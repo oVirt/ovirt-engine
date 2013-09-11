@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -76,8 +76,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check storage pool valid
-        if (getStoragePool() == null || getStoragePool().getStatus() != StoragePoolStatus.Up) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+            return false;
         }
 
         // check if delete protected

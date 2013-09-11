@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
@@ -61,9 +60,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         // order to change description in spm
         if (returnValue
                 && _storageDomainNameChanged
-                && getStoragePool() != null
-                && getStoragePool().getStatus() != StoragePoolStatus.Up) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+                && !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             returnValue = false;
         }
         if (returnValue && _storageDomainNameChanged && IsStorageWithSameNameExists()) {
