@@ -363,6 +363,7 @@ public enum VdcBllErrors {
     GlusterVolumeDeleteFailed(4139),
     GlusterVolumeReplaceBrickStartFailed(4142),
     GlusterVolumeListFailed(4149),
+    GlusterVolumeRemoveBrickStatusFailed(4152),
     GlusterVolumeOptionInfoFailed(4154),
     GlusterVolumeResetOptionsFailed(4155),
     GlusterVolumeRemoveBricksFailed(4156),

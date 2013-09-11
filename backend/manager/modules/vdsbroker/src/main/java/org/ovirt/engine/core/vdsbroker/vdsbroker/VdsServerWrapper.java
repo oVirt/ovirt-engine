@@ -1268,6 +1268,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeRemoveBrickStatus(volumeName, bricksList);
+            GlusterVolumeTaskReturnForXmlRpc wrapper = new GlusterVolumeTaskReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc setMOMPolicyParameters(Map<String, Object> key_value_store) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.setMOMPolicyParameters(key_value_store);

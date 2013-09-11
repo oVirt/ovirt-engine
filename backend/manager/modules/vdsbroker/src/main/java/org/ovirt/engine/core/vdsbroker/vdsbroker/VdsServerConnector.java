@@ -252,4 +252,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterTasksList();
 
     public Map<String, Object> glusterVolumeRebalanceStatus(String volumeName);
+
+    public Map<String, Object> glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 }

@@ -269,4 +269,6 @@ public interface IVdsServer {
     GlusterTasksListReturnForXmlRpc glusterTasksList();
 
     GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStatus(String volumeName);
+
+    GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 }
