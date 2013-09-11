@@ -385,6 +385,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String ERR_USED_BRIDGE();
 
+    String ERR_FAILED_IFUP();
+
     String ENGINE();
 
     String IRS_IMAGE_STATUS_ILLEGAL();
