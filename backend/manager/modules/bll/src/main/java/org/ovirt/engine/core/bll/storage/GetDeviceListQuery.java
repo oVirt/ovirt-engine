@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +38,7 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
 
         // Get LUNs from DB
         List<LUNs> lunsFromDb = getDbFacade().getLunDao().getAll();
-        java.util.HashMap<String, LUNs> lunsFromDbById = new java.util.HashMap<String, LUNs>();
+        HashMap<String, LUNs> lunsFromDbById = new HashMap<String, LUNs>();
         for (LUNs lun : lunsFromDb) {
             lunsFromDbById.put(lun.getLUN_id(), lun);
         }

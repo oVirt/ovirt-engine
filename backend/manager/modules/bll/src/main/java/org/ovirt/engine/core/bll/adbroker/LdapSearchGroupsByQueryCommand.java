@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
@@ -16,7 +17,7 @@ public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredential
 
     @Override
     protected void executeQuery(DirectorySearcher directorySearcher) {
-        java.util.ArrayList<LdapGroup> groupList = new java.util.ArrayList<LdapGroup>();
+        ArrayList<LdapGroup> groupList = new ArrayList<LdapGroup>();
 
         List<GroupSearchResult> searchResults = (List<GroupSearchResult>)directorySearcher.findAll(getLdapQueryData());
         {

@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VdsTagMapBase<T extends AttachVdsToTagParameters> extends TagsCommandBase<T> {
-    protected java.util.ArrayList<Guid> getVdsList() {
+    protected ArrayList<Guid> getVdsList() {
         return getParameters().getEntitiesId();
     }
 

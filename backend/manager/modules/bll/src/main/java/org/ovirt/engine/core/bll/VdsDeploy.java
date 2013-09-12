@@ -57,6 +57,8 @@ import org.ovirt.otopi.constants.SysEnv;
 import org.ovirt.otopi.dialog.Event;
 import org.ovirt.otopi.dialog.MachineDialogParser;
 import org.ovirt.otopi.dialog.SoftError;
+import org.ovirt.ovirt_host_deploy.constants.Const;
+import org.ovirt.ovirt_host_deploy.constants.Displays;
 import org.ovirt.ovirt_host_deploy.constants.GlusterEnv;
 import org.ovirt.ovirt_host_deploy.constants.OpenStackEnv;
 import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
@@ -438,7 +440,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliEnvironmentSet(
                 VdsmEnv.CERTIFICATE_ENROLLMENT,
-                org.ovirt.ovirt_host_deploy.constants.Const.CERTIFICATE_ENROLLMENT_INLINE
+                Const.CERTIFICATE_ENROLLMENT_INLINE
             );
             return null;
         }},
@@ -847,7 +849,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 else if (bevent instanceof Event.DisplayMultiString) {
                     Event.DisplayMultiString event = (Event.DisplayMultiString)bevent;
 
-                    if (org.ovirt.ovirt_host_deploy.constants.Displays.CERTIFICATE_REQUEST.equals(event.name)) {
+                    if (Displays.CERTIFICATE_REQUEST.equals(event.name)) {
                         _messages.post(
                             InstallerMessages.Severity.INFO,
                             "Enrolling certificate"

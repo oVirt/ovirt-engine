@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.ovirt.engine.core.bll.MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -122,12 +124,12 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     protected Pair<Boolean, Integer> connectStorage() {
         String connectionId = getStorageDomain().getStorage();
         StorageServerConnections connection = getStorageServerConnectionDAO().get(connectionId);
-        java.util.HashMap<String, String> result = (java.util.HashMap<String, String>) runVdsCommand(
+        HashMap<String, String> result = (HashMap<String, String>) runVdsCommand(
                         VDSCommandType.ConnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,
                                 connection.getstorage_type(),
-                                new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
-                                        .asList(new StorageServerConnections[] { connection }))))
+                                new ArrayList<StorageServerConnections>
+                                        (Arrays.asList(new StorageServerConnections[]{connection}))))
                 .getReturnValue();
         return new Pair<Boolean, Integer>(StorageHelperDirector.getInstance()
                 .getItem(connection.getstorage_type())

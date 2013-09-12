@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
@@ -32,13 +36,13 @@ public class TagsDirector {
     /**
      * In memory nodes cache for quicker access to each node by ID: O(1) instead O(lnN) of tree
      */
-    private final java.util.Map<Guid, Tags> tagsMapByID =
-            new CopyOnAccessMap<Guid, Tags>(new java.util.HashMap<Guid, Tags>());
+    private final Map<Guid, Tags> tagsMapByID =
+            new CopyOnAccessMap<Guid, Tags>(new HashMap<Guid, Tags>());
     /**
      * In memory nodes cache for quicker access to each node by name
      */
-    private final java.util.Map<String, Tags> tagsMapByName =
-            new CopyOnAccessMap<String, Tags>(new java.util.HashMap<String, Tags>());
+    private final Map<String, Tags> tagsMapByName =
+            new CopyOnAccessMap<String, Tags>(new HashMap<String, Tags>());
 
     private static TagsDirector instance = new TagsDirector();
 
@@ -268,9 +272,9 @@ public class TagsDirector {
         return sb.toString();
     }
 
-    public java.util.HashSet<Guid> GetTagIdAndChildrenIdsAsSet(Guid tagId) {
+    public HashSet<Guid> GetTagIdAndChildrenIdsAsSet(Guid tagId) {
         Tags tag = GetTagById(tagId);
-        java.util.HashSet<Guid> set = new java.util.HashSet<Guid>();
+        HashSet<Guid> set = new HashSet<Guid>();
         tag.getTagIdAndChildrenIdsAsList(set);
         return set;
     }
@@ -363,8 +367,8 @@ public class TagsDirector {
      *
      * @return a tags list.
      */
-    public java.util.ArrayList<Tags> GetAllTags() {
-        java.util.ArrayList<Tags> ret = new java.util.ArrayList<Tags>(tagsMapByID.values());
+    public ArrayList<Tags> GetAllTags() {
+        ArrayList<Tags> ret = new ArrayList<Tags>(tagsMapByID.values());
         // remove the root - it is not a real tag:
         ret.remove(GetRootTag());
         return ret;

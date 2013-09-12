@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +128,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         user.setDomainControler(domain);
 
         // Getting the groups
-        java.util.HashMap<String, LdapGroup> groupsDict = new java.util.HashMap<String, LdapGroup>();
+        HashMap<String, LdapGroup> groupsDict = new HashMap<String, LdapGroup>();
 
         GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator();
         proceedGroupsSearchResult(null, user.getMemberof(), groupsDict, generator);
@@ -154,7 +155,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
     protected void populateGroup(LdapQueryData queryData,
                                  String domain,
-                                 java.util.Map<String, LdapGroup> groupsDict,
+                                 Map<String, LdapGroup> groupsDict,
                                  String loginName,
                                  String password) {
         try {
@@ -179,7 +180,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     private void ProceedGroupsSearchResult(GroupSearchResult groupsResult,
-            java.util.Map<String, LdapGroup> groupsDict, GroupsDNQueryGenerator generator) {
+            Map<String, LdapGroup> groupsDict, GroupsDNQueryGenerator generator) {
         List<String> groupsList = groupsResult.getMemberOf();
         LdapGroup group = new LdapGroup();
         group.setid(groupsResult.getId());

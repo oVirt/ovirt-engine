@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +21,7 @@ public class GetAllSiblingVlanInterfacesQuery<P extends InterfaceAndIdQueryParam
 
     @Override
     protected void executeQueryCommand() {
-        java.util.ArrayList<VdsNetworkInterface> retVal = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> retVal = new ArrayList<VdsNetworkInterface>();
         if (NetworkUtils.isVlan(getParameters().getInterface())) {
             List<VdsNetworkInterface> vdsInterfaces =
                     getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getId());

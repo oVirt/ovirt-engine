@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -21,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters> extends BaseImagesCommand<T> {
 
-    private final java.util.ArrayList<Guid> _imagesToDelete = new java.util.ArrayList<Guid>();
+    private final ArrayList<Guid> _imagesToDelete = new ArrayList<Guid>();
 
     public RestoreFromSnapshotCommand(T parameters) {
         super(parameters);

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -188,7 +189,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         }
     }
 
-    public boolean canMaintenanceVds(Guid vdsId, java.util.ArrayList<String> reasons) {
+    public boolean canMaintenanceVds(Guid vdsId, ArrayList<String> reasons) {
         boolean returnValue = true;
         // VDS vds = ResourceManager.Instance.getVds(vdsId);
         VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);

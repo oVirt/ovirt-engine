@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -27,7 +29,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
 
     @Override
     protected void executeQueryCommand() {
-        java.util.ArrayList<StorageDomain> returnValue = new java.util.ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> returnValue = new ArrayList<StorageDomain>();
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()
                 .getResourceManager()
@@ -38,8 +40,8 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                                 .getStorageType(), getParameters()
                                 .getStorageDomainType(), getParameters().getPath()));
         if (vdsReturnValue.getSucceeded()) {
-            java.util.ArrayList<Guid> guidsFromIrs = (java.util.ArrayList<Guid>) vdsReturnValue.getReturnValue();
-            java.util.HashSet<Guid> guidsFromDb = new java.util.HashSet<Guid>();
+            ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
+            HashSet<Guid> guidsFromDb = new HashSet<Guid>();
             if (guidsFromIrs.size() > 0) {
                 List<StorageDomain> domainsInDb = DbFacade.getInstance().getStorageDomainDao().getAll();
                 for (StorageDomain domain : domainsInDb) {

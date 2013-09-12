@@ -627,7 +627,7 @@ public final class AsyncTaskManager {
         }
     }
 
-    public synchronized ArrayList<AsyncTaskStatus> pollTasks(java.util.ArrayList<Guid> vdsmTaskIdList) {
+    public synchronized ArrayList<AsyncTaskStatus> pollTasks(ArrayList<Guid> vdsmTaskIdList) {
         ArrayList<AsyncTaskStatus> returnValue = new ArrayList<AsyncTaskStatus>();
 
         if (vdsmTaskIdList != null && vdsmTaskIdList.size() > 0) {

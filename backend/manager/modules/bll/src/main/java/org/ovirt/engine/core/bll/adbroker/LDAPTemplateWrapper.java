@@ -17,6 +17,7 @@ import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.core.support.SingleContextSource;
+import com.sun.jndi.ldap.LdapCtxFactory;
 
 public abstract class LDAPTemplateWrapper {
 
@@ -62,7 +63,7 @@ public abstract class LDAPTemplateWrapper {
 
         setCredentialsOnContext();
         contextSource.setBase(baseDN);
-        contextSource.setContextFactory(com.sun.jndi.ldap.LdapCtxFactory.class);
+        contextSource.setContextFactory(LdapCtxFactory.class);
 
         // binary properties
         Hashtable<String, String> baseEnvironmentProperties =  new Hashtable<String, String>();

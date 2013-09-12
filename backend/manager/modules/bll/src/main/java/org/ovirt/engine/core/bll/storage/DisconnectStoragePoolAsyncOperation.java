@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -10,7 +11,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
-    public DisconnectStoragePoolAsyncOperation(java.util.ArrayList<VDS> vdss, StoragePool storagePool) {
+    public DisconnectStoragePoolAsyncOperation(ArrayList<VDS> vdss, StoragePool storagePool) {
         super(vdss, null, storagePool);
     }
 

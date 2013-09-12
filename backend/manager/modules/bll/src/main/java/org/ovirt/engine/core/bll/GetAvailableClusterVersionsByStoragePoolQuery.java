@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -16,13 +18,13 @@ public class GetAvailableClusterVersionsByStoragePoolQuery<P extends IdQueryPara
     @Override
     protected void executeQueryCommand() {
         if (getParameters().getId() != null) {
-            java.util.ArrayList<Version> result = new java.util.ArrayList<Version>();
+            ArrayList<Version> result = new ArrayList<Version>();
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                     getParameters().getId());
             if (storagePool != null) {
                 // return all versions that >= to the storage pool version
                 for (Version supportedVer : Config
-                        .<java.util.HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
+                        .<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
                     // if version lower than current skip because cannot
                     // decrease version
                     if (supportedVer.compareTo(storagePool.getcompatibility_version()) < 0) {
@@ -34,8 +36,8 @@ public class GetAvailableClusterVersionsByStoragePoolQuery<P extends IdQueryPara
             getQueryReturnValue().setReturnValue(result);
         } else {
             getQueryReturnValue().setReturnValue(
-                    new java.util.ArrayList<Version>(Config
-                            .<java.util.HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)));
+                    new ArrayList<Version>(Config
+                            .<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)));
         }
     }
 }

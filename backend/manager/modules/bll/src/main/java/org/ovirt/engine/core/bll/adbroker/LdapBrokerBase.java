@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
+import java.lang.reflect.Constructor;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -20,13 +21,13 @@ public abstract class LdapBrokerBase implements LdapBroker {
 
     private BrokerCommandBase CreateCommand(AdActionType action, LdapBrokerBaseParameters parameters) {
         try {
-            java.lang.Class type = java.lang.Class.forName(GetCommandTypeName(action));
-            java.lang.reflect.Constructor info = ReflectionUtils.findConstructor(type, parameters.getClass());
+            Class type = Class.forName(GetCommandTypeName(action));
+            Constructor info = ReflectionUtils.findConstructor(type, parameters.getClass());
             Object tempVar = info.newInstance(parameters);
             return (BrokerCommandBase) ((tempVar instanceof BrokerCommandBase) ? tempVar : null);
         }
 
-        catch (java.lang.Exception e) {
+        catch (Exception e) {
             log.errorFormat("LdapBrokerCommandBase: Failed to get type information using reflection for Action: {0}",
                     action);
             return null;

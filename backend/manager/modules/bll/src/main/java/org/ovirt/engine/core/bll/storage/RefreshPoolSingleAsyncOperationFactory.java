@@ -6,12 +6,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public class RefreshPoolSingleAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
-    private java.util.ArrayList<Guid> _vdsIdsToSetNonOperational;
+    private ArrayList<Guid> _vdsIdsToSetNonOperational;
 
     @Override
     public void initialize(ArrayList parameters) {
         super.initialize(parameters);
-        if (!(parameters.get(3) instanceof java.util.ArrayList)) {
+        if (!(parameters.get(3) instanceof ArrayList)) {
             throw new IllegalArgumentException();
         }
         ArrayList l = (ArrayList) parameters.get(3);

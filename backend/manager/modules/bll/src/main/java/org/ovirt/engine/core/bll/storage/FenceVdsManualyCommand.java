@@ -196,7 +196,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                                 _fenceSpmCalled = true;
                                 break;
                             }
-                        } catch (java.lang.Exception e) {
+                        } catch (Exception e) {
                             log.warnFormat("Could not fence spm on vds {0}", vds.getName());
                         }
                     }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -18,22 +19,21 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
     public AttachStorageDomainsMultipleActionRunner(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters, boolean isInternal) {
+            ArrayList<VdcActionParametersBase> parameters, boolean isInternal) {
         super(actionType, parameters, isInternal);
     }
 
     @Override
-    public java.util.ArrayList<VdcReturnValueBase> execute() {
+    public ArrayList<VdcReturnValueBase> execute() {
         if (getParameters().size() > 0) {
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(
                     ((StorageDomainPoolParametersBase) getParameters().get(0)).getStoragePoolId());
             if (pool.getStatus() == StoragePoolStatus.Uninitialized) {
-                java.util.ArrayList<Guid> storageDomainIds = new java.util.ArrayList<Guid>();
+                ArrayList<Guid> storageDomainIds = new ArrayList<Guid>();
                 for (VdcActionParametersBase param : getParameters()) {
                     storageDomainIds.add(((StorageDomainPoolParametersBase) param).getStorageDomainId());
                 }
-                java.util.ArrayList<VdcActionParametersBase> parameters =
-                        new java.util.ArrayList<VdcActionParametersBase>();
+                ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                 parameters.add(new StoragePoolWithStoragesParameter(pool, storageDomainIds, getParameters().get(0)
                         .getSessionId()));
                 if (isInternal) {

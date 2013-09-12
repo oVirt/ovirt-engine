@@ -117,7 +117,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
      * @return <c>true</c> if [is domain legal] [the specified domain name];
      *         otherwise, <c>false</c>.
      */
-    public static boolean isDomainLegal(String domainName, java.util.ArrayList<String> reasons) {
+    public static boolean isDomainLegal(String domainName, ArrayList<String> reasons) {
         boolean result = true;
         char[] illegalChars = new char[] { '&' };
         if (StringUtils.isNotEmpty(domainName)) {

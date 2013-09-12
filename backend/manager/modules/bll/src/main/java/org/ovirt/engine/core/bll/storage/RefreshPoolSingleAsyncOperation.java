@@ -16,9 +16,9 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
-    private final java.util.ArrayList<Guid> _vdsIdsToSetNonOperational;
+    private final ArrayList<Guid> _vdsIdsToSetNonOperational;
 
-    public RefreshPoolSingleAsyncOperation(java.util.ArrayList<VDS> vdss, StorageDomain domain,
+    public RefreshPoolSingleAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
             StoragePool storagePool, ArrayList<Guid> vdssIdsToSetNonoperational) {
         super(vdss, domain, storagePool);
         _vdsIdsToSetNonOperational = vdssIdsToSetNonoperational;
@@ -41,7 +41,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                                     new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),
                                             getStoragePool().getId(), getVdss().get(iterationId).getVdsSpmId(),
                                             masterDomainIdFromDb, getStoragePool().getmaster_domain_version()));
-                } catch (java.lang.Exception e) {
+                } catch (Exception e) {
                     log.errorFormat("Could not connect vds {0} to pool {1} - moving host to non-operational", getVdss()
                             .get(iterationId).getName(), getStoragePool().getName());
                     synchronized (_vdsIdsToSetNonOperational) {

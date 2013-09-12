@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -16,7 +17,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
     private final boolean _isLastMaster;
     private Guid _newMasterStorageDomainId = Guid.Empty;
 
-    public AfterDeactivateSingleAsyncOperation(java.util.ArrayList<VDS> vdss, StorageDomain domain,
+    public AfterDeactivateSingleAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
             StoragePool storagePool, boolean isLastMaster, Guid newMasterStorageDomain) {
         super(vdss, domain, storagePool);
         _isLastMaster = isLastMaster;

@@ -39,7 +39,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         String address = params.getAddress();
         String subnet = StringUtils.isEmpty(params.getSubnet()) ? logicalNetwork.getSubnet() : params.getSubnet();
         String gateway = StringUtils.isEmpty(params.getGateway()) ? "" : params.getGateway();
-        java.util.ArrayList<String> nics = new java.util.ArrayList<String>();
+        ArrayList<String> nics = new ArrayList<String>();
         nics.add(params.getInterface().getName());
 
         // check if bond...

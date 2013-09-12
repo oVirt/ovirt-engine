@@ -19,7 +19,7 @@ public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> ext
             super.executeCommand();
             setActionReturnValue(true);
             setSucceeded(true);
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             setActionReturnValue(false);
         }
     }

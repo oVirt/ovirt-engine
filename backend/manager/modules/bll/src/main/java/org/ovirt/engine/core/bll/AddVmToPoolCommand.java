@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -27,7 +28,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
      * @return <c>true</c> if this instance [can add vm to pool] the specified
      *         vm id; otherwise, <c>false</c>.
      */
-    public static boolean canAddVmToPool(Guid vmId, java.util.ArrayList<String> messages, Guid poolId) {
+    public static boolean canAddVmToPool(Guid vmId, ArrayList<String> messages, Guid poolId) {
         boolean returnValue = true;
 
         boolean isRunning = RemoveVmCommand.isVmRunning(vmId);

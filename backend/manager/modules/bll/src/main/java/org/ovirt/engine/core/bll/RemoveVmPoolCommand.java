@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -37,11 +38,11 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     }
 
     public static boolean canRemoveVmPoolWithoutReasons(Guid vmPoolId) {
-        java.util.ArrayList<String> reasons = new java.util.ArrayList<String>();
+        ArrayList<String> reasons = new ArrayList<String>();
         return (canRemoveVmPool(vmPoolId, reasons));
     }
 
-    public static boolean canRemoveVmPool(Guid vmPoolId, java.util.ArrayList<String> reasons) {
+    public static boolean canRemoveVmPool(Guid vmPoolId, ArrayList<String> reasons) {
         boolean returnValue = true;
         if (DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(vmPoolId).size() != 0) {
             returnValue = false;

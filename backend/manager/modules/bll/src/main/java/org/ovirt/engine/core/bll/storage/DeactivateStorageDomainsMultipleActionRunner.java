@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.bll.SortedMultipleActionsRunnerBase;
@@ -8,7 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class DeactivateStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
     public DeactivateStorageDomainsMultipleActionRunner(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters, boolean isInternal) {
+            ArrayList<VdcActionParametersBase> parameters, boolean isInternal) {
         super(actionType, parameters, isInternal);
     }
 

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -20,7 +22,7 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
 
     @Override
     protected void executeQueryCommand() {
-        java.util.ArrayList<StorageDomain> vgsFromVds = (java.util.ArrayList<StorageDomain>) (Backend.getInstance()
+        ArrayList<StorageDomain> vgsFromVds = (ArrayList<StorageDomain>) (Backend.getInstance()
                 .getResourceManager().RunVdsCommand(VDSCommandType.GetVGList,
                                                     new VdsIdVDSCommandParametersBase(getParameters().getVdsId())))
                 .getReturnValue();
@@ -33,13 +35,13 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
                     }
                 });
 
-        java.util.HashSet<String> vgIdsFromDb = new java.util.HashSet<String>();
+        HashSet<String> vgIdsFromDb = new HashSet<String>();
 
         for (StorageDomain domain : vgsFromDb) {
             vgIdsFromDb.add(domain.getStorage());
         }
 
-        java.util.ArrayList<StorageDomain> returnValue = new java.util.ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> returnValue = new ArrayList<StorageDomain>();
 
         for (StorageDomain domain : vgsFromVds) {
             if (domain.getId().equals(Guid.Empty) && !vgIdsFromDb.contains(domain.getStorage())) {

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -108,11 +109,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 && IsPowerManagementLegal(getVds().getStaticData(), getVdsGroup().getcompatibility_version().toString())) {
             // check if we are in the interval of X seconds from startup
             // if yes , system is still initializing , ignore fence operations
-            java.util.Date waitTo =
+            Date waitTo =
                     Backend.getInstance()
                             .getStartedAt()
                             .addSeconds((Integer) Config.getValue(ConfigValues.DisableFenceAtStartupInSec));
-            java.util.Date now = new java.util.Date();
+            Date now = new Date();
             if (waitTo.before(now) || waitTo.equals(now)) {
                 // Check Quiet time between PM operations, this is done only if command is not internal and parent command is not <Restart>
                 int secondsLeftToNextPmOp = (isInternalExecution() || (getParameters().getParentCommand() == VdcActionType.RestartVds))
@@ -466,8 +467,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected void restartVdsVms() {
-        java.util.ArrayList<VdcActionParametersBase> runVmParamsList =
-                new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> runVmParamsList = new ArrayList<VdcActionParametersBase>();
         // restart all running vms of a failed vds.
         for (VM vm : mVmList) {
             destroyVmOnDestination(vm);

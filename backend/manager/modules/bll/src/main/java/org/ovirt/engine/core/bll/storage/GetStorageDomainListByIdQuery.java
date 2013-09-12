@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
@@ -17,7 +18,7 @@ public class GetStorageDomainListByIdQuery<P extends IdQueryParameters> extends 
     protected void executeQueryCommand() {
         List<StorageDomain> result = DbFacade.getInstance().getStorageDomainDao().getAllForStorageDomain(
                 getParameters().getId());
-        java.util.ArrayList<StorageDomain> temp = new java.util.ArrayList<StorageDomain>(result);
+        ArrayList<StorageDomain> temp = new ArrayList<StorageDomain>(result);
         for (StorageDomain domain : temp) {
             if (domain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
                 result.remove(domain);

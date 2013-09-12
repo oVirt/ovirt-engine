@@ -113,7 +113,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             ""));
 
             if (vdsReturnValue.getSucceeded()) {
-                getParameters().setVdsmTaskIds(new java.util.ArrayList<Guid>());
+                getParameters().setVdsmTaskIds(new ArrayList<Guid>());
                 getParameters().getVdsmTaskIds().add(
                         createTask(taskId,
                         vdsReturnValue.getCreationInfo(),
@@ -128,7 +128,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                     throw new RuntimeException();
                 }
             }
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             log.errorFormat("Failed creating snapshot from image id -'{0}'", getImage().getImageId());
             AsyncTaskManager.logAndFailTaskOfCommandWithEmptyVdsmId(getAsyncTaskId(),
                     "Create snapshot failed at VDSM. DB task ID is " + getAsyncTaskId());

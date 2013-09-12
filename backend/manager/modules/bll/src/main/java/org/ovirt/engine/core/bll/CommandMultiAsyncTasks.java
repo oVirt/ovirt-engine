@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.EndedTasksInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -9,7 +11,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class CommandMultiAsyncTasks {
 
-    private java.util.HashMap<Guid, CommandAsyncTask> _listTasks;
+    private HashMap<Guid, CommandAsyncTask> _listTasks;
     private Guid commandId;
 
     public Guid getCommandId() {
@@ -21,7 +23,7 @@ public class CommandMultiAsyncTasks {
     }
 
     public CommandMultiAsyncTasks(Guid commandId) {
-        _listTasks = new java.util.HashMap<Guid, CommandAsyncTask>();
+        _listTasks = new HashMap<Guid, CommandAsyncTask>();
         setCommandId(commandId);
     }
 
@@ -36,8 +38,8 @@ public class CommandMultiAsyncTasks {
         }
     }
 
-    private java.util.ArrayList<CommandAsyncTask> getCurrentTasks() {
-        java.util.ArrayList<CommandAsyncTask> retValue = new java.util.ArrayList<CommandAsyncTask>();
+    private ArrayList<CommandAsyncTask> getCurrentTasks() {
+        ArrayList<CommandAsyncTask> retValue = new ArrayList<CommandAsyncTask>();
 
         for (CommandAsyncTask task : _listTasks.values()) {
             if (task.getParameters() != null
@@ -53,7 +55,7 @@ public class CommandMultiAsyncTasks {
 
     public boolean ShouldEndAction() {
         synchronized (_listTasks) {
-            java.util.ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
+            ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
                 // Check this is a task that is run on VDSM and is not in ENDED state.
@@ -77,7 +79,7 @@ public class CommandMultiAsyncTasks {
 
     public void MarkAllWithAttemptingEndAction() {
         synchronized (_listTasks) {
-            java.util.ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
+            ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
                 task.setState(AsyncTaskState.AttemptingEndAction);
@@ -87,10 +89,10 @@ public class CommandMultiAsyncTasks {
 
     public EndedTasksInfo getEndedTasksInfo() {
         EndedTasksInfo endedTasksInfo = new EndedTasksInfo();
-        java.util.ArrayList<EndedTaskInfo> endedTaskInfoList = new java.util.ArrayList<EndedTaskInfo>();
+        ArrayList<EndedTaskInfo> endedTaskInfoList = new ArrayList<EndedTaskInfo>();
 
         synchronized (_listTasks) {
-            java.util.ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
+            ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
                 task.setLastStatusAccessTime();
@@ -109,7 +111,7 @@ public class CommandMultiAsyncTasks {
     public int getTasksCountCurrentActionType() {
         int returnValue = 0;
         synchronized (_listTasks) {
-            java.util.ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
+            ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
             returnValue = CurrentActionTypeTasks.size();
         }
 
@@ -118,7 +120,7 @@ public class CommandMultiAsyncTasks {
 
     public void Repoll() {
         synchronized (_listTasks) {
-            java.util.ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
+            ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
                 task.setState(AsyncTaskState.Ended);
@@ -128,7 +130,7 @@ public class CommandMultiAsyncTasks {
 
     public void ClearTasks() {
         synchronized (_listTasks) {
-            java.util.ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
+            ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
                 if (task.getLastTaskStatus().getStatus() == AsyncTaskStatusEnum.finished) {

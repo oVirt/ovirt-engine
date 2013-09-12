@@ -38,7 +38,7 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
         List<LdapQueryData> queries = GenerateUsersQuery();
         List<LdapUser> results = new ArrayList<LdapUser>();
         for (LdapQueryData queryData : queries) {
-            java.util.ArrayList<LdapUser> tempUsers = (java.util.ArrayList<LdapUser>) LdapFactory
+            ArrayList<LdapUser> tempUsers = (ArrayList<LdapUser>) LdapFactory
                     .getInstance(getDomain())
                     .runAdAction(AdActionType.SearchUserByQuery,
                             new LdapSearchByQueryParameters(getParameters().getSessionId(), getDomain(), queryData))

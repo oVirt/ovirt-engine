@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -20,8 +21,8 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 public final class StoragePoolStatusHandler {
-    private static java.util.HashMap<Guid, StoragePoolStatusHandler> _nonOperationalPools =
-            new java.util.HashMap<Guid, StoragePoolStatusHandler>();
+    private static HashMap<Guid, StoragePoolStatusHandler> _nonOperationalPools =
+            new HashMap<Guid, StoragePoolStatusHandler>();
 
     private Guid poolId;
     private String timerId;
@@ -60,7 +61,7 @@ public final class StoragePoolStatusHandler {
                 if (pool != null && pool.getStatus() == StoragePoolStatus.NotOperational) {
                     nonOperationalPoolTreatment(pool);
                 }
-            } catch (java.lang.Exception e) {
+            } catch (Exception e) {
             }
         }
     }

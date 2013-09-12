@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -34,7 +35,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
         return getSucceeded() ? AuditLogType.USER_PAUSE_VM : AuditLogType.USER_FAILED_PAUSE_VM;
     }
 
-    public boolean canPauseVm(Guid vmId, java.util.ArrayList<String> message) {
+    public boolean canPauseVm(Guid vmId, ArrayList<String> message) {
         boolean retValue = true;
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm == null) {

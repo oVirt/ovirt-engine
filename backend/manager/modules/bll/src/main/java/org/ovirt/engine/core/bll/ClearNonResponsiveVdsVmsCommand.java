@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,8 +46,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
     protected void executeCommand() {
         List<VM> vms = DbFacade.getInstance().getVmDao().getAllRunningForVds(getVdsId());
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
-        java.util.ArrayList<VdcActionParametersBase> runVmParamsList =
-                new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> runVmParamsList = new ArrayList<VdcActionParametersBase>();
         for (VM vm : vms) {
             if (vm.isAutoStartup()) {
                 runVmParamsList.add(new RunVmParams(vm.getId()));

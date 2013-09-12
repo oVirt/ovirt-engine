@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -12,7 +13,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
-    public RefreshStoragePoolAndDisconnectAsyncOperation(java.util.ArrayList<VDS> vdss, StorageDomain domain,
+    public RefreshStoragePoolAndDisconnectAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
             StoragePool storagePool) {
         super(vdss, domain, storagePool);
     }

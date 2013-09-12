@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
@@ -17,7 +18,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
         }
     }
 
-    public static boolean canRemoveVmFromPool(Guid vmId, java.util.ArrayList<String> messages) {
+    public static boolean canRemoveVmFromPool(Guid vmId, ArrayList<String> messages) {
         boolean returnValue = true;
         // Check if the vm is in a pool.
         if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId) == null) {

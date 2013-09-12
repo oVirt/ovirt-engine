@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +22,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryPara
                 .getEventDao()
                 .getAllForSubscriber(getParameters().getId());
         if (list.size() > 0) {
-            java.util.HashMap<String, event_subscriber> dic = new java.util.HashMap<String, event_subscriber>();
+            HashMap<String, event_subscriber> dic = new HashMap<String, event_subscriber>();
 
             for (event_subscriber ev : list) {
                 // event_subscriber foundEv = groupedList.FirstOrDefault(a =>
@@ -34,7 +35,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryPara
                 }
             }
 
-            java.util.ArrayList<event_subscriber> groupedList = new ArrayList<event_subscriber>(dic.values());
+            ArrayList<event_subscriber> groupedList = new ArrayList<event_subscriber>(dic.values());
             for (event_subscriber event : groupedList) {
                 event.settag_name(StringUtils.strip(event.gettag_name(), ", "));
             }

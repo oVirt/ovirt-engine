@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,7 +48,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         String subnet = StringUtils.isEmpty(getParameters().getSubnet()) ? getParameters().getNetwork()
                 .getSubnet() : getParameters().getSubnet();
         String gateway = StringUtils.isEmpty(getParameters().getGateway()) ? "" : getParameters().getGateway();
-        java.util.ArrayList<String> interfaceNames = new java.util.ArrayList<String>();
+        ArrayList<String> interfaceNames = new ArrayList<String>();
 
         for (VdsNetworkInterface i : getParameters().getInterfaces()) {
             if (Boolean.TRUE.equals(i.getBonded()) || NetworkUtils.isBondVlan(interfaces, i)) {
@@ -138,7 +139,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             if (e instanceof VdcBLLException) {
                 getReturnValue().setFault(new VdcFault(e, ((VdcBLLException) e).getVdsError().getCode()));
             }
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
         } finally {
             editNetworkThreadFinish = true;
         }
@@ -153,7 +154,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
                                 new CollectHostNetworkDataVdsCommandParameters(vds));
-            } catch (java.lang.Exception e) {
+            } catch (Exception e) {
             }
         }
     }

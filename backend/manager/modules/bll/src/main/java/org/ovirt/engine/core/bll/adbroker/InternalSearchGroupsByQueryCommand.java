@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 
 public class InternalSearchGroupsByQueryCommand extends InternalBrokerCommandBase {
@@ -10,7 +11,7 @@ public class InternalSearchGroupsByQueryCommand extends InternalBrokerCommandBas
 
     @Override
     protected void executeQuery() {
-        java.util.List<LdapGroup> groupList = InternalBrokerUtils.getAllGroups();
+        List<LdapGroup> groupList = InternalBrokerUtils.getAllGroups();
         setReturnValue(groupList);
         setSucceeded(true);
     }
