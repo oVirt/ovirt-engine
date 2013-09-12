@@ -228,12 +228,6 @@ public interface Enums extends LocalizedEnums {
 
     String VmTemplateStatus___Illegal();
 
-    String UsbPolicy___ENABLED_LEGACY();
-
-    String UsbPolicy___ENABLED_NATIVE();
-
-    String UsbPolicy___DISABLED();
-
     String VolumeType___Preallocated();
 
     String VolumeType___Sparse();

@@ -22,15 +22,21 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String NonOperationalReason___TIMEOUT_RECOVERING_FROM_CRASH();
 
-        String NonOperationalReason___GLUSTER_COMMAND_FAILED();
+    String NonOperationalReason___GLUSTER_COMMAND_FAILED();
 
-        String NonOperationalReason___UNTRUSTED();
+    String NonOperationalReason___UNTRUSTED();
 
-        String NonOperationalReason___UNINITIALIZED();
+    String NonOperationalReason___UNINITIALIZED();
 
     String NonOperationalReason___GLUSTER_HOST_UUID_NOT_FOUND();
 
     String NonOperationalReason___EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER();
+
+    String UsbPolicy___ENABLED_LEGACY();
+
+    String UsbPolicy___ENABLED_NATIVE();
+
+    String UsbPolicy___DISABLED();
 
 	String VmPauseStatus___NONE();
 
