@@ -38,7 +38,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
 
     @Override
     public final Date getDateTimeValue(String name, String defaultValue) {
-        Date dt = new java.util.Date(0);
+        Date dt = new Date(0);
         String dateString = getValue(DataType.String, name, defaultValue).toString();
         try {
             dt = (new SimpleDateFormat("k:m:s")).parse(dateString);

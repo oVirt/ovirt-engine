@@ -17,6 +17,7 @@ import javax.naming.directory.SearchResult;
 import javax.security.sasl.SaslException;
 
 import org.apache.log4j.Logger;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.ldap.RootDSEData;
@@ -203,7 +204,7 @@ public class JndiAction implements PrivilegedAction {
             } else {
                 Object objectGuid = sr.getAttributes().get("objectGUID").get();
                 byte[] guid = (byte[]) objectGuid;
-                guidString += ((new org.ovirt.engine.core.compat.Guid(guid, false)).toString());
+                guidString += new Guid(guid, false).toString();
             }
         } catch (NullPointerException ne) {
             System.out.println("LDAP connection successful. But no guid found");

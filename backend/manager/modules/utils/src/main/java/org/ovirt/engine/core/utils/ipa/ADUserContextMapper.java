@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.utils.kerberos.InstallerConstants.ERROR_PREF
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
@@ -26,7 +27,7 @@ public class ADUserContextMapper implements ContextMapper {
         try {
             Object objectGuid = attributes.get("objectGUID").get();
             byte[] guid = (byte[]) objectGuid;
-            return ((new org.ovirt.engine.core.compat.Guid(guid, false)).toString());
+            return new Guid(guid, false).toString();
         } catch (NamingException e) {
             System.err.println(ERROR_PREFIX + "Failed getting user GUID");
             return null;

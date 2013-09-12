@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -162,7 +163,7 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
     }
 
     @Override
-    public Set<java.util.Map.Entry<K, V>> entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         Map<K, V> newHashMap = new HashMap<K, V>(innerMap.size() * REALLOCATION_FACTOR);
         for (Entry<K, V> entry : innerMap.entrySet()) {
             newHashMap.put(clone(entry.getKey()), clone(entry.getValue()));

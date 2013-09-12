@@ -94,7 +94,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
     }
 
     public final List<String> doTranslation(List<String> errorMsg, boolean changeIfNotFound, Locale locale) {
-        java.util.ArrayList<String> translatedMessages = new java.util.ArrayList<String>();
+        ArrayList<String> translatedMessages = new ArrayList<String>();
         if (errorMsg != null && errorMsg.size() > 0) {
             for (String curError : errorMsg) {
                 translatedMessages.add(translate(curError, changeIfNotFound, locale));
@@ -164,8 +164,8 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
      * @see org.ovirt.engine.core.utils.ErrorTranslator#ResolveMessages(java.util.List)
      */
     public final List<String> ResolveMessages(List<String> translatedMessages) {
-        java.util.ArrayList<String> translatedErrors = new java.util.ArrayList<String>();
-        java.util.HashMap<String, String> variables = new java.util.HashMap<String, String>();
+        ArrayList<String> translatedErrors = new ArrayList<String>();
+        HashMap<String, String> variables = new HashMap<String, String>();
         for (String currentMessage : translatedMessages) {
             if (currentMessage.startsWith("$")) {
                 AddVariable(currentMessage, variables);
@@ -176,14 +176,14 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         /**
          * Place to global variable adding
          */
-        java.util.ArrayList<String> returnValue = new java.util.ArrayList<String>();
+        ArrayList<String> returnValue = new ArrayList<String>();
         for (String error : translatedErrors) {
             returnValue.add(resolveMessage(error, variables));
         }
         return returnValue;
     }
 
-    private void AddVariable(String variable, java.util.HashMap<String, String> variables) {
+    private void AddVariable(String variable, HashMap<String, String> variables) {
         int firstSpace = variable.indexOf(' ');
         if (firstSpace != -1 && firstSpace < variable.length()) {
             String key = variable.substring(1, firstSpace);
@@ -194,7 +194,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         }
     }
 
-    private String resolveMessage(String message, java.util.HashMap<String, String> variables) {
+    private String resolveMessage(String message, HashMap<String, String> variables) {
         StrSubstitutor sub = new StrSubstitutor(variables);
         return sub.replace(message);
     }

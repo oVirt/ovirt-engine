@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.customprop;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -94,7 +95,7 @@ public class CustomPropertiesUtils {
      * @return supported cluster levels
      */
     public Set<Version> getSupportedClusterLevels() {
-        Set<Version> versions = Config.<java.util.HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels);
+        Set<Version> versions = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels);
         return versions;
     }
 

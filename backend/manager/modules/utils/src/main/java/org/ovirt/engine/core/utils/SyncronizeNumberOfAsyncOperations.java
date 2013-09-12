@@ -9,7 +9,7 @@ public final class SyncronizeNumberOfAsyncOperations {
     private int _numberOfOperations;
     private ISingleAsyncOperationFactory _factory;
 
-    public SyncronizeNumberOfAsyncOperations(int numberOfOperations, java.util.ArrayList parameters,
+    public SyncronizeNumberOfAsyncOperations(int numberOfOperations, ArrayList parameters,
             ISingleAsyncOperationFactory factory) {
         _numberOfOperations = numberOfOperations;
         _factory = factory;

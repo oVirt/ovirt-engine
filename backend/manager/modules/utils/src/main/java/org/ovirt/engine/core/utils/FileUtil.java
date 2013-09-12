@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -7,7 +8,7 @@ public class FileUtil {
     public static String readAllText(final String filename) throws IOException {
         FileInputStream fis = null;
         try {
-            java.io.File file = new java.io.File(filename.toString());
+            File file = new File(filename.toString());
             fis = new FileInputStream(file);
             int size = fis.available();
             byte[] contents = new byte[size];

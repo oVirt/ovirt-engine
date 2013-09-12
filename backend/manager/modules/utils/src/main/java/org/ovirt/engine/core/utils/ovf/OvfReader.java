@@ -43,8 +43,8 @@ import org.w3c.dom.NodeList;
 
 public abstract class OvfReader implements IOvfBuilder {
     protected OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
-    protected java.util.ArrayList<DiskImage> _images;
-    protected java.util.ArrayList<VmNetworkInterface> interfaces;
+    protected ArrayList<DiskImage> _images;
+    protected ArrayList<VmNetworkInterface> interfaces;
     protected XmlDocument _document;
     protected XmlNamespaceManager _xmlNS;
     private static final int BYTES_IN_GB = 1024 * 1024 * 1024;

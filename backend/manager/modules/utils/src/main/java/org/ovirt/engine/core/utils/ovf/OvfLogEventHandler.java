@@ -100,7 +100,7 @@ public abstract class OvfLogEventHandler<T> {
 
             Map<String, String> fieldsMap = fieldsToAliasesMap;
 
-            for (java.util.Map.Entry<String, String> entry : fieldsMap.entrySet()) {
+            for (Map.Entry<String, String> entry : fieldsMap.entrySet()) {
 
                 String name = entry.getKey();
                 String alias = entry.getValue();
@@ -193,7 +193,7 @@ public abstract class OvfLogEventHandler<T> {
         }
     }
 
-    public java.util.List<String> getAliases() {
+    public List<String> getAliases() {
         return aliases;
     }
 

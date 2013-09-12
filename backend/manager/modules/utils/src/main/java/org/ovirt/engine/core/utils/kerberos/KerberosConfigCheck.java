@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.kerberos;
 
 import static org.ovirt.engine.core.utils.kerberos.InstallerConstants.ERROR_PREFIX;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -60,7 +61,7 @@ public class KerberosConfigCheck {
         }
 
         @Override
-        public void handle(Callback[] callbacks) throws java.io.IOException, UnsupportedCallbackException {
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
             for (int i = 0; i < callbacks.length; i++) {
                 if (callbacks[i] instanceof NameCallback) {
                     NameCallback cb = (NameCallback) callbacks[i];

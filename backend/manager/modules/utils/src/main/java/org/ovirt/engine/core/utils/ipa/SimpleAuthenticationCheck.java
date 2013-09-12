@@ -91,7 +91,7 @@ public class SimpleAuthenticationCheck {
             } else {
                 userGuid.append((String) searchResult.get(0));
             }
-        } catch (org.springframework.ldap.AuthenticationException authEx) {
+        } catch (AuthenticationException authEx) {
             return authenticationReturnStatus(authEx, username, domain);
         } catch (Exception ex) {
             return new Pair(ReturnStatus.CANNOT_QUERY_USER, ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain

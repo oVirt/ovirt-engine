@@ -311,7 +311,7 @@ public class OvfVmReader extends OvfReader {
     }
 
     // function returns the index of the image that has no parent
-    private static int GetFirstImage(java.util.ArrayList<DiskImage> images, DiskImage curr) {
+    private static int GetFirstImage(ArrayList<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (curr.getParentId().equals(images.get(i).getImageId())) {
                 return i;
@@ -321,7 +321,7 @@ public class OvfVmReader extends OvfReader {
     }
 
     // function returns the index of image that is it's child
-    private static int GetNextImage(java.util.ArrayList<DiskImage> images, DiskImage curr) {
+    private static int GetNextImage(ArrayList<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (images.get(i).getParentId().equals(curr.getImageId())) {
                 return i;
