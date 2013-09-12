@@ -37,6 +37,7 @@
 
 %global ovirt_product_name oVirt Engine
 %global ovirt_product_name_short oVirt Engine
+%global ovirt_product_group Virtualization/Management
 %global ovirt_user_description oVirt Manager
 
 %global engine_cache %{_localstatedir}/cache/%{engine_name}
@@ -122,7 +123,7 @@ Name:		@PACKAGE_NAME@
 Version:	@RPM_VERSION@
 Release:	@RPM_RELEASE@%{?release_suffix}%{?dist}
 Summary:	Management server for Open Virtualization
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 License:	ASL 2.0
 URL:		http://www.ovirt.org
 Source0:	http://ovirt.org/releases/stable/src/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
@@ -175,7 +176,7 @@ virtualization infrastructure for Servers and Desktops.
 
 %package lib
 Summary:	%{ovirt_product_name_short} library
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	python-daemon
 
 %description lib
@@ -183,7 +184,7 @@ Requires:	python-daemon
 
 %package backend
 Summary:	Engine core of %{ovirt_product_name_short}
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-lib
 Requires:	httpd
@@ -252,7 +253,7 @@ The backend engine of %{ovirt_product_name_short}
 
 %package restapi
 Summary:	RESTful API for %{ovirt_product_name_short}
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 
 %description restapi
@@ -270,7 +271,7 @@ The RESTful API for %{ovirt_product_name_short}
 
 %package setup
 Summary:	Setup and upgrade scripts for %{ovirt_product_name_short}
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name}
 Requires:	%{name}-lib
 Requires:	bind-utils
@@ -303,7 +304,7 @@ Setup and upgrade scripts for %{ovirt_product_name_short}
 
 %package dbscripts
 Summary:	Database scripts for %{ovirt_product_name_short}
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 
 %description dbscripts
@@ -311,7 +312,7 @@ Database scripts for %{ovirt_product_name_short}
 
 %package userportal
 Summary:	User Portal of %{ovirt_product_name_short}
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 
 %description userportal
@@ -319,7 +320,7 @@ The user portal interface to %{ovirt_product_name_short}
 
 %package webadmin-portal
 Summary:	Web Admin Portal of %{ovirt_product_name_short}
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 
 %description webadmin-portal
@@ -327,7 +328,7 @@ The web administration interface to %{ovirt_product_name_short}
 
 %package tools
 Summary:	%{ovirt_product_name_short} Tools
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-lib
 Requires:	java
@@ -384,7 +385,7 @@ fi
 
 %package websocket-proxy
 Summary:	%{ovirt_product_name_short} Websocket Proxy
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name}-lib
 Requires:	m2crypto
 Requires:	python-websockify
@@ -424,7 +425,7 @@ fi
 
 %package setup-plugin-allinone
 Summary:	All-in-one plugin for %{ovirt_product_name_short}'s setup
-Group:		Virtualization/Management
+Group:		%{ovirt_product_group}
 Requires:	%{name}-sdk >= 3.3.0.5
 Requires:	%{name}-setup >= %{version}-%{release}
 Requires:	openssh-server
