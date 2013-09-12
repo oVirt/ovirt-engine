@@ -612,8 +612,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
                 // If data center has format defined and the selected-item role is Data, choose it.
                 if (dataCenter.getStoragePoolFormatType() != null
-                        && getSelectedItem().getRole() == StorageDomainType.Data)
-                {
+                        && getSelectedItem().getRole().isDataDomain()) {
                     formats.add(dataCenter.getStoragePoolFormatType());
                     selectItem = dataCenter.getStoragePoolFormatType();
                 }
