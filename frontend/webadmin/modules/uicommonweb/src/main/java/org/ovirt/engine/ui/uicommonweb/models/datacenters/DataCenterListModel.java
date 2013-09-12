@@ -616,8 +616,11 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     .changeDataCenterCompatibilityVersionTitle());
             confirmModel.setHashName("change_data_center_compatibility_version"); //$NON-NLS-1$
 
-            StorageFormatType newFormat = VersionStorageFormatUtil.getFormatForVersion((Version) model.getVersion().getSelectedItem());
-            StorageFormatType oldFormat = VersionStorageFormatUtil.getFormatForVersion(((StoragePool) getSelectedItem()).getcompatibility_version());
+            StoragePool sp = (StoragePool) getSelectedItem();
+            StorageFormatType newFormat = VersionStorageFormatUtil.getPreferredForVersion(
+                (Version) model.getVersion().getSelectedItem(), sp.getStorageType());
+            StorageFormatType oldFormat = VersionStorageFormatUtil.getPreferredForVersion(
+                sp.getcompatibility_version(), sp.getStorageType());
             if (newFormat == oldFormat) {
                 confirmModel.setMessage(ConstantsManager.getInstance()
                         .getConstants()

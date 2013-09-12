@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -17,8 +20,17 @@ public class VersionStorageFormatUtilTest {
     @DataPoints
     public static final Version[] versions = Version.ALL.toArray(new Version[Version.ALL.size()]);
 
+    @DataPoints
+    public static final StorageType[] types = StorageType.values();
+
     @Theory
-    public void versionHasMatchingFormat(Version v) {
-        assertNotNull("Missing format for version " + v, VersionStorageFormatUtil.getFormatForVersion(v));
+    public void versionHasMatchingFormat(Version v, StorageType t) {
+        StorageFormatType preferred = VersionStorageFormatUtil.getPreferredForVersion(v, t);
+        assertNotNull(String.format("Missing preferred format for version %s in type %s", v, t), preferred);
+
+        StorageFormatType required = VersionStorageFormatUtil.getRequiredForVersion(v, t);
+        assertNotNull(String.format("Missing required format for version %s in type %s", v, t), required);
+
+        assertTrue("Preferred version shouldn't be smaller than the required one", preferred.compareTo(required) >= 0);
     }
 }

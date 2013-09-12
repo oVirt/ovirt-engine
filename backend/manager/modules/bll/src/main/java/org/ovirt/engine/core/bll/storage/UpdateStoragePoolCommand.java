@@ -97,12 +97,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             return;
         }
 
-        final StorageFormatType targetFormat = VersionStorageFormatUtil.getFormatForVersion(spVersion);
         StorageType spType = storagePool.getStorageType();
-        if (targetFormat == StorageFormatType.V2 && !spType.isBlockDomain()) {
-            // There is no format V2 for domains that aren't ISCSI/FCP
-            return;
-        }
+        final StorageFormatType targetFormat = VersionStorageFormatUtil.getPreferredForVersion(spVersion, spType);
 
         storagePool.setStoragePoolFormatType(targetFormat);
 
