@@ -3758,7 +3758,7 @@ actions:
           gluster_volume.replica_count: 'xs:unsignedShort'
           gluster_volume.stripe_count: 'xs:unsignedShort'
           gluster_volume.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}
-        description: add a new gluster volume to the cluster at the specified gluster fs server
+        description: add a new gluster volume to the cluster with bricks
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -3791,14 +3791,14 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/rebalance|rel=rebalance
-  description: invoke the rebalance command on the gluster volume attached to the
+  description: invoke the rebalance command on the gluster volume attached to the cluster
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.fix_layout: 'xs:boolean', action.force: 'xs:boolean'}
-        description: invoke the rebalance command on the gluster volume attached to the with optional arguments to fix the lay and force the operation
+        description: invoke the rebalance command on the gluster volume attached to the cluster with optional arguments to fix the lay and force the operation
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -3888,7 +3888,7 @@ actions:
     headers:
       All-Content: {value: true|false, required: false}
 - name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
-  description: get the list of all bricks in the gluster volume attached to the cluster
+  description: delete the bricks in the gluster volume attached to the cluster
   request:
     body:
       parameterType: GlusterBricks
@@ -3896,7 +3896,7 @@ actions:
       - mandatoryArguments:
           bricks--COLLECTION: {brick.id: 'xs:string'}
         optionalArguments: {}
-        description: get the list of all bricks in the gluster volume attached to the cluster
+        description: delete bricks in the gluster volume attached to the cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
