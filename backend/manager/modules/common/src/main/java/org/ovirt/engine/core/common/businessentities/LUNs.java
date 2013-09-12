@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -144,13 +147,13 @@ public class LUNs implements BusinessEntity<String> {
         this.productId = value;
     }
 
-    private java.util.ArrayList<StorageServerConnections> _lunConnections;
+    private ArrayList<StorageServerConnections> _lunConnections;
 
-    public java.util.ArrayList<StorageServerConnections> getLunConnections() {
+    public ArrayList<StorageServerConnections> getLunConnections() {
         return _lunConnections;
     }
 
-    public void setLunConnections(java.util.ArrayList<StorageServerConnections> value) {
+    public void setLunConnections(ArrayList<StorageServerConnections> value) {
         _lunConnections = value;
     }
 
@@ -188,13 +191,13 @@ public class LUNs implements BusinessEntity<String> {
         return (getPathsDictionary() == null ? 0 : getPathsDictionary().size());
     }
 
-    private java.util.HashMap<String, Boolean> pathsDictionary;
+    private HashMap<String, Boolean> pathsDictionary;
 
-    public java.util.HashMap<String, Boolean> getPathsDictionary() {
+    public HashMap<String, Boolean> getPathsDictionary() {
         return pathsDictionary;
     }
 
-    public void setPathsDictionary(java.util.HashMap<String, Boolean> value) {
+    public void setPathsDictionary(HashMap<String, Boolean> value) {
         pathsDictionary = value;
     }
 

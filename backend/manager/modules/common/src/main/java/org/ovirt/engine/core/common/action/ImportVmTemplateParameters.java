@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -8,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImportVmTemplateParameters extends MoveOrCopyParameters implements java.io.Serializable {
+public class ImportVmTemplateParameters extends MoveOrCopyParameters implements Serializable {
     private static final long serialVersionUID = -6796905699865416157L;
 
     public ImportVmTemplateParameters(Guid storagePoolId, Guid sourceDomainId, Guid destDomainId, Guid vdsGroupId,

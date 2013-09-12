@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StopVmParameters extends VmOperationParameterBase implements java.io.Serializable {
+public class StopVmParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = -1331508207367552128L;
     private StopVmTypeEnum _stopVmType;
 

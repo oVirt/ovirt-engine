@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBase {
@@ -24,13 +25,13 @@ public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBas
         privateStorageDomainId = value;
     }
 
-    private java.util.ArrayList<Guid> privateIds;
+    private ArrayList<Guid> privateIds;
 
-    public java.util.ArrayList<Guid> getIds() {
+    public ArrayList<Guid> getIds() {
         return privateIds;
     }
 
-    public void setIds(java.util.ArrayList<Guid> value) {
+    public void setIds(ArrayList<Guid> value) {
         privateIds = value;
     }
 

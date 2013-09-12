@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ShutdownVmParameters extends VmOperationParameterBase implements java.io.Serializable {
+public class ShutdownVmParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = 7007574816935458890L;
     private boolean _waitBeforeShutdown;
 

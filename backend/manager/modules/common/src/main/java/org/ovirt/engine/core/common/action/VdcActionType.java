@@ -341,7 +341,7 @@ public enum VdcActionType {
     private int intValue;
     private ActionGroup actionGroup;
     private boolean isActionMonitored;
-    private static final java.util.HashMap<Integer, VdcActionType> mappings = new HashMap<Integer, VdcActionType>();
+    private static final HashMap<Integer, VdcActionType> mappings = new HashMap<Integer, VdcActionType>();
     private QuotaDependency quotaDependency;
 
     static {

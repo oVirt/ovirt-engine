@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmTemplateParametersBase extends VdcActionParametersBase implements java.io.Serializable {
+public class VmTemplateParametersBase extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = -8930994274659598061L;
     private boolean removeTemplateFromDb;
     private Guid vmTemplateId;

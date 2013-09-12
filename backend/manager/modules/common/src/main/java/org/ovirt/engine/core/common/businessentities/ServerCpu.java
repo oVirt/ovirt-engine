@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 
 public class ServerCpu implements Serializable {
     private static final long serialVersionUID = -267863982363067020L;
 
-    public ServerCpu(String name, int level, java.util.HashSet<String> flags, String verbData, ArchitectureType architecture) {
+    public ServerCpu(String name, int level, HashSet<String> flags, String verbData, ArchitectureType architecture) {
         setCpuName(name);
         setLevel(level);
         setFlags(flags);
@@ -33,13 +34,13 @@ public class ServerCpu implements Serializable {
         privateLevel = value;
     }
 
-    private java.util.HashSet<String> privateFlags;
+    private HashSet<String> privateFlags;
 
-    public java.util.HashSet<String> getFlags() {
+    public HashSet<String> getFlags() {
         return privateFlags;
     }
 
-    public void setFlags(java.util.HashSet<String> value) {
+    public void setFlags(HashSet<String> value) {
         privateFlags = value;
     }
 

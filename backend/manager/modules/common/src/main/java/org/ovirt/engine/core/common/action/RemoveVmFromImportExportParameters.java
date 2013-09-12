@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveVmFromImportExportParameters extends RemoveVmParameters implements java.io.Serializable {
+public class RemoveVmFromImportExportParameters extends RemoveVmParameters implements Serializable {
     private static final long serialVersionUID = 1841755064122049392L;
 
     private Guid storagePoolId;

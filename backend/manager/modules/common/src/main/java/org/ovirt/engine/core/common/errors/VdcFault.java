@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.errors;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
 public class VdcFault extends IVdcQueryable {
@@ -14,13 +15,13 @@ public class VdcFault extends IVdcQueryable {
         privateSessionID = value;
     }
 
-    private java.util.ArrayList<String> privateDetails;
+    private ArrayList<String> privateDetails;
 
-    public java.util.ArrayList<String> getDetails() {
+    public ArrayList<String> getDetails() {
         return privateDetails;
     }
 
-    public void setDetails(java.util.ArrayList<String> value) {
+    public void setDetails(ArrayList<String> value) {
         privateDetails = value;
     }
 
@@ -70,8 +71,8 @@ public class VdcFault extends IVdcQueryable {
         privateMessage = value;
     }
 
-    private static java.util.ArrayList<String> getInnerException(Throwable ex) {
-        java.util.ArrayList<String> result = new java.util.ArrayList<String>();
+    private static ArrayList<String> getInnerException(Throwable ex) {
+        ArrayList<String> result = new ArrayList<String>();
         while (ex.getCause() != null) {
             result.add(ex.getCause().getMessage());
             ex = ex.getCause();

@@ -124,9 +124,9 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private RpmVersion rpmVersion;
 
-    private java.util.HashSet<Version> _supportedClusterVersionsSet;
+    private HashSet<Version> _supportedClusterVersionsSet;
 
-    private java.util.HashSet<Version> _supportedENGINESVersionsSet;
+    private HashSet<Version> _supportedENGINESVersionsSet;
 
     /**
      * This flag is set to true if the host PM can be controlled

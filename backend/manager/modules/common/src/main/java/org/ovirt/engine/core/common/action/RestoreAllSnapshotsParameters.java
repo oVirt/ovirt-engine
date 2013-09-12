@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RestoreAllSnapshotsParameters extends VmOperationParameterBase implements java.io.Serializable {
+public class RestoreAllSnapshotsParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = -8756081739745132849L;
 
     private List<DiskImage> images;

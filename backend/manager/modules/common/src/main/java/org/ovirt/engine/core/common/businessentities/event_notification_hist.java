@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,7 +10,7 @@ public class event_notification_hist implements Serializable {
     private static final long serialVersionUID = 5812544412663001644L;
 
     public event_notification_hist() {
-        sentAt = new java.util.Date(0);
+        sentAt = new Date(0);
         subscriberId = Guid.Empty;
     }
 
@@ -53,13 +54,13 @@ public class event_notification_hist implements Serializable {
         this.reason = value;
     }
 
-    private java.util.Date sentAt;
+    private Date sentAt;
 
-    public java.util.Date getsent_at() {
+    public Date getsent_at() {
         return this.sentAt;
     }
 
-    public void setsent_at(java.util.Date value) {
+    public void setsent_at(Date value) {
         this.sentAt = value;
     }
 

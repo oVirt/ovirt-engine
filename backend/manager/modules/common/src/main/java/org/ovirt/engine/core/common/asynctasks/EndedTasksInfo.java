@@ -1,14 +1,17 @@
 package org.ovirt.engine.core.common.asynctasks;
 
-public class EndedTasksInfo implements java.io.Serializable {
-    private static final long serialVersionUID = 2511229303527096741L;
-    private java.util.ArrayList<EndedTaskInfo> privateTasksInfo;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-    public java.util.ArrayList<EndedTaskInfo> getTasksInfo() {
+public class EndedTasksInfo implements Serializable {
+    private static final long serialVersionUID = 2511229303527096741L;
+    private ArrayList<EndedTaskInfo> privateTasksInfo;
+
+    public ArrayList<EndedTaskInfo> getTasksInfo() {
         return privateTasksInfo;
     }
 
-    public void setTasksInfo(java.util.ArrayList<EndedTaskInfo> value) {
+    public void setTasksInfo(ArrayList<EndedTaskInfo> value) {
         privateTasksInfo = value;
     }
 }

@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveAllVmImagesParameters extends VmOperationParameterBase implements java.io.Serializable {
+public class RemoveAllVmImagesParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = 7211692656127711421L;
-    public java.util.List<DiskImage> images;
+    public List<DiskImage> images;
 
-    public RemoveAllVmImagesParameters(Guid vmId, java.util.List<DiskImage> images) {
+    public RemoveAllVmImagesParameters(Guid vmId, List<DiskImage> images) {
         super(vmId);
         this.images = images;
         setForceDelete(false);

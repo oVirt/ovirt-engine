@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.common.config;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.EngineWorkingMode;
@@ -80,7 +83,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3600")
     UserRefreshRate,
-    @TypeConverterAttribute(java.util.Date.class)
+    @TypeConverterAttribute(Date.class)
     @DefaultValueAttribute("03:35:35")
     AuditLogCleanupTime,
     @Reloadable
@@ -274,7 +277,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("LDAP")
     AuthenticationMethod,
     @Reloadable
-    @TypeConverterAttribute(java.util.List.class)
+    @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("1,2,4")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     ValidNumOfMonitors,
@@ -363,7 +366,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("1:pentium3:vmx:pentium3;2:intel-qemu64-nx:vmx,sse2:qemu64,-nx,+sse2;3:intel-qemu64:vmx,sse2,nx:qemu64,+sse2;2:amd-qemu64-nx:svm,sse2:qemu64,-nx,+sse2;3:amd-qemu64:svm,sse2,nx:qemu64,+sse2")
     ServerCPUList,
     @Reloadable
-    @TypeConverterAttribute(java.util.List.class)
+    @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("ovirt-guest-agent-common,ovirt-guest-agent")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     AgentAppName,
@@ -587,11 +590,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("SELECT * FROM ( {1}) as T1 {2}")
     PostgresSearchTemplate,    // used by behaviour DBSearchTemplate
     @Reloadable
-    @TypeConverterAttribute(java.util.HashSet.class)
+    @TypeConverterAttribute(HashSet.class)
     @DefaultValueAttribute("4.4,4.5")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)
     SupportedVDSMVersions,
-    @TypeConverterAttribute(java.util.HashSet.class)
+    @TypeConverterAttribute(HashSet.class)
     @DefaultValueAttribute("2.2,3.0")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)
     SupportedClusterLevels,
@@ -1049,7 +1052,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NonVmNetworkSupported,
 
-    @TypeConverterAttribute(java.util.List.class)
+    @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("0,2")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     DisconnectPoolOnReconstruct,
@@ -1298,7 +1301,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("9")
     PgMajorRelease,
 
-    @TypeConverterAttribute(java.util.List.class)
+    @TypeConverterAttribute(List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     @DefaultValueAttribute("ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr")
     VncKeyboardLayoutValidValues,
@@ -1452,7 +1455,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("/sbin/poweroff")
     SshVdsPowerdownCommand,
 
-    @TypeConverterAttribute(java.util.List.class)
+    @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("rhel6.2.0,pc-1.0")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     ClusterEmulatedMachines,

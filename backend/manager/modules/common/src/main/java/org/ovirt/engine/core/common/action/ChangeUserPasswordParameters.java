@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-public class ChangeUserPasswordParameters extends VdcActionParametersBase implements java.io.Serializable {
+import java.io.Serializable;
+
+public class ChangeUserPasswordParameters extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = -1289433335701261260L;
 
     private String _userName;

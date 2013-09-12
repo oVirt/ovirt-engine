@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveImageParameters extends ImagesContainterParametersBase implements java.io.Serializable {
+public class RemoveImageParameters extends ImagesContainterParametersBase implements Serializable {
     private static final long serialVersionUID = -225670698019388215L;
 
     private DiskImage diskImage;

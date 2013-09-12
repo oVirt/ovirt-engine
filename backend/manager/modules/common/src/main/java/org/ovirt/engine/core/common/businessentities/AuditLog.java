@@ -113,11 +113,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.auditLogId = value;
     }
 
-    public java.util.Date getlog_time() {
+    public Date getlog_time() {
         return this.logTime;
     }
 
-    public void setlog_time(java.util.Date value) {
+    public void setlog_time(Date value) {
         this.logTime = value;
     }
 

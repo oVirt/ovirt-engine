@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.interfaces;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -22,12 +23,12 @@ public interface BackendLocal {
 
     ErrorTranslator getVdsErrorsTranslator();
 
-    java.util.ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters,
+    ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters,
             boolean isRunOnlyIfAllCanDoPass, boolean waitForResult);
 
-    java.util.ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            java.util.ArrayList<VdcActionParametersBase> parameters,
+    ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters,
             boolean isRunOnlyIfAllCanDoPass);
 
     void initialize();

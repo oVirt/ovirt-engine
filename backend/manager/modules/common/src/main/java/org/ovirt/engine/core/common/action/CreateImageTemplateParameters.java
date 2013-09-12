@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateImageTemplateParameters extends ImagesActionsParametersBase implements java.io.Serializable {
+public class CreateImageTemplateParameters extends ImagesActionsParametersBase implements Serializable {
     private static final long serialVersionUID = 1528721415797299722L;
 
     private Guid destinationStorageDomainId;

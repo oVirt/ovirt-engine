@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 public class AddSANStorageDomainParameters extends StorageDomainManagementParameter {
     private static final long serialVersionUID = 6386931158747982426L;
-    private java.util.ArrayList<String> privateLunIds;
+    private ArrayList<String> privateLunIds;
 
-    public java.util.ArrayList<String> getLunIds() {
+    public ArrayList<String> getLunIds() {
         return privateLunIds == null ? new ArrayList<String>() : privateLunIds;
     }
 
-    public void setLunIds(java.util.ArrayList<String> value) {
+    public void setLunIds(ArrayList<String> value) {
         privateLunIds = value;
     }
 

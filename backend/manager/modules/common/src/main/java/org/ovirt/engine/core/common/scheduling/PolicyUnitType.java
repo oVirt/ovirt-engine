@@ -10,7 +10,7 @@ public enum PolicyUnitType implements Identifiable {
     LoadBalancing(2);
 
     private int intValue;
-    private static final java.util.HashMap<Integer, PolicyUnitType> mappings = new HashMap<Integer, PolicyUnitType>();
+    private static final HashMap<Integer, PolicyUnitType> mappings = new HashMap<Integer, PolicyUnitType>();
 
     static {
         for (PolicyUnitType vmType : values()) {

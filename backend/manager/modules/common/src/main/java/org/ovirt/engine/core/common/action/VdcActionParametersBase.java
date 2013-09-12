@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
-public class VdcActionParametersBase implements java.io.Serializable {
+public class VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = 4872560145516614773L;
 
     private Guid commandId;

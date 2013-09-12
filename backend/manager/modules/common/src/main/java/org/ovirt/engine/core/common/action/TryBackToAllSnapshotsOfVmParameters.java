@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBase implements java.io.Serializable {
+public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = 1862924807826485840L;
     private Guid dstSnapshotId;
     private boolean restoreMemory;

@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Date;
 import org.ovirt.engine.core.compat.Guid;
 
-//using VdcDAL.AdBroker;
-
 public interface IImage extends BusinessEntity<Guid>{
-    java.util.Date getCreationDate();
+    Date getCreationDate();
 
-    void setCreationDate(java.util.Date creationDate);
+    void setCreationDate(Date creationDate);
 
     long getSize();
 

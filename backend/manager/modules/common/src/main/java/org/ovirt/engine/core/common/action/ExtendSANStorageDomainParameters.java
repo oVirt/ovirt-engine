@@ -7,23 +7,23 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendSANStorageDomainParameters extends StorageDomainParametersBase {
     private static final long serialVersionUID = 1051216804598069936L;
-    private java.util.ArrayList<String> privateLunIds;
+    private ArrayList<String> privateLunIds;
 
-    public java.util.ArrayList<String> getLunIds() {
+    public ArrayList<String> getLunIds() {
         return privateLunIds == null ? new ArrayList<String>() : privateLunIds;
     }
 
-    public void setLunIds(java.util.ArrayList<String> value) {
+    public void setLunIds(ArrayList<String> value) {
         privateLunIds = value;
     }
 
-    private java.util.ArrayList<LUNs> privateLunsList;
+    private ArrayList<LUNs> privateLunsList;
 
-    public java.util.ArrayList<LUNs> getLunsList() {
+    public ArrayList<LUNs> getLunsList() {
         return privateLunsList == null ? new ArrayList<LUNs>() : privateLunsList;
     }
 
-    public void setLunsList(java.util.ArrayList<LUNs> value) {
+    public void setLunsList(ArrayList<LUNs> value) {
         privateLunsList = value;
     }
 

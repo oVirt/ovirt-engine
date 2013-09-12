@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveVmParameters extends VmOperationParameterBase implements java.io.Serializable {
+public class RemoveVmParameters extends VmOperationParameterBase implements Serializable {
 
     private static final long serialVersionUID = 4931085923357689965L;
     private boolean force;

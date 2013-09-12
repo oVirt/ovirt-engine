@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.asynctasks;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 
-public class EndedTaskInfo implements java.io.Serializable {
+public class EndedTaskInfo implements Serializable {
     private static final long serialVersionUID = 5791056980536223685L;
     private AsyncTaskStatus privateTaskStatus;
 

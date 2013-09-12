@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase implements java.io.Serializable {
+public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = 847791941815264795L;
 
     @NotEmpty(groups = { CreateEntity.class },

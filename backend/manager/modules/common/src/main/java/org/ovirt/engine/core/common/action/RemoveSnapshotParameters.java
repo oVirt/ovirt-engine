@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveSnapshotParameters extends VmOperationParameterBase implements java.io.Serializable {
+public class RemoveSnapshotParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = -2684524270498397962L;
 
     private Guid snapshotId;

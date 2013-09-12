@@ -167,11 +167,11 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     private ArrayList<VmNetworkInterface> interfaceStatisticsField;
 
-    public java.util.ArrayList<VmNetworkInterface> getInterfaceStatistics() {
+    public ArrayList<VmNetworkInterface> getInterfaceStatistics() {
         return this.interfaceStatisticsField;
     }
 
-    public void setInterfaceStatistics(java.util.ArrayList<VmNetworkInterface> value) {
+    public void setInterfaceStatistics(ArrayList<VmNetworkInterface> value) {
         this.interfaceStatisticsField = value;
     }
 

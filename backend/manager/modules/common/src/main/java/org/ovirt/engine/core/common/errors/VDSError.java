@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.common.errors;
 
+import java.util.ArrayList;
+
 public class VDSError {
 
     private String message;
     private VdcBllErrors code;
-    private java.util.ArrayList<Object> args;
+    private ArrayList<Object> args;
 
     public VDSError(VdcBllErrors code, String message) {
         this.code = code;
@@ -28,11 +30,11 @@ public class VDSError {
         code = value;
     }
 
-    public java.util.ArrayList<Object> getArgs() {
+    public ArrayList<Object> getArgs() {
         return args;
     }
 
-    public void setArgs(java.util.ArrayList<Object> value) {
+    public void setArgs(ArrayList<Object> value) {
         args = value;
     }
 

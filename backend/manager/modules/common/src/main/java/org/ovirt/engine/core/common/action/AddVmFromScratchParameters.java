@@ -22,7 +22,7 @@ public class AddVmFromScratchParameters extends VmManagementParametersBase {
         super(vmStatic);
         setDiskInfoList((diskInfoList != null) ? diskInfoList : new ArrayList<DiskImage>());
         setStorageDomainId(storageDomainId);
-        _interfaces = new java.util.ArrayList<VmNetworkInterface>();
+        _interfaces = new ArrayList<VmNetworkInterface>();
     }
 
     public AddVmFromScratchParameters(VM vm, ArrayList<DiskImage> diskInfoList, Guid storageDomainId) {

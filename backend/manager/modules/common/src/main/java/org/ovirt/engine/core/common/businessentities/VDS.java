@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     private VdsDynamic mVdsDynamic;
     private VdsStatistics mVdsStatistics;
     private ArrayList<VdsNetworkInterface> mInterfaceList;
-    private java.util.ArrayList<Network> mNetworkList;
+    private ArrayList<Network> mNetworkList;
     private String activeNic;
 
     /**
@@ -34,8 +35,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         mVdsStatistics = new VdsStatistics();
         storagePoolId = Guid.Empty;
         _spm_status = VdsSpmStatus.None;
-        mInterfaceList = new java.util.ArrayList<VdsNetworkInterface>();
-        mNetworkList = new java.util.ArrayList<Network>();
+        mInterfaceList = new ArrayList<VdsNetworkInterface>();
+        mNetworkList = new ArrayList<Network>();
     }
 
     @Override
@@ -491,7 +492,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         this.mVdsDynamic.setsupported_cluster_levels(value);
     }
 
-    public java.util.HashSet<Version> getSupportedClusterVersionsSet() {
+    public HashSet<Version> getSupportedClusterVersionsSet() {
         return this.mVdsDynamic.getSupportedClusterVersionsSet();
     }
 
@@ -503,7 +504,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         this.mVdsDynamic.setsupported_engines(value);
     }
 
-    public java.util.HashSet<Version> getSupportedENGINESVersionsSet() {
+    public HashSet<Version> getSupportedENGINESVersionsSet() {
         return this.mVdsDynamic.getSupportedENGINESVersionsSet();
     }
 
@@ -820,7 +821,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         return mVdsDynamic.getcpu_over_commit_time_stamp();
     }
 
-    public void setCpuOverCommitTimestamp(java.util.Date value) {
+    public void setCpuOverCommitTimestamp(Date value) {
         mVdsDynamic.setcpu_over_commit_time_stamp(value);
     }
 
@@ -1124,21 +1125,21 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         mVdsStatistics = value;
     }
 
-    public java.util.ArrayList<Network> getNetworks() {
+    public ArrayList<Network> getNetworks() {
         return this.mNetworkList;
     }
 
-    public java.util.ArrayList<VdsNetworkInterface> getInterfaces() {
+    public ArrayList<VdsNetworkInterface> getInterfaces() {
         return this.mInterfaceList;
     }
 
-    private java.util.ArrayList<VDSDomainsData> privateDomains;
+    private ArrayList<VDSDomainsData> privateDomains;
 
-    public java.util.ArrayList<VDSDomainsData> getDomains() {
+    public ArrayList<VDSDomainsData> getDomains() {
         return privateDomains;
     }
 
-    public void setDomains(java.util.ArrayList<VDSDomainsData> value) {
+    public void setDomains(ArrayList<VDSDomainsData> value) {
         privateDomains = value;
     }
 

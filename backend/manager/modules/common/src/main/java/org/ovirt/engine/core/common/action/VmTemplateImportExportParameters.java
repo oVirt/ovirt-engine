@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.common.action;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmTemplateImportExportParameters extends VmTemplateParametersBase implements java.io.Serializable {
+public class VmTemplateImportExportParameters extends VmTemplateParametersBase implements Serializable {
     private static final long serialVersionUID = -3811237640112907464L;
     private Guid privateStorageDomainId;
 
