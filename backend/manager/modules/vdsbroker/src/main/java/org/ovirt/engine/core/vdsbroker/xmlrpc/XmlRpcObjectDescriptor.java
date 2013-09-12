@@ -3,15 +3,15 @@ package org.ovirt.engine.core.vdsbroker.xmlrpc;
 import java.util.Map;
 
 public class XmlRpcObjectDescriptor {
-    public static void toStringBuilder(java.util.Map<String, ?> map, StringBuilder builder) {
+    public static void toStringBuilder(Map<String, ?> map, StringBuilder builder) {
         if (map == null)
             return;
 
-        for (java.util.Map.Entry<String, ?> entry : map.entrySet()) {
-            if (entry.getValue() instanceof java.util.Map) {
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            if (entry.getValue() instanceof Map) {
                 builder.append(String.format("%1$s:", entry.getKey()));
                 builder.append("\n");
-                toStringBuilder((java.util.Map<String, Object>) entry.getValue(), builder);
+                toStringBuilder((Map<String, Object>) entry.getValue(), builder);
                 builder.append("\n");
             } else if (!(entry.getValue() instanceof String) && entry.getValue() instanceof Iterable) {
                 builder.append(String.format("%1$s:", entry.getKey()));

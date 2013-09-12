@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-public class IrsSpmStartFailedException extends IRSErrorException implements java.io.Serializable {
+import java.io.Serializable;
+
+public class IrsSpmStartFailedException extends IRSErrorException implements Serializable {
     // protected IrsSpmStartFailedException(SerializationInfo info,
     // StreamingContext context)
     // {

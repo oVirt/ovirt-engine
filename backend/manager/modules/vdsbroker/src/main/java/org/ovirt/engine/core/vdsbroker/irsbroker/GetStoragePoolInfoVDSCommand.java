@@ -45,9 +45,8 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     }
 
     @SuppressWarnings("unchecked")
-    private java.util.ArrayList<StorageDomain> ParseStorageDomainList(Map<String, Object> xmlRpcStruct, Guid masterId) {
-        java.util.ArrayList<StorageDomain> domainsList = new java.util.ArrayList<StorageDomain>(
-                xmlRpcStruct.size());
+    private ArrayList<StorageDomain> ParseStorageDomainList(Map<String, Object> xmlRpcStruct, Guid masterId) {
+        ArrayList<StorageDomain> domainsList = new ArrayList<StorageDomain>(xmlRpcStruct.size());
         for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
             Map<String, Object> domainAsStruct = (Map<String, Object>) entry.getValue();
             StorageDomain sd = GetStorageDomainStatsVDSCommand.buildStorageDynamicFromXmlRpcStruct(domainAsStruct);

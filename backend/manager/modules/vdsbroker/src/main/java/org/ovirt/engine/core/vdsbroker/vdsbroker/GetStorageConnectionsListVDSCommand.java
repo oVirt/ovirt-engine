@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -22,8 +23,7 @@ public class GetStorageConnectionsListVDSCommand<P extends GetStorageConnections
         proceedProxyReturnValue();
 
         // parse result to storage_server_connections
-        java.util.ArrayList<StorageServerConnections> connections =
-                new java.util.ArrayList<StorageServerConnections>();
+        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
         for (Map<String, Object> x : _result.mConnectionList) {
             StorageServerConnections storageCon = new StorageServerConnections();
             if (x.containsKey("serverType")) {

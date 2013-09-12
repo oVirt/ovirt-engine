@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 
-public class VDSErrorException extends VDSGenericException implements java.io.Serializable {
+public class VDSErrorException extends VDSGenericException implements Serializable {
     // protected VDSErrorException(SerializationInfo info, StreamingContext
     // context)
     // {

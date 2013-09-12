@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
-public class IRSGenericException extends VDSExceptionBase implements java.io.Serializable {
+public class IRSGenericException extends VDSExceptionBase implements Serializable {
     // protected IRSGenericException(SerializationInfo info, StreamingContext
     // context)
     // {

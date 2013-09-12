@@ -536,7 +536,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private static void addBootOrder(VmDevice vmDevice, Map<String, Object> struct) {
         String s = String.valueOf(vmDevice.getBootOrder());
-        if (!org.apache.commons.lang.StringUtils.isEmpty(s) && !s.equals("0")) {
+        if (!StringUtils.isEmpty(s) && !s.equals("0")) {
             struct.put(VdsProperties.BootOrder, s);
         }
     }

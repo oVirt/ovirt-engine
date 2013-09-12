@@ -11,7 +11,7 @@ public final class TaskInfoListReturnForXmlRpc extends StatusReturnForXmlRpc {
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore),
     // XmlRpcMember("allTasksInfo")]
-    public Map<String, java.util.Map<String, String>> taskInfoList;
+    public Map<String, Map<String, String>> taskInfoList;
 
     @Override
     public String toString() {
@@ -28,7 +28,7 @@ public final class TaskInfoListReturnForXmlRpc extends StatusReturnForXmlRpc {
         super(innerMap);
         Object temp = innerMap.get(ALL_TASKS_INFO);
         if (temp != null) {
-            taskInfoList = (Map<String, java.util.Map<String, String>>) temp;
+            taskInfoList = (Map<String, Map<String, String>>) temp;
         }
     }
 

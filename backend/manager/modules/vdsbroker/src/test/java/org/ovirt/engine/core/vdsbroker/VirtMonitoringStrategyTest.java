@@ -10,6 +10,7 @@ import static org.mockito.Mockito.spy;
 import java.util.Map;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -88,7 +89,7 @@ public class VirtMonitoringStrategyTest {
         VdsGroupDAO mock = mock(VdsGroupDAO.class);
         VDSGroup value = new VDSGroup();
         value.setEmulatedMachine("pc-1.0");
-        org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
+        Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
         return mock;
     }
 }

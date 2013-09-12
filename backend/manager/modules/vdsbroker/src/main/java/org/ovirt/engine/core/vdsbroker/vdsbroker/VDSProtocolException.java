@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-public class VDSProtocolException extends VDSGenericException implements java.io.Serializable {
+import java.io.Serializable;
+
+public class VDSProtocolException extends VDSGenericException implements Serializable {
     // protected VDSProtocolException(SerializationInfo info, StreamingContext
     // context)
     // {

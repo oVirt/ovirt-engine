@@ -65,7 +65,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         try {
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.HSMClearTask,
                     new HSMTaskGuidBaseVDSCommandParameters(vdsId, taskId));
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             log.errorFormat("Could not clear spmStart task (id - {0}), continuing with SPM selection.", taskId);
         }
         setReturnValue(spmStatus);

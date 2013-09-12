@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-public class IRSUnicodeArgumentException extends IRSGenericException implements java.io.Serializable {
+import java.io.Serializable;
+
+public class IRSUnicodeArgumentException extends IRSGenericException implements Serializable {
     // protected IRSUnicodeArgumentException(SerializationInfo info,
     // StreamingContext context)
     // {

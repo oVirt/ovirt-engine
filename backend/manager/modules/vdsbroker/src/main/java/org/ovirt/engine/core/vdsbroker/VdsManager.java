@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -517,7 +518,7 @@ public class VdsManager {
                     .toString());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
             log.infoFormat("Vds {0} moved to Error mode after {1} attempts. Time: {2}", vds.getName(),
-                    mFailedToRunVmAttempts, new java.util.Date());
+                    mFailedToRunVmAttempts, new Date());
         }
     }
 

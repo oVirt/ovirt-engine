@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -22,11 +23,11 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
         setReturnValue(parseTaskInfoList(_result.taskInfoList));
     }
 
-    protected java.util.ArrayList<AsyncTaskCreationInfo> parseTaskInfoList(Map<String, Map<String, String>> taskInfoList) {
+    protected ArrayList<AsyncTaskCreationInfo> parseTaskInfoList(Map<String, Map<String, String>> taskInfoList) {
         try {
-            java.util.ArrayList<AsyncTaskCreationInfo> result = new java.util.ArrayList<AsyncTaskCreationInfo>(
+            ArrayList<AsyncTaskCreationInfo> result = new ArrayList<AsyncTaskCreationInfo>(
                     taskInfoList.size());
-            for (java.util.Map.Entry<String, java.util.Map<String, String>> entry : taskInfoList.entrySet()) {
+            for (Map.Entry<String, Map<String, String>> entry : taskInfoList.entrySet()) {
                 Guid taskID = new Guid(entry.getKey());
                 Map<String, String> taskInfo = entry.getValue();
                 AsyncTaskCreationInfo task = parseTaskInfo(taskInfo, taskID);

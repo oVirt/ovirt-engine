@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -18,7 +19,7 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
                 ((getParameters().getPath()) != null) ? getParameters().getPath() : "");
         proceedProxyReturnValue();
 
-        java.util.ArrayList<Guid> domains = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> domains = new ArrayList<Guid>();
         for (String domain : _result.mStorageDomainList) {
             domains.add(new Guid(domain));
         }

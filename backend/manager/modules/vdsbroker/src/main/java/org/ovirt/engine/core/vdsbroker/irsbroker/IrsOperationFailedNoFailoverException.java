@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-public class IrsOperationFailedNoFailoverException extends IRSErrorException implements java.io.Serializable {
+import java.io.Serializable;
+
+public class IrsOperationFailedNoFailoverException extends IRSErrorException implements Serializable {
     public IrsOperationFailedNoFailoverException(RuntimeException baseException) {
         super(baseException);
     }

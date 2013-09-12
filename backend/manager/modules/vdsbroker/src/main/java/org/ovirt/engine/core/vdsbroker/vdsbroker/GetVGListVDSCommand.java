@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -30,14 +31,14 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
         return _result.mStatus;
     }
 
-    protected java.util.ArrayList<StorageDomain> parseVGList(Map<String, Object>[] vgList) {
-        java.util.ArrayList<StorageDomain> result = new java.util.ArrayList<StorageDomain>(vgList.length);
+    protected ArrayList<StorageDomain> parseVGList(Map<String, Object>[] vgList) {
+        ArrayList<StorageDomain> result = new ArrayList<StorageDomain>(vgList.length);
         for (Map<String, Object> vg : vgList) {
             StorageDomain sDomain = new StorageDomain();
             if (vg.containsKey("name")) {
                 try {
                     sDomain.setId(new Guid(vg.get("name").toString()));
-                } catch (java.lang.Exception e) {
+                } catch (Exception e) {
                     sDomain.setStorageName(vg.get("name").toString());
                 }
             }

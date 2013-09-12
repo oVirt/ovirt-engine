@@ -56,7 +56,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                     handleCommandResult(command);
                     ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
                 }
-            } catch (java.lang.Exception e) {
+            } catch (Exception e) {
                 log.error("Error in excuting CreateVmVDSCommand", e);
                 if (command != null && !command.getVDSReturnValue().getSucceeded()) {
                     ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());

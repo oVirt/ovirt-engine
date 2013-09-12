@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,7 +22,7 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
     protected void executeIrsBrokerCommand() {
         String storagePoolId = getParameters().getStoragePoolId().toString();
         String storageDomainId = getParameters().getStorageDomainId().toString();
-        java.util.ArrayList<String> ids = new java.util.ArrayList<String>();
+        ArrayList<String> ids = new ArrayList<String>();
 
         if (getParameters().getVmIdList() != null) {
             for (Guid id : getParameters().getVmIdList()) {
@@ -33,7 +34,7 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
         proceedProxyReturnValue();
 
         Map<String, Object> xmlRpcStruct = _vmsInfo.vmlist;
-        java.util.ArrayList<String> retVal = new java.util.ArrayList<String>();
+        ArrayList<String> retVal = new ArrayList<String>();
         for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
             retVal.add(entry.getValue().toString());
         }

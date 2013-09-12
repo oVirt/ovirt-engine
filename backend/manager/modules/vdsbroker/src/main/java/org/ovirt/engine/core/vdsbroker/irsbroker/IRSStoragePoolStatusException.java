@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-public class IRSStoragePoolStatusException extends IRSErrorException implements java.io.Serializable {
+import java.io.Serializable;
+
+public class IRSStoragePoolStatusException extends IRSErrorException implements Serializable {
     // protected IRSStoragePoolStatusException(SerializationInfo info,
     // StreamingContext context)
     // {

@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.io.Serializable;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 
-public class VDSGenericException extends VDSExceptionBase implements java.io.Serializable {
+public class VDSGenericException extends VDSExceptionBase implements Serializable {
 
     private static final long serialVersionUID = 4778043822136178263L;
 

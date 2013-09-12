@@ -141,7 +141,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         public Object syncObj = new Object();
 
         private final String storagePoolRefreshJobId;
-        private final java.util.HashSet<Guid> mTriedVdssList = new java.util.HashSet<Guid>();
+        private final HashSet<Guid> mTriedVdssList = new HashSet<Guid>();
         private Guid mCurrentVdsId;
 
         private Guid preferredHostId;
@@ -283,11 +283,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             VDSReturnValue storagePoolInfoResult = ResourceManager.getInstance().runVdsCommand(
                     VDSCommandType.GetStoragePoolInfo, tempVar);
             if (storagePoolInfoResult.getSucceeded()) {
-                KeyValuePairCompat<StoragePool, java.util.List<StorageDomain>> data =
-                        (KeyValuePairCompat<StoragePool, java.util.List<StorageDomain>>) storagePoolInfoResult
+                KeyValuePairCompat<StoragePool, List<StorageDomain>> data =
+                        (KeyValuePairCompat<StoragePool, List<StorageDomain>>) storagePoolInfoResult
                                 .getReturnValue();
                 int masterVersion = data.getKey().getmaster_domain_version();
-                java.util.HashSet<Guid> domainsInVds = new java.util.HashSet<Guid>();
+                HashSet<Guid> domainsInVds = new HashSet<Guid>();
                 for (StorageDomain domainData : data.getValue()) {
                     domainsInVds.add(domainData.getId());
                     proceedStorageDomain(domainData, masterVersion, storagePool);
@@ -473,7 +473,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             throw new IRSNoMasterDomainException(exceptionMessage);
         }
 
-        public java.util.HashSet<Guid> getTriedVdssList() {
+        public HashSet<Guid> getTriedVdssList() {
             return mTriedVdssList;
         }
 
@@ -1193,7 +1193,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private void addDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
-            _domainsInProblem.put(domainId, new java.util.HashSet<Guid>(java.util.Arrays.asList(vdsId)));
+            _domainsInProblem.put(domainId, new HashSet<Guid>(Arrays.asList(vdsId)));
             log.warnFormat("domain {0} in problem. vds: {1}", getDomainIdTuple(domainId), vdsName);
             Class[] inputType = new Class[] { Guid.class };
             Object[] inputParams = new Object[] { domainId };

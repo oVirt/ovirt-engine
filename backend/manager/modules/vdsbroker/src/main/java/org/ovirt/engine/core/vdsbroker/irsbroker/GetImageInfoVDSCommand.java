@@ -39,7 +39,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
         try {
             proceedProxyReturnValue();
             di = buildImageEntity(imageInfoReturn.mInfo);
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             printReturnValue();
             // nothing to do - logging inside upper functions
         } finally {
@@ -126,7 +126,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
         return newImage;
     }
 
-    private static java.util.Date MakeDTFromCTime(long ctime) {
+    private static Date MakeDTFromCTime(long ctime) {
         return new Date(ctime * 1000L);
     }
 

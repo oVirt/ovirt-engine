@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-public class IRSNoMasterDomainException extends IRSErrorException implements java.io.Serializable {
+import java.io.Serializable;
+
+public class IRSNoMasterDomainException extends IRSErrorException implements Serializable {
     // protected IRSNoMasterDomainException(SerializationInfo info,
     // StreamingContext context)
     // {
