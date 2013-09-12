@@ -333,7 +333,6 @@ public class HostInterfaceListModel extends SearchableListModel
 
     public HostInterfaceListModel()
     {
-        setIsTimerDisabled(true);
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
         setHashName("network_interfaces"); //$NON-NLS-1$
 
