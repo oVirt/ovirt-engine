@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Date;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
 
@@ -37,7 +38,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         getTypeDictionary().put("TYPE", Integer.class);
         getTypeDictionary().put("SEVERITY", AuditLogSeverity.class);
         getTypeDictionary().put("MESSAGE", String.class);
-        getTypeDictionary().put("TIME", java.util.Date.class);
+        getTypeDictionary().put("TIME", Date.class);
         getTypeDictionary().put("USRNAME", String.class);
         getTypeDictionary().put("EVENT_HOST", String.class);
         getTypeDictionary().put("EVENT_VM", String.class);

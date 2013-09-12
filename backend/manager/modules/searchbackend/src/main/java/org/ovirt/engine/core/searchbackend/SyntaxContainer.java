@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class SyntaxContainer implements Iterable<SyntaxObject> {
 
@@ -143,8 +145,8 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         return retval;
     }
 
-    public java.util.ArrayList<String> getCrossRefObjList() {
-        java.util.ArrayList<String> retval = new java.util.ArrayList<String>();
+    public ArrayList<String> getCrossRefObjList() {
+        ArrayList<String> retval = new ArrayList<String>();
         String searchObj = getObjSingularName(getSearchObjectStr());
         for (SyntaxObject obj : mObjList) {
             if (obj.getType() == SyntaxObjectType.CROSS_REF_OBJ) {
@@ -254,12 +256,12 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         return retval;
     }
 
-    public java.util.ListIterator<SyntaxObject> listIterator(int index) {
+    public ListIterator<SyntaxObject> listIterator(int index) {
         return mObjList.listIterator(index);
     }
 
     @Override
-    public java.util.Iterator<SyntaxObject> iterator() {
+    public Iterator<SyntaxObject> iterator() {
         return mObjList.iterator();
     }
 }

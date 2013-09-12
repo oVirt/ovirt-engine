@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.HashMap;
+
 public class BitValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
-    private final java.util.HashMap<String, Integer> mBitValues = new java.util.HashMap<String, Integer>();
+    private final HashMap<String, Integer> mBitValues = new HashMap<String, Integer>();
 
     public BitValueAutoCompleter() {
         mBitValues.put("TRUE", 1);

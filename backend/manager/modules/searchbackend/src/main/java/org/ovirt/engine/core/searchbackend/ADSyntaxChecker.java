@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
 
@@ -7,7 +10,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
     private AdSearchObjecAutoCompleter mSearchObjectAC;
     private BaseAutoCompleter mColonAC;
     private BaseAutoCompleter mPluralAC;
-    private java.util.HashMap<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
+    private HashMap<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
     protected final static String USER_ACCOUNT_TYPE = "$USER_ACCOUNT_TYPE";
     private final static String LDAP_GROUP_CATEGORY = "$LDAP_GROUP_CATEGORY";
 
@@ -22,7 +25,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
         mFirstDQRegexp = new Regex("^\\s*\"$");
         mNonSpaceRegexp = new Regex("^\\S+$");
 
-        mStateMap = new java.util.HashMap<SyntaxObjectType, SyntaxObjectType[]>();
+        mStateMap = new HashMap<SyntaxObjectType, SyntaxObjectType[]>();
         SyntaxObjectType[] beginArray = { SyntaxObjectType.SEARCH_OBJECT };
         mStateMap.put(SyntaxObjectType.BEGIN, beginArray);
         SyntaxObjectType[] searchObjectArray = { SyntaxObjectType.COLON };
@@ -227,7 +230,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                     break;
                 case CONDITION_FIELD:
                     String[] tmpCompletions = AdConditionFieldAC.getCompletion(curPartialWord);
-                    java.util.ArrayList<String> nonDuplicates = new java.util.ArrayList<String>();
+                    ArrayList<String> nonDuplicates = new ArrayList<String>();
                     for (int itr = 0; itr < tmpCompletions.length; itr++) {
                         if (!retval.contains(SyntaxObjectType.CONDITION_FIELD, tmpCompletions[itr])) {
                             nonDuplicates.add(tmpCompletions[itr]);

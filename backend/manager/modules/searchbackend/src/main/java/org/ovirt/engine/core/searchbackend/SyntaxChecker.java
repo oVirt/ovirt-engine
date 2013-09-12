@@ -2,6 +2,7 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         mAndAC = new BaseAutoCompleter("AND");
         mOrAC = new BaseAutoCompleter("OR");
         mDotAC = new BaseAutoCompleter(".");
-        mDisAllowedChars = new ArrayList<Character>(java.util.Arrays.asList(new Character[] { '\'', ';' }));
+        mDisAllowedChars = new ArrayList<Character>(Arrays.asList(new Character[] { '\'', ';' }));
 
         mFirstDQRegexp = new Regex("^\\s*\"$");
         mNonSpaceRegexp = new Regex("^\\S+$");

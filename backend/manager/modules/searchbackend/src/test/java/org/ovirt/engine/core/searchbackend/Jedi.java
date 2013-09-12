@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.HashMap;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum Jedi implements Identifiable {
@@ -11,7 +12,7 @@ public enum Jedi implements Identifiable {
 
     private int intValue;
 
-    private static java.util.HashMap<Integer, Jedi> mappings;
+    private static HashMap<Integer, Jedi> mappings;
 
     private Jedi(int value) {
         intValue = value;
@@ -23,9 +24,9 @@ public enum Jedi implements Identifiable {
         return intValue;
     }
 
-    private synchronized static java.util.HashMap<Integer, Jedi> getMappings() {
+    private synchronized static HashMap<Integer, Jedi> getMappings() {
         if (mappings == null) {
-            mappings = new java.util.HashMap<Integer, Jedi>();
+            mappings = new HashMap<Integer, Jedi>();
         }
         return mappings;
     }

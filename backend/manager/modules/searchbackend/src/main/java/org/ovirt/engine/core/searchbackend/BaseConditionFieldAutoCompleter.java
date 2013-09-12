@@ -75,7 +75,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         for (String key : mVerbs) {
             final List<ValueValidationFunction> curList = new ArrayList<ValueValidationFunction>();
             final Class<?> curType = typeDict.get(key);
-            if (curType == java.math.BigDecimal.class) {
+            if (curType == BigDecimal.class) {
                 curList.add(validDecimal);
             } else if (curType == Integer.class) {
                 curList.add(validInteger);

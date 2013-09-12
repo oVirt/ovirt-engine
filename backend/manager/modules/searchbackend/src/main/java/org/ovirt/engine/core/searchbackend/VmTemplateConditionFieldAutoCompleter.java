@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -31,7 +32,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put("DOMAIN", String.class);
         getTypeDictionary().put("OS", String.class);
-        getTypeDictionary().put("CREATIONDATE", java.util.Date.class);
+        getTypeDictionary().put("CREATIONDATE", Date.class);
         getTypeDictionary().put("CHILDCOUNT", Integer.class);
         getTypeDictionary().put("MEM", Integer.class);
         getTypeDictionary().put("DESCRIPTION", String.class);

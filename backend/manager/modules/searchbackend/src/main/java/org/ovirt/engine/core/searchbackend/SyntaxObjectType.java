@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.HashMap;
+
 public enum SyntaxObjectType {
     BEGIN(0),
     SEARCH_OBJECT(1),
@@ -19,11 +21,11 @@ public enum SyntaxObjectType {
     END(15);
 
     private int intValue;
-    private static java.util.HashMap<Integer, SyntaxObjectType> mappings;
+    private static HashMap<Integer, SyntaxObjectType> mappings;
 
-    private synchronized static java.util.HashMap<Integer, SyntaxObjectType> getMappings() {
+    private synchronized static HashMap<Integer, SyntaxObjectType> getMappings() {
         if (mappings == null) {
-            mappings = new java.util.HashMap<Integer, SyntaxObjectType>();
+            mappings = new HashMap<Integer, SyntaxObjectType>();
         }
         return mappings;
     }

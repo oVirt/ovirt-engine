@@ -50,7 +50,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("UPTIME", TimeSpan.class);
         getTypeDictionary().put("DOMAIN", String.class);
         getTypeDictionary().put("OS", String.class);
-        getTypeDictionary().put("CREATIONDATE", java.util.Date.class);
+        getTypeDictionary().put("CREATIONDATE", Date.class);
         getTypeDictionary().put("ADDRESS", String.class);
         getTypeDictionary().put("CPU_USAGE", Integer.class);
         getTypeDictionary().put("MEM_USAGE", Integer.class);

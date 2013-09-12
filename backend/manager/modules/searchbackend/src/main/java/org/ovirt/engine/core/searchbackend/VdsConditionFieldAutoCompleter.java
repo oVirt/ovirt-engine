@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -42,11 +43,11 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put("CPU_USAGE", Integer.class);
         getTypeDictionary().put("MEM_USAGE", Integer.class);
         getTypeDictionary().put("NETWORK_USAGE", Integer.class);
-        getTypeDictionary().put("LOAD", java.math.BigDecimal.class);
+        getTypeDictionary().put("LOAD", BigDecimal.class);
         getTypeDictionary().put("VERSION", String.class);
         getTypeDictionary().put("CPUS", Integer.class);
         getTypeDictionary().put("MEMORY", Integer.class);
-        getTypeDictionary().put("CPU_SPEED", java.math.BigDecimal.class);
+        getTypeDictionary().put("CPU_SPEED", BigDecimal.class);
         getTypeDictionary().put("CPU_MODEL", String.class);
         getTypeDictionary().put("ACTIVE_VMS", Integer.class);
         getTypeDictionary().put("MIGRATING_VMS", Integer.class);
