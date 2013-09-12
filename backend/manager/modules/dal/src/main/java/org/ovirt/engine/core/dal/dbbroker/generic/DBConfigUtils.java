@@ -2,7 +2,9 @@ package org.ovirt.engine.core.dal.dbbroker.generic;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +40,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static Object parseValue(String value, String name, java.lang.Class<?> fieldType) {
+    private static Object parseValue(String value, String name, Class<?> fieldType) {
         if (value == null) {
             return null;
         }
@@ -50,7 +52,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                 return Boolean.parseBoolean(value);
             } else if (fieldType == Version.class) {
                 return new Version(value);
-            } else if (fieldType == java.util.Date.class) {
+            } else if (fieldType == Date.class) {
                 return new SimpleDateFormat("k:m:s").parse(value);
             } else if (fieldType == Double.class) {
                 return Double.parseDouble(value);
@@ -70,7 +72,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
             } else {
                 return value;
             }
-        } catch (java.lang.Exception e2) {
+        } catch (Exception e2) {
             log.errorFormat("Could not parse option {0} value.", name);
             return null;
         }
@@ -129,11 +131,11 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     }
                     break;
                 case CommaSeparatedVersionArray:
-                    java.util.HashSet<Version> versions = new java.util.HashSet<Version>();
+                    HashSet<Version> versions = new HashSet<Version>();
                     for (String ver : result.toString().split("[,]", -1)) {
                         try {
                             versions.add(new Version(ver));
-                        } catch (java.lang.Exception e) {
+                        } catch (Exception e) {
                             log.errorFormat("Could not parse version {0} for config value {1}", ver,
                                     option.getoption_name());
                         }
@@ -184,7 +186,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
         try {
             // refresh the cache entry after update
             _vdcOptionCache.get(vdcOption.getoption_name()).put(version, getValue(vdcOption));
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             log.errorFormat("Could not update option {0} in cache.", name);
         }
     }

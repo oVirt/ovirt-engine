@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -98,7 +99,7 @@ public class DomainsPasswordMap implements Map<String, String> {
     }
 
     @Override
-    public Set<java.util.Map.Entry<String, String>> entrySet() {
+    public Set<Entry<String, String>> entrySet() {
         return map.entrySet();
     }
 

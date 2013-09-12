@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  *
@@ -61,7 +62,7 @@ public class VmStatisticsDAOTest extends BaseDAOTestCase {
         assertEquals(newVmStatistics, stats);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = DataIntegrityViolationException.class)
     public void testSaveStaticDoesNotExist() {
         Guid newGuid = Guid.newGuid();
         newVmStatistics.setId(newGuid);
