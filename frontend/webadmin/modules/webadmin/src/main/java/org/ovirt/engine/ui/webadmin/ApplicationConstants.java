@@ -3382,4 +3382,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("External Policy Unit")
     String externalPolicyUnit();
+
+    @DefaultStringValue("Optimize for Utilization")
+    String optimizeForUtilizationLabel();
+
+    @DefaultStringValue("Optimize for Speed")
+    String optimizeForSpeedLabel();
+
+    @DefaultStringValue("Scheduler Optimization")
+    String schedulerOptimizationPanelLabel();
 }

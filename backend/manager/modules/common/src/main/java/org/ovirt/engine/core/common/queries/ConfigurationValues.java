@@ -106,7 +106,8 @@ public enum ConfigurationValues {
     MaxVmNameLengthNonWindows(ConfigAuthType.User),
     AttestationServer,
     DefaultGeneralTimeZone,
-    DefaultWindowsTimeZone;
+    DefaultWindowsTimeZone,
+    SpeedOptimizationSchedulingThreshold;
 
     public static enum ConfigAuthType {
         Admin,

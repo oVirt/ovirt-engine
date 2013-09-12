@@ -3492,4 +3492,9 @@ public final class AsyncDataProvider {
         }
         return maxVmNameLengthNonWindows;
     }
+
+    public static int getOptimizeSchedulerForSpeedPendingRequests() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.SpeedOptimizationSchedulingThreshold,
+                getDefaultConfigurationVersion());
+    }
 }

@@ -502,6 +502,26 @@ public class ClusterModel extends EntityModel
         this.enableBallooning = enableBallooning;
     }
 
+    private EntityModel<Boolean> optimizeForUtilization;
+
+    public EntityModel<Boolean> getOptimizeForUtilization() {
+        return optimizeForUtilization;
+    }
+
+    public void setOptimizeForUtilization(EntityModel<Boolean> optimizeForUtilization) {
+        this.optimizeForUtilization = optimizeForUtilization;
+    }
+
+    private EntityModel<Boolean> optimizeForSpeed;
+
+    public EntityModel<Boolean> getOptimizeForSpeed() {
+        return optimizeForSpeed;
+    }
+
+    public void setOptimizeForSpeed(EntityModel<Boolean> optimizeForSpeed) {
+        this.optimizeForSpeed = optimizeForSpeed;
+    }
+
     private boolean isGeneralTabValid;
 
     public boolean getIsGeneralTabValid()
@@ -627,6 +647,12 @@ public class ClusterModel extends EntityModel
         }
 
         return AsyncDataProvider.getClusterDefaultMemoryOverCommit();
+    }
+
+    public String getSchedulerOptimizationInfoMessage() {
+        return ConstantsManager.getInstance()
+                .getMessages()
+                .schedulerOptimizationInfo(AsyncDataProvider.getOptimizeSchedulerForSpeedPendingRequests());
     }
 
     public void setMemoryOverCommit(int value)
@@ -816,6 +842,13 @@ public class ClusterModel extends EntityModel
         setCountThreadsAsCores(new EntityModel(AsyncDataProvider.getClusterDefaultCountThreadsAsCores()));
 
         setVersionSupportsCpuThreads(new EntityModel<Boolean>(true));
+
+        setOptimizeForUtilization(new EntityModel<Boolean>());
+        setOptimizeForSpeed(new EntityModel<Boolean>());
+        getOptimizeForUtilization().setEntity(true);
+        getOptimizeForSpeed().setEntity(false);
+        getOptimizeForUtilization().getEntityChangedEvent().addListener(this);
+        getOptimizeForSpeed().getEntityChangedEvent().addListener(this);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1115,6 +1148,10 @@ public class ClusterModel extends EntityModel
                 {
                     getMigrateOnErrorOption_YES().setEntity(false);
                     getMigrateOnErrorOption_NO().setEntity(false);
+                } else if (senderEntityModel == getOptimizeForUtilization()) {
+                    getOptimizeForSpeed().setEntity(false);
+                } else if (senderEntityModel == getOptimizeForSpeed()) {
+                    getOptimizeForUtilization().setEntity(false);
                 }
             }
         }

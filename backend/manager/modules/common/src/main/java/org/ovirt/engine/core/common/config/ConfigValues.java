@@ -1543,5 +1543,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("300")
     HostPreparingForMaintenanceIdleTime,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    SpeedOptimizationSchedulingThreshold,
+
     Invalid;
 }
