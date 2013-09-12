@@ -150,7 +150,7 @@ public class GetDiskAlignmentCommandTest {
     public void testCanDoActionVmRunningFail() {
         vm.setStatus(VMStatus.Up);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+                VdcBllMessages.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
     }
 
     @Test

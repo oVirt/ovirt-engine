@@ -115,7 +115,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         }
 
         if (isImageExclusiveLockNeeded() && getVm().isRunningOrPaused()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING);
         }
 
         if (getVdsIdInGroup() == null) {
