@@ -4,7 +4,7 @@
 
 # Fix release is manually specified,
 # increment after releasing/branching
-FIX_RELEASE=2
+FIX_RELEASE=3
 
 # Milestone is manually specified,
 # example for ordering:
@@ -32,4 +32,4 @@ MILESTONE=
 # RPM_RELEASE=N
 # while N is incremented each re-release
 #
-RPM_RELEASE=1.1
+RPM_RELEASE=1
