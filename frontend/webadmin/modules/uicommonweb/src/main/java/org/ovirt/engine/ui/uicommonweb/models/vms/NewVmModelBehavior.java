@@ -46,24 +46,29 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                 dataCenters.add(a);
                             }
                         }
-                        AsyncDataProvider.getClusterListByService(
-                                new AsyncQuery(getModel(), new INewAsyncCallback() {
 
-                                    @Override
-                                    public void onSuccess(Object target, Object returnValue) {
-                                        UnitVmModel model = (UnitVmModel) target;
-                                        model.setDataCentersAndClusters(model,
-                                                dataCenters,
-                                                (List<VDSGroup>) returnValue, null);
-                                        initCdImage();
-                                    }
-                                }, getModel().getHash()),
-                                true, false);
+                        if (!dataCenters.isEmpty()) {
+                            AsyncDataProvider.getClusterListByService(
+                                    new AsyncQuery(getModel(), new INewAsyncCallback() {
 
+                                        @Override
+                                        public void onSuccess(Object target, Object returnValue) {
+                                            UnitVmModel model = (UnitVmModel) target;
+                                            model.setDataCentersAndClusters(model,
+                                                    dataCenters,
+                                                    (List<VDSGroup>) returnValue, null);
+                                            initCdImage();
+                                        }
+                                    }, getModel().getHash()),
+                                    true, false);
+                        } else {
+                            getModel().disableEditing();
+                        }
                     }
                 }, getModel().getHash()),
                 true,
                 false);
+
         initPriority(0);
     }
 

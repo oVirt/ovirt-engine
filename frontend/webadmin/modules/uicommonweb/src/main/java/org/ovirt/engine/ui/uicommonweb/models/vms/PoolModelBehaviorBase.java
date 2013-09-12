@@ -59,22 +59,27 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                     }
                 }
 
-                AsyncDataProvider.getClusterListByService(
-                        new AsyncQuery(getModel(), new INewAsyncCallback() {
+                postDataCentersLoaded(dataCenters);
 
-                            @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                UnitVmModel model = (UnitVmModel) target;
-                                model.setDataCentersAndClusters(model,
-                                        dataCenters,
-                                        (List<VDSGroup>) returnValue, null);
-                                initCdImage();
-                                getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
-                            }
-                        }, getModel().getHash()),
-                        true, false);
             }
         }, getModel().getHash()), true, false);
+    }
+
+    protected void postDataCentersLoaded(final List<StoragePool> dataCenters) {
+        AsyncDataProvider.getClusterListByService(
+                new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        UnitVmModel model = (UnitVmModel) target;
+                        model.setDataCentersAndClusters(model,
+                                dataCenters,
+                                (List<VDSGroup>) returnValue, null);
+                        initCdImage();
+                        getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
+                    }
+                }, getModel().getHash()),
+                true, false);
     }
 
     protected void setupWindowModelFrom(VmBase vmBase) {

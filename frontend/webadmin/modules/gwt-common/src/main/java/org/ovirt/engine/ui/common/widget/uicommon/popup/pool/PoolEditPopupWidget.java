@@ -107,22 +107,6 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         editPrestartedVmsPanel.addStyleName(style.generalTabExtendedRightWidgetWidth());
         nameEditor.addStyleName(style.generalTabExtendedRightWidgetWidth());
         nameEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-
-    }
-
-    private void disableAllTabs() {
-        generalTab.disableContent();
-        poolTab.disableContent();
-        initialRunTab.disableContent();
-        consoleTab.disableContent();
-        hostTab.disableContent();
-        highAvailabilityTab.disableContent();
-        resourceAllocationTab.disableContent();
-        bootOptionsTab.disableContent();
-        customPropertiesTab.disableContent();
-        systemTab.disableContent();
-        oSTypeEditor.setEnabled(false);
-        quotaEditor.setEnabled(false);
     }
 
     @Override

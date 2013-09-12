@@ -64,6 +64,16 @@ public class UnitVmModel extends Model {
 
     private boolean privateIsNew;
 
+    private EntityModel editingEnabled;
+
+    public EntityModel getEditingEnabled() {
+        return editingEnabled;
+    }
+
+    public void setEditingEnabled(EntityModel editingEnabled) {
+        this.editingEnabled = editingEnabled;
+    }
+
     public boolean getIsNew()
     {
         return privateIsNew;
@@ -1306,6 +1316,9 @@ public class UnitVmModel extends Model {
 
         setIsSingleQxlEnabled(new NotChangableForVmInPoolEntityModel());
         getIsSingleQxlEnabled().setEntity(false);
+
+        setEditingEnabled(new EntityModel());
+        getEditingEnabled().setEntity(true);
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -2381,6 +2394,11 @@ public class UnitVmModel extends Model {
         }
 
         return dataCenterWithCluster.getCluster();
+    }
+
+    public void disableEditing() {
+        getDefaultCommand().setIsExecutionAllowed(false);
+        getEditingEnabled().setEntity(false);
     }
 
     public static enum CpuSharesAmount {

@@ -581,6 +581,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private final CommonApplicationTemplates applicationTemplates;
 
+    private final CommonApplicationConstants constants;
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(CommonApplicationConstants constants,
             CommonApplicationResources resources,
@@ -589,6 +591,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         this.messages = messages;
         this.applicationTemplates = applicationTemplates;
+        this.constants = constants;
 
         initListBoxEditors();
         // Contains a special parser/renderer
@@ -1041,7 +1044,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         changeApplicationLevelVisibility(customPropertiesTab, model.getIsCustomPropertiesTabAvailable());
     }
 
-    private void initListeners(final UnitVmModel object) {
+    protected void initListeners(final UnitVmModel object) {
         // TODO should be handled by the core framework
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -1107,6 +1110,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
 
         updateUsbNativeMessageVisibility(object);
+
+        object.getEditingEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                Boolean enabled = (Boolean) object.getEditingEnabled().getEntity();
+                if (Boolean.FALSE.equals(enabled)) {
+                    disableAllTabs();
+                    generalWarningMessage.setText(constants.notAvailableWithNoUpDC());
+                }
+            }
+        });
     }
 
     /**
@@ -1436,4 +1450,23 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 copyTemplatePermissionsEditor
                 );
     }
+
+    protected void disableAllTabs() {
+        generalTab.disableContent();
+        poolTab.disableContent();
+        initialRunTab.disableContent();
+        consoleTab.disableContent();
+        hostTab.disableContent();
+        highAvailabilityTab.disableContent();
+        resourceAllocationTab.disableContent();
+        bootOptionsTab.disableContent();
+        customPropertiesTab.disableContent();
+        systemTab.disableContent();
+        oSTypeEditor.setEnabled(false);
+        quotaEditor.setEnabled(false);
+        dataCenterWithClusterEditor.setEnabled(false);
+        templateEditor.setEnabled(false);
+        vmTypeEditor.setEnabled(false);
+    }
+
 }

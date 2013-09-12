@@ -58,19 +58,22 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                             }
                         }
 
-                        AsyncDataProvider.getClustersWithPermittedAction(
-                                new AsyncQuery(getModel(), new INewAsyncCallback() {
+                        if (!dataCenters.isEmpty()) {
+                            AsyncDataProvider.getClustersWithPermittedAction(
+                                    new AsyncQuery(getModel(), new INewAsyncCallback() {
 
-                                    @Override
-                                    public void onSuccess(Object target, Object returnValue) {
-                                        UnitVmModel model = (UnitVmModel) target;
-                                        model.setDataCentersAndClusters(model,
-                                                dataCenters,
-                                                (List<VDSGroup>) returnValue, null);
-                                    }
-                                }, getModel().getHash()),
-                                CREATE_VM, true, false);
-
+                                        @Override
+                                        public void onSuccess(Object target, Object returnValue) {
+                                            UnitVmModel model = (UnitVmModel) target;
+                                            model.setDataCentersAndClusters(model,
+                                                    dataCenters,
+                                                    (List<VDSGroup>) returnValue, null);
+                                        }
+                                    }, getModel().getHash()),
+                                    CREATE_VM, true, false);
+                        } else {
+                            getModel().disableEditing();
+                        }
                     }
                 }, getModel().getHash()), CREATE_VM, true, false);
     }
