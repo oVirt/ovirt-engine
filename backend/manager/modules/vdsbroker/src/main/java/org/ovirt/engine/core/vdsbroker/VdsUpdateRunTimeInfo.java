@@ -1624,6 +1624,7 @@ public class VdsUpdateRunTimeInfo {
 
                 vmStatic.setNumOfSockets(parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
                 vmStatic.setMemSizeMb(parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
+                vmStatic.setSingleQxlPci(false);
 
                 _externalVmsToAdd.add(vmStatic);
                 log.infoFormat("Importing VM {0} as {1}, as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
