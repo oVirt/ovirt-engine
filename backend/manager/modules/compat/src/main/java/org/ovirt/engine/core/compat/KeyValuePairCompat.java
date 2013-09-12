@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
+import java.util.Map;
 
-public class KeyValuePairCompat<K, V> implements java.util.Map.Entry<K, V>, Serializable {
+public class KeyValuePairCompat<K, V> implements Map.Entry<K, V>, Serializable {
 
     private static final long serialVersionUID = 3550666497489591122L;
 
