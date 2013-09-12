@@ -8,6 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -170,8 +171,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("cluster_policy_id", group.getClusterPolicyId())
                 .addValue("cluster_policy_custom_properties",
                                 SerializationFactory.getSerializer().serialize(group.getClusterPolicyProperties()))
-                .addValue("enable_balloon", group.isEnableBallooning());
-
+                .addValue("enable_balloon", group.isEnableBallooning())
+                .addValue("optimization_type", group.getOptimizationType());
         return parameterSource;
     }
 
@@ -210,7 +211,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("cluster_policy_custom_properties"), LinkedHashMap.class));
             entity.setEnableBallooning(rs.getBoolean("enable_balloon"));
-
+            entity.setOptimizationType(OptimizationType.from(rs.getInt("optimization_type")));
             return entity;
         }
     }

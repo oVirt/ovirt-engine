@@ -488,6 +488,26 @@ public class ClusterModel extends EntityModel
         this.enableBallooning = enableBallooning;
     }
 
+    private EntityModel optimizeForUtilization;
+
+    public EntityModel getOptimizeForUtilization() {
+        return optimizeForUtilization;
+    }
+
+    public void setOptimizeForUtilization(EntityModel optimizeForUtilization) {
+        this.optimizeForUtilization = optimizeForUtilization;
+    }
+
+    private EntityModel optimizeForSpeed;
+
+    public EntityModel getOptimizeForSpeed() {
+        return optimizeForSpeed;
+    }
+
+    public void setOptimizeForSpeed(EntityModel optimizeForSpeed) {
+        this.optimizeForSpeed = optimizeForSpeed;
+    }
+
     private boolean isGeneralTabValid;
 
     public boolean getIsGeneralTabValid()
@@ -613,6 +633,12 @@ public class ClusterModel extends EntityModel
         }
 
         return AsyncDataProvider.getClusterDefaultMemoryOverCommit();
+    }
+
+    public String getSchedulerOptimizationInfoMessage() {
+        return ConstantsManager.getInstance()
+                .getMessages()
+                .schedulerOptimizationInfo(AsyncDataProvider.getOptimizeSchedulerForSpeedPendingRequests());
     }
 
     public void setMemoryOverCommit(int value)
@@ -802,6 +828,13 @@ public class ClusterModel extends EntityModel
         setCountThreadsAsCores(new EntityModel(AsyncDataProvider.getClusterDefaultCountThreadsAsCores()));
 
         setVersionSupportsCpuThreads(new EntityModel(true));
+
+        setOptimizeForUtilization(new EntityModel());
+        setOptimizeForSpeed(new EntityModel());
+        getOptimizeForUtilization().setEntity(true);
+        getOptimizeForSpeed().setEntity(false);
+        getOptimizeForUtilization().getEntityChangedEvent().addListener(this);
+        getOptimizeForSpeed().getEntityChangedEvent().addListener(this);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1097,6 +1130,10 @@ public class ClusterModel extends EntityModel
                 {
                     getMigrateOnErrorOption_YES().setEntity(false);
                     getMigrateOnErrorOption_NO().setEntity(false);
+                } else if (senderEntityModel == getOptimizeForUtilization()) {
+                    getOptimizeForSpeed().setEntity(false);
+                } else if (senderEntityModel == getOptimizeForSpeed()) {
+                    getOptimizeForUtilization().setEntity(false);
                 }
             }
         }

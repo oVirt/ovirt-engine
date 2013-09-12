@@ -3322,4 +3322,9 @@ public final class AsyncDataProvider {
         Integer maxVmNameLengthNonWindows = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthNonWindows);
         return maxVmNameLengthNonWindows == null ? 64 : maxVmNameLengthNonWindows;
     }
+
+    public static int getOptimizeSchedulerForSpeedPendingRequests() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.SpeedOptimizationSchedulingThreshold,
+                getDefaultConfigurationVersion());
+    }
 }

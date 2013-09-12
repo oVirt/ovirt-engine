@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -369,6 +370,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             clusterModel.getEnableTrustedService().setIsChangable(false);
         }
 
+        clusterModel.getOptimizeForSpeed()
+                .setEntity(OptimizationType.OPTIMIZE_FOR_SPEED == cluster.getOptimizationType());
+
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -696,6 +700,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setTrustedService((Boolean) model.getEnableTrustedService().getEntity());
         cluster.setClusterPolicyId(((ClusterPolicy) model.getClusterPolicy().getSelectedItem()).getId());
         cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().getEntity()));
+        cluster.setOptimizationType((Boolean) model.getOptimizeForSpeed().getEntity() ?
+                OptimizationType.OPTIMIZE_FOR_SPEED : OptimizationType.NONE);
 
         model.startProgress(null);
 

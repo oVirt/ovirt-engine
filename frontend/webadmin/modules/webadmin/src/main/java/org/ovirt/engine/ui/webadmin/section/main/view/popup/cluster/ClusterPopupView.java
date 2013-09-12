@@ -36,6 +36,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -247,6 +248,23 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelCheckBoxEditor enableBallooning;
 
+    @UiField
+    @Ignore
+    Label schedulerOptimizationPanelTitle;
+
+    @UiField(provided = true)
+    InfoIcon schedulerOptimizationInfoIcon;
+
+    @UiField(provided = true)
+    @Path(value = "optimizeForUtilization.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor optimizeForUtilizationEditor;
+
+    @UiField(provided = true)
+    @Path(value = "optimizeForSpeed.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor optimizeForSpeedEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final ApplicationMessages messages;
@@ -325,6 +343,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         clusterPolicyEditor.setLabel(constants.clusterPolicySelectPolicyLabel());
 
         enableBallooning.setLabel(constants.enableBallooningLabel());
+
+        schedulerOptimizationPanelTitle.setText(constants.schedulerOptimizationPanelLabel());
+        optimizeForUtilizationEditor.setLabel(constants.optimizeForUtilizationLabel());
+        optimizeForSpeedEditor.setLabel(constants.optimizeForSpeedLabel());
     }
 
     private void initRadioButtonEditors() {
@@ -339,6 +361,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         migrateOnErrorOption_YESEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
         migrateOnErrorOption_HA_ONLYEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
         migrateOnErrorOption_NOEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+
+        optimizeForUtilizationEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+        optimizeForSpeedEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
     }
 
     private void initListBoxEditors() {
@@ -382,6 +407,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         enableBallooning = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableBallooning.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
+
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates)
@@ -389,6 +415,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", constants.clusterPopupMemoryOptimizationInfo()), resources); //$NON-NLS-1$
 
         cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo()), resources); //$NON-NLS-1$
+        schedulerOptimizationInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
     }
 
     private void applyModeCustomizations() {
@@ -473,6 +500,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
             }
         });
+
+        schedulerOptimizationInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
+                templates.italicFixedWidth("350px", //$NON-NLS-1$
+                object.getSchedulerOptimizationInfoMessage()).asString()
+                        .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {

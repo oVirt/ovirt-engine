@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.annotation.ValidVdsGroup;
@@ -77,10 +78,13 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private Map<String, String> clusterPolicyProperties;
     private boolean detectEmulatedMachine;
 
+    private OptimizationType optimizationType;
+
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
         name = "";
         virtService = true;
+        optimizationType = OptimizationType.NONE;
     }
 
     @Override
@@ -274,6 +278,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         return detectEmulatedMachine;
     }
 
+    public OptimizationType getOptimizationType() {
+        return optimizationType;
+    }
+
+    public void setOptimizationType(OptimizationType optimizationType) {
+        this.optimizationType = optimizationType;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -298,6 +310,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + ((clusterPolicyName == null) ? 0 : clusterPolicyName.hashCode());
         result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
         result = prime * result + (enableBallooning ? 1231 : 1237);
+        result = prime * result + ((optimizationType == null) ? 0 : optimizationType.hashCode());
         return result;
     }
 
@@ -334,7 +347,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(clusterPolicyName, other.clusterPolicyName)
                 && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties)
                 && enableBallooning == other.enableBallooning
-                && detectEmulatedMachine == other.detectEmulatedMachine);
+                && detectEmulatedMachine == other.detectEmulatedMachine
+                && optimizationType == other.optimizationType);
     }
 
 }

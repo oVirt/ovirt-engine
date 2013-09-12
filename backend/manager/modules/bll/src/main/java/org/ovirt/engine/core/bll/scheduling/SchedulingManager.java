@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -71,7 +73,7 @@ public class SchedulingManager {
 
     private final Object policyUnitsLock = new Object();
 
-    private final ConcurrentHashMap<Guid, Object> clusterLockMap = new ConcurrentHashMap<Guid, Object>();
+    private final ConcurrentHashMap<Guid, Semaphore> clusterLockMap = new ConcurrentHashMap<Guid, Semaphore>();
 
     private final VdsFreeMemoryChecker noWaitingMemoryChecker = new VdsFreeMemoryChecker(new NonWaitingDelayer());
     private MigrationHandler migrationHandler;
@@ -225,8 +227,9 @@ public class SchedulingManager {
             List<String> messages,
             VdsFreeMemoryChecker memoryChecker,
             String correlationId) {
-        clusterLockMap.putIfAbsent(cluster.getId(), new Object());
-        synchronized (clusterLockMap.get(cluster.getId())) {
+        clusterLockMap.putIfAbsent(cluster.getId(), new Semaphore(1));
+        try {
+            clusterLockMap.get(cluster.getId()).acquire();
             List<VDS> vdsList = getVdsDAO()
                     .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
             updateInitialHostList(vdsList, hostBlackList, true);
@@ -260,7 +263,10 @@ public class SchedulingManager {
             if (policy.getFunctions() == null || policy.getFunctions().isEmpty()) {
                 return vdsList.get(0).getId();
             }
-            Guid bestHost = runFunctions(policy.getFunctions(), vdsList, vm, parameters);
+            Guid bestHost = null;
+            if (shouldWeighClusterHosts(cluster, vdsList)) {
+                bestHost = runFunctions(policy.getFunctions(), vdsList, vm, parameters);
+            }
             if (bestHost == null && vdsList.size() > 0) {
                 bestHost = vdsList.get(0).getId();
             }
@@ -274,7 +280,38 @@ public class SchedulingManager {
                         0);
             }
             return bestHost;
+        } catch (InterruptedException e) {
+            log.error("interrupted", e);
+            return null;
+        } finally {
+            clusterLockMap.get(cluster.getId()).release();
         }
+    }
+
+    /**
+     * Checks whether scheduler should weigh hosts/or skip weighing:
+     * * More than one host (it's trivial to weigh a single host).
+     * * optimize for speed is enabled for the cluster, and there are less than configurable requests pending (skip
+     * weighing in a loaded setup).
+     *
+     * @param cluster
+     * @param vdsList
+     * @return
+     */
+    protected boolean shouldWeighClusterHosts(VDSGroup cluster, List<VDS> vdsList) {
+        Integer threshold = Config.<Integer> GetValue(ConfigValues.SpeedOptimizationSchedulingThreshold);
+        // threshold is crossed only when cluster is configured for optimized for speed
+        boolean crossedThreshold =
+                OptimizationType.OPTIMIZE_FOR_SPEED == cluster.getOptimizationType()
+                        && clusterLockMap.get(cluster.getId()).getQueueLength() >
+                        threshold;
+        if (crossedThreshold) {
+            log.infoFormat("Scheduler: skipping whighing hosts in cluster {0}, since there are more than {1} parallel requests",
+                    cluster.getName(),
+                    threshold);
+        }
+        return vdsList.size() > 1
+                && !crossedThreshold;
     }
 
     public boolean canSchedule(VDSGroup cluster,

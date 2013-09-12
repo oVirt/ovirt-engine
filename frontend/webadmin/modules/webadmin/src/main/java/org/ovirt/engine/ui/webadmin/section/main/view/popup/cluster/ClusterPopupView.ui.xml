@@ -33,7 +33,9 @@
 		.label {
 			width: 100%;
 		}
-
+		.radioButtonLabel {
+			width: 200px;
+		}
 		.radioButtonsTabContent {
 			margin-top: 10px;
 		}
@@ -220,6 +222,14 @@
 								<g:ScrollPanel height="100px">
 									<k:KeyValueWidget ui:field="customPropertiesSheetEditor" />
 								</g:ScrollPanel>
+								<g:FlowPanel>
+									<g:Label ui:field="schedulerOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
+									<g:HorizontalPanel>
+										<e:EntityModelRadioButtonEditor ui:field="optimizeForUtilizationEditor" addStyleNames="{style.radioButtonLabel}" />
+										<e:EntityModelRadioButtonEditor ui:field="optimizeForSpeedEditor" addStyleNames="{style.radioButtonLabel}" />
+										<d:InfoIcon ui:field="schedulerOptimizationInfoIcon" addStyleNames="{style.panelInfo}" />
+									</g:HorizontalPanel>
+								</g:FlowPanel>
 								<g:FlowPanel ui:field="additionPropsPanel" addStyleNames="{style.nestedSubsequentPanel}">
 									<g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.panelTitle}" />
 									<e:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" />

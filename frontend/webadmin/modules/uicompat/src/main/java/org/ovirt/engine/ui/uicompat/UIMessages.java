@@ -306,4 +306,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("No Rebalance ever happened on volume :  {0}")
     String rebalanceStatusConfirmationMessage(String name);
+
+    @DefaultMessage("Optimize scheduling for host weighing (ordering):\n" +
+            "Utilization: include weight modules in shceduling to allow best selection\n" +
+            "Speed: skip host weighing in case there are more than {0} pending requests")
+    String schedulerOptimizationInfo(int numOfRequests);
 }

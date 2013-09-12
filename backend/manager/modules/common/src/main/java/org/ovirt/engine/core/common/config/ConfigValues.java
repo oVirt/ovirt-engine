@@ -1537,6 +1537,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     PortMirroringSupported(544),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    SpeedOptimizationSchedulingThreshold(545),
+
     Invalid(65535);
 
     private int intValue;
