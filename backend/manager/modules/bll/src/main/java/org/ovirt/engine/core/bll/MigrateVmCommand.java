@@ -97,7 +97,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVdsWhiteList(),
                         destVds == null ? null : destVds.getId(),
                         new ArrayList<String>(),
-                        new VdsFreeMemoryChecker(this));
+                        new VdsFreeMemoryChecker(this),
+                        getCorrelationId());
         setVdsDestinationId(vdsToRunOn);
         if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
             getRunVdssList().add(vdsToRunOn);

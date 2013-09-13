@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.webadmin;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 
-import com.google.gwt.i18n.client.Messages.DefaultMessage;
-
 public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("A new version is available; an upgrade option will appear once the Host is moved to maintenance mode.")
@@ -103,4 +101,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("{0} GB")
     String rebalanceFileSizeGb(String size);
+
+    @DefaultMessage("Host {0} was filtered out by {1} filter {2}")
+    String schedulingHostFilteredOutReason(String host, String filterLocation, String filterName);
 }

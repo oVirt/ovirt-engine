@@ -846,6 +846,12 @@ public enum VdcBllMessages {
     //exteral scheduler
     EXTERNAL_SCHEDULER_FAIL(ErrorType.INTERNAL_ERROR),
 
+    // scheduling
+    VAR__FILTERTYPE__INTERNAL,
+    VAR__FILTERTYPE__EXTERNAL,
+    SCHEDULING_HOST_FILTERED_REASON,
+    SCHEDULING_ALL_HOSTS_FILTERED_OUT(ErrorType.CONFLICT),
+
     // memory QOS features
     QOS_BALLOON_NOT_SUPPORTED(ErrorType.BAD_PARAMETERS),
 
