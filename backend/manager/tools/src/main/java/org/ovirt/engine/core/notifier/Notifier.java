@@ -121,12 +121,6 @@ public class Notifier {
                     TimeUnit.SECONDS));
         } catch (Exception e) {
             log.error("Failed to run the event notification service. ", e);
-            if (notifyScheduler != null) {
-                notifyScheduler.shutdown();
-            }
-            if (monitorScheduler != null) {
-                monitorScheduler.shutdown();
-            }
             // flag exit code to calling script after threads shut down.
             System.exit(1);
         }
@@ -155,7 +149,6 @@ public class Notifier {
                 }
             }
             log.info("Event Notification service was shutdown");
-            System.exit(0);
         }
 
         public void addScheduledExecutorService(ScheduledExecutorService scheduler) {
