@@ -27,7 +27,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put("NAME", String.class);
         getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put("DOMAIN", String.class);
-        getTypeDictionary().put("OS", String.class);
+        getTypeDictionary().put("OS", Integer.class);
         getTypeDictionary().put("CREATIONDATE", java.util.Date.class);
         getTypeDictionary().put("CHILDCOUNT", Integer.class);
         getTypeDictionary().put("MEM", Integer.class);
