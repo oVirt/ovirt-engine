@@ -456,6 +456,9 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.DISK_ALIGNMENT_SCAN_START, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.DISK_ALIGNMENT_SCAN_FAILURE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.DISK_ALIGNMENT_SCAN_SUCCESS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_IMPORT_IMAGE, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_IMPORT_IMAGE_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE, AuditLogSeverity.ERROR);
     }
 
     private static void initQuotaSeverities() {

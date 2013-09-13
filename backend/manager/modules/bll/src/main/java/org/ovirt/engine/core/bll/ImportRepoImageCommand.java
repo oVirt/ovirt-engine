@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -141,13 +142,36 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         return getParameters().getDiskImage();
     }
 
+    public String getRepoImageName() {
+        return getDiskImage() != null ? getDiskImage().getDiskAlias() : "";
+    }
+
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            jobProperties.put("repoimagename", getDiskImage() != null ? getDiskImage().getDiskAlias() : "");
+            jobProperties.put("repoimagename", getRepoImageName());
         }
         return jobProperties;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        switch (getActionState()) {
+            case EXECUTE:
+                if (!getParameters().getTaskGroupSuccess()) {
+                    return AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE;
+                }
+                if (getParameters().getExecutionIndex() == 0 && getSucceeded()) {
+                    return AuditLogType.USER_IMPORT_IMAGE;
+                }
+                break;
+            case END_SUCCESS:
+                return AuditLogType.USER_IMPORT_IMAGE_FINISHED_SUCCESS;
+            case END_FAILURE:
+                return AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE;
+        }
+        return AuditLogType.UNASSIGNED;
     }
 
     @Override
