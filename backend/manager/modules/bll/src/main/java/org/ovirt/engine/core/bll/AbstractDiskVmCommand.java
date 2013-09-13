@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -142,8 +143,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     protected boolean isVmInUpPausedDownStatus() {
         if (getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down
                 && getVm().getStatus() != VMStatus.Paused) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
         }
         return true;
     }

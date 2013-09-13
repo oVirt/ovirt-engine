@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
+import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -241,7 +242,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
         VMStatus vmStatus = getVm().getStatus();
         if (vmStatus == VMStatus.WaitForLaunch || vmStatus == VMStatus.NotResponding) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vmStatus));
         }
         if (vmStatus != VMStatus.Up) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP);

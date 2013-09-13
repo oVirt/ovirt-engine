@@ -388,7 +388,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The VM is performing an operation on a Snapshot. Please wait for the operation to finish, and try again.")
     String ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The VM status is illegal.")
+    @DefaultStringValue("Cannot ${action} ${type} because it is in ${vmStatus} status.")
     String ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL();
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM is running as Stateless. Please try again when VM is not running as Stateless.")
@@ -840,6 +840,57 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$hostStatus 'Up' or 'Maintenance'")
     String VAR__HOST_STATUS__UP_OR_MAINTENANCE();
+
+    @DefaultStringValue("$vmStatus Up")
+    String VAR__VM_STATUS__UP();
+
+    @DefaultStringValue("$vmStatus Unassigned")
+    String VAR__VM_STATUS__UNASSIGNED();
+
+    @DefaultStringValue("$vmStatus Down")
+    String VAR__VM_STATUS__DOWN();
+
+    @DefaultStringValue("$vmStatus Powering Up")
+    String VAR__VM_STATUS__POWERING_UP();
+
+    @DefaultStringValue("$vmStatus Paused")
+    String VAR__VM_STATUS__PAUSED();
+
+    @DefaultStringValue("$vmStatus Migrating")
+    String VAR__VM_STATUS__MIGRATING();
+
+    @DefaultStringValue("$vmStatus Unknown")
+    String VAR__VM_STATUS__UNKNOWN();
+
+    @DefaultStringValue("$vmStatus Not Responding")
+    String VAR__VM_STATUS__NOT_RESPONDING();
+
+    @DefaultStringValue("$vmStatus Wair for Launch")
+    String VAR__VM_STATUS__WAIT_FOR_LAUNCH();
+
+    @DefaultStringValue("$vmStatus Reboot in Progress")
+    String VAR__VM_STATUS__REBOOT_IN_PROGRESS();
+
+    @DefaultStringValue("$vmStatus Saving State")
+    String VAR__VM_STATUS__SAVING_STATE();
+
+    @DefaultStringValue("$vmStatus Restoring State")
+    String VAR__VM_STATUS__RESTORING_STATE();
+
+    @DefaultStringValue("$vmStatus Suspended")
+    String VAR__VM_STATUS__SUSPENDED();
+
+    @DefaultStringValue("$vmStatus Image Locked")
+    String VAR__VM_STATUS__IMAGE_LOCKED();
+
+    @DefaultStringValue("$vmStatus Powering Down")
+    String VAR__VM_STATUS__POWERING_DOWN();
+
+    @DefaultStringValue("$vmStatus Image Illegal")
+    String VAR__VM_STATUS__IMAGE_ILLEGAL();
+
+    @DefaultStringValue("$vmStatus Preparing for Hibernate")
+    String VAR__VM_STATUS__PREPARING_FOR_HIBERNATE();
 
     @DefaultStringValue("$type Gluster Volume")
     String VAR__TYPE__GLUSTER_VOLUME();

@@ -222,7 +222,7 @@ public class RunVmValidator {
     public ValidationResult validateVmStatusUsingMatrix(VM vm) {
         if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
                 VdcActionType.RunVm)) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
         }
         return ValidationResult.VALID;
     }

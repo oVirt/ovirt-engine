@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -51,6 +52,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
                     || vm.getStatus() == VMStatus.NotResponding)) {
                 retValue = false;
                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
+                message.add(LocalizedVmStatus.from(vm.getStatus()));
             } else if (!vm.isRunning()) {
                 retValue = false;
                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.toString());
