@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
@@ -262,8 +263,9 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     public void updateDetails(VM vm)
     {
         getSelectedItemDefinedMemory().setEntity(sizeParser(vm.getVmMemSizeMb()));
-        getSelectedItemNumOfCpuCores().setEntity(vm.getNumOfCpus() + " " + "(" + vm.getNumOfSockets() //$NON-NLS-1$ //$NON-NLS-2$
-                + " Socket(s), " + vm.getCpuPerSocket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
+        getSelectedItemNumOfCpuCores().setEntity(
+                ConstantsManager.getInstance().getMessages().cpuInfoMessage(vm.getNumOfCpus(), vm.getNumOfSockets(), vm.getCpuPerSocket())
+        );
     }
 
     // Temporarily converter
