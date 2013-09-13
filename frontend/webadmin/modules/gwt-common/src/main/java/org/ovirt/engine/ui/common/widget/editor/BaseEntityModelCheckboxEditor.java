@@ -42,6 +42,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         if (useCheckBoxWidgetLabel) {
             getContentWidgetContainer().getElement().getStyle().setFloat(Float.LEFT);
             getLabelElement().getStyle().setDisplay(Display.NONE);
+            getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
         }
     }
 
