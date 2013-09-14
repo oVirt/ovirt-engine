@@ -35,8 +35,11 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
      * In case this parameter is null the default procedure is used.
      */
     public void updateAll(String procedureName, Collection<T> entities) {
+        if (procedureName == null) {
+            procedureName = getProcedureNameForUpdate();
+        }
         for (T entity : entities) {
-            update(entity, procedureName == null ? getProcedureNameForUpdate() : procedureName);
+            update(entity, procedureName);
         }
     }
 
