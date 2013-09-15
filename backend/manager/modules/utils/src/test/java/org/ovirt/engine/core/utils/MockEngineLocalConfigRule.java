@@ -18,7 +18,6 @@ public class MockEngineLocalConfigRule extends TestWatcher {
         }
     }
 
-    private Map<String, String> oldValues;
     private Map<String, String> newValues;
 
     public MockEngineLocalConfigRule(KeyValue... values) {
