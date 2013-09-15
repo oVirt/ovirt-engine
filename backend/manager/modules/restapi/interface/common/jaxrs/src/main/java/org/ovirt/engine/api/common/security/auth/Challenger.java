@@ -92,7 +92,6 @@ public class Challenger implements PreProcessInterceptor {
         boolean successful = false;
         HttpHeaders headers = request.getHttpHeaders();
         boolean preferPersistentAuth = checkPersistentAuthentication(headers);
-        boolean hasAuthorizationHeader = checkAuthorizationHeader(headers);
         Integer customHttpSessionTtl = getCustomHttpSessionTtl(headers);
 
         // Get the current session
@@ -100,14 +99,17 @@ public class Challenger implements PreProcessInterceptor {
         // is successful
         httpSession = getCurrentSession(false);
 
-        // If the session isn't new and doesn't carry authorization header, we validate it
-        if (validator != null && httpSession != null && !hasAuthorizationHeader) {
+        // If preferPersistentAuth and the session is alive we validate it
+        // (regardless of authorization-header existence)
+        if (validator != null && preferPersistentAuth && httpSession != null) {
             successful = executeSessionValidation(httpSession, preferPersistentAuth);
         } else {
             // If the session isn't new but carries authorization header, we invalidate it first
             if (validator != null && httpSession != null) {
                 httpSession.invalidate();
-                httpSession = getCurrentSession(true);
+                if (preferPersistentAuth) {
+                    httpSession = getCurrentSession(true);
+                }
             }
 
             // Authenticate the session
