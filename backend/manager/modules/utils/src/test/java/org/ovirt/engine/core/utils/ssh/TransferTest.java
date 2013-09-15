@@ -38,21 +38,11 @@ public class TransferTest {
         catch(NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        InputStream is = null;
-        try {
-            is = new FileInputStream(file);
+        try (InputStream is =  new FileInputStream(file)) {
             byte buffer[] = new byte[1024];
             int n;
             while ((n = is.read(buffer)) != -1) {
                 digest.update(buffer, 0, n);
-            }
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // ignore
-                }
             }
         }
         return digest.digest();
@@ -72,13 +62,13 @@ public class TransferTest {
         catch(NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        OutputStream os = new FileOutputStream(local1);
-        byte buffer[] = new byte[1000];
-        for (long i=0;i<TestCommon.largeTestFileSize / buffer.length;i++) {
-            random.nextBytes(buffer);
-            os.write(buffer);
+        try (OutputStream os = new FileOutputStream(local1)) {
+            byte buffer[] = new byte[1000];
+            for (long i=0;i<TestCommon.largeTestFileSize / buffer.length;i++) {
+                random.nextBytes(buffer);
+                os.write(buffer);
+            }
         }
-        os.close();
     }
 
     @AfterClass
