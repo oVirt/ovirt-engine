@@ -2,9 +2,11 @@ package org.ovirt.engine.core.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -148,10 +150,10 @@ public class LocalConfig {
         }
 
         // Load the file:
-        BufferedReader reader = null;
         int index = 0;
-        try {
-            reader = new BufferedReader(new FileReader(file));
+        try (
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")))
+        ) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 index++;
@@ -168,16 +170,6 @@ public class LocalConfig {
             );
             log.error(msg, e);
             throw new RuntimeException(msg, e);
-        }
-        finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                }
-                catch (IOException exception) {
-                    log.error("Can't close file \"" + file.getAbsolutePath() + "\".", exception);
-                }
-            }
         }
     }
 
