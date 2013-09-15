@@ -71,16 +71,15 @@ public class LocalConfig {
 
             // Locate the override values directory and add the .conf files inside
             // to the list, sorted alphabetically:
-            File varsDir = new File(varsPath + ".d");
-            if (varsDir.isDirectory()) {
-                File[] varsFiles = varsDir.listFiles(
-                    new FilenameFilter() {
-                        @Override
-                        public boolean accept(File parent, String name) {
-                            return name.endsWith(".conf");
-                        }
+            File[] varsFiles = new File(varsPath + ".d").listFiles(
+                new FilenameFilter() {
+                    @Override
+                    public boolean accept(File parent, String name) {
+                        return name.endsWith(".conf");
                     }
-                );
+                }
+            );
+            if (varsFiles != null) {
                 Arrays.sort(
                     varsFiles,
                     new Comparator<File>() {
