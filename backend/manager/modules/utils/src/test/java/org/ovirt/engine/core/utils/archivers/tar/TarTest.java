@@ -22,22 +22,14 @@ import static org.junit.Assume.assumeTrue;
 public class TarTest {
 
     private void _writeFile(File file, String content, boolean executable) throws IOException {
-        OutputStream os = null;
-        try {
-            file.getParentFile().mkdirs();
-            os = new FileOutputStream(file);
+        File f = file.getParentFile();
+        if (f == null) {
+            throw new IOException("File not found " + f);
+        }
+        f.mkdirs();
+        try (OutputStream os = new FileOutputStream(file)) {
             os.write(content.getBytes("UTF-8"));
             file.setExecutable(executable);
-        }
-        finally {
-            if (os != null) {
-                try {
-                    os.close();
-                }
-                catch (IOException e) {
-                    // ignore
-                }
-            }
         }
     }
 
