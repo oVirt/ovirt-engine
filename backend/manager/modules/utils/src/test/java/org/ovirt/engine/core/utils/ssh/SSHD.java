@@ -17,7 +17,7 @@ import org.apache.sshd.server.shell.ProcessShellFactory;
 
 public class SSHD {
 
-    class MyPasswordAuthenticator implements PasswordAuthenticator {
+    static class MyPasswordAuthenticator implements PasswordAuthenticator {
         String _user;
         String _password;
 
@@ -32,7 +32,7 @@ public class SSHD {
         }
     }
 
-    class MyPublickeyAuthenticator implements PublickeyAuthenticator {
+    static class MyPublickeyAuthenticator implements PublickeyAuthenticator {
         String _user;
         PublicKey _key;
 
@@ -47,7 +47,7 @@ public class SSHD {
         }
     }
 
-    class MyKeyPairProvider extends AbstractKeyPairProvider {
+    static class MyKeyPairProvider extends AbstractKeyPairProvider {
         KeyPair _keyPair;
 
         public MyKeyPairProvider(KeyPair keyPair) {
