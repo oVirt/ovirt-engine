@@ -74,7 +74,9 @@ public class TransferTest {
     @AfterClass
     public static void cleanUp() {
         if (local1 != null) {
-            local1.delete();
+            if (!local1.delete()) {
+                // void
+            }
             local1 = null;
         }
         TestCommon.terminate();
@@ -109,7 +111,9 @@ public class TransferTest {
             client = null;
         }
         if (local2 != null) {
-            local2.delete();
+            if (!local2.delete()) {
+                // void
+            }
             local2 = null;
         }
     }

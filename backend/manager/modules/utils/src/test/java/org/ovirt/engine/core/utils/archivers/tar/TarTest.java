@@ -26,7 +26,9 @@ public class TarTest {
         if (f == null) {
             throw new IOException("File not found " + f);
         }
-        f.mkdirs();
+        if (!f.mkdirs()) {
+            // void
+        }
         try (OutputStream os = new FileOutputStream(file)) {
             os.write(content.getBytes("UTF-8"));
             file.setExecutable(executable);
@@ -88,11 +90,19 @@ public class TarTest {
         try {
             tmpTar = File.createTempFile("test1", "tar");
             tmpDir1 = File.createTempFile("test1", "tmp");
-            tmpDir1.delete();
-            tmpDir1.mkdir();
+            if (!tmpDir1.delete()) {
+                throw new IOException("Cannot delete " + tmpDir1);
+            }
+            if (!tmpDir1.mkdir()) {
+                throw new IOException("Cannot create " + tmpDir1);
+            }
             tmpDir2 = File.createTempFile("test1", "tmp");
-            tmpDir2.delete();
-            tmpDir2.mkdir();
+            if (!tmpDir2.delete()) {
+                throw new IOException("Cannot delete " + tmpDir2);
+            }
+            if (!tmpDir2.mkdir()) {
+                throw new IOException("Cannot create " + tmpDir2);
+            }
 
             _writeFile(new File(tmpDir1, "script1"), "script1", true);
             _writeFile(new File(tmpDir1, "script2"), "script2", true);
@@ -131,7 +141,9 @@ public class TarTest {
         finally {
             for (File file : new File[] {tmpDir1, tmpDir2, tmpTar}) {
                 if (file != null) {
-                    file.delete();
+                    if (!file.delete()) {
+                        // void
+                    }
                 }
             }
         }
