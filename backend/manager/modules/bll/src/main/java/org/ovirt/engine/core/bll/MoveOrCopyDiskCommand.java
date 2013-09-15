@@ -63,7 +63,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (getImage() == null) {
             return null;
         }
-        Collection<VmTemplate> templates = getVmTemplateDAO().getAllForImage(getImage().getId()).values();
+        Collection<VmTemplate> templates = getVmTemplateDAO().getAllForImage(getImage().getImageId()).values();
         return !templates.isEmpty() ? templates.iterator().next() : null;
     }
 
