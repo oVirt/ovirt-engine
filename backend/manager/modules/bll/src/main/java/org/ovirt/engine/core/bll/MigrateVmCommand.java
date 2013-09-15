@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -191,15 +192,28 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             }
         }
 
-        // Find migration ip
         if (migrationNetwork != null) {
-            final List<VdsNetworkInterface> allInterfacesForDstVds =
-                    DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(getDestinationVds().getId());
 
-            for (VdsNetworkInterface nic : allInterfacesForDstVds) {
-                if (migrationNetwork.getName().equals(nic.getNetworkName())) {
-                    return nic.getAddress();
-                }
+            // assure migration network is active on source host
+            if (getMigrationNetworkAddress(getVds().getId(), migrationNetwork.getName()) == null) {
+                return null;
+            }
+
+            // find migration IP address on destination host
+            return getMigrationNetworkAddress(getDestinationVds().getId(), migrationNetwork.getName());
+        }
+
+        return null;
+    }
+
+    private String getMigrationNetworkAddress(Guid hostId, String migrationNetworkName) {
+        final List<VdsNetworkInterface> nics =
+                getDbFacade().getInterfaceDao().getAllInterfacesForVds(hostId);
+
+        for (VdsNetworkInterface nic : nics) {
+            if (nic.getStatistics().getStatus() == InterfaceStatus.UP
+                    && migrationNetworkName.equals(nic.getNetworkName())) {
+                return nic.getAddress();
             }
         }
 
