@@ -8,16 +8,13 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class ImportDiskData {
     ArrayList<StorageDomain> storageDomains;
     StorageDomain selectedStorageDomain;
     EntityModel collapseSnapshots;
     private ArrayList<StorageDomain> allStorageDomains;
-    VolumeType volumeType = VolumeType.Sparse;
+    VolumeType volumeType;
     VolumeType selectedVolumeType;
     Map<Guid, ArrayList<Quota>> storageQuotaList;
     Quota selectedQuota;
@@ -46,10 +43,10 @@ public class ImportDiskData {
     }
 
     public VolumeType getSelectedVolumeType() {
-        if ((Boolean) collapseSnapshots.getEntity() && selectedVolumeType != null) {
-            return selectedVolumeType;
+        if (!(Boolean) collapseSnapshots.getEntity()) {
+            return getVolumeType();
         }
-        return getVolumeType();
+        return selectedVolumeType;
     }
 
     public void setSelectedVolumeType(VolumeType selectedVolumeType) {
@@ -98,16 +95,14 @@ public class ImportDiskData {
 
     public void setVolumeType(VolumeType type) {
         volumeType = type;
+        setSelectedVolumeType(type);
     }
 
     public void setCollapseSnapshot(EntityModel collapseSnapshotsModel) {
+        if (!(Boolean) collapseSnapshotsModel.getEntity()) {
+            setSelectedVolumeType(getVolumeType());
+        }
         this.collapseSnapshots = collapseSnapshotsModel;
-        collapseSnapshots.getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                setVolumeType(VolumeType.Sparse);
-            }
-        });
     }
 
     public ArrayList<Quota> getQuotaList() {
