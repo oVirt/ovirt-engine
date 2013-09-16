@@ -50,8 +50,8 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             NetworkVdsmVDSCommandParameters parameters =
                     new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
                             network,
-                            NetworkUtils.GetVlanId(bond.getName()),
-                            NetworkUtils.StripVlan(getParameters().getBondName()),
+                            NetworkUtils.getVlanId(bond.getName()),
+                            NetworkUtils.stripVlan(getParameters().getBondName()),
                             interfaces.toArray(new String[] {}),
                             null,
                             null,

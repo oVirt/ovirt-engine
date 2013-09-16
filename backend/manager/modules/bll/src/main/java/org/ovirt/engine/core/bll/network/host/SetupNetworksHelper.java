@@ -99,7 +99,7 @@ public class SetupNetworksHelper {
      */
     private void validateInterfacesExist() {
         for (VdsNetworkInterface iface : params.getInterfaces()) {
-            String nameWithoutVlanId = NetworkUtils.StripVlan(iface.getName());
+            String nameWithoutVlanId = NetworkUtils.stripVlan(iface.getName());
             if (!getExistingIfaces().containsKey(nameWithoutVlanId) && !bonds.containsKey(nameWithoutVlanId)) {
                 addViolation(VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, nameWithoutVlanId);
             }
@@ -151,10 +151,10 @@ public class SetupNetworksHelper {
      * @return a list of attached networks to the given underlying interface
      */
     private List<Network> findNetworksOnInterface(VdsNetworkInterface iface) {
-        String nameWithoutVlanId = NetworkUtils.StripVlan(iface.getName());
+        String nameWithoutVlanId = NetworkUtils.stripVlan(iface.getName());
         List<Network> networks = new ArrayList<Network>();
         for (VdsNetworkInterface tmp : params.getInterfaces()) {
-            if (NetworkUtils.StripVlan(tmp.getName()).equals(nameWithoutVlanId) && tmp.getNetworkName() != null) {
+            if (NetworkUtils.stripVlan(tmp.getName()).equals(nameWithoutVlanId) && tmp.getNetworkName() != null) {
                 if (getExistingClusterNetworks().containsKey(tmp.getNetworkName())) {
                     networks.add(getExistingClusterNetworks().get(tmp.getNetworkName()));
                 }
@@ -358,7 +358,7 @@ public class SetupNetworksHelper {
      *            The type of the network.
      */
     private void validateNetworkExclusiveOnIface(VdsNetworkInterface iface, NetworkType networkType) {
-        String ifaceName = NetworkUtils.StripVlan(iface.getName());
+        String ifaceName = NetworkUtils.stripVlan(iface.getName());
         List<NetworkType> networksOnIface = ifacesWithExclusiveNetwork.get(ifaceName);
 
         if (networksOnIface == null) {

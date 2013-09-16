@@ -28,8 +28,8 @@ public class GetAllSiblingVlanInterfacesQuery<P extends InterfaceAndIdQueryParam
                 if (vdsInterfaces.get(i).getVlanId() != null
                         && !StringUtils.equals(getParameters().getInterface().getName(), vdsInterfaces.get(i)
                                 .getName())) {
-                    if (StringUtils.equals(NetworkUtils.StripVlan(getParameters().getInterface().getName()),
-                            NetworkUtils.StripVlan(vdsInterfaces.get(i).getName()))) {
+                    if (StringUtils.equals(NetworkUtils.stripVlan(getParameters().getInterface().getName()),
+                            NetworkUtils.stripVlan(vdsInterfaces.get(i).getName()))) {
                         retVal.add(vdsInterfaces.get(i));
                     }
                 }

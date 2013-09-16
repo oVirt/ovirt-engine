@@ -32,8 +32,8 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
     protected void executeCommand() {
         String bond = null;
         List<String> nics = new ArrayList<>();
-        nics.add(NetworkUtils.StripVlan(getParameters().getInterface().getName()));
-        Integer vlanId = NetworkUtils.GetVlanId(getParameters().getInterface().getName());
+        nics.add(NetworkUtils.stripVlan(getParameters().getInterface().getName()));
+        Integer vlanId = NetworkUtils.getVlanId(getParameters().getInterface().getName());
 
         // vlan with bond
         boolean isBond = getParameters().getInterface().getName().startsWith("bond")
@@ -45,14 +45,14 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         // check if bond...
         if (isBond) {
             nics.clear();
-            bond = NetworkUtils.StripVlan(getParameters().getInterface().getName());
+            bond = NetworkUtils.stripVlan(getParameters().getInterface().getName());
 
             List<VdsNetworkInterface> interfaces = getDbFacade()
                     .getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
             for (VdsNetworkInterface i : interfaces) {
                 if (StringUtils.equals(i.getBondName(), bond)) {
-                    nics.add(NetworkUtils.StripVlan(i.getName()));
+                    nics.add(NetworkUtils.stripVlan(i.getName()));
                 }
             }
         }

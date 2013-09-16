@@ -27,7 +27,7 @@ public final class NetworkUtils {
     // method return interface name without vlan:
     // input: eth0.5 output eth0
     // input" eth0 output eth0
-    public static String StripVlan(String name) {
+    public static String stripVlan(String name) {
         String[] tokens = name.split("[.]", -1);
         if (tokens.length == 1) {
             return name;
@@ -59,7 +59,7 @@ public final class NetworkUtils {
 
     // method return the vlan part of the interface name (if exists),
     // else - return null
-    public static Integer GetVlanId(String ifaceName) {
+    public static Integer getVlanId(String ifaceName) {
         String[] tokens = ifaceName.split("[.]", -1);
         if (tokens.length > 1) {
             Integer vlan = IntegerCompat.tryParse(tokens[tokens.length - 1]);
@@ -70,7 +70,7 @@ public final class NetworkUtils {
         return null;
     }
 
-    public static boolean IsBondVlan(List<VdsNetworkInterface> interfaces, VdsNetworkInterface iface) {
+    public static boolean isBondVlan(List<VdsNetworkInterface> interfaces, VdsNetworkInterface iface) {
         boolean retVal = false;
 
         if (iface.getVlanId() != null) {
@@ -99,7 +99,7 @@ public final class NetworkUtils {
      *         <code>false</code> otherwise.
      */
     public static boolean interfaceBasedOn(String proposedIface, String iface) {
-        return iface != null && proposedIface != null && iface.equals(StripVlan(proposedIface));
+        return iface != null && proposedIface != null && iface.equals(stripVlan(proposedIface));
     }
 
     public static boolean interfaceHasVlan(VdsNetworkInterface iface, List<VdsNetworkInterface> allIfaces) {

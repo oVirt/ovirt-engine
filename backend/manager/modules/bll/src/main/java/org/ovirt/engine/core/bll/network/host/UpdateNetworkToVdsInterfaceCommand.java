@@ -48,15 +48,15 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         String gateway = StringUtils.isEmpty(getParameters().getGateway()) ? "" : getParameters().getGateway();
         java.util.ArrayList<String> interfaceNames = new java.util.ArrayList<String>();
         for (VdsNetworkInterface i : getParameters().getInterfaces()) {
-            if (i.getBonded() != null && i.getBonded() || NetworkUtils.IsBondVlan(interfaces, i)) {
-                getParameters().setBondName(NetworkUtils.StripVlan(i.getName()));
+            if (i.getBonded() != null && i.getBonded() || NetworkUtils.isBondVlan(interfaces, i)) {
+                getParameters().setBondName(NetworkUtils.stripVlan(i.getName()));
                 for (VdsNetworkInterface ix : interfaces) {
                     if (NetworkUtils.interfaceBasedOn(i.getName(), ix.getBondName())) {
-                        interfaceNames.add(NetworkUtils.StripVlan(ix.getName()));
+                        interfaceNames.add(NetworkUtils.stripVlan(ix.getName()));
                     }
                 }
             } else {
-                interfaceNames.add(NetworkUtils.StripVlan(i.getName()));
+                interfaceNames.add(NetworkUtils.stripVlan(i.getName()));
             }
         }
 

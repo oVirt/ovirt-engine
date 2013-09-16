@@ -35,7 +35,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             Map<String, String> opts = new HashMap<String, String>();
             VdsNetworkInterface iface =
                     findNetworkInterface(network.getName(), getParameters().getInterfaces(), getParameters().getBonds());
-            String ifaceNameWithoutVlan = NetworkUtils.StripVlan(iface.getName());
+            String ifaceNameWithoutVlan = NetworkUtils.stripVlan(iface.getName());
             Boolean bonded = findInterfaceByName(ifaceNameWithoutVlan).getBonded();
             String type = (bonded != null && bonded) ? "bonding" : "nic";
             opts.put(type, ifaceNameWithoutVlan);
