@@ -102,7 +102,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
                     Window.Location.reload();
                 }
 
-                Frontend.setLoggedInUser(null);
+                Frontend.clearLoggedInUser();
                 getLoginModel().resetAfterLogout();
                 AsyncDataProvider.clearCache();
                 connectAutomaticallyManager.resetAlreadyOpened();

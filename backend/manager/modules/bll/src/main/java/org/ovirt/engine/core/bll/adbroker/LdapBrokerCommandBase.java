@@ -33,15 +33,19 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
     protected void initCredentials(String domain) {
         VdcUser curUser;
+        String curPassword;
+        SessionDataContainer sessionDataContainer = SessionDataContainer.getInstance();
         if (StringUtils.isEmpty(getParameters().getSessionId())) {
-            curUser = SessionDataContainer.getInstance().getUser(false);
+            curUser = sessionDataContainer.getUser(false);
+            curPassword = sessionDataContainer.getPassword();
         } else {
-            curUser = SessionDataContainer.getInstance().getUser(getParameters().getSessionId(), false);
+            curUser = sessionDataContainer.getUser(getParameters().getSessionId(), false);
+            curPassword = sessionDataContainer.getPassword(getParameters().getSessionId());
         }
         // verify that in auto login mode , user is not taken from session.
-        if (curUser != null && !StringUtils.isEmpty(curUser.getPassword())) {
+        if (curUser != null && !StringUtils.isEmpty(curPassword)) {
             setLoginName(curUser.getUserName());
-            setPassword(curUser.getPassword());
+            setPassword(curPassword);
             setAuthenticationDomain(curUser.getDomainControler());
         } else {
             Domain domainObject = UsersDomainsCacheManagerService.getInstance().getDomain(domain);

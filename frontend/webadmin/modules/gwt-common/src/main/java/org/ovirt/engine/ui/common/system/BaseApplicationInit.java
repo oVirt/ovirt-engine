@@ -100,9 +100,10 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
 
     protected void performLogin(T loginModel) {
         VdcUser loggedUser = loginModel.getLoggedUser();
+        String loginPassword = (String) loginModel.getPassword().getEntity();
 
         // UiCommon login preparation
-        Frontend.setLoggedInUser(loggedUser);
+        Frontend.initLoggedInUser(loggedUser, loginPassword);
         beforeUiCommonInitEvent(loginModel);
         UiCommonInitEvent.fire(eventBus);
 

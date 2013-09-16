@@ -189,6 +189,10 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             log.debugFormat("Checking if user {0} is an admin, result {1}", currentUser.getUserName(), isAdmin);
             currentUser.setAdmin(isAdmin);
             setCurrentUser(currentUser);
+
+            // Add the user password to the session, as it will be needed later
+            // when trying to log on to virtual machines:
+            SessionDataContainer.getInstance().setPassword(getUserPassword());
         }
         return authenticated;
     }

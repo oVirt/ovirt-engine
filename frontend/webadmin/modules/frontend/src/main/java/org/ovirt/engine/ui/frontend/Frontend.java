@@ -84,6 +84,7 @@ public class Frontend {
     private static VdcUser loggedUser;
     private static ErrorTranslator canDoActionErrorsTranslator = null;
     private static ErrorTranslator vdsmErrorsTranslator = null;
+    private static String loginPassword;
 
     static UIConstants constants = null;
     static final Map<String, QueryWrapper> currentRequests = new HashMap<String, Frontend.QueryWrapper>();
@@ -815,7 +816,7 @@ public class Frontend {
             @Override
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from Login."); //$NON-NLS-1$
-                setLoggedInUser(null);
+                clearLoggedInUser();
                 result.setCanDoActionMessages((ArrayList<String>) translateError(result));
                 callback.getDel().onSuccess(callback.getModel(), result);
                 if (getLoginHandler() != null && result.getSucceeded()) {
@@ -832,7 +833,7 @@ public class Frontend {
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
                 if (callback.isHandleFailure()) {
-                    setLoggedInUser(null);
+                    clearLoggedInUser();
                     callback.getDel().onSuccess(callback.getModel(), null);
                 }
             }
@@ -878,12 +879,21 @@ public class Frontend {
         return getLoggedInUser() != null;
     }
 
+    public static void initLoggedInUser(VdcUser loggedUser, String loginPassword) {
+        Frontend.loggedUser = loggedUser;
+        Frontend.loginPassword = loginPassword;
+    }
+
+    public static void clearLoggedInUser() {
+        initLoggedInUser(null, null);
+    }
+
     public static VdcUser getLoggedInUser() {
         return loggedUser;
     }
 
-    public static void setLoggedInUser(VdcUser loggedUser) {
-        Frontend.loggedUser = loggedUser;
+    public static String getLoginPassword() {
+        return loginPassword;
     }
 
     // TODO: Externalize to a better location, should support translation via

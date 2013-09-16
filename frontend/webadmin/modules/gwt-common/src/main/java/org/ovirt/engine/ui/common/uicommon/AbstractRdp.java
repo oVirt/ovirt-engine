@@ -31,8 +31,7 @@ public class AbstractRdp {
     }
 
     public String getVdcUserPassword() {
-        String password = Frontend.getLoggedInUser().getPassword();
-        return password == null ? "" : password;
+        return Frontend.getLoginPassword();
     }
 
     public String getVdcUserDomainController() {

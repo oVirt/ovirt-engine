@@ -17,6 +17,7 @@ public class SessionDataContainer {
             new ConcurrentHashMap<String, Map<String, Object>>();
 
     private static final String VDC_USER_PARAMETER_NAME = "VdcUser";
+    private static final String PASSWORD_PARAMETER_NAME = "password";
 
     private static SessionDataContainer dataProviderInstance = new SessionDataContainer();
 
@@ -207,5 +208,34 @@ public class SessionDataContainer {
     /** @return The user set in the current session */
     public VdcUser getUser(boolean refresh) {
         return (VdcUser) GetData(VDC_USER_PARAMETER_NAME, refresh);
+    }
+
+    /**
+     * Sets the password of the user for the current session.
+     *
+     * @param user the password of the user
+     */
+    public void setPassword(String password) {
+        SetData(PASSWORD_PARAMETER_NAME, password);
+    }
+
+    /**
+     * Returns the password of the current user stored in the session.
+     *
+     * @return an array of characters containing the password or
+     *     <code>null</code> if the password is not available
+     */
+    public String getPassword(String sessionId) {
+        return (String) GetData(sessionId, PASSWORD_PARAMETER_NAME, false);
+    }
+
+    /**
+     * Returns the password of the current user stored in the session.
+     *
+     * @return an array of characters containing the password or
+     *     <code>null</code> if the password is not available
+     */
+    public String getPassword() {
+        return (String) GetData(PASSWORD_PARAMETER_NAME, false);
     }
 }

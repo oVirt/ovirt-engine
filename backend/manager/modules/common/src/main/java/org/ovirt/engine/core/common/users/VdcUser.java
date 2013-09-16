@@ -10,7 +10,6 @@ public class VdcUser implements Serializable {
 
     private Guid mUserId;
     private String mUserName;
-    private String mPassword;
     private String mDomainControler;
     private String mGroupNames;
     private String groupIds;
@@ -34,7 +33,6 @@ public class VdcUser implements Serializable {
     public VdcUser(LdapUser ldapUser, boolean isAdmin) {
         mUserName = ldapUser.getUserName();
         mUserId = ldapUser.getUserId();
-        mPassword = ldapUser.getPassword();
         mDomainControler = ldapUser.getDomainControler();
         mGroupNames = ldapUser.getGroup();
         mFirstName = ldapUser.getName();
@@ -59,14 +57,6 @@ public class VdcUser implements Serializable {
 
     public void setUserName(String value) {
         mUserName = value;
-    }
-
-    public String getPassword() {
-        return mPassword;
-    }
-
-    public void setPassword(String value) {
-        mPassword = value;
     }
 
     public Guid getUserId() {

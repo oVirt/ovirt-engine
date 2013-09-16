@@ -95,7 +95,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         if (queryReturnValue != null) {
             VdcUser vdcUser = queryReturnValue.getReturnValue();
             if (vdcUser != null) {
-                principal = new Principal(vdcUser.getUserName(), vdcUser.getPassword(), vdcUser.getDomainControler());
+                principal = new Principal(vdcUser.getUserName(), null, vdcUser.getDomainControler());
                 sessionHelper.setSessionId(sessionId);
                 current.set(vdcUser);
             }
