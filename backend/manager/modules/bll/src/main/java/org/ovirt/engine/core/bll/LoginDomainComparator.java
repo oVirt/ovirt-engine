@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * Used to sort the login domain list on the login page. Business rule is sort alphabetically,
  * but put "internal" at the end.
  */
-public class LoginDomainComparator implements Comparator<String> {
+public class LoginDomainComparator implements Comparator<String>, Serializable {
+
+    private static final long serialVersionUID = -1679928871675563671L;
 
     private String internal;
 
