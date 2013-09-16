@@ -190,6 +190,7 @@
         <include name="common/osinfo/OsRepository.java"/>
         <include name="common/utils/SimpleDependecyInjector.java"/>
         <include name="common/utils/VersionStorageFormatUtil.java"/>
+        <include name="common/utils/ExternalId.java"/>
 
         <!-- Required by frontend -->
 		<include name="common/interfaces/SearchType.java" />

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dal.dbbroker;
 
 import java.lang.reflect.Method;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,6 +31,8 @@ public class CustomMapSqlParameterSource extends MapSqlParameterSource {
                 tmpValue = ((Guid) tmpValue).getUuid();
             } else if (tmpValue instanceof Version) {
                 tmpValue = value.toString();
+            } else if (tmpValue instanceof ExternalId) {
+                tmpValue = ((ExternalId) value).getBytes();
             }
         }
 
