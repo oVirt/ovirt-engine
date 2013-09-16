@@ -98,4 +98,32 @@
        <Method name="clone"/>
        <Bug code="CN"/>
      </Match>
+
+     <!--
+      findbugs complains that class does not override hasCode(), thus violating
+      the invariant that equal objects must have equal hashcodes.
+      Since this class is annonymous class which is only passed to contains()
+      method that invokes its equals() method, its hash code is never being used.
+
+      findbugs reason:
+      HE: Class defines equals() and uses Object.hashCode() (HE_EQUALS_USE_HASHCODE)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain$1" />
+       <Bug code="HE"/>
+     </Match>
+
+     <!--
+      findbugs complains that class does not override hasCode(), thus violating
+      the invariant that equal objects must have equal hashcodes.
+      Since this class is annonymous class which is only passed to contains()
+      method that invokes its equals() method, its hash code is never being used.
+
+      findbugs reason:
+      HE: Class defines equals() and uses Object.hashCode() (HE_EQUALS_USE_HASHCODE)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.memory.HibernationVolumesRemover$1" />
+       <Bug code="HE"/>
+     </Match>
 </FindBugsFilter>
