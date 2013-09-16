@@ -1,16 +1,24 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
+import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.dao.DataAccessException;
@@ -155,11 +163,57 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
         Map<String, Object> values = paramSource.getValues();
         for (Map.Entry<String, SqlCallParameter> paramOrderEntry : paramOrder.entrySet())
         {
+            DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
             String paramName = paramOrderEntry.getKey();
             Object value = values.get(paramName);
+            if (value == null && paramName.startsWith(DbFacade.getInstance().getDbEngineDialect().getParamNamePrefix())) {
+                value =
+                        values.get(paramName.substring(DbFacade.getInstance()
+                                .getDbEngineDialect()
+                                .getParamNamePrefix()
+                                .length()));
+            }
+
             SqlCallParameter sqlParam = paramOrderEntry.getValue();
+
+            if (value != null) {
+                if (value.getClass().isEnum()) {
+                    try {
+                        Method method = value.getClass().getMethod("getValue");
+                        if (method == null)
+                            method = value.getClass().getMethod("ordinal");
+                        value = method.invoke(value);
+                    } catch (Exception e) {
+                        log.error("Can't map Enum type " + value);
+                    }
+                }
+
+                if (value instanceof Guid) {
+                    value = value.toString();
+                }
+
+                if (sqlParam.getDataType() == Types.TIMESTAMP) {
+                    value = new Timestamp(((Date) value).getTime());
+                }
+
+                if (value instanceof Map) {
+                    value = SerializationFactory.getSerializer().serialize(value);
+                }
+            } else {
+                if (sqlParam.getDataType() == Types.BOOLEAN || sqlParam.getDataType() == Types.BIT) {
+                    value = false;
+                }
+            }
+
             int ordinal = sqlParam.getOrdinal();
-            stmt.setObject(ordinal, value);
+            try {
+                stmt.setObject(ordinal, value);
+            } catch (Exception e) {
+                log.error("Can't map " + value + " of type " + value.getClass().getName() + " to type "
+                        + sqlParam.getDataType()
+                        + " mapping to null value for parameter " + sqlParam.getName());
+                stmt.setObject(ordinal, null);
+            }
         }
 
         log.debugFormat("Mapped params %s", values.keySet());

@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistic
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
 
+//TODO: Split to 2 interfaces - one for statistics and one for interfaces. Both should extend MassOperation
 public interface InterfaceDao extends DAO {
     /**
      * Saves the specified statistics
@@ -51,6 +52,14 @@ public interface InterfaceDao extends DAO {
     void updateInterfaceForVds(VdsNetworkInterface iface);
 
     /**
+     * Updates the given collection of vds network interface using a more efficient method to update all of them at
+     * once, rather than each at a time.
+     * @param statistics
+     *            The collection of statistics to update.
+     */
+    void massUpdateInterfacesForVds(List<VdsNetworkInterface> dbIfacesToBatch);
+
+    /**
      * Retrieves all interfaces for the given VDS id.
      *
      * @param id
@@ -74,11 +83,11 @@ public interface InterfaceDao extends DAO {
 
     /**
      * Retrieves the management interface for the given VDS id with optional filtering.
-     *
      * @param id
      *            the VDS id
      * @param userID
-     *            the ID of the user requesting the information
+     *            //TODO: Split to 2 interfaces - one for statistics and one for interfaces. Both should extend MassOp
+     *            eration the ID of the user requesting the information
      * @param isFiltered
      *            Whether the results should be filtered according to the user's permissions
      * @return the VDS managed interfaces
