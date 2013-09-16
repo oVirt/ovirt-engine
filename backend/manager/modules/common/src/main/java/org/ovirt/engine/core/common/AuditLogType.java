@@ -793,6 +793,9 @@ public enum AuditLogType {
     USER_REMOVE_CLUSTER_POLICY(9914),
     USER_FAILED_TO_REMOVE_CLUSTER_POLICY(9915),
 
+    // external scheduler
+    FAILED_TO_CONNECT_TO_SCHEDULER_PROXY(9920),
+
     //trusted service
     VDS_UNTRUSTED(10000, AuditLogTimeInterval.MINUTE.getValue()),
     USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED(10001),

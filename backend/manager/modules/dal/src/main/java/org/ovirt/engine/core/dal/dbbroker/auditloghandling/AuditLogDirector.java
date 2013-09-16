@@ -845,6 +845,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_TO_REMOVE_CLUSTER_POLICY, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_UPDATE_CLUSTER_POLICY, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_TO_UPDATE_CLUSTER_POLICY, AuditLogSeverity.ERROR);
+
+        severities.put(AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY, AuditLogSeverity.ERROR);
     }
 
     private static void initMessages() {
