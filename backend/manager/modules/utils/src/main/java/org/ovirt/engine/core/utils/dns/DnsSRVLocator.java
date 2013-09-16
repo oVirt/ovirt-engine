@@ -381,11 +381,6 @@ public class DnsSRVLocator {
                 host = host.substring(0, host.length() - 1);
             }
             StringBuilder sb = new StringBuilder(host);
-            //Remove the "root DNS" part from the host name
-            //if exists as "." at the end of the host name
-            if (host.lastIndexOf(".") == host.length() -1) {
-                host = host.substring(0, host.length() - 1);
-            }
             sb.append(":").append(port);
             return new SrvRecord(priority, weight, sb.toString());
         } catch (InputMismatchException ex) {
