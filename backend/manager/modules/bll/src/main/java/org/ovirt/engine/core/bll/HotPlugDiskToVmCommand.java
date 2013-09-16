@@ -25,7 +25,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @LockIdNameAttribute
 public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends AbstractDiskVmCommand<T> {
 
-    protected Disk disk;
+    private Disk disk;
     private VmDevice oldVmDevice;
 
     public HotPlugDiskToVmCommand(T parameters) {
@@ -67,31 +67,27 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     }
 
     protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
-        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
-        return storageDomainValidator;
+        return new StorageDomainValidator(storageDomain);
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {
-        boolean returnValue = true;
         if (getVm().getStatus().isUpOrPaused()) {
             setVdsId(getVm().getRunOnVds());
-            returnValue =
-                    isHotPlugSupported() && isOsSupportingHotPlug()
-                            && isInterfaceSupportedForPlugUnPlug(disk);
-        }
-        if (returnValue) {
-            oldVmDevice =
-                    getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
-            if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
-            }
-            if (getPlugAction() == VDSCommandType.HotUnPlugDisk && !oldVmDevice.getIsPlugged()) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
+            if (!canPerformHotPlug() || !isInterfaceSupportedForPlugUnPlug(disk)) {
+                return false;
             }
         }
-        return returnValue;
+
+        oldVmDevice = getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
+        if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
+            return failCanDoAction(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
+        }
+
+        if (getPlugAction() == VDSCommandType.HotUnPlugDisk && !oldVmDevice.getIsPlugged()) {
+            return failCanDoAction(VdcBllMessages.HOT_UNPLUG_DISK_IS_NOT_PLUGGED);
+        }
+
+        return true;
     }
 
     protected VDSCommandType getPlugAction() {
@@ -128,7 +124,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED));
     }
 
     @Override
