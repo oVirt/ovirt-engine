@@ -7,10 +7,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.utils.log.Log;
@@ -27,7 +30,8 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
             updateDB(discoveryResult);
             log.info("PolicyUnits updated");
         } else {
-            log.warn("Discovery returned empty result, not updating policyunits");
+            AuditLogableBase loggable = new AuditLogableBase();
+            AuditLogDirector.log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
         }
     }
 
