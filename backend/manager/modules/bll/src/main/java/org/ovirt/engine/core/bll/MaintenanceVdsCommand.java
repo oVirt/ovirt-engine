@@ -60,7 +60,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             setSucceeded(true);
         } else {
             orderListOfRunningVmsOnVds(getVdsId());
-            setSucceeded(MigrateAllVms(getExecutionContext()));
+            setSucceeded(migrateAllVms(getExecutionContext()));
 
             // if non responsive move directly to maintenance
             if (getVds().getStatus() == VDSStatus.NonResponsive
@@ -91,14 +91,14 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method
      */
-    protected boolean MigrateAllVms(ExecutionContext parentContext) {
-        return MigrateAllVms(parentContext, false);
+    protected boolean migrateAllVms(ExecutionContext parentContext) {
+        return migrateAllVms(parentContext, false);
     }
 
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method
      */
-    protected boolean MigrateAllVms(ExecutionContext parentContext, boolean HAOnly) {
+    protected boolean migrateAllVms(ExecutionContext parentContext, boolean HAOnly) {
 
         boolean succeeded = true;
 
@@ -139,7 +139,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     @Override
     protected boolean canDoAction() {
-        return CanMaintenanceVds(getVdsId(), getReturnValue().getCanDoActionMessages());
+        return canMaintenanceVds(getVdsId(), getReturnValue().getCanDoActionMessages());
     }
 
     @Override
@@ -159,7 +159,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         }
     }
 
-    public boolean CanMaintenanceVds(Guid vdsId, java.util.ArrayList<String> reasons) {
+    public boolean canMaintenanceVds(Guid vdsId, java.util.ArrayList<String> reasons) {
         boolean returnValue = true;
         // VDS vds = ResourceManager.Instance.getVds(vdsId);
         VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
@@ -183,7 +183,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return returnValue;
     }
 
-    public static void ProcessStorageOnVdsInactive(final VDS vds) {
+    public static void processStorageOnVdsInactive(final VDS vds) {
 
         // Clear the problematic timers since the VDS is in maintenance so it doesn't make sense to check it
         // anymore.

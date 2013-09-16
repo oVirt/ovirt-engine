@@ -65,7 +65,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void vdsMovedToMaintenance(VDS vds) {
         try {
-            MaintenanceVdsCommand.ProcessStorageOnVdsInactive(vds);
+            MaintenanceVdsCommand.processStorageOnVdsInactive(vds);
         } finally {
             ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, true);
         }
