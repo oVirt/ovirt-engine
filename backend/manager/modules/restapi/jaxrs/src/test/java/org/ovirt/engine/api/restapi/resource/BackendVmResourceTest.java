@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
+import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
@@ -384,13 +385,28 @@ public class BackendVmResourceTest
 
     @Test
     public void testStart() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.RunVm,
+                                           RunVmParams.class,
+                                           new String[] { "VmId" },
+                                           new Object[] { GUIDS[0] }));
+
+        Response response = resource.start(new Action());
+        verifyActionResponse(response);
+        verifyActionModel(((Action) response.getEntity()).getVm(), 0);
+    }
+
+    @Test
+    public void testStartWithVm() throws Exception {
         setUpWindowsGetEntityExpectations(1, false);
+
         setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId" },
                                            new Object[] { GUIDS[0] }));
 
-        Response response = resource.start(new Action());
+        Action action = new Action();
+        action.setVm(new VM());
+        Response response = resource.start(action);
         verifyActionResponse(response);
         verifyActionModel(((Action) response.getEntity()).getVm(), 0);
     }

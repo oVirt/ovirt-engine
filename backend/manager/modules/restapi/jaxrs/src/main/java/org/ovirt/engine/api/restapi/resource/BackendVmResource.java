@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
+import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
@@ -221,23 +222,26 @@ public class BackendVmResource extends
 
     @Override
     public Response start(Action action) {
-        RunVmOnceParams params =
-                map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true),
-                        new VM()),
-                        new RunVmOnceParams(guid));
+        RunVmParams params;
+        VdcActionType actionType;
         if (action.isSetVm()) {
-            validateEnums(VM.class, action.getVm());
             VM vm = action.getVm();
-            params = map(vm, params);
+            validateEnums(VM.class, vm);
+            actionType = VdcActionType.RunVmOnce;
+            params = map(vm, map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true), new VM()),
+                                 new RunVmOnceParams(guid)));
             if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {
                 validateParameters(vm.getPlacementPolicy(), "host.id|name");
                 params.setDestinationVdsId(getHostId(vm.getPlacementPolicy().getHost()));
             }
+        } else {
+            actionType = VdcActionType.RunVm;
+            params = new RunVmParams(guid);
         }
         if (action.isSetPause() && action.isPause()) {
             params.setRunAndPause(true);
         }
-        return doAction(VdcActionType.RunVmOnce, params, action);
+        return doAction(actionType, params, action);
     }
 
     @Override
