@@ -32,7 +32,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     @Override
     protected boolean canDoAction() {
         String connectionId = getConnection().getid();
-        List<StorageDomain> domains = new ArrayList<>();
+        List<StorageDomain> domains = null;
         if (StringUtils.isEmpty(connectionId) ) {
            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
         }
