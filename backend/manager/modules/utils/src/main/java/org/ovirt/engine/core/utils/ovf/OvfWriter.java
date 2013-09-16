@@ -46,10 +46,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         if (version.compareTo(Version.v3_1) < 0) {
             diskAliasesMap = new HashMap<String, String>();
         }
-        WriteHeader();
+        writeHeader();
     }
 
-    private void WriteHeader() {
+    private void writeHeader() {
         _instanceId = 0;
         _writer.WriteStartDocument(false);
 
