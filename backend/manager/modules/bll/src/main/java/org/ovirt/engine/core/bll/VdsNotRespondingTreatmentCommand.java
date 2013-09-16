@@ -71,7 +71,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     @Override
-    protected void HandleError() {
+    protected void handleError() {
         MoveVMsToUnknown();
         // if fence failed on spm, move storage pool to non operational
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {

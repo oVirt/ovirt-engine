@@ -49,7 +49,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     }
 
     @Override
-    protected void HandleError() {
+    protected void handleError() {
         addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);

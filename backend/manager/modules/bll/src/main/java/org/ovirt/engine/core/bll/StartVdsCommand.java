@@ -43,7 +43,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
     }
 
     @Override
-    protected void HandleError() {
+    protected void handleError() {
         log.errorFormat("Failed to run StartVdsCommand on vds :{0}", getVdsName());
     }
 

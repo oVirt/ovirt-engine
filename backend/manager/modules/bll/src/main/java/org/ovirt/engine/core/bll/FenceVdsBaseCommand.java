@@ -135,12 +135,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             }
             // retry operation only when fence is enabled on Host.
             if (!retValue) {
-                HandleError();
+                handleError();
             }
         }
         else {
             addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED);
-            HandleError();
+            handleError();
         }
         getReturnValue().setSucceeded(retValue);
         return retValue;
@@ -484,7 +484,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         RunSleepOnReboot();
     }
 
-    protected void HandleError() {
+    protected void handleError() {
     }
 
     @Override
