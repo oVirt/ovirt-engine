@@ -47,7 +47,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
                 if (policyUnitImpl == null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
                 }
-                if (policyUnitImpl.getPolicyUnitType() != PolicyUnitType.Filter) {
+                if (policyUnitImpl.getPolicyUnit().getPolicyUnitType() != PolicyUnitType.Filter) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_FILTER_NOT_IMPLEMENTED);
                 }
             }
@@ -79,7 +79,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
                 if (policyUnitImpl == null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
                 }
-                if (policyUnitImpl.getPolicyUnitType() != PolicyUnitType.Weight) {
+                if (policyUnitImpl.getPolicyUnit().getPolicyUnitType() != PolicyUnitType.Weight) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_NOT_IMPLEMENTED);
                 }
                 if (functionPair.getSecond() < 0) {
@@ -93,7 +93,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
             if (policyUnitImpl == null) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
             }
-            if (policyUnitImpl.getPolicyUnitType() != PolicyUnitType.LoadBalancing) {
+            if (policyUnitImpl.getPolicyUnit().getPolicyUnitType() != PolicyUnitType.LoadBalancing) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_BALANCE_NOT_IMPLEMENTED);
             }
         }

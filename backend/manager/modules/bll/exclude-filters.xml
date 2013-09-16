@@ -77,25 +77,6 @@
        <Bug code="CN"/>
      </Match>
 
-     <!--
-      findbugs complains that class does not override equals(Object) even
-      though its parent does.
-      Since this error has been present in the codebase and previously
-      excluded as part of a wider filter, it's relatively safe to exclude
-      it now.
-
-      findbugs reason:
-      Eq: Class doesn't override equals in superclass (EQ_DOESNT_OVERRIDE_EQUALS)
-     -->
-     <Match>
-       <Class name="org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl" />
-       <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
-     </Match>
-     <Match>
-       <Class name="org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit" />
-       <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
-     </Match>
-
      <Match>
        <Class name="org.ovirt.engine.core.bll.utils.GlusterUtil" />
        <Or>

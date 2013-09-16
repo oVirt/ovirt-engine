@@ -36,7 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-public class PolicyUnitImpl extends PolicyUnit {
+public class PolicyUnitImpl {
     public static final int MaxSchedulerWeight = Config.<Integer> getValue(ConfigValues.MaxSchedulerWeight);;
 
     public static PolicyUnitImpl getPolicyUnitImpl(PolicyUnit policyUnit) {
@@ -118,7 +118,7 @@ public class PolicyUnitImpl extends PolicyUnit {
     }
 
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
-        log.error("policy unit:" + getName() + "filter is not implemented");
+        log.error("policy unit:" + getPolicyUnit().getName() + "filter is not implemented");
         return hosts;
     }
 
@@ -135,79 +135,8 @@ public class PolicyUnitImpl extends PolicyUnit {
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
-        log.error("policy unit:" + getName() + "balance is not implemented");
+        log.error("policy unit:" + getPolicyUnit().getName() + "balance is not implemented");
         return null;
-    }
-
-    @Override
-    public final Guid getId() {
-        return policyUnit.getId();
-    }
-
-    @Override
-    public final void setId(Guid id) {
-        policyUnit.setId(id);
-    }
-
-    @Override
-    public final String getName() {
-        return policyUnit.getName();
-    }
-
-    @Override
-    public final void setName(String name) {
-        policyUnit.setName(name);
-    }
-
-    @Override
-    public String getDescription() {
-        return policyUnit.getDescription();
-    }
-
-    @Override
-    public void setDescription(String description) {
-        policyUnit.setDescription(description);
-    }
-
-    @Override
-    public final boolean isInternal() {
-        return policyUnit.isInternal();
-    }
-
-    @Override
-    public final void setInternal(boolean internal) {
-        policyUnit.setInternal(internal);
-    }
-
-    @Override
-    public PolicyUnitType getPolicyUnitType() {
-        return policyUnit.getPolicyUnitType();
-    }
-
-    @Override
-    public void setPolicyUnitType(PolicyUnitType policyUnitType) {
-        policyUnit.setPolicyUnitType(policyUnitType);
-    }
-
-    @Override
-    public final Map<String, String> getParameterRegExMap() {
-        return policyUnit.getParameterRegExMap();
-    }
-
-    @Override
-    public final void setParameterRegExMap(Map<String, String> parameterRegExMap) {
-        policyUnit.setParameterRegExMap(parameterRegExMap);
-    }
-
-    @Override
-    public final boolean isEnabled() {
-        return policyUnit.isEnabled();
-    }
-
-    @Override
-    public final void setEnabled(boolean enabled) {
-        // TODO Auto-generated method stub
-        policyUnit.setEnabled(enabled);
     }
 
     public final PolicyUnit getPolicyUnit() {
