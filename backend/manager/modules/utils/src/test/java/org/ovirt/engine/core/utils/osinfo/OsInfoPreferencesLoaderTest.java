@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.osinfo;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 import org.junit.Assert;
@@ -10,8 +11,8 @@ import org.junit.Test;
 public class OsInfoPreferencesLoaderTest {
 
     @BeforeClass
-    public static void init() {
-        Path directoryPath = new File(OsInfoPreferencesLoader.class.getResource("/osinfo.conf.d").getPath()).toPath();
+    public static void init() throws URISyntaxException {
+        Path directoryPath = new File(OsInfoPreferencesLoader.class.getResource("/osinfo.conf.d").toURI().getPath()).toPath();
         OsInfoPreferencesLoader.INSTANCE.init(directoryPath);
     }
     @Test

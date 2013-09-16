@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +27,7 @@ public class BrandingManagerTest {
     @Before
     public void setUp() throws Exception {
         File etcDir = new File(this.getClass().getClassLoader().
-                getResource("./org/ovirt/engine/core/utils").getFile()); //$NON-NLS-1$
+                getResource("./org/ovirt/engine/core/utils").toURI().getPath()); //$NON-NLS-1$
         testManager = new BrandingManager(etcDir);
     }
 
@@ -67,10 +68,9 @@ public class BrandingManagerTest {
     }
 
     @Test
-    public void testGetBrandingRootPath() {
+    public void testGetBrandingRootPath() throws URISyntaxException {
         String rootPath = this.getClass().getClassLoader().
-            getResource("./org/ovirt/engine/core/utils/") //$NON-NLS-1$
-            .getFile() + "/branding"; //$NON-NLS-1$
+            getResource("./org/ovirt/engine/core/utils/").toURI().getPath() + "/branding"; //$NON-NLS-1$ //$NON-NLS-2$
         assertEquals("Root paths don't match", new File(rootPath), testManager.getBrandingRootPath()); //$NON-NLS-1$
     }
 

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -25,8 +26,7 @@ public class BrandingThemeTest {
     @Before
     public void setUp() throws Exception {
         File testThemeRootPath = new File(this.getClass().getClassLoader().
-            getResource("./org/ovirt/engine/core/utils/branding") //$NON-NLS-1$
-            .getFile());
+            getResource("./org/ovirt/engine/core/utils/branding").toURI().getPath()); //$NON-NLS-1$
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "01-test.brand"); //$NON-NLS-1$
         testTheme = new BrandingTheme(testThemePath.getAbsolutePath(),
                 testThemeRootPath, 1);
@@ -76,10 +76,10 @@ public class BrandingThemeTest {
     }
 
     @Test
-    public void testGetCascadingResource_missingResourcesFile() {
+    public void testGetCascadingResource_missingResourcesFile() throws URISyntaxException {
         File testThemeRootPath = new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/utils/branding") //$NON-NLS-1$
-                .getFile());
+                .toURI().getPath());
         // theme 4 is purposely missing a resources.properties file
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "04-test4.brand"); //$NON-NLS-1$
         BrandingTheme theme4 = new BrandingTheme(testThemePath.getAbsolutePath(),
@@ -91,10 +91,10 @@ public class BrandingThemeTest {
     }
 
     @Test
-    public void testGetCascadingResource_missingResourcesProperty() {
+    public void testGetCascadingResource_missingResourcesProperty() throws URISyntaxException {
         File testThemeRootPath = new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/utils/branding") //$NON-NLS-1$
-                .getFile());
+                .toURI().getPath());
         // theme 5 is purposely missing a resources key in branding.properties
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "05-test5.brand"); //$NON-NLS-1$
         BrandingTheme theme5 = new BrandingTheme(testThemePath.getAbsolutePath(),

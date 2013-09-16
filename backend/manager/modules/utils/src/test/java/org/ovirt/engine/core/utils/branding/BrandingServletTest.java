@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -53,7 +54,7 @@ public class BrandingServletTest {
         when(mockResponse.getOutputStream()).thenReturn(mockResponseOutputStream);
         testFile = new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/utils/branding/BrandingServletTest.class") //$NON-NLS-1$
-                .getFile());
+                .toURI().getPath());
     }
 
     @Test
@@ -71,11 +72,11 @@ public class BrandingServletTest {
     }
 
     @Test
-    public void testDoGet_ExistingFile() throws IOException, ServletException {
+    public void testDoGet_ExistingFile() throws IOException, ServletException, URISyntaxException {
         when(mockRequest.getPathInfo())
             .thenReturn("/org/ovirt/engine/core/utils/branding/BrandingServletTest.class"); //$NON-NLS-1$
         when(mockFile.getAbsolutePath()).thenReturn(this.getClass().getClassLoader().
-                getResource(".").getFile()); //$NON-NLS-1$
+                getResource(".").toURI().getPath()); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).setHeader(eq("ETag"), anyString()); //$NON-NLS-1$
     }

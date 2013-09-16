@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -57,19 +58,20 @@ public class BrandingCascadingResourceServletTest {
      * Test that serving works when the request is "/favicon".
      * @throws IOException
      * @throws ServletException
+     * @throws URISyntaxException
      */
     @Test
-    public void testDoGet_ServeFavicon() throws IOException, ServletException {
+    public void testDoGet_ServeFavicon() throws IOException, ServletException, URISyntaxException {
         when(mockBrandingManager.getBrandingRootPath()).thenReturn(
                 new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/utils/branding") //$NON-NLS-1$
-                .getFile()));
+                .toURI().getPath()));
 
         when(mockBrandingManager.getCascadingResource("favicon")).thenReturn(mockCascadingResource); //$NON-NLS-1$
         when(mockCascadingResource.getFile()).thenReturn(
                 new File(this.getClass().getClassLoader().
                         getResource("./org/ovirt/engine/core/utils/branding/02-test2.brand/images/favicon.ico") //$NON-NLS-1$
-                        .getFile()));
+                        .toURI().getPath()));
         when(mockCascadingResource.getContentType()).thenReturn("madeUp/ContentType"); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).setHeader(eq("ETag"), anyString()); //$NON-NLS-1$
@@ -80,13 +82,14 @@ public class BrandingCascadingResourceServletTest {
      * Test that a 404 is served when no resources are available.
      * @throws IOException
      * @throws ServletException
+     * @throws URISyntaxException
      */
     @Test
-    public void testDoGet_ServeFaviconNotFound() throws IOException, ServletException {
+    public void testDoGet_ServeFaviconNotFound() throws IOException, ServletException, URISyntaxException {
         when(mockBrandingManager.getBrandingRootPath()).thenReturn(
                 new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core/utils/branding") //$NON-NLS-1$
-                .getFile()));
+                .toURI().getPath()));
         when(mockBrandingManager.getCascadingResource("favicon")).thenReturn(null); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
