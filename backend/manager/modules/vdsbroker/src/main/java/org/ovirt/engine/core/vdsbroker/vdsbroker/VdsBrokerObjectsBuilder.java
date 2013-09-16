@@ -981,12 +981,19 @@ public class VdsBrokerObjectsBuilder {
      *            The host in which the network is defined
      */
     private static void reportInvalidInterfacesForNetwork(List<VdsNetworkInterface> interfaces, Network network, VDS vds) {
-        if (interfaces.size() != 1) {
-            AuditLogableBase logable = new AuditLogableBase(vds.getId());
-            logable.addCustomValue("NetworkName", network.getName());
+        if (interfaces.isEmpty()) {
+            AuditLogDirector.log(createHostNetworkAuditLog(network, vds), AuditLogType.NETWORK_WITHOUT_INTERFACES);
+        } else if (interfaces.size() > 1) {
+            AuditLogableBase logable = createHostNetworkAuditLog(network, vds);
             logable.addCustomValue("Interfaces", StringUtils.join(Entities.objectNames(interfaces), ","));
             AuditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
         }
+    }
+
+    protected static AuditLogableBase createHostNetworkAuditLog(Network network, VDS vds) {
+        AuditLogableBase logable = new AuditLogableBase(vds.getId());
+        logable.addCustomValue("NetworkName", network.getName());
+        return logable;
     }
 
     private static List<VdsNetworkInterface> findNetworkInterfaces(VDS vds,

@@ -802,6 +802,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.UPDATE_VNIC_PROFILE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.REMOVE_VNIC_PROFILE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.REMOVE_VNIC_PROFILE_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.NETWORK_WITHOUT_INTERFACES, AuditLogSeverity.WARNING);
     }
 
     private static void initExtrnalEvents() {
