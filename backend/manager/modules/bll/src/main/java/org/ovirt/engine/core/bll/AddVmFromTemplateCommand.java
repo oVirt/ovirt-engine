@@ -76,7 +76,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 log.error("Cannot add images. VM is not Down");
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
-            VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
+            VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
             for (DiskImage disk : getVmTemplate().getDiskTemplateMap().values()) {
                 VdcReturnValueBase result = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateCloneOfTemplate,

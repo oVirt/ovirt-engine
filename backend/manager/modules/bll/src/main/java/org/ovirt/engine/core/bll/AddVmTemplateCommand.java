@@ -179,7 +179,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
 
-            VmHandler.LockVm(vmDynamic, getCompensationContext());
+            VmHandler.lockVm(vmDynamic, getCompensationContext());
         }
         setActionReturnValue(Guid.Empty);
         setVmTemplateId(Guid.newGuid());
@@ -500,7 +500,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private void endUnlockOps() {
         if (isVmInDb) {
-            VmHandler.UnLockVm(getVm());
+            VmHandler.unLockVm(getVm());
         }
         VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
     }
@@ -531,7 +531,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (!getVmId().equals(Guid.Empty) && getVm() != null) {
-            VmHandler.UnLockVm(getVm());
+            VmHandler.unLockVm(getVm());
         }
 
         setSucceeded(true);

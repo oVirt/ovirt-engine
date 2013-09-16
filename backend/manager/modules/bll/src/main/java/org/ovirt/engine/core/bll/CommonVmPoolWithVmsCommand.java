@@ -252,7 +252,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     protected boolean verifyAddVM() {
-        return VmHandler.VerifyAddVm
+        return VmHandler.verifyAddVm
                 (getReturnValue().getCanDoActionMessages(),
                         getParameters().getVmsCount()
                                 * getVmNicDao().getAllForTemplate(getVmTemplateId()).size(),

@@ -159,7 +159,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             return;
         }
 
-        VmHandler.LockVm(vm.getDynamicData(), getCompensationContext());
+        VmHandler.lockVm(vm.getDynamicData(), getCompensationContext());
         moveOrCopyAllImageGroups();
 
         setSucceeded(true);
@@ -198,7 +198,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         endActionOnAllImageGroups();
 
         if (vmExists) {
-            VmHandler.UnLockVm(getVm());
+            VmHandler.unLockVm(getVm());
 
             VmHandler.updateDisksFromDb(getVm());
         }

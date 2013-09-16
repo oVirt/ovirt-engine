@@ -22,7 +22,7 @@ public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesComman
 
     protected void updateVMDetails(VM vm) {
         VmHandler.updateDisksFromDb(vm);
-        VmHandler.UpdateVmGuestAgentVersion(vm);
+        VmHandler.updateVmGuestAgentVersion(vm);
         VmHandler.updateNetworkInterfacesFromDb(vm);
     }
 }

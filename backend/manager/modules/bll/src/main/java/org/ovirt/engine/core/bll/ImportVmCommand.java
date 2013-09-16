@@ -640,7 +640,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 updateSnapshotsFromExport();
                 moveOrCopyAllImageGroups();
                 VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
-                VmHandler.LockVm(getVm().getId());
+                VmHandler.lockVm(getVm().getId());
                 if (getParameters().isImportAsNewEntity()) {
                     getParameters().setVm(getVm());
                     setVmId(getVm().getId());
@@ -1141,7 +1141,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     private void endVmRelatedOps() {
         setVm(null);
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm());
+            VmHandler.unLockVm(getVm());
         }
 
         else {

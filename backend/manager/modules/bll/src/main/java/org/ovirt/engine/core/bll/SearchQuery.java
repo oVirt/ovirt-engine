@@ -141,7 +141,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         } else {
             returnValue = getDbFacade().getVmDao().getAllUsingQuery(data.getQuery());
             for (VM vm : returnValue) {
-                VmHandler.UpdateVmGuestAgentVersion(vm);
+                VmHandler.updateVmGuestAgentVersion(vm);
             }
         }
         return returnValue;

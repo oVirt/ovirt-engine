@@ -522,7 +522,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean verifyAddVM(List<String> reasons, int vmPriority) {
-        return VmHandler.VerifyAddVm(reasons,
+        return VmHandler.verifyAddVm(reasons,
                 getVmInterfaces().size(),
                 vmPriority);
     }
@@ -706,7 +706,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 log.error("Cannot add images. VM is not Down");
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
-            VmHandler.LockVm(getVmId());
+            VmHandler.lockVm(getVmId());
             for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
                         dit.getImageId(), getParameters().getVmStaticData().getId());

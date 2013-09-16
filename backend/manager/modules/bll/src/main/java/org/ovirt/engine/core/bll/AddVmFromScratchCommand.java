@@ -122,7 +122,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                 }
             }
 
-            VmHandler.LockVm(getParameters().getVmStaticData().getId());
+            VmHandler.lockVm(getParameters().getVmStaticData().getId());
         } else {
             // if no disks send update vm here
             getVmStaticDao().incrementDbGeneration(getVm().getId());

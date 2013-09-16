@@ -45,7 +45,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
     protected void perform() {
         log.infoFormat("Entered (VM {0}).", getVm().getName());
 
-        VmHandler.UpdateVmGuestAgentVersion(getVm());
+        VmHandler.updateVmGuestAgentVersion(getVm());
 
         if (canShutdownVm()) {
             // shutting down desktop and waiting for it in a separate thread to

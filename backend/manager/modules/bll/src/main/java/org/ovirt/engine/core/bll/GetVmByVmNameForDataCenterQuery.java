@@ -26,7 +26,7 @@ public class GetVmByVmNameForDataCenterQuery<P extends GetVmByVmNameForDataCente
 
     protected void updateVMDetails(VM vm) {
         VmHandler.updateDisksFromDb(vm);
-        VmHandler.UpdateVmGuestAgentVersion(vm);
+        VmHandler.updateVmGuestAgentVersion(vm);
         VmHandler.updateNetworkInterfacesFromDb(vm);
     }
 }

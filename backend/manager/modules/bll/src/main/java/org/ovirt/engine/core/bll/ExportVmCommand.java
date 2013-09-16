@@ -207,7 +207,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     @Override
     protected void executeCommand() {
-        VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
+        VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
         freeLock();
 
         // Means that there are no asynchronous tasks to execute - so we can end the command
@@ -508,7 +508,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     protected void endSuccessfully() {
         endActionOnAllImageGroups();
         VM vm = getVm();
-        VmHandler.UnLockVm(vm);
+        VmHandler.unLockVm(vm);
         endDiskRelatedActions(vm);
         if (getParameters().getCopyCollapse()) {
             endCopyCollapseOperations(vm);
@@ -541,7 +541,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     protected void endSuccessfullySynchronous() {
         VM vm = getVm();
-        VmHandler.UnLockVm(vm);
+        VmHandler.unLockVm(vm);
         this.updateSnapshotOvf(vm);
         setSucceeded(true);
     }
@@ -556,7 +556,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     protected void endWithFailure() {
         endActionOnAllImageGroups();
         VM vm = getVm();
-        VmHandler.UnLockVm(vm);
+        VmHandler.unLockVm(vm);
         VmHandler.updateDisksFromDb(vm);
         setSucceeded(true);
     }

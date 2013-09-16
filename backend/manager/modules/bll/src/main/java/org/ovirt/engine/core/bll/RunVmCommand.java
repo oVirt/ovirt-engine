@@ -230,7 +230,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVdsToRunOn()) {
             VMStatus status = null;
             try {
-                VmHandler.UpdateVmGuestAgentVersion(getVm());
+                VmHandler.updateVmGuestAgentVersion(getVm());
                 incrementVdsPendingVmsCount();
                 if (connectLunDisks(getVdsId())) {
                     status = createVm();
@@ -671,7 +671,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
             getRunVdssList().add(vdsToRunOn);
         }
-        VmHandler.UpdateVmGuestAgentVersion(getVm());
+        VmHandler.updateVmGuestAgentVersion(getVm());
         setVds(null);
         setVdsName(null);
         if (getVdsId().equals(Guid.Empty)) {

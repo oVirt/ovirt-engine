@@ -143,7 +143,7 @@ public class VmHandlerTest {
 //    public void UpdateVmGuestAgentVersionWithNullAppList() {
 //        VM vm = new VM();
 //        vm.setapp_list(null);
-//        VmHandler.UpdateVmGuestAgentVersion(vm);
+//        VmHandler.updateVmGuestAgentVersion(vm);
 //        Assert.assertNull(vm.getGuestAgentVersion());
 //        Assert.assertNull(vm.getSpiceDriverVersion());
 //    }
@@ -159,7 +159,7 @@ public class VmHandlerTest {
 //        VM vm = new VM();
 //        vm.getStaticData().setos(VmOsType.OtherLinux);
 //        vm.setapp_list("kernel-3.0,ovirt-agent-4.5.6,xorg-x11-drv-qxl-0.0.21-3.fc15.i686");
-//        VmHandler.UpdateVmGuestAgentVersion(vm);
+//        VmHandler.updateVmGuestAgentVersion(vm);
 //        Assert.assertNotNull(vm.getGuestAgentVersion());
 //        Assert.assertNotNull(vm.getSpiceDriverVersion());
 //    }
@@ -232,6 +232,6 @@ public class VmHandlerTest {
 //        when(backendMock.getResourceManager()).thenReturn(resourceManagerMock);
 //        when(resourceManagerMock.RunVdsCommand(any(VDSCommandType.class), any(IrsBaseVDSCommandParameters.class))).thenReturn(returnValue);
 //
-//        assertFalse(VmHandler.VerifyAddVm(new ArrayList<String>(), 0, null, Guid.NewGuid(), 0));
+//        assertFalse(VmHandler.verifyAddVm(new ArrayList<String>(), 0, null, Guid.NewGuid(), 0));
 //    }
 //}

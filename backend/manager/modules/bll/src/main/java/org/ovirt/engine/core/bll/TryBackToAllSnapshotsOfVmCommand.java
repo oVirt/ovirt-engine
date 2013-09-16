@@ -157,7 +157,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         });
 
         if (!images.isEmpty()) {
-            VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
+            VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
             freeLock();
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override

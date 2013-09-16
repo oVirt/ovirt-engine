@@ -71,7 +71,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     @Override
     protected void executeVmCommand() {
         if (getVm().getStatus() != VMStatus.ImageLocked) {
-            VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
+            VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
         }
         freeLock();
         setSucceeded(removeVm());

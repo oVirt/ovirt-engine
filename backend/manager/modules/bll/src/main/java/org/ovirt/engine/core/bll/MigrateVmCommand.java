@@ -98,7 +98,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
             getRunVdssList().add(vdsToRunOn);
         }
-        VmHandler.UpdateVmGuestAgentVersion(getVm());
+        VmHandler.updateVmGuestAgentVersion(getVm());
         // make _destinationVds null in order to refresh it from db in case it
         // changed.
         _destinationVds = null;

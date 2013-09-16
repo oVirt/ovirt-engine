@@ -15,7 +15,7 @@ public class GetAllVmsQuery<P extends VdcQueryParametersBase> extends QueriesCom
         List<VM> vmsList = getDbFacade()
                 .getVmDao().getAll(getUserID(), getParameters().isFiltered());
         for (VM vm : vmsList) {
-            VmHandler.UpdateVmGuestAgentVersion(vm);
+            VmHandler.updateVmGuestAgentVersion(vm);
         }
         getQueryReturnValue().setReturnValue(vmsList);
     }

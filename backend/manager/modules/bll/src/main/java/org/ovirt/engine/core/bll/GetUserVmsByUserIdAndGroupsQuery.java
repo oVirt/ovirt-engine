@@ -36,7 +36,7 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
     }
 
     protected void updateVmGuestAgentVersion(VM vm) {
-        VmHandler.UpdateVmGuestAgentVersion(vm);
+        VmHandler.updateVmGuestAgentVersion(vm);
     }
 
 }

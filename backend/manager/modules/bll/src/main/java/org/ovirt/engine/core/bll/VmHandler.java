@@ -125,9 +125,9 @@ public class VmHandler {
      *            How many vNICs need to be allocated.
      * @return
      */
-    public static boolean VerifyAddVm(List<String> reasons,
-            int nicsCount,
-            int vmPriority) {
+    public static boolean verifyAddVm(List<String> reasons,
+                                      int nicsCount,
+                                      int vmPriority) {
         boolean returnValue = true;
         if (MacPoolManager.getInstance().getAvailableMacsCount() < nicsCount) {
             if (reasons != null) {
@@ -145,10 +145,6 @@ public class VmHandler {
         return (vmStatic.size() != 0);
     }
 
-    public static void QueueAndLockVm(Guid vmId) {
-        LockVm(vmId);
-    }
-
     /**
      * Lock the VM in a new transaction, saving compensation data of the old status.
      *
@@ -157,13 +153,13 @@ public class VmHandler {
      * @param compensationContext
      *            Used to save the old VM status, for compensation purposes.
      */
-    public static void LockVm(final VmDynamic vm, final CompensationContext compensationContext) {
+    public static void lockVm(final VmDynamic vm, final CompensationContext compensationContext) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
             public Void runInTransaction() {
                 compensationContext.snapshotEntityStatus(vm);
-                LockVm(vm.getId());
+                lockVm(vm.getId());
                 compensationContext.stateChanged();
                 return null;
             }
@@ -192,7 +188,7 @@ public class VmHandler {
     public static void checkStatusAndLockVm(Guid vmId) {
         VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
         checkStatusBeforeLock(vmDynamic.getStatus());
-        LockVm(vmId);
+        lockVm(vmId);
     }
 
     /**
@@ -206,10 +202,10 @@ public class VmHandler {
     public static void checkStatusAndLockVm(Guid vmId, CompensationContext compensationContext) {
         VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
         checkStatusBeforeLock(vmDynamic.getStatus());
-        LockVm(vmDynamic, compensationContext);
+        lockVm(vmDynamic, compensationContext);
     }
 
-    public static void LockVm(Guid vmId) {
+    public static void lockVm(Guid vmId) {
         Backend.getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVmStatus,
@@ -230,26 +226,19 @@ public class VmHandler {
             @Override
             public Void runInTransaction() {
                 compensationContext.snapshotEntityStatus(vm.getDynamicData());
-                UnLockVm(vm);
+                unLockVm(vm);
                 compensationContext.stateChanged();
                 return null;
             }
         });
     }
 
-    public static void UnLockVm(VM vm) {
+    public static void unLockVm(VM vm) {
         Backend.getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVmStatus,
                         new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
         vm.setStatus(VMStatus.Down);
-    }
-
-    public static void MarkVmAsIllegal(Guid vmId) {
-        Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVmStatus,
-                        new SetVmStatusVDSCommandParameters(vmId, VMStatus.ImageIllegal));
     }
 
     public static void updateDisksFromDb(VM vm) {
@@ -278,7 +267,7 @@ public class VmHandler {
         vm.setInterfaces(interfaces);
     }
 
-    private static Version GetApplicationVersion(final String part, final String appName) {
+    private static Version getApplicationVersion(final String part, final String appName) {
         try {
             return new RpmVersion(part, getAppName(part, appName), true);
         } catch (Exception e) {
@@ -305,7 +294,7 @@ public class VmHandler {
      * @param vm
      *            the VM
      */
-    public static void UpdateVmGuestAgentVersion(final VM vm) {
+    public static void updateVmGuestAgentVersion(final VM vm) {
         if (vm.getAppList() != null) {
             final String[] parts = vm.getAppList().split("[,]", -1);
             if (parts != null && parts.length != 0) {
@@ -318,10 +307,10 @@ public class VmHandler {
                 for (final String part : parts) {
                     for (String agentName : possibleAgentAppNames) {
                         if (StringUtils.containsIgnoreCase(part, agentName)) {
-                            vm.setGuestAgentVersion(GetApplicationVersion(part, agentName));
+                            vm.setGuestAgentVersion(getApplicationVersion(part, agentName));
                         }
                         if (StringUtils.containsIgnoreCase(part, spiceDriverInGuest)) {
-                            vm.setSpiceDriverVersion(GetApplicationVersion(part, spiceDriverInGuest));
+                            vm.setSpiceDriverVersion(getApplicationVersion(part, spiceDriverInGuest));
                         }
                     }
                 }
