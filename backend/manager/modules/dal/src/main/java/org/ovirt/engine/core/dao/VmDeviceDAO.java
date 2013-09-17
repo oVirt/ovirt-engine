@@ -61,4 +61,5 @@ public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOpera
      */
     void updateHotPlugDisk(VmDevice vmDevice);
 
+    void updateBootOrder(VmDevice vmDevice);
 }

@@ -100,20 +100,33 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION UpdateVmDeviceForHotPlugDisk(
     v_device_id UUID,
     v_vm_id UUID,
-    v_boot_order int,
     v_is_plugged boolean)
 RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE vm_device
     SET
-           boot_order = v_boot_order,
            is_plugged = v_is_plugged,
            _update_date = current_timestamp
     WHERE  device_id = v_device_id and vm_id = v_vm_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION UpdateVmDeviceBootOrder(
+    v_device_id UUID,
+    v_vm_id UUID,
+    v_boot_order int)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE vm_device
+    SET
+           boot_order = v_boot_order,
+           _update_date = current_timestamp
+    WHERE  device_id = v_device_id and vm_id = v_vm_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION DeleteVmDevice(v_device_id UUID, v_vm_id UUID)
