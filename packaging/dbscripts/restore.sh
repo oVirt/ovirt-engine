@@ -13,24 +13,25 @@ source ./dbcustomfunctions.sh
 set_defaults
 
 usage() {
-	printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] -u USERNAME -d DATABASE -f FILE [-r] [-o] \n"
+	printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] -u USERNAME -d DATABASE -f FILE [-o] \n"
+        printf "This script must run with a DB engine user credentials"
 	printf "\n"
 	printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
 	printf "\t-p PORT       - The database port for the database       (def. ${PORT})\n"
 	printf "\t-u USERNAME   - The username for the database            (def. engine)\n"
 	printf "\t-d DATABASE   - The database name, this must match the db name recorded in the backup file.\n"
 	printf "\t-f File       - Backup file name to restore from. ${FILE}\n"
-	printf "\t-r            - Remove existing database with same name\n"
 	printf "\t-o            - Omit upgrade step\n"
 	printf "\t-h            - This help text.\n"
 	printf "\n"
 	printf "for more options please run pg_restore --help\n"
 	printf "\nThe recommended way for restoring your database is.\n"
 	printf "\t1) Backup current database with backup.sh\n"
-	printf "\t2) Drop existing DB with dropdb or use the -r flag.\n"
-	printf "\t3) Create a new blank db with the same name with createdb.\n"
+	printf "\t2) Drop existing from root user by : su - postgres -c \"psql -d template1 -c \"drop database <db>;\"\" \n"
+	printf "\t3) Create a new blank db with the same name by:  su - postgres -c \"psql -d template1 -c \"create database <db> owner engine;\"\".\n"
 	printf "\t4) Run restore.sh and give new database instance name as the target\n"
 	popd > /dev/null
+        exit $ret
 }
 
 restore_from_tar() {
@@ -54,11 +55,12 @@ restore_from_tar() {
 	tar xf "${name}" > /dev/null
 	if [[ $? -ne 0 ]]; then
 		echo "Failed to extract TAR content to working directory ${dir}."
+                popd
 		exit 6
 	fi
 	chmod 777 *
-	# dropping all statements we don't need on a clean DB from teh restore.sql file
-	sed -i -e '/^DROP /d' -e '/^CREATE SCHEMA/d' -e '/^ALTER TABLE ONLY public\./d' -e '/^ALTER FUNCTION public\.uuid_/d' -e '/^CREATE PROCEDURAL LANGUAGE plpgsql/d' -e '/^ALTER PROCEDURAL LANGUAGE plpgsql/d' -e 's/^CREATE FUNCTION uuid_/CREATE OR REPLACE FUNCTION uuid_/g' -e 's?/tmp?'`pwd`'?'  -e 's?\$\$PATH\$\$?'`pwd`'?' restore.sql
+	# dropping all statements we don't need on a clean DB from the restore.sql file
+	sed -i -e '/^CREATE DATABASE /d' -e '/ALTER DATABASE /d' -e '/^DROP /d' -e '/^CREATE SCHEMA/d' -e '/^ALTER TABLE ONLY public\./d' -e '/^ALTER FUNCTION public\.uuid_/d' -e '/^CREATE PROCEDURAL LANGUAGE plpgsql/d' -e '/^ALTER PROCEDURAL LANGUAGE plpgsql/d' -e 's/^CREATE FUNCTION uuid_/CREATE OR REPLACE FUNCTION uuid_/g' -e 's?/tmp?'`pwd`'?'  -e 's?\$\$PATH\$\$?'`pwd`'?' restore.sql
 
 	psql -w -h "${SERVERNAME}" -p "${PORT}" -U "${USERNAME}" -f restore.sql "${DATABASE}"
 	res=$?
@@ -67,17 +69,24 @@ restore_from_tar() {
 	return $res
 }
 
+get_query_result() {
+    local cmd=${1}
+    local db=${2}
+    res=$(execute_command "${cmd}" "${db}"  "${SERVERNAME}" "${PORT}")
+    echo $res | sed "s@^ @@g"
+}
 
-while getopts hs:d:u:p:l:f:ro option; do
+
+while getopts hs:d:u:p:f:o option; do
 	case $option in
 		s) SERVERNAME=$OPTARG;;
 		p) PORT=$OPTARG;;
 		u) USERNAME=$OPTARG;;
 		d) DATABASE=$OPTARG;;
 		f) FILE=$OPTARG;;
-		r) REMOVE_EXISTING=true;;
 		o) OMIT_UPGRADE=true;;
-		h) usage;;
+                h) ret=0 && usage;;
+                \?) ret=1 && usage;;
 	esac
 done
 
@@ -86,34 +95,29 @@ if [[ -z "${USERNAME}" \
 	|| -z "${FILE}" ]]; then
 
 	usage
-	exit 1
 fi
 
-cmd="select datname from pg_database where datname ilike '${DATABASE}';"
-res=$(execute_command "${cmd}" template1 "${SERVERNAME}" "${PORT}")
-res=$(echo $res | sed "s@^ @@g")
+res=$(get_query_result "select datname from pg_database where datname ilike '${DATABASE}';" "template1")
 
-if [[ "${res}" =  "${DATABASE}" ]]; then
-	if [[ -z "${REMOVE_EXISTING}" ]]; then
-		echo "Database ${DATABASE} exists, please use -r to force removing it."
-		exit 1
-	else
-		dropdb -h "${SERVERNAME}" -p "${PORT}" -U postgres "${DATABASE}"
-		if [[ $? -ne 0 ]]; then
-			echo "Failed to drop database ${DATABASE}."
-			exit 2
-		fi
-	fi
+if [[ "${res}" !=  "${DATABASE}" ]]; then
+    echo "Database ${DATABASE} does not exist, please create an empty database named ${DATABASE}."
+    exit 2
+else
+    res=$(get_query_result "select 1 from information_schema.tables where table_name='schema_version';" "${DATABASE}")
+    if [[ ${res} -eq  1 ]]; then
+        echo "Database ${DATABASE} is not empty, please create an empty database named ${DATABASE}."
+        exit 3
+    fi
 fi
 
 echo "Restore of database ${DATABASE} from ${FILE} started..."
 if file "${FILE}" | grep -q 'tar'; then
-	createdb -h "${SERVERNAME}" -p "${PORT}" -U postgres "${DATABASE}"
 	# Creating the plpgsql language
 	createlang --host="${SERVERNAME}" --port="${PORT}" --dbname="${DATABASE}" --username="${USERNAME}" plpgsql >& /dev/null
 	restore_from_tar
 	restore_from_tar_res=$?
 else
+	sed -i -e '/^CREATE DATABASE /d' -e '/ALTER DATABASE /d' "${FILE}"
 	psql -w -h "${SERVERNAME}" -p "${PORT}" -U "${USERNAME}" -f "${FILE}"
 fi
 
@@ -123,14 +127,15 @@ if [[ "${restore_from_tar_res}" -eq 0 ]]; then
 		echo "Upgrading restored database..."
 		./upgrade.sh -s "${SERVERNAME}" -p "${PORT}" -d "${DATABASE}" -u "${USERNAME}" -c
 	fi
-	popd > /dev/null
 else
-	usage
-	exit 3
+        popd > /dev/null
+	exit 4
 fi
 
 fn_db_set_dbobjects_ownership
 if [[ $? -ne 0 ]]; then
-	echo "An error occurred whilst changing the ownership of objects in the database."
-	exit 4
+	echo "An error occurred while changing the ownership of objects in the database."
+        popd > /dev/null
+	exit 5
 fi
+popd > /dev/null
