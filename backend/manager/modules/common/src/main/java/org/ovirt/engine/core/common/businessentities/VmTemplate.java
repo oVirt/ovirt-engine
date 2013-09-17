@@ -31,6 +31,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private String storagePoolName;
 
+    @EditableField
     private HashMap<Guid, DiskImage> diskImageMap;
 
     private HashMap<Guid, DiskImage> diskTemplateMap;
@@ -50,6 +51,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         templateType = VmEntityType.TEMPLATE;
     }
 
+    @EditableField
     private boolean disabled;
 
     public VmTemplate(int childCount, Date creationDate, String description, int memSizeMb, String name,

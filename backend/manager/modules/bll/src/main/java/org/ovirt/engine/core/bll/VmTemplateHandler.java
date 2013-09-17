@@ -3,10 +3,15 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.EditableField;
+import org.ovirt.engine.core.common.businessentities.EditableOnTemplate;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -27,17 +32,18 @@ public class VmTemplateHandler {
      * @see Backend#InitHandlers
      */
     public static void Init() {
+        final Class<?>[] inspectedClassNames = new Class<?>[] { VmBase.class, VmTemplate.class };
         mUpdateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
         BlankVmTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
-        mUpdateVmTemplate.AddPermittedFields(new String[] { "name", "description", "comment", "domain", "osId",
-                "interfaces", "memSizeMb", "numOfSockets", "cpuPerSocket",
-                "vdsGroupId", "numOfMonitors", "allowConsoleReconnect", "usbPolicy", "timeZone", "diskMap",
-                "defaultBootSequence", "disabled",
-                "isoPath", "diskImageMap", "defaultDisplayType", "priority", "autoStartup", "stateless",
-                "initrdUrl", "kernelUrl", "kernelParams", "images", "interfaces", "quotaId", "quotaName",
-                "quotaEnforcementType", "migrationSupport", "dedicatedVmForVds", "smartcardEnabled", "dbGeneration", "deleteProtected",
-                "quotaDefault", "tunnelMigration", "vncKeyboardLayout", "runAndPause", "singleQxlPci", "cpuShares", "vmType"
-        });
+
+        for (Pair<EditableField, String> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
+                                                                                   (inspectedClassNames))) {
+            mUpdateVmTemplate.AddPermittedFields(pair.getSecond());
+        }
+
+        for (Pair<EditableOnTemplate, String> pair : BaseHandler.extractAnnotatedFields(EditableOnTemplate.class, inspectedClassNames)) {
+            mUpdateVmTemplate.AddPermittedFields(pair.getSecond());
+        }
     }
 
     public static boolean isUpdateValid(VmTemplate source, VmTemplate destination) {

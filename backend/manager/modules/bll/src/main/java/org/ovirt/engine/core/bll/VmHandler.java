@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableField;
+import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -89,6 +90,10 @@ public class VmHandler {
 
         for (Pair<EditableField, String> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
                 (inspectedClassNames))) {
+            mUpdateVmsStatic.AddPermittedFields(pair.getSecond());
+        }
+
+        for (Pair<EditableOnVm, String> pair : BaseHandler.extractAnnotatedFields(EditableOnVm.class, inspectedClassNames)) {
             mUpdateVmsStatic.AddPermittedFields(pair.getSecond());
         }
 

@@ -45,12 +45,12 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private Guid id;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     private Guid vdsGroupId;
 
     @EditableField
     private int osId;
 
-    @EditableField
     private Date creationDate;
 
     @EditableField
@@ -63,20 +63,25 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private String comment;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     private int memSizeMb;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     private int numOfSockets;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     private int cpuPerSocket;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors,
             message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
     private int numOfMonitors;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     private boolean singleQxlPci;
 
     @EditableField
@@ -84,6 +89,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private String domain;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     @Size(max = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
     private String timeZone;
 
@@ -91,6 +97,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private VmType vmType;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     private UsbPolicy usbPolicy;
 
     private boolean failBack;
@@ -102,6 +109,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private int niceLevel;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     private int cpuShares;
 
     @EditableField
@@ -111,6 +119,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private boolean autoStartup;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     private boolean stateless;
 
     @EditableField
@@ -211,9 +220,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private Guid dedicatedVmForVds;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     protected DisplayType defaultDisplayType;
 
     @EditableOnVmStatusField
+    @EditableOnTemplate
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
         groups = { CreateEntity.class, UpdateEntity.class },
         message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
