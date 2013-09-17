@@ -74,7 +74,7 @@ if [  -n "${COLUMN_INSERTS}" ]; then
     column_inserts=" --column-inserts "
 fi
 
-cmd="pg_dump -C -E UTF8 ${column_inserts} --disable-dollar-quoting  --disable-triggers --format=p -h ${SERVERNAME} -p ${PORT} -U ${USERNAME}  -f ${file}  ${DATABASE}"
+cmd="pg_dump -E UTF8 ${column_inserts} --disable-dollar-quoting  --disable-triggers --format=p -h ${SERVERNAME} -p ${PORT} -U ${USERNAME}  -f ${file}  ${DATABASE}"
 
 echo "Backup of database $DATABASE to $file started..."
 
