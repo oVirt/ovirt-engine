@@ -11,12 +11,14 @@
 
 		.messagePanel {
 			color: #CD2127;
-			height: 65px;
+			height: 30px;
+            overflow-y: auto;
+            padding: 5px;
 		}
 
 		.disksAllocationPanel {
 			width: 100%;
-			height: 190px;
+			height: 180px;
 			float: right;
 		}
 
@@ -34,13 +36,11 @@
 		<e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" />
 		<e:ListModelListBoxEditor ui:field="quotaEditor" />
 		<g:Label ui:field="disksAllocationLabel" addStyleNames="{style.disksAllocationLabel}" />
-		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="155px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />
+		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="145px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />
 		<g:FlowPanel>
 			<e:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" />
             <e:EntityModelCheckBoxEditor ui:field="copyVmPermissions" />
-			<g:ScrollPanel>
-				<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
-			</g:ScrollPanel>
+			<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
 		</g:FlowPanel>
 	</g:FlowPanel>
 
