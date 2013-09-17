@@ -38,7 +38,6 @@ import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
@@ -440,10 +439,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected DiskImageDAO getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
-    }
-
-    protected StorageDomainDAO getStorageDomainDao(){
-        return getDbFacade().getStorageDomainDao();
     }
 
     protected boolean checkPayload(VmPayload payload, String isoPath) {
