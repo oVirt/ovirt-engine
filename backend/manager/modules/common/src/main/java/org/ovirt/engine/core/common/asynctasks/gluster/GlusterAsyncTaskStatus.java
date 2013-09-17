@@ -31,7 +31,7 @@ public enum GlusterAsyncTaskStatus {
             }
         }
 
-        return null;
+        return GlusterAsyncTaskStatus.UNKNOWN;
     }
 
     public JobExecutionStatus getJobExecutionStatus() {
