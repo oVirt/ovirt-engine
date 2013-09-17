@@ -917,6 +917,7 @@ class ConfigEnv(object):
         answerfile=True,
         summary=True,
         description=_('Configure WebSocket Proxy'),
+        postinstallfile=True,
     )
     def WEBSOCKET_PROXY_CONFIG(self):
         return 'OVESETUP_CONFIG/websocketProxyConfig'
