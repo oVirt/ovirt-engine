@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceBase.SUB_COLLECTIONS;
+import static org.ovirt.engine.api.restapi.resource.BackendUsersResource.SUB_COLLECTIONS;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
@@ -12,6 +12,10 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
+/**
+ * This resource corresponds to an user that has been added to the engine and
+ * stored in the database.
+ */
 public class BackendUserResource
         extends AbstractBackendSubResource<User, DbUser>
         implements UserResource {
@@ -21,6 +25,14 @@ public class BackendUserResource
     public BackendUserResource(String id, BackendUsersResource parent) {
         super(id, User.class, DbUser.class, SUB_COLLECTIONS);
         this.parent = parent;
+    }
+
+    public void setParent(BackendUsersResource parent) {
+        this.parent = parent;
+    }
+
+    public BackendUsersResource getParent() {
+        return parent;
     }
 
     @Override
@@ -44,10 +56,6 @@ public class BackendUserResource
                                                              VdcQueryType.GetPermissionsByAdElementId,
                                                              new IdQueryParameters(guid),
                                                              User.class));
-    }
-
-    public BackendUsersResource getParent() {
-        return parent;
     }
 
     @Override

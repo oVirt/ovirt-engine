@@ -1,25 +1,28 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
+import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDomainUserResourceTest
-    extends AbstractBackendUserResourceTest<BackendDomainUserResource> {
-
-    static final Guid USER_ID = GUIDS[1];
-    static final Guid DOMAIN_ID = GUIDS[2];
+    extends AbstractBackendSubResourceTest<User, LdapUser, BackendDomainUserResource> {
 
     public BackendDomainUserResourceTest() {
-        super(new BackendDomainUserResource(USER_ID.toString(),
-                new BackendDomainUsersResource(DOMAIN_ID.toString(),null)));
+        super(new BackendDomainUserResource(GUIDS[1].toString(), null));
+    }
 
+    @Override
+    protected void init () {
+        super.init();
+        setUpParentExpectations();
     }
 
     @Test
@@ -33,12 +36,11 @@ public class BackendDomainUserResourceTest
         }
     }
 
-    @Test
+     @Test
     public void testGet() throws Exception {
       UriInfo uriInfo = setUpBasicUriExpectations();
       setUriInfo(uriInfo);
-      setUpEntityQueryExpectations(1);
-      initParetResource(resource.parent, uriInfo);
+      setUpEntityQueryExpectations(1, false);
 
       control.replay();
 
@@ -55,8 +57,7 @@ public class BackendDomainUserResourceTest
     public void testGetNotFound() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
-        setUpEntityQueryExpectations(2);
-        initParetResource(resource.parent, uriInfo);
+        setUpEntityQueryExpectations(1, true);
 
         control.replay();
         try {
@@ -67,16 +68,31 @@ public class BackendDomainUserResourceTest
         }
     }
 
-    private void initParetResource(AbstractBackendUsersResource resource, UriInfo uriInfo) {
-        initResource(resource);
-        resource.setUriInfo(uriInfo);
+    private void setUpParentExpectations() {
+        BackendDomainUsersResource parent = control.createMock(BackendDomainUsersResource.class);
+        Domain domain = new Domain();
+        domain.setName(DOMAIN);
+        expect(parent.getDirectory()).andReturn(domain).anyTimes();
+        resource.setParent(parent);
     }
 
-    protected void setUpEntityQueryExpectations(int index) throws Exception {
-        LdapUser user = BackendUsersResourceTest.setUpEntityExpectations(control.createMock(LdapUser.class),index);
-        setUpGetEntityExpectations("ADUSER@"+DOMAIN+": allnames=*",
-                SearchType.AdUser,
-                user);
+    private void setUpEntityQueryExpectations(int index, boolean notFound) throws Exception {
+        setUpGetEntityExpectations(
+            VdcQueryType.GetDirectoryUserById,
+            DirectoryIdQueryParameters.class,
+            new String[] { "Domain", "Id" },
+            new Object[] { DOMAIN, GUIDS[index] },
+            notFound? null: getEntity(index)
+        );
+    }
+
+    @Override
+    protected LdapUser getEntity(int index) {
+        LdapUser entity = new LdapUser();
+        entity.setUserId(GUIDS[index]);
+        entity.setName(NAMES[index]);
+        entity.setDepartment(DOMAIN);
+        return entity;
     }
 }
 

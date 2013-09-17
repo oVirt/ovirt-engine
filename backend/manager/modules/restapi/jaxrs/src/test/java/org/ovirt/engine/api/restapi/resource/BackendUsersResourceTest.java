@@ -1,10 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,8 +22,6 @@ import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -34,12 +29,19 @@ public class BackendUsersResourceTest
     extends AbstractBackendCollectionResourceTest<User, DbUser, BackendUsersResource> {
 
     static final String GROUPS =
-        "Schema Admins@Maghreb/Users,Group Policy Creator Owners@Maghreb/Users,Enterprise Admins@Maghreb/Users";
-    static final String[] PARSED_GROUPS =
-        { "Schema Admins@Maghreb/Users", "Group Policy Creator Owners@Maghreb/Users", "Enterprise Admins@Maghreb/Users" };
+        "Schema Admins@Maghreb/Users," +
+        "Group Policy Creator Owners@Maghreb/Users," +
+        "Enterprise Admins@Maghreb/Users"
+    ;
 
-    protected static final String SEARCH_QUERY = "Users : usrname != \"\" and name=s* AND id=*0";
-    protected static final String QUERY = "Users : usrname != \"\"";
+    static final String[] PARSED_GROUPS = {
+        "Schema Admins@Maghreb/Users",
+        "Group Policy Creator Owners@Maghreb/Users",
+        "Enterprise Admins@Maghreb/Users",
+    };
+
+    protected static final String SEARCH_QUERY = "name=s* AND id=*0 and usrname != \"\"";
+    protected static final String QUERY = "usrname != \"\"";
 
     public BackendUsersResourceTest() {
         super(new BackendUsersResource(), SearchType.DBUser, "Users : ");
@@ -48,38 +50,47 @@ public class BackendUsersResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveUser,
-                                           AdElementParametersBase.class,
-                                           new String[] { "AdElementId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveUser,
+                AdElementParametersBase.class,
+                new String[] { "AdElementId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true
+            )
+        );
         verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
     @Test
     public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { NON_EXISTANT_GUID },
-                null);
+        setUpGetEntityExpectations(
+             VdcQueryType.GetDbUserByUserId,
+             IdQueryParameters.class,
+             new String[] { "Id" },
+             new Object[] { NON_EXISTANT_GUID },
+             null
+        );
         control.replay();
         try {
             collection.remove(NON_EXISTANT_GUID.toString());
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }
     }
 
     private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                getEntity(0));
+        setUpGetEntityExpectations(
+            VdcQueryType.GetDbUserByUserId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { GUIDS[0] },
+            getEntity(0)
+        );
     }
 
     @Test
@@ -92,18 +103,23 @@ public class BackendUsersResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveUser,
-                                           AdElementParametersBase.class,
-                                           new String[] { "AdElementId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveUser,
+                AdElementParametersBase.class,
+                new String[] { "AdElementId" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success
+            )
+        );
         try {
             collection.remove(GUIDS[0].toString());
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
@@ -116,7 +132,6 @@ public class BackendUsersResourceTest
         domain.setName(DOMAIN);
         model.setDomain(domain);
         model.setUserName(NAMES[0]);
-
         Response response = collection.add(model);
         verifyAddUser(response);
     }
@@ -149,7 +164,7 @@ public class BackendUsersResourceTest
     }
 
     private List<String> setUpDomains() {
-        List<String> domains = new LinkedList<String>();
+        List<String> domains = new LinkedList<>();
         domains.add("some.domain");
         domains.add(DOMAIN);
         return domains;
@@ -163,21 +178,25 @@ public class BackendUsersResourceTest
 
     private void setUpAddUserExpectations(String query) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(query,
-                                   SearchType.AdUser,
-                                   getAdUser(0));
-        setUpCreationExpectations(VdcActionType.AddUser,
-                                  AddUserParameters.class,
-                                  new String[] { "VdcUser.UserId" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  null,
-                                  VdcQueryType.GetDbUserByUserId,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getEntity(0));
+        setUpGetEntityExpectations(
+            query,
+            SearchType.AdUser,
+            getAdUser(0)
+        );
+        setUpCreationExpectations(
+            VdcActionType.AddUser,
+            AddUserParameters.class,
+            new String[] { "AdUser.UserId" },
+            new Object[] { GUIDS[0] },
+            true,
+            true,
+            null,
+            VdcQueryType.GetDbUserByUserId,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { GUIDS[0] },
+            getEntity(0)
+        );
     }
 
     @Override
@@ -226,30 +245,6 @@ public class BackendUsersResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        SearchParameters params = new SearchParameters(query, searchType);
-        expect(queryResult.getSucceeded()).andReturn(failure == null).anyTimes();
-        if (failure == null) {
-            List<DbUser> entities = new ArrayList<DbUser>();
-            for (int i = 0; i < NAMES.length; i++) {
-                entities.add(getEntity(i));
-            }
-            expect(queryResult.getReturnValue()).andReturn(entities).anyTimes();
-        } else {
-            if (failure instanceof String) {
-                expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
-                setUpL10nExpectations((String)failure);
-            } else if (failure instanceof Exception) {
-                expect(queryResult.getExceptionString()).andThrow((Exception) failure).anyTimes();
-            }
-        }
-        expect(backend.RunQuery(eq(VdcQueryType.Search), eqSearchParams(params))).andReturn(
-                queryResult);
-        control.replay();
-    }
-
-    @Override
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpQueryExpectations(query, null);
     }
@@ -258,7 +253,6 @@ public class BackendUsersResourceTest
     @Test
     public void testQuery() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(SEARCH_QUERY);
-
         setUpQueryExpectations(SEARCH_QUERY);
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -268,7 +262,6 @@ public class BackendUsersResourceTest
     @Test
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-
         setUpQueryExpectations(QUERY);
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -278,13 +271,13 @@ public class BackendUsersResourceTest
     @Test
     public void testListFailure() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-
         setUpQueryExpectations(QUERY, FAILURE);
         collection.setUriInfo(uriInfo);
         try {
             getCollection();
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             assertTrue(wae.getResponse().getEntity() instanceof Fault);
             assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
         }
@@ -294,14 +287,14 @@ public class BackendUsersResourceTest
     @Test
     public void testListCrash() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-
         Throwable t = new RuntimeException(FAILURE);
         setUpQueryExpectations(QUERY, t);
         collection.setUriInfo(uriInfo);
         try {
             getCollection();
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
         }
     }
@@ -311,16 +304,17 @@ public class BackendUsersResourceTest
     public void testListCrashClientLocale() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
-
         Throwable t = new RuntimeException(FAILURE);
         setUpQueryExpectations(QUERY, t);
         collection.setUriInfo(uriInfo);
         try {
             getCollection();
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        } finally {
+        }
+        finally {
             locales.clear();
         }
     }
