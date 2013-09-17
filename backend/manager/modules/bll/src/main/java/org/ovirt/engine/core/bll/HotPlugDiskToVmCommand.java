@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -40,13 +40,10 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected boolean canDoAction() {
-        disk = getDiskDao().get(getParameters().getDiskId());
-
-        return
-                isVmExist() &&
+        return isVmExist() &&
                 isVmInUpPausedDownStatus() &&
                 canRunActionOnNonManagedVm() &&
-                isDiskExist(disk) &&
+                isDiskExist(getDisk()) &&
                 checkCanPerformPlugUnPlugDisk() &&
                 isVmNotInPreviewSnapshot() &&
                 imageStorageValidation();
@@ -56,10 +53,10 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         // If the VM is not an image then it does not use the storage domain.
         // If the VM is not in UP or PAUSED status, then we know that there is no running qemu process,
         // so we don't need to check the storage domain activity.
-        if (disk.getDiskStorageType() != DiskStorageType.IMAGE || !getVm().getStatus().isRunningOrPaused()) {
+        if (getDisk().getDiskStorageType() != DiskStorageType.IMAGE || !getVm().getStatus().isRunningOrPaused()) {
             return true;
         }
-        DiskImage diskImage = (DiskImage) disk;
+        DiskImage diskImage = (DiskImage) getDisk();
         StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
                 diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
         StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
@@ -78,7 +75,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
             }
         }
 
-        oldVmDevice = getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
+        oldVmDevice = getVmDeviceDao().get(new VmDeviceId(getDisk().getId(), getVmId()));
         if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
             return failCanDoAction(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
         }
@@ -97,34 +94,59 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected void executeVmCommand() {
         if (getVm().getStatus().isUpOrPaused()) {
-            performPlugCommand(getPlugAction(), disk, oldVmDevice);
+            performPlugCommand(getPlugAction(), getDisk(), oldVmDevice);
         }
 
-        //Update boot order and isPlugged fields
-        final List<VmDevice> devices = VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
-        for (VmDevice device:devices) {
-            if (device.getDeviceId().equals(oldVmDevice.getDeviceId())) {
-                device.setIsPlugged(!oldVmDevice.getIsPlugged());
-                break;
-            }
+        // At this point disk is already plugged to or unplugged from VM (depends on the command),
+        // so device's 'isPlugged' property should be updated accordingly in DB
+        updateDeviceIsPluggedProperty();
+
+        // Now after updating 'isPlugged' property of the plugged/unplugged device, its time to
+        // update the boot order for all VM devices. Failure to do that doesn't change the fact that
+        // device is already plugged to or unplugged from VM.
+        if (disk.isBoot()) {
+            updateBootOrder();
         }
 
+        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        setSucceeded(true);
+    }
+
+    private void updateDeviceIsPluggedProperty() {
+        VmDevice device = getVmDeviceDao().get(oldVmDevice.getId());
+        device.setIsPlugged(!oldVmDevice.getIsPlugged());
+        getVmDeviceDao().updateHotPlugDisk(device);
+    }
+
+    private void updateBootOrder() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                getVmStaticDAO().incrementDbGeneration(getVm().getId());
-                getVmDeviceDao().updateAll("UpdateVmDeviceForHotPlugDisk", devices);
-                VmHandler.updateDisksFromDb(getVm());
+                VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
                 return null;
             }
         });
-        setSucceeded(true);
     }
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         return Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED));
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        Map<String, Pair<String, String>> exclusiveLock = new HashMap<>();
+        exclusiveLock.put(getDisk().getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                        VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED));
+        if (getDisk().isBoot()) {
+            exclusiveLock.put(getVmId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+
+        }
+        return exclusiveLock;
     }
 
     @Override
@@ -137,4 +159,10 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         return disk.getDiskAlias();
     }
 
+    protected Disk getDisk() {
+        if (disk == null) {
+            disk = getDiskDao().get(getParameters().getDiskId());
+        }
+        return disk;
+    }
 }

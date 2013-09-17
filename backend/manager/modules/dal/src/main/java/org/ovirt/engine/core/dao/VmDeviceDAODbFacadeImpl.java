@@ -187,14 +187,18 @@ public class VmDeviceDAODbFacadeImpl extends
         return parameterSource;
     }
 
-
     @Override
     public void updateHotPlugDisk(VmDevice vmDevice) {
         MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
-            .addValue("boot_order",vmDevice.getBootOrder())
             .addValue("is_plugged",vmDevice.getIsPlugged());
         getCallsHandler().executeModification("UpdateVmDeviceForHotPlugDisk" , paramsForUpdate);
+    }
 
+    @Override
+    public void updateBootOrder(VmDevice vmDevice) {
+        MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
+                .addValue("boot_order",vmDevice.getBootOrder());
+        getCallsHandler().executeModification("UpdateVmDeviceBootOrder" , paramsForUpdate);
     }
 
     @Override

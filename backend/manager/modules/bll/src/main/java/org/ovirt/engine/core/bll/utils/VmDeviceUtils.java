@@ -588,7 +588,7 @@ public class VmDeviceUtils {
     public static void updateBootOrderInVmDeviceAndStoreToDB(VmBase vmBase) {
         List<VmDevice> devices = updateBootOrderInVmDevice(vmBase);
         for (VmDevice device : devices) {
-           dao.update(device);
+           dao.updateBootOrder(device);
         }
     }
 
