@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 
 public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -25,6 +27,9 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
 
         if (StringUtils.isNotBlank(parameters.getDstQemu())) {
             migrationInfo.put(VdsProperties.DST_QEMU, parameters.getDstQemu());
+        }
+        if (Config.<Boolean> GetValue(ConfigValues.AbortMigrationOnError, parameters.getClusterVersion().getValue())) {
+            migrationInfo.put("abortOnError", Boolean.TRUE.toString());
         }
     }
 

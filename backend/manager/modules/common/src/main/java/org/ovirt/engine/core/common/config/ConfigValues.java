@@ -1516,6 +1516,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     UseFqdnForRdpIfAvailable,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AbortMigrationOnError,
+
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     DwhHeartBeatInterval,

@@ -160,7 +160,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDestinationVds().getPort());
 
         return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, vdsDestinationId,
-                dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp());
+                dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getVdsGroupCompatibilityVersion());
     }
 
     private Boolean isTunnelMigrationUsed() {

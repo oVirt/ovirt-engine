@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private String _srcHost;
@@ -10,9 +11,10 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private MigrationMethod _migrationMethod;
     private Boolean tunnelMigration;
     private String dstQemu;
+    private Version clusterVersion;
 
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId, String dstHost,
-            MigrationMethod migrationMethod, Boolean tunnelMigration, String dstQemu) {
+            MigrationMethod migrationMethod, Boolean tunnelMigration, String dstQemu, Version clusterVersion) {
         super(vdsId, vmId);
         _srcHost = srcHost;
         _dstVdsId = dstVdsId;
@@ -20,6 +22,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         _migrationMethod = migrationMethod;
         this.tunnelMigration = tunnelMigration;
         this.dstQemu = dstQemu;
+        this.clusterVersion = clusterVersion;
     }
 
     public String getSrcHost() {
@@ -59,5 +62,13 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 getDstHost(),
                 getMigrationMethod(),
                 getTunnelMigration());
+    }
+
+    public void setClusterVersion(Version clusterVersion) {
+        this.clusterVersion = clusterVersion;
+    }
+
+    public Version getClusterVersion() {
+        return clusterVersion;
     }
 }
