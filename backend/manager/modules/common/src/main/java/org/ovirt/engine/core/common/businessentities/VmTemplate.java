@@ -1,16 +1,13 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
@@ -21,8 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid, VmTemplateStatus>, InstanceType, ImageType {
     private static final long serialVersionUID = -5238366659716600486L;
-
-    private List<VmNetworkInterface> interfaces;
 
     private int childCount;
 
@@ -38,8 +33,6 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private HashMap<Guid, DiskImage> diskImageMap;
 
-    private ArrayList<DiskImage> diskList;
-
     private HashMap<Guid, DiskImage> diskTemplateMap;
 
     private double bootDiskSizeGB;
@@ -52,10 +45,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setNiceLevel(0);
         setCpuShares(0);
         diskTemplateMap = new HashMap<Guid, DiskImage>();
-        interfaces = new ArrayList<VmNetworkInterface>();
         status = VmTemplateStatus.OK;
         diskImageMap = new HashMap<Guid, DiskImage>();
-        diskList = new ArrayList<DiskImage>();
         templateType = VmEntityType.TEMPLATE;
     }
 
@@ -105,9 +96,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 createdByUserId);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
-        interfaces = new ArrayList<VmNetworkInterface>();
         diskImageMap = new HashMap<Guid, DiskImage>();
-        diskList = new ArrayList<DiskImage>();
 
         this.childCount = childCount;
         setName(name);
@@ -148,16 +137,6 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public boolean isTrustedService() {
         return trustedService;
-    }
-
-    @Override
-    public List<VmNetworkInterface> getInterfaces() {
-        return interfaces;
-    }
-
-    @Override
-    public void setInterfaces(List<VmNetworkInterface> value) {
-        interfaces = value;
     }
 
     public Guid getStoragePoolId() {
@@ -219,16 +198,6 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public void setDiskImageMap(HashMap<Guid, DiskImage> value) {
         diskImageMap = value;
-    }
-
-    @Override
-    @JsonIgnore
-    public ArrayList<DiskImage> getDiskList() {
-        return diskList;
-    }
-
-    public void setDiskList(ArrayList<DiskImage> disks) {
-        diskList = disks;
     }
 
     @Override

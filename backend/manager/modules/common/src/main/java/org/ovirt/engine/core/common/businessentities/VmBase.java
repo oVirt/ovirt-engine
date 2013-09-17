@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -169,6 +170,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public VmBase() {
         name = "";
+        interfaces = new ArrayList<VmNetworkInterface>();
         diskList = new ArrayList<DiskImage>();
         managedDeviceMap = new HashMap<Guid, VmDevice>();
         unmanagedDeviceList = new ArrayList<VmDevice>();
@@ -323,8 +325,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         images = value;
     }
 
+    @JsonIgnore
     public ArrayList<DiskImage> getDiskList() {
         return diskList;
+    }
+
+    public void setDiskList(ArrayList<DiskImage> diskList) {
+        this.diskList = diskList;
     }
 
     public Map<Guid, VmDevice> getManagedDeviceMap() {
