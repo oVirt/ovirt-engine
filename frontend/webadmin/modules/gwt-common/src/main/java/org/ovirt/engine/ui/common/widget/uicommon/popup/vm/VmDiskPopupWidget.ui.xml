@@ -53,11 +53,11 @@
 		}
 
 		.boxEditor {
-			width: 400px;
+			width: 435px;
 		}
 
 		.checkBoxEditor {
-			padding-left: 50px;
+			padding-left: 75px;
 		}
 
 		.externalDiskPanel {
@@ -74,11 +74,15 @@
 			padding: 2px;
 			margin-right: 2px;
 		}
+
+        .attachEditor {
+            width: 90%;
+        }
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.container}">
 		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.obrand_topPanel}">
-			<e:EntityModelCheckBoxEditor ui:field="attachEditor" />
+			<e:EntityModelCheckBoxEditor ui:field="attachEditor" addStyleNames="{style.attachEditor}"/>
 		</g:HorizontalPanel>
 		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}">
 			<g:RadioButton ui:field="internalDiskRadioButton" ui:name="disktype" ui:text="{constants.internalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
