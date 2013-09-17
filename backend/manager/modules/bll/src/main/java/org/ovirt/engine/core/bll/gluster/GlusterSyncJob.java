@@ -190,7 +190,6 @@ public class GlusterSyncJob extends GlusterJob {
         switch (status) {
         case Up:
         case Down:
-        case Maintenance:
             return true;
         default:
             return false;
