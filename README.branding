@@ -19,7 +19,10 @@ branding.properties
     user_portal_css - Css to inject into user portal (required, can be empty).
     web_admin_css - Css to inject into web admin (required, can be empty).
     welcome_css - Css for the welcome page (required, can be empty).
-    messages - Standard java message bundle (required).
+    messages - Standard java message bundle (required). Comma-delimited list.
+    resources - The file that defines cascading resources. These are static
+      resources (favicon, images, PDFs, etc.) that exist outside of CSS,
+      but we still want to cascade them.
     version - The version of the branding in the package. Only versions
       that match the one defined in the engine will be loaded (required,
       theme will not load without it).
@@ -57,14 +60,52 @@ You will notice the following files:
 5. welcome_page.template, An HTML formatted template that gets inserted
    into the welcome page.
 5. messages.properties, A java message bundle in many different locales.
+   Only strings to be localized should go in here.
+6. external_messages.properties, A second java message bundle, used for
+   non-translatable strings (like URLs).
+7. resources.properties, contains the locations of cascading resources
+   such as the brand's favicon.
 
-Note that images are background images instead of image tags so we can use
-style sheets to replace them.
+Note that most images are background images instead of image tags so we can
+use style sheets to replace them. However, branding does include a servlet
+to serve branded images (and other static resources) outside of CSS in a
+cascading manner.
 
 As you can see the example branding theme references images from the images
 directory. There is no rule that images have to exist in an images directory
 but we highly suggest you organize your images in some way to make it easier
 to maintain them.
+
+CASCADING RESOURCES
+-------------------
+These are images, PDFs, etc. that exist in multiple brands and are cascaded
+similarly to how CSS cascades. This allows us to use a cascading mechanism
+for branding outside of CSS, for things like favicon.ico.
+
+If the same resource key exists in a higher brand, the higher brand "wins" and
+its copy of the resource gets served.
+
+All cascading resources are defined in resources.properties. For each resource,
+specify a file path and optionally a contentType.
+
+Example:
+favicon.file=images/favicon.ico
+favicon.contentType=image/x-icon
+
+The BrandingCascadingResourceServlet that serves these resources is mapped to
+/ovirt-engine-theme-resource for the root app, /theme-resource for WebAdmin
+and UserPortal. To reference a cascaded resource in the root ovirt-engine.jsp,
+use ${pageContext.request.contextPath}/ovirt-engine-theme-resource/<resource>
+where <resource> is the key of the resource in resources.properties. To
+reference a cascaded resource in the the WebAdmin or UserPortal GWT host page,
+use ${pageContext.request.contextPath}/theme-resource/<resource>
+where <resource> is the key of the resource in resources.properties.
+
+Examples:
+in WebAdmin and UserPortal:
+<link rel="shortcut icon" href="${pageContext.request.contextPath}/theme-resource/favicon" type="image/x-icon" />
+in root app:
+<link rel="shortcut icon" href="${pageContext.request.contextPath}/ovirt-engine-theme-resource/favicon" type="image/x-icon" />
 
 WELCOME PAGE TEMPLATE
 ---------------------
@@ -123,11 +164,13 @@ MAINTENANCE - ADDING A BRANDED MESSAGE
 All branded messages feed into the application via the host page and then via the
 ApplicationDynamicMessages classes. To added a new branded message to the application:
 
-1. add a property to messages.properties in the form of
+1. add a property to messages.properties or external_messages.properties in the form of
     obrand.webadmin.my_new_message=BrandX Message
     obrand.userportal.my_new_message=BrandX Message
   You'll need to add one for both webadmin and userportal if you want the message
   exposed to both applications.
+  NOTE: Use messages.properties for any messages that will need to be translated into
+  other languages. Use external_messages.properties for anything else, like URLs.
 2. in DynamicMessages.java, add a key to the DynamicMessageKey enum for your property.
 3. in DynamicMessages.java, add a getter for your property. Use the existing getters
   as examples.
