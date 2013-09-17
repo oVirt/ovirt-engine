@@ -91,7 +91,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Guid vdsToRunOn =
                 SchedulingManager.getInstance().schedule(getVdsGroup(),
                         getVm(),
-                        getRunVdssList(),
+                        getVdsBlackList(),
                         getParameters().getInitialHosts(),
                         destVds == null ? null : destVds.getId(),
                         new ArrayList<String>(),
@@ -299,7 +299,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 && validate(new DiskImagesValidator(ImagesHandler.getPluggedImagesForVm(vm.getId())).diskImagesNotLocked())
                 && SchedulingManager.getInstance().canSchedule(getVdsGroup(),
                         getVm(),
-                        getRunVdssList(),
+                        getVdsBlackList(),
                         getParameters().getInitialHosts(),
                         getVdsDestinationId(),
                         getReturnValue().getCanDoActionMessages());
@@ -379,5 +379,14 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED.name());
         builder.append(String.format("$VmName %1$s", getVmName()));
         return builder.toString();
+    }
+
+    // hosts that cannot be selected for scheduling (failed hosts + VM source host)
+    private List<Guid> getVdsBlackList() {
+        List<Guid> blackList = new ArrayList<Guid>(getRunVdssList());
+        if (getVdsId() != null) {
+            blackList.add(getVdsId());
+        }
+        return blackList;
     }
 }
