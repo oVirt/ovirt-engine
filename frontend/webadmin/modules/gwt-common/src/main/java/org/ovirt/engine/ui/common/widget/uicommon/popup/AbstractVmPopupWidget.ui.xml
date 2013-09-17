@@ -19,6 +19,8 @@
 
         .sectionPanelTight {
             margin-bottom: 6px;
+            float: left;
+            width: 100%;
         }
 
 		.sectionLabel {
@@ -253,26 +255,53 @@
             width: 250px;
         }
 
-        .cpuPinningLabel {
-            float: left;
-            color: #333333;
-            width: 220px;
-            margin: 5px;
-        }
-
-        .cpuSharesSelector {
-            float: left;
-            width: 370px;
-        }
-
-        .cpuSahresValue {
-            width: 120px;
-            float:left;
-        }
-
 		.hostSelector {
 			width: 416px;
 		}
+
+        .labelToCouple {
+            line-height: 30px;
+            text-align: left;
+            float: left;
+            width: 100%;
+        }
+
+        .labelToCoupleLabel {
+            color: gray;
+            font-family: Verdana,sans-serif;
+            font-size: 13px;
+            line-height: 30px;
+            padding: 0 5px;
+            float: left;
+        }
+
+        .labelToCoupleCouple {
+            float: right;
+            line-height: 30px;
+            padding: 0 5px;
+            width: 230px;
+        }
+
+        .labelToCoupleCoupleLeft {
+            float: left;
+        }
+
+        .labelToCoupleCoupleRight {
+            float: left;
+        }
+
+        .cpuSahresValueListBox, .cpuSahresValueTextBox {
+            width: 110px;
+        }
+
+        .cpuPinningTextBox {
+            width: 202px;
+            padding-left: 5px;
+        }
+
+        .cpuSahresValueTextBox {
+            padding-left: 5px;
+        }
 
 		.migrationSelectorInner {
 			width: 260px;
@@ -482,12 +511,24 @@
 				<t:content>
 					<g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanelTight}">
-							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.cpuAllocVmPopup}"/>
-							<e:ListModelListBoxEditor ui:field="cpuSharesAmountSelectionEditor" addStyleNames="{style.cpuSharesSelector}"/>
-							<e:EntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" addStyleNames="{style.cpuSahresValue}"/>
-							<g:Label text="{constants.cpuPinningLabel}" addStyleNames="{style.cpuPinningLabel}"/>
-							<d:InfoIcon ui:field="cpuPinningInfo" addStyleNames="{style.poolNameIcon}"/>
-							<e:EntityModelTextBoxOnlyEditor ui:field="cpuPinning" addStyleNames="{style.cpuPinningStyle}"/>
+                            <g:Label addStyleNames="{style.sectionLabel}" text="{constants.cpuAllocVmPopup}"/>
+
+							<g:FlowPanel addStyleNames="{style.labelToCouple}">
+                                <g:Label ui:field="cpuSharesEditor" text="{constants.cpuShares}" addStyleNames="{style.labelToCoupleLabel}"/>
+                                <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
+                                    <e:ListModelListBoxOnlyEditor ui:field="cpuSharesAmountSelectionEditor" addStyleNames="{style.labelToCoupleCoupleLeft}" contentWidgetStyleName="{style.cpuSahresValueListBox}" />
+                                    <e:EntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetStyleName="{style.cpuSahresValueTextBox}" />
+                                </g:FlowPanel>
+							</g:FlowPanel>
+
+                            <g:FlowPanel addStyleNames="{style.labelToCouple}">
+                                <g:Label text="{constants.cpuPinningLabel}" addStyleNames="{style.labelToCoupleLabel}"/>
+                                <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
+                                    <d:InfoIcon ui:field="cpuPinningInfo" addStyleNames="{style.labelToCoupleCoupleLeft}"/>
+                                    <e:EntityModelTextBoxOnlyEditor ui:field="cpuPinning" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetStyleName="{style.cpuPinningTextBox}"/>
+                                </g:FlowPanel>
+                            </g:FlowPanel>
+
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanelTight}">
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.memAllocVmPopup}" />

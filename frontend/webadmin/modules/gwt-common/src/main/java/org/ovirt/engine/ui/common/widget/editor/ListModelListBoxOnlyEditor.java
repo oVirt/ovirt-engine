@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 
 import com.google.gwt.editor.client.IsEditor;
@@ -21,7 +22,11 @@ public class ListModelListBoxOnlyEditor<T> extends AbstractValidatedWidgetWithLa
     }
 
     public ListModelListBoxOnlyEditor(Renderer<T> renderer) {
-        super(new ListModelListBox<T>(renderer));
+        this(renderer, new VisibilityRenderer.SimpleVisibilityRenderer());
+    }
+
+    public ListModelListBoxOnlyEditor(Renderer<T> renderer, VisibilityRenderer visibilityRenderer) {
+        super(new ListModelListBox<T>(renderer), visibilityRenderer);
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
     }
 

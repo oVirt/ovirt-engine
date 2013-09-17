@@ -1,3 +1,4 @@
+
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
@@ -33,6 +34,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
@@ -429,7 +431,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "cpuSharesAmountSelection.selectedItem")
     @WithElementId("cpuSharesAmountSelection")
-    public ListModelListBoxEditor<Object> cpuSharesAmountSelectionEditor;
+    public ListModelListBoxOnlyEditor<Object> cpuSharesAmountSelectionEditor;
+
+    @UiField
+    @Ignore
+    public Label cpuSharesEditor;
 
     @UiField(provided = true)
     @Path(value = "cpuSharesAmount.entity")
@@ -659,7 +665,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfVmsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         cpuPinning = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         cpuSharesAmountEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        cpuSharesAmountEditor.asValueBox().setWidth("110px");//$NON-NLS-1$
         kernel_pathEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         initrd_pathEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         kernel_parametersEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
@@ -894,9 +899,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, new ModeSwitchingVisibilityRenderer());
 
         cpuSharesAmountSelectionEditor =
-                new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
-        cpuSharesAmountSelectionEditor.asListBox().setWidth("110px"); //$NON-NLS-1$
-        cpuSharesAmountSelectionEditor.getContentWidgetContainer().setWidth("110px"); //$NON-NLS-1$
+                new ListModelListBoxOnlyEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -975,7 +978,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningThinEditor.setLabel(constants.thinVmPopup());
         provisioningCloneEditor.setLabel(constants.cloneVmPopup());
         minAllocatedMemoryEditor.setLabel(constants.physMemGuarVmPopup());
-        cpuSharesAmountSelectionEditor.setLabel(constants.cpuShares());
 
         // Boot Options
         firstBootDeviceEditor.setLabel(constants.firstDeviceVmPopup());
@@ -1121,6 +1123,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 }
             }
         });
+
+        object.getCpuSharesAmountSelection().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    changeApplicationLevelVisibility(cpuSharesEditor, object.getCpuSharesAmountSelection().getIsAvailable());
+                }
+            }
+        });
+
     }
 
     /**
