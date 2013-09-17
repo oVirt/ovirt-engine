@@ -40,8 +40,10 @@ public class MapBackedPreferences extends AbstractPreferences implements Seriali
 
     @Override
     protected void removeNodeSpi() {
-        throw new UnsupportedOperationException("Not supported for sake of simplicity, non blocking API");
-
+        if (parent() == null) {
+            throw new IllegalArgumentException("Cannot remove root node");
+        }
+        parent().remove(this.name());
     }
 
     @Override

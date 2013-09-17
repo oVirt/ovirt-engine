@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.osinfo;
+package org.ovirt.engine.core.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.compat.Version;
 
 public class OsRepositoryImplTest {
