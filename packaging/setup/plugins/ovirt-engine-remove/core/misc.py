@@ -162,6 +162,10 @@ class Plugin(plugin.PluginBase):
             name=osetupcons.Const.ENGINE_SERVICE_NAME,
             state=False,
         )
+        self.services.startup(
+            name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
+            state=False,
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
