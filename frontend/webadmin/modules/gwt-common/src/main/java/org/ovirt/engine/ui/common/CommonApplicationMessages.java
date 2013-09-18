@@ -111,7 +111,7 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("VM has 1 network interface. Assign a profile to it.")
     String assignNicsToProfilesSingular();
 
-    @DefaultMessage("VM has no network interfaces and there are no available profiles to choose from.")
+    @DefaultMessage("VM has no network interfaces. To add one, assign a profile.")
     String assignNicsNothingToAssign();
 
     @DefaultMessage("<Empty>")
