@@ -42,6 +42,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDao();
+    private final static String RAM = "ram";
     private final static String VRAM = "vram";
     private final static String HEADS = "heads";
     private final static String EHCI_MODEL = "ich9-ehci";
@@ -843,16 +844,12 @@ public class VmDeviceUtils {
      */
     private static Map<String, Object> getMemExpr(int numOfMonitors, boolean singleQxlPci) {
         int heads = singleQxlPci ? numOfMonitors : 1;
-        String mem;
-        if (singleQxlPci) {
-            mem = String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM * heads);
-        } else {
-           mem = (numOfMonitors < 2 ? String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM) :
-            String.valueOf(VmDeviceCommonUtils.HIGH_VIDEO_MEM));
-        }
         Map<String, Object> specParams = new HashMap<String, Object>();
-        specParams.put(VRAM, mem);
         specParams.put(HEADS, String.valueOf(heads));
+        specParams.put(VRAM, VmDeviceCommonUtils.singlePciVRamByHeads(heads));
+        if (singleQxlPci) {
+            specParams.put(RAM, VmDeviceCommonUtils.singlePciRamByHeads(heads));
+        }
         return specParams;
     }
 
