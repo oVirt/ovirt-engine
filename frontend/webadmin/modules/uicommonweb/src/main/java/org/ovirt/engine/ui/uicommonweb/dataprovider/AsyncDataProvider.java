@@ -2903,7 +2903,7 @@ public final class AsyncDataProvider {
         return diskInterfaces;
     }
 
-    public static String getNewNicName(ArrayList<VmNetworkInterface> existingInterfaces)
+    public static String getNewNicName(List<VmNetworkInterface> existingInterfaces)
     {
         int maxIfaceNumber = 0;
         if (existingInterfaces != null)

@@ -1041,11 +1041,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         for (VmNetworkInterface nic : nics) {
             final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
             vnicInstanceType.setItems(profiles);
-            behavior.initSelectedProfile(vnicInstanceType,
-                    vnicInstanceType.getNetworkInterface());
+            behavior.initSelectedProfile(vnicInstanceType, vnicInstanceType.getNetworkInterface());
             vnicInstanceTypes.add(vnicInstanceType);
         }
 
+        getModel().getVnicProfiles().setItems(profiles);
         getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
         getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
     }

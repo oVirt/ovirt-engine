@@ -179,8 +179,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public Panel logicalNetworksEditorPanel;
 
     @UiField
-    @Path(value = "nicsWithLogicalNetworks.selectedItem")
-    @WithElementId("networksEditor")
+    @Ignore
+    @WithElementId("vnicsEditor")
     public ProfilesInstanceTypeEditor profilesInstanceTypeEditor;
 
     @UiField
@@ -1161,6 +1161,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
+        profilesInstanceTypeEditor.edit(object.getNicsWithLogicalNetworks(), object.getVnicProfiles().getItems());
+        object.getNicsWithLogicalNetworks().getItemsChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                profilesInstanceTypeEditor.edit(object.getNicsWithLogicalNetworks(), object.getVnicProfiles()
+                        .getItems());
+            }
+        });
     }
 
     /**

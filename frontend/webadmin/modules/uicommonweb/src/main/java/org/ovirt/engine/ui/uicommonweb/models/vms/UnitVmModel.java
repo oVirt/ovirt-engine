@@ -110,6 +110,16 @@ public class UnitVmModel extends Model {
         this.dataCenterWithClustersList = dataCenterWithClustersList;
     }
 
+    private ListModel vnicProfiles;
+
+    public ListModel getVnicProfiles() {
+        return vnicProfiles;
+    }
+
+    private void setVnicProfiles(ListModel vnicProfiles) {
+        this.vnicProfiles = vnicProfiles;
+    }
+
     private ListModel nicsWithLogicalNetworks;
 
     public ListModel getNicsWithLogicalNetworks() {
@@ -1145,6 +1155,7 @@ public class UnitVmModel extends Model {
         this.behavior = behavior;
         this.behavior.setModel(this);
 
+        setVnicProfiles(new ListModel());
         setNicsWithLogicalNetworks(new ListModel());
         setAdvancedMode(new EntityModel(false));
         setStorageDomain(new NotChangableForVmInPoolListModel());

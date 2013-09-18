@@ -51,6 +51,11 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
 
     }
 
+    @Override
+    public ListModelTypeAheadListBox<T> asWidget() {
+        return getContentWidget();
+    }
+
     public static abstract class NullSafeSuggestBoxRenderer<T> implements SuggestBoxRenderer<T> {
 
         private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
