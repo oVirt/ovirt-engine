@@ -31,7 +31,7 @@
 		}
 		
 		.label {
-			width: 350px;
+			width: 100%;
 		}
 
 		.radioButtonsTabContent {
@@ -138,7 +138,7 @@
 		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="620px" height="560px">
+	<d:SimpleDialogPanel width="670px" height="560px">
 		<d:content>
 			<t:DialogTabPanel ui:field="tabsPanel" height="100%">
 				<t:tab>
