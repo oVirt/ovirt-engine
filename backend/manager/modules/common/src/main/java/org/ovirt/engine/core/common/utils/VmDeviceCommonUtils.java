@@ -24,6 +24,15 @@ public class VmDeviceCommonUtils {
 
     public final static String CDROM_IMAGE_ID = "11111111-1111-1111-1111-111111111111";
 
+    public static String singlePciRamByHeads(int heads) {
+        return String.valueOf(HIGH_VIDEO_MEM * heads);
+    }
+
+    public static String singlePciVRamByHeads(int heads) {
+        // for now we return the low memory for vram
+        return String.valueOf(LOW_VIDEO_MEM);
+    }
+
     public static boolean isNetwork(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE;
     }
