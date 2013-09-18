@@ -39,7 +39,7 @@ public class RemoveStorageDomainCommandTest {
         params.setStoragePoolId(storagePoolID);
         params.setDoFormat(true);
 
-        command = spy(new RemoveStorageDomainCommand<RemoveStorageDomainParameters>(params));
+        command = spy(new RemoveStorageDomainCommand<>(params));
         doReturn(storageDomainDAOMock).when(command).getStorageDomainDAO();
         doReturn(storagePoolDAOMock).when(command).getStoragePoolDAO();
     }
