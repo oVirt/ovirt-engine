@@ -47,8 +47,8 @@ public class RemoveStorageDomainCommandTest {
     @Test
     public void testCanDoActionNonExistingStorageDomain() {
         // All the mock DAOs return nulls (which mocks the objects do not exist)
-        // canDoAction should return false, not crash with NullPointerExcpetion
-        assertFalse("canDoActtion shouldn't be possible for a non-existant storage domain", command.canDoAction());
+        // canDoAction should return false, not crash with NullPointerException
+        assertFalse("canDoAction shouldn't be possible for a non-existent storage domain", command.canDoAction());
         checkMessages(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
