@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -97,6 +98,7 @@ import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.dwh.DwhHistoryTimekeepingDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
@@ -166,6 +168,7 @@ public class DbFacade {
             put(Step.class, StepDao.class);
             put(VnicProfile.class, VnicProfileDao.class);
             put(VnicProfileView.class, VnicProfileDao.class);
+            put(DwhHistoryTimekeeping.class, DwhHistoryTimekeepingDao.class);
         }
     };
 
@@ -957,6 +960,16 @@ public class DbFacade {
      */
     public VmNicDao getVmNicDao() {
         return getDao(VmNicDao.class);
+    }
+
+
+    /**
+     * Returns the singleton instance of {@link DwhHistoryTimekeepingDAO}.
+     *
+     * @return the dao instance
+     */
+    public DwhHistoryTimekeepingDao getDwhHistoryTimekeepingDao() {
+        return getDao(DwhHistoryTimekeepingDao.class);
     }
 
     /**
