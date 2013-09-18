@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -103,6 +104,11 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void endWithFailure() {
+        enclosingCommand.getParameters().getDiskImage().setImageStatus(ImageStatus.ILLEGAL);
+        ImagesHandler.updateImageStatus(
+                enclosingCommand.getParameters().getDiskImage().getImageId(),
+                enclosingCommand.getParameters().getDiskImage().getImageStatus());
+        compensate();
         enclosingCommand.getReturnValue().setSucceeded(true);
     }
 
