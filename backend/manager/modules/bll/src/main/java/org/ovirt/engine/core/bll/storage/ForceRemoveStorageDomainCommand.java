@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -96,6 +97,12 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE);
             }
         }
+
+        if (returnValue && getStorageDomain().getStorageType() == StorageType.GLANCE) {
+            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
+            returnValue = false;
+        }
+
         return returnValue;
     }
 
