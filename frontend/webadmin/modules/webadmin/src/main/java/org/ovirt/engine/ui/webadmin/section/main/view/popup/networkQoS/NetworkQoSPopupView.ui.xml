@@ -9,33 +9,32 @@
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQoSPopupView.WidgetStyle">
 		.topDecorator {
 			background-color: #D3D3D3;
-			margin-bottom: 8px;
-			margin-top: 4px;
-			margin-right: 3px;
-			padding-top: 6px;
-			padding-bottom: 6px;
+			margin: 5px;
 		}
 		.labelStyle {
 			font-weight: bold;
+			width: 90%;
 			padding-left: 5px;
-			margin-top: 30px;
 		}
 		.mbpsLabel {
 			text-align: right;
 			font-size: smaller;
 			color: gray;
 		}
-		.valuePanelWidth {
-			width: 65px;
-			float: right;
+		.valueWidth {
+			width: 60px;
+			padding-left: 5px;
 		}
-		.marginLeft {
-			margin-left: 40px;
+		.valuePanelStyle {
+			padding-left: 30px;
+			width: 120px;
 		}
-
+		.textBoxLabelStyle {
+			padding-left: 5px;
+		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="500px" height="400px">
+	<d:SimpleDialogPanel width="400px" height="400px">
 		<d:content>
 			<g:FlowPanel>
 				<g:FlowPanel addStyleNames="{style.topDecorator}">
@@ -44,32 +43,50 @@
 				</g:FlowPanel>
 				<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="inboundEnabled"/>
 				<g:HorizontalPanel>
-					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor addStyleNames="{style.marginLeft}" ui:field="inboundAverageEditor" />
-						<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+					<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+						<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.averageNetworkQoSPopup}"/>
+						<g:VerticalPanel>
+							<e:EntityModelTextBoxOnlyEditor ui:field="inboundAverageEditor" />
+							<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+						</g:VerticalPanel>
 					</g:VerticalPanel>
-					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor addStyleNames="{style.marginLeft}" ui:field="inboundPeakEditor" />
-						<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+					<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+						<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.peakNetworkQoSPopup}"/>
+						<g:VerticalPanel>
+							<e:EntityModelTextBoxOnlyEditor ui:field="inboundPeakEditor" />
+							<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+						</g:VerticalPanel>
 					</g:VerticalPanel>
-					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor addStyleNames="{style.marginLeft}" ui:field="inboundBurstEditor" />
-						<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbLabelQoSPopup}"/>
+					<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+						<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.burstNetworkQoSPopup}"/>
+						<g:VerticalPanel>
+							<e:EntityModelTextBoxOnlyEditor ui:field="inboundBurstEditor" />
+							<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbLabelQoSPopup}"/>
+						</g:VerticalPanel>
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="outboundEnabled"/>
 				<g:HorizontalPanel>
-					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor addStyleNames="{style.marginLeft}" ui:field="outboundAverageEditor" />
-						<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+					<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+						<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.averageNetworkQoSPopup}"/>
+						<g:VerticalPanel>
+							<e:EntityModelTextBoxOnlyEditor ui:field="outboundAverageEditor" />
+							<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+						</g:VerticalPanel>
 					</g:VerticalPanel>
-					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor addStyleNames="{style.marginLeft}" ui:field="outboundPeakEditor" />
-						<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+					<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+						<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.peakNetworkQoSPopup}"/>
+						<g:VerticalPanel>
+							<e:EntityModelTextBoxOnlyEditor ui:field="outboundPeakEditor" />
+							<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+						</g:VerticalPanel>
 					</g:VerticalPanel>
-					<g:VerticalPanel>
-						<e:EntityModelTextBoxEditor addStyleNames="{style.marginLeft}" ui:field="outboundBurstEditor" />
-						<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbLabelQoSPopup}"/>
+					<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+						<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.burstNetworkQoSPopup}"/>
+						<g:VerticalPanel>
+							<e:EntityModelTextBoxOnlyEditor ui:field="outboundBurstEditor" />
+							<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbLabelQoSPopup}"/>
+						</g:VerticalPanel>
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
