@@ -242,8 +242,6 @@ class Plugin(plugin.PluginBase):
                 raise
 
     def _setDatabaseResources(self, environment):
-        existing = False
-
         dbstatement = database.Statement(
             environment=environment,
         )
@@ -276,24 +274,27 @@ class Plugin(plugin.PluginBase):
             transaction=False,
         )[0]['count'] != 0
 
-        if hasDatabase and hasUser:
-            try:
-                dbovirtutils = database.OvirtUtils(
-                    plugin=self,
-                    environment=environment,
-                )
-                if not dbovirtutils.isNewDatabase():
-                    raise RuntimeError(
-                        _('Not new database')
-                    )
-                self.logger.debug('Using existing empty database')
-                existing = True
-            except RuntimeError:
-                self.logger.debug(
-                    'Error while trying to connect to existing database'
-                )
+        generate = hasDatabase or hasUser
+        existing = False
 
-        if not existing and (hasDatabase or hasUser):
+        if hasDatabase and hasUser:
+            dbovirtutils = database.OvirtUtils(
+                plugin=self,
+                environment=environment,
+            )
+            if dbovirtutils.isNewDatabase(
+                database=self.environment[
+                    osetupcons.DBEnv.DATABASE
+                ],
+            ):
+                self.logger.debug('Found empty database')
+                generate = False
+                existing = True
+            else:
+                generate = True
+
+        if generate:
+            self.logger.debug('Existing resources found, generating names')
             suffix = '_%s' % datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             self.environment[osetupcons.DBEnv.DATABASE] += suffix
             self.environment[osetupcons.DBEnv.USER] += suffix
@@ -526,6 +527,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         before=(
+            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
             osetupcons.Stages.DB_SCHEMA,
         ),
         after=(
