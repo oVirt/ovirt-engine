@@ -18,13 +18,13 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute
@@ -59,12 +59,12 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             }
         }
 
-        executeInNewTransaction(new TransactionMethod<Object>() {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
                 getStorageHelper(dom).storageDomainRemoved(dom.getStorageStaticData());
-                getDbFacade().getStorageDomainDynamicDao().remove(dom.getId());
-                getDbFacade().getStorageDomainStaticDao().remove(dom.getId());
+                getStorageDomainDynamicDao().remove(dom.getId());
+                getStorageDomainStaticDAO().remove(dom.getId());
                 return null;
             }
         });
@@ -146,10 +146,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                 getVds().getId());
     }
 
-    protected VDSBrokerFrontend getVdsBroker() {
-        return getBackend().getResourceManager();
-    }
-
     protected boolean isLocalFs(StorageDomain dom) {
         return dom.getStorageType() == StorageType.LOCALFS;
     }
@@ -191,8 +187,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     protected boolean formatStorage(StorageDomain dom, VDS vds) {
         try {
-            return getVdsBroker()
-                    .RunVdsCommand(VDSCommandType.FormatStorageDomain,
+            return runVdsCommand(VDSCommandType.FormatStorageDomain,
                             new FormatStorageDomainVDSCommandParameters(vds.getId(), dom.getId())).getSucceeded();
         } catch (VdcBLLException e) {
             if (e.getErrorCode() != VdcBllErrors.StorageDomainDoesNotExist) {

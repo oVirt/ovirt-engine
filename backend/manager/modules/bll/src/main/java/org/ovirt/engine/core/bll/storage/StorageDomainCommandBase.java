@@ -36,7 +36,6 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -381,10 +380,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     private void addStorageDomainStatusIllegalMessage() {
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
-    }
-
-    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
-        return getDbFacade().getStoragePoolIsoMapDao();
     }
 
     protected BaseDiskDao getBaseDiskDao() {

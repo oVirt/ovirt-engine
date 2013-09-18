@@ -25,11 +25,17 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -163,7 +169,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         boolean returnValue = false;
         if (storageDomain != null) {
             // check if there is no pool-domain map
-            returnValue = getDbFacade().getStoragePoolIsoMapDao().getAllForStorage(storageDomain.getId()).isEmpty();
+            returnValue = getStoragePoolIsoMapDAO().getAllForStorage(storageDomain.getId()).isEmpty();
             if (!returnValue) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
             }
@@ -399,9 +405,23 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return super.getDbFacade();
     }
 
+    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
+        return getDbFacade().getStoragePoolIsoMapDao();
+    }
+
+    protected StorageDomainDynamicDAO getStorageDomainDynamicDao() {
+        return getDbFacade().getStorageDomainDynamicDao();
+    }
+
+
     /* Transaction methods */
 
     protected void executeInScope(TransactionScopeOption scope, TransactionMethod<?> code) {
         TransactionSupport.executeInScope(scope, code);
+    }
+
+    @Override
+    public VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) throws VdcBLLException {
+        return super.runVdsCommand(commandType, parameters);
     }
 }

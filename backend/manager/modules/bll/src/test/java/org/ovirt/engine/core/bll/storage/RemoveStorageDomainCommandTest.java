@@ -1,23 +1,46 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 /** A test case for the {@link RemoveStorageDomainCommand} */
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveStorageDomainCommandTest {
+    @ClassRule
+    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     private RemoveStorageDomainCommand<RemoveStorageDomainParameters> command;
 
@@ -27,29 +50,58 @@ public class RemoveStorageDomainCommandTest {
     @Mock
     private StoragePoolDAO storagePoolDAOMock;
 
+    @Mock
+    private StoragePoolIsoMapDAO storagePoolIsoMapDAOMock;
+
+    @Mock
+    private VdsDAO vdsDAOMock;
+
+    private StorageDomain storageDomain;
+
     @Before
     public void setUp() {
         Guid storageDomainID = Guid.newGuid();
+        storageDomain = new StorageDomain();
+        storageDomain.setId(storageDomainID);
+        storageDomain.setStatus(StorageDomainStatus.Maintenance);
+
         Guid vdsID = Guid.newGuid();
-        Guid storagePoolID = Guid.newGuid();
+        VDS vds = new VDS();
+        vds.setId(vdsID);
+
         RemoveStorageDomainParameters params = new RemoveStorageDomainParameters();
         params.setVdsId(vdsID);
         params.setStorageDomainId(storageDomainID);
-        params.setStoragePoolId(storagePoolID);
         params.setDoFormat(true);
 
         command = spy(new RemoveStorageDomainCommand<>(params));
+
         doReturn(storageDomainDAOMock).when(command).getStorageDomainDAO();
-        doReturn(storagePoolDAOMock).when(command).getStoragePoolDAO();
+        doReturn(storageDomain).when(storageDomainDAOMock).get(storageDomainID);
+        doReturn(Collections.singletonList(storageDomain)).when(storageDomainDAOMock).getAllForStorageDomain(storageDomainID);
+
+        doReturn(storagePoolIsoMapDAOMock).when(command).getStoragePoolIsoMapDAO();
+        doReturn(Collections.emptyList()).when(storagePoolIsoMapDAOMock).getAllForStorage(storageDomainID);
+
+        doReturn(vdsDAOMock).when(command).getVdsDAO();
+        doReturn(vds).when(vdsDAOMock).get(vdsID);
+
     }
 
     @Test
     public void testCanDoActionNonExistingStorageDomain() {
-        // All the mock DAOs return nulls (which mocks the objects do not exist)
-        // canDoAction should return false, not crash with NullPointerException
+        doReturn(null).when(storageDomainDAOMock).get(storageDomain.getId());
+        doReturn(Collections.emptyList()).when(storageDomainDAOMock).getAllForStorageDomain(storageDomain.getId());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
                 "canDoAction shouldn't be possible for a non-existent storage domain",
                 command, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+    }
+
+    @Test
+    public void testCanDoActionSuccess() {
+        storageDomain.setStorageType(StorageType.NFS);
+        storageDomain.setStorageDomainType(StorageDomainType.Data);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test
@@ -57,5 +109,55 @@ public class RemoveStorageDomainCommandTest {
         CanDoActionTestUtils.runAndAssertSetActionMessageParameters(command,
                 VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN,
                 VdcBllMessages.VAR__ACTION__REMOVE);
+    }
+
+    @Test
+    public void testRemove() {
+        for (boolean shouldFormat : new boolean[] { true, false }) {
+            for (StorageDomainType sdType : new StorageDomainType[] { StorageDomainType.Data, StorageDomainType.ISO,
+                    StorageDomainType.ImportExport }) {
+                for (StorageType sType : StorageType.values()) {
+                    if (sType.isConcreteStorageType()) {
+                        doTestRemove(sdType, sType, shouldFormat, false);
+                    }
+                }
+
+            }
+        }
+    }
+
+    public void doTestRemove
+            (StorageDomainType type, StorageType storageType, boolean shouldFormat, boolean shouldFormatFail) {
+        command.getParameters().setDoFormat(shouldFormat);
+        storageDomain.setStorageDomainType(type);
+        storageDomain.setStorageType(storageType);
+
+        setUpStorageHelper();
+        if (shouldFormat || type.isDataDomain()) {
+            setUpFormatDomain(shouldFormatFail);
+        }
+
+        command.executeCommand();
+
+        CommandAssertUtils.checkSucceeded(command, !shouldFormatFail);
+    }
+
+    private void setUpStorageHelper() {
+        IStorageHelper helper = mock(IStorageHelper.class);
+        when(helper.connectStorageToDomainByVdsId(storageDomain, command.getParameters().getVdsId())).thenReturn(true);
+        when(helper.disconnectStorageFromDomainByVdsId(storageDomain, command.getParameters().getVdsId())).thenReturn(true);
+        doReturn(helper).when(command).getStorageHelper(storageDomain);
+    }
+
+    protected void setUpFormatDomain(boolean shouldFail) {
+        VDSReturnValue ret = new VDSReturnValue();
+        ret.setSucceeded(!shouldFail);
+        doReturn(ret).when(command).runVdsCommand
+                (eq(VDSCommandType.FormatStorageDomain), any(FormatStorageDomainVDSCommandParameters.class));
+
+        if (!shouldFail) {
+            doReturn(mock(StorageDomainStaticDAO.class)).when(command).getStorageDomainStaticDAO();
+            doReturn(mock(StorageDomainDynamicDAO.class)).when(command).getStorageDomainDynamicDao();
+        }
     }
 }
