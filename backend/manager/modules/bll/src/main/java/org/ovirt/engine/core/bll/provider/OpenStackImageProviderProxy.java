@@ -182,7 +182,9 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
 
     protected void validateContainerFormat(Image glanceImage) {
         if (!glanceImage.getContainerFormat().equals(GlanceImageContainer.BARE.getValue())) {
-            throw new RuntimeException("Unsupported container format");
+            throw new OpenStackImageException(
+                    OpenStackImageException.ErrorType.UNSUPPORTED_CONTAINER_FORMAT,
+                    "Unsupported container format: " + glanceImage.getContainerFormat());
         }
     }
 
@@ -255,7 +257,9 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         } else if (glanceImage.getDiskFormat().equals(GlanceImageFormat.COW.getValue())) {
             diskImage.setvolumeFormat(VolumeFormat.COW);
         } else {
-            throw new RuntimeException("Unknown disk format: " + glanceImage.getDiskFormat());
+            throw new OpenStackImageException(
+                    OpenStackImageException.ErrorType.UNSUPPORTED_DISK_FORMAT,
+                    "Unknown disk format: " + glanceImage.getDiskFormat());
         }
 
         return diskImage;
@@ -271,7 +275,9 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         } else if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
             glanceImage.setDiskFormat(GlanceImageFormat.COW.getValue());
         } else {
-            throw new RuntimeException("Unknown disk format: " + diskImage.getVolumeFormat());
+            throw new OpenStackImageException(
+                    OpenStackImageException.ErrorType.UNSUPPORTED_DISK_FORMAT,
+                    "Unknown disk format: " + diskImage.getVolumeFormat());
         }
 
         glanceImage.setContainerFormat(GlanceImageContainer.BARE.getValue());
@@ -281,7 +287,7 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         return retGlanceImage.getId();
     }
 
-    private long getCowVirtualSize(String id) throws IOException {
+    private long getCowVirtualSize(String id) {
         // For the qcow2 format we need to download the image header and read the virtual size from there
         byte[] imgContent = new byte[72];
         ImageDownload downloadImage = getClient().images().download(id).execute();
@@ -289,11 +295,20 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         try {
             int bytesRead = downloadImage.getInputStream().read(imgContent, 0, imgContent.length);
             if (bytesRead != imgContent.length) {
-                throw new RuntimeException("Unable to read image header: " + bytesRead);
+                throw new OpenStackImageException(
+                        OpenStackImageException.ErrorType.UNABLE_TO_DOWNLOAD_IMAGE,
+                        "Unable to read image header: " + bytesRead);
             }
-        }
-        finally {
-            downloadImage.getInputStream().close();
+        } catch (IOException e) {
+            throw new OpenStackImageException(
+                    OpenStackImageException.ErrorType.UNABLE_TO_DOWNLOAD_IMAGE,
+                    "Unable to download image");
+        } finally {
+            try {
+                downloadImage.getInputStream().close();
+            } catch (IOException e) {
+                // Silently skip errors on close
+            }
         }
 
         ByteBuffer b = ByteBuffer.wrap(imgContent);
@@ -303,7 +318,9 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
             return b.getLong();
         }
 
-        throw new RuntimeException("Unable to recognize QCOW2 format");
+        throw new OpenStackImageException(
+                OpenStackImageException.ErrorType.UNRECOGNIZED_IMAGE_FORMAT,
+                "Unable to recognize QCOW2 format");
     }
 
     protected long getImageVirtualSize(Image glanceImage) {
@@ -313,14 +330,12 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
                 || glanceImage.getDiskFormat().equals(GlanceImageFormat.ISO.getValue())) {
             return glanceImage.getSize();
         } else if (glanceImage.getDiskFormat().equals(GlanceImageFormat.COW.getValue())) {
-            try {
-                return getCowVirtualSize(glanceImage.getId());
-            } catch (IOException e) {
-                throw new RuntimeException("Unsupported image format");
-            }
+            return getCowVirtualSize(glanceImage.getId());
         }
 
-        throw new RuntimeException("Unsupported image format");
+        throw new OpenStackImageException(
+                OpenStackImageException.ErrorType.UNSUPPORTED_DISK_FORMAT,
+                "Unknown disk format: " + glanceImage.getDiskFormat());
     }
 
     public long getImageVirtualSize(String id) {

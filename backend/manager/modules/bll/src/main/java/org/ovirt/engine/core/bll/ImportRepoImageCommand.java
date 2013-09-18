@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.provider.OpenStackImageException;
 import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -186,8 +187,18 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
         try {
             diskImage = getDiskImage();
-        } catch (Exception e) {
-            log.error("Unable to get the disk image from the provider proxy", e);
+        } catch (OpenStackImageException e) {
+            log.errorFormat("Unable to get the disk image from the provider proxy: {0} ({1})",
+                    e.getMessage(), e.getErrorType());
+            switch (e.getErrorType()) {
+                case UNSUPPORTED_CONTAINER_FORMAT:
+                case UNSUPPORTED_DISK_FORMAT:
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_NOT_SUPPORTED);
+                case UNABLE_TO_DOWNLOAD_IMAGE:
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_DOWNLOAD_ERROR);
+                case UNRECOGNIZED_IMAGE_FORMAT:
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_UNRECOGNIZED);
+            }
         }
 
         if (diskImage == null) {

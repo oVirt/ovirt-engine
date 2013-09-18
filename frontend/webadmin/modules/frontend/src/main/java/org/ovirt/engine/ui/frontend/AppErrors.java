@@ -2525,6 +2525,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. A task is in progress on the volume ${volumeName} in cluster ${vdsGroup}.")
     String ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The image content could not be detected. Please try to re-import the image.")
+    String ACTION_TYPE_FAILED_IMAGE_DOWNLOAD_ERROR();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Only bare RAW and QCOW2 image formats are supported.")
+    String ACTION_TYPE_FAILED_IMAGE_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Either the image is missing, or its format is corrupted or unrecognizable.")
+    String ACTION_TYPE_FAILED_IMAGE_UNRECOGNIZED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Rebalance is not running on the volume ${volumeName} in cluster ${vdsGroup}.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REBALANCE_NOT_STARTED();
 
