@@ -105,7 +105,12 @@ public class PermissionListModel extends SearchableListModel
         tempVar.setVdcObjectType(objType);
         tempVar.setDirectOnly(directOnly);
         tempVar.setRefresh(getIsQueryFirstTime());
+        tempVar.setAllUsersWithPermission(getAllUsersWithPermission());
         super.syncSearch(VdcQueryType.GetPermissionsForObject, tempVar);
+    }
+
+    public boolean getAllUsersWithPermission() {
+        return false;
     }
 
     private void add()

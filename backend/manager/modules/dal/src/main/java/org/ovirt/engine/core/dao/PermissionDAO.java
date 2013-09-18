@@ -135,6 +135,8 @@ public interface PermissionDAO extends GenericDao<permissions, Guid> {
      */
     List<permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered);
 
+    public List<permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered, boolean allUsersWithPermission);
+
     List<permissions> getTreeForEntity(Guid id, VdcObjectType type);
 
     List<permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered);

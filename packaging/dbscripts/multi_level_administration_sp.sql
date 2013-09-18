@@ -469,6 +469,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetAllUsersWithPermissionsOnEntityByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF permissions_view STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM permissions_view
+   WHERE object_id = v_id
+   AND   (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM   GetAllUsersWithPermissionsByEntityId(v_id, v_user_id, v_is_filtered)));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION GetUserPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF permissions_view STABLE
     -- SET NOCOUNT ON added to prevent extra result sets from
@@ -478,6 +492,25 @@ BEGIN
    RETURN QUERY SELECT *
    FROM permissions_view p
    WHERE object_id = v_id
+   AND   (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM   user_flat_groups u
+                                       WHERE  p.ad_element_id = u.granted_id
+                                       AND    u.user_id       = v_user_id));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION GetAllUsersWithPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF permissions_view STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM permissions_view p
+   WHERE object_id in (select id from fn_get_entity_parents(v_id,
+                                                            (SELECT DISTINCT role_type
+                                                               FROM permissions_view p
+                                                              WHERE object_id = v_id)))
    AND   (NOT v_is_filtered OR EXISTS (SELECT 1
                                        FROM   user_flat_groups u
                                        WHERE  p.ad_element_id = u.granted_id

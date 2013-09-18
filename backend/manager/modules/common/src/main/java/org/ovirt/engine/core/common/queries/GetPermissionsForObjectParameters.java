@@ -14,6 +14,8 @@ public class GetPermissionsForObjectParameters extends VdcQueryParametersBase {
      */
     private boolean directOnly;
 
+    private boolean allUsersWithPermission;
+
     private VdcObjectType vdcObjectType;
 
     public GetPermissionsForObjectParameters() {
@@ -47,6 +49,14 @@ public class GetPermissionsForObjectParameters extends VdcQueryParametersBase {
 
     public VdcObjectType getVdcObjectType() {
         return vdcObjectType;
+    }
+
+    public boolean getAllUsersWithPermission() {
+        return allUsersWithPermission;
+    }
+
+    public void setAllUsersWithPermission(boolean getAllUserPermissions) {
+        this.allUsersWithPermission = getAllUserPermissions;
     }
 
 }

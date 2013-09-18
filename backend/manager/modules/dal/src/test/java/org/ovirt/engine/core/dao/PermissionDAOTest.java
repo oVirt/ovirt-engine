@@ -252,6 +252,15 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertInvalidGetPermissionList(result);
     }
 
+    @Test
+    public void testGetAllUsersWithPermissionsOnEntity() {
+        List<permissions> result = dao.getAllForEntity(VM_ENTITY_ID, PRIVILEGED_USER_ID, true, true);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertGetAllForEntityResult(result);
+    }
+
     /**
      * Ensures a call to {@link PermissionDAO#getAllForEntity(Guid)} works properly
      * @param result

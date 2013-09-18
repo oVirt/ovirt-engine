@@ -8,4 +8,9 @@ public class UserPortalPermissionListModel extends PermissionListModel {
     protected AdElementListModel createAdElementListModel() {
         return new UserPortalAdElementListModel();
     }
+
+    @Override
+    public boolean getAllUsersWithPermission() {
+        return true;
+    }
 }

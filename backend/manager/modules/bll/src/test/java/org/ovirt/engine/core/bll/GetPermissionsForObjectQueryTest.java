@@ -38,7 +38,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
     @Test
     public void testExecuteQueryWithDirectOnly() {
         PermissionDAO permissionDAOMock = mock(PermissionDAO.class);
-        when(permissionDAOMock.getAllForEntity(objectID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(mockedPermissions);
+        when(permissionDAOMock.getAllForEntity(objectID, getUser().getId(), getQueryParameters().isFiltered(), false)).thenReturn(mockedPermissions);
         when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAOMock);
 
         assertQueryDAOCall(true);
