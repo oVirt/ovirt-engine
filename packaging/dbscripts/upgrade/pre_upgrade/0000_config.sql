@@ -621,6 +621,8 @@ select fn_db_add_config_value('ExternalSchedulerConnectionTimeout','100','genera
 select fn_db_add_config_value('ExternalSchedulerEnabled','false','general');
 select fn_db_add_config_value('ExternalSchedulerResponseTimeout','120000','general');
 
+select fn_db_add_config_value('DwhHeartBeatInterval', '30', 'general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
