@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -183,8 +184,9 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
                         if (method == null)
                             method = value.getClass().getMethod("ordinal");
                         value = method.invoke(value);
-                    } catch (Exception e) {
-                        log.error("Can't map Enum type " + value);
+                    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+                        log.error("Can't map Enum type " + value + "Exception is: " + ex.getMessage());
+                        log.debug("", ex);
                     }
                 }
 
