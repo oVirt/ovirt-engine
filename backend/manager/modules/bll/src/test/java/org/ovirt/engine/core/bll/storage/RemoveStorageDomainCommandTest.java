@@ -20,9 +20,6 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveStorageDomainCommandTest {
 
-    private Guid storageDomainID;
-    private Guid vdsID;
-    private Guid storagePoolID;
     private RemoveStorageDomainCommand<RemoveStorageDomainParameters> command;
 
     @Mock
@@ -33,9 +30,9 @@ public class RemoveStorageDomainCommandTest {
 
     @Before
     public void setUp() {
-        storageDomainID = Guid.newGuid();
-        vdsID = Guid.newGuid();
-        storagePoolID = Guid.newGuid();
+        Guid storageDomainID = Guid.newGuid();
+        Guid vdsID = Guid.newGuid();
+        Guid storagePoolID = Guid.newGuid();
         RemoveStorageDomainParameters params = new RemoveStorageDomainParameters();
         params.setVdsId(vdsID);
         params.setStorageDomainId(storageDomainID);
