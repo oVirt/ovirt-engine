@@ -1,13 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS;
 
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -16,12 +9,21 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.inject.Inject;
 
 
 public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSModel>
@@ -53,32 +55,32 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
     @UiField
     @Path(value = "inboundAverage.entity")
     @WithElementId
-    EntityModelTextBoxEditor inboundAverageEditor;
+    EntityModelTextBoxOnlyEditor inboundAverageEditor;
 
     @UiField
     @Path(value = "inboundPeak.entity")
     @WithElementId
-    EntityModelTextBoxEditor inboundPeakEditor;
+    EntityModelTextBoxOnlyEditor inboundPeakEditor;
 
     @UiField
     @Path(value = "inboundBurst.entity")
     @WithElementId
-    EntityModelTextBoxEditor inboundBurstEditor;
+    EntityModelTextBoxOnlyEditor inboundBurstEditor;
 
     @UiField
     @Path(value = "outboundAverage.entity")
     @WithElementId
-    EntityModelTextBoxEditor outboundAverageEditor;
+    EntityModelTextBoxOnlyEditor outboundAverageEditor;
 
     @UiField
     @Path(value = "outboundPeak.entity")
     @WithElementId
-    EntityModelTextBoxEditor outboundPeakEditor;
+    EntityModelTextBoxOnlyEditor outboundPeakEditor;
 
     @UiField
     @Path(value = "outboundBurst.entity")
     @WithElementId
-    EntityModelTextBoxEditor outboundBurstEditor;
+    EntityModelTextBoxOnlyEditor outboundBurstEditor;
 
 
 
@@ -108,12 +110,16 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
 
         localize(constants);
         driver.initialize(this);
-        inboundAverageEditor.asValueBox().getParent().setStyleName(style.valuePanelWidth());
-        inboundPeakEditor.asValueBox().getParent().setStyleName(style.valuePanelWidth());
-        inboundBurstEditor.asValueBox().getParent().setStyleName(style.valuePanelWidth());
-        outboundAverageEditor.asValueBox().getParent().setStyleName(style.valuePanelWidth());
-        outboundPeakEditor.asValueBox().getParent().setStyleName(style.valuePanelWidth());
-        outboundBurstEditor.asValueBox().getParent().setStyleName(style.valuePanelWidth());
+        setStyle();
+    }
+
+    private void setStyle() {
+        inboundAverageEditor.setContentWidgetStyleName(style.valueWidth());
+        inboundPeakEditor.setContentWidgetStyleName(style.valueWidth());
+        inboundBurstEditor.setContentWidgetStyleName(style.valueWidth());
+        outboundAverageEditor.setContentWidgetStyleName(style.valueWidth());
+        outboundPeakEditor.setContentWidgetStyleName(style.valueWidth());
+        outboundBurstEditor.setContentWidgetStyleName(style.valueWidth());
     }
 
     private void initListBoxEditors() {
@@ -128,12 +134,6 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
     void localize(ApplicationConstants constants) {
         nameEditor.setLabel(constants.networkQoSName());
         dataCenterEditor.setLabel(constants.dataCenterNetworkQoSPopup());
-        inboundAverageEditor.setLabel(constants.averageNetworkQoSPopup());
-        inboundPeakEditor.setLabel(constants.peakNetworkQoSPopup());
-        inboundBurstEditor.setLabel(constants.burstNetworkQoSPopup());
-        outboundAverageEditor.setLabel(constants.averageNetworkQoSPopup());
-        outboundPeakEditor.setLabel(constants.peakNetworkQoSPopup());
-        outboundBurstEditor.setLabel(constants.burstNetworkQoSPopup());
         inboundEnabled.setLabel(constants.inboundLabelQoSPopup());
         outboundEnabled.setLabel(constants.outboundLabelQoSPopup());
         inboundAverageEditor.setTitle(constants.averageNetworkQoSPopup() + constants.inMegabitsNetworkQoSPopup());
@@ -158,6 +158,6 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
 
 
     interface WidgetStyle extends CssResource {
-        String valuePanelWidth();
+        String valueWidth();
     }
 }
