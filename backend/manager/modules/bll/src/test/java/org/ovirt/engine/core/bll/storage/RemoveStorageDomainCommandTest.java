@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.CommandAssertUtils.checkMessages;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 
 /** A test case for the {@link RemoveStorageDomainCommand} */
+@RunWith(MockitoJUnitRunner.class)
 public class RemoveStorageDomainCommandTest {
 
     private Guid storageDomainID;
@@ -22,7 +25,10 @@ public class RemoveStorageDomainCommandTest {
     private Guid storagePoolID;
     private RemoveStorageDomainCommand<RemoveStorageDomainParameters> command;
 
+    @Mock
     private StorageDomainDAO storageDomainDAOMock;
+
+    @Mock
     private StoragePoolDAO storagePoolDAOMock;
 
     @Before
@@ -35,9 +41,6 @@ public class RemoveStorageDomainCommandTest {
         params.setStorageDomainId(storageDomainID);
         params.setStoragePoolId(storagePoolID);
         params.setDoFormat(true);
-
-        storageDomainDAOMock = mock(StorageDomainDAO.class);
-        storagePoolDAOMock = mock(StoragePoolDAO.class);
 
         command = spy(new RemoveStorageDomainCommand<RemoveStorageDomainParameters>(params));
         doReturn(storageDomainDAOMock).when(command).getStorageDomainDAO();
