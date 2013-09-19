@@ -9,7 +9,7 @@ public class GlusterFeaturesUtil {
     }
 
     public static boolean isGlusterSwiftSupported(Version version) {
-        return Version.v3_3.compareTo(version) <= 0;
+        return false;
     }
 
     public static boolean isGlusterHookSupported(Version version) {
