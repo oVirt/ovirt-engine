@@ -1012,7 +1012,7 @@ public class ManageDomains {
         while (StringUtils.isBlank(response)
                 || (!StringUtils.equalsIgnoreCase(response, "yes")
                  && !StringUtils.equalsIgnoreCase(response, "no"))) {
-            System.out.println("Are you sure you like to delete domain "+domainName +" (yes/no) : ");
+            System.out.print("Are you sure you like to delete domain " + domainName + " (yes/no): ");
             response = System.console().readLine();
         }
         return response.equals("yes");
