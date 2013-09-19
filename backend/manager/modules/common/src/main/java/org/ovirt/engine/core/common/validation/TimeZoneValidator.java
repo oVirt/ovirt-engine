@@ -19,7 +19,7 @@ public class TimeZoneValidator implements ConstraintValidator<ValidTimeZone, VmB
 
     @Override
     public boolean isValid(VmBase value, ConstraintValidatorContext context) {
-        if (value.getTimeZone() == null) {
+        if (value.getTimeZone() == null || "".equals(value.getTimeZone().trim())) {
             return true;
         }
         TimeZoneType timeZoneType = osRepository.isWindows(value.getOsId()) ? TimeZoneType.WINDOWS_TIMEZONE : TimeZoneType.GENERAL_TIMEZONE;
