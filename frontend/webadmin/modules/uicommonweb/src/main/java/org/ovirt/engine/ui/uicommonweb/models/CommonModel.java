@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -55,306 +54,51 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class CommonModel extends ListModel
 {
 
-    public static EventDefinition SignedOutEventDefinition;
+    // TODO: "SingedOut" is misspelled.
+    public static EventDefinition SignedOutEventDefinition = new EventDefinition("SingedOut", CommonModel.class); //$NON-NLS-1$
     private Event privateSignedOutEvent;
-
-    public Event getSignedOutEvent()
-    {
-        return privateSignedOutEvent;
-    }
-
-    private void setSignedOutEvent(Event value)
-    {
-        privateSignedOutEvent = value;
-    }
-
     private UICommand privateSearchCommand;
-
-    public UICommand getSearchCommand()
-    {
-        return privateSearchCommand;
-    }
-
-    private void setSearchCommand(UICommand value)
-    {
-        privateSearchCommand = value;
-    }
-
     private UICommand privateConfigureCommand;
-
-    public UICommand getConfigureCommand()
-    {
-        return privateConfigureCommand;
-    }
-
-    private void setConfigureCommand(UICommand value)
-    {
-        privateConfigureCommand = value;
-    }
-
     private UICommand privateSignOutCommand;
-
-    public UICommand getSignOutCommand()
-    {
-        return privateSignOutCommand;
-    }
-
-    private void setSignOutCommand(UICommand value)
-    {
-        privateSignOutCommand = value;
-    }
-
     private UICommand privateClearSearchStringCommand;
-
-    public UICommand getClearSearchStringCommand()
-    {
-        return privateClearSearchStringCommand;
-    }
-
-    private void setClearSearchStringCommand(UICommand value)
-    {
-        privateClearSearchStringCommand = value;
-    }
-
-    @Override
-    public List<SearchableListModel> getItems()
-    {
-        return (List<SearchableListModel>) super.getItems();
-    }
-
-    public void setItems(List<SearchableListModel> value)
-    {
-        super.setItems(value);
-    }
-
-    @Override
-    public SearchableListModel getSelectedItem()
-    {
-        return (SearchableListModel) super.getSelectedItem();
-    }
-
-    public void setSelectedItem(SearchableListModel value)
-    {
-        super.setSelectedItem(value);
-    }
-
     private BookmarkListModel privateBookmarkList;
-
-    public BookmarkListModel getBookmarkList()
-    {
-        return privateBookmarkList;
-    }
-
-    private void setBookmarkList(BookmarkListModel value)
-    {
-        privateBookmarkList = value;
-    }
-
     private TagListModel privateTagList;
-
-    public TagListModel getTagList()
-    {
-        return privateTagList;
-    }
-
-    private void setTagList(TagListModel value)
-    {
-        privateTagList = value;
-    }
-
     private SystemTreeModel privateSystemTree;
-
-    public SystemTreeModel getSystemTree()
-    {
-        return privateSystemTree;
-    }
-
-    private void setSystemTree(SystemTreeModel value)
-    {
-        privateSystemTree = value;
-    }
-
     private SearchableListModel privateEventList;
-
-    public SearchableListModel getEventList()
-    {
-        return privateEventList;
-    }
-
-    private void setEventList(SearchableListModel value)
-    {
-        privateEventList = value;
-    }
-
     private TaskListModel privateTaskList;
-
-    public TaskListModel getTaskList() {
-        return privateTaskList;
-    }
-
-    public void setTaskList(TaskListModel taskList) {
-        this.privateTaskList = taskList;
-    }
-
     private AlertListModel privateAlertList;
-
-    public AlertListModel getAlertList()
-    {
-        return privateAlertList;
-    }
-
-    private void setAlertList(AlertListModel value)
-    {
-        privateAlertList = value;
-    }
-
     private SearchSuggestModel privateAutoCompleteModel;
-
-    public SearchSuggestModel getAutoCompleteModel()
-    {
-        return privateAutoCompleteModel;
-    }
-
-    private void setAutoCompleteModel(SearchSuggestModel value)
-    {
-        privateAutoCompleteModel = value;
-    }
-
     private String searchStringPrefix;
-
-    public String getSearchStringPrefix()
-    {
-        return searchStringPrefix;
-    }
-
-    public void setSearchStringPrefix(String value)
-    {
-        if (!StringHelper.stringsEqual(searchStringPrefix, value))
-        {
-            searchStringPrefix = value;
-            searchStringPrefixChanged();
-            onPropertyChanged(new PropertyChangedEventArgs("SearchStringPrefix")); //$NON-NLS-1$
-        }
-    }
-
     private boolean hasSearchStringPrefix;
-
-    public boolean getHasSearchStringPrefix()
-    {
-        return hasSearchStringPrefix;
-    }
-
-    private void setHasSearchStringPrefix(boolean value)
-    {
-        if (hasSearchStringPrefix != value)
-        {
-            hasSearchStringPrefix = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasSearchStringPrefix")); //$NON-NLS-1$
-        }
-    }
-
     private String searchString;
-
-    public String getSearchString()
-    {
-        return searchString;
-    }
-
-    public void setSearchString(String value)
-    {
-        setSearchString(value, true);
-    }
-
-    public void setSearchString(String value, boolean checkIfNewValue)
-    {
-        if (!checkIfNewValue || !StringHelper.stringsEqual(searchString, value))
-        {
-            searchString = value;
-            searchStringChanged();
-            onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
-        }
-    }
-
     private VdcUser loggedInUser;
-
-    public VdcUser getLoggedInUser()
-    {
-        return loggedInUser;
-    }
-
-    public void setLoggedInUser(VdcUser value)
-    {
-        if (loggedInUser != value)
-        {
-            loggedInUser = value;
-            onPropertyChanged(new PropertyChangedEventArgs("LoggedInUser")); //$NON-NLS-1$
-        }
-    }
-
     private List<AuditLog> privateEvents;
-
-    public List<AuditLog> getEvents()
-    {
-        return privateEvents;
-    }
-
-    public void setEvents(List<AuditLog> value)
-    {
-        privateEvents = value;
-    }
-
     private AuditLog lastEvent;
-
-    public AuditLog getLastEvent()
-    {
-        return lastEvent;
-    }
-
-    public void setLastEvent(AuditLog value)
-    {
-        if (lastEvent != value)
-        {
-            lastEvent = value;
-            onPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
-        }
-    }
-
     private AuditLog lastAlert;
-
-    public AuditLog getLastAlert()
-    {
-        return lastAlert;
-    }
-
-    public void setLastAlert(AuditLog value)
-    {
-        if (lastAlert != value)
-        {
-            lastAlert = value;
-            onPropertyChanged(new PropertyChangedEventArgs("LastAlert")); //$NON-NLS-1$
-        }
-    }
-
     private boolean hasSelectedTags;
+    private boolean executingSearch;
+    private RoleListModel roleListModel;
+    private SystemPermissionListModel systemPermissionListModel;
+    private ClusterPolicyListModel clusterPolicyListModel;
 
-    public boolean getHasSelectedTags()
-    {
-        return hasSelectedTags;
-    }
-
-    public void setHasSelectedTags(boolean value)
-    {
-        if (hasSelectedTags != value)
-        {
-            hasSelectedTags = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasSelectedTags")); //$NON-NLS-1$
-        }
-    }
-
-    static
-    {
-        SignedOutEventDefinition = new EventDefinition("SingedOut", CommonModel.class); //$NON-NLS-1$
-    }
+    // NOTE: when adding a new ListModel here, be sure to add it to the list in initItems()
+    private SearchableListModel dataCenterList;
+    private SearchableListModel clusterList;
+    private SearchableListModel hostList;
+    private SearchableListModel storageList;
+    private SearchableListModel vmList;
+    private SearchableListModel poolList;
+    private SearchableListModel templateList;
+    private SearchableListModel userList;
+    private SearchableListModel eventList;
+    private ReportsListModel reportsList;
+    private SearchableListModel quotaList;
+    private SearchableListModel monitor;
+    private SearchableListModel volumeList;
+    private SearchableListModel diskList;
+    private SearchableListModel networkList;
+    private SearchableListModel providerList;
+    private SearchableListModel profileList;
 
     private static CommonModel instance = null;
 
@@ -404,6 +148,63 @@ public class CommonModel extends ListModel
         setLoggedInUser(Frontend.getLoggedInUser());
     }
 
+    private void initItems()
+    {
+        ObservableCollection<SearchableListModel> list = new ObservableCollection<SearchableListModel>();
+
+        dataCenterList = new DataCenterListModel();
+        list.add(dataCenterList);
+        clusterList = new ClusterListModel();
+        list.add(clusterList);
+        hostList = new HostListModel();
+        list.add(hostList);
+        storageList = new StorageListModel();
+        list.add(storageList);
+        vmList = new VmListModel();
+        list.add(vmList);
+        poolList = new PoolListModel();
+        list.add(poolList);
+        templateList = new TemplateListModel();
+        list.add(templateList);
+        eventList = new EventListModel();
+        list.add(eventList);
+
+        quotaList = new QuotaListModel();
+        list.add(quotaList);
+
+        volumeList = new VolumeListModel();
+        list.add(volumeList);
+
+        diskList = new DiskListModel();
+        list.add(diskList);
+
+        userList = new UserListModel();
+        list.add(userList);
+
+        reportsList = new ReportsListModel(ReportInit.getInstance().getReportBaseUrl());
+        list.add(reportsList);
+
+        reportsList.setIsAvailable(false);
+
+        networkList = new NetworkListModel();
+        list.add(networkList);
+
+        providerList = new ProviderListModel();
+        list.add(providerList);
+
+        profileList = new VnicProfileListModel();
+        list.add(profileList);
+
+        setItems(list);
+
+        roleListModel = new RoleListModel();
+        systemPermissionListModel = new SystemPermissionListModel();
+        clusterPolicyListModel = new ClusterPolicyListModel();
+
+        // Activate the default list model.
+        setSelectedItem(getDefaultItem());
+    }
+
     private void updateHasSelectedTags()
     {
         ArrayList<TagModel> selectedTags =
@@ -411,12 +212,6 @@ public class CommonModel extends ListModel
                         : new ArrayList<TagModel>();
 
         setHasSelectedTags(getSelectedItem() != null && selectedTags.size() > 0);
-    }
-
-    private void setAllListModelsUnavailable() {
-        for (ListModel m : getItems()) {
-            m.setIsAvailable(false);
-        }
     }
 
     private void tagListModel_SelectedItemsChanged(Object sender, EventArgs e)
@@ -771,84 +566,15 @@ public class CommonModel extends ListModel
         model.getCommands().add(tempVar);
     }
 
+    private void setAllListModelsUnavailable() {
+        for (ListModel m : getItems()) {
+            m.setIsAvailable(false);
+        }
+    }
+
     public void cancel()
     {
         setWindow(null);
-    }
-
-    private SearchableListModel dataCenterList;
-    private SearchableListModel clusterList;
-    private SearchableListModel hostList;
-    private SearchableListModel storageList;
-    private SearchableListModel vmList;
-    private SearchableListModel poolList;
-    private SearchableListModel templateList;
-    private SearchableListModel userList;
-    private SearchableListModel eventList;
-    private ReportsListModel reportsList;
-    private SearchableListModel quotaList;
-    private SearchableListModel monitor;
-    private SearchableListModel volumeList;
-    private SearchableListModel diskList;
-    private SearchableListModel networkList;
-    private SearchableListModel providerList;
-    private SearchableListModel profileList;
-
-    private void initItems()
-    {
-        ObservableCollection<SearchableListModel> list = new ObservableCollection<SearchableListModel>();
-
-        dataCenterList = new DataCenterListModel();
-        list.add(dataCenterList);
-        clusterList = new ClusterListModel();
-        list.add(clusterList);
-        hostList = new HostListModel();
-        list.add(hostList);
-        storageList = new StorageListModel();
-        list.add(storageList);
-        vmList = new VmListModel();
-        list.add(vmList);
-        poolList = new PoolListModel();
-        list.add(poolList);
-        templateList = new TemplateListModel();
-        list.add(templateList);
-        eventList = new EventListModel();
-        list.add(eventList);
-
-        quotaList = new QuotaListModel();
-        list.add(quotaList);
-
-        volumeList = new VolumeListModel();
-        list.add(volumeList);
-
-        diskList = new DiskListModel();
-        list.add(diskList);
-
-        userList = new UserListModel();
-        list.add(userList);
-
-        reportsList = new ReportsListModel(ReportInit.getInstance().getReportBaseUrl());
-        list.add(reportsList);
-
-        reportsList.setIsAvailable(false);
-
-        networkList = new NetworkListModel();
-        list.add(networkList);
-
-        providerList = new ProviderListModel();
-        list.add(providerList);
-
-        profileList = new VnicProfileListModel();
-        list.add(profileList);
-
-        setItems(list);
-
-        roleListModel = new RoleListModel();
-        systemPermissionListModel = new SystemPermissionListModel();
-        clusterPolicyListModel = new ClusterPolicyListModel();
-
-        // Activate the default list model.
-        setSelectedItem(getDefaultItem());
     }
 
     private SearchableListModel getDefaultItem()
@@ -874,11 +600,6 @@ public class CommonModel extends ListModel
             systemTree_ItemChanged(sender, args);
         }
     }
-
-    private boolean executingSearch;
-    private RoleListModel roleListModel;
-    private SystemPermissionListModel systemPermissionListModel;
-    private ClusterPolicyListModel clusterPolicyListModel;
 
     @Override
     protected void onSelectedItemChanging(Object newValue, Object oldValue)
@@ -1336,4 +1057,259 @@ public class CommonModel extends ListModel
     public ClusterPolicyListModel getClusterPolicyListModel() {
         return clusterPolicyListModel;
     }
+
+    public Event getSignedOutEvent()
+    {
+        return privateSignedOutEvent;
+    }
+
+    private void setSignedOutEvent(Event value)
+    {
+        privateSignedOutEvent = value;
+    }
+
+    public UICommand getSearchCommand()
+    {
+        return privateSearchCommand;
+    }
+
+    private void setSearchCommand(UICommand value)
+    {
+        privateSearchCommand = value;
+    }
+
+    public UICommand getConfigureCommand()
+    {
+        return privateConfigureCommand;
+    }
+
+    private void setConfigureCommand(UICommand value)
+    {
+        privateConfigureCommand = value;
+    }
+
+    public UICommand getSignOutCommand()
+    {
+        return privateSignOutCommand;
+    }
+
+    private void setSignOutCommand(UICommand value)
+    {
+        privateSignOutCommand = value;
+    }
+
+    public UICommand getClearSearchStringCommand()
+    {
+        return privateClearSearchStringCommand;
+    }
+
+    private void setClearSearchStringCommand(UICommand value)
+    {
+        privateClearSearchStringCommand = value;
+    }
+
+    @Override
+    public List<SearchableListModel> getItems()
+    {
+        return (List<SearchableListModel>) super.getItems();
+    }
+
+    public void setItems(List<SearchableListModel> value)
+    {
+        super.setItems(value);
+    }
+
+    @Override
+    public SearchableListModel getSelectedItem()
+    {
+        return (SearchableListModel) super.getSelectedItem();
+    }
+
+    public void setSelectedItem(SearchableListModel value)
+    {
+        super.setSelectedItem(value);
+    }
+
+    public BookmarkListModel getBookmarkList()
+    {
+        return privateBookmarkList;
+    }
+
+    private void setBookmarkList(BookmarkListModel value)
+    {
+        privateBookmarkList = value;
+    }
+
+    public TagListModel getTagList()
+    {
+        return privateTagList;
+    }
+
+    private void setTagList(TagListModel value)
+    {
+        privateTagList = value;
+    }
+
+    public SystemTreeModel getSystemTree()
+    {
+        return privateSystemTree;
+    }
+
+    private void setSystemTree(SystemTreeModel value)
+    {
+        privateSystemTree = value;
+    }
+
+    public SearchableListModel getEventList()
+    {
+        return privateEventList;
+    }
+
+    private void setEventList(SearchableListModel value)
+    {
+        privateEventList = value;
+    }
+
+    public TaskListModel getTaskList() {
+        return privateTaskList;
+    }
+
+    public void setTaskList(TaskListModel taskList) {
+        this.privateTaskList = taskList;
+    }
+
+    public AlertListModel getAlertList()
+    {
+        return privateAlertList;
+    }
+
+    private void setAlertList(AlertListModel value)
+    {
+        privateAlertList = value;
+    }
+    public SearchSuggestModel getAutoCompleteModel()
+    {
+        return privateAutoCompleteModel;
+    }
+
+    private void setAutoCompleteModel(SearchSuggestModel value)
+    {
+        privateAutoCompleteModel = value;
+    }
+
+    public String getSearchStringPrefix()
+    {
+        return searchStringPrefix;
+    }
+
+    public void setSearchStringPrefix(String value)
+    {
+        if (!StringHelper.stringsEqual(searchStringPrefix, value))
+        {
+            searchStringPrefix = value;
+            searchStringPrefixChanged();
+            onPropertyChanged(new PropertyChangedEventArgs("SearchStringPrefix")); //$NON-NLS-1$
+        }
+    }
+
+    public boolean getHasSearchStringPrefix()
+    {
+        return hasSearchStringPrefix;
+    }
+
+    private void setHasSearchStringPrefix(boolean value)
+    {
+        if (hasSearchStringPrefix != value)
+        {
+            hasSearchStringPrefix = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HasSearchStringPrefix")); //$NON-NLS-1$
+        }
+    }
+
+    public String getSearchString()
+    {
+        return searchString;
+    }
+
+    public void setSearchString(String value)
+    {
+        setSearchString(value, true);
+    }
+
+    public void setSearchString(String value, boolean checkIfNewValue)
+    {
+        if (!checkIfNewValue || !StringHelper.stringsEqual(searchString, value))
+        {
+            searchString = value;
+            searchStringChanged();
+            onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
+        }
+    }
+
+    public VdcUser getLoggedInUser()
+    {
+        return loggedInUser;
+    }
+
+    public void setLoggedInUser(VdcUser value)
+    {
+        if (loggedInUser != value)
+        {
+            loggedInUser = value;
+            onPropertyChanged(new PropertyChangedEventArgs("LoggedInUser")); //$NON-NLS-1$
+        }
+    }
+
+    public List<AuditLog> getEvents()
+    {
+        return privateEvents;
+    }
+
+    public void setEvents(List<AuditLog> value)
+    {
+        privateEvents = value;
+    }
+
+    public AuditLog getLastEvent()
+    {
+        return lastEvent;
+    }
+
+    public void setLastEvent(AuditLog value)
+    {
+        if (lastEvent != value)
+        {
+            lastEvent = value;
+            onPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
+        }
+    }
+
+    public AuditLog getLastAlert()
+    {
+        return lastAlert;
+    }
+
+    public void setLastAlert(AuditLog value)
+    {
+        if (lastAlert != value)
+        {
+            lastAlert = value;
+            onPropertyChanged(new PropertyChangedEventArgs("LastAlert")); //$NON-NLS-1$
+        }
+    }
+
+    public boolean getHasSelectedTags()
+    {
+        return hasSelectedTags;
+    }
+
+    public void setHasSelectedTags(boolean value)
+    {
+        if (hasSelectedTags != value)
+        {
+            hasSelectedTags = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HasSelectedTags")); //$NON-NLS-1$
+        }
+    }
+
 }
