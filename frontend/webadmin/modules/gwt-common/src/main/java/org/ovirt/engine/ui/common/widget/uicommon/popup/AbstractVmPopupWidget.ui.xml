@@ -252,7 +252,7 @@
         .monitorsLabel {
             float: left;
             color: #333333;
-            width: 250px;
+            width: 265px;
         }
 
 		.hostSelector {

@@ -31,7 +31,11 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         this(labelAlign, contentWidget, new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
-    public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget, VisibilityRenderer visibilityRendere) {
+    public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget, VisibilityRenderer visibilityRenderer) {
+        this(labelAlign, contentWidget, visibilityRenderer, false);
+    }
+
+    public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget, VisibilityRenderer visibilityRendere, boolean useFullWidthIfAvailable) {
         super(contentWidget, visibilityRendere);
 
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
@@ -42,7 +46,9 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         if (useCheckBoxWidgetLabel) {
             getContentWidgetContainer().getElement().getStyle().setFloat(Float.LEFT);
             getLabelElement().getStyle().setDisplay(Display.NONE);
-            getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
+            if (useFullWidthIfAvailable) {
+                getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
+            }
         }
     }
 

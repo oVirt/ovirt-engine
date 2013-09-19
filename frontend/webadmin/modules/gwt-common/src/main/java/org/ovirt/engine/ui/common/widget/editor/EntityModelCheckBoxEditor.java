@@ -20,4 +20,8 @@ public class EntityModelCheckBoxEditor extends BaseEntityModelCheckboxEditor<Obj
         super(labelAlign, new EntityModelCheckBox(), visibilityRenderer);
     }
 
+    public EntityModelCheckBoxEditor(Align labelAlign, VisibilityRenderer visibilityRenderer, boolean useFullWidthIfAvailable) {
+        super(labelAlign, new EntityModelCheckBox(), visibilityRenderer, useFullWidthIfAvailable);
+    }
+
 }
