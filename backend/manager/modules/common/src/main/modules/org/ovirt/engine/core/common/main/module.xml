@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<module xmlns="urn:jboss:module:1.0" name="org.ovirt.engine.core.common">
+<module xmlns="urn:jboss:module:1.1" name="org.ovirt.engine.core.common">
 
-   <resources>
-     <resource-root path="common.jar"/>
-   </resources>
+  <resources>
+    <resource-root path="common.jar"/>
+  </resources>
 
-   <dependencies>
-      <module name="javax.api"/>
-      <module name="javax.validation.api"/>
-      <module name="org.ovirt.engine.core.compat"/>
-      <module name="org.ovirt.engine.core.dependencies"/>
-   </dependencies>
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="javax.validation.api"/>
+    <module name="org.codehaus.jackson.jackson-core-asl"/>
+    <module name="org.codehaus.jackson.jackson-mapper-asl"/>
+    <module name="org.hibernate.validator"/>
+    <module name="org.ovirt.engine.core.compat"/>
+  </dependencies>
 
 </module>

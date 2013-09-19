@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<module xmlns="urn:jboss:module:1.1" name="org.postgresql">
+<module xmlns="urn:jboss:module:1.1" name="org.apache.mina">
 
   <resources>
-    <resource-root path="postgresql.jar"/>
+    <resource-root path="mina-core.jar"/>
   </resources>
 
   <dependencies>
     <module name="javax.api"/>
-    <module name="javax.transaction.api"/>
+    <module name="org.slf4j"/>
   </dependencies>
 
 </module>
