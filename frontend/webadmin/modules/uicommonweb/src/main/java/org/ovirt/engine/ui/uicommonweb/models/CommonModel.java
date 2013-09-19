@@ -413,6 +413,12 @@ public class CommonModel extends ListModel
         setHasSelectedTags(getSelectedItem() != null && selectedTags.size() > 0);
     }
 
+    private void setAllListModelsUnavailable() {
+        for (ListModel m : getItems()) {
+            m.setIsAvailable(false);
+        }
+    }
+
     private void tagListModel_SelectedItemsChanged(Object sender, EventArgs e)
     {
         // Reset system tree to the root item.
@@ -423,21 +429,20 @@ public class CommonModel extends ListModel
         boolean hadSelectedTags = getHasSelectedTags();
         updateHasSelectedTags();
 
-        dataCenterList.setIsAvailable(!getHasSelectedTags());
-        clusterList.setIsAvailable(!getHasSelectedTags());
-        hostList.setIsAvailable(true);
-        storageList.setIsAvailable(!getHasSelectedTags());
-        vmList.setIsAvailable(true);
-        volumeList.setIsAvailable(true);
-        poolList.setIsAvailable(!getHasSelectedTags());
+        // When any tags are selected, only show Hosts, VMs, and Users tabs.
+        // These are currently the only nodes for which tags can be assigned.
+        // When no tags are selected, show the exact same main tabs that are
+        // displayed when the "System" node in the system tree is selected.
 
-        templateList.setIsAvailable(!getHasSelectedTags());
-        userList.setIsAvailable(true);
-        eventList.setIsAvailable(!getHasSelectedTags());
-        reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled() && !getHasSelectedTags());
-        networkList.setIsAvailable(!getHasSelectedTags());
-        providerList.setIsAvailable(!getHasSelectedTags());
-        profileList.setIsAvailable(!getHasSelectedTags());
+        if (getHasSelectedTags()) {
+            setAllListModelsUnavailable();
+            hostList.setIsAvailable(true);
+            vmList.setIsAvailable(true);
+            userList.setIsAvailable(true);
+        }
+        else {
+            updateAvailability(SystemTreeItemType.System, null);
+        }
 
         // Switch the selected item as neccessary.
         ListModel oldSelectedItem = getSelectedItem();
