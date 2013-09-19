@@ -1299,7 +1299,7 @@ public enum ConfigValues {
     GlusterRefreshRateHooks(425),
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
+    @DefaultValueAttribute("false")
     GlusterServicesEnabled(426),
 
     @TypeConverterAttribute(Boolean.class)
