@@ -4,15 +4,21 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.api.restapi.resource.BackendActionResource;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -29,7 +35,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendGlusterBricksResource
         extends AbstractBackendCollectionResource<GlusterBrick, GlusterBrickEntity>
         implements GlusterBricksResource {
-    static final String[] SUB_COLLECTIONS = {"statistics"};
+    static final String[] SUB_COLLECTIONS = { "statistics" };
 
     private BackendGlusterVolumeResource parent;
 
@@ -47,7 +53,8 @@ public class BackendGlusterBricksResource
     public GlusterBricks list() {
         List<GlusterBrickEntity> bricks =
                 getBackendCollection(VdcQueryType.GetGlusterVolumeBricks, new IdQueryParameters(asGuid(getVolumeId())));
-        return mapCollection(bricks);
+        GlusterBricks bricksModel = mapCollection(bricks);
+        return addActions(bricksModel);
     }
 
     private GlusterBricks mapCollection(List<GlusterBrickEntity> entities) {
@@ -102,7 +109,7 @@ public class BackendGlusterBricksResource
     protected GlusterBricks resolveCreatedList(VdcReturnValueBase result, EntityIdResolver<Guid> entityResolver) {
         try {
             GlusterBricks bricks = new GlusterBricks();
-            for(Guid id : (List<Guid>)result.getActionReturnValue()) {
+            for (Guid id : (List<Guid>) result.getActionReturnValue()) {
                 GlusterBrickEntity created = entityResolver.resolve(id);
                 bricks.getGlusterBricks().add(addLinks(doPopulate(map(created), created)));
             }
@@ -183,7 +190,6 @@ public class BackendGlusterBricksResource
                                                      new IdQueryParameters(entity.getVolumeId()),
                                                      null,
                                                      true);
-
         GlusterVolumeAdvancedDetails detailsEntity = getEntity(GlusterVolumeAdvancedDetails.class,
                                                 VdcQueryType.GetGlusterVolumeAdvancedDetails,
                                                 new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
@@ -199,4 +205,55 @@ public class BackendGlusterBricksResource
 
     }
 
+    private GlusterVolumeRemoveBricksParameters toParameters(Action action) {
+        GlusterVolumeRemoveBricksParameters params = new GlusterVolumeRemoveBricksParameters();
+
+        List<GlusterBrickEntity> entityBricks = new ArrayList<GlusterBrickEntity>();
+        for (GlusterBrick brick : action.getBricks().getGlusterBricks()) {
+            GlusterBrickEntity entity = new GlusterBrickEntity();
+            entity.setBrickDirectory(brick.getBrickDir());
+            entity.setVolumeId(new Guid(getVolumeId()));
+            if (brick.getName() != null) {
+                String [] arr = brick.getName().split("\\:");
+                if (arr.length > 1) {
+                    entity.setServerName(arr[0]);
+                    entity.setBrickDirectory(arr[1]);
+                } else {
+                    continue;
+                }
+            }
+            entityBricks.add(entity);
+        }
+        params.setVolumeId(asGuid(getVolumeId()));
+        params.setBricks(entityBricks);
+        params.setCommandType(VdcActionType.StartRemoveGlusterVolumeBricks);
+
+        return params;
+    }
+
+    private void validateBrickNames(Action action) {
+        List<GlusterBrick> bricks = action.getBricks().getGlusterBricks();
+        for (GlusterBrick brick : bricks) {
+            if (brick.getName() == null || brick.getName().equals("")) {
+                Fault fault = new Fault();
+                fault.setReason(localize(Messages.INCOMPLETE_PARAMS_REASON));
+                throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                        .entity(fault)
+                        .build());
+            }
+        }
+    }
+
+    @Override
+    public Response migrate(Action action) {
+        validateParameters(action, "bricks");
+        validateBrickNames(action);
+        GlusterVolumeRemoveBricksParameters params = toParameters(action);
+        return performAction(VdcActionType.StartRemoveGlusterVolumeBricks, params, action, false);
+    }
+
+    @Override
+    public ActionResource getActionSubresource(String action) {
+        return inject(new BackendActionResource(action, ""));
+    }
 }

@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
-
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -11,6 +10,7 @@ import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.se
 import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.volumeId;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.GlusterBrick;
@@ -41,6 +42,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     private static final String serverName = "testServer";
     private BackendGlusterVolumeResource parentMock;
     private GlusterTestHelper helper;
+    private static final String MIGRATE_BRICKS_ACTION_BASE_URL = "/clusters/" + clusterId + "/glustervolumes/" + volumeId;
 
     public BackendGlusterBricksResourceTest() {
         super(new BackendGlusterBricksResource(),
@@ -49,8 +51,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     /**
-     * Override init to perform additional mocking required
-     * for the "list" method of the collection resource.
+     * Override init to perform additional mocking required for the "list" method of the collection resource.
      */
     @Override
     protected void init() {
@@ -73,7 +74,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     @Test
     public void testList() throws Exception {
         setUpBricksQueryExpectations(null);
-        UriInfo uriInfo = setUpUriExpectations(null);
+        UriInfo uriInfo = setUpActionsUriExpectations();
         collection.setUriInfo(uriInfo);
         control.replay();
 
@@ -84,7 +85,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     public void testListAllDetails() throws Exception {
         setUpBricksQueryExpectations(null);
         setUpGetEntityExpectationsAllContent(false);
-        UriInfo uriInfo = setUpUriExpectations(null);
+        UriInfo uriInfo = setUpActionsUriExpectations();
         collection.setUriInfo(uriInfo);
         control.replay();
 
@@ -148,7 +149,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         }
     }
 
-
     @Test
     public void testAdd() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
@@ -157,17 +157,17 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         setUriInfo(uriInfo);
         setupEntityExpectationAdvancedDetails(1, false);
         setUpCreationExpectations(VdcActionType.AddBricksToGlusterVolume,
-                                  GlusterVolumeBricksActionParameters.class,
-                                  new String[] { "VolumeId", "Bricks" },
-                                  new Object[] { volumeId, getBricks() },
-                                  true,
-                                  true,
-                                  getBrickIds(),
-                                  VdcQueryType.GetGlusterBrickById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getEntity(0));
+                GlusterVolumeBricksActionParameters.class,
+                new String[] { "VolumeId", "Bricks" },
+                new Object[] { volumeId, getBricks() },
+                true,
+                true,
+                getBrickIds(),
+                VdcQueryType.GetGlusterBrickById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
         Response response = collection.add(createModel());
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof GlusterBricks);
@@ -178,11 +178,34 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     public void testRemove() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.GlusterVolumeRemoveBricks,
                 GlusterVolumeRemoveBricksParameters.class,
-                                           new String[] { "VolumeId", "Bricks" },
-                                           new Object[] { volumeId, getBricksToRemove() },
-                                           true,
-                                           true));
+                new String[] { "VolumeId", "Bricks" },
+                new Object[] { volumeId, getBricksToRemove() },
+                true,
+                true));
         verifyRemove(collection.remove(GUIDS[0].toString()));
+    }
+
+    @Test
+    public void testMigrate() throws Exception {
+        GlusterBrick brick = new GlusterBrick();
+        GlusterVolume volume = new GlusterVolume();
+        brick.setName(serverName + ":" + brickDir);
+        volume.setId(volumeId.toString());
+        brick.setGlusterVolume(volume);
+
+        GlusterBricks bricks = control.createMock(GlusterBricks.class);
+        expect(bricks.getGlusterBricks()).andReturn(Collections.singletonList(brick)).anyTimes();
+
+        setUriInfo(setUpActionExpectations(VdcActionType.StartRemoveGlusterVolumeBricks,
+                GlusterVolumeRemoveBricksParameters.class,
+                new String [] {},
+                new Object[] {},
+                true,
+                true));
+
+        Action action = new Action();
+        action.setBricks(bricks);
+        collection.migrate(action);
     }
 
     /**
@@ -248,10 +271,9 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     /**
-     * The method {@link BackendGlusterBricksResource#list()} internally
-     * invokes {@link BackendGlusterVolumeResource#get()} to fetch the volume object,
-     * and then invokes the query to fetch the bricks of that volume.
-     * This method mocks the volume resource to return pre-defined volume id
+     * The method {@link BackendGlusterBricksResource#list()} internally invokes
+     * {@link BackendGlusterVolumeResource#get()} to fetch the volume object, and then invokes the query to fetch the
+     * bricks of that volume. This method mocks the volume resource to return pre-defined volume id
      */
     private void setUpParentMocks() {
         GlusterVolume volume = new GlusterVolume();
@@ -285,7 +307,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                         return model;
                     }
 
-
                 }).anyTimes();
 
     }
@@ -303,9 +324,10 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         } else {
             if (failure instanceof String) {
                 expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
-                setUpL10nExpectations((String)failure);
+                setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                expect(backend.RunQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andThrow((Exception) failure).anyTimes();
+                expect(backend.RunQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andThrow((Exception) failure)
+                        .anyTimes();
                 return;
             }
         }
@@ -335,6 +357,11 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                     new Object[] { clusterId, volumeId, GUIDS[times], true },
                     notFound ? null : helper.getVolumeAdvancedDetailsEntity(times));
         }
+    }
+
+    private UriInfo setUpActionsUriExpectations() {
+        UriInfo uriInfo = setUpBasicUriExpectations(MIGRATE_BRICKS_ACTION_BASE_URL);
+        return uriInfo;
     }
 
 }

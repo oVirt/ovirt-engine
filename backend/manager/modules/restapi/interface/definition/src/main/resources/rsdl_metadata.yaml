@@ -3873,12 +3873,26 @@ actions:
   description: get the list of all bricks in the gluster volume attached to the cluster
   request:
     body:
-      parameterType: Bricks
+      parameterType: GlusterBricks
       signatures:
       - mandatoryArguments:
           bricks--COLLECTION: {brick.id: 'xs:string'}
         optionalArguments: {}
         description: get the list of all bricks in the gluster volume attached to the cluster
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/migrate|rel=migrate
+  description: migrate the data from the brick to others and mark for deletion
+  request:
+    body:
+      parameterType: GlusterBricks
+      signatures:
+      - mandatoryArguments:
+          bricks--COLLECTION: {brick.name: 'xs:string'}
+        optionalArguments: {}
+        description: migrate the data from the brick to others and mark for deletion
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}

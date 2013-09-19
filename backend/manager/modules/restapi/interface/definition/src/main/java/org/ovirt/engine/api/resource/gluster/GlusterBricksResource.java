@@ -13,7 +13,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
+import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterBricks;
+import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.RsdlIgnore;
 
@@ -22,6 +25,9 @@ import org.ovirt.engine.api.resource.RsdlIgnore;
  */
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterBricksResource {
+    @Path("{action: (migrate)}")
+    public ActionResource getActionSubresource(@PathParam("action") String action);
+
     @GET
     @Formatted
     public GlusterBricks list();
@@ -72,4 +78,12 @@ public interface GlusterBricksResource {
      */
     @Path("{brick_id}")
     public GlusterBrickResource getGlusterBrickSubResource(@PathParam("brick_id") String id);
+
+    @POST
+    @Formatted
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("migrate")
+    public Response migrate(Action action);
+
 }
