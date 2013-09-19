@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
@@ -150,7 +151,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
             }
         });
 
-        overrideEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        overrideEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new VisibilityRenderer.SimpleVisibilityRenderer(), true);
     }
 
     void localize(ApplicationConstants constants) {
