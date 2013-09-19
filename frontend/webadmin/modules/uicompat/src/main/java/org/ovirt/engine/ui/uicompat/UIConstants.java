@@ -1575,6 +1575,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("NOTE:\n -Removing brick(s) can result in data loss.")
     String removeBricksWarning();
 
+    @DefaultStringValue("Stop Brick Removal")
+    String stopRemoveBricksTitle();
+
+    @DefaultStringValue("Are you sure you want to stop the removal operation of the following bricks?")
+    String stopRemoveBricksMessage();
+
     @DefaultStringValue("Brick with the same details already exist")
     String duplicateBrickMsg();
 

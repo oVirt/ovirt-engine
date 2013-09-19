@@ -52,6 +52,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setIsTimerDisabled(false);
         setAddBricksCommand(new UICommand("Add Bricks", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("Remove Bricks", this)); //$NON-NLS-1$
+        setStopRemoveBricksCommand(new UICommand("StopRemoveBricks", this)); //$NON-NLS-1$
         setReplaceBrickCommand(new UICommand("Replace Brick", this)); //$NON-NLS-1$
         setBrickAdvancedDetailsCommand(new UICommand("Brick Advanced Details", this)); //$NON-NLS-1$
         getReplaceBrickCommand().setIsAvailable(false);
@@ -79,6 +80,18 @@ public class VolumeBrickListModel extends SearchableListModel {
     private void setRemoveBricksCommand(UICommand value)
     {
         removeBricksCommand = value;
+    }
+
+    private UICommand stopRemoveBricksCommand;
+
+    public UICommand getStopRemoveBricksCommand()
+    {
+        return stopRemoveBricksCommand;
+    }
+
+    private void setStopRemoveBricksCommand(UICommand value)
+    {
+        stopRemoveBricksCommand = value;
     }
 
     private UICommand replaceBrickCommand;
@@ -123,6 +136,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
         boolean allowRemove = true;
+        boolean allowStopRemove = true;
         boolean allowReplace = true;
         boolean allowAdvanced = true;
 
@@ -130,12 +144,13 @@ public class VolumeBrickListModel extends SearchableListModel {
             allowRemove = false;
             allowReplace = false;
             allowAdvanced = false;
+            allowStopRemove = false;
         }
         else {
-            GlusterAsyncTask task = volumeEntity.getAsyncTask();
-            if (task != null
-                    && (task.getStatus() == JobExecutionStatus.STARTED || task.getType() == GlusterTaskType.REMOVE_BRICK
-                            && task.getStatus() == JobExecutionStatus.FINISHED)) {
+            GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
+            if (volumeTask != null
+                    && (volumeTask.getStatus() == JobExecutionStatus.STARTED || volumeTask.getType() == GlusterTaskType.REMOVE_BRICK
+                            && volumeTask.getStatus() == JobExecutionStatus.FINISHED)) {
                 allowRemove = false;
             }
             else if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
@@ -145,6 +160,14 @@ public class VolumeBrickListModel extends SearchableListModel {
             else if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
                     && (volumeEntity.getBricks().size() == VolumeListModel.REPLICATE_COUNT_DEFAULT || getSelectedItems().size() > 1)) {
                 allowRemove = false;
+            }
+
+            List<GlusterBrickEntity> list = getSelectedItems();
+            for (GlusterBrickEntity brick : list) {
+                GlusterAsyncTask task = brick.getAsyncTask();
+                allowStopRemove =
+                        allowStopRemove && task != null && task.getTaskId() != null
+                                && volumeTask != null && volumeTask.getStatus() == JobExecutionStatus.STARTED;
             }
 
             if(getSelectedItems().size() == 1) {
@@ -158,6 +181,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
 
         getRemoveBricksCommand().setIsExecutionAllowed(allowRemove);
+        getStopRemoveBricksCommand().setIsExecutionAllowed(allowStopRemove);
         getReplaceBrickCommand().setIsExecutionAllowed(allowReplace);
         getBrickAdvancedDetailsCommand().setIsExecutionAllowed(allowAdvanced);
     }
@@ -720,6 +744,80 @@ public class VolumeBrickListModel extends SearchableListModel {
         }, model);
     }
 
+    private void stopRemoveBricks() {
+
+        if (getSelectedItems() == null || getSelectedItems().isEmpty()) {
+            return;
+        }
+
+        if (getConfirmWindow() != null) {
+            return;
+        }
+
+        ConfirmationModel model = new ConfirmationModel();
+        setConfirmWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().stopRemoveBricksTitle());
+        model.setMessage(ConstantsManager.getInstance().getConstants().stopRemoveBricksMessage());
+        model.setHashName("volume_remove_bricks_stop"); //$NON-NLS-1$
+
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
+        ArrayList<String> list = new ArrayList<String>();
+        for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
+            if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null
+                    && volumeTask != null && volumeTask.getStatus() == JobExecutionStatus.STARTED) {
+                list.add(brick.getQualifiedName());
+            }
+        }
+        model.setItems(list);
+
+        UICommand okCommand = new UICommand("OnStopRemoveBricks", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+
+        UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    private void onStopRemoveBricks() {
+        if (getConfirmWindow() == null) {
+            return;
+        }
+
+        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+
+        if (getSelectedItems() == null || getSelectedItems().isEmpty()) {
+            return;
+        }
+
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+
+        ArrayList<GlusterBrickEntity> list = new ArrayList<GlusterBrickEntity>();
+        GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
+        for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
+            if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null
+                    && volumeTask != null && volumeTask.getStatus() == JobExecutionStatus.STARTED) {
+                list.add(brick);
+            }
+        }
+
+        GlusterVolumeRemoveBricksParameters parameter =
+                new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
+        model.startProgress(null);
+
+        Frontend.RunAction(VdcActionType.StopRemoveGlusterVolumeBricks, parameter, new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                localModel.stopProgress();
+                setConfirmWindow(null);
+            }
+        }, model);
+    }
+
     private void replaceBrick()
     {
         if (getWindow() != null)
@@ -930,16 +1028,22 @@ public class VolumeBrickListModel extends SearchableListModel {
             removeBricks();
         } else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             onRemoveBricks();
+        } else if (command.equals(getStopRemoveBricksCommand())) {
+            stopRemoveBricks();
+        } else if (command.getName().equals("OnStopRemoveBricks")) { //$NON-NLS-1$
+            onStopRemoveBricks();
         } else if (command.equals(getReplaceBrickCommand())) {
             replaceBrick();
         } else if (command.getName().equals("OnReplace")) { //$NON-NLS-1$
             onReplaceBrick();
         } else if (command.equals(getBrickAdvancedDetailsCommand())) {
             showBrickAdvancedDetails();
-        }
-        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+        } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             setWindow(null);
+        } else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
+            setConfirmWindow(null);
         }
+
     }
 
 }
