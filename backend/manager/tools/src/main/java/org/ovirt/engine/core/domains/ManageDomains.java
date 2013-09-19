@@ -369,7 +369,7 @@ public class ManageDomains {
     private String readPasswordInteractively() {
         String password = null;
         while (StringUtils.isBlank(password)) {
-            System.out.println("Enter password:");
+            System.out.print("Enter password:");
             password = new String(System.console().readPassword());
         }
         return password;
