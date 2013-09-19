@@ -218,20 +218,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 query);
     }
 
-    @Override
-    protected void assignVnicProfiles(ProfileBehavior behavior, List argNics, List profiles) {
-        List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
-
-        if (nics.isEmpty() && profilesExist(profiles)) {
-            // create a default if none provided AND if there are profiles to choose from
-            VmNetworkInterface networkInterface = new VmNetworkInterface();
-            networkInterface.setName(AsyncDataProvider.getNewNicName(null));
-            nics.add(networkInterface);
-        }
-
-        super.assignVnicProfiles(behavior, nics, profiles);
-    }
-
     private boolean profilesExist(List<VnicProfileView> profiles) {
         return !profiles.isEmpty() && profiles.get(0) != null;
     }
