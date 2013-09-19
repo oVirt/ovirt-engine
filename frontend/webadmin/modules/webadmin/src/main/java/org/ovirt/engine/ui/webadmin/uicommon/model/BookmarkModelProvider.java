@@ -108,6 +108,14 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
             }
         });
 
+        // Clear tag selection when a tag is saved/edited/deleted
+        getModel().getItemSavedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                clearSelection();
+            }
+        });
+
     }
 
     void clearSelection() {

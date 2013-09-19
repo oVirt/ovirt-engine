@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -48,6 +49,9 @@ public class BookmarkListModel extends SearchableListModel
     private static final BookmarksComparator COMPARATOR = new BookmarksComparator();
 
     public static EventDefinition NavigatedEventDefinition;
+
+    public static EventDefinition SavedEventDefinition;
+
     private Event privateNavigatedEvent;
 
     public Event getNavigatedEvent()
@@ -109,14 +113,28 @@ public class BookmarkListModel extends SearchableListModel
         privateIsBookmarkInitiated = value;
     }
 
+    private Event privateItemSavedEvent;
+
+    public Event getItemSavedEvent()
+    {
+        return privateItemSavedEvent;
+    }
+
+    private void setItemSavedEvent(Event value)
+    {
+        privateItemSavedEvent = value;
+    }
+
     static
     {
         NavigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class); //$NON-NLS-1$
+        SavedEventDefinition = new EventDefinition("Saved", BookmarkListModel.class); //$NON-NLS-1$
     }
 
     public BookmarkListModel()
     {
         setNavigatedEvent(new Event(NavigatedEventDefinition));
+        setItemSavedEvent(new Event(SavedEventDefinition));
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -310,6 +328,8 @@ public class BookmarkListModel extends SearchableListModel
             // Cancel() triggers a force refresh
             // getSearchCommand().Execute();
         }
+
+        privateItemSavedEvent.raise(this, EventArgs.Empty);
     }
 
     public void cancel()
