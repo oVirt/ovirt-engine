@@ -1417,6 +1417,7 @@ public class UnitVmModel extends Model {
             } else if (sender == getDataCenterWithClustersList())
             {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
+                updateDisplayProtocol();
                 initUsbPolicy();
             }
             else if (sender == getTemplate())
@@ -1434,6 +1435,7 @@ public class UnitVmModel extends Model {
             else if (sender == getOSType())
             {
                 oSType_SelectedItemChanged(sender, args);
+                updateDisplayProtocol();
                 initUsbPolicy();
             }
             else if (sender == getFirstBootDevice())
@@ -1671,21 +1673,44 @@ public class UnitVmModel extends Model {
 
     private void initDisplayProtocol()
     {
+        getDisplayProtocol().getSelectedItemChangedEvent().addListener(this);
+    }
+
+    private void updateDisplayProtocol()
+    {
+        DisplayType oldDisplayProtocolOption = null;
+
+        if (getDisplayProtocol().getSelectedItem() != null) {
+            oldDisplayProtocolOption = getDisplayProtocol().getSelectedItem().getEntity();
+        }
+
+        VDSGroup cluster = getSelectedCluster();
+        Integer osType = getOSType().getSelectedItem();
+
+        if (cluster == null || osType == null) {
+            return;
+        }
+
         List<EntityModel<DisplayType>> displayProtocolOptions = new ArrayList<EntityModel<DisplayType>>();
+        List<DisplayType> displayTypes = AsyncDataProvider.getDisplayTypes(osType, cluster.getcompatibility_version());
 
-        EntityModel spiceProtocol = new EntityModel();
-        spiceProtocol.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
-        spiceProtocol.setEntity(DisplayType.qxl);
+        if (displayTypes.contains(DisplayType.vnc)) {
+            EntityModel<DisplayType> vncProtocol = new EntityModel<DisplayType>();
+            vncProtocol.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
+            vncProtocol.setEntity(DisplayType.vnc);
+            displayProtocolOptions.add(vncProtocol);
+        }
 
-        EntityModel vncProtocol = new EntityModel();
-        vncProtocol.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
-        vncProtocol.setEntity(DisplayType.vnc);
+        if (displayTypes.contains(DisplayType.qxl)) {
+            EntityModel<DisplayType> spiceProtocol = new EntityModel<DisplayType>();
+            spiceProtocol.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
+            spiceProtocol.setEntity(DisplayType.qxl);
+            displayProtocolOptions.add(spiceProtocol);
+        }
 
-        displayProtocolOptions.add(spiceProtocol);
-        displayProtocolOptions.add(vncProtocol);
         getDisplayProtocol().setItems(displayProtocolOptions);
 
-        getDisplayProtocol().getSelectedItemChangedEvent().addListener(this);
+        behavior.postDisplayTypeItemChanged(oldDisplayProtocolOption);
     }
 
     private void initFirstBootDevice()
