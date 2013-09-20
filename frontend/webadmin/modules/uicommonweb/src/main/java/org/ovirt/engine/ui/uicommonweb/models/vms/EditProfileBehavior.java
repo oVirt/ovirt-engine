@@ -16,7 +16,7 @@ public class EditProfileBehavior extends ProfileBehavior {
         profiles = profiles == null ? new ArrayList<VnicProfileView>() : profiles;
 
         if (networkInterface.getVnicProfileId() == null) {
-            profileList.setSelectedItem(null);
+            profileList.setSelectedItem(VnicProfileView.EMPTY);
             return;
         }
 

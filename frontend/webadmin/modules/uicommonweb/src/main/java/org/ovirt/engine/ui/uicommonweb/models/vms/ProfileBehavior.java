@@ -33,6 +33,9 @@ public abstract class ProfileBehavior {
                 ProfileBehavior.this.clusterNetworks = clusterNetworks;
 
                 List<VnicProfileView> vnicProfiles = new ArrayList<VnicProfileView>();
+                if (hotUpdateSupported) {
+                    vnicProfiles.add(VnicProfileView.EMPTY);
+                }
 
                 if (returnValue == null) {
                     return vnicProfiles;
@@ -44,10 +47,6 @@ public abstract class ProfileBehavior {
                         vnicProfiles.add(vnicProfile);
                     }
 
-                }
-
-                if (hotUpdateSupported) {
-                    vnicProfiles.add(null);
                 }
 
                 Collections.sort(vnicProfiles, new Linq.VnicProfileViewComparator());

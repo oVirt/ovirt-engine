@@ -1142,9 +1142,9 @@ public final class Linq
 
         @Override
         public int compare(VnicProfileView vnicProfile1, VnicProfileView vnicProfile2) {
-            if (vnicProfile1 == null) {
-                return vnicProfile2 == null ? 0 : 1;
-            } else if (vnicProfile2 == null) {
+            if (vnicProfile1 == VnicProfileView.EMPTY) {
+                return vnicProfile2 == VnicProfileView.EMPTY ? 0 : 1;
+            } else if (vnicProfile2 == VnicProfileView.EMPTY) {
                 return -1;
             }
 
