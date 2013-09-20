@@ -1581,6 +1581,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to stop the removal operation of the following bricks?")
     String stopRemoveBricksMessage();
 
+    @DefaultStringValue("Commit Brick Removal")
+    String commitRemoveBricksTitle();
+
+    @DefaultStringValue("Are you sure you want to commit the removal of the following brick(s)?")
+    String commitRemoveBricksMessage();
+
     @DefaultStringValue("Brick with the same details already exist")
     String duplicateBrickMsg();
 

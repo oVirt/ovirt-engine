@@ -2648,6 +2648,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Stop")
     String removeBricksStop();
 
+    @DefaultStringValue("Commit")
+    String removeBricksCommit();
+
     @DefaultStringValue("Replace Brick")
     String replaceBrickBrick();
 
