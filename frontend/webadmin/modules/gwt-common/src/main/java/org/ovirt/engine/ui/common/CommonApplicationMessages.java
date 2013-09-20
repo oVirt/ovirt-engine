@@ -105,14 +105,20 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("default: {0}")
     String defaultTimeZoneCaption(String currentDefault);
 
-    @DefaultMessage("VM has {0} Nics. Assign them to Profiles.")
+    @DefaultMessage("VM has {0} network interfaces. Assign profiles to them.")
     String assignNicsToProfilesPlural(int numOfNics);
 
-    @DefaultMessage("VM has 1 Nic. Assign it to a Profile.")
+    @DefaultMessage("VM has 1 network interface. Assign a profile to it.")
     String assignNicsToProfilesSingular();
 
     @DefaultMessage("VM has no network interfaces and there are no available profiles to choose from.")
     String assignNicsNothingToAssign();
+
+    @DefaultMessage("<Empty>")
+    SafeHtml emptyProfile();
+
+    @DefaultMessage("Do not assign any profile to this virtual network interface")
+    SafeHtml emptyProfileDescription();
 
     @DefaultMessage("{0} ({1})")
     SafeHtml profileAndNetwork(String profileName, String networkName);

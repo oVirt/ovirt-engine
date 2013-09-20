@@ -383,8 +383,8 @@ public abstract class VmInterfaceModel extends Model
         // Save changes.
         nic.setName((String) getName().getEntity());
         VnicProfileView profile = (VnicProfileView) getProfile().getSelectedItem();
-        nic.setVnicProfileId(profile != null ? profile.getId() : null);
-        nic.setNetworkName(profile != null ? profile.getNetworkName() : null);
+        nic.setVnicProfileId(profile.getId());
+        nic.setNetworkName(profile.getNetworkName());
         nic.setLinked((Boolean) getLinked().getEntity());
         if (getNicType().getSelectedItem() == null)
         {

@@ -10,6 +10,8 @@ public class VnicProfileView extends VnicProfile {
     private String dataCenterName;
     private Version compatibilityVersion;
 
+    public static final VnicProfileView EMPTY = new VnicProfileView();
+
     public String getNetworkName() {
         return networkName;
     }

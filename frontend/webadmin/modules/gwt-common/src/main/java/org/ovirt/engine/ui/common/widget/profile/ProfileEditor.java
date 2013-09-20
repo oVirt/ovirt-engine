@@ -18,17 +18,23 @@ public class ProfileEditor extends ListModelTypeAheadListBoxEditor<Object> {
 
                     @Override
                     public String getReplacementStringNullSafe(Object data) {
-                        return messages.profileAndNetworkSelected(((VnicProfileView) data).getName(),
-                                ((VnicProfileView) data).getNetworkName()).asString();
+                        VnicProfileView profile = (VnicProfileView) data;
+                        return (profile == VnicProfileView.EMPTY) ? messages.emptyProfile().asString()
+                                : messages.profileAndNetworkSelected(profile.getName(), profile.getNetworkName())
+                                        .asString();
                     }
 
                     @Override
                     public String getDisplayStringNullSafe(Object data) {
-                        String profileDescription =
-                                ((VnicProfileView) data).getDescription();
+                        VnicProfileView profile = (VnicProfileView) data;
+                        if (profile == VnicProfileView.EMPTY) {
+                            return templates.typeAheadNameDescription(messages.emptyProfile().asString(),
+                                    messages.emptyProfileDescription().asString()).asString();
+                        }
+
+                        String profileDescription = profile.getDescription();
                         String profileAndNetwork =
-                                messages.profileAndNetwork(((VnicProfileView) data).getName(),
-                                        ((VnicProfileView) data).getNetworkName()).asString();
+                                messages.profileAndNetwork(profile.getName(), profile.getNetworkName()).asString();
 
                         return templates.typeAheadNameDescription(profileAndNetwork,
                                 profileDescription != null ? profileDescription : "").asString(); //$NON-NLS-1$
