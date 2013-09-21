@@ -36,6 +36,7 @@ ENGINE_CACHE="@ENGINE_CACHE@"
 SPICE_DIR="@SPICE_DIR@"
 ENGINE_NOVNC_DIR="/usr/share/novnc"
 ENGINE_SPICE_HTML5_DIR="/usr/share/spice-html5"
+ENGINE_MANUAL="${ENGINE_DOC}/manual"
 
 #
 # A file created on init and removed on orderly shutdown

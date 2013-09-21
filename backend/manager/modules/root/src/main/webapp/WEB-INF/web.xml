@@ -63,7 +63,7 @@
     <servlet-class>org.ovirt.engine.core.DocsServlet</servlet-class>
     <init-param>
       <param-name>file</param-name>
-      <param-value>%{ENGINE_DOC}/manual</param-value>
+      <param-value>%{ENGINE_MANUAL}</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
