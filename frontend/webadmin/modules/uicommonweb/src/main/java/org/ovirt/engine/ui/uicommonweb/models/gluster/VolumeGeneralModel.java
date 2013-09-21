@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
+import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -14,6 +17,7 @@ public class VolumeGeneralModel extends EntityModel {
     private String numOfBricks;
     private String glusterMountPoint;
     private String nfsMountPoint;
+    private Set<TransportType> transportTypes;
 
     public String getName() {
         return name;
@@ -106,6 +110,14 @@ public class VolumeGeneralModel extends EntityModel {
         setReplicaCount(entity.getReplicaCount() != null ? Integer.toString(entity.getReplicaCount()) : null);
         setStripeCount(entity.getStripeCount() != null ? Integer.toString(entity.getStripeCount()) : null);
         setNumOfBricks(entity.getBricks() != null ? Integer.toString(entity.getBricks().size()) : null);
+        setTransportTypes(entity.getTransportTypes());
     }
 
+    public Set<TransportType> getTransportTypes() {
+        return transportTypes;
+    }
+
+    public void setTransportTypes(Set<TransportType> transportTypes) {
+        this.transportTypes = transportTypes;
+    }
 }

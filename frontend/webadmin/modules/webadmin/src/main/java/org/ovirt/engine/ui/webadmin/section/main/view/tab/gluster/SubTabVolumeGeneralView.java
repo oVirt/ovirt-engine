@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.VolumeTransportTypeLabel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -40,6 +41,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     TextBoxLabel replicaCount = new TextBoxLabel();
     TextBoxLabel stripeCount = new TextBoxLabel();
     TextBoxLabel numOfBricks = new TextBoxLabel();
+    VolumeTransportTypeLabel transportTypes = new VolumeTransportTypeLabel();
 
     FormBuilder formBuilder;
 
@@ -59,7 +61,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 6);
+        formBuilder = new FormBuilder(formPanel, 1, 7);
 
         formBuilder.addFormItem(new FormItem(constants.NameVolume(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeIdVolume(), volumeId, 1, 0));
@@ -72,6 +74,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         formBuilder.addFormItem(stripeFormItem);
 
         formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.transportTypesVolume(), transportTypes, 6, 0));
 
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override

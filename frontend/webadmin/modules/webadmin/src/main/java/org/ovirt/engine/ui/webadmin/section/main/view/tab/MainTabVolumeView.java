@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -86,34 +86,6 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 };
         getTable().addColumn(numOfBricksColumn, constants.numberOfBricksVolume(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<GlusterVolumeEntity> transportColumn =
-                new TextColumnWithTooltip<GlusterVolumeEntity>() {
-                    @Override
-                    public String getValue(GlusterVolumeEntity object) {
-                        StringBuilder transportTypes = new StringBuilder();
-                        Iterator<TransportType> iterator = object.getTransportTypes().iterator();
-                        while (iterator.hasNext())
-                        {
-                            TransportType transportType = iterator.next();
-                            if (transportTypeTranslator.containsKey(transportType))
-                            {
-                                transportTypes.append(transportTypeTranslator.get(transportType));
-                            }
-                            else
-                            {
-                                transportTypes.append(transportType.toString());
-                            }
-
-                            if (iterator.hasNext())
-                            {
-                                transportTypes.append(", "); //$NON-NLS-1$
-                            }
-                        }
-                        return transportTypes.toString();
-                    }
-
-                };
-        getTable().addColumn(transportColumn, constants.transportTypesVolume(), "150px"); //$NON-NLS-1$
 
         MenuCell<GlusterVolumeEntity> rebalanceMenuCell = getRebalanceActivityMenu(constants);
         List<HasCell<GlusterVolumeEntity, ?>> list = new ArrayList<HasCell<GlusterVolumeEntity, ?>>();
@@ -135,6 +107,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         getTable().addColumn(new VolumeActivityColumn(list),
                 constants.activitiesOnVolume(),
                 "100px"); //$NON-NLS-1$
+
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
