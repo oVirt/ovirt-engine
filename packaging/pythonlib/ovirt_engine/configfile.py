@@ -34,6 +34,10 @@ class ConfigFile(base.Base):
     _EMPTY_LINE = re.compile(r'^\s*(#.*|)$')
     _KEY_VALUE_EXPRESSION = re.compile(r'^\s*(?P<key>\w+)=(?P<value>.*)$')
 
+    @property
+    def values(self):
+        return self._values
+
     def _loadLine(self, line):
         emptyMatch = self._EMPTY_LINE.search(line)
         if emptyMatch is None:
