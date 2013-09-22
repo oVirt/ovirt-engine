@@ -270,6 +270,8 @@ public abstract class AbstractDiskModel extends DiskModel
         getDataCenter().setIsAvailable(false);
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
 
+        getStorageDomain().getSelectedItemChangedEvent().addListener(this);
+
         setStorageType(new ListModel());
         getStorageType().setIsAvailable(false);
         getStorageType().setItems(AsyncDataProvider.getStorageTypeList());
@@ -362,8 +364,6 @@ public abstract class AbstractDiskModel extends DiskModel
                 else {
                     diskModel.setMessage(CONSTANTS.noActiveStorageDomainsInDC());
                 }
-
-                updateQuota(datacenter);
             }
         }, getHash()), datacenter.getId(), ActionGroup.CREATE_DISK);
     }
@@ -661,6 +661,10 @@ public abstract class AbstractDiskModel extends DiskModel
         }
     }
 
+    private void storageDomain_SelectedItemChanged() {
+        updateQuota((StoragePool) getDataCenter().getSelectedItem());
+    }
+
     public boolean validate() {
         getDescription().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
@@ -799,6 +803,10 @@ public abstract class AbstractDiskModel extends DiskModel
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter())
         {
             datacenter_SelectedItemChanged();
+        }
+        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStorageDomain())
+        {
+            storageDomain_SelectedItemChanged();
         }
         else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
