@@ -5,9 +5,11 @@ import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,12 +96,12 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
     }
 
-    public static boolean isDomainsReportedAsProblematic(Guid storagePoolId, List<VDSDomainsData> vdsDomainsData) {
+    public static List<Guid> fetchDomainsReportedAsProblematic(Guid storagePoolId, List<VDSDomainsData> vdsDomainsData) {
         IrsProxyData proxy = _irsProxyData.get(storagePoolId);
         if (proxy != null) {
-            return proxy.isDomainsReportedAsProblematic(vdsDomainsData);
+            return proxy.checkIfDomainsReportedAsProblematic(vdsDomainsData);
         }
-        return false;
+        return Collections.emptyList();
     }
 
     @Override
@@ -1104,7 +1106,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
         }
 
-        public boolean isDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData) {
+        public List<Guid> checkIfDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData) {
+            List<Guid> domainsInProblem = new LinkedList<>();
             Set<Guid> domainsInPool = new HashSet<Guid>(
                     DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                             _storagePoolId, StorageDomainStatus.Active));
@@ -1114,7 +1117,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             for (VDSDomainsData vdsDomainData : vdsDomainsData) {
                 if (domainsInPool.contains(vdsDomainData.getDomainId())) {
                     if (isDomainReportedAsProblematic(vdsDomainData, true)) {
-                        return true;
+                        domainsInProblem.add(vdsDomainData.getDomainId());
                     }
                     domainWhicWereSeen.add(vdsDomainData.getDomainId());
                 }
@@ -1124,9 +1127,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 for (Guid domainId : domainsInPool) {
                     log.errorFormat("Domain {0} is not seen by Host", domainId);
                 }
-                return true;
+                domainsInProblem.addAll(domainsInPool);
             }
-            return false;
+            return domainsInProblem;
         }
 
         private boolean isDomainReportedAsProblematic(VDSDomainsData tempData, boolean isLog) {
