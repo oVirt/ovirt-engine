@@ -236,7 +236,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
-            entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
+            entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));

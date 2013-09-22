@@ -151,7 +151,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                     : null);
             entity.setFlushLatency(rs.getObject("flush_latency_seconds") != null ? rs.getDouble("flush_latency_seconds")
                     : null);
-            entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
+            entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setActive(Boolean.TRUE.equals(rs.getObject("active")));
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));

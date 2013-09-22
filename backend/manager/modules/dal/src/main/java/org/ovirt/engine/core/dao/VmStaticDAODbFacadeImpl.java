@@ -214,7 +214,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
                     userDefinedProperties));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
-            entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
+            entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setCpuPinning(rs.getString("cpu_pinning"));
             entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
             entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
