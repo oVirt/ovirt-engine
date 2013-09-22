@@ -90,6 +90,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Disable CPU Thread Support")
     String disableClusterCpuThreadSupportTitle();
 
+    @DefaultStringValue("Change Cluster CPU level")
+    String changeCpuLevel();
+
+    @DefaultStringValue("There are running VMs. Lowering the Cluster CPU level might prevent migration of these VMs to some of the Hosts in the Cluster. Are you sure you want to continue?")
+    String changeCpuLevelConfirmation();
+
     @DefaultStringValue("General")
     String generalTitle();
 

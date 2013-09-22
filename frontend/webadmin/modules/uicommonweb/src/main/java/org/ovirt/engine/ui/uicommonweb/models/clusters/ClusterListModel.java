@@ -571,7 +571,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     .getConstants()
                     .youAreAboutChangeClusterCpuThreadSupportMsg());
 
-            UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
+            UICommand tempVar = new UICommand("OnSaveConfirmCpuLevel", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             getConfirmWindow().getCommands().add(tempVar);
@@ -580,10 +580,69 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             tempVar2.setIsCancel(true);
             getConfirmWindow().getCommands().add(tempVar2);
         } else {
-            onSaveInternal();
+            onSaveConfirmCpuLevel();
         }
     }
 
+    private ServerCpu getVdsGroupServerCpu(ClusterModel model, VDSGroup vdsGroup) {
+        ServerCpu retVal = null;
+        for (ServerCpu cpu : (ArrayList<ServerCpu>) model.getCPU().getItems()) {
+            if (StringHelper.stringsEqual(cpu.getCpuName(), vdsGroup.getcpu_name())) {
+                retVal = cpu;
+                break;
+            }
+        }
+
+        return retVal;
+    }
+
+    private void onSaveConfirmCpuLevel()
+    {
+        ClusterModel model = (ClusterModel) getWindow();
+
+        // cancel confirm window if there is one
+        cancelConfirmation();
+
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(model);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result)
+            {
+                ClusterModel clusterModel = (ClusterModel) model;
+                Integer activeVms = (Integer) result;
+
+                ServerCpu vdsCpu = getVdsGroupServerCpu(clusterModel, (VDSGroup) getSelectedItem());
+                if (activeVms > 0 && vdsCpu != null && ((ServerCpu) clusterModel.getCPU().getSelectedItem()).getLevel() < vdsCpu.getLevel()) {
+                    cpuLevelConfirmationWindow();
+                } else {
+                    onSaveInternal();
+                }
+            }
+        };
+        AsyncDataProvider.getNumberOfActiveVmsInCluster(_asyncQuery, ((VDSGroup) getSelectedItem()).getId());
+    }
+
+    private void cpuLevelConfirmationWindow() {
+        ConfirmationModel confirmModel = new ConfirmationModel();
+        setConfirmWindow(confirmModel);
+        confirmModel.setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .changeCpuLevel());
+        confirmModel.setHashName("change_cpu_level"); //$NON-NLS-1$
+        confirmModel.setMessage(ConstantsManager.getInstance()
+                .getConstants()
+                .changeCpuLevelConfirmation());
+
+        UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar.setIsDefault(true);
+        getConfirmWindow().getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar2.setIsCancel(true);
+        getConfirmWindow().getCommands().add(tempVar2);
+    }
     public void onPreSaveInternal(ClusterModel model)
     {
         if ((Boolean) model.getIsImportGlusterConfiguration().getEntity())
@@ -963,6 +1022,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveConfirmCpuThreads")) //$NON-NLS-1$
         {
             onSaveConfirmCpuThreads();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnSaveConfirmCpuLevel")) //$NON-NLS-1$
+        {
+            onSaveConfirmCpuLevel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal")) //$NON-NLS-1$
         {
