@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -22,7 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class VmInterfaceListModel extends SearchableListModel
 {
 
@@ -283,26 +281,9 @@ public class VmInterfaceListModel extends SearchableListModel
         updateActionAvailability();
     }
 
-    protected void updateConfigValues()
-    {
-        if (getEntity() == null)
-        {
-            return;
-        }
-        VM vm = getEntity();
-        Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion() != null
-                ? vm.getVdsGroupCompatibilityVersion() : new Version();
-    }
-
     @Override
     public VM getEntity() {
         return (VM) super.getEntity();
-    }
-
-    @Override
-    public void setEntity(Object value) {
-        super.setEntity(value);
-        updateConfigValues();
     }
 
     @Override
