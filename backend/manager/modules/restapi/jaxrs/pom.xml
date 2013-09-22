@@ -97,7 +97,7 @@
       <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-types</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
