@@ -74,11 +74,11 @@ public class NewClusterPolicyModel extends Model {
             getCustomProperties().putAll(clusterPolicy.getParameterMap());
         }
         customPropertiesInitialized = true;
-        refreshCustomProperties(null);
+        refreshCustomProperties(null, false);
 
     }
 
-    private void refreshCustomProperties(PolicyUnit toRemove) {
+    private void refreshCustomProperties(PolicyUnit toRemove, boolean reset) {
         if (!customPropertiesInitialized) {
             return;
         }
@@ -107,8 +107,12 @@ public class NewClusterPolicyModel extends Model {
                 }
             }
         }
+        Map<String, String> defaultMap = new HashMap<String, String>(getCustomProperties());
+        if(!reset) {
+            defaultMap.putAll(KeyValueModel.convertProperties(getCustomPropertySheet().getEntity()));
+        }
         getCustomPropertySheet().setKeyValueString(lines);
-        getCustomPropertySheet().setEntity(KeyValueModel.convertProperties(getCustomProperties()));
+        getCustomPropertySheet().setEntity(KeyValueModel.convertProperties(defaultMap));
     }
 
     private void initFilters() {
@@ -168,7 +172,7 @@ public class NewClusterPolicyModel extends Model {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                refreshCustomProperties(currentLoadBalance);
+                refreshCustomProperties(currentLoadBalance, false);
                 currentLoadBalance = (PolicyUnit) getLoadBalanceList().getSelectedItem();
             }
         });
@@ -444,7 +448,7 @@ public class NewClusterPolicyModel extends Model {
                 }
             }
         }
-        refreshCustomProperties(null);
+        refreshCustomProperties(null, false);
         getFiltersChangedEvent().raise(this, EventArgs.Empty);
     }
 
@@ -456,7 +460,7 @@ public class NewClusterPolicyModel extends Model {
                 break;
             }
         }
-        refreshCustomProperties(policyUnit);
+        refreshCustomProperties(policyUnit, false);
         getFiltersChangedEvent().raise(this, EventArgs.Empty);
     }
 
@@ -468,7 +472,7 @@ public class NewClusterPolicyModel extends Model {
                 break;
             }
         }
-        refreshCustomProperties(null);
+        refreshCustomProperties(null, false);
         getFunctionsChangedEvent().raise(this, EventArgs.Empty);
     }
 
@@ -480,7 +484,7 @@ public class NewClusterPolicyModel extends Model {
                 break;
             }
         }
-        refreshCustomProperties(policyUnit);
+        refreshCustomProperties(policyUnit, false);
         getFunctionsChangedEvent().raise(this, EventArgs.Empty);
     }
 
@@ -558,7 +562,7 @@ public class NewClusterPolicyModel extends Model {
         if (clusterPolicy.getParameterMap() != null) {
             customProperties.putAll(clusterPolicy.getParameterMap());
         }
-        refreshCustomProperties(null);
+        refreshCustomProperties(null, true);
     }
 
 }
