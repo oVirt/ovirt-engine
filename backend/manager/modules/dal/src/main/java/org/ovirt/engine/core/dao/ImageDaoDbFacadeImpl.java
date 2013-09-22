@@ -92,7 +92,7 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
             entity.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
             entity.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
             entity.setDiskId(getGuidDefaultEmpty(rs, "image_group_id"));
-            entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
+            entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setActive((Boolean) rs.getObject("active"));
             return entity;
         }
