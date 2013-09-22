@@ -242,10 +242,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                         result = false;
                     } else if (notDownVms) {
                         int compareResult = compareCpuLevels(oldGroup);
-                        if (compareResult < 0) {
-                            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_LOWER_CPU_LEVEL);
-                            result = false;
-                        } else if (compareResult > 0) {// Upgrade of CPU in same compability level is allowed if
+                        if (compareResult > 0) {// Upgrade of CPU in same compability level is allowed if
                                                        // there
                             // are running VMs - but we should warn they
                             // cannot not be hibernated

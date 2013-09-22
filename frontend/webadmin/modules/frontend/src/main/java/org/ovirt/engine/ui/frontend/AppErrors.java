@@ -1975,9 +1975,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot update Cluster and change CPU Cluster level if there are suspended VMs in the Cluster")
     String VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS();
 
-    @DefaultStringValue("Cannot update Cluster and lower CPU Cluster level if not all virtual machines in Cluster are down")
-    String VDS_GROUP_CANNOT_LOWER_CPU_LEVEL();
-
     @DefaultStringValue("Cannot update Cluster, custom properties are not supported under current Cluster version")
     String CUSTOM_PROPERTIES_INVALID_VALUES_NOT_ALLOWED_IN_CURRENT_CLUSTER();
 

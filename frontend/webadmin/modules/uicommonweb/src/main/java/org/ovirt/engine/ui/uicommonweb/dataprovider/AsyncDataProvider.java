@@ -3240,6 +3240,24 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
     }
 
+    public static void getNumberOfActiveVmsInCluster(AsyncQuery aQuery, Guid clusterId) {
+        // do not replace a converter = just add if none provided
+        if (aQuery.converterCallback == null) {
+            aQuery.converterCallback = new IAsyncConverter() {
+                @Override
+                public Object Convert(Object source, AsyncQuery _asyncQuery)
+                {
+                    if (source == null)
+                    {
+                        return Integer.valueOf(0);
+                    }
+                    return source;
+                }
+            };
+        }
+        Frontend.RunQuery(VdcQueryType.GetNumberOfActiveVmsInVdsGroupByVdsGroupId, new IdQueryParameters(clusterId), aQuery);
+    }
+
     private static ArrayList<VDSGroup> getClusterByServiceList(ArrayList<VDSGroup> list,
             boolean supportsVirtService,
             boolean supportsGlusterService) {
