@@ -17,10 +17,12 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -60,7 +62,6 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
-import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 
 /**
  * Initialize Vds on its loading. For storages: First connect all storage
@@ -266,12 +267,16 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         boolean returnValue = true;
         try {
             runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
-            if (IrsBrokerCommand.isDomainsReportedAsProblematic(getVds().getStoragePoolId(), getVds().getDomains())) {
-                log.errorFormat("One of the Storage Domains of host {0} in pool {1} is problematic",
-                        getVds().getName(),
-                        getStoragePool()
-                                .getName());
-                returnValue = false;
+            List<Guid> problematicDomainsIds = IrsBrokerCommand.fetchDomainsReportedAsProblematic(getVds().getStoragePoolId(), getVds().getDomains());
+            for (Guid domainId : problematicDomainsIds) {
+                StorageDomainStatic domainInfo = getStorageDomainStaticDAO().get(domainId);
+                log.errorFormat("Storage Domain {0} of pool {1} is in problem in host {2}",
+                        domainInfo != null ? domainInfo.getStorageName() : domainId,
+                        getStoragePool().getName(),
+                        getVds().getName());
+                if (domainInfo == null || domainInfo.getStorageDomainType().isDataDomain()) {
+                    returnValue = false;
+                }
             }
         } catch (VdcBLLException e) {
             log.errorFormat("Could not get Host statistics for Host {0}, Error is {1}",
