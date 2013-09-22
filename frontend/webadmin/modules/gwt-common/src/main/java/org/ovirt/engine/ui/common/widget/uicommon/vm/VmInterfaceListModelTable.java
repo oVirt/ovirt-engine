@@ -115,15 +115,15 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         getTable().addColumn(profileNameColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
 
         BooleanColumn<VmNetworkInterface> linkStateColumn =
-                new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInteface(),
-                        constants.unlinkedNetworkInteface()) {
+                new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
+                        constants.unlinkedNetworkInterface()) {
                     @Override
                     protected Boolean getRawValue(VmNetworkInterface object) {
                         return object.isLinked();
                     }
                 };
 
-        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInteface(), "65px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "65px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override

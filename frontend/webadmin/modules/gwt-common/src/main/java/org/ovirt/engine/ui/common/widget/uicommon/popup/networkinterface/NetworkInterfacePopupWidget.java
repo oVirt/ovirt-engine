@@ -135,30 +135,30 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     }
 
     private void localize(CommonApplicationConstants constants) {
-        nameEditor.setLabel(constants.nameNetworkIntefacePopup());
-        profileEditor.setLabel(constants.profileNetworkIntefacePopup());
-        nicTypeEditor.setLabel(constants.typeNetworkIntefacePopup());
-        enableManualMacCheckbox.setLabel(constants.customMacNetworkIntefacePopup());
+        nameEditor.setLabel(constants.nameNetworkInterfacePopup());
+        profileEditor.setLabel(constants.profileNetworkInterfacePopup());
+        nicTypeEditor.setLabel(constants.typeNetworkInterfacePopup());
+        enableManualMacCheckbox.setLabel(constants.customMacNetworkInterfacePopup());
 
-        cardStatusEditor.setLabel(constants.cardStatusNetworkInteface());
+        cardStatusEditor.setLabel(constants.cardStatusNetworkInterface());
         pluggedEditor.asRadioButton()
                 .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.pluggedNetworkImage())
                         .getHTML()),
-                        constants.pluggedNetworkInteface()));
+                        constants.pluggedNetworkInterface()));
         unpluggedEditor.asRadioButton()
                 .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.unpluggedNetworkImage())
                         .getHTML()),
-                        constants.unpluggedNetworkInteface()));
+                        constants.unpluggedNetworkInterface()));
 
-        linkStateEditor.setLabel(constants.linkStateNetworkInteface());
+        linkStateEditor.setLabel(constants.linkStateNetworkInterface());
         linkedEditor.asRadioButton()
                 .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.linkedNetworkImage())
                         .getHTML()),
-                        constants.linkedNetworkInteface()));
+                        constants.linkedNetworkInterface()));
         unlinkedEditor.asRadioButton()
                 .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.unlinkedNetworkImage())
                         .getHTML()),
-                        constants.unlinkedNetworkInteface()));
+                        constants.unlinkedNetworkInterface()));
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

@@ -47,20 +47,20 @@ public class NicActivateStatusColumn<T> extends SafeHtmlWithSafeHtmlTooltipColum
         boolean vnicExist = vnic != null;
         if (vnicExist && vnic.isPlugged()) {
             tooltip =
-                    tooltip.append(templates.cardStatus(constants.pluggedNetworkInteface()).asString());
+                    tooltip.append(templates.cardStatus(constants.pluggedNetworkInterface()).asString());
         } else {
             tooltip =
-                    tooltip.append(templates.cardStatus(constants.unpluggedNetworkInteface()).asString());
+                    tooltip.append(templates.cardStatus(constants.unpluggedNetworkInterface()).asString());
         }
 
         tooltip = tooltip.append("<BR>"); //$NON-NLS-1$
         if (vnicExist && vnic.isLinked()) {
             tooltip =
-                    tooltip.append(templates.linkState(constants.linkedNetworkInteface())
+                    tooltip.append(templates.linkState(constants.linkedNetworkInterface())
                             .asString());
         } else {
             tooltip =
-                    tooltip.append(templates.linkState(constants.unlinkedNetworkInteface())
+                    tooltip.append(templates.linkState(constants.unlinkedNetworkInterface())
                             .asString());
         }
 

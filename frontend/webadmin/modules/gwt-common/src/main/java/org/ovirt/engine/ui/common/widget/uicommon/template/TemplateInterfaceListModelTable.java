@@ -68,15 +68,15 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
         getTable().addColumn(profileNameColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
 
         BooleanColumn<VmNetworkInterface> linkStateColumn =
-                new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInteface(),
-                        constants.unlinkedNetworkInteface()) {
+                new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
+                        constants.unlinkedNetworkInterface()) {
                     @Override
                     protected Boolean getRawValue(VmNetworkInterface object) {
                         return object.isLinked();
                     }
                 };
 
-        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInteface(), "90px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "90px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override

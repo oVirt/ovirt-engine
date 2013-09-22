@@ -935,34 +935,34 @@ public interface CommonApplicationConstants extends Constants {
 
     // Network interface popup
     @DefaultStringValue("Name")
-    String nameNetworkIntefacePopup();
+    String nameNetworkInterfacePopup();
 
     @DefaultStringValue("Profile")
-    String profileNetworkIntefacePopup();
+    String profileNetworkInterfacePopup();
 
     @DefaultStringValue("Type")
-    String typeNetworkIntefacePopup();
+    String typeNetworkInterfacePopup();
 
     @DefaultStringValue("Custom MAC address")
-    String customMacNetworkIntefacePopup();
+    String customMacNetworkInterfacePopup();
 
     @DefaultStringValue("Card Status")
-    String cardStatusNetworkInteface();
+    String cardStatusNetworkInterface();
 
     @DefaultStringValue("Plugged")
-    String pluggedNetworkInteface();
+    String pluggedNetworkInterface();
 
     @DefaultStringValue("Unplugged")
-    String unpluggedNetworkInteface();
+    String unpluggedNetworkInterface();
 
     @DefaultStringValue("Link State")
-    String linkStateNetworkInteface();
+    String linkStateNetworkInterface();
 
     @DefaultStringValue("Up")
-    String linkedNetworkInteface();
+    String linkedNetworkInterface();
 
     @DefaultStringValue("Down")
-    String unlinkedNetworkInteface();
+    String unlinkedNetworkInterface();
 
     @DefaultStringValue("Number of VMs")
     String numOfVmsPoolPopup();
