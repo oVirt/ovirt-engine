@@ -13,13 +13,6 @@
   <name>oVirt Server EAR</name>
   <description>oVirt server EAR</description>
 
-  <distributionManagement>
-    <repository>
-      <id>local</id>
-      <url>file://${maven.repository.root}</url>
-    </repository>
-  </distributionManagement>
-
   <properties>
     <earDirectory>${project.build.directory}/${project.build.finalName}</earDirectory>
     <backendConfFiles>${basedir}/../backend/manager/conf</backendConfFiles>
