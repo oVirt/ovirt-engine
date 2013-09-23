@@ -84,7 +84,6 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
                 object.getAddLine().execute();
             }
         });
-
         minusButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -135,6 +134,14 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
         plusButton.setEnabled(enabled);
         minusButton.setEnabled(enabled);
         this.enabled = enabled;
+    }
+
+    public void setPlusButtonEnabled(boolean enabled) {
+        plusButton.setEnabled(enabled);
+    }
+
+    public void setMinusButtonEnabled(boolean enabled) {
+        minusButton.setEnabled(enabled);
     }
 
 }

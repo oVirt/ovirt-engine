@@ -213,6 +213,18 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
         }
     }
 
+    public int keysUsedCount() {
+        if (keyValueMap_used == null
+                || keyValueMap_used.containsKey(NO_KEYS)) {
+            return 0;
+        }
+        return keyValueMap_used.size();
+    }
+
+    public int possibleKeysCount() {
+        return allKeyValueMap == null ? 0 : allKeyValueMap.size();
+    }
+
     @Override
     public void addLine(KeyValueLineModel lineModel) {
         List<KeyValueLineModel> list =
