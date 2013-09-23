@@ -81,9 +81,6 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserSelectedDisplayProtocolManager;
-import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateFrontendAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateOrUpdateFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkUpdateFrontendAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -2042,7 +2039,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 setVmWatchdogToParams(model, parameters);
 
-                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters, new NetworkCreateFrontendAsyncCallback(model, addVmFromScratchNetworkManager), this);
+                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters, new UnitVmModelNetworkAsyncCallback(model, addVmFromScratchNetworkManager), this);
             }
             else
             {
@@ -2074,7 +2071,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             param.setBalloonEnabled(balloonEnabled(model));
                             param.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
 
-                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
+                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                         }
                     };
                     AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
@@ -2100,7 +2097,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     params.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
                     setVmWatchdogToParams(model, params);
 
-                    Frontend.RunAction(VdcActionType.AddVm, params, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), this);
+                    Frontend.RunAction(VdcActionType.AddVm, params, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
                 }
             }
         }
@@ -2142,7 +2139,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     updateVmParams.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
 
                                     Frontend.RunAction(VdcActionType.UpdateVm,
-                                            updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, vmListModel.getcurrentVm().getId()), vmListModel);
+                                            updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vmListModel.getcurrentVm().getId()), vmListModel);
                                 }
                                 else
                                 {
@@ -2168,7 +2165,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 updateVmParams.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                 updateVmParams.setBalloonEnabled(balloonEnabled(model));
                 updateVmParams.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
-                Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
+                Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }
     }
