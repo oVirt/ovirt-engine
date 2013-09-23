@@ -66,7 +66,7 @@ public class ReportPresenterWidget extends PresenterWidget<ReportPresenterWidget
         this.model = model;
 
         if (model.isDifferntDcError()) {
-            errorPopupManager.show(applicationConstants.reportFromDifferentDCsError());
+            errorPopupManager.show(applicationConstants.entitiesFromDifferentDCsError());
         } else {
             updateReportUrl();
         }
