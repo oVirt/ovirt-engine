@@ -55,7 +55,7 @@
 			color: gray;
 			background: none repeat scroll 0 0 transparent;
 			opacity:0;
-			position:fixed;
+			position:absolute;
 			width: 150px;
 		}
 
