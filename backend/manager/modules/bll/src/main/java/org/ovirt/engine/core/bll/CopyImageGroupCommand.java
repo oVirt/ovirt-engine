@@ -184,9 +184,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void revertTasks() {
-        // Revert should be performed only for AddVmFromSnapshot at this point.
-        if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot || getParameters().getParentCommand() == VdcActionType.ImportVm
-                || getParameters().getParentCommand() == VdcActionType.ImportVmTemplate) {
+        if (getParameters().getRevertDbOperationScope() != null) {
             Guid destImageId = getParameters().getDestinationImageId();
             RemoveImageParameters removeImageParams =
                     new RemoveImageParameters(destImageId);
@@ -196,6 +194,9 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             } else {
                 removeImageParams.setParentParameters(removeImageParams);
                 removeImageParams.setParentCommand(VdcActionType.RemoveImage);
+                removeImageParams.setStorageDomainId(getParameters().getStorageDomainId());
+                removeImageParams.setDbOperationScope(getParameters().getRevertDbOperationScope());
+                removeImageParams.setShouldLockImage(getParameters().isShouldLockImageOnRevert());
             }
             removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getDestinationImageId()));
             // Setting the image as the monitored entity, so there will not be dependency

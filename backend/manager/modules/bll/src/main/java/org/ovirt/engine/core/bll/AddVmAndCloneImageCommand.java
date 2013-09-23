@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -68,6 +69,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                 srcStorageDomainId,
                 diskImage.getId(),
                 diskImage.getImageId(), parentCommandType);
+        parameters.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
         VdcReturnValueBase result = executeChildCopyingCommand(parameters);
         handleCopyResult(diskImage, newDiskImage, result);
     }

@@ -11,10 +11,12 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -64,6 +66,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     p.setVolumeFormat(disk.getVolumeFormat());
                     p.setVolumeType(disk.getVolumeType());
                     p.setForceOverride(getParameters().getForceOverride());
+                    p.setRevertDbOperationScope(ImageDbOperationScope.NONE);
+                    p.setShouldLockImageOnRevert(false);
                     p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                                     VdcActionType.CopyImageGroup,
@@ -166,15 +170,28 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected void incrementDbGeneration() {
-        Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
-                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
-        OvfDataUpdater.getInstance().loadTemplateData(getVmTemplate());
-        VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
-        // update the target (export) domain
-        OvfDataUpdater.getInstance().buildMetadataDictionaryForTemplate(getVmTemplate(), metaDictionary);
-        OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVmTemplate().getStoragePoolId(),
-                metaDictionary,
-                getParameters().getStorageDomainId());
+        // we want to export the Template's ovf only in case that all tasks has succeeded, otherwise we will attempt to
+        // revert
+        // and there's no need for exporting the template's ovf.
+        if (getParameters().getTaskGroupSuccess()) {
+            Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
+                    new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
+            OvfDataUpdater.getInstance().loadTemplateData(getVmTemplate());
+            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+            // update the target (export) domain
+            OvfDataUpdater.getInstance().buildMetadataDictionaryForTemplate(getVmTemplate(), metaDictionary);
+            OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVmTemplate().getStoragePoolId(),
+                    metaDictionary,
+                    getParameters().getStorageDomainId());
+        }
+    }
+
+    @Override
+    protected void endActionOnAllImageGroups() {
+        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+            p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+            getBackend().EndAction(getImagesActionType(), p);
+        }
     }
 
     @Override
