@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
+import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -17,6 +18,8 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     private boolean forceOverride;
     private Guid sourceDomainId;
     private Guid destImageGroupId;
+    private ImageDbOperationScope revertDbOperationScope;
+    private boolean shouldLockImageOnRevert;
 
     public MoveOrCopyImageGroupParameters() {
         operation = ImageOperation.Unassigned;
@@ -51,6 +54,7 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         setDestinationImageId(leafSnapshotID);
         setDestImageGroupId(imageGroupId);
         copyVolumeType = CopyVolumeType.SharedVol;
+        setShouldLockImageOnRevert(true);
     }
 
     public MoveOrCopyImageGroupParameters(Guid containerId,
@@ -134,5 +138,21 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
 
     public void setSourceDomainId(Guid value) {
         sourceDomainId = value;
+    }
+
+    public ImageDbOperationScope getRevertDbOperationScope() {
+        return revertDbOperationScope;
+    }
+
+    public void setRevertDbOperationScope(ImageDbOperationScope revertDbOperationScope) {
+        this.revertDbOperationScope = revertDbOperationScope;
+    }
+
+    public boolean isShouldLockImageOnRevert() {
+        return shouldLockImageOnRevert;
+    }
+
+    public void setShouldLockImageOnRevert(boolean shouldLockImageOnRevert) {
+        this.shouldLockImageOnRevert = shouldLockImageOnRevert;
     }
 }

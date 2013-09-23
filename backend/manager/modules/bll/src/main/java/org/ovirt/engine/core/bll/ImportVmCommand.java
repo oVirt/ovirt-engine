@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -759,6 +760,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         params.setStoragePoolId(getParameters().getStoragePoolId());
         params.setImportEntity(true);
         params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
+        params.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
         params.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getParameters().getQuotaId());
         if (getParameters().getVm().getDiskMap() != null
                 && getParameters().getVm().getDiskMap().containsKey(originalDiskId)) {
