@@ -275,4 +275,11 @@ public interface VmDAO extends DAO {
      * @param originalTemplateName the new name of the template on which the VM has been based on
      */
     void updateOriginalTemplateName(Guid originalTemplateId, String originalTemplateName);
+
+    /**
+     * Retrieves all auto started VMs that went down unintentionally
+     *
+     * @return the list of VMs
+     */
+    List<VM> getAllFailedAutoStartVms();
 }

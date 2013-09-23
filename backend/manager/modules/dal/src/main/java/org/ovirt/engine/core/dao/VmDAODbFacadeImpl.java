@@ -246,6 +246,13 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
+    public List<VM> getAllFailedAutoStartVms() {
+        return getCallsHandler().executeReadList("GetFailedAutoStartVms",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource());
+    }
+
+    @Override
     public List<VM> getAllMigratingToHost(Guid vdsId) {
         return getCallsHandler().executeReadList("GetVmsMigratingToVds",
                 VMRowMapper.instance,

@@ -1,13 +1,16 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
@@ -19,6 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -45,7 +49,17 @@ public class AutoStartVmsRunner {
     }
 
     private AutoStartVmsRunner() {
-        autoStartVmsToRestart = new CopyOnWriteArraySet<>();
+        // There might be HA VMs which went down just before the engine stopped, we detected
+        // the failure and updated the DB but didn't made it to rerun the VM. So here we'll
+        // take all the HA VMs which are down because of an error and add them to the set
+        List<VM> failedAutoStartVms = getVmDao().getAllFailedAutoStartVms();
+        ArrayList<AutoStartVmToRestart> initialFailedVms = new ArrayList<>(failedAutoStartVms.size());
+        for (VM vm: failedAutoStartVms) {
+            log.infoFormat("Found HA VM which is down because of an error, trying to restart it, VM: {0} ({1})",
+                    vm.getName(), vm.getId());
+            initialFailedVms.add(new AutoStartVmToRestart(vm.getId()));
+        }
+        autoStartVmsToRestart = new CopyOnWriteArraySet<>(initialFailedVms);
     }
 
     @OnTimerMethodAnnotation("startFailedAutoStartVms")
@@ -137,6 +151,10 @@ public class AutoStartVmsRunner {
 
     protected VmDynamicDAO getVmDynamicDao() {
         return DbFacade.getInstance().getVmDynamicDao();
+    }
+
+    protected VmDAO getVmDao() {
+        return DbFacade.getInstance().getVmDao();
     }
 
     public void addVmToRun(Guid vmId) {

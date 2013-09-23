@@ -1899,7 +1899,7 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
-            <value>0</value>
+            <value>1</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -2103,7 +2103,7 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
-            <value>0</value>
+            <value>1</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -2154,7 +2154,7 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
-            <value>0</value>
+            <value>1</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -2788,7 +2788,7 @@
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
-            <value>1</value>
+            <value>0</value>
             <null />
             <null />
             <null />
@@ -2816,6 +2816,7 @@
             <null />
             <value>42058975-3d5e-484a-80c1-01c31207f57a</value>
             <value>0</value>
+            <value>1</value>
             <value>0</value>
             <value>0</value>
             <null />
@@ -2823,7 +2824,7 @@
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
-            <value>1</value>
+            <value>0</value>
             <null />
             <null />
             <null />
@@ -2853,6 +2854,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <null />
             <null />
             <null />
         </row>

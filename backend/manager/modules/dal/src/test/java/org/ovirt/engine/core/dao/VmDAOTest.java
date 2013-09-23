@@ -453,6 +453,14 @@ public class VmDAOTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testFailedAutoStartVms() {
+        List<VM> result = dao.getAllFailedAutoStartVms();
+
+        assertNotNull(result);
+        assertEquals("wrong number of failed HA VMs", 1, result.size());
+    }
+
+    @Test
     public void testUpdateOriginalTemplateName() {
         dao.updateOriginalTemplateName(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b82"),

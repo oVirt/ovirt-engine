@@ -1123,3 +1123,13 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetFailedAutoStartVms() RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vms.*
+      FROM vms
+      WHERE auto_startup = TRUE and status = 0 and exit_status = 1;
+END; $procedure$
+LANGUAGE plpgsql;
+
