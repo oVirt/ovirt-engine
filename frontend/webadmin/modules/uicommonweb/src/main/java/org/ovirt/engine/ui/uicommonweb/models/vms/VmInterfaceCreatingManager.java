@@ -1,8 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -22,101 +27,6 @@ public class VmInterfaceCreatingManager {
         this.callback = callback;
     }
 
-    private void updateVnicsFromParams(final Guid vmId, ArrayList<VdcActionParametersBase> parameters) {
-        if (parameters.size() == 0) {
-            callback.vnicCreated(vmId);
-            return;
-        }
-
-        Frontend.RunMultipleAction(
-                VdcActionType.UpdateVmInterface,
-                parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        callback.vnicCreated(vmId);
-                    }
-                },
-                this
-                );
-    }
-
-    /**
-     * Used mainly when the VM is created from the template. If the Vm has been created but without NICs, new
-     * ones are created according to the vnicInstanceTypes. If the VM is created with nics - e.g. by copying from template update their profiles
-     * as edited by the user (again, according to the vnicInstanceTypes).
-     *
-     * @param vmId The ID of the VM
-     * @param vnicInstanceTypes list of nics as edited in the window
-     */
-    public void updateOrCreateIfNothingToUpdate(final Guid vmId,
-            final List<VnicInstanceType> vnicInstanceTypes) {
-        new UpdatedNicsUpdater() {
-            @Override
-            protected void onNoNicsDefinedOnVm() {
-                // there are no vnics created - create according to the setup
-                createVnics(vmId, vnicInstanceTypes);
-            }
-        }.execute(vmId, vnicInstanceTypes);
-    }
-
-    /**
-     * Update the nic->profile assignment on the VM which already has the NICs created. Used when editing a VM.
-     *
-     * @param vmId The ID of the VM
-     * @param vnicInstanceTypes list of nics as edited in the window
-     */
-    public void updateVnics(final Guid vmId, final List<VnicInstanceType> vnicInstanceTypes) {
-        new UpdatedNicsUpdater() {
-            @Override
-            protected void onNoNicsDefinedOnVm() {
-                callback.vnicCreated(vmId);
-            }
-        }.execute(vmId, vnicInstanceTypes);
-    }
-
-    /**
-     * Create new NICs with profiles assignment according to the config in the window.
-     *
-     * @param vmId The ID of the VM
-     * @param vnicInstanceTypes list of nics as edited in the window
-     */
-    public void createVnics(final Guid vmId,
-            final List<VnicInstanceType> vnicInstanceTypes) {
-        ArrayList<VdcActionParametersBase> parameters = createAddVmInterfaceParams(vmId, vnicInstanceTypes);
-
-        if (parameters.size() == 0) {
-            callback.vnicCreated(vmId);
-            return;
-        }
-
-        Frontend.RunMultipleAction(
-                VdcActionType.AddVmInterface,
-                parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        callback.vnicCreated(vmId);
-                    }
-
-                },
-                this
-                );
-
-    }
-
-    private ArrayList<VdcActionParametersBase> createAddVmInterfaceParams(final Guid vmId,
-            final List<VnicInstanceType> vnicInstanceTypes) {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-
-        for (VnicInstanceType vnicInstanceType : vnicInstanceTypes) {
-            parameters.add(new AddVmInterfaceParameters(vmId, vnicInstanceType.getNetworkInterface()));
-        }
-        return parameters;
-    }
-
     public PostVnicCreatedCallback getCallback() {
         return callback;
     }
@@ -127,55 +37,84 @@ public class VmInterfaceCreatingManager {
         void queryFailed();
     }
 
-    abstract class UpdatedNicsUpdater {
-        public void execute(final Guid vmId, final List<VnicInstanceType> vnicInstanceTypes) {
-            AsyncQuery getVmNicsQuery = new AsyncQuery();
-            getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object result) {
-                    List<VmNetworkInterface> createdNics = (List<VmNetworkInterface>) result;
+    public void updateVnics(final Guid vmId, final Iterable<VnicInstanceType> vnicsWithProfiles) {
+        AsyncQuery getVmNicsQuery = new AsyncQuery();
+        getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                Iterable<VmNetworkInterface> existingVnics = (Iterable<VmNetworkInterface>) result;
+                if (existingVnics == null) {
+                    existingVnics = new ArrayList<VmNetworkInterface>();
+                }
 
-                    if (createdNics == null || createdNics.size() == 0) {
-                        onNoNicsDefinedOnVm();
+                Map<String, VmNetworkInterface> existingVnicForName = new HashMap<String, VmNetworkInterface>();
+                for (VmNetworkInterface vnic : existingVnics) {
+                    existingVnicForName.put(vnic.getName(), vnic);
+                }
+
+                final ArrayList<VdcActionParametersBase> createVnicParameters =
+                        new ArrayList<VdcActionParametersBase>();
+                final ArrayList<VdcActionParametersBase> updateVnicParameters =
+                        new ArrayList<VdcActionParametersBase>();
+                final ArrayList<VdcActionParametersBase> removeVnicParameters =
+                        new ArrayList<VdcActionParametersBase>();
+                final Set<String> vnicsEncountered = new HashSet<String>();
+
+                // iterate over edited VNICs, see if any need to be added or have been assigned a different profile
+                for (VnicInstanceType vnicWithProfile : vnicsWithProfiles) {
+                    VmNetworkInterface editedVnic = vnicWithProfile.getNetworkInterface();
+                    String vnicName = editedVnic.getName();
+                    VmNetworkInterface existingVnic = existingVnicForName.get(vnicName);
+                    if (existingVnic == null) {
+                        createVnicParameters.add(new AddVmInterfaceParameters(vmId, editedVnic));
                     } else {
-                        // there are some vnics created - update according to the setup in the window
-                        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-
-                        for (VmNetworkInterface created : createdNics) {
-                            for (VnicInstanceType edited : vnicInstanceTypes) {
-                                // can not use getId() because they have different IDs - one is already created, one is not
-                                // yet
-                                boolean sameNic = edited.getNetworkInterface().getName().equals(created.getName());
-
-                                boolean bothProfilesNull =
-                                        created.getVnicProfileId() == null
-                                                && edited.getNetworkInterface().getVnicProfileId() == null;
-
-                                boolean sameProfiles =
-                                        created.getVnicProfileId() != null
-                                                && created.getVnicProfileId().equals(edited.getNetworkInterface()
-                                                .getVnicProfileId());
-
-                                boolean assignedProfileChanged = !(bothProfilesNull || sameProfiles);
-
-                                if (sameNic && assignedProfileChanged) {
-                                    created.setVnicProfileId(edited.getNetworkInterface().getVnicProfileId());
-                                    created.setNetworkName(edited.getNetworkInterface().getNetworkName());
-                                    parameters.add(new AddVmInterfaceParameters(vmId, created));
-                                    break;
-                                }
-                            }
-
+                        vnicsEncountered.add(vnicName);
+                        Guid existingProfileId = existingVnic.getVnicProfileId();
+                        Guid editedProfileId = editedVnic.getVnicProfileId();
+                        if ((editedProfileId == null && existingProfileId != null)
+                                || (editedProfileId != null && !editedProfileId.equals(existingProfileId))) {
+                            existingVnic.setVnicProfileId(editedProfileId);
+                            existingVnic.setNetworkName(editedVnic.getNetworkName());
+                            updateVnicParameters.add(new AddVmInterfaceParameters(vmId, existingVnic));
                         }
-
-                        updateVnicsFromParams(vmId, parameters);
                     }
                 }
-            };
-            AsyncDataProvider.getVmNicList(getVmNicsQuery, vmId);
-        }
 
-        protected abstract void onNoNicsDefinedOnVm();
+                // iterate over existing VNICs, see if any have not been encountered and thus removed in editing
+                for (VmNetworkInterface existingVnic : existingVnics) {
+                    if (!vnicsEncountered.contains(existingVnic.getName())) {
+                        removeVnicParameters.add(new RemoveVmInterfaceParameters(vmId, existingVnic.getId()));
+                    }
+                }
+
+                Frontend.RunMultipleAction(VdcActionType.AddVmInterface,
+                        createVnicParameters,
+                        new IFrontendMultipleActionAsyncCallback() {
+
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                                Frontend.RunMultipleAction(VdcActionType.UpdateVmInterface,
+                                        updateVnicParameters,
+                                        new IFrontendMultipleActionAsyncCallback() {
+
+                            @Override
+                            public void executed(FrontendMultipleActionAsyncResult result) {
+                                                Frontend.RunMultipleAction(VdcActionType.RemoveVmInterface,
+                                                        removeVnicParameters,
+                                                        new IFrontendMultipleActionAsyncCallback() {
+
+                                    @Override
+                                    public void executed(FrontendMultipleActionAsyncResult result) {
+                                        callback.vnicCreated(vmId);
+                                    }
+                                }, this);
+                            }
+                        }, this);
+                    }
+                }, this);
+            }
+        };
+        AsyncDataProvider.getVmNicList(getVmNicsQuery, vmId);
     }
 
 }
