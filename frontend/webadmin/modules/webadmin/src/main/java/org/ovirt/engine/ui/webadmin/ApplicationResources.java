@@ -250,6 +250,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/icon_collapse_all.png")
     ImageResource collapseAllIcon();
 
+    @Source("images/triangle_down.gif")
+    ImageResource triangleDown();
+
     @Source("images/network/arrow_left.png")
     ImageResource arrowLeft();
 

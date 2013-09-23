@@ -3225,9 +3225,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String disabledPolicyUnit();
 
     // Volume Rebalance
-    @DefaultStringValue("Start")
-    String startRebalance();
-
     @DefaultStringValue("Stop")
     String stopRebalance();
 

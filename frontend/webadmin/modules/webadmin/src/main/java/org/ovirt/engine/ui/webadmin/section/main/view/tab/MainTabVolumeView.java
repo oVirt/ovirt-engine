@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -21,11 +19,15 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivitySeperatorCell;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
 
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.inject.Inject;
 
 public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<GlusterVolumeEntity, VolumeListModel> implements MainTabVolumePresenter.ViewDef {
@@ -113,7 +115,26 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 };
         getTable().addColumn(transportColumn, constants.transportTypesVolume(), "150px"); //$NON-NLS-1$
 
-        getTable().addColumn(new VolumeActivityColumn(), constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$
+        MenuCell<GlusterVolumeEntity> rebalanceMenuCell = getRebalanceActivityMenu(constants);
+        List<HasCell<GlusterVolumeEntity, ?>> list = new ArrayList<HasCell<GlusterVolumeEntity, ?>>();
+        list.add(new VolumeActivityStatusColumn());
+        list.add(new Column<GlusterVolumeEntity, GlusterVolumeEntity>(new VolumeActivitySeperatorCell<GlusterVolumeEntity>()) {
+            @Override
+            public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
+                return object;
+            }
+
+        });
+        list.add(new Column<GlusterVolumeEntity, GlusterVolumeEntity>(rebalanceMenuCell) {
+            @Override
+            public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
+                return object;
+            }
+        });
+
+        getTable().addColumn(new VolumeActivityColumn(list),
+                constants.activitiesOnVolume(),
+                "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
@@ -145,28 +166,18 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return getMainModel().getOptimizeForVirtStoreCommand();
             }
         });
-        List<ActionButtonDefinition<GlusterVolumeEntity>> rebalanceSubActions = new LinkedList<ActionButtonDefinition<GlusterVolumeEntity>>();
-        rebalanceSubActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.startRebalance()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.rebalanceVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStartRebalanceCommand();
             }
         });
+    }
 
-        rebalanceSubActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.stopRebalance()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStopRebalanceCommand();
-            }
-        });
-
-        rebalanceSubActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.statusRebalance()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStatusRebalanceCommand();
-            }
-        });
-
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterVolumeEntity>(constants.rebalanceVolume(),rebalanceSubActions,CommandLocation.ContextAndToolBar));
+    private MenuCell<GlusterVolumeEntity> getRebalanceActivityMenu(ApplicationConstants constants) {
+        MenuCell<GlusterVolumeEntity> menuCell = new MenuCell<GlusterVolumeEntity>();
+        menuCell.addMenuItem(constants.statusRebalance(), getMainModel().getStatusRebalanceCommand());
+        menuCell.addMenuItem(constants.stopRebalance(), getMainModel().getStopRebalanceCommand());
+        return menuCell;
     }
 }

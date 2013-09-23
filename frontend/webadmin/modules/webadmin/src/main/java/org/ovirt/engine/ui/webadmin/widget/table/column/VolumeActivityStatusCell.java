@@ -14,7 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class VolumeActivityCell extends AbstractCell<GlusterVolumeEntity> {
+public class VolumeActivityStatusCell extends AbstractCell<GlusterVolumeEntity> {
 
     ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
 
