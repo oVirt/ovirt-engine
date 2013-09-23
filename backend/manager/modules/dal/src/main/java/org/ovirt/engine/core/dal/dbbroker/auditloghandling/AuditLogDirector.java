@@ -658,6 +658,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.HA_VM_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.HA_VM_RESTART_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.EXCEEDED_MAXIMUM_NUM_OF_RESTART_HA_VM_ATTEMPTS, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_FAILED_ATTACH_DISK_TO_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.WATCHDOG_EVENT, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);

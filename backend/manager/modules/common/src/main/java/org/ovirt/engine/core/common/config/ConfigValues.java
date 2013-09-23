@@ -1513,10 +1513,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     HotPlugDiskSnapshotSupported,
 
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("1")
-    AutoStartVmsRunnerIntervalInSeconds,
-
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     UseFqdnForRdpIfAvailable,
@@ -1561,6 +1557,18 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
     GlusterPeerStatusRetries,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1")
+    AutoStartVmsRunnerIntervalInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    RetryToRunAutoStartVmIntervalInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    MaxNumOfTriesToRunFailedAutoStartVm,
 
     Invalid;
 }

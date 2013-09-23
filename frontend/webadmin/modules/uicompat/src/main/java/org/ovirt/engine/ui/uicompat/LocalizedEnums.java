@@ -749,6 +749,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___HA_VM_FAILED();
 
+    String AuditLogType___EXCEEDED_MAXIMUM_NUM_OF_RESTART_HA_VM_ATTEMPTS();
+
     String AuditLogType___SYSTEM_DEACTIVATED_STORAGE_DOMAIN();
 
     String AuditLogType___VDS_SET_NONOPERATIONAL();

@@ -756,15 +756,11 @@ public enum AuditLogType {
 
     EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER(9604, AuditLogTimeInterval.MINUTE.getValue()),
 
-    /**
-    * A highly available virtual machine went down.
-    */
+    /** Highly available virtual machine went down. */
     HA_VM_FAILED(9602),
-
-    /**
-    * Restart of a highly available virtual machine failed.
-    */
+    /** Restart of a highly available virtual machine failed. */
     HA_VM_RESTART_FAILED(9603),
+    EXCEEDED_MAXIMUM_NUM_OF_RESTART_HA_VM_ATTEMPTS(9605),
 
     IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES(9606, AuditLogTimeInterval.MINUTE.getValue()),
     ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES(9607, AuditLogTimeInterval.MINUTE.getValue()),
