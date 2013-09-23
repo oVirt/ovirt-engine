@@ -202,7 +202,7 @@ class Plugin(plugin.PluginBase):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=os.path.join(domMdDir, 'leases'),
-                content=b'\x00'*512,
+                content=b'\x00' * 512,
                 binary=True,
                 mode=0o660,
                 dmode=0o755,
