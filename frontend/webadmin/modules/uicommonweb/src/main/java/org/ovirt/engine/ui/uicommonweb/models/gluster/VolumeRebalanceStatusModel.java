@@ -36,6 +36,8 @@ public class VolumeRebalanceStatusModel extends Model {
 
     private boolean isStatusAvailable;
 
+    private Timer refresh;
+
     public VolumeRebalanceStatusModel(final GlusterVolumeEntity volumeEntity) {
         setStatus(new EntityModel());
         setVolume(new EntityModel());
@@ -44,6 +46,15 @@ public class VolumeRebalanceStatusModel extends Model {
         setStatusTime(new EntityModel());
         setRebalanceSessions(new ListModel());
         setEntity(volumeEntity);
+        refresh = new Timer() {
+
+            @Override
+            public void run() {
+                refreshDetails(volumeEntity);
+            }
+
+        };
+        refresh.scheduleRepeating(10000);
         this.entity = volumeEntity;
     }
 
@@ -106,22 +117,19 @@ public class VolumeRebalanceStatusModel extends Model {
         getRebalanceSessions().setItems(sessionList);
         if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FINISHED) {
             setStatusAvailable(true);
+            refresh.cancel();
         }else {
             setStatusAvailable(false);
-            refresh(getEntity());
+            if ((rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED || rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FAILED)) {
+                refresh.cancel();
+            }
         }
     }
 
-    public void refresh(final GlusterVolumeEntity volumeEntity) {
-        Timer refresh = new Timer() {
-
-            @Override
-            public void run() {
-                refreshDetails(volumeEntity);
-            }
-
-        };
-        refresh.schedule(10000);
+    public void cancelRefresh() {
+        if(refresh != null) {
+            refresh.cancel();
+        }
     }
 
     public void refreshDetails(GlusterVolumeEntity volumeEntity) {

@@ -592,6 +592,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         {
             return;
         }
+        ((VolumeRebalanceStatusModel)getWindow()).cancelRefresh();
         cancel();
     }
 
