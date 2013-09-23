@@ -565,7 +565,7 @@ select fn_db_add_config_value('VmPoolMonitorIntervalInMinutes','5','general');
 select fn_db_add_config_value('VmPoolMonitorMaxAttempts','3','general');
 select fn_db_add_config_value('VmPriorityMaxValue','100','general');
 --How often we'll try to run HA VM that we couldn't run before
-select fn_db_add_config_value('AutoStartVmsRunnerIntervalInSeconds','60','general');
+select fn_db_add_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
 --Handling Keyboard Layout configuration for VNC
 select fn_db_add_config_value('VncKeyboardLayout','en-us','general');
 select fn_db_add_config_value('VncKeyboardLayoutValidValues','ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr','general');
@@ -759,6 +759,7 @@ select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.1');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.2');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.3');
+select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
 
 
 ------------------------------------------------------------------------------------

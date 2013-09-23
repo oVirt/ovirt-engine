@@ -1512,7 +1512,7 @@ public enum ConfigValues {
     HotPlugDiskSnapshotSupported,
 
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("60")
+    @DefaultValueAttribute("1")
     AutoStartVmsRunnerIntervalInSeconds,
 
     @TypeConverterAttribute(Boolean.class)

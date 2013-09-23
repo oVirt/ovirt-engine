@@ -397,7 +397,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     @Override
-    protected String getVmLockMessage() {
+    protected String getLockMessage() {
         StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED.name());
         builder.append(String.format("$VmName %1$s", getVmName()));
         return builder.toString();

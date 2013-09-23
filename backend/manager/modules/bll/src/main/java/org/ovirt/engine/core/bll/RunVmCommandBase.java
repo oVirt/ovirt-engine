@@ -352,15 +352,34 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getVmLockMessage()));
+        return getExclusiveLocksForRunVm(getVmId(), getLockMessage());
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return getSharedLocksForRunVm();
+    }
+
+    protected static Map<String, Pair<String, String>> getExclusiveLocksForRunVm(Guid vmId, String lockMessage) {
+        return Collections.singletonMap(
+                vmId.toString(),
+                LockMessagesMatchUtil.makeLockingPair(
+                        LockingGroup.VM,
+                        lockMessage));
+    }
+
+    protected static Map<String, Pair<String, String>> getSharedLocksForRunVm() {
+        return null;
     }
 
     /**
-     * Returns a message that explains the reason the VM is exclusively locked
-     * @return String explaining why the VM is exclusively locked
+     * Returns a message that explains what this command does. The message is
+     * shown when other command is blocked because it conflicts with this
+     * command, so the user should understand what cause it the conflict.
+     *
+     * @return String explaining what this command does
      */
-    protected String getVmLockMessage() {
+    protected String getLockMessage() {
         return VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
     }
 }

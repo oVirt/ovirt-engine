@@ -488,10 +488,22 @@ public class ExecutionHandler {
      * @return an execution context as a Job
      */
     public static CommandContext createInternalJobContext() {
+        return createInternalJobContext(null);
+    }
+
+    /**
+     * Creates a context for execution of internal command as a monitored Job,
+     * the command will release the given lock when it is finished.
+     *
+     * @param lock
+     *            The lock which should be released at child command (can be null)
+     * @return an execution context as a Job
+     */
+    public static CommandContext createInternalJobContext(EngineLock lock) {
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.setJobRequired(true);
         executionContext.setMonitored(true);
-        return new CommandContext(executionContext);
+        return new CommandContext(executionContext, lock);
     }
 
     /**
