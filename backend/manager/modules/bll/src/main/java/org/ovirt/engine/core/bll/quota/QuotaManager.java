@@ -692,6 +692,9 @@ public class QuotaManager {
             throws InvalidQuotaParametersException {
         if(param.getQuotaGuid() == null || Guid.Empty.equals(param.getQuotaGuid())) {
             parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+            parameters.getCanDoActionMessages().add(String.format("$VmName %1$s",
+                    parameters.getAuditLogable()
+                            .getVmName()));
             auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
                     AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE :
                     AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
