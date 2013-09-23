@@ -97,7 +97,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
 
             getModel().getIsStateless().setEntity(template.isStateless());
-            getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
 
             boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
 
@@ -149,6 +148,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 getModel().getVmType().setSelectedItem(template.getVmType());
                 getModel().setIsBlankTemplate(false);
                 getModel().getCopyPermissions().setIsAvailable(true);
+                getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
                 initDisks();
                 initSoundCard(template.getId());
             }

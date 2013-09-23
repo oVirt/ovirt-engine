@@ -976,6 +976,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void vmTypeChanged(VmType vmType) {
         getModel().getIsSoundcardEnabled().setEntity(vmType == VmType.Desktop);
+        getModel().getAllowConsoleReconnect().setEntity(vmType == VmType.Server);
     }
 
     protected void initSoundCard(Guid id) {
