@@ -507,6 +507,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
                         vm.setCustomProperties(model.getCustomPropertySheet().getEntity());
                         vm.setVmType((VmType) model.getVmType().getSelectedItem());
+                        vm.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
 
                         AddVmPoolWithVmsParameters param =
                                 new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops()

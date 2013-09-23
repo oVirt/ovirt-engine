@@ -99,6 +99,7 @@ public class VmStatic extends VmBase {
         setDefaultDisplayType(vmStatic.getDefaultDisplayType());
         setDedicatedVmForVds(vmStatic.getDedicatedVmForVds());
         setMigrationSupport(vmStatic.getMigrationSupport());
+        setAllowConsoleReconnect(vmStatic.isAllowConsoleReconnect());
     }
 
     public String getCustomProperties() {

@@ -170,6 +170,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             }
 
             initSoundCard(vmBase.getId());
+
+            getModel().getAllowConsoleReconnect().setEntity(vmBase.isAllowConsoleReconnect());
         }
     }
 

@@ -1536,9 +1536,8 @@ public class UnitVmModel extends Model {
 
     }
 
-    protected void initAllowConsoleReconnect()
-    {
-        getAllowConsoleReconnect().setEntity(true);
+    protected void initAllowConsoleReconnect() {
+        getAllowConsoleReconnect().setEntity(getVmType().getSelectedItem() == VmType.Server);
     }
 
     private void initOSType() {
