@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -22,12 +23,15 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -35,6 +39,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public abstract class OvfReader implements IOvfBuilder {
+    protected OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     protected java.util.ArrayList<DiskImage> _images;
     protected java.util.ArrayList<VmNetworkInterface> interfaces;
     protected XmlDocument _document;
@@ -389,7 +394,10 @@ public abstract class OvfReader implements IOvfBuilder {
 
             if ("ovf:OperatingSystemSection_Type".equals(value)) {
                 readOsSection(section);
-
+                if (!osRepository.isLinux(vmBase.getOsId()) ||
+                        !FeatureSupported.singleQxlPci(new Version(getVersion()))) {
+                    vmBase.setSingleQxlPci(false);
+                }
             }
             else if ("ovf:VirtualHardwareSection_Type".equals(value)) {
                 readHardwareSection(section);
