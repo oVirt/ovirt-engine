@@ -11,7 +11,8 @@ public enum GlusterAsyncTaskStatus {
     STOPPED("STOPPED"),
     FAILED("FAILED"),
     UNKNOWN("UNKNOWN"),
-    NOT_STARTED("NOT STARTED")
+    NOT_STARTED("NOT STARTED"),
+    IN_PROGRESS("IN PROGRESS"),
     ;
 
     private String statusMsg;
@@ -39,6 +40,7 @@ public enum GlusterAsyncTaskStatus {
             case COMPLETED:
                 return JobExecutionStatus.FINISHED;
             case STARTED:
+            case IN_PROGRESS:
                 return JobExecutionStatus.STARTED;
             case STOPPED:
                 return JobExecutionStatus.ABORTED;
