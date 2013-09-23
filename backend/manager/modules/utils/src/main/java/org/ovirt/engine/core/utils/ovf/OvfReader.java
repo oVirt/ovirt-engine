@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
@@ -390,9 +389,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
             if ("ovf:OperatingSystemSection_Type".equals(value)) {
                 readOsSection(section);
-                if (!OsRepositoryImpl.INSTANCE.isLinux(vmBase.getOsId())) {
-                    vmBase.setSingleQxlPci(false);
-                }
+
             }
             else if ("ovf:VirtualHardwareSection_Type".equals(value)) {
                 readHardwareSection(section);
