@@ -67,6 +67,13 @@ public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValu
             panel.add(keyValueLineWidget);
             keyValueLineWidget.edit(keyValueLineModel);
             keyValueLineWidget.setEnabled(enabled);
+
+            if (list.size() == 1 && object.keysUsedCount() == 0) {
+                keyValueLineWidget.setMinusButtonEnabled(false);
+            }
+            if (list.size() >= object.possibleKeysCount()) {
+                keyValueLineWidget.setPlusButtonEnabled(false);
+            }
         }
     }
 
