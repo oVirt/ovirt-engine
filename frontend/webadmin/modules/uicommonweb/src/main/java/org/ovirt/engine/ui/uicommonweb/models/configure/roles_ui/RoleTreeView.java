@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@SuppressWarnings("unused")
 public class RoleTreeView
 {
     public static ArrayList<SelectionTreeNodeModel> getRoleTreeView(boolean isReadOnly, boolean isAdmin)
@@ -240,19 +239,28 @@ public class RoleTreeView
 
     protected static RoleNode createNetworkRoleTree() {
         return new RoleNode(getConstants().networkRoleTree(),
-                new RoleNode[] { new RoleNode(getConstants().configureNetworkRoleTree(), new RoleNode[] {
-                        new RoleNode(ActionGroup.CREATE_STORAGE_POOL_NETWORK,
-                                getConstants().allowToCreateLogicalNetworkPerDataCenterRoleTreeTooltip()),
-                        new RoleNode(ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK,
-                                getConstants().allowToEditLogicalNetworkRoleTreeTooltip()),
-                        new RoleNode(ActionGroup.DELETE_STORAGE_POOL_NETWORK,
-                                getConstants().allowToDeleteLogicalNetworkRoleTreeTooltip()),
-                        new RoleNode(ActionGroup.ASSIGN_CLUSTER_NETWORK,
-                                getConstants().allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip()),
-                        new RoleNode(ActionGroup.CONFIGURE_VM_NETWORK,
-                                getConstants().allowToConfigureVMsNetworkRoleTreeTooltip()),
-                        new RoleNode(ActionGroup.CONFIGURE_TEMPLATE_NETWORK,
-                                getConstants().allowToConfigureTemlateNetworkRoleTreeTooltip()) }) });
+                new RoleNode[] {
+                        new RoleNode(getConstants().configureNetworkRoleTree(), new RoleNode[] {
+                                new RoleNode(ActionGroup.CREATE_STORAGE_POOL_NETWORK,
+                                        getConstants().allowToCreateLogicalNetworkPerDataCenterRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK,
+                                        getConstants().allowToEditLogicalNetworkRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.DELETE_STORAGE_POOL_NETWORK,
+                                        getConstants().allowToDeleteLogicalNetworkRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.ASSIGN_CLUSTER_NETWORK,
+                                        getConstants().allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip()) }),
+                        new RoleNode(getConstants().configureVnicProfileRoleTree(), new RoleNode[] {
+                                new RoleNode(ActionGroup.CREATE_NETWORK_VNIC_PROFILE,
+                                        getConstants().allowToCreateVnicProfileRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.CONFIGURE_NETWORK_VNIC_PROFILE,
+                                        getConstants().allowToEditVnicProfileRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.DELETE_NETWORK_VNIC_PROFILE,
+                                        getConstants().allowToDeleteVnicProfileRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.CONFIGURE_VM_NETWORK,
+                                        getConstants().allowToConfigureVMsNetworkRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.CONFIGURE_TEMPLATE_NETWORK,
+                                        getConstants().allowToConfigureTemlateNetworkRoleTreeTooltip()) })
+                });
     }
 
     protected static RoleNode createDataCenterRoleTree() {

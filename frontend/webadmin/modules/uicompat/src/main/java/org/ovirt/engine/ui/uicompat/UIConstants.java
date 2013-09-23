@@ -1126,6 +1126,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to delete Logical Network")
     String allowToDeleteLogicalNetworkRoleTreeTooltip();
 
+    @DefaultStringValue("Allow to create vNIC Profile")
+    String allowToCreateVnicProfileRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to edit vNIC Profile")
+    String allowToEditVnicProfileRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to delete vNIC Profile")
+    String allowToDeleteVnicProfileRoleTreeTooltip();
+
     @DefaultStringValue("Allow to create Storage Domain")
     String allowToCreateStorageDomainRoleTreeTooltip();
 
@@ -1403,6 +1412,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Configure Network")
     String configureNetworkRoleTree();
+
+    @DefaultStringValue("Configure vNIC Profile")
+    String configureVnicProfileRoleTree();
 
     @DefaultStringValue("Storage Domain")
     String storageDomainRoleTree();
