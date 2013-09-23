@@ -1043,7 +1043,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         behavior.initProfiles(hotUpdateSupported, getModel().getSelectedCluster().getId(), getModel().getSelectedDataCenter().getId(), query);
     }
 
-    public void updateSingleQxl(boolean visible) {
-       getModel().getIsSingleQxlEnabled().setIsAvailable(visible);
+    public void enableSinglePCI(boolean enabled) {
+        getModel().getIsSingleQxlEnabled().setIsChangable(enabled);
+        getModel().getIsSingleQxlEnabled().setEntity(enabled);
     }
 }
