@@ -166,7 +166,7 @@ public class UnitVmModel extends Model {
             getDisplayProtocol().setIsChangable(false);
             getUsbPolicy().setIsChangable(false);
             getNumOfMonitors().setIsChangable(false);
-            getIsSingleQxlEnabled().setIsAvailable(false);
+            getIsSingleQxlEnabled().setIsChangable(false);
             getIsSmartcardEnabled().setIsChangable(false);
             getAllowConsoleReconnect().setIsChangable(false);
             getVncKeyboardLayout().setIsChangable(false);
@@ -1340,7 +1340,7 @@ public class UnitVmModel extends Model {
         getIsSoundcardEnabled().setIsChangable(false);
 
         setIsSingleQxlEnabled(new NotChangableForVmInPoolEntityModel());
-        getIsSingleQxlEnabled().setEntity(false);
+        getBehavior().enableSinglePCI(false);
 
         setEditingEnabled(new EntityModel());
         getEditingEnabled().setEntity(true);
@@ -1361,7 +1361,7 @@ public class UnitVmModel extends Model {
         getIsHighlyAvailable().setEntity(false);
         getIsAutoAssign().setEntity(true);
         getIsTemplatePublic().setEntity(true);
-        getIsSingleQxlEnabled().setEntity(false);
+        getBehavior().enableSinglePCI(false);
 
         getHostCpu().setEntity(false);
         getMigrationMode().setIsChangable(true);
@@ -1724,6 +1724,17 @@ public class UnitVmModel extends Model {
         }
 
         updateMaximalVmMemSize();
+        handleQxlClusterLevel();
+    }
+
+    private void handleQxlClusterLevel() {
+        // Enable Single PCI only on cluster 3.3 and high and on Linux OS
+        boolean isLinux = getIsLinuxOS();
+        boolean isQxl = getDisplayType() == DisplayType.qxl;
+        boolean clusterSupportsSinglePci = getSelectedCluster() != null &&
+        Version.v3_3.compareTo(getSelectedCluster().getcompatibility_version()) <= 0;
+
+        getBehavior().enableSinglePCI(isLinux && isQxl && clusterSupportsSinglePci);
     }
 
     private void template_SelectedItemChanged(Object sender, EventArgs args)
@@ -1759,7 +1770,8 @@ public class UnitVmModel extends Model {
         getDomain().setIsChangable(getIsWindowsOS());
 
         getBehavior().updateDefaultTimeZone();
-        getIsSingleQxlEnabled().setEntity(getIsLinuxOS());
+
+        handleQxlClusterLevel();
     }
 
     private void firstBootDevice_SelectedItemChanged(Object sender, EventArgs args)
@@ -1792,21 +1804,30 @@ public class UnitVmModel extends Model {
         behavior.provisioning_SelectedItemChanged();
     }
 
-    private void displayProtocol_SelectedItemChanged(Object sender, EventArgs args)
-    {
+    private DisplayType getDisplayType() {
         EntityModel entityModel = (EntityModel) getDisplayProtocol().getSelectedItem();
         if (entityModel == null)
         {
+            return null;
+        }
+        return (DisplayType) entityModel.getEntity();
+    }
+
+    private void displayProtocol_SelectedItemChanged(Object sender, EventArgs args)
+    {
+        if (getDisplayType() == null)
+        {
             return;
         }
-        DisplayType type = (DisplayType) entityModel.getEntity();
+        DisplayType type = getDisplayType();
 
         if (type == DisplayType.vnc)
         {
             getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
             getIsSmartcardEnabled().setEntity(false);
         }
-        getBehavior().updateSingleQxl(type == DisplayType.qxl);
+
+        handleQxlClusterLevel();
 
         getUsbPolicy().setIsChangable(type == DisplayType.qxl);
         getIsSmartcardEnabled().setIsChangable(type == DisplayType.qxl);
