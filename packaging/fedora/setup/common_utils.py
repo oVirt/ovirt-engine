@@ -701,7 +701,7 @@ def parseStrRegex(string, regex, errMsg):
     else:
         raise Exception(errMsg)
 
-def copyFile(filename, destination, uid=-1, gid=-1, filemod=-1):
+def copyFile(filename, destination, uid=-1, gid=-1, filemod=None):
     """
     copy filename to
     the destDir path
@@ -712,7 +712,7 @@ def copyFile(filename, destination, uid=-1, gid=-1, filemod=-1):
     destination  - full path to target dir or filename
     uid          - integer with user id (default -1 leaves the original uid)
     gid          - integer with group id (default -1 leaves the original gid)
-    filemod      - integer with file mode (default -1 keeps original mode)
+    filemod      - integer with file mode (default None keeps original mode)
     """
     # If the source is a directory, throw an exception since this func handles only files
     if (os.path.isdir(filename)):
@@ -737,8 +737,12 @@ def copyFile(filename, destination, uid=-1, gid=-1, filemod=-1):
     logging.debug("setting file %s uid/gid ownership"%(targetFile))
     os.chown(targetFile, uid, gid)
 
-    logging.debug("setting file %s mode to %d"%(targetFile, filemod))
-    os.chmod(targetFile, filemod)
+    if filemod is not None:
+        if filemod > 0:
+            logging.debug("setting file %s mode to %d"%(targetFile, filemod))
+            os.chmod(targetFile, filemod)
+        else:
+            raise Exception("copyFile called with an invalid filemod %s" % filemod)
 
 def getDbAdminUser():
     """
