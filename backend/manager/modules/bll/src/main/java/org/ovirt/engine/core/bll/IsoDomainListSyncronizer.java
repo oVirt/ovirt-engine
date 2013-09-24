@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -46,6 +48,7 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 /**
  * The class manages the Iso domain cache mechanism, <BR/>
@@ -537,19 +540,10 @@ public class IsoDomainListSyncronizer {
         }
     }
 
-    /**
-     * Create a new transaction to refresh the Iso file list in to the DB.
-     *
-     * @param repoStorageDomainId
-     *            - The repository domain id we want to update.
-     * @param repoFileMetaDataDao
-     *            - The Data Access Layer for storage domain.
-     * @param isoDomainList
-     *            - The Iso files which refreshed in the cache.
-     */
     private static boolean refreshIsoFileListMetaData(final Guid repoStorageDomainId,
-            final RepoFileMetaDataDAO repoFileMetaDataDao,
-            final List<String> isoDomainList, final ImageFileType imageType) {
+                                                      final RepoFileMetaDataDAO repoFileMetaDataDao,
+                                                      final Map<String, Map<String, Object>> fileStats,
+                                                      final ImageFileType imageType) {
         Lock syncObject = getSyncObject(repoStorageDomainId, imageType);
         try {
             syncObject.lock();
@@ -560,13 +554,13 @@ public class IsoDomainListSyncronizer {
                             long currentTime = System.currentTimeMillis();
                             repoFileMetaDataDao.removeRepoDomainFileList(repoStorageDomainId, imageType);
                             RepoImage repo_md;
-                            for (String isoFile : isoDomainList) {
+                            for (Map.Entry<String, Map<String, Object>> entry : fileStats.entrySet()) {
                                 repo_md = new RepoImage();
                                 repo_md.setLastRefreshed(currentTime);
-                                repo_md.setSize(0);
+                                repo_md.setSize(retrieveIsoFileSize(entry));
                                 repo_md.setRepoDomainId(repoStorageDomainId);
                                 repo_md.setDateCreated(null);
-                                repo_md.setRepoImageId(isoFile);
+                                repo_md.setRepoImageId(entry.getKey());
                                 repo_md.setRepoImageName(null);
                                 repo_md.setFileType(imageType);
                                 repoFileMetaDataDao.addRepoFileMap(repo_md);
@@ -576,6 +570,17 @@ public class IsoDomainListSyncronizer {
                     });
         } finally {
             syncObject.unlock();
+        }
+    }
+
+    private static long retrieveIsoFileSize(Map.Entry<String, Map<String, Object>> fileStats) {
+        try {
+            return Long.valueOf((String) fileStats.getValue().get(VdsProperties.size));
+        } catch (RuntimeException e) {
+            // Illegal number or null are treated as not available,
+            // handling exception in UI will be much more complicated.
+            log.errorFormat("File's '{0}' size is illegal number", fileStats.getKey(), e);
+            return StorageConstants.SIZE_IS_NOT_AVAILABLE;
         }
     }
 
@@ -630,14 +635,16 @@ public class IsoDomainListSyncronizer {
                         .RunVdsCommand(VDSCommandType.GetIsoList,
                                 new IrsBaseVDSCommandParameters(repoStoragePoolId));
                 @SuppressWarnings("unchecked")
-                List<String> isoDomainList = (List<String>) returnValue.getReturnValue();
-                if (returnValue.getSucceeded() && isoDomainList != null) {
+                Map<String, Map<String, Object>> fileStats =
+                        (Map<String, Map<String, Object>>) returnValue.getReturnValue();
+                if (returnValue.getSucceeded() && fileStats != null) {
                     log.debugFormat("The refresh process from VDSM, for Iso files succeeded.");
                     // Set the Iso domain file list fetched from VDSM into the DB.
                     refreshIsoSucceeded =
                             refreshIsoFileListMetaData(repoStorageDomainId,
                                     repoStorageDom,
-                                    isoDomainList, ImageFileType.ISO);
+                                    fileStats,
+                                    ImageFileType.ISO);
                 }
             } catch (Exception e) {
                 refreshIsoSucceeded = false;
@@ -668,13 +675,15 @@ public class IsoDomainListSyncronizer {
                         .RunVdsCommand(VDSCommandType.GetFloppyList,
                                 new IrsBaseVDSCommandParameters(repoStoragePoolId));
                 @SuppressWarnings("unchecked")
-                List<String> isoDomainFloppyList = (List<String>) returnValue.getReturnValue();
-                if (returnValue.getSucceeded() && isoDomainFloppyList != null) {
+                Map<String, Map<String, Object>> fileStats =
+                        (Map<String, Map<String, Object>>) returnValue.getReturnValue();
+                if (returnValue.getSucceeded() && fileStats != null) {
                     // Set the Iso domain floppy file list fetched from VDSM into the DB.
                     refreshFloppySucceeded =
                             refreshIsoFileListMetaData(repoStorageDomainId,
                                     repoStorageDom,
-                                    isoDomainFloppyList, ImageFileType.Floppy);
+                                    fileStats,
+                                    ImageFileType.Floppy);
                 }
                 log.debugFormat("The refresh process from VDSM, for Floppy files succeeded.");
             } catch (Exception e) {

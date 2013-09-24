@@ -4,30 +4,26 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetIsoListParameters;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 
 public class HsmGetIsoListVDSCommand<P extends HSMGetIsoListParameters> extends VdsBrokerCommand<P> {
+    private IsoListReturnForXmlRpc isoList;
+
     public HsmGetIsoListVDSCommand(P parameters) {
         super(parameters);
     }
 
-    protected IsoListReturnForXmlRpc _isoList;
-
     @Override
     protected void executeVdsBrokerCommand() {
-        _isoList = getBroker().getIsoList(getParameters().getStoragePoolId().toString());
+        isoList = getBroker().getIsoList(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
-        if (_isoList.mVMList != null && _isoList.mVMList.length > 0) {
-            setReturnValue(new java.util.ArrayList<String>(java.util.Arrays.asList(_isoList.mVMList)));
-        } else {
-            setReturnValue(new java.util.ArrayList<String>());
-        }
+        setReturnValue(isoList.getFileStats());
     }
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _isoList;
+        return isoList;
     }
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _isoList.mStatus;
+        return isoList.mStatus;
     }
 }

@@ -162,6 +162,12 @@ public final class VdsProperties {
     public static final String disk_actual_size = "actualsize";
     public static final String disk_true_size = "truesize";
     public static final String image_group_id = "imageID";
+    public static final String size = "size";
+
+    // Iso/Floppy related properties
+    public static final String iso_list = "isolist";
+    public static final String file_stats = "fileStats";
+
     // vm configuration (i.e. VmStatic)
     public static final String mem_size_mb = "memSize";
     public static final String mem_guaranteed_size_mb = "memGuaranteedSize";

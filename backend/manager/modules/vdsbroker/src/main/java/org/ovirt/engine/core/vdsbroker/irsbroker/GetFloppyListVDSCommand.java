@@ -5,7 +5,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> extends GetIsoListVDSCommand<P> {
-    protected IsoListReturnForXmlRpc _isoList;
+    protected IsoListReturnForXmlRpc floppyList;
 
     public GetFloppyListVDSCommand(P parameters) {
         super(parameters);
@@ -13,13 +13,9 @@ public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> exte
 
     @Override
     protected void executeIrsBrokerCommand() {
-        _isoList = getIrsProxy().getFloppyList(getParameters().getStoragePoolId().toString());
+        floppyList = getIrsProxy().getFloppyList(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
-        if (_isoList.mVMList != null && _isoList.mVMList.length > 0) {
-            setReturnValue(new java.util.ArrayList<String>(java.util.Arrays.asList(_isoList.mVMList)));
-        } else {
-            setReturnValue(new java.util.ArrayList<String>());
-        }
+        setReturnValue(floppyList.getFileStats());
     }
 
     @Override
@@ -29,11 +25,11 @@ public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> exte
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return _isoList;
+        return floppyList;
     }
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _isoList.mStatus;
+        return floppyList.mStatus;
     }
 }
