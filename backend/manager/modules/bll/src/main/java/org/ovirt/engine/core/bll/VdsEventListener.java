@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
-import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -311,24 +310,14 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void runFailedAutoStartVM(Guid vmId) {
-        // We will reuse this because we can generate more than one event:
+        // Alert that the virtual machine failed:
         final AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);
-
-        // Alert that the virtual machine failed:
         AuditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
         log.infoFormat("Highly Available VM went down. Attempting to restart. VM Name: {0}, VM Id:{1}",
                 event.getVmName(), vmId);
 
-        // Try to start it again:
-        final VdcReturnValueBase result = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
-                new RunVmParams(vmId),
-                ExecutionHandler.createInternalJobContext());
-
-        // Alert if the restart fails:
-        if (!result.getSucceeded()) {
-            AuditLogDirector.log(event, AuditLogType.HA_VM_RESTART_FAILED);
-        }
+        AutoStartVmsRunner.getInstance().addVmToRun(vmId);
     }
 
     @Override
