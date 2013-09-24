@@ -136,7 +136,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_STATE_DIR=%{engine_state} \\\
 	PKG_USER=%{engine_user} \\\
 	PKG_GROUP=%{engine_group} \\\
-	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
 Name:		@PACKAGE_NAME@
