@@ -275,7 +275,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     String bondOptions = rs.getString("bond_opts");
                     Integer speed = (Integer) rs.getObject("speed");
 
-                    if (isBond != null && vlanId != null) {
+                    if (Boolean.TRUE.equals(isBond) && vlanId != null) {
                         iface = new VdsNetworkInterface();
                         iface.setMacAddress(macAddress);
                         iface.setVlanId(vlanId);
