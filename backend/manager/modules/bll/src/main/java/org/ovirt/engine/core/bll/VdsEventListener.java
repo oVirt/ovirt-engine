@@ -310,15 +310,18 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void runFailedAutoStartVM(Guid vmId) {
-        // Alert that the virtual machine failed:
-        final AuditLogableBase event = new AuditLogableBase();
-        event.setVmId(vmId);
-        AuditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
-        log.infoFormat("Highly Available VM went down. Attempting to restart. VM Name: {0}, VM Id:{1}",
-                event.getVmName(), vmId);
+    public void runFailedAutoStartVMs(List<Guid> vmIds) {
+        for (Guid vmId: vmIds) {
+            // Alert that the virtual machine failed:
+            AuditLogableBase event = new AuditLogableBase();
+            event.setVmId(vmId);
+            AuditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
 
-        AutoStartVmsRunner.getInstance().addVmToRun(vmId);
+            log.infoFormat("Highly Available VM went down. Attempting to restart. VM Name: {0}, VM Id: {1}",
+                    event.getVmName(), vmId);
+        }
+
+        AutoStartVmsRunner.getInstance().addVmsToRun(vmIds);
     }
 
     @Override

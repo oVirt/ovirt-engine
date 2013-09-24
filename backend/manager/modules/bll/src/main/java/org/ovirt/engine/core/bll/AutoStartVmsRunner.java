@@ -62,6 +62,20 @@ public class AutoStartVmsRunner {
         autoStartVmsToRestart = new CopyOnWriteArraySet<>(initialFailedVms);
     }
 
+    /**
+     * Add the given VM IDs to the set of VMs which will be started in the next iteration.
+     *
+     * @param vmIds
+     *              List of VM IDs to start in the next iteration of the job
+     */
+    public void addVmsToRun(List<Guid> vmIds) {
+        ArrayList<AutoStartVmToRestart> vmsToAdd = new ArrayList<>(vmIds.size());
+        for (Guid vmId: vmIds) {
+            vmsToAdd.add(new AutoStartVmToRestart(vmId));
+        }
+        autoStartVmsToRestart.addAll(vmsToAdd);
+    }
+
     @OnTimerMethodAnnotation("startFailedAutoStartVms")
     public void startFailedAutoStartVms() {
         LinkedList<AutoStartVmToRestart> vmsToRemove = new LinkedList<>();
@@ -155,10 +169,6 @@ public class AutoStartVmsRunner {
 
     protected VmDAO getVmDao() {
         return DbFacade.getInstance().getVmDao();
-    }
-
-    public void addVmToRun(Guid vmId) {
-        autoStartVmsToRestart.add(new AutoStartVmToRestart(vmId));
     }
 
     private boolean runVm(Guid vmId, EngineLock lock) {

@@ -54,7 +54,7 @@ public interface IVdsEventListener {
 
     void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status);
 
-    void runFailedAutoStartVM(Guid vmId);
+    void runFailedAutoStartVMs(List<Guid> vmIds);
 
     void addExternallyManagedVms(List<VmStatic> externalVmList);
 

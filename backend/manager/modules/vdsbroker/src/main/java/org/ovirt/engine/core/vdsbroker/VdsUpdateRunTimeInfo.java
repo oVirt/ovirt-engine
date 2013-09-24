@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -168,7 +169,7 @@ public class VdsUpdateRunTimeInfo {
         getDbFacade().getDiskImageDynamicDao().updateAllInBatch(_vmDiskImageDynamicToSave.values());
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
-        ResourceManager.getInstance().getEventListener().addExternallyManagedVms(_externalVmsToAdd);
+        getVdsEventListener().addExternallyManagedVms(_externalVmsToAdd);
     }
 
     private void saveVmGuestAgentNetworkDevices() {
@@ -370,6 +371,10 @@ public class VdsUpdateRunTimeInfo {
                 _vds.getName());
     }
 
+    protected IVdsEventListener getVdsEventListener() {
+        return ResourceManager.getInstance().getEventListener();
+    }
+
     public void afterRefreshTreatment() {
         try {
             if (processHardwareCapsNeeded) {
@@ -378,13 +383,13 @@ public class VdsUpdateRunTimeInfo {
             }
 
             if (refreshedCapabilities) {
-                ResourceManager.getInstance().getEventListener().handleVdsVersion(_vds.getId());
+                getVdsEventListener().handleVdsVersion(_vds.getId());
                 markIsSetNonOperationalExecuted();
             }
 
             if (_vds.getStatus() == VDSStatus.Maintenance) {
                 try {
-                    ResourceManager.getInstance().getEventListener().vdsMovedToMaintenance(_vds);
+                    getVdsEventListener().vdsMovedToMaintenance(_vds);
                 } catch (RuntimeException ex) {
                     log.errorFormat("Host encounter a problem moving to maintenance mode, probably error during disconnecting it from pool {0}. The Host will stay in Maintenance",
                             ex.getMessage());
@@ -412,18 +417,15 @@ public class VdsUpdateRunTimeInfo {
             for (Guid vm_guid : _succededToRunVms) {
                 _vdsManager.succededToRunVm(vm_guid);
             }
+
+            // Refrain from auto-start HA VM during its re-run attempts.
+            _autoVmsToRun.removeAll(_vmsToRerun);
             // run all vms that crushed that marked with auto startup
-            for (Guid vm_guid : _autoVmsToRun) {
-                // Refrain from auto-start HA VM during its re-run attempts.
-                if (!_vmsToRerun.contains(vm_guid)) {
-                    ResourceManager.getInstance().getEventListener().runFailedAutoStartVM(vm_guid);
-                }
-            }
+            getVdsEventListener().runFailedAutoStartVMs(_autoVmsToRun);
 
             // process all vms that their ip changed.
             for (Entry<VM, VmDynamic> pair : _vmsClientIpChanged.entrySet()) {
-                ResourceManager.getInstance().getEventListener()
-                        .processOnClientIpChange(_vds, pair.getValue().getId());
+                getVdsEventListener().processOnClientIpChange(_vds, pair.getValue().getId());
             }
 
             // process all vms that powering up.
@@ -437,7 +439,7 @@ public class VdsUpdateRunTimeInfo {
 
             // process all vms that went down
             for (Guid vm_guid : _vmsMovedToDown) {
-                ResourceManager.getInstance().getEventListener().processOnVmStop(vm_guid);
+                getVdsEventListener().processOnVmStop(vm_guid);
             }
             for (Guid vm_guid : _vmsToRemoveFromAsync) {
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vm_guid);
