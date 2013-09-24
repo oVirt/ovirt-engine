@@ -61,7 +61,6 @@ PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
 PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
 PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
 PKG_STATE_DIR=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
-SPICE_DIR=/usr/share/spice
 JBOSS_HOME=/usr/share/jboss-as
 PYTHON_DIR=$(PYTHON_SYS_DIR)
 DEV_PYTHON_DIR=
@@ -147,7 +146,6 @@ BUILD_TARGET=install
 	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
 	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g" \
 	-e "s|@DISPLAY_VERSION@|$(DISPLAY_VERSION)|g" \
-	-e "s|@SPICE_DIR@|$(SPICE_DIR)|g" \
 	-e "s|@JBOSS_HOME@|$(JBOSS_HOME)|g" \
 	$< > $@
 
@@ -339,7 +337,7 @@ install-packaging-files: \
 	$(MAKE) copy-recursive SOURCEDIR=packaging/sys-etc TARGETDIR="$(DESTDIR)$(SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/etc TARGETDIR="$(DESTDIR)$(PKG_SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pki TARGETDIR="$(DESTDIR)$(PKG_PKI_DIR)" EXCLUDE_GEN="$(GENERATED)"
-	for d in bin branding conf firewalld manual services setup; do \
+	for d in bin branding conf files firewalld manual services setup; do \
 		$(MAKE) copy-recursive SOURCEDIR="packaging/$${d}" TARGETDIR="$(DESTDIR)$(DATA_DIR)/$${d}" EXCLUDE_GEN="$(GENERATED)"; \
 	done
 	$(MAKE) copy-recursive SOURCEDIR=packaging/man TARGETDIR="$(DESTDIR)$(MAN_DIR)" EXCLUDE_GEN="$(GENERATED)"
@@ -372,6 +370,11 @@ install-layout: \
 	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/ui-plugins"
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	install -d -m 750 "$(DESTDIR)$(PKG_STATE_DIR)/backups"
+
+	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/files"
+	ln -s "$(PKG_SYSCONF_DIR)/usbfilter.txt" "$(DESTDIR)$(DATA_DIR)/files/usbfilter.txt"
+	ln -s "/usr/share/novnc" "$(DESTDIR)$(DATA_DIR)/files/novnc"
+	ln -s "/usr/share/spice-html5" "$(DESTDIR)$(DATA_DIR)/files/spice-html5"
 
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	-rm -f "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"

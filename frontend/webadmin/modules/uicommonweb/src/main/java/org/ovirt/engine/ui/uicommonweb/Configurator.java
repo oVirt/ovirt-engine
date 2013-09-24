@@ -195,7 +195,7 @@ public abstract class Configurator {
      * Returns the base URL for retrieving Spice-related resources.
      */
     public static String getSpiceBaseURL() {
-        return FrontendUrlUtils.getRootURL() + "spice/"; //$NON-NLS-1$
+        return FrontendUrlUtils.getRootURL() + "ovirt-engine-files/spice/"; //$NON-NLS-1$
     }
 
     protected void setUsbFilter(String usbFilter) {
