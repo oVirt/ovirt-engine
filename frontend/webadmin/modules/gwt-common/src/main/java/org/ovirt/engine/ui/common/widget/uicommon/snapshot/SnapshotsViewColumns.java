@@ -65,6 +65,7 @@ public class SnapshotsViewColumns {
                 description = templates.snapshotDescription("font-style:italic", descriptionStr); //$NON-NLS-1$
             }
             else if (snapshot.getType() == SnapshotType.ACTIVE || snapshot.getType() == SnapshotType.PREVIEW) {
+                descriptionStr = snapshot.getType() == SnapshotType.ACTIVE ? constants.snapshotDescriptionActiveVm() : constants.snapshotDescriptionActiveVmBeforePreview();
                 description = templates.snapshotDescription("color:gray", descriptionStr); //$NON-NLS-1$
             }
 
