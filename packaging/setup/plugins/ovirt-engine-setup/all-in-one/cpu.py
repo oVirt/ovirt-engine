@@ -94,6 +94,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment[osetupcons.AIOEnv.VDSM_CPU] = None
+        self.environment[osetupcons.AIOEnv.SUPPORTED] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -106,20 +107,9 @@ class Plugin(plugin.PluginBase):
         from ovirt_host_deploy import hardware
         virtualization = hardware.Virtualization()
         result = virtualization.detect()
-        if result == virtualization.DETECT_RESULT_UNSUPPORTED:
-            self.logger.warning(
-                _(
-                    'Disabling all-in-one plugin because hardware '
-                    'does not support virtualization'
-                )
-            )
-            self.environment[osetupcons.AIOEnv.ENABLE] = False
-        elif result == virtualization.DETECT_RESULT_SUPPORTED:
+        if result == virtualization.DETECT_RESULT_SUPPORTED:
             self.logger.info(_('Hardware supports virtualization'))
-        else:
-            self.logger.warning(
-                _('Cannot detect if hardware supports virtualization')
-            )
+            self.environment[osetupcons.AIOEnv.SUPPORTED] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,

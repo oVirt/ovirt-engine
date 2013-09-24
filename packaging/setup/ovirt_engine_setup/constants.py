@@ -1056,6 +1056,7 @@ class RemoveEnv(object):
 @osetupattrsclass
 class AIOEnv(object):
     ENABLE = 'OVESETUP_AIO/enable'
+    CONTINUE_WITHOUT_AIO = 'OVESETUP_AIO/continueWithoutAIO'
 
     @osetupattrs(
         answerfile=True,
@@ -1069,6 +1070,7 @@ class AIOEnv(object):
     LOCAL_CLUSTER = 'OVESETUP_AIO/localCluster'
     LOCAL_HOST = 'OVESETUP_AIO/localHost'
     VDSM_CPU = 'OVESETUP_AIO/vdsmCpu'
+    SUPPORTED = 'OVESETUP_AIO/supported'
 
     STORAGE_DOMAIN_SD_UUID = 'OVESETUP_AIO/storageDomainSdUuid'
     STORAGE_DOMAIN_DEFAULT_DIR = 'OVESETUP_AIO/storageDomainDefaultDir'
