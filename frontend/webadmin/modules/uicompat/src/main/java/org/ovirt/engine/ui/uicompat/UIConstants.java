@@ -2025,9 +2025,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("22")
     String defaultHostSSHPort();
 
-    @DefaultStringValue("root")
-    String defaultUserName();
-
     @DefaultStringValue("Remove Network QoS")
     String removeNetworkQoSTitle();
 

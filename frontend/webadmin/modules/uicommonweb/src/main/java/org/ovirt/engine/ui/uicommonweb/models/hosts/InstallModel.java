@@ -117,7 +117,7 @@ public class InstallModel extends Model {
         setOverrideIpTables(new EntityModel());
         getOverrideIpTables().setEntity(false);
         setUserName(new EntityModel());
-        getUserName().setEntity(constants.defaultUserName());
+        getUserName().setEntity(HostModel.RootUserName);
         // TODO: remove setIsChangable when configured ssh username is enabled
         getUserName().setIsChangable(false);
         setPublicKey(new EntityModel());

@@ -57,6 +57,7 @@ public abstract class HostModel extends Model
     public static final String PmSlotKey = "slot"; //$NON-NLS-1$
     public static final String BeginTestStage = "BeginTest"; //$NON-NLS-1$
     public static final String EndTestStage = "EndTest"; //$NON-NLS-1$
+    public static final String RootUserName = "root"; //$NON-NLS-1$
 
     private UICommand privateTestCommand;
     UIConstants constants = ConstantsManager.getInstance().getConstants();
@@ -854,7 +855,7 @@ public abstract class HostModel extends Model
         setAuthSshPort(new EntityModel());
         getAuthSshPort().setEntity(constants.defaultHostSSHPort());
         setUserName(new EntityModel());
-        getUserName().setEntity(constants.defaultUserName());
+        getUserName().setEntity(RootUserName);
         // TODO: remove setIsChangable when configured ssh username is enabled
         getUserName().setIsChangable(false);
         setFetchSshFingerprint(new EntityModel());
