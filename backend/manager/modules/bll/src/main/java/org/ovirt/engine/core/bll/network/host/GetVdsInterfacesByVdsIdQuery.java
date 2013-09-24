@@ -50,8 +50,8 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
             Map<String, Network> networks = Entities.entitiesByName(
                     getDbFacade().getNetworkDao().getAllForCluster(vdsStatic.getVdsGroupId()));
             for (final VdsNetworkInterface i : list) {
-                if (i.getBonded() == null || (i.getBonded() != null && i.getBonded())
-                            && LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
+                if (!Boolean.TRUE.equals(i.getBonded())
+                        || LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
                                 @Override
                                 public boolean eval(VdsNetworkInterface bond) {
                                     return StringUtils.equals(bond.getBondName(), i.getName());
