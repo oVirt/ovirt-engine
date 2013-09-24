@@ -541,7 +541,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                         connectionTimeOut,
                                         clientRetries,
                                         IrsServerConnector.class,
-                                        Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
+                                        Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication));
                         privatemIrsProxy = new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
                         runStoragePoolUpEvent(storagePool);
                     }

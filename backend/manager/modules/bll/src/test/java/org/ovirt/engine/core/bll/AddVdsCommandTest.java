@@ -58,7 +58,7 @@ public class AddVdsCommandTest {
     @ClassRule
     public static MockConfigRule configRule =
             new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.MaxVdsNameLength, 4),
-                    MockConfigRule.mockConfig(ConfigValues.UseSecureConnectionWithServers, false),
+                    MockConfigRule.mockConfig(ConfigValues.EncryptHostCommunication, false),
                     MockConfigRule.mockConfig(ConfigValues.InstallVds, true));
 
     private VDS makeTestVds(Guid vdsId) {

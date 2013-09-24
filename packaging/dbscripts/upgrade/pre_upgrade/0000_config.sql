@@ -25,6 +25,7 @@ select fn_db_rename_config_key('ClientConsoleModeDefault', 'ClientModeSpiceDefau
 select fn_db_rename_config_key('PowerClientAutoApprovePatterns','AutoApprovePatterns','general');
 select fn_db_rename_config_key('PowerClientAutoRegistrationDefaultVdsGroupID','AutoRegistrationDefaultVdsGroupID','general');
 select fn_db_rename_config_key('PowerClientAutoInstallCertificateOnApprove','AutoInstallCertificateOnApprove','general');
+select fn_db_rename_config_key('UseSecureConnectionWithServers', 'EncryptHostCommunication', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -494,6 +495,8 @@ select fn_db_add_config_value('ThrottlerMaxWaitForVdsUpdateInMillis','10000','ge
 select fn_db_add_config_value('TimeoutToResetVdsInSeconds','60','general');
 select fn_db_add_config_value('DelayResetForSpmInSeconds','20','general');
 select fn_db_add_config_value('DelayResetPerVmInSeconds','0.5','general');
+--Handling Use Secure Connection with Hosts
+select fn_db_add_config_value('EncryptHostCommunication','true','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('UknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.0');
@@ -503,8 +506,6 @@ select fn_db_add_config_value('UserDefinedVMProperties','','3.3');
 select fn_db_add_config_value('UserRefreshRate','3600','general');
 select fn_db_add_config_value('UserSessionTimeOutInterval','30','general');
 select fn_db_add_config_value('UserSessionTimeOutInvalidationInterval','30','general');
---Handling Use Secure Connection with Hosts
-select fn_db_add_config_value('UseSecureConnectionWithServers','true','general');
 select fn_db_add_config_value('UtilizationThresholdInPercent','80','general');
 select fn_db_add_config_value('ValidNumOfMonitors','1,2,4','general');
 select fn_db_add_config_value('VcpuConsumptionPercentage','10','general');
@@ -837,6 +838,7 @@ select fn_db_delete_config_value('TruststorePass','general');
 select fn_db_delete_config_value('TruststoreUrl','general');
 select fn_db_delete_config_value('UseENGINERepositoryRPMs','general');
 select fn_db_delete_config_value('UseVdsBrokerInProc','general');
+select fn_db_delete_config_value('UseSecureConnectionWithServers','general');
 select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
 select fn_db_delete_config_value('VdcBootStrapUrl','general');
 select fn_db_delete_config_value('VdsErrorsFileName','general');

@@ -161,11 +161,11 @@ class Plugin(plugin.PluginBase):
                     'value': 'true',
                 },
                 {
-                    'name': 'UseSecureConnectionWithServers',
+                    'name': 'EncryptHostCommunication',
                     'value': 'true',
                 },
                 {
-                    'name': 'UseSecureConnectionWithServers',
+                    'name': 'EncryptHostCommunication',
                     'value': 'true',
                 },
                 {
