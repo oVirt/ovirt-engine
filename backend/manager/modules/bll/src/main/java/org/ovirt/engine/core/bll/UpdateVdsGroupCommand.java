@@ -59,7 +59,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             String emulatedMachine = null;
             // pick an UP host randomly - all should have latest compat version already if we passed the canDo.
             for (VDS vds : allForVdsGroup) {
-                if (getVds().getStatus() == VDSStatus.Up) {
+                if (vds.getStatus() == VDSStatus.Up) {
                     emulatedMachine = ListUtils.firstMatch(
                             Config.<List<String>>GetValue(ConfigValues.ClusterEmulatedMachines,
                                     getParameters().getVdsGroup().getcompatibility_version().getValue()), vds.getSupportedEmulatedMachines().split(","));
