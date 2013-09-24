@@ -88,27 +88,24 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 @SuppressWarnings({ "synthetic-access", "unchecked", "rawtypes" })
 public class VdsUpdateRunTimeInfo {
     private Map<Guid, VmInternalData> _runningVms;
-    private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<Guid, VmDynamic>();
-    private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<Guid, VmStatistics>();
-    private final Map<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave =
-            new HashMap<Guid, List<VmNetworkInterface>>();
-    private final Map<Guid, DiskImageDynamic> _vmDiskImageDynamicToSave =
-            new HashMap<Guid, DiskImageDynamic>();
-    private final Map<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<VmDeviceId, VmDevice>();
-    private final List<VmDevice> newVmDevices = new ArrayList<VmDevice>();
-    private final List<VmDeviceId> removedDeviceIds = new ArrayList<VmDeviceId>();
-    private final Map<VM, VmDynamic> _vmsClientIpChanged = new HashMap<VM, VmDynamic>();
-    private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics =
-            new HashMap<Guid, List<VmGuestAgentInterface>>();
-    private final List<VmDynamic> _poweringUpVms = new ArrayList<VmDynamic>();
-    private final List<Guid> _vmsToRerun = new ArrayList<Guid>();
-    private final List<Guid> _autoVmsToRun = new ArrayList<Guid>();
-    private final List<Guid> _vmsMovedToDown = new ArrayList<Guid>();
-    private final List<Guid> _vmsToRemoveFromAsync = new ArrayList<Guid>();
-    private final List<Guid> _succededToRunVms = new ArrayList<Guid>();
+    private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<>();
+    private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<>();
+    private final Map<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave = new HashMap<>();
+    private final Map<Guid, DiskImageDynamic> _vmDiskImageDynamicToSave = new HashMap<>();
+    private final Map<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<>();
+    private final List<VmDevice> newVmDevices = new ArrayList<>();
+    private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
+    private final Map<VM, VmDynamic> _vmsClientIpChanged = new HashMap<>();
+    private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics = new HashMap<>();
+    private final List<VmDynamic> _poweringUpVms = new ArrayList<>();
+    private final List<Guid> _vmsToRerun = new ArrayList<>();
+    private final List<Guid> _autoVmsToRun = new ArrayList<>();
+    private final List<Guid> _vmsMovedToDown = new ArrayList<>();
+    private final List<Guid> _vmsToRemoveFromAsync = new ArrayList<>();
+    private final List<Guid> _succededToRunVms = new ArrayList<>();
     private static final Map<Guid, Integer> vmsWithBalloonDriverProblem = new HashMap<>();
     private static final Map<Guid, Integer> vmsWithUncontrolledBalloon = new HashMap<>();
-    private final List<VmStatic> _externalVmsToAdd = new ArrayList();
+    private final List<VmStatic> _externalVmsToAdd = new ArrayList<>();
     private boolean _saveVdsDynamic;
     private VDSStatus _firstStatus = VDSStatus.forValue(0);
     private boolean _saveVdsStatistics;
@@ -118,7 +115,7 @@ public class VdsUpdateRunTimeInfo {
     private final Map<Guid, VM> _vmDict;
     private boolean processHardwareCapsNeeded;
     private boolean refreshedCapabilities = false;
-    private static Map<Guid, Long> hostDownTimes = new HashMap<Guid, Long>();
+    private static Map<Guid, Long> hostDownTimes = new HashMap<>();
 
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 
