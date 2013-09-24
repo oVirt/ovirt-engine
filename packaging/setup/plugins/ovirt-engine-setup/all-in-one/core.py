@@ -56,6 +56,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.AIOEnv.CONFIGURE,
             None
         )
+        self.environment.setdefault(
+            osetupcons.AIOEnv.CONTINUE_WITHOUT_AIO,
+            None
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -65,6 +69,48 @@ class Plugin(plugin.PluginBase):
     )
     def _setup(self):
         self._enabled = True
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        condition=lambda self: (
+            self._enabled and
+            self.environment[
+                osetupcons.AIOEnv.SUPPORTED
+            ] is False
+        ),
+        name=osetupcons.Stages.AIO_CONFIG_NOT_AVAILABLE,
+        before=(
+            osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+        ),
+    )
+    def _continueSetupWithoutAIO(self):
+        if self.environment[
+            osetupcons.AIOEnv.CONTINUE_WITHOUT_AIO
+        ] is None:
+            self.environment[
+                osetupcons.AIOEnv.CONTINUE_WITHOUT_AIO
+            ] = dialog.queryBoolean(
+                dialog=self.dialog,
+                name='OVESETUP_CONTINUE_WITHOUT_AIO',
+                note=_(
+                    'Disabling all-in-one plugin because hardware '
+                    'supporting virtualization could not be detected. '
+                    'Do you want to continue setup without AIO plugin? '
+                    '(@VALUES@) [@DEFAULT@]: '
+                ),
+                prompt=True,
+                default=False,
+            )
+
+        if self.environment[
+            osetupcons.AIOEnv.CONTINUE_WITHOUT_AIO
+        ]:
+            self._enabled = False
+            self.environment[osetupcons.AIOEnv.CONFIGURE] = False
+        else:
+            raise RuntimeError(
+                _('Aborted by user.')
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
