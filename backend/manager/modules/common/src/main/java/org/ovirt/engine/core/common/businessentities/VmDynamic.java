@@ -49,6 +49,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Long lastWatchdogEvent;
     private String lastWatchdogAction;
     private boolean runOnce;
+    private String cpuName;
 
     @Override
     public int hashCode() {
@@ -91,6 +92,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + (lastWatchdogEvent == null ? 0 : lastWatchdogEvent.hashCode());
         result = prime * result + (lastWatchdogAction == null ? 0 : lastWatchdogAction.hashCode());
         result = prime * result + (runOnce ? 1231 : 1237);
+        result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
         return result;
     }
 
@@ -142,7 +144,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(vmPid, other.vmPid)
                 && ObjectUtils.objectsEqual(lastWatchdogEvent, other.lastWatchdogEvent)
                 && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction)
-                && runOnce == other.runOnce);
+                && runOnce == other.runOnce
+                && ObjectUtils.objectsEqual(cpuName, other.cpuName));
     }
 
     public String getExitMessage() {
@@ -479,4 +482,12 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     public void setRunOnce(boolean runOnce) {
         this.runOnce = runOnce;
     }
+    public String getCpuName() {
+        return cpuName;
+    }
+
+    public void setCpuName(String cpuName) {
+        this.cpuName = cpuName;
+    }
+
 }

@@ -277,6 +277,7 @@ public class ResourceManager {
         vm.setGuestOs(null);
         vm.setVmIp(null);
         vm.setVmFQDN(null);
+        vm.setCpuName(null);
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         for (VmNetworkInterface ifc : interfaces) {
             NetworkStatistics statistics = ifc.getStatistics();

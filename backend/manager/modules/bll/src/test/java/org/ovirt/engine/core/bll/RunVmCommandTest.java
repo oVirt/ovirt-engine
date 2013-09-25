@@ -297,6 +297,7 @@ public class RunVmCommandTest {
         vm.setStatus(VMStatus.Down);
         doReturn(vmDAO).when(command).getVmDAO();
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
+        doReturn(new VDSGroup()).when(command).getVdsGroup();
         return vm;
     }
 

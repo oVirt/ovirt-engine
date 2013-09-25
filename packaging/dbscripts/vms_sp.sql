@@ -242,12 +242,13 @@ Create or replace FUNCTION InsertVmDynamic(v_app_list VARCHAR(4000) ,
 	v_guest_agent_nics_hash INTEGER,
         v_last_watchdog_event NUMERIC,
         v_last_watchdog_action VARCHAR(8),
-        v_is_run_once BOOLEAN)
+        v_is_run_once BOOLEAN,
+        v_cpu_name VARCHAR(255))
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_dynamic(app_list, guest_cur_user_name, console_cur_user_name, guest_last_login_time, guest_last_logout_time, console_user_id, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, last_start_time, vm_pid, display, acpi_enable, session, display_ip, display_type, kvm_enable, boot_sequence, display_secure_port, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, hibernation_vol_handle,exit_status,pause_status,exit_message, guest_agent_nics_hash, last_watchdog_event, last_watchdog_action, is_run_once, vm_fqdn)
-	VALUES(v_app_list, v_guest_cur_user_name, v_console_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_vm_pid, v_display, v_acpi_enable, v_session, v_display_ip, v_display_type, v_kvm_enable, v_boot_sequence, v_display_secure_port, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_hibernation_vol_handle, v_exit_status, v_pause_status, v_exit_message, v_guest_agent_nics_hash, v_last_watchdog_event, v_last_watchdog_action, v_is_run_once, v_vm_fqdn);
+INSERT INTO vm_dynamic(app_list, guest_cur_user_name, console_cur_user_name, guest_last_login_time, guest_last_logout_time, console_user_id, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, last_start_time, vm_pid, display, acpi_enable, session, display_ip, display_type, kvm_enable, boot_sequence, display_secure_port, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, hibernation_vol_handle,exit_status,pause_status,exit_message, guest_agent_nics_hash, last_watchdog_event, last_watchdog_action, is_run_once, vm_fqdn, cpu_name)
+	VALUES(v_app_list, v_guest_cur_user_name, v_console_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_vm_pid, v_display, v_acpi_enable, v_session, v_display_ip, v_display_type, v_kvm_enable, v_boot_sequence, v_display_secure_port, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_hibernation_vol_handle, v_exit_status, v_pause_status, v_exit_message, v_guest_agent_nics_hash, v_last_watchdog_event, v_last_watchdog_action, v_is_run_once, v_vm_fqdn, v_cpu_name);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -289,7 +290,8 @@ Create or replace FUNCTION UpdateVmDynamic(v_app_list VARCHAR(4000) ,
         v_guest_agent_nics_hash INTEGER,
         v_last_watchdog_event NUMERIC,
         v_last_watchdog_action VARCHAR(8),
-        v_is_run_once BOOLEAN)
+        v_is_run_once BOOLEAN,
+        v_cpu_name VARCHAR(255))
 RETURNS VOID
 
 	--The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -312,7 +314,7 @@ BEGIN
       guest_requested_memory = v_guest_requested_memory,
       hibernation_vol_handle = v_hibernation_vol_handle,exit_status = v_exit_status,
       pause_status = v_pause_status,exit_message = v_exit_message, hash=v_hash, guest_agent_nics_hash = v_guest_agent_nics_hash,
-      last_watchdog_event = v_last_watchdog_event, last_watchdog_action = v_last_watchdog_action, is_run_once = v_is_run_once
+      last_watchdog_event = v_last_watchdog_event, last_watchdog_action = v_last_watchdog_action, is_run_once = v_is_run_once, cpu_name = v_cpu_name
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;

@@ -365,6 +365,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setTrustedService(rs.getBoolean("trusted_service"));
             entity.setRunOnce(rs.getBoolean("is_run_once"));
             entity.setCreatedByUserId(getGuid(rs,"created_by_user_id"));
+            entity.setCpuName(rs.getString("cpu_name"));
             return entity;
         }
     }
