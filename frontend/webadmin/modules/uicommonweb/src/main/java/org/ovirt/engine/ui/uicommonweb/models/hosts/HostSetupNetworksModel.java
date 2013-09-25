@@ -55,6 +55,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
  */
 public class HostSetupNetworksModel extends EntityModel {
 
+    @Override
+    public VDS getEntity() {
+        return (VDS) super.getEntity();
+    }
+
     private EntityModel privateCheckConnectivity;
 
     public EntityModel getCheckConnectivity()
@@ -655,7 +660,7 @@ public class HostSetupNetworksModel extends EntityModel {
             }
         };
 
-        VDS vds = (VDS) getEntity();
+        VDS vds = getEntity();
         Frontend.RunQuery(VdcQueryType.GetVdsFreeBondsByVdsId, new IdQueryParameters(vds.getId()), asyncQuery);
     }
 
@@ -676,7 +681,7 @@ public class HostSetupNetworksModel extends EntityModel {
             }
         };
 
-        VDS vds = (VDS) getEntity();
+        VDS vds = getEntity();
         IdQueryParameters params = new IdQueryParameters(vds.getId());
         params.setRefresh(false);
         Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId, params, asyncQuery);
@@ -700,7 +705,7 @@ public class HostSetupNetworksModel extends EntityModel {
             }
         };
 
-        VDS vds = (VDS) getEntity();
+        VDS vds = getEntity();
         AsyncDataProvider.getClusterNetworkList(asyncQuery, vds.getVdsGroupId());
     }
 
@@ -785,7 +790,7 @@ public class HostSetupNetworksModel extends EntityModel {
         params.setInterfaces(model.getAllNics());
         params.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
         params.setConectivityTimeout((Integer) model.getConnectivityTimeout().getEntity());
-        params.setVdsId(((VDS) getEntity()).getId());
+        params.setVdsId(getEntity().getId());
         params.setNetworksToSync(model.getNetworksToSync());
 
         model.startProgress(null);
@@ -799,7 +804,7 @@ public class HostSetupNetworksModel extends EntityModel {
                     EntityModel commitChanges = model.getCommitChanges();
                     if ((Boolean) commitChanges.getEntity())
                     {
-                        new SaveNetworkConfigAction(sourceListModel, model, (VDS) getEntity()).execute();
+                        new SaveNetworkConfigAction(sourceListModel, model, getEntity()).execute();
                     }
                     else
                     {
