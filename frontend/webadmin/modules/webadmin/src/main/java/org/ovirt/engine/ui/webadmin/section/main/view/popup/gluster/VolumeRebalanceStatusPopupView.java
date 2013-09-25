@@ -96,13 +96,13 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @Inject
     public VolumeRebalanceStatusPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,ApplicationMessages messages) {
         super(eventBus, resources);
+        this.messages = messages;
+        this.constants = constants;
         initEditors(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         driver.initialize(this);
-        this.messages = messages;
-        this.constants = constants;
     }
 
     private void localize(final ApplicationConstants constants) {
