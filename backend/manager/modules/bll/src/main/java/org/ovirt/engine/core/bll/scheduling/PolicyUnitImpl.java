@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
@@ -40,6 +41,8 @@ public class PolicyUnitImpl extends PolicyUnit {
             return new MemoryPolicyUnit(policyUnit);
         case "Network":
             return new NetworkPolicyUnit(policyUnit);
+        case "CPU-Level":
+            return new CpuLevelFilterPolicyUnit(policyUnit);
         case "None":
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
                 return new NoneWeightPolicyUnit(policyUnit);
