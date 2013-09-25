@@ -67,7 +67,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Networks")
     String networkMainTabLabel();
 
-    @DefaultStringValue("VM Interface Profiles")
+    @DefaultStringValue("vNIC Profiles")
     String vnicProfilesMainTabLabel();
 
     @DefaultStringValue("Storage")
@@ -184,7 +184,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Export")
     String exportLabel();
 
-    @DefaultStringValue("vNic Profiles")
+    @DefaultStringValue("vNIC Profiles")
     String profilesLabel();
 
     @DefaultStringValue("Create on external provider")
@@ -1101,7 +1101,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Used Storage/Total")
     String usedStorageTotalQuotaStorage();
 
-    // Vnic Profile
+    // vNIC Profile
     @DefaultStringValue("Network")
     String networkVnicProfile();
 
