@@ -523,6 +523,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There are no available running Hosts with enough cores in VM's Cluster .")
     String ACTION_TYPE_FAILED_VDS_VM_CPUS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The host has lower CPU level than the VM was run with.")
+    String ACTION_TYPE_FAILED_VDS_VM_CPU_LEVEL();
+
     @DefaultStringValue("Cannot ${action} ${type}. There are no available running Hosts with all the networks used by the VM.")
     String ACTION_TYPE_FAILED_VDS_VM_NETWORKS();
 
