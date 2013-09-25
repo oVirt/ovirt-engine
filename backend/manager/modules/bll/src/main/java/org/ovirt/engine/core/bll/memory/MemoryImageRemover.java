@@ -116,11 +116,14 @@ public abstract class MemoryImageRemover {
             return guid;
         }
         else {
+            boolean imageDoesNotExist = vdsRetValue.getVdsError().getCode() == VdcBllErrors.ImageDoesNotExistInDomainError;
+            if (!imageDoesNotExist) {
+                log.errorFormat("Could not remove memory image: {0}", parameters);
+            }
             enclosingCommand.deleteAsyncTaskPlaceHolder(taskKey);
-            // otherwise, if the command failed because the image already does not exist,
+            // otherwise, if the command failed because the image does not exist,
             // no need to create and monitor task, so we return empty guid to mark this state
-            return vdsRetValue.getVdsError().getCode() == VdcBllErrors.ImageDoesNotExistInDomainError ?
-                    Guid.Empty : null;
+            return imageDoesNotExist ? Guid.Empty : null;
         }
     }
 

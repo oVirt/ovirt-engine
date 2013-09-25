@@ -197,6 +197,10 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
         return memoryVolume;
     }
 
+    public boolean containsMemory() {
+        return !memoryVolume.isEmpty();
+    }
+
     public void setMemoryVolume(String memoryVolume) {
         this.memoryVolume = memoryVolume == null ? "" : memoryVolume;
     }

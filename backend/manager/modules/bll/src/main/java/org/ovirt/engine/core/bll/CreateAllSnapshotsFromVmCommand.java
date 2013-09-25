@@ -213,13 +213,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void endVmCommand() {
-        boolean taskGroupSucceeded = getParameters().getTaskGroupSuccess();
         Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
-        // if the snapshot was not created the command should be
-        // handled as a failure
-        if (createdSnapshot == null) {
-            taskGroupSucceeded = false;
-        }
+        // if the snapshot was not created in the DB
+        // the command should also be handled as a failure
+        boolean taskGroupSucceeded = createdSnapshot != null && getParameters().getTaskGroupSuccess();
+
         if (taskGroupSucceeded) {
             getSnapshotDao().updateStatus(createdSnapshot.getId(), SnapshotStatus.OK);
 
@@ -227,13 +225,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 performLiveSnapshot(createdSnapshot);
             } else {
                 // If the created snapshot contains memory, remove the memory volumes as
-                // they are not in use since no live snapshot was created
-                if (!createdSnapshot.getMemoryVolume().isEmpty()) {
+                // they are not going to be in use since no live snapshot is created
+                if (createdSnapshot.containsMemory()) {
                     logMemorySavingFailed();
-                    if (!removeMemoryFromSnapshot(createdSnapshot, true)) {
-                        log.errorFormat("Failed to remove unused memory {0} of snapshot {1}",
-                                createdSnapshot.getMemoryVolume(), createdSnapshot.getId());
-                    }
+
+                    getSnapshotDao().removeMemoryFromSnapshot(createdSnapshot.getId());
+                    removeMemoryVolumesOfSnapshot(createdSnapshot);
                 }
             }
         } else {
@@ -241,10 +238,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 revertToActiveSnapshot(createdSnapshot.getId());
                 // If the removed snapshot contained memory, remove the memory volumes
                 // Note that the memory volumes might not have been created
-                if (!removeMemoryFromSnapshot(createdSnapshot, false)) {
-                    log.warnFormat("Failed to remove memory {0} of snapshot {1}",
-                            createdSnapshot.getMemoryVolume(), createdSnapshot.getId());
-                }
+                removeMemoryVolumesOfSnapshot(createdSnapshot);
             } else {
                 log.warnFormat("No snapshot was created for VM {0} which is in LOCKED status", getVmId());
             }
@@ -263,29 +257,21 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         AuditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_NO_MEMORY_FAILURE);
     }
 
-    private boolean removeMemoryFromSnapshot(Snapshot snapshot, boolean clearFromDB) {
-        final String memoryVolume = snapshot.getMemoryVolume();
-        if (memoryVolume.isEmpty()) {
-            return true;
-        }
-
-        if (clearFromDB) {
-            getSnapshotDao().removeMemoryFromSnapshot(snapshot.getId());
-        }
-
-        return removeMemoryVolumes(memoryVolume);
-    }
-
-    private boolean removeMemoryVolumes(String memoryVolumes) {
-        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(memoryVolumes, getVmId());
+    private void removeMemoryVolumesOfSnapshot(Snapshot snapshot) {
+        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId());
         parameters.setParentCommand(getActionType());
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
 
-        return getBackend().runInternalAction(
+        VdcReturnValueBase retVal = getBackend().runInternalAction(
                 VdcActionType.RemoveMemoryVolumes,
                 parameters,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext())).getSucceeded();
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+
+        if (!retVal.getSucceeded()) {
+            log.errorFormat("Failed to remove memory volumes of snapshot {0} ({1})",
+                    snapshot.getDescription(), snapshot.getId());
+        }
     }
 
     private boolean isLiveSnapshotApplicable() {
