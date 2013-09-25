@@ -39,10 +39,13 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<
             return false;
         }
 
-        if (!glusterVolume.getVolumeType().isDistributedType()
-                || (glusterVolume.getBricks().size() == 1)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_BRICKS_ARE_NOT_DISTRIBUTED);
+        boolean isVolumeDistributed = glusterVolume.getVolumeType().isDistributedType();
+        if (!isVolumeDistributed) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NOT_DISTRIBUTED);
+        } else if (glusterVolume.getBricks().size() == 1) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_DISTRIBUTED_AND_HAS_SINGLE_BRICK);
         }
+
         return true;
     }
 

@@ -2489,8 +2489,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume should be started.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume bricks are not distributed.")
-    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_BRICKS_ARE_NOT_DISTRIBUTED();
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is not distributed.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_NOT_DISTRIBUTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume has a single brick.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_DISTRIBUTED_AND_HAS_SINGLE_BRICK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Replacing brick is not a Gluster volume brick.")
     String ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK();
