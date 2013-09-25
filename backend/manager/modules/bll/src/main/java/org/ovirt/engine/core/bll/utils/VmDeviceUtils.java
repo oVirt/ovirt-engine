@@ -815,7 +815,7 @@ public class VmDeviceUtils {
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())){
                 hasCD = true;
             }
-            if (vmDevice.getDevice().equals(VmDeviceType.SOUND.getName())){
+            if (VmDeviceCommonUtils.isSound(vmDevice)) {
                 hasSoundCard = true;
             }
             vmDeviceToAdd.add(vmDevice);
