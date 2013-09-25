@@ -58,7 +58,7 @@ public class VolumeModule extends AbstractGinModule {
                 if (lastExecutedCommand == getModel().getNewVolumeCommand()) {
                     return popupProvider.get();
                 }
-                else if (lastExecutedCommand == getModel().getStatusRebalanceCommand()) {
+                else if (lastExecutedCommand == getModel().getStatusRebalanceCommand() || lastExecutedCommand.getName().equals("onStopRebalance")) {//$NON-NLS-1$
                     return rebalanceStatusPopupProvider.get();
                 }
                 else {
