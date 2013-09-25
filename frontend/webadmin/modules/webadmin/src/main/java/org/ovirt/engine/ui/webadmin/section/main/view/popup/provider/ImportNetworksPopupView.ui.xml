@@ -6,7 +6,7 @@
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ImportNetworksPopupView.Style">
 		.providersStyle {
-			width: 400px;
+			width: 420px;
 		}
 
 		.section {
