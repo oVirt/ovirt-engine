@@ -122,6 +122,7 @@ public enum VdcActionType {
     MoveImageGroup(231, QuotaDependency.STORAGE),
     GetDiskAlignment(232, QuotaDependency.NONE),
     RemoveVmHibernationVolumes(233, QuotaDependency.NONE),
+    RemoveMemoryVolumes(234, QuotaDependency.NONE),
     // VmPoolCommands
     AddVmPool(301, QuotaDependency.NONE),
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),

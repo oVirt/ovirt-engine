@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -300,7 +301,19 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             getSnapshotDao().removeMemoryFromSnapshot(snapshot.getId());
         }
 
-        return removeMemoryVolumes(memoryVolume, getActionType(), false);
+        return removeMemoryVolumes(memoryVolume);
+    }
+
+    private boolean removeMemoryVolumes(String memoryVolumes) {
+        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(memoryVolumes, getVmId());
+        parameters.setParentCommand(getActionType());
+        parameters.setEntityInfo(getParameters().getEntityInfo());
+        parameters.setParentParameters(getParameters());
+
+        return getBackend().runInternalAction(
+                VdcActionType.RemoveMemoryVolumes,
+                parameters,
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext())).getSucceeded();
     }
 
     private boolean isLiveSnapshotApplicable() {
