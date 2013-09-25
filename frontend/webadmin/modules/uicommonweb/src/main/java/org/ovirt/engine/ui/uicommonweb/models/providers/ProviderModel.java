@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.UrlValidation;
@@ -227,7 +228,7 @@ public class ProviderModel extends Model {
     }
 
     private boolean validate() {
-        getName().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
