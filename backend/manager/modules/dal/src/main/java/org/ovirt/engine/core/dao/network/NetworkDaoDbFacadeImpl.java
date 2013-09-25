@@ -142,8 +142,6 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     }
 
     abstract static class NetworkRowMapperBase<T extends Network> implements RowMapper<T> {
-        public final static NetworkRowMapper instance = new NetworkRowMapper();
-
         @Override
         public T mapRow(ResultSet rs, int rowNum) throws SQLException {
             T entity = createNetworkEntity();
