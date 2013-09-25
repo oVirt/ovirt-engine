@@ -1300,20 +1300,20 @@ public interface CommonApplicationConstants extends Constants {
     String txNetworkHost();
 
     // Network VM
-    @DefaultStringValue("Vnic Status")
+    @DefaultStringValue("vNIC Status")
     String vnicStatusNetworkVM();
 
-    @DefaultStringValue("Vnic")
+    @DefaultStringValue("vNIC")
     String vnicNetworkVM();
 
-    @DefaultStringValue("Nic Rx")
+    @DefaultStringValue("vNIC Rx")
     String rxNetworkVM();
 
-    @DefaultStringValue("Nic Tx")
+    @DefaultStringValue("vNIC Tx")
     String txNetworkVM();
 
     // Network Template
-    @DefaultStringValue("Vnic")
+    @DefaultStringValue("vNIC")
     String vnicNetworkTemplate();
 
     @DefaultStringValue("Show Quota Distribution")
