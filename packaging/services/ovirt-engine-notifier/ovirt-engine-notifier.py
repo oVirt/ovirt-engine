@@ -160,16 +160,13 @@ class Daemon(service.Daemon):
             'LANG': 'en_US.UTF-8',
             'LC_ALL': 'en_US.UTF-8',
             'CLASSPATH': '',
-            'JAVA_MODULEPATH': ':'.join([
-                os.path.join(
-                    self._config.get('ENGINE_USR'),
-                    'modules',
-                ),
+            'JAVA_MODULEPATH': '%s:%s' % (
+                self._config.get('ENGINE_JAVA_MODULEPATH'),
                 os.path.join(
                     self._config.get('JBOSS_HOME'),
                     'modules',
-                ),
-            ]),
+                )
+            ),
             'ENGINE_DEFAULTS': config.ENGINE_DEFAULTS,
             'ENGINE_VARS': config.ENGINE_VARS,
             'ENGINE_NOTIFIER_DEFAULTS': self._defaults,

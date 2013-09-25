@@ -56,29 +56,47 @@ class Daemon(service.Daemon):
             f.write(str(Template(file=template, searchList=[self._config])))
         return out
 
-    def _linkModules(self, modulesDir):
-        """Link all the JBoss modules into a temporary directory"""
+    def _linkModules(self, modulePath):
+        """
+        Link all the JBoss modules into a temporary directory.
+        This required because jboss tries to automatically update
+        indexes based on timestamp even if there is no permission to do so.
+        """
 
-        modulesTmpDir = os.path.join(
-            self._config.get('ENGINE_TMP'),
-            'modules',
-        )
+        modifiedModulePath = []
+        for index, element in enumerate(modulePath.split(':')):
+            modulesTmpDir = os.path.join(
+                self._config.get('ENGINE_TMP'),
+                'modules',
+                '%02d-%s' % (
+                    index,
+                    '-'.join(element.split(os.sep)[-2:]),
+                ),
+            )
+            modifiedModulePath.append(modulesTmpDir)
 
-        # For each directory in the modules directory create the same in the
-        # temporary directory and populate with symlinks pointing to the
-        # original files (excluding indexes):
-        for parentDir, childrenDirs, childrenFiles in os.walk(modulesDir):
-            parentTmpDir = parentDir.replace(modulesDir, modulesTmpDir, 1)
-            if not os.path.exists(parentTmpDir):
-                os.makedirs(parentTmpDir)
-            for childFile in childrenFiles:
-                if childFile.endswith('.index'):
-                    continue
-                childPath = os.path.join(parentDir, childFile)
-                childTmpPath = os.path.join(parentTmpDir, childFile)
-                os.symlink(childPath, childTmpPath)
+            # For each directory in the modules directory create the
+            # same in the temporary directory and populate with symlinks
+            # pointing to the original files (excluding indexes):
+            for parentDir, childrenDirs, childrenFiles in os.walk(element):
+                parentTmpDir = os.path.join(
+                    modulesTmpDir,
+                    os.path.relpath(
+                        parentDir,
+                        element
+                    ),
+                )
+                if not os.path.exists(parentTmpDir):
+                    os.makedirs(parentTmpDir)
+                for childFile in childrenFiles:
+                    if childFile.endswith('.index'):
+                        continue
+                    os.symlink(
+                        os.path.join(parentDir, childFile),
+                        os.path.join(parentTmpDir, childFile)
+                    )
 
-        return modulesTmpDir
+        return ':'.join(modifiedModulePath)
 
     def _checkInstallation(
         self,
@@ -292,10 +310,13 @@ class Daemon(service.Daemon):
             'config',
         )
 
-        jbossModulesTmpDir = self._linkModules(
-            os.path.join(
-                self._config.get('JBOSS_HOME'),
-                'modules',
+        javaModulePath = self._linkModules(
+            '%s:%s' % (
+                self._config.get('ENGINE_JAVA_MODULEPATH'),
+                os.path.join(
+                    self._config.get('JBOSS_HOME'),
+                    'modules',
+                ),
             ),
         )
 
@@ -401,18 +422,7 @@ class Daemon(service.Daemon):
             '-Djboss.server.temp.dir=%s' % jbossTempDir,
             '-Djboss.controller.temp.dir=%s' % jbossTempDir,
             '-jar', jbossModulesJar,
-
-            # Module path should include first the engine modules
-            # so that they can override those provided by the
-            # application server if needed:
-            '-mp', "%s:%s" % (
-                os.path.join(
-                    self._config.get('ENGINE_USR'),
-                    'modules',
-                ),
-                jbossModulesTmpDir,
-            ),
-
+            '-mp', javaModulePath,
             '-jaxpmodule', 'javax.xml.jaxp-provider',
             'org.jboss.as.standalone',
             '-c', os.path.basename(jbossConfigFile),

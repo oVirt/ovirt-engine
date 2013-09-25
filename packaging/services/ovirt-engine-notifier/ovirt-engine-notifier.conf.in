@@ -21,6 +21,16 @@ ENGINE_LOG="@ENGINE_LOG@"
 ENGINE_USR="@ENGINE_USR@"
 
 #
+# Module path
+#
+# Colon separated list of paths.
+#
+# JBoss is always appended, cannot be appended here
+# as it may be resolved to different value.
+#
+ENGINE_JAVA_MODULEPATH="${ENGINE_USR}/modules"
+
+#
 # Service timeouts
 #
 NOTIFIER_STOP_TIME=30
