@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -315,9 +316,14 @@ public class HostSetupNetworksModel extends EntityModel {
                         .getMessages()
                         .editNetworkTitle(logicalNetwork.getName()));
                 networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
+
                 networkDialogModel.getAddress().setEntity(entity.getAddress());
                 networkDialogModel.getSubnet().setEntity(entity.getSubnet());
                 networkDialogModel.getGateway().setEntity(entity.getGateway());
+                networkDialogModel.getGateway()
+                        .setIsAvailable((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
+                                getEntity().getVdsGroupCompatibilityVersion().getValue()));
+
                 networkDialogModel.getName().setIsAvailable(false);
                 networkDialogModel.getBondingOptions().setIsAvailable(false);
 

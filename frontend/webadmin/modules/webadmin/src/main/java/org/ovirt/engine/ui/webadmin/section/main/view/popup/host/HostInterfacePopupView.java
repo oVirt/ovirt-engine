@@ -237,8 +237,6 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         isToSync.setVisible(false);
         isToSyncInfo.setVisible(false);
-
-        gateway.setVisible(false);
     }
 
     @Override

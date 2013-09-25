@@ -244,6 +244,7 @@ public class HostInterfaceModel extends EntityModel
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
         setGateway(new EntityModel());
+        getGateway().setIsAvailable(false);
         setNetwork(new ListModel());
         getNetwork().getSelectedItemChangedEvent().addListener(this);
         setName(new EntityModel());
