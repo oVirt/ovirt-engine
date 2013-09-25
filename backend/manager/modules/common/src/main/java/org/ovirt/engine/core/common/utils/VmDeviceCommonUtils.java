@@ -38,6 +38,10 @@ public class VmDeviceCommonUtils {
                 && device.getDevice().equals(VmDeviceType.CDROM.getName());
     }
 
+    public static boolean isSound(VmDevice device) {
+        return device.getType() == VmDeviceGeneralType.SOUND;
+    }
+
     /**
      * updates given devices boot order
      *
