@@ -112,7 +112,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("guest_agent_nics_hash", vm.getGuestAgentNicsHash())
                 .addValue("last_watchdog_event", vm.getLastWatchdogEvent())
                 .addValue("last_watchdog_action", vm.getLastWatchdogAction())
-                .addValue("is_run_once", vm.isRunOnce());
+                .addValue("is_run_once", vm.isRunOnce())
+                .addValue("cpu_name", vm.getCpuName());
     }
 
     @Override
@@ -173,6 +174,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
                 entity.setLastWatchdogAction(rs.getString("last_watchdog_action"));
                 entity.setRunOnce(rs.getBoolean("is_run_once"));
+                entity.setCpuName(rs.getString("cpu_name"));
                 return entity;
             }
         };
@@ -219,7 +221,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .addValue("hash", entity.getHash())
                         .addValue("guest_agent_nics_hash", entity.getGuestAgentNicsHash())
                         .addValue("last_watchdog_event", entity.getLastWatchdogEvent())
-                        .addValue("last_watchdog_action", entity.getLastWatchdogAction());
+                        .addValue("last_watchdog_action", entity.getLastWatchdogAction())
+                        .addValue("cpu_name", entity.getCpuName());
 
                 return paramValue;
             }

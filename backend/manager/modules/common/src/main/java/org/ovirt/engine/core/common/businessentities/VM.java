@@ -939,6 +939,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmDynamic.setHibernationVolHandle(value);
     }
 
+    public String getCpuName() {
+        return this.vmDynamic.getCpuName();
+    }
+
+    public void setCpuName(String value) {
+        this.vmDynamic.setCpuName(value);
+    }
+
     public void setExportDate(Date value) {
         this.vmStatic.setExportDate(value);
     }

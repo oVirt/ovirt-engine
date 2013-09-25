@@ -2456,6 +2456,7 @@
         <column>pause_status</column>
         <column>exit_message</column>
         <column>guest_agent_nics_hash</column>
+        <column>cpu_name</column>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>5</value>
@@ -2489,6 +2490,7 @@
             <value>0</value>
             <value>0</value>
             <null />
+            <null/>
             <null/>
         </row>
         <row>
@@ -2525,6 +2527,7 @@
             <value>0</value>
             <null />
             <value>0</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
@@ -2560,6 +2563,7 @@
             <value>0</value>
             <null />
             <value>3452354</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2594,6 +2598,7 @@
             <value>0</value>
             <value>0</value>
             <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2627,6 +2632,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <null />
             <null />
         </row>
     </table>
