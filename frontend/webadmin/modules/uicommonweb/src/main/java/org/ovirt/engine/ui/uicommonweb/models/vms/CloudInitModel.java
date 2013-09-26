@@ -16,12 +16,9 @@ import org.ovirt.engine.core.common.action.CloudInitParameters.Attachment;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -378,22 +375,16 @@ public class CloudInitModel extends Model {
         getNetworkEnabled().setEntity(false);
         getAttachmentEnabled().setEntity(false);
 
-        AsyncDataProvider.getTimeZoneList(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                @SuppressWarnings("unchecked")
-                Map<String, String> timezones = (Map<String, String>) returnValue;
-                getTimeZoneList().setItems(timezones.entrySet());
+        Map<String, String> timezones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
+        getTimeZoneList().setItems(timezones.entrySet());
 
-                getTimeZoneList().setSelectedItem(Linq.firstOrDefault(timezones.entrySet(),
-                        new IPredicate<Map.Entry<String, String>>() {
-                            @Override
-                            public boolean match(Map.Entry<String, String> item) {
-                                return item.getValue().startsWith("(GMT) Greenwich"); //$NON-NLS-1$
-                            }
-                        }));
-            }
-        }), TimeZoneType.GENERAL_TIMEZONE);
+        getTimeZoneList().setSelectedItem(Linq.firstOrDefault(timezones.entrySet(),
+                new IPredicate<Map.Entry<String, String>>() {
+                    @Override
+                    public boolean match(Map.Entry<String, String> item) {
+                        return item.getValue().startsWith("(GMT) Greenwich"); //$NON-NLS-1$
+                    }
+                }));
 
         getAttachmentType().setItems(attachmentTypes.entrySet());
         getAttachmentType().setSelectedItem(Linq.firstOrDefault(attachmentTypes.entrySet()));
