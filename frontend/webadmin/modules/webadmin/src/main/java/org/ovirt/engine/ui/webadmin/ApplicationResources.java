@@ -381,16 +381,16 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/host_prepare_to_migrate.png")
     ImageResource prepareImage();
 
-    // Gluster Volume Rebalance
-    @Source("images/glusterRebalance/rebalance_running.png")
+    // Gluster Volume Async Tasks
+    @Source("images/glusterAsyncTasks/rebalance_running.png")
     ImageResource rebalanceRunning();
 
-    @Source("images/glusterRebalance/rebalance_failed.png")
+    @Source("images/glusterAsyncTasks/rebalance_failed.png")
     ImageResource rebalanceFailed();
 
-    @Source("images/glusterRebalance/rebalance_completed.png")
+    @Source("images/glusterAsyncTasks/rebalance_completed.png")
     ImageResource rebalanceCompleted();
 
-    @Source("images/glusterRebalance/rebalance_stopped.png")
+    @Source("images/glusterAsyncTasks/rebalance_stopped.png")
     ImageResource rebalanceStoppped();
 }
