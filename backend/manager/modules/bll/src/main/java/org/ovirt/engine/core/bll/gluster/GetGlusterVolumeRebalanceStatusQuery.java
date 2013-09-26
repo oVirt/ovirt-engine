@@ -55,7 +55,7 @@ public class GetGlusterVolumeRebalanceStatusQuery<P extends GlusterVolumeQueries
 
         // Set the volume re-balance start time
         GlusterVolumeTaskStatusEntity entity = (GlusterVolumeTaskStatusEntity) returnValue.getReturnValue();
-        List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getStepId());
+        List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
         if (stepsList != null && !stepsList.isEmpty()) {
             entity.setStartTime(stepsList.get(0).getStartTime());
         }
