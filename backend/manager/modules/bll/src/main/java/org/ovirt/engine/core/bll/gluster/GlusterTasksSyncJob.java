@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,10 @@ import org.ovirt.engine.core.common.action.AddStepParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -28,6 +32,7 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -139,6 +144,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         case REBALANCING_VOLUME:
             actionType = VdcActionType.StartRebalanceGlusterVolume;
             break;
+        case REMOVING_BRICKS:
+            actionType = VdcActionType.StartRemoveGlusterVolumeBricks;
+            break;
         default:
             actionType = VdcActionType.Unknown;
         }
@@ -152,6 +160,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         ExecutionHandler.updateStepExternalId(asyncStep,
                 task.getTaskId(),
                 ExternalSystemType.GLUSTER);
+        updateVolumeBricksAndLock(cluster,task);
 
     }
 
@@ -207,6 +216,50 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }
     }
 
+    private void updateVolumeBricksAndLock(VDSGroup cluster,GlusterAsyncTask task) {
+        //get volume associated with task
+        String volumeName = task.getTaskParameters().getVolumeName();
+        GlusterVolumeEntity vol = getVolumeDao().getByName(cluster.getId(), volumeName);
+
+        if (vol != null) {
+            //update volume with task id
+            getVolumeDao().updateVolumeTask(vol.getId(), task.getTaskId());
+            //acquire lock on volume
+            acquireLock(vol.getId());
+
+            if (GlusterTaskType.REMOVE_BRICK == task.getType()) {
+                //update bricks associated with task id
+                String[] bricks = task.getTaskParameters().getBricks();
+                if (bricks == null)
+                {
+                    return;
+                }
+                List<GlusterBrickEntity> brickEntities = new ArrayList<>();
+                for (String brick: bricks) {
+                    String[] brickParts = brick.split(":", -1);
+                    String hostnameOrIp = brickParts[0];
+                    String brickDir = brickParts[1];
+                    GlusterBrickEntity brickEntity = new GlusterBrickEntity();
+                    VdsStatic server = GlusterDBUtils.getInstance().getServer(cluster.getId(), hostnameOrIp);
+                    if (server == null) {
+                        log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, cluster.getId());
+                    } else {
+                        brickEntity.setServerId(server.getId());
+                        brickEntity.setBrickDirectory(brickDir);
+                        brickEntity.setAsyncTask(new GlusterAsyncTask());
+                        brickEntity.getAsyncTask().setTaskId(task.getTaskId());
+                        brickEntities.add(brickEntity);
+                    }
+                }
+                getBrickDao().updateAllBrickTasksByHostIdBrickDirInBatch(brickEntities);
+            }
+
+        } else {
+            log.debugFormat("Did not find a volume associated with volumeName {0} and task {1} ",
+                                volumeName, task.getTaskId());
+        }
+    }
+
     protected void endStepJob(Step step) {
         getJobRepository().updateStep(step);
         ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
@@ -226,7 +279,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     private static boolean hasTaskCompleted(GlusterAsyncTask task) {
-        if (JobExecutionStatus.ABORTED == task.getStatus() || JobExecutionStatus.FINISHED == task.getStatus()
+        //Remove brick task is marked completed only if committed or aborted.
+        if (JobExecutionStatus.ABORTED == task.getStatus() ||
+                (JobExecutionStatus.FINISHED == task.getStatus() && task.getType() != GlusterTaskType.REMOVE_BRICK)
                 || JobExecutionStatus.FAILED == task.getStatus()) {
             return true;
         }

@@ -22,7 +22,7 @@ public class GlusterTasksService {
     public Map<Guid, GlusterAsyncTask> getTaskListForCluster(Guid id) {
         VDS upServer = ClusterUtils.getInstance().getUpServer(id);
         if (upServer == null) {
-            log.error("No up server in cluster");
+            log.info("No up server in cluster");
             return null;
         }
         VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterTasksList,

@@ -19,6 +19,7 @@ public class GlusterTasksListReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String TASK_TYPE = "type";
     private static final String DATA = "data";
     private static final String VOLUME_NAME = "volume";
+    private static final String BRICK_NAMES = "bricks";
     private static final String FILES_MOVED = "filesMoved";
     private static final String TOTAL_SIZE_MOVED = "totalSizeMoved";
     private static final String FILES_SCANNED = "filesScanned";
@@ -48,10 +49,11 @@ public class GlusterTasksListReturnForXmlRpc extends StatusReturnForXmlRpc {
         GlusterAsyncTask task = new GlusterAsyncTask();
         task.setTaskId(Guid.createGuidFromString(taskId));
         task.setStatus(GlusterAsyncTaskStatus.from((String)map.get(STATUS)).getJobExecutionStatus());
-        task.setType(GlusterTaskType.valueOf((String)map.get(TASK_TYPE)));
+        task.setType(GlusterTaskType.fromValue((String)map.get(TASK_TYPE)));
         task.setMessage(getMessage((Map<String, Object>)map.get(DATA)));
         task.setTaskParameters(new GlusterTaskParameters());
         task.getTaskParameters().setVolumeName((String)map.get(VOLUME_NAME));
+        task.getTaskParameters().setBricks(getBrickNames(map.get(BRICK_NAMES)));
         return task;
     }
 
@@ -62,6 +64,18 @@ public class GlusterTasksListReturnForXmlRpc extends StatusReturnForXmlRpc {
                             map.get(FILES_FAILED),
                             map.get(TOTAL_SIZE_MOVED));
 
+    }
+
+    private String[] getBrickNames(Object bricksObj){
+        if (bricksObj == null || !(bricksObj instanceof Object[])) {
+            return null;
+        }
+        Object[] brickObjectArray = (Object[])bricksObj;
+        String[] brickNames = new String[brickObjectArray.length];
+        for (int i=0; i< brickNames.length; i++){
+            brickNames[i] = brickObjectArray[i].toString();
+        }
+        return brickNames;
     }
 
     public List<GlusterAsyncTask> getGlusterTasks() {
