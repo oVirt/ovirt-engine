@@ -372,23 +372,6 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
-    public static void getTimeZoneList(AsyncQuery aQuery, TimeZoneType timeZoneType) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source == null)
-                {
-                    return new HashMap<String, String>();
-                }
-                return source;
-            }
-        };
-        TimeZoneQueryParams params = new TimeZoneQueryParams();
-        params.setTimeZoneType(timeZoneType);
-        Frontend.RunQuery(VdcQueryType.GetTimeZones, params, aQuery);
-    }
-
     public static void getDataCenterList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
