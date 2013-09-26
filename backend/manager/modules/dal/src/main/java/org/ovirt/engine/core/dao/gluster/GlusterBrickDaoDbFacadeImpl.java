@@ -194,4 +194,22 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     public void updateBrickTasksInBatch(Collection<GlusterBrickEntity> bricks) {
         getCallsHandler().executeStoredProcAsBatch("UpdateGlusterVolumeBrickAsyncTask", bricks, getBatchMapper());
     }
+
+    @Override
+    public void updateBrickTaskByHostIdBrickDir(Guid serverId, String brickDir, Guid taskId) {
+        getCallsHandler().executeModification("UpdateGlusterBrickTaskByServerIdBrickDir",
+                getCustomMapSqlParameterSource().
+                        addValue("server_id", serverId).
+                        addValue("brick_dir", brickDir).
+                        addValue("task_id", taskId));
+
+    }
+
+    @Override
+    public void updateAllBrickTasksByHostIdBrickDirInBatch(Collection<GlusterBrickEntity> bricks) {
+        getCallsHandler().executeStoredProcAsBatch("UpdateGlusterBrickTaskByServerIdBrickDir",
+                bricks, getBatchMapper());
+
+    }
+
 }

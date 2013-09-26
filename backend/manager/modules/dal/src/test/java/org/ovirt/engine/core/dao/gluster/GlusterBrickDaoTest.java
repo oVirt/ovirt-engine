@@ -180,4 +180,48 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
         assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEnity1.getAsyncTask().getTaskId());
         assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEnity2.getAsyncTask().getTaskId());
     }
+
+    @Test
+    public void testUpdateBrickTaskByHostIdBrickDir() {
+        GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterAsyncTask asyncTask = new GlusterAsyncTask();
+        asyncTask.setTaskId(FixturesTool.GLUSTER_ASYNC_TASK_ID1);
+
+        dao.updateBrickTaskByHostIdBrickDir(existingBrick.getServerId(), existingBrick.getBrickDirectory(), FixturesTool.GLUSTER_ASYNC_TASK_ID1);
+
+        GlusterBrickEntity newEnity = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+
+        assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEnity.getAsyncTask().getTaskId());
+    }
+
+    @Test
+    public void testUpdateAllBrickTasksByHostIdBrickDir() {
+        GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity existingBrick2 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID2);
+        GlusterAsyncTask asyncTask = new GlusterAsyncTask();
+        asyncTask.setTaskId(FixturesTool.GLUSTER_ASYNC_TASK_ID1);
+
+        GlusterBrickEntity updateBrick = new GlusterBrickEntity();
+        updateBrick.setBrickDirectory(existingBrick.getBrickDirectory());
+        updateBrick.setServerId(existingBrick.getServerId());
+        updateBrick.setAsyncTask(asyncTask);
+
+        GlusterBrickEntity updateBrick2 = new GlusterBrickEntity();
+        updateBrick2.setBrickDirectory(existingBrick2.getBrickDirectory());
+        updateBrick2.setServerId(existingBrick2.getServerId());
+        updateBrick2.setAsyncTask(asyncTask);
+
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
+        bricks.add(updateBrick);
+        bricks.add(updateBrick2);
+
+
+        dao.updateAllBrickTasksByHostIdBrickDirInBatch(bricks);
+
+        GlusterBrickEntity newEntity1 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity newEntity2 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+
+        assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEntity1.getAsyncTask().getTaskId());
+        assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEntity2.getAsyncTask().getTaskId());
+    }
 }

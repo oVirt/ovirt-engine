@@ -464,6 +464,20 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateGlusterBrickTaskByServerIdBrickDir(v_server_id UUID,
+                                                                    v_brick_dir VARCHAR(200),
+                                                                    v_task_id UUID)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE  gluster_volume_bricks
+    SET     task_id = v_task_id,
+            _update_date = LOCALTIMESTAMP
+    WHERE   server_id = v_server_id
+    AND brick_dir = v_brick_dir;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION UpdateGlusterVolumeStatusByName(v_cluster_id UUID,
                                                     v_vol_name VARCHAR(1000),
                                                     v_status VARCHAR(32))

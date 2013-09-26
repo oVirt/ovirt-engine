@@ -36,4 +36,19 @@ public interface GlusterBrickDao extends DAO, MassOperationsDao<GlusterBrickEnti
     public void updateBrickTask(Guid brickId, Guid taskId);
 
     public void updateBrickTasksInBatch(Collection<GlusterBrickEntity> bricks);
+
+    /**
+     * Updates the given task id on brick identified by server id and brick dir parameters
+     * @param serverId
+     * @param brickDir
+     * @param taskId
+     */
+    public void updateBrickTaskByHostIdBrickDir(Guid serverId, String brickDir, Guid taskId);
+
+    /**
+     * Updates the collection of brick entities with task id populated in entity, in a batch.
+     * Each brick is identified by server id and brick dir populated in the brick entity.
+     * @param bricks
+     */
+    public void updateAllBrickTasksByHostIdBrickDirInBatch(Collection<GlusterBrickEntity> bricks);
 }
