@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -580,11 +581,11 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         AsyncDataProvider.getGlusterRebalanceStatus(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                GlusterVolumeTaskStatusEntity rebalanceStatusEntity =
-                        (GlusterVolumeTaskStatusEntity) returnValue;
-                if ((rebalanceStatusEntity == null) || (rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.UNKNOWN)) {
-                    cModel.stopProgress();
-                    cModel.setMessage(ConstantsManager.getInstance().getMessages().rebalanceStatusConfirmationMessage(volumeEntity.getName()));
+                cModel.stopProgress();
+                VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
+                GlusterVolumeTaskStatusEntity rebalanceStatusEntity =vdcValue.getReturnValue();
+                if ((rebalanceStatusEntity == null) || !(vdcValue.getSucceeded())) {
+                    cModel.setMessage(ConstantsManager.getInstance().getMessages().rebalanceStatusFailed(volumeEntity.getName()));
                 } else {
                     setConfirmWindow(null);
                     if (getWindow() == null) {

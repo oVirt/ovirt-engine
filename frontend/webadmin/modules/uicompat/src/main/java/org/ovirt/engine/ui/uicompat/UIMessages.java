@@ -306,8 +306,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
     String cpuInfoMessage(int numOfCpus, int sockets, int coresPerSocket);
 
-    @DefaultMessage("No Rebalance ever happened on volume :  {0}")
-    String rebalanceStatusConfirmationMessage(String name);
+    @DefaultMessage("Could not fetch rebalance status of volume :  {0}")
+    String rebalanceStatusFailed(String name);
 
     @DefaultMessage("The following disks cannot be moved: {0}")
     String cannotMoveDisks(String disks);

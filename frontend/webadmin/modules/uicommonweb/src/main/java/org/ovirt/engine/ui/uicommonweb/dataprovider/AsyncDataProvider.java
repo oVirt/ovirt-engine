@@ -1395,12 +1395,7 @@ public final class AsyncDataProvider {
     }
 
     public static void getGlusterRebalanceStatus(AsyncQuery aQuery, Guid clusterId, Guid volumeId) {
-        aQuery.converterCallback = new IAsyncConverter<GlusterVolumeTaskStatusEntity>() {
-            @Override
-            public GlusterVolumeTaskStatusEntity Convert(Object source, AsyncQuery _asyncQuery) {
-                return (GlusterVolumeTaskStatusEntity) source;
-            }
-        };
+        aQuery.setHandleFailure(true);
         GlusterVolumeQueriesParameters parameters = new GlusterVolumeQueriesParameters(clusterId, volumeId);
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeRebalanceStatus, parameters, aQuery);
     }
