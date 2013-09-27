@@ -146,7 +146,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
-        DiskValidator diskValidator = new DiskValidator(getNewDisk());
+        DiskValidator diskValidator = getDiskValidator(getNewDisk());
         return validateCanUpdateShareable() && validate(diskValidator.isVirtIoScsiValid(getVm()));
     }
 

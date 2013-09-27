@@ -110,7 +110,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
                 return false;
             }
         }
-        DiskValidator diskValidator = new DiskValidator(disk);
+        DiskValidator diskValidator = getDiskValidator(disk);
         if (!validate(diskValidator.isVirtIoScsiValid(getVm()))) {
             return false;
         }

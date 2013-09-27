@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -223,6 +224,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected SnapshotsValidator getSnapshotsValidator() {
         return new SnapshotsValidator();
+    }
+
+    protected DiskValidator getDiskValidator(Disk disk) {
+        return new DiskValidator(disk);
     }
 
     protected boolean isVmNotInPreviewSnapshot() {
