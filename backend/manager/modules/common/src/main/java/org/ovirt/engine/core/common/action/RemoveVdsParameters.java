@@ -7,6 +7,9 @@ public class RemoveVdsParameters extends VdsActionParameters {
 
     private boolean forceAction;
 
+    public RemoveVdsParameters() {
+    }
+
     public RemoveVdsParameters(Guid vdsId) {
         super(vdsId);
     }
