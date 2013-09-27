@@ -1525,6 +1525,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Down")
     String down();
 
+    @DefaultStringValue("Up but one or more bricks are down")
+    String volumeBricksDown();
+
+    @DefaultStringValue("Up but all bricks are down")
+    String volumeAllBricksDown();
+
     @DefaultStringValue("Powering Up")
     String poweringUp();
 

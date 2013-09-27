@@ -170,6 +170,12 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/user.png")
     ImageResource userImage();
 
+    @Source("images/volume_bricks_down_warning.png")
+    ImageResource volumeBricksDownWarning();
+
+    @Source("images/volume_all_bricks_down_warning.png")
+    ImageResource volumeAllBricksDownWarning();
+
     // Model-bound widgets
 
     @Source("images/snapshot.png")

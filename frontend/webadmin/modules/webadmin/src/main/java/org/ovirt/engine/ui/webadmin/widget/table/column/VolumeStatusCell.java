@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -28,6 +29,8 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         if (volume == null) {
             return;
         }
+        int brickCount = volume.getBricks().size();
+        int count = 0;
 
         // Find the image corresponding to the status of the volume:
         GlusterStatus status = volume.getStatus();
@@ -40,8 +43,17 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
             tooltip = constants.down();
             break;
         case UP:
-            statusImage = resources.upImage();
-            tooltip = constants.up();
+            count = countDownBricks(volume);
+            if (count == 0) {
+                statusImage = resources.upImage();
+                tooltip = constants.up();
+            } else if (count < brickCount) {
+                statusImage = resources.volumeBricksDownWarning();
+                tooltip = constants.volumeBricksDown();
+            } else {
+                statusImage = resources.volumeAllBricksDownWarning();
+                tooltip = constants.volumeAllBricksDown();
+            }
             break;
         default:
             statusImage = resources.downImage();
@@ -54,4 +66,19 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip));
     }
 
+    public int countDownBricks(GlusterVolumeEntity volume) {
+        int downCount = 0;
+        int upCount = 0;
+        for (GlusterBrickEntity brick : volume.getBricks()) {
+            if (brick.getStatus() == GlusterStatus.UP) {
+                upCount++;
+            } else {
+                downCount++;
+            }
+            if (upCount > 0 && downCount > 0) {
+                return downCount;
+            }
+        }
+        return downCount;
+    }
 }
