@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -135,8 +134,7 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void updateInterface(Version clusterVersion) {
-        super.updateInterface(clusterVersion);
+    public void setDefaultInterface() {
         getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
     }
 
