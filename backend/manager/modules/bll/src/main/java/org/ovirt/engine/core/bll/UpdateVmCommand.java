@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -368,6 +369,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
                 !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
             return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+        }
+
+        if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled())) {
+            List<Disk> allDisks = getDiskDao().getAllForVm(getVmId(), true);
+            for (Disk disk : allDisks) {
+                if (disk.getDiskInterface() == DiskInterface.VirtIO_SCSI) {
+                    return failCanDoAction(VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
+                }
+            }
         }
 
         if (getParameters().isVirtioScsiEnabled() != null && !getVm().isDown()
