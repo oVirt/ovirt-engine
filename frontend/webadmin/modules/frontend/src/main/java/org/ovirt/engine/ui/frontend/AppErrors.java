@@ -2335,6 +2335,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VirtIO-SCSI is disabled for the VM")
     String CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED();
 
+    @DefaultStringValue("Cannot disable VirtIO-SCSI when disks with a VirtIO-SCSI interface are plugged into the VM.")
+    String CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS();
+
     // Suspected (not in use?)
     @DefaultStringValue("Cannot Login. User Password has expired, Please change your password.")
     String USER_PASSWORD_EXPIRED();

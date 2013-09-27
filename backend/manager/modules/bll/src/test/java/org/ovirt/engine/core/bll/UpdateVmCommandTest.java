@@ -12,6 +12,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -21,6 +22,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -32,6 +36,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -50,6 +55,8 @@ public class UpdateVmCommandTest {
     private VmDAO vmDAO;
     @Mock
     private VdsDAO vdsDAO;
+    @Mock
+    private DiskDao diskDAO;
 
     @Mock
     OsRepository osRepository;
@@ -222,6 +229,21 @@ public class UpdateVmCommandTest {
         assertCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);
     }
 
+    @Test
+    public void testCannotDisableVirtioScsi() {
+        prepareVmToPassCanDoAction();
+        command.getParameters().setVirtioScsiEnabled(false);
+
+        Disk disk = new DiskImage();
+        disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        disk.setPlugged(true);
+
+        mockDiskDaoGetAllForVm(Collections.singletonList(disk), true);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
+    }
+
     private void prepareVmToPassCanDoAction() {
         vmStatic.setName("vm1");
         vmStatic.setMemSizeMb(256);
@@ -236,6 +258,11 @@ public class UpdateVmCommandTest {
                 command.getReturnValue()
                         .getCanDoActionMessages()
                         .contains(msg.name()));
+    }
+
+    private void mockDiskDaoGetAllForVm(List<Disk> disks, boolean onlyPluggedDisks) {
+        doReturn(diskDAO).when(command).getDiskDao();
+        doReturn(disks).when(diskDAO).getAllForVm(vm.getId(), onlyPluggedDisks);
     }
 
     private void mockVmDaoGetVm() {
