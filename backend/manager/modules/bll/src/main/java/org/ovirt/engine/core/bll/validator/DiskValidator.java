@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * A validator for the {@link Disk} class.
@@ -45,6 +47,10 @@ public class DiskValidator {
                 return new ValidationResult(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
 
+            if (!isVirtioScsiControllerAttached(vm.getId())) {
+                return new ValidationResult(VdcBllMessages.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
+            }
+
             return isOsSupportedForVirtIoScsi(vm);
         }
 
@@ -64,5 +70,9 @@ public class DiskValidator {
             }
         }
         return ValidationResult.VALID;
+    }
+
+    public boolean isVirtioScsiControllerAttached(Guid vmId) {
+        return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
     }
 }

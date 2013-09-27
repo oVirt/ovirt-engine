@@ -112,7 +112,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected boolean checkIfLunDiskCanBeAdded() {
         LUNs lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
-        DiskValidator diskValidator = new DiskValidator(getParameters().getDiskInfo());
+        DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
 
         switch (lun.getLunType()) {
         case UNKNOWN:
@@ -148,7 +148,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private boolean checkIfImageDiskCanBeAdded(VM vm) {
         boolean returnValue;
-        DiskValidator diskValidator = new DiskValidator(getParameters().getDiskInfo());
+        DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
 
         // vm agnostic checks
         returnValue =

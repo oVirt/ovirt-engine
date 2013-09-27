@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
@@ -46,7 +47,13 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
                 isDiskExist(getDisk()) &&
                 checkCanPerformPlugUnPlugDisk() &&
                 isVmNotInPreviewSnapshot() &&
-                imageStorageValidation();
+                imageStorageValidation() &&
+                virtIoScsiDiskValidation();
+    }
+
+    private boolean virtIoScsiDiskValidation() {
+        DiskValidator diskValidator = getDiskValidator(disk);
+        return validate(diskValidator.isVirtIoScsiValid(getVm()));
     }
 
     private boolean imageStorageValidation() {

@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -375,6 +376,12 @@ public class AddDiskToVmCommandTest {
         return snapshotsValidator;
     }
 
+    private DiskValidator spyDiskValidator(Disk disk) {
+        DiskValidator diskValidator = spy(new DiskValidator(disk));
+        doReturn(diskValidator).when(command).getDiskValidator(disk);
+        return diskValidator;
+    }
+
     /**
      * Mock a {@link StoragePool}.
      *
@@ -632,12 +639,36 @@ public class AddDiskToVmCommandTest {
 
         vm.setVmOs(7);
 
+        DiskValidator diskValidator = spyDiskValidator(disk);
+        doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
+
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
     }
 
     @Test
-    public void testLunDiskWithSgioCanBeAdded() {
+    public void testVirtioScsiDiskWithoutControllerCantBeAdded() {
+        DiskImage disk = createVirtIoScsiDiskImage();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId, parameters);
+        mockStorageDomain(storageId);
+        mockStoragePoolIsoMap();
+
+        VM vm = mockVm();
+        vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+
+        DiskValidator diskValidator = spyDiskValidator(disk);
+        doReturn(false).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
+    }
+
+    @Test
+    public void testDiskImageWithSgioCantBeAdded() {
         DiskImage disk = createVirtIoScsiDiskImage();
         disk.setSgio(ScsiGenericIO.UNFILTERED);
 
@@ -652,12 +683,15 @@ public class AddDiskToVmCommandTest {
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
 
+        DiskValidator diskValidator = spyDiskValidator(disk);
+        doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
+
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
     }
 
     @Test
-    public void testDiskImageWithSgioCantBeAdded() {
+    public void testLunDiskWithSgioCanBeAdded() {
         LunDisk disk = createISCSILunDisk();
         disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setSgio(ScsiGenericIO.UNFILTERED);
@@ -668,6 +702,9 @@ public class AddDiskToVmCommandTest {
 
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+
+        DiskValidator diskValidator = spyDiskValidator(disk);
+        doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }

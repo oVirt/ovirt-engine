@@ -2332,6 +2332,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("VirtIO-SCSI interface is only available on cluster level 3.3 or higher.")
     String VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VirtIO-SCSI is disabled for the VM")
+    String CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED();
+
     // Suspected (not in use?)
     @DefaultStringValue("Cannot Login. User Password has expired, Please change your password.")
     String USER_PASSWORD_EXPIRED();
