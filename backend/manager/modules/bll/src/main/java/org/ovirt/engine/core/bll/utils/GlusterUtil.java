@@ -179,7 +179,7 @@ public class GlusterUtil {
             returnValue = getBackendInstance().
                     runInternalQuery(VdcQueryType.GetServerSSHKeyFingerprint,
                                      new ServerParameters(server));
-            if (returnValue != null && returnValue.getSucceeded()) {
+            if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
                 fingerprints.put(server, returnValue.getReturnValue().toString());
             } else {
                 fingerprints.put(server, null);

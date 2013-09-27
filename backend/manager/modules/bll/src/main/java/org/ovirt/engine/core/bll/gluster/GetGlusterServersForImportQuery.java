@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +45,15 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
                             USER,
                             getParameters().getPassword(),
                             getParameters().getFingerprint());
+
+            // Keep server details in the map only for the servers which are reachable
+            Iterator<Map.Entry<String, String>> iterator = serverFingerPrintMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String,String> entry = iterator.next();
+                if (entry.getValue() == null) {
+                    iterator.remove();
+                }
+            }
 
             // Check if any of the server in the map is already part of some other cluster.
             if (!validateServers(serverFingerPrintMap.keySet())) {
