@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -69,10 +71,13 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered) {
+        Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id).
                 addValue("user_id", userID).
-                addValue("is_filtered", isFiltered);
+                addValue("is_filtered", isFiltered).
+                addValue("app_mode", appMode.intValue());
 
         return getCallsHandler().executeReadList("GetPermissionsByAdElementId",
                 PermissionRowMapper.instance,

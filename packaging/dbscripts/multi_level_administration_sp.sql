@@ -102,14 +102,14 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetPermissionsByAdElementId(v_ad_element_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+Create or replace FUNCTION GetPermissionsByAdElementId(v_ad_element_id UUID, v_user_id UUID, v_is_filtered BOOLEAN, v_app_mode INTEGER)
 RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM permissions_view
-   WHERE
-   (permissions_view.ad_element_id = v_ad_element_id
+   WHERE (permissions_view.app_mode & v_app_mode) > 0
+   AND (permissions_view.ad_element_id = v_ad_element_id
     OR    ad_element_id IN (SELECT * FROM getUserAndGroupsById(v_ad_element_id)))
    AND (NOT v_is_filtered OR EXISTS (SELECT 1 FROM user_permissions_permissions_view WHERE user_id = v_user_id));
 
