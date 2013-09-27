@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -94,8 +93,7 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void updateInterface(Version clusterVersion) {
-        super.updateInterface(clusterVersion);
+    public void setDefaultInterface() {
         getDiskInterface().setSelectedItem(getDisk().getDiskInterface());
     }
 

@@ -301,6 +301,8 @@ public abstract class AbstractDiskModel extends DiskModel
 
     protected abstract LunDisk getLunDisk();
 
+    protected abstract void setDefaultInterface();
+
     protected boolean isEditEnabled() {
         return getIsFloating() || getIsNew() || getVm().isDown() || !getDisk().getPlugged();
     }
@@ -503,7 +505,26 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     public void updateInterface(Version clusterVersion) {
-        getDiskInterface().setItems(AsyncDataProvider.getDiskInterfaceList(clusterVersion));
+        final ArrayList<DiskInterface> diskInterfaces = AsyncDataProvider.getDiskInterfaceList(clusterVersion);
+        if (getVm() != null) {
+            AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    if (Boolean.FALSE.equals(returnValue)) {
+                        diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
+                    }
+                    setInterfaces(diskInterfaces);
+                }
+            }), getVm().getId());
+        }
+        else {
+            setInterfaces(diskInterfaces);
+        }
+    }
+
+    private void setInterfaces(ArrayList<DiskInterface> diskInterfaces) {
+        getDiskInterface().setItems(diskInterfaces);
+        setDefaultInterface();
     }
 
     private void updateQuota(StoragePool datacenter) {
