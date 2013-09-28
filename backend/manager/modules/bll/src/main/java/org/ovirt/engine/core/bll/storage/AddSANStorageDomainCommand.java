@@ -88,7 +88,6 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
 
     @Override
     protected boolean canAddDomain() {
-        // !AddSANStorageDomainParametersValue.IsExistingStorageDomain &&
         if (((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringUtils
                 .isEmpty(getStorageDomain().getStorage()))) {
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
