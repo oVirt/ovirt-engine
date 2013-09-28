@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -213,6 +216,50 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             getStorageDomain().setStatus(status);
             getStoragePoolIsoMapDAO().updateStatus(map.getId(), status);
         }
+    }
+
+    protected boolean isLunsAlreadyInUse(List<String> lunIds) {
+        // Get LUNs from DB
+        List<LUNs> lunsFromDb = getLunDao().getAll();
+        Set<LUNs> lunsUsedBySDs = new HashSet<>();
+        Set<LUNs> lunsUsedByDisks = new HashSet<>();
+
+        for (LUNs lun : lunsFromDb) {
+            if (lunIds.contains(lun.getLUN_id())) {
+                if (lun.getStorageDomainId() != null) {
+                    // LUN is already part of a storage domain
+                    lunsUsedBySDs.add(lun);
+                }
+                if (lun.getDiskId() != null) {
+                    // LUN is already used by a disk
+                    lunsUsedByDisks.add(lun);
+                }
+            }
+        }
+
+        if (!lunsUsedBySDs.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS);
+            Set<String> formattedIds = new HashSet<>();
+            for (LUNs lun : lunsUsedBySDs) {
+                formattedIds.add(getFormattedLunId(lun, lun.getStorageDomainName()));
+            }
+            addCanDoActionMessage(String.format("$lunIds %1$s", StringUtils.join(formattedIds, ", ")));
+        }
+
+        if (!lunsUsedByDisks.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS);
+            Set<String> formattedIds = new HashSet<>();
+            for (LUNs lun : lunsUsedByDisks) {
+                formattedIds.add(getFormattedLunId(lun, lun.getDiskAlias()));
+            }
+            addCanDoActionMessage(String.format("$lunIds %1$s", StringUtils.join(formattedIds, ", ")));
+        }
+
+       return !lunsUsedBySDs.isEmpty() || !lunsUsedByDisks.isEmpty();
+    }
+
+    protected String getFormattedLunId(LUNs lun, String usedByEntityName) {
+        return String.format("%1$s (%2$s)", lun.getLUN_id(), usedByEntityName);
     }
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType) {

@@ -93,6 +93,9 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
                 .isEmpty(getStorageDomain().getStorage()))) {
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
         }
+        if (isLunsAlreadyInUse(getParameters().getLunIds())) {
+            return false;
+        }
         return true;
     }
 }

@@ -8,16 +8,32 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDAO;
 
+@RunWith(MockitoJUnitRunner.class)
 public class StorageDomainCommandBaseTest {
+    private static final Guid[] GUIDS = new Guid[] {
+            new Guid("11111111-1111-1111-1111-111111111111"),
+            new Guid("22222222-2222-2222-2222-222222222222")
+    };
+
+    @Mock
+    private LunDAO lunDAO;
 
     public StorageDomainCommandBase<StorageDomainParametersBase> cmd;
 
@@ -90,6 +106,26 @@ public class StorageDomainCommandBaseTest {
     public void checkStorageDomainNotEqualWithNonActiveStatus() {
         setStorageDomainStatus(StorageDomainStatus.Maintenance);
         assertTrue(cmd.checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
+    }
+
+    @Test
+    public void lunAlreadyPartOfStorageDomains() {
+        LUNs lun1 = new LUNs();
+        lun1.setLUN_id(GUIDS[0].toString());
+        lun1.setStorageDomainId(Guid.newGuid());
+        LUNs lun2 = new LUNs();
+        lun2.setLUN_id(GUIDS[1].toString());
+        lun2.setStorageDomainId(Guid.newGuid());
+
+        doReturn(lunDAO).when(cmd).getLunDao();
+        when(lunDAO.getAll()).thenReturn(Arrays.asList(lun1, lun2));
+        List<String> specifiedLunIds = Collections.singletonList(GUIDS[0].toString());
+
+        assertTrue(cmd.isLunsAlreadyInUse(specifiedLunIds));
+        List<String> messages = cmd.getReturnValue().getCanDoActionMessages();
+        assertEquals(messages.size(), 2);
+        assertEquals(messages.get(0), VdcBllMessages.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS.toString());
+        assertEquals(messages.get(1), String.format("$lunIds %1$s", cmd.getFormattedLunId(lun1, lun1.getStorageDomainName())));
     }
 
     private void storagePoolExists() {

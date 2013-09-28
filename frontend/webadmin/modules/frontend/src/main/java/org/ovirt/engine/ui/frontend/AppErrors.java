@@ -1147,6 +1147,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The selected Storage Domain is not part of the Data Center.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following LUNs are already part of existing storage domains: ${lunIds}.")
+    String ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following LUNs are already used by DirectLUN disks: ${lunIds}.")
+    String ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS();
+
     @DefaultStringValue("Cannot detach a non empty Storage Domain.\n-Please remove all VMs / Templates / Disks and try again.")
     String ERROR_CANNOT_DETACH_STORAGE_DOMAIN_WITH_IMAGES();
 

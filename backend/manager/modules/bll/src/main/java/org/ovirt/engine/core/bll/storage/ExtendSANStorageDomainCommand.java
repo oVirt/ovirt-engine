@@ -65,6 +65,11 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
     protected boolean canDoAction() {
         super.canDoAction();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXTEND);
+
+        if (isLunsAlreadyInUse(getParameters().getLunIds())) {
+            return false;
+        }
+
         boolean returnValue = checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active);
         if (returnValue
                 && (getStorageDomain().getStorageType() == StorageType.NFS || getStorageDomain().getStorageType() == StorageType.UNKNOWN)) {
