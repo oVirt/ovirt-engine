@@ -60,11 +60,16 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         setSucceeded(true);
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXTEND);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     protected boolean canDoAction() {
         super.canDoAction();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXTEND);
 
         if (isLunsAlreadyInUse(getParameters().getLunIds())) {
             return false;
