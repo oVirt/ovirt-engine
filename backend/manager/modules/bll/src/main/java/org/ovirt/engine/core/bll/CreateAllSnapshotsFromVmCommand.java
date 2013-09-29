@@ -285,8 +285,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         Collections.sort(sortedList, new Comparator<VdcActionParametersBase>() {
             @Override
             public int compare(VdcActionParametersBase o1, VdcActionParametersBase o2) {
-                return ((ImagesActionsParametersBase) o1).getDestinationImageId()
-                        .compareTo(((ImagesActionsParametersBase) o2).getDestinationImageId());
+                if (o1 instanceof ImagesActionsParametersBase && o2 instanceof ImagesActionsParametersBase) {
+                    return ((ImagesActionsParametersBase) o1).getDestinationImageId()
+                            .compareTo(((ImagesActionsParametersBase) o2).getDestinationImageId());
+                }
+                return 0;
             }
         });
 
