@@ -2574,6 +2574,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("No Valid Action")
     String noValidActionSetupNetwork();
 
+    @DefaultStringValue("External networks can't be attached statically; they will be attached dynamically as they are needed by VMs.")
+    String externalNetworksInfo();
+
     @DefaultStringValue("Check this checkbox to ensure you won't lose connectivity to the engine.")
     String checkConnectivityInfoPart1();
 
@@ -2625,6 +2628,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Unassigned Logical Networks")
     String unassignedLogicalNetworks();
+
+    @DefaultStringValue("External Logical Networks")
+    String externalLogicalNetworks();
 
     // Brick
     @DefaultStringValue("Status")

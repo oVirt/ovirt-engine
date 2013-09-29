@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
@@ -8,17 +7,16 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFact
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 
-public class NetworkPanel extends NetworkItemPanel {
+public abstract class NetworkPanel extends NetworkItemPanel {
 
-    public NetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style) {
-        super(item, style, true);
+    public NetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style, boolean draggable) {
+        super(item, style, draggable);
         actionButton.setStyleName(style.actionButtonNetwork());
-        getElement().addClassName(style.networkPanel());
         if (item.isManagement()) {
             getElement().addClassName(style.mgmtNetwork());
         }
@@ -103,17 +101,7 @@ public class NetworkPanel extends NetworkItemPanel {
         return rowPanel;
     }
 
-    protected ImageResource getStatusImage() {
-        NetworkStatus netStatus = ((LogicalNetworkModel) item).getStatus();
-
-        if (netStatus == NetworkStatus.OPERATIONAL) {
-            return resources.upImage();
-        } else if (netStatus == NetworkStatus.NON_OPERATIONAL) {
-            return resources.downImage();
-        } else {
-            return resources.questionMarkImage();
-        }
-    }
+    protected abstract ImageResource getStatusImage();
 
     private String getItemTitle() {
         LogicalNetworkModel networkModel = (LogicalNetworkModel) item;

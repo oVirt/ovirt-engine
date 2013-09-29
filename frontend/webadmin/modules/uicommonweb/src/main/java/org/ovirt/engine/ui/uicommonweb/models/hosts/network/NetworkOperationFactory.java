@@ -41,7 +41,13 @@ public class NetworkOperationFactory {
      * @return
      */
     public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2, boolean isDrag) {
-        // !! always check bond before nic because of inheritance !!
+        // first of all, if the network is external then there's no valid operation for it
+        if (op1 instanceof LogicalNetworkModel) {
+            LogicalNetworkModel network = (LogicalNetworkModel) op1;
+            if (network.getEntity().isExternal()) {
+                return NetworkOperation.NULL_OPERATION;
+            }
+        }
 
         // unary operation dragging op1 to nowhere
         if (op2 == null) {

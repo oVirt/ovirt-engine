@@ -23,10 +23,13 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.ExternalNetworkPanel;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.ExternalNetworksPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkGroup;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanel;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InternalNetworkPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanelsStyle;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.UnassignedNetworksPanel;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.InternalNetworksPanel;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
 import org.ovirt.engine.ui.webadmin.widget.footer.StatusLabel;
 
@@ -50,8 +53,14 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private static ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
     private static final String EMPTY_STATUS = constants.dragToMakeChangesSetupNetwork();
 
+    @UiField
+    InternalNetworksPanel internalNetworkList;
+
+    @UiField
+    ExternalNetworksPanel externalNetworkList;
+
     @UiField(provided = true)
-    UnassignedNetworksPanel networkList;
+    InfoIcon externalNetworksInfo;
 
     @UiField
     AnimatedVerticalPanel nicList;
@@ -90,7 +99,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         status = new StatusLabel(EMPTY_STATUS);
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
-        networkList = new UnassignedNetworksPanel();
+        externalNetworksInfo = new InfoIcon(templates.italicText(constants.externalNetworksInfo()), resources);
         checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()), resources);
         commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()), resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -103,8 +112,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     }
 
     private void initUnassignedNetworksPanel() {
-        networkList.setStyle(style);
-        networkList.setSpacing(10);
+        internalNetworkList.setStyle(style);
+        externalNetworkList.setStyle(style);
     }
 
     private void localize(){
@@ -155,7 +164,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
             }
         });
 
-        networkList.setSetupModel(uicommonModel);
+        internalNetworkList.setSetupModel(uicommonModel);
+        externalNetworkList.setSetupModel(uicommonModel);
     }
 
     @Override
@@ -164,15 +174,20 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     }
 
     private void updateNetworks(List<LogicalNetworkModel> allNetworks) {
-        networkList.clear();
+        internalNetworkList.clear();
+        externalNetworkList.clear();
         Collections.sort(allNetworks);
-        List<NetworkPanel> panels = new ArrayList<NetworkPanel>();
+        List<NetworkPanel> staticNetworkPanels = new ArrayList<NetworkPanel>();
+        List<NetworkPanel> dynamicNetworkPanels = new ArrayList<NetworkPanel>();
         for (LogicalNetworkModel network : allNetworks) {
-            if (!network.isAttached()) {
-                panels.add(new NetworkPanel(network, style));
+            if (network.getEntity().isExternal()) {
+                dynamicNetworkPanels.add(new ExternalNetworkPanel(network, style));
+            } else if (!network.isAttached()) {
+                staticNetworkPanels.add(new InternalNetworkPanel(network, style));
             }
         }
-        networkList.addAll(panels, !rendered);
+        internalNetworkList.addAll(staticNetworkPanels, !rendered);
+        externalNetworkList.addAll(dynamicNetworkPanels, !rendered);
     }
 
     private void updateNics(List<NetworkInterfaceModel> nics) {

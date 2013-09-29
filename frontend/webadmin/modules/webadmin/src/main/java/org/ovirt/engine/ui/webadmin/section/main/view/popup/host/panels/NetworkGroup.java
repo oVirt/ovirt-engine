@@ -77,7 +77,7 @@ public class NetworkGroup extends FocusPanel {
             flexCellFormatter.setRowSpan(0, 0, networkSize);
             FlexTable networkTable = new FlexTable();
             for (int i = 0; i < networkSize; i++) {
-                networkTable.setWidget(i, 0, new NetworkPanel(networks.get(i), style));
+                networkTable.setWidget(i, 0, new InternalNetworkPanel(networks.get(i), style));
             }
             networkTable.setWidth("100%"); //$NON-NLS-1$
             table.setWidget(0, 2, networkTable);
