@@ -2,6 +2,7 @@
 #
 # CUSTOMIZATION-BEGIN
 #
+# ovirt_build_extra_flags
 %if 0%{?ovirt_build_quick}
 %global ovirt_build_gwt 0
 %global ovirt_build_locales 0
@@ -9,7 +10,7 @@
 %endif
 %if 0%{?ovirt_build_minimal}
 %global ovirt_build_locales 0
-%global EXTRA_BUILD_FLAGS -D gwt.userAgent=gecko1_8
+%global _ovirt_build_extra_flags -D gwt.userAgent=gecko1_8
 %endif
 %if 0%{!?ovirt_build_gwt:1}
 %global ovirt_build_gwt 1
@@ -20,6 +21,14 @@
 #
 # CUSTOMIZATION-END
 #
+
+#
+# rpm does not support override
+# nor modify of variables
+#
+%if %{?_ovirt_build_extra_flags:1}%{?ovirt_build_extra_flags:1}0
+%global EXTRA_BUILD_FLAGS %{?_ovirt_build_extra_flags:%{_ovirt_build_extra_flags}}%{?ovirt_build_extra_flags: %{ovirt_build_extra_flags}}
+%endif
 
 %if 0%{?fedora}
 %global ovirt_install_systemd 1
