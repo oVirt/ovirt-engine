@@ -25,6 +25,8 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String networkPanel();
 
+    String disabledNetworkPanel();
+
     String nicPanel();
 
     String statusPanel();
