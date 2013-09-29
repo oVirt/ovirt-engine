@@ -17,6 +17,8 @@ public class ResizableDialogBox extends DialogBox {
     private static int EDGE_SIZE = 3;
     private static int EDGE_THRESHOLD = 10;
 
+    private static String STYLE_RESIZE_POSTFIX = "resize"; //$NON-NLS-1$
+
     public ResizableDialogBox() {
         enableResizeSupport(false);
     }
@@ -85,9 +87,15 @@ public class ResizableDialogBox extends DialogBox {
     public void enableResizeSupport(boolean enabled) {
         this.resizeSupportEnabled = enabled;
 
-        String bottomRightCornerImageUrl =
-                enabled ? "images/dialog/panel_edge_BR_resize.png" : "images/dialog/panel_edge_BR.png"; //$NON-NLS-1$ //$NON-NLS-2$
-        setBackgroundImageByClassName("dialogBottomRight", bottomRightCornerImageUrl); //$NON-NLS-1$
+        Element dialogBottomRight = getElementByTagAndClassName("td", "dialogBottomRight"); //$NON-NLS-1$ //$NON-NLS-2$
+        assert dialogBottomRight != null;
+
+        if (enabled) {
+            dialogBottomRight.addClassName(STYLE_RESIZE_POSTFIX);
+        }
+        else {
+            dialogBottomRight.removeClassName(STYLE_RESIZE_POSTFIX);
+        }
     }
 
     /**
@@ -143,20 +151,16 @@ public class ResizableDialogBox extends DialogBox {
         return rightEdge || bottomEdge;
     }
 
-    /**
-     * Set background by class name - used for displaying 'resize' mark on bottom-right corner
-     *
-     * @param className
-     * @param imageUrl
-     */
-    private void setBackgroundImageByClassName(String className, String imageUrl) {
-        NodeList<Element> elements = getElement().getElementsByTagName("td"); //$NON-NLS-1$
+    private Element getElementByTagAndClassName(String tagName, String className) {
+        NodeList<Element> elements = getElement().getElementsByTagName(tagName);
 
         for (int i = 0; i < elements.getLength(); i++) {
             Element element = elements.getItem(i);
             if (element.getClassName().contains(className)) {
-                element.getStyle().setBackgroundImage("url(" + imageUrl + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+                return element;
             }
         }
+
+        return null;
     }
 }

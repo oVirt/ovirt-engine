@@ -22,6 +22,9 @@ screen */
 .gwt-DialogBox .dialogBottomRight {
         background: url(images/dialog/panel_edge_BR.png) !important;
 }
+.gwt-DialogBox .dialogBottomRight.resize {
+        background: url(images/dialog/panel_edge_BR_resize.png) !important;
+}
 
 .gwt-DialogBox .dialogMiddleLeft {
         background: url(images/dialog/panel_edge_L.png) !important;
