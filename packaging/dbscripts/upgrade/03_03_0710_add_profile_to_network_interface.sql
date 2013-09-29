@@ -29,7 +29,7 @@ REFERENCES vnic_profiles(id);
 Create or replace FUNCTION __temp_has_port_mirroring_vm_interfaces(v_network_id UUID) RETURNS BOOLEAN
    AS $procedure$
 BEGIN
-   RETURN ((SELECT 1
+   RETURN ((SELECT COUNT(1)
    FROM vm_interface
    INNER JOIN vm_static
    ON vm_static.vm_guid = vm_interface.vm_guid
@@ -39,14 +39,14 @@ BEGIN
    ON network.id = network_cluster.network_id
    AND network.name = vm_interface.network_name
    WHERE network.id = v_network_id
-   AND port_mirroring = TRUE) IS NOT NULL);
+   AND port_mirroring = TRUE) > 0);
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION __temp_has_port_mirroring_template_interfaces(v_network_id UUID) RETURNS BOOLEAN
    AS $procedure$
 BEGIN
-   RETURN ((SELECT 1
+   RETURN ((SELECT COUNT(1)
    FROM vm_interface
    INNER JOIN vm_static
    ON vm_static.vm_guid = vm_interface.vmt_guid
@@ -56,7 +56,7 @@ BEGIN
    ON network.id = network_cluster.network_id
    AND network.name = vm_interface.network_name
    WHERE network.id = v_network_id
-   AND port_mirroring = TRUE) IS NOT NULL);
+   AND port_mirroring = TRUE) > 0);
 END; $procedure$
 LANGUAGE plpgsql;
 
