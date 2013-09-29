@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import java.util.Date;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -7,6 +9,9 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
+import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
+import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -44,11 +49,6 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     }
 
     @UiField
-    @Ignore
-    @WithElementId
-    SimpleDialogPanel panel;
-
-    @UiField
     @Path("volume.entity")
     @WithElementId
     EntityModelLabelEditor volumeEditor;
@@ -58,12 +58,12 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @WithElementId
     EntityModelLabelEditor clusterEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path("startedTime.entity")
     @WithElementId
     EntityModelLabelEditor startedTimeEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path("statusTime.entity")
     @WithElementId
     EntityModelLabelEditor statusTimeEditor;
@@ -116,6 +116,10 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
 
     void initEditors(ApplicationConstants constants) {
         rebalanceHostsTable = new EntityModelCellTable<ListModel>(false, true);
+
+        statusTimeEditor = getInstanceOfDateEditor();
+
+        startedTimeEditor = getInstanceOfDateEditor();
 
         rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
             @Override
@@ -179,6 +183,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @Override
     public void edit(final VolumeRebalanceStatusModel object) {
         driver.edit(object);
+
         rebalanceHostsTable.asEditor().edit(object.getRebalanceSessions());
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -192,6 +197,17 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         });
     }
 
+    private EntityModelLabelEditor getInstanceOfDateEditor() {
+        return new EntityModelLabelEditor(new EntityModelRenderer(){
+            @Override
+            public String render(Object entity) {
+                if(entity == null) {
+                    return constants.unAvailablePropertyLabel();
+                }
+                return FullDateTimeRenderer.getLocalizedDateTimeFormat().format((Date) entity);
+            }
+        }, new EntityModelParser());
+    }
     @Override
     public VolumeRebalanceStatusModel flush() {
         return driver.flush();

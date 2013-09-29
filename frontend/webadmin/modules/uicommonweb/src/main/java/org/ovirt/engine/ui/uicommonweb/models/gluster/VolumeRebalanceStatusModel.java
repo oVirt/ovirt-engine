@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.user.client.Timer;
@@ -106,14 +105,8 @@ public class VolumeRebalanceStatusModel extends Model {
             EntityModel sessionModel = new EntityModel(hostDetail);
             sessionList.add(sessionModel);
         }
-        getStartedTime().setEntity(rebalanceStatusEntity.getStartTime() == null ? ConstantsManager.getInstance()
-                .getConstants()
-                .notAvailableLabel()
-                : rebalanceStatusEntity.getStartTime());
-        getStatusTime().setEntity(rebalanceStatusEntity.getStatusTime() == null ? ConstantsManager.getInstance()
-                .getConstants()
-                .notAvailableLabel()
-                : rebalanceStatusEntity.getStatusTime());
+        getStartedTime().setEntity(rebalanceStatusEntity.getStartTime());
+        getStatusTime().setEntity(rebalanceStatusEntity.getStatusTime());
         getRebalanceSessions().setItems(sessionList);
         if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FINISHED) {
             setStatusAvailable(true);
