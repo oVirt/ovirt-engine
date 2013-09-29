@@ -8,11 +8,13 @@ import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmDeviceType;
+import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -78,6 +80,9 @@ public class VmMapperTest extends
         cpuTune.getVCpuPin().add(pin);
         from.getCpu().setCpuTune(cpuTune);
         from.setTimezone("Australia/Darwin");
+        from.setPlacementPolicy(new VmPlacementPolicy());
+        from.getPlacementPolicy().setHost(new Host());
+        from.getPlacementPolicy().getHost().setId(Guid.Empty.toString());
         return from;
     }
 

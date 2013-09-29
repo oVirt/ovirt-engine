@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -26,7 +27,21 @@ public class MappingTestHelper {
      * @return a populated instance
      */
     public static Object populate(Class<?> clz) {
-        return populate(instantiate(clz), clz, new ArrayList<Class<?>>());
+        List<Class<?>> seen = getSetMethodTypes(clz);
+        return populate(instantiate(clz), clz, seen, 1);
+    }
+
+    private static List<Class<?>> getSetMethodTypes(Class<?> clz) {
+        List<Class<?>> types = new ArrayList<Class<?>>();
+        for (Method method : clz.getMethods()) {
+            if (isSetter(method)) {
+                Class<?> type = method.getParameterTypes()[0];
+                if (BaseResource.class.isAssignableFrom(type) && !types.contains(type)) {
+                    types.add(type);
+                }
+            }
+        }
+        return types;
     }
 
     /**
@@ -41,7 +56,7 @@ public class MappingTestHelper {
      *            model types seen so far
      * @return a populated instance
      */
-    public static Object populate(Object model, Class<?> clz, List<Class<?>> seen) {
+    public static Object populate(Object model, Class<?> clz, List<Class<?>> seen, int level) {
 
         for (Method method : clz.getMethods()) {
             if (isSetter(method)) {
@@ -54,10 +69,10 @@ public class MappingTestHelper {
                     populateBigDecimal(method,model);
                 }
                 else {
-                    descend(method, model, scope(seen));
+                    descend(method, model, scope(seen), level);
                 }
             } else if (isGetter(method) && returnsList(method)) {
-                fill(method, model, seen);
+                fill(method, model, seen, level);
             }
         }
         return model;
@@ -121,12 +136,12 @@ public class MappingTestHelper {
         }
     }
 
-    private static void descend(Method method, Object model, List<Class<?>> seen) {
+    private static void descend(Method method, Object model, List<Class<?>> seen, int level) {
         try {
             Object child = method.getParameterTypes()[0].newInstance();
             method.invoke(model, child);
-            if (unseen(method, seen)) {
-                populate(child, child.getClass(), seen);
+            if (level == 1 || unseen(method, seen)) {
+                populate(child, child.getClass(), seen, ++level);
             }
         } catch (Exception e) {
             // simple setter, exception should not be thrown
@@ -134,13 +149,13 @@ public class MappingTestHelper {
     }
 
     @SuppressWarnings("unchecked")
-    private static void fill(Method method, Object model, List<Class<?>> seen) {
+    private static void fill(Method method, Object model, List<Class<?>> seen, int level) {
         try {
             // List<T> type parameter removed by erasure, hence we attempt to
             // infer from method name
             String elementType = method.getName().substring(GET_ROOT.length());
             Class<?> childType = coPackaged(model, elementType);
-            if (unseen(childType, seen)) {
+            if (level == 1 || unseen(childType, seen)) {
                 List<Object> list = (List<Object>) method.invoke(model);
                 Object child = null;
                 if (childType.isEnum()) {
@@ -150,7 +165,7 @@ public class MappingTestHelper {
                     child = childType.newInstance();
                 }
                 list.add(child);
-                populate(child, child.getClass(), seen);
+                populate(child, child.getClass(), seen, ++level);
             }
         } catch (Exception e) {
             // simple getter, exception should not be thrown
