@@ -6,11 +6,13 @@ source ./dbcustomfunctions.sh
 
 #setting defaults
 set_defaults
+VERBOSE=false
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-d DATABASE] [-u USERNAME] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-u USERNAME] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
+    printf "\t-p PORT       - The database servername port for the database (def. ${PORT})\n"
     printf "\t-d DATABASE   - The database name                        (def. ${DATABASE})\n"
     printf "\t-u USERNAME   - The username for the database            (def. engine)\n"
     printf "\t-l LOGFILE    - The logfile for capturing output         (def. ${LOGFILE}\n"
@@ -30,6 +32,7 @@ DEBUG () {
 while getopts hs:d:u:p:l:v option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
+        p) PORT=$OPTARG;;
         d) DATABASE=$OPTARG;;
         u) USERNAME=$OPTARG;;
         l) LOGFILE=$OPTARG;;
@@ -40,9 +43,9 @@ while getopts hs:d:u:p:l:v option; do
 done
 
 CMD="select version from schema_version where current;"
-VERSION=$(execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} | sed 's/^ *//g')
+VERSION=$(psql -w -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT} -c "${CMD}" | sed 's/^ *//g')
 FILE=".${DATABASE}.${VERSION}.schema"
-pg_dump -f "${FILE}" -F p -n public -s -U ${USERNAME} ${DATABASE} -h ${SERVERNAME} -p ${PORT}  >& /dev/null
+pg_dump -f "${FILE}" -F p -n public -s -U ${USERNAME} ${DATABASE} -h ${SERVERNAME} -p ${PORT} $(${VERBOSE} && echo -v)
 
 printf "Done.\n"
 printf "Exported file is ${FILE}.\n"
