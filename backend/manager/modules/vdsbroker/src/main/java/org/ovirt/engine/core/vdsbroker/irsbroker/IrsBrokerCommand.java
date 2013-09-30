@@ -1113,16 +1113,16 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             _storagePoolId, StorageDomainStatus.Active));
             domainsInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                     _storagePoolId, StorageDomainStatus.Unknown));
-            List<Guid> domainWhicWereSeen = new ArrayList<Guid>();
+            List<Guid> domainWhichWereSeen = new ArrayList<Guid>();
             for (VDSDomainsData vdsDomainData : vdsDomainsData) {
                 if (domainsInPool.contains(vdsDomainData.getDomainId())) {
                     if (isDomainReportedAsProblematic(vdsDomainData, true)) {
                         domainsInProblem.add(vdsDomainData.getDomainId());
                     }
-                    domainWhicWereSeen.add(vdsDomainData.getDomainId());
+                    domainWhichWereSeen.add(vdsDomainData.getDomainId());
                 }
             }
-            domainsInPool.removeAll(domainWhicWereSeen);
+            domainsInPool.removeAll(domainWhichWereSeen);
             if (domainsInPool.size() > 0) {
                 for (Guid domainId : domainsInPool) {
                     log.errorFormat("Domain {0} is not seen by Host", domainId);
