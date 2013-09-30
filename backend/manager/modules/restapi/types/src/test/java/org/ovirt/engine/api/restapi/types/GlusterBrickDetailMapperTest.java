@@ -15,16 +15,15 @@ import org.ovirt.engine.core.common.businessentities.gluster.MemoryStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<GlusterVolumeAdvancedDetails,
-                                                        GlusterBrick, GlusterBrick> {
+public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<GlusterBrick, GlusterVolumeAdvancedDetails, GlusterVolumeAdvancedDetails> {
 
      public GlusterBrickDetailMapperTest() {
-        super(GlusterVolumeAdvancedDetails.class, GlusterBrick.class,
-                GlusterBrick.class);
+        super(GlusterBrick.class, GlusterVolumeAdvancedDetails.class,
+                GlusterVolumeAdvancedDetails.class);
     }
 
     @Override
-    protected void verify(GlusterVolumeAdvancedDetails model, GlusterVolumeAdvancedDetails transform) {
+    protected void verify(GlusterBrick model, GlusterBrick transform) {
        assertNotNull(transform);
     }
 
