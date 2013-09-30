@@ -37,7 +37,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @EditableField
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
-    @NotNull(groups = PowerManagementCheck.class)
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
     private String managementIp;
 
