@@ -46,6 +46,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
     final PushButton actionButton;
     final NetworkItemModel<?> item;
 
+    final private boolean draggable;
     final protected NetworkPanelsStyle style;
     protected NetworkItemPanel parentPanel;
     private MenuBar menu;
@@ -58,7 +59,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
     private static String lastDragData = ""; //$NON-NLS-1$
 
     public NetworkItemPanel(NetworkItemModel<?> item, NetworkPanelsStyle style, boolean draggable) {
-        super();
+        this.draggable = draggable;
         getElement().setDraggable(draggable ? Element.DRAGGABLE_TRUE : Element.DRAGGABLE_FALSE);
 
         dragImage.setVisible(false);
@@ -108,7 +109,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
     }
 
     protected void onMouseOver() {
-        dragImage.setVisible(true);
+        dragImage.setVisible(draggable);
         infoPopup.showItem(item, this);
     }
 
@@ -137,21 +138,23 @@ public abstract class NetworkItemPanel extends FocusPanel {
         }, ContextMenuEvent.getType());
 
         // drag start
-        addBitlessDomHandler(new DragStartHandler() {
-            @Override
-            public void onDragStart(DragStartEvent event) {
-                NetworkItemPanel sourcePanel = (NetworkItemPanel) event.getSource();
-                // Required: set data for the event.
-                lastDragData = sourcePanel.item.getType() + " " + sourcePanel.item.getName(); //$NON-NLS-1$
-                event.setData("Text", lastDragData); //$NON-NLS-1$
+        if (draggable) {
+            addBitlessDomHandler(new DragStartHandler() {
+                @Override
+                public void onDragStart(DragStartEvent event) {
+                    NetworkItemPanel sourcePanel = (NetworkItemPanel) event.getSource();
+                    // Required: set data for the event.
+                    lastDragData = sourcePanel.item.getType() + " " + sourcePanel.item.getName(); //$NON-NLS-1$
+                    event.setData("Text", lastDragData); //$NON-NLS-1$
 
-                // show a ghost of the widget under cursor.
-                NativeEvent nativeEvent = event.getNativeEvent();
-                int x = nativeEvent.getClientX() - sourcePanel.getAbsoluteLeft();
-                int y = nativeEvent.getClientY() - sourcePanel.getAbsoluteTop();
-                event.getDataTransfer().setDragImage(sourcePanel.getElement(), x, y);
-            }
-        }, DragStartEvent.getType());
+                    // show a ghost of the widget under cursor.
+                    NativeEvent nativeEvent = event.getNativeEvent();
+                    int x = nativeEvent.getClientX() - sourcePanel.getAbsoluteLeft();
+                    int y = nativeEvent.getClientY() - sourcePanel.getAbsoluteTop();
+                    event.getDataTransfer().setDragImage(sourcePanel.getElement(), x, y);
+                }
+            }, DragStartEvent.getType());
+        }
 
     }
 
