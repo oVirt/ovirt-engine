@@ -27,7 +27,9 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -40,6 +42,7 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -277,17 +280,22 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected void decreasePendingVms(Guid vdsId) {
-        DbFacade.getInstance()
-                .getVdsDynamicDao()
-                .updatePartialVdsDynamicCalc(vdsId, 0, -getVm().getNumOfCpus(), -getVm().getMinAllocatedMem(), 0, 0);
+        VM vm = getVm();
+        decreasePendingVms(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
+    }
+
+    protected void decreasePendingVms(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
+        getVdsDynamicDao().updatePartialVdsDynamicCalc(vdsId, 0, -numOfCpus, -minAllocatedMem, 0, 0);
         getBlockingQueue(vdsId).offer(Boolean.TRUE);
 
         if (log.isDebugEnabled()) {
-            log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, in {1}. Vm: {2}",
-                    vdsId, getVm().getNumOfCpus(), getVm().getName());
-            log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, in {1}. Vm: {2}",
-                    vdsId, getVm().getMinAllocatedMem(), getVm().getName());
+            log.debugFormat("Decreasing vds {0} pending vcpu count by {1} and vmem size by {2} (Vm: {3})",
+                    vdsId, numOfCpus, minAllocatedMem, vmName);
         }
+    }
+
+    protected VdsDynamicDAO getVdsDynamicDao() {
+        return DbFacade.getInstance().getVdsDynamicDao();
     }
 
     /**
@@ -329,9 +337,17 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return ResourceManager.getInstance().GetVdsManager(vdsId).getVdsMonitor();
     }
 
+    /**
+     * Since this callback is called by the VdsUpdateRunTimeInfo thread, we don't want it
+     * to fetch the VM using {@link #getVm()}, as the thread that invokes {@link #rerun()},
+     * which runs in parallel, is doing setVm(null) to refresh the VM, and because of this
+     * race we might end up with null VM. so we fetch the static part of the VM from the DB.
+     */
     @Override
     public void onPowerringUp() {
-        decreasePendingVms(getCurrentVdsId());
+        VmStatic vmStatic = getVmStaticDAO().get(getVmId());
+        decreasePendingVms(getCurrentVdsId(), vmStatic.getNumOfCpus(),
+                vmStatic.getMinAllocatedMem(), vmStatic.getName());
     }
 
     @Override
