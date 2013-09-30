@@ -1,19 +1,15 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -26,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
@@ -225,22 +220,6 @@ public class VmGeneralModel extends EntityModel
         {
             hasDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean hasStorageDomain;
-
-    public boolean getHasStorageDomain()
-    {
-        return hasStorageDomain;
-    }
-
-    public void setHasStorageDomain(boolean value)
-    {
-        if (hasStorageDomain != value)
-        {
-            hasStorageDomain = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain")); //$NON-NLS-1$
         }
     }
 
@@ -643,57 +622,6 @@ public class VmGeneralModel extends EntityModel
         {
             setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
-    }
-
-    public void updateStorageDomain()
-    {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
-                VmGeneralModel vmGeneralModel = (VmGeneralModel) model;
-                Iterable disks = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Iterator disksIterator = disks.iterator();
-                if (disksIterator.hasNext())
-                {
-                    vmGeneralModel.setHasStorageDomain(true);
-
-                    AsyncQuery _asyncQuery1 = new AsyncQuery();
-                    _asyncQuery1.setModel(vmGeneralModel);
-                    _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model1, Object ReturnValue1)
-                        {
-                            VmGeneralModel vmGeneralModel1 = (VmGeneralModel) model1;
-                            StorageDomain storage =
-                                    (StorageDomain) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                            vmGeneralModel1.setStorageDomain(storage.getStorageName());
-
-                            vmGeneralModel1.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
-                        }
-                    };
-
-                    DiskImage firstDisk = (DiskImage) disksIterator.next();
-                    IdQueryParameters params = new IdQueryParameters(firstDisk.getStorageIds().get(0));
-                    params.setRefresh(false);
-                    Frontend.RunQuery(VdcQueryType.GetStorageDomainById, params, _asyncQuery1);
-                }
-                else
-                {
-                    vmGeneralModel.setHasStorageDomain(false);
-
-                    vmGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
-                }
-            }
-        };
-
-        VM vm = (VM) getEntity();
-
-        IdQueryParameters params = new IdQueryParameters(vm.getId());
-        params.setRefresh(false);
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, _asyncQuery);
     }
 
 }
