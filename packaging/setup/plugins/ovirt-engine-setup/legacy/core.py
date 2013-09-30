@@ -39,19 +39,45 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        name=osetupcons.Stages.LEGACY_CORE_INIT,
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             self.environment[osetupcons.CoreEnv.UPGRADE_FROM_LEGACY] = False
         else:
+            versionLocked = False
+            if os.path.exists(
+                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK
+            ):
+                with open(
+                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+                    'r'
+                ) as f:
+                    versionLocked = (
+                        '%s-backend' % osetupcons.Const.PACKAGE_NAME
+                    ) in f.read()
+            self.logger.debug('versionLocked=%s', versionLocked)
+
             self.environment[osetupcons.CoreEnv.UPGRADE_FROM_LEGACY] = (
+                # This one should exist only after a 3.3+ setup
+                not os.path.exists(
+                    osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
+                ) and
+                # This one should exist after any setup. It even exists
+                # after a partial cleanup. Perhaps it's best to not check
+                # it at all...
                 os.path.exists(
                     osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
                 ) and
-                not os.path.exists(
-                    osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
-                )
+                # The following ones should exist only after a 3.2 legacy setup
+                os.path.exists(
+                    osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
+                ) and
+                self.environment[
+                    osetupcons.CoreEnv.LEGACY_PG_CREDS_FOUND
+                ] and
+                versionLocked
             )
 
 
