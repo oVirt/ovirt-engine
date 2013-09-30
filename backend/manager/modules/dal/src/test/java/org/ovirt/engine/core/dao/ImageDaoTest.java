@@ -18,6 +18,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid EXISTING_IMAGE_DISK_TEMPLATE_ID = new Guid("52058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");
+    private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
 
     private static final int TOTAL_IMAGES = 11;
     private Image newImage;
@@ -65,7 +66,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         newImage.setVolumeFormat(VolumeFormat.COW);
         newImage.setVolumeType(VolumeType.Sparse);
         newImage.setDiskId(Guid.newGuid());
-        newImage.setQuotaId(Guid.newGuid());
+        newImage.setQuotaId(QUOTA_ID);
     }
 
     @Test
