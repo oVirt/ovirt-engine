@@ -25,6 +25,7 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 from otopi import constants as otopicons
+from otopi import filetransaction
 from otopi import util
 from otopi import plugin
 
@@ -41,15 +42,15 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
+        stage=plugin.Stages.STAGE_INIT,
         before=(
-            osetupcons.Stages.DB_CONNECTION_SETUP,
+            osetupcons.Stages.LEGACY_CORE_INIT,
         ),
-        condition=lambda self: self.environment[
-            osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
-        ],
     )
-    def _setup(self):
+    def _init(self):
+        self.environment[
+            osetupcons.CoreEnv.LEGACY_PG_CREDS_FOUND
+        ] = False
         if os.path.exists(
             osetupcons.FileLocations.LEGACY_PSQL_PASS_FILE
         ):
@@ -76,22 +77,47 @@ class Plugin(plugin.PluginBase):
                                 osetupcons.DBEnv.USER: d[3],
                                 osetupcons.DBEnv.PASSWORD: d[4],
                                 osetupcons.DBEnv.NEW_DATABASE: False,
+                                osetupcons.CoreEnv.LEGACY_PG_CREDS_FOUND: True,
                             })
                             self.environment[
                                 otopicons.CoreEnv.LOG_FILTER
                             ].append(
                                 self.environment[osetupcons.DBEnv.PASSWORD]
                             )
-                            dbovirtutils = database.OvirtUtils(plugin=self)
-                            dbovirtutils.tryDatabaseConnect()
-                            if dbovirtutils.isNewDatabase():
-                                raise RuntimeError(
-                                    _(
-                                        'Unexpected empty database '
-                                        'during upgrade'
-                                    )
-                                )
                             break
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+        before=(
+            osetupcons.Stages.DB_CONNECTION_SETUP,
+        ),
+        condition=lambda self: self.environment[
+            osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
+        ],
+    )
+    def _setup(self):
+        dbovirtutils = database.OvirtUtils(plugin=self)
+        dbovirtutils.tryDatabaseConnect()
+        if dbovirtutils.isNewDatabase():
+            raise RuntimeError(
+                _('Unexpected empty database during upgrade')
+            )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: self.environment[
+            osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
+        ],
+    )
+    def _misc(self):
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=(
+                    osetupcons.FileLocations.LEGACY_PSQL_PASS_FILE
+                ),
+                content='',
+            )
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

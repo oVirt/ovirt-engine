@@ -567,6 +567,7 @@ class Stages(object):
     AIO_CONFIG_VDSM = 'osetup.aio.config.vdsm'
 
     UPGRADE_FROM_LEGACY_CONFIG = 'osetup.legacy.upgrade'
+    LEGACY_CORE_INIT = 'osetup.legacy.core.init'
 
     REMOVE_CUSTOMIZATION_COMMON = 'osetup.remove.customization.common'
     REMOVE_CUSTOMIZATION_GROUPS = 'osetup.remove.customization.groups'
@@ -661,6 +662,8 @@ class CoreEnv(object):
         return 'OVESETUP_CORE/generatedByVersion'
 
     ORIGINAL_GENERATED_BY_VERSION = 'OVESETUP_CORE/originalGeneratedByVersion'
+
+    LEGACY_PG_CREDS_FOUND = 'OVESETUP_CORE/legacyPGCredsFound'
 
 
 @util.export
