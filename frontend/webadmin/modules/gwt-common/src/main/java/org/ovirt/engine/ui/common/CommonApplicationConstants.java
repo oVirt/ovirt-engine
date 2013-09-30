@@ -1095,9 +1095,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("USB Policy")
     String usbPolicyPoolGeneral();
 
-    @DefaultStringValue("Resides on Storage Domain")
-    String residesOnSDPoolGeneral();
-
     @DefaultStringValue("Origin")
     String originPoolGeneral();
 

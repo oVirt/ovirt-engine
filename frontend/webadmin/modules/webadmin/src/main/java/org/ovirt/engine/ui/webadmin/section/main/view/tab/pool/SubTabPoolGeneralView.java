@@ -42,7 +42,6 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     TextBoxLabel origin = new TextBoxLabel();
     @Ignore
     TextBoxLabel oS = new TextBoxLabel();
-    TextBoxLabel storageDomain = new TextBoxLabel();
     TextBoxLabel template = new TextBoxLabel();
     TextBoxLabel timeZone = new TextBoxLabel();
     TextBoxLabel usbPolicy = new TextBoxLabel();
@@ -86,12 +85,6 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresPoolGeneral(), cpuInfo, 2, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsPoolGeneral(), monitorCount, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyPoolGeneral(), usbPolicy, 4, 1));
-        formBuilder.addFormItem(new FormItem(constants.residesOnSDPoolGeneral(), storageDomain, 5, 1, "HasStorageDomain") { //$NON-NLS-1$
-            @Override
-            public boolean getIsAvailable() {
-                return getDetailModel().getHasStorageDomain();
-            }
-        });
 
         formBuilder.addFormItem(new FormItem(constants.originPoolGeneral(), origin, 0, 2));
         formBuilder.addFormItem(new FormItem(constants.isStatelessPoolGeneral(), isStateless, 1, 2));

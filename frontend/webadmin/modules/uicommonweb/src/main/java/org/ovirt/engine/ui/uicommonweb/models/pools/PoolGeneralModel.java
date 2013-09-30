@@ -1,12 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -235,22 +232,6 @@ public class PoolGeneralModel extends EntityModel
         }
     }
 
-    private boolean hasStorageDomain;
-
-    public boolean getHasStorageDomain()
-    {
-        return hasStorageDomain;
-    }
-
-    public void setHasStorageDomain(boolean value)
-    {
-        if (hasStorageDomain != value)
-        {
-            hasStorageDomain = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain")); //$NON-NLS-1$
-        }
-    }
-
     private boolean hasTimeZone;
 
     public boolean getHasTimeZone()
@@ -296,22 +277,6 @@ public class PoolGeneralModel extends EntityModel
         {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
-        }
-    }
-
-    private String storageDomain;
-
-    public String getStorageDomain()
-    {
-        return storageDomain;
-    }
-
-    public void setStorageDomain(String value)
-    {
-        if (!StringHelper.stringsEqual(storageDomain, value))
-        {
-            storageDomain = value;
-            onPropertyChanged(new PropertyChangedEventArgs("StorageDomain")); //$NON-NLS-1$
         }
     }
 
@@ -512,8 +477,6 @@ public class PoolGeneralModel extends EntityModel
                                         break;
                                     }
                                 }
-
-                                poolGeneralModel1.updateStorageDomain();
                             }
                         };
 
@@ -525,8 +488,6 @@ public class PoolGeneralModel extends EntityModel
                         poolGeneralModel.setDefaultHost(ConstantsManager.getInstance()
                                 .getConstants()
                                 .anyHostInCluster());
-
-                        poolGeneralModel.updateStorageDomain();
                     }
                 }
                 else
@@ -538,8 +499,6 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setDefinedMemory(null);
                     poolGeneralModel.setMinAllocatedMemory(null);
                     poolGeneralModel.setDefaultDisplayType(null);
-                    poolGeneralModel.setStorageDomain(null);
-                    poolGeneralModel.setHasStorageDomain(false);
                     poolGeneralModel.setHasDomain(false);
                     poolGeneralModel.setDomain(null);
                     poolGeneralModel.setHasTimeZone(false);
@@ -554,55 +513,6 @@ public class PoolGeneralModel extends EntityModel
         };
         Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
-                _asyncQuery);
-    }
-
-    private void updateStorageDomain()
-    {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
-                PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
-                Iterable disks = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Iterator disksIterator = disks.iterator();
-                if (disksIterator.hasNext())
-                {
-                    poolGeneralModel.setHasStorageDomain(true);
-
-                    AsyncQuery _asyncQuery1 = new AsyncQuery();
-                    _asyncQuery1.setModel(poolGeneralModel);
-                    _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model1, Object ReturnValue1)
-                        {
-                            PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
-                            StorageDomain storage =
-                                    (StorageDomain) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                            poolGeneralModel1.setStorageDomain(storage.getStorageName());
-
-                            poolGeneralModel1.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
-                        }
-                    };
-
-                    DiskImage firstDisk = (DiskImage) disksIterator.next();
-                    Frontend.RunQuery(VdcQueryType.GetStorageDomainById,
-                            new IdQueryParameters(firstDisk.getStorageIds().get(0)),
-                            _asyncQuery1);
-                }
-                else
-                {
-                    poolGeneralModel.setHasStorageDomain(false);
-
-                    poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
-                }
-            }
-        };
-
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId,
-                new IdQueryParameters(getvm().getId()),
                 _asyncQuery);
     }
 
