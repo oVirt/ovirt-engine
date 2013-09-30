@@ -99,7 +99,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     public static List<Guid> fetchDomainsReportedAsProblematic(Guid storagePoolId, List<VDSDomainsData> vdsDomainsData) {
         IrsProxyData proxy = _irsProxyData.get(storagePoolId);
         if (proxy != null) {
-            return proxy.checkIfDomainsReportedAsProblematic(vdsDomainsData);
+            return proxy.obtainDomainsReportedAsProblematic(vdsDomainsData);
         }
         return Collections.emptyList();
     }
@@ -1106,7 +1106,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
         }
 
-        public List<Guid> checkIfDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData) {
+        private List<Guid> obtainDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData) {
             List<Guid> domainsInProblem = new LinkedList<>();
             Set<Guid> domainsInPool = new HashSet<Guid>(
                     DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
