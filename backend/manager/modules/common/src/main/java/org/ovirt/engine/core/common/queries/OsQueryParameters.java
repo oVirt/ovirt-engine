@@ -39,6 +39,8 @@ public class OsQueryParameters extends VdcQueryParametersBase {
 
     public enum OsRepositoryVerb {
         GetSpiceSupportMatrix,
+        HasNicHotplugSupport,
+        GetNicHotplugSupportMap,
         GetLinuxOss,
         GetOsIds,
         GetMinimumOsRam,

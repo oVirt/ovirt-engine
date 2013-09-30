@@ -30,6 +30,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetWindowsOss:
                 setReturnValue(osRepository.getWindowsOss());
                 break;
+            case GetNicHotplugSupportMap:
+                setReturnValue(osRepository.getNicHotplugSupportMap());
+                break;
             case GetMaxOsRam:
                 setReturnValue(osRepository.getMaximumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;
@@ -38,6 +41,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
                 break;
             case GetSpiceSupportMatrix:
                 setReturnValue(osRepository.getSpiceSupportMatrix());
+                break;
+            case HasNicHotplugSupport:
+                setReturnValue(osRepository.hasNicHotplugSupport(getParameters().getOsId(), getParameters().getVersion()));
                 break;
             case GetNetworkDevices:
                 setReturnValue(osRepository.getNetworkDevices(getParameters().getOsId(), getParameters().getVersion()));

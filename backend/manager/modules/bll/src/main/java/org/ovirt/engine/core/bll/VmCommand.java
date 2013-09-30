@@ -387,8 +387,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
-    protected boolean canPerformHotPlug() {
+    protected boolean canPerformDiskHotPlug() {
         return isHotPlugSupported() && isOsSupportingHotPlug();
+    }
+
+    protected boolean canPerformNicHotPlug() {
+        return osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getVdsGroupCompatibilityVersion());
     }
 
     /**

@@ -77,7 +77,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     private boolean checkCanPerformPlugUnPlugDisk() {
         if (getVm().getStatus().isUpOrPaused()) {
             setVdsId(getVm().getRunOnVds());
-            if (!canPerformHotPlug() || !isInterfaceSupportedForPlugUnPlug(disk)) {
+            if (!canPerformDiskHotPlug() || !isInterfaceSupportedForPlugUnPlug(disk)) {
                 return false;
             }
         }

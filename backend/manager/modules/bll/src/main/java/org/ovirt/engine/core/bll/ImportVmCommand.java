@@ -1016,7 +1016,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
             vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser().getId());
-            vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity(),
+            vmInterfaceManager.add(iface,
+                    getCompensationContext(),
+                    getParameters().isImportAsNewEntity(),
+                    getVm().getOs(),
                     getVdsGroup().getcompatibility_version());
             macsAdded.add(iface.getMacAddress());
         }
@@ -1219,26 +1222,32 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     // TaskHandlerCommand Implementation //
     ///////////////////////////////////////
 
+    @Override
     public T getParameters() {
         return super.getParameters();
     }
 
+    @Override
     public VdcActionType getActionType() {
         return super.getActionType();
     }
 
+    @Override
     public VdcReturnValueBase getReturnValue() {
         return super.getReturnValue();
     }
 
+    @Override
     public ExecutionContext getExecutionContext() {
         return super.getExecutionContext();
     }
 
+    @Override
     public void setExecutionContext(ExecutionContext executionContext) {
         super.setExecutionContext(executionContext);
     }
 
+    @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
@@ -1247,24 +1256,29 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         return super.createTaskInCurrentTransaction(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
     }
 
+    @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
     }
 
+    @Override
     public ArrayList<Guid> getTaskIdList() {
         return super.getTaskIdList();
     }
 
+    @Override
     public void preventRollback() {
         throw new NotImplementedException();
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder() {
         return super.persistAsyncTaskPlaceHolder(getActionType());
     }
 
+    @Override
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }

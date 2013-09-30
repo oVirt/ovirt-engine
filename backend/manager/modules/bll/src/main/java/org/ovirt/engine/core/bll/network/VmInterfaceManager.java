@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -48,12 +50,16 @@ public class VmInterfaceManager {
      *            the compatibility version of the cluster
      * @return <code>true</code> if the MAC wasn't used, <code>false</code> if it was.
      */
-    public void add(final VmNic iface, CompensationContext compensationContext, boolean allocateMac,
+    public void add(final VmNic iface,
+            CompensationContext compensationContext,
+            boolean allocateMac,
+            int osId,
             Version clusterCompatibilityVersion) {
 
         if (allocateMac) {
             iface.setMacAddress(getMacPoolManager().allocateNewMac());
-        } else if (FeatureSupported.hotPlug(clusterCompatibilityVersion)) {
+        } else if (FeatureSupported.hotPlug(clusterCompatibilityVersion)
+                && getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
             getMacPoolManager().forceAddMac(iface.getMacAddress());
         } else if (!getMacPoolManager().addMac(iface.getMacAddress())) {
             auditLogMacInUse(iface);
@@ -64,6 +70,10 @@ public class VmInterfaceManager {
         getVmNetworkStatisticsDao().save(iface.getStatistics());
         compensationContext.snapshotNewEntity(iface);
         compensationContext.snapshotNewEntity(iface.getStatistics());
+    }
+
+    public OsRepository getOsRepository() {
+        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
     }
 
     public void auditLogMacInUse(final VmNic iface) {

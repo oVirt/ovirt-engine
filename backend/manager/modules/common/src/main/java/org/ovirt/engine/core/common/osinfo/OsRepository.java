@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.Map;
+
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -70,6 +72,19 @@ public interface OsRepository {
       * compatibility versions
      */
     public Map<Integer, Map<Version, Boolean>> getSpiceSupportMatrix();
+
+    /**
+     * Checks if that OS network devices support hotplug.
+     * @param osId
+     * @param version
+     * @return an boolean
+     */
+    public boolean hasNicHotplugSupport(int osId, Version version);
+
+    /**
+     * @return a map that contain an pair (OS id and version) with the hotplug support.
+     */
+    public Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap();
 
     /**
      * this is Windows OSs specific path to the sysprep file

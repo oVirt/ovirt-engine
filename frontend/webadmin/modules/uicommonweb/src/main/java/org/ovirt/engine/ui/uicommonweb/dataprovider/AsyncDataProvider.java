@@ -115,6 +115,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameter
 import org.ovirt.engine.core.common.queries.gluster.GlusterServiceQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -162,6 +163,10 @@ public final class AsyncDataProvider {
 
     // cached linux OS
     private static List<Integer> linuxOsIds;
+
+    // cached NIC hotplug support map
+    private static Map<Pair<Integer, Version>, Boolean> nicHotplugSupportMap;
+
     // cached windows OS
     private static List<Integer> windowsOsIds;
 
@@ -205,6 +210,34 @@ public final class AsyncDataProvider {
         initLinuxOsTypes();
         initWindowsOsTypes();
         initHasSpiceSupport();
+        initNicHotplugSupportMap();
+    }
+
+    public static void initNicHotplugSupportMap() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                nicHotplugSupportMap =(Map<Pair<Integer, Version>, Boolean>) ((VdcQueryReturnValue) returnValue)
+                        .getReturnValue();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(
+                OsRepositoryVerb.GetNicHotplugSupportMap), callback);
+    }
+
+    public static Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap() {
+        return nicHotplugSupportMap;
+    }
+
+    public static Boolean getNicHotplugSupport(Integer osId, Version version) {
+        Pair<Integer, Version> pair = new Pair<Integer, Version>(osId, version);
+
+        if (getNicHotplugSupportMap().containsKey(pair)) {
+            return getNicHotplugSupportMap().get(pair);
+        }
+
+        return false;
     }
 
     public static void getDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {

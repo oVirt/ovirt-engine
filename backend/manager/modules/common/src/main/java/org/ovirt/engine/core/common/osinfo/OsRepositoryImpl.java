@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -87,6 +91,24 @@ public enum OsRepositoryImpl implements OsRepository {
             }
         }
         return osNames;
+    }
+
+    @Override
+    public Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap() {
+
+        List<Version> versions =
+                new ArrayList<Version>(Config.<HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels));
+        Map<Pair<Integer, Version>, Boolean> hotplugSupportOsIdVersionMap =
+                new HashMap<Pair<Integer, Version>, Boolean>();
+
+        for (Integer osId : getOsIds()) {
+            for (Version version : versions) {
+                hotplugSupportOsIdVersionMap.put(
+                        new Pair<Integer, Version>(osId, version), hasNicHotplugSupport(osId, version));
+            }
+        }
+
+        return hotplugSupportOsIdVersionMap;
     }
 
     @Override
@@ -176,6 +198,11 @@ public enum OsRepositoryImpl implements OsRepository {
         }
 
         return spiceSupportMatrix;
+    }
+
+    @Override
+    public boolean hasNicHotplugSupport(int osId, Version version) {
+        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.network.hotplugSupport", version), false);
     }
 
     @Override
