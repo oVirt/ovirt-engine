@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class BondPanel extends NicPanel {
 
     public BondPanel(BondNetworkInterfaceModel item, NetworkPanelsStyle style) {
-        super(item, style, false);
+        super(item, style, true);
         actionButton.setStyleName(style.actionButtonBond());
     }
 
