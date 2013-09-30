@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -23,12 +24,19 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     VmNetworkInterface nic;
 
     protected BaseEditVmInterfaceModel(VmBase vm,
+            VMStatus vmStatus,
             Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
             EntityModel sourceModel) {
-        super(vm, dcId, clusterCompatibilityVersion, vmNicList, sourceModel, new EditProfileBehavior());
+        super(vm,
+                vmStatus,
+                dcId,
+                clusterCompatibilityVersion,
+                vmNicList,
+                sourceModel,
+                new EditProfileBehavior());
         this.nic = nic;
         setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
         setHashName("edit_network_interface_vms"); //$NON-NLS-1$
@@ -64,12 +72,12 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
         // Plug should be the last one updated, cause it controls the changeability of the other editor
         getPlugged().setEntity(getNic().isPlugged());
-        if (!hotPlugSupported) {
+        if (!allowPlug()) {
             getPlugged().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getMessages()
-                    .hotPlugNotSupported(getClusterCompatibilityVersion().toString()));
+                    .nicHotPlugNotSupported(getClusterCompatibilityVersion().toString()));
         }
-        getPlugged().setIsChangable(hotPlugSupported);
+        getPlugged().setIsChangable(allowPlug());
 
         initCommands();
     }

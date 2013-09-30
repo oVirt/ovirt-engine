@@ -33,7 +33,13 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
             EntityModel sourceModel) {
-        super(vmStatic, vm.getStoragePoolId(), clusterCompatibilityVersion, vmNicList, nic, sourceModel);
+        super(vmStatic,
+                vm.getStatus(),
+                vm.getStoragePoolId(),
+                clusterCompatibilityVersion,
+                vmNicList,
+                nic,
+                sourceModel);
         this.vm = vm;
     }
 

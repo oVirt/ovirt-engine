@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +33,13 @@ public class EditTemplateInterfaceModel extends BaseEditVmInterfaceModel {
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
             EntityModel sourceModel) {
-        super(vm, dcId, clusterCompatibilityVersion, vmNicList, nic, sourceModel);
+        super(vm,
+                VMStatus.Down,
+                dcId,
+                clusterCompatibilityVersion,
+                vmNicList,
+                nic,
+                sourceModel);
         setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
         setHashName("edit_network_interface_tmps"); //$NON-NLS-1$
     }

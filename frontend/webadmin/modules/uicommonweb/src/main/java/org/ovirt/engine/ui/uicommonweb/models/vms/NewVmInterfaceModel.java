@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -19,21 +20,33 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class NewVmInterfaceModel extends VmInterfaceModel {
 
     public static NewVmInterfaceModel createInstance(VmBase vm,
+            VMStatus vmStatus,
             Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel) {
-        NewVmInterfaceModel instance = new NewVmInterfaceModel(vm, dcId, clusterCompatibilityVersion, vmNicList, sourceModel);
+        NewVmInterfaceModel instance = new NewVmInterfaceModel(vm,
+                vmStatus,
+                dcId,
+                clusterCompatibilityVersion,
+                vmNicList,
+                sourceModel);
         instance.init();
         return instance;
     }
 
     protected NewVmInterfaceModel(VmBase vm,
+            VMStatus vmStatus,
             Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel) {
-        super(vm, dcId, clusterCompatibilityVersion, vmNicList, sourceModel, new NewProfileBehavior());
+        super(vm,
+                vmStatus,
+                dcId,
+                clusterCompatibilityVersion,
+                vmNicList, sourceModel,
+                new NewProfileBehavior());
         setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
         setHashName("new_network_interface_vms"); //$NON-NLS-1$
     }
@@ -56,13 +69,13 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
         getName().setEntity(AsyncDataProvider.getNewNicName(getVmNicList()));
         initMAC();
 
-        if (!hotPlugSupported) {
+        if (!allowPlug()) {
             getPlugged().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getMessages()
-                    .hotPlugNotSupported(getClusterCompatibilityVersion().toString()));
+                    .nicHotPlugNotSupported(getClusterCompatibilityVersion().toString()));
         }
-        getPlugged().setIsChangable(hotPlugSupported);
-        getPlugged().setEntity(true);
+        getPlugged().setIsChangable(allowPlug());
+        getPlugged().setEntity(allowPlug());
 
         initLinked();
 

@@ -273,8 +273,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     String providerUrlWarningText(String providedEntities);
 
     // Vnic
-    @DefaultMessage("Hot Plug is not supported on cluster version {0}")
-    String hotPlugNotSupported(String clusterVersion);
+    @DefaultMessage("The virtual machine is running and NIC Hot Plug is not supported on cluster version {0} or by the operating system.")
+    String nicHotPlugNotSupported(String clusterVersion);
 
     @DefaultMessage("Updating 'profile' on a running virtual machine while the NIC is plugged is not supported on cluster version {0}")
     String hotProfileUpdateNotSupported(String clusterVersion);

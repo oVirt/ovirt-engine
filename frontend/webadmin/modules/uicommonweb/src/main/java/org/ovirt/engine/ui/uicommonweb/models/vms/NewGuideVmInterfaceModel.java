@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,7 +27,12 @@ public class NewGuideVmInterfaceModel extends NewVmInterfaceModel {
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel) {
-        super(vm, dcId, clusterCompatibilityVersion, vmNicList, sourceModel);
+        super(vm,
+                VMStatus.Down,
+                dcId,
+                clusterCompatibilityVersion,
+                vmNicList,
+                sourceModel);
         setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
         setHashName("new_network_interface_vms_guide"); //$NON-NLS-1$
     }

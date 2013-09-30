@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -55,6 +56,7 @@ public abstract class VmInterfaceModel extends Model
     protected final boolean hotUpdateSupported;
     private final VmBase vm;
     private final ArrayList<VmNetworkInterface> vmNicList;
+    private final VMStatus vmStatus;
 
     private UICommand okCommand;
 
@@ -66,6 +68,7 @@ public abstract class VmInterfaceModel extends Model
     private Guid dcId;
 
     protected VmInterfaceModel(VmBase vm,
+            VMStatus vmStatus,
             Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
@@ -80,12 +83,13 @@ public abstract class VmInterfaceModel extends Model
 
         this.vm = vm;
         this.vmNicList = vmNicList;
+        this.vmStatus = vmStatus;
         this.sourceModel = sourceModel;
         this.clusterCompatibilityVersion = clusterCompatibilityVersion;
 
         hotPlugSupported =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
-                        clusterCompatibilityVersion.toString());
+                (Boolean) AsyncDataProvider.getNicHotplugSupport(vm.getOsId(),
+                        clusterCompatibilityVersion);
 
         hotUpdateSupported =
                 (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
@@ -144,6 +148,19 @@ public abstract class VmInterfaceModel extends Model
 
     public ArrayList<VmNetworkInterface> getVmNicList() {
         return vmNicList;
+    }
+
+    public VMStatus getVmStatus() {
+        return vmStatus;
+    }
+
+    /**
+     * The user may also plug and unplug interfaces when the VM is down (regardless of hotplug support)
+     * or create an unplugged NIC in a running VM when there isn't support for hotplug.
+     * @return an boolean.
+     */
+    public boolean allowPlug() {
+        return hotPlugSupported || getVmStatus().equals(VMStatus.Down);
     }
 
     public Version getClusterCompatibilityVersion() {
