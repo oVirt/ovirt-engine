@@ -57,7 +57,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
     private static String lastDragData = ""; //$NON-NLS-1$
 
-    public NetworkItemPanel(NetworkItemModel<?> item, NetworkPanelsStyle style, Boolean draggable) {
+    public NetworkItemPanel(NetworkItemModel<?> item, NetworkPanelsStyle style, boolean draggable) {
         super();
         getElement().setDraggable(draggable ? Element.DRAGGABLE_TRUE : Element.DRAGGABLE_FALSE);
 
