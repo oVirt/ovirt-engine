@@ -29,6 +29,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
 
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
@@ -52,7 +53,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         newVmStatic.setVdsGroupId(VDS_GROUP_ID);
         newVmStatic.setVmtGuid(vmtemplate.getId());
         newVmStatic.setOrigin(OriginType.OVIRT);
-        newVmStatic.setQuotaId(Guid.newGuid());
+        newVmStatic.setQuotaId(QUOTA_ID);
     }
 
     /**
