@@ -2382,7 +2382,8 @@ actions:
         deprecated: true
         description: install vdsm and other packages required to get the host ready to be used in the engine providing the root password. This has been deprecated
       - mandatoryArguments: {}
-        optionalArguments: {action.ssh.password: 'xs:string', action.image: 'xs:string'}
+        optionalArguments: {action.ssh.port: 'xs:int', action.ssh.fingerprint: 'xs:string', action.ssh.authentication_method: 'xs:string',
+          action.ssh.user.user_name: 'xs:string', action.ssh.user.password: 'xs:string', action.image: 'xs:string'}
         description: install vdsm and other packages required to get the host ready to be used in the engine providing thre ssh password
     urlparams: {}
     headers:
