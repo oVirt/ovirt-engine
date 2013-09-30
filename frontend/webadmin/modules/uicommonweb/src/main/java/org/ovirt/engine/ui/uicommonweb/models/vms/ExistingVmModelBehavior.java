@@ -182,7 +182,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getCustomProperties().setEntity(vm.getCustomProperties());
         getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
-        getModel().getCpuPinning().setEntity(vm.getCpuPinning());
         getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
         updateCpuSharesSelection();
 
@@ -255,6 +254,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             }
         }
 
+        getModel().getCpuPinning().setEntity(vm.getCpuPinning());
         initPriority(vm.getPriority());
     }
 
