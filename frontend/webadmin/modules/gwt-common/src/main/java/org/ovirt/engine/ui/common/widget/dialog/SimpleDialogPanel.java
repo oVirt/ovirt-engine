@@ -28,18 +28,14 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
 
         String contentWidget();
 
-        String headerContainerWithBlankLogo();
-
+        String headerTitleFloat();
     }
 
     @UiField
     SimplePanel logoPanel;
 
     @UiField
-    FlowPanel headerContainerPanel;
-
-    @UiField
-    SimplePanel headerTitlePanel;
+    FlowPanel headerTitlePanel;
 
     @UiField
     SimplePanel contentPanel;
@@ -61,8 +57,6 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
 
     private UICommand helpCommand;
 
-    private boolean useBlankLogo = true;
-
     public SimpleDialogPanel() {
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         getElement().getStyle().setZIndex(1);
@@ -72,23 +66,13 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     @Override
     @UiChild(tagname = "header", limit = 1)
     public void setHeader(Widget widget) {
-        headerTitlePanel.setWidget(widget);
-        updateHeaderContainerStyle();
+        widget.addStyleName(style.headerTitleFloat());
+        headerTitlePanel.insert(widget, 0); //Put the label at the front.
     }
 
     @UiChild(tagname = "logo", limit = 1)
     public void setLogo(Widget widget) {
         logoPanel.setWidget(widget);
-        useBlankLogo = false;
-        updateHeaderContainerStyle();
-    }
-
-    void updateHeaderContainerStyle() {
-        if (useBlankLogo) {
-            headerContainerPanel.addStyleName(style.headerContainerWithBlankLogo());
-        } else {
-            headerContainerPanel.removeStyleName(style.headerContainerWithBlankLogo());
-        }
     }
 
     @Override

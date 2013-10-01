@@ -26,13 +26,8 @@
 		.obrand_headerCenterPanel {
 		}
 
-		.headerTitle {
-			text-align: left;
-			font-size: 14px;
-			font-weight: bold;
-			color: white;
-			margin-left: 6px;
-			float: left;
+        @external obrand_headerTitle;
+		.obrand_headerTitle {
 		}
 
 		.content {
@@ -66,10 +61,9 @@
 			position: absolute;
 		}
 
-		.headerContainerWithBlankLogo {
-			position: relative;
-			left: -27px;
-		}
+        .headerTitleFloat {
+            float: left;
+        }
 
 		.helpIconButton {
 			background: transparent;
@@ -81,7 +75,7 @@
 			z-index: 1;
 			float: left;
 			position: relative;
-			top: -3px;
+			top: -5px;
 		}
 
 		.closeIconButton {
@@ -111,16 +105,7 @@
 			<g:SimplePanel ui:field="logoPanel" addStyleNames="{style.headerLeftPanel}">
 				<g:Image styleName='obrand_dialogLogoImage' url="clear.cache.gif" />
 			</g:SimplePanel>
-			<g:FlowPanel addStyleNames="{style.obrand_headerCenterPanel}">
-				<g:FlowPanel ui:field="headerContainerPanel">
-					<g:SimplePanel ui:field="headerTitlePanel" addStyleNames="{style.headerTitle}" />
-					<g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
-						<g:upFace image='{resources.dialogIconHelp}' />
-						<g:downFace image='{resources.dialogIconHelpDown}' />
-						<g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
-					</g:PushButton>
-				</g:FlowPanel>
-			</g:FlowPanel>
+			<g:SimplePanel addStyleNames="{style.obrand_headerCenterPanel}" />
 			<g:SimplePanel addStyleNames="{style.headerRightPanel}">
 				<g:FlowPanel>
 					<g:Image styleName='obrand_dialogHeaderImage' url="clear.cache.gif" />
@@ -131,6 +116,15 @@
 					</g:PushButton>
 				</g:FlowPanel>
 			</g:SimplePanel>
+			<g:FlowPanel addStyleNames="{style.obrand_headerTitle}">
+                <g:FlowPanel ui:field="headerTitlePanel">
+                    <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
+                        <g:upFace image='{resources.dialogIconHelp}' />
+                        <g:downFace image='{resources.dialogIconHelpDown}' />
+                        <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
+                    </g:PushButton>
+                </g:FlowPanel>
+			</g:FlowPanel>
 		</g:FlowPanel>
 
 		<g:SimplePanel ui:field="contentPanel" addStyleNames="{style.content}" />
