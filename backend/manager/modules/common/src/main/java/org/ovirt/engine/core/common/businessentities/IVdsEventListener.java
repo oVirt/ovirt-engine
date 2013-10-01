@@ -68,4 +68,6 @@ public interface IVdsEventListener {
      * @param vds
      */
     void updateSchedulingStats(VDS vds); // BLL
+
+    void handleVdsMaintenanceTimeout(VDS vds);
 }

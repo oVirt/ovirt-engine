@@ -1549,6 +1549,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     SchedulerOverBookingThreshold(547),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    HostPreparingForMaintenanceIdleTime(548),
+
     Invalid(65535);
 
     private int intValue;
@@ -1572,4 +1576,5 @@ public enum ConfigValues {
     public static ConfigValues forValue(int value) {
         return mappings.get(value);
     }
+
 }

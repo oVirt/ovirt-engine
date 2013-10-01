@@ -161,6 +161,7 @@ select fn_db_add_config_value('HardwareInfoEnabled','true','3.2');
 select fn_db_add_config_value('HardwareInfoEnabled','true','3.3');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
 select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
+select fn_db_add_config_value('HostPreparingForMaintenanceIdleTime', '300', 'general');
 select fn_db_add_config_value('HostTimeDriftInSec','300','general');
 select fn_db_add_config_value('HotPlugEnabled','false','3.0');
 select fn_db_add_config_value('HotPlugEnabled','true','3.1');

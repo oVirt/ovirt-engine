@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 
 public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
 
@@ -20,8 +20,8 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.CancelMigrate,
-                        new VdsAndVmIDVDSParametersBase(getVm().getRunOnVds(),
-                                getParameters().getVmId()));
+                        new CancelMigrationVDSParameters(getVm().getRunOnVds(),
+                                getParameters().getVmId(), false));
 
         setSucceeded(retVal.getSucceeded());
     }

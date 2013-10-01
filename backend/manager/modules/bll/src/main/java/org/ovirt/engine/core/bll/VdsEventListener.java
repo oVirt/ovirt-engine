@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -329,6 +331,13 @@ public class VdsEventListener implements IVdsEventListener {
                 log.debugFormat("Failed adding Externally managed VM {0}", currVm.getName());
             }
         }
+    }
+
+    @Override
+    public void handleVdsMaintenanceTimeout(final VDS vds) {
+        // try to put the host to Maintenance again.
+        Backend.getInstance().runInternalAction(VdcActionType.MaintenanceNumberOfVdss,
+                new MaintenanceNumberOfVdssParameters(Arrays.asList(vds.getId()), true));
     }
 
     @Override

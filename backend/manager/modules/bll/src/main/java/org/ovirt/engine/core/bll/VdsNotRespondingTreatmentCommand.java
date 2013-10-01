@@ -95,7 +95,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     private void MoveVMsToUnknown() {
-        getVmList().addAll(getVmDAO().getAllMigratingToHost(getVdsId()));
+        addMigratedVmsNotUpYet();
         for (VM vm : getVmList()) {
             DestroyVmOnDestination(vm);
             Backend.getInstance()
@@ -106,6 +106,16 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             AuditLogableBase logable = new AuditLogableBase();
             logable.setVmId(vm.getId());
             AuditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
+        }
+    }
+
+    private void addMigratedVmsNotUpYet() {
+        for (VM incomingVm : getVmDAO().getAllMigratingToHost(getVdsId())) {
+            if (incomingVm.getStatus() == VMStatus.MigratingTo) {
+                // this VM is finished the migration handover and is running on this host now
+                // and should be treated as well.
+                getVmList().add(incomingVm);
+            }
         }
     }
 

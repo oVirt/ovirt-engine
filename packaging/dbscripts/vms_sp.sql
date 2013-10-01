@@ -861,8 +861,7 @@ Create or replace FUNCTION GetVmsMigratingToVds(v_vds_id UUID) RETURNS SETOF vms
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    FROM vms
-   WHERE migrating_to_vds = v_vds_id
-   AND status = 6;
+   WHERE migrating_to_vds = v_vds_id;
 
 END; $procedure$
 LANGUAGE plpgsql;

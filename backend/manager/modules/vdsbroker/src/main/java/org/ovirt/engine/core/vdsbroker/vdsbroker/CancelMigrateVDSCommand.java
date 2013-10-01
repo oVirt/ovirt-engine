@@ -2,11 +2,10 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
-public class CancelMigrateVDSCommand<P extends VdsAndVmIDVDSParametersBase> extends VdsBrokerCommand<P> {
+public class CancelMigrateVDSCommand<P extends CancelMigrationVDSParameters> extends VdsBrokerCommand<P> {
     public CancelMigrateVDSCommand(P parameters) {
         super(parameters);
     }
@@ -16,7 +15,9 @@ public class CancelMigrateVDSCommand<P extends VdsAndVmIDVDSParametersBase> exte
         Guid vmId = getParameters().getVmId();
         status = getBroker().migrateCancel(vmId.toString());
         proceedProxyReturnValue();
-        ResourceManager.getInstance().RemoveAsyncRunningVm(vmId);
+        if (!getParameters().isRerunAfterCancel()) {
+            ResourceManager.getInstance().RemoveAsyncRunningVm(vmId);
+        }
     }
 
     /**
