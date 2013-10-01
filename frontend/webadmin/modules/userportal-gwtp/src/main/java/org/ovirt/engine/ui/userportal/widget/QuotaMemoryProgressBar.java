@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.widget;
 
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -10,7 +11,7 @@ public class QuotaMemoryProgressBar extends QuotaProgressBar {
     private static final double GIGA = 1024;
     private static final double MB_GB_THRESHOLD = 4; // over this threshold number would be presented in GB not MB
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(DiskSizeRenderer.DiskSizeUnit.GIGABYTE);
+            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GB);
 
     public QuotaMemoryProgressBar(QuotaUsagePerUser quotaUsagePerUser) {
         super(quotaUsagePerUser);

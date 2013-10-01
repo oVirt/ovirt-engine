@@ -13,11 +13,11 @@ public class RebalanceFileSizeRenderer<T extends Number> extends AbstractRendere
     @Override
     public String render(T size) {
         if(size.longValue() > SizeConverter.BYTES_IN_GB) {
-            return messages.rebalanceFileSizeGb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.GB));
+            return messages.rebalanceFileSizeGb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.GB).longValue());
         } else if(size.longValue() > SizeConverter.BYTES_IN_MB) {
-            return messages.rebalanceFileSizeMb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.MB));
+            return messages.rebalanceFileSizeMb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.MB).longValue());
         } else if(size.longValue() > SizeConverter.BYTES_IN_KB) {
-            return messages.rebalanceFileSizeKb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.KB));
+            return messages.rebalanceFileSizeKb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.KB).longValue());
         } else {
             return messages.rebalanceFileSizeBytes(size.longValue());
         }

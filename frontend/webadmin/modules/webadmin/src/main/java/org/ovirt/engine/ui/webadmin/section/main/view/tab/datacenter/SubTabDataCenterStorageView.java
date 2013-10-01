@@ -8,11 +8,11 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -67,7 +67,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         };
         getTable().addColumn(statusColumn, constants.statusStorage(), "160px"); //$NON-NLS-1$
 
-        DiskSizeColumn<StorageDomain> freeColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
+        DiskSizeColumn<StorageDomain> freeColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
@@ -76,7 +76,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         };
         getTable().addColumn(freeColumn, constants.freeSpaceStorage(), "160px"); //$NON-NLS-1$
 
-        DiskSizeColumn<StorageDomain> usedColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
+        DiskSizeColumn<StorageDomain> usedColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long usedDiskSize = object.getUsedDiskSize() != null ? object.getUsedDiskSize() : 0;
@@ -85,7 +85,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         };
         getTable().addColumn(usedColumn, constants.usedSpaceStorage(), "160px"); //$NON-NLS-1$
 
-        DiskSizeColumn<StorageDomain> totalColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
+        DiskSizeColumn<StorageDomain> totalColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long totalDiskSize = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;

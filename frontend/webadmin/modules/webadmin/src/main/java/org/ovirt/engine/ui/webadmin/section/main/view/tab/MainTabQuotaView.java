@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter;
@@ -25,7 +26,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
 
     private static final NumberFormat decimalFormat = NumberFormat.getDecimalFormat();
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(DiskSizeRenderer.DiskSizeUnit.GIGABYTE);
+            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GB);
 
     interface ViewIdHandler extends ElementIdHandler<MainTabQuotaView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);

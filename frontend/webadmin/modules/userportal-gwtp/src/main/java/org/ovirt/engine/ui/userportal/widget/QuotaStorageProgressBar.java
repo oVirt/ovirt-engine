@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.widget;
 
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -16,7 +17,7 @@ public class QuotaStorageProgressBar extends QuotaProgressBar {
     }
 
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(DiskSizeRenderer.DiskSizeUnit.GIGABYTE);
+            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GB);
 
     @Override
     protected void setValuesByType(QuotaUsagePerUser quotaUsagePerUser) {

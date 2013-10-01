@@ -3,19 +3,15 @@ package org.ovirt.engine.ui.common.widget.renderer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.text.shared.AbstractRenderer;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 
 public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
-    public enum DiskSizeUnit {
-        BYTE,
-        GIGABYTE;
-    }
-
-    private final DiskSizeUnit unit;
+    private final SizeConverter.SizeUnit unit;
 
     private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
 
-    public DiskSizeRenderer(DiskSizeUnit unit) {
+    public DiskSizeRenderer(SizeConverter.SizeUnit unit) {
         if (unit == null) {
             throw new IllegalArgumentException("The unit can not be null!"); //$NON-NLS-1$
         }
@@ -33,18 +29,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
             return CONSTANTS.unAvailablePropertyLabel();
         }
 
-        long sizeInGB = -1;
-
-        switch (unit) {
-        case BYTE:
-            sizeInGB = (long) (size.longValue() / Math.pow(1024, 3));
-            break;
-        case GIGABYTE:
-            sizeInGB = size.longValue();
-            break;
-        }
-
+        long sizeInGB = SizeConverter.convert(size.longValue(), unit, SizeConverter.SizeUnit.GB).longValue();
         return sizeInGB >= 1 ? sizeInGB + " GB" : "< 1 GB"; //$NON-NLS-1$ //$NON-NLS-2$
     }
-
 }

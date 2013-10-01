@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextCellWithEditableTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithEditableTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -23,7 +24,7 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         implements SubTabQuotaStoragePresenter.ViewDef {
 
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(DiskSizeRenderer.DiskSizeUnit.GIGABYTE);
+            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GB);
 
     interface ViewIdHandler extends ElementIdHandler<SubTabQuotaStorageView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);

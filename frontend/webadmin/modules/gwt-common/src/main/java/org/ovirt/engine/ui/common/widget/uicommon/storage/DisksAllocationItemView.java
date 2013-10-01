@@ -12,10 +12,10 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 import com.google.gwt.core.client.GWT;
@@ -143,7 +143,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         driver.edit(object);
 
         diskAliasLabel.asValueBox().setValue(object.getAlias().getEntity());
-        diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Long>(DiskSizeUnit.GIGABYTE).render(
+        diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Long>(SizeConverter.SizeUnit.GB).render(
                 (Long) object.getSize().getEntity())));
 
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());

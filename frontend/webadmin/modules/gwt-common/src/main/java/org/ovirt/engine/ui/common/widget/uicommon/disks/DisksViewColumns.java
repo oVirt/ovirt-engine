@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
@@ -24,7 +23,7 @@ import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
-
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -141,7 +140,7 @@ public class DisksViewColumns {
         }
     };
 
-    public static final DiskSizeColumn<Disk> actualSizeColumn = new DiskSizeColumn<Disk>(DiskSizeUnit.GIGABYTE) {
+    public static final DiskSizeColumn<Disk> actualSizeColumn = new DiskSizeColumn<Disk>(SizeConverter.SizeUnit.GB) {
         @Override
         protected Long getRawValue(Disk object) {
             return object.getDiskStorageType() == DiskStorageType.IMAGE ?

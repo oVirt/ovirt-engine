@@ -25,9 +25,9 @@ public class SizeConverter {
         }
     };
 
-    public static long convert(long size, SizeUnit fromUnit, SizeUnit toUnit) {
+    public static Number convert(long size, SizeUnit fromUnit, SizeUnit toUnit) {
         long fromType = fromUnit.getUnitWeight();
         long toType = toUnit.getUnitWeight();
-        return (long) ((size) * ((Math.pow(CONVERT_FACTOR, fromType)) / (Math.pow(CONVERT_FACTOR, toType))));
+        return (size) * ((Math.pow(CONVERT_FACTOR, fromType)) / (Math.pow(CONVERT_FACTOR, toType)));
     }
 }

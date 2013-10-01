@@ -1,18 +1,17 @@
 package org.ovirt.engine.ui.common.widget.label;
 
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 
 import com.google.gwt.user.client.ui.ValueLabel;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 
 public class DiskSizeLabel<T extends Number> extends ValueLabel<T> {
 
     public DiskSizeLabel() {
-        super(new DiskSizeRenderer<T>(DiskSizeUnit.GIGABYTE));
+        super(new DiskSizeRenderer<T>(SizeConverter.SizeUnit.GB));
     }
 
-    public DiskSizeLabel(DiskSizeUnit diskSizeUnit) {
+    public DiskSizeLabel(SizeConverter.SizeUnit diskSizeUnit) {
         super(new DiskSizeRenderer<T>(diskSizeUnit));
     }
-
 }

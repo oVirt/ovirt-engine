@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -60,7 +61,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(DiskSizeRenderer.DiskSizeUnit.GIGABYTE);
+            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GB);
 
     @UiField
     WidgetStyle style;
