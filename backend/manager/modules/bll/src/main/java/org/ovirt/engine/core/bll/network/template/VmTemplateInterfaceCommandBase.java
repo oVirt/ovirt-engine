@@ -49,6 +49,8 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
 
     protected boolean updateVnicForBackwardCompatibility() {
         if (!validate(VnicProfileHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
+                getParameters().getNetworkName(),
+                getParameters().isPortMirroring(),
                 getVmTemplate(),
                 getCurrentUser().getUserId()))) {
             return false;

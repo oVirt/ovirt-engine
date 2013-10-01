@@ -96,6 +96,8 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
 
     protected boolean updateVnicForBackwardCompatibility() {
         if (!validate(VnicProfileHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
+                getParameters().getNetworkName(),
+                getParameters().isPortMirroring(),
                 getVm().getStaticData(),
                 getCurrentUser().getUserId()))) {
             return false;

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -149,27 +150,34 @@ public class VnicProfileHelper {
         }
     }
 
-    public static ValidationResult updateNicForBackwardCompatibility(VmNetworkInterface nic, VmBase vm, Guid userId) {
-        if (nic.getVnicProfileId() != null) {
+    public static ValidationResult updateNicForBackwardCompatibility(VmNic nic,
+            String networkName,
+            boolean portMirroring,
+            VmBase vm,
+            Guid userId) {
+
+        if (networkName == null) {
             return ValidationResult.VALID;
         }
 
-        if (nic.getNetworkName() == null) {
-            if (nic.isPortMirroring()) {
+        // empty network name is considered as an empty network
+        if ("".equals(networkName)) {
+            if (portMirroring) {
                 return new ValidationResult(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK);
             } else {
+                nic.setVnicProfileId(null);
                 return ValidationResult.VALID;
             }
         }
 
-        Network network = getNetworkDao().getByNameAndCluster(nic.getNetworkName(), vm.getVdsGroupId());
+        Network network = getNetworkDao().getByNameAndCluster(networkName, vm.getVdsGroupId());
         if (network == null) {
             return new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
         List<VnicProfile> vnicProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
         for (VnicProfile profile : vnicProfiles) {
-            if (isVnicProfilePermitted(userId, profile, nic.isPortMirroring())) {
+            if (isVnicProfilePermitted(userId, profile, portMirroring)) {
                 nic.setVnicProfileId(profile.getId());
                 return ValidationResult.VALID;
             }
