@@ -59,6 +59,18 @@ in the user portal and web admin. The border is defined in gwt-common.css */
     right: 123px;
 }
 
+.obrand_headerTitle {
+    text-align: left;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    margin-left: 14px;
+    float: left;
+    position: relative;
+    margin-top: 5px;
+}
+
+
 /* ErrorPopupView.ui.xml:
 This class allows you to change the error icon on the error popup window. */
 .obrand_dialogLogoErrorImage {
