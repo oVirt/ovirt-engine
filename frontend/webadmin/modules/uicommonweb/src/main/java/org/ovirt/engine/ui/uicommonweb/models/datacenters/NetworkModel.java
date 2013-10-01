@@ -462,7 +462,8 @@ public abstract class NetworkModel extends Model
             if (!StringHelper.isNullOrEmpty(profileModel.getProfile().getName())) {
                 VnicProfile vnicProfile = profileModel.getProfile();
                 vnicProfile.setNetworkId(networkGuid);
-                VdcActionParametersBase parameters = new VnicProfileParameters(vnicProfile);
+                VnicProfileParameters parameters = new VnicProfileParameters(vnicProfile);
+                parameters.setPublicUse((Boolean) profileModel.getPublicUse().getEntity());
                 paramlist.add(parameters);
             }
         }
