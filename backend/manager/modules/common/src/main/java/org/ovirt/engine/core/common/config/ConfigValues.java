@@ -1531,5 +1531,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("500")
     GlanceImageTotalListSize,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    HostPreparingForMaintenanceIdleTime,
+
     Invalid;
 }

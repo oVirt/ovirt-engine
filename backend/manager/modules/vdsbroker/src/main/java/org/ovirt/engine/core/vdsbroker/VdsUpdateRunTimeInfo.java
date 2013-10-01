@@ -1858,15 +1858,21 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void moveVDSToMaintenanceIfNeeded() {
-        if ((_vds.getStatus() == VDSStatus.PreparingForMaintenance)
-                && monitoringStrategy.canMoveToMaintenance(_vds)) {
-            _vdsManager.setStatus(VDSStatus.Maintenance, _vds);
-            _saveVdsDynamic = true;
-            _saveVdsStatistics = true;
-            log.infoFormat(
-                    "Updated vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds = {0} : {1}",
-                    _vds.getId(),
-                    _vds.getName());
+        if (_vds.getStatus() == VDSStatus.PreparingForMaintenance) {
+            if (monitoringStrategy.canMoveToMaintenance(_vds)) {
+                _vdsManager.setStatus(VDSStatus.Maintenance, _vds);
+                _saveVdsDynamic = true;
+                _saveVdsStatistics = true;
+                log.infoFormat(
+                        "Updated vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds = {0} : {1}",
+                        _vds.getId(),
+                        _vds.getName());
+            } else {
+                if (_vdsManager.isTimeToRetryMaintenance()) {
+                    ResourceManager.getInstance().getEventListener().handleVdsMaintenanceTimeout(_vds);
+                    _vdsManager.calculateNextMaintenanceAttemptTime();
+                }
+            }
         }
     }
 

@@ -57,6 +57,7 @@ public class VdsManager {
     private VDS _vds;
     private long lastUpdate;
     private long updateStartTime;
+    private long nextMaintenanceAttemptTime;
 
     private static Log log = LogFactory.getLog(VdsManager.class);
 
@@ -428,6 +429,10 @@ public class VdsManager {
                 vds.setPreviousStatus(vds.getStatus());
                 if (_vds != null) {
                     _vds.setPreviousStatus(vds.getStatus());
+                    if (_vds.getStatus() == VDSStatus.PreparingForMaintenance) {
+                        calculateNextMaintenanceAttemptTime();
+                    }
+
                 }
             }
             // update to new status
@@ -734,5 +739,14 @@ public class VdsManager {
         // change VDS state to connecting
         setStatus(VDSStatus.Connecting, vds);
         UpdateDynamicData(vds.getDynamicData());
+    }
+
+    public void calculateNextMaintenanceAttemptTime() {
+        this.nextMaintenanceAttemptTime = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(
+                Config.<Integer>GetValue(ConfigValues.HostPreparingForMaintenanceIdleTime), TimeUnit.SECONDS);
+    }
+
+    public boolean isTimeToRetryMaintenance() {
+        return System.currentTimeMillis() > nextMaintenanceAttemptTime;
     }
 }

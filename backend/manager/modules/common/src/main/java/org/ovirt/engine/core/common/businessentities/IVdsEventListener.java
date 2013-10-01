@@ -60,4 +60,6 @@ public interface IVdsEventListener {
     boolean restartVds(Guid vdsId);
 
     void addExternallyManagedVms(List<VmStatic> externalVmList);
+
+    void handleVdsMaintenanceTimeout(VDS vds);
 }
