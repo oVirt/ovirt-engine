@@ -37,8 +37,6 @@
     <engine.groupId>org.ovirt.engine</engine.groupId>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--  <jbossHome>${env.JBOSS_HOME}</jbossHome> -->
-    <jbossServer>${jbossHome}/standalone</jbossServer>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <animal.sniffer.signature>java17</animal.sniffer.signature>
@@ -524,12 +522,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
           <version>${gwt.version}</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.7</version>
         </plugin>
 
         <plugin>
