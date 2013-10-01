@@ -7,6 +7,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -75,6 +76,14 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         boolean succeeded = false;
         boolean macAddedToPool = false;
         try {
+            if (isVnicProfileChanged(oldIface, getInterface())) {
+                Network newNetwork = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
+                Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
+                if (ObjectUtils.notEqual(oldNetwork, newNetwork)) {
+                    new ExternalNetworkManager(oldIface).deallocateIfExternal();
+                }
+            }
+
             if (macShouldBeChanged) {
                 macAddedToPool = addMacToPool(getMacAddress());
             }

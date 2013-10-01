@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -63,6 +64,9 @@ public class VmInterfaceManagerTest {
     @Mock
     private VmDAO vmDAO;
 
+    @Mock
+    private ExternalNetworkManager externalNetworkManager;
+
     @Spy
     private VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
 
@@ -70,6 +74,7 @@ public class VmInterfaceManagerTest {
     private Version version;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setupMocks() {
         MockitoAnnotations.initMocks(this);
 
@@ -79,6 +84,7 @@ public class VmInterfaceManagerTest {
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
         doReturn(vmDAO).when(vmInterfaceManager).getVmDAO();
         doNothing().when(vmInterfaceManager).auditLogMacInUseUnplug(any(VmNic.class));
+        doNothing().when(vmInterfaceManager).removeFromExternalNetworks(anyList());
 
         doNothing().when(vmInterfaceManager).log(any(AuditLogableBase.class), any(AuditLogType.class));
     }

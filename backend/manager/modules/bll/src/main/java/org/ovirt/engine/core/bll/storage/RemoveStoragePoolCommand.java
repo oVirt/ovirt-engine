@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -90,11 +92,19 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     private void removeNetworks() {
+        final List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
+        for (Network network : networks) {
+            if (network.isExternal()) {
+                for (VmNic nic : getVmNicDao().getAllForNetwork(network.getId())) {
+                    new ExternalNetworkManager(nic, network).deallocateIfExternal();
+                }
+            }
+        }
+
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
             public Void runInTransaction() {
-                final List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
                 for (final Network net : networks) {
                     List<VnicProfile> profiles = getDbFacade().getVnicProfileDao().getAllForNetwork(net.getId());
                     for (VnicProfile vnicProfile : profiles) {

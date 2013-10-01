@@ -1,25 +1,17 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
-import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -58,23 +50,6 @@ public class VmPoolHandler {
 
         QuotaManager.getInstance().rollbackQuotaByVmId(vmId);
         VmHandler.removeStatelessVmUnmanagedDevices(vmId);
-        handleProviderNetworks(vmId);
-    }
-
-    private static void handleProviderNetworks(Guid vmId) {
-        List<VmNic> interfaces = DbFacade.getInstance().getVmNicDao().getAllForVm(vmId);
-        VmStatic vm = DbFacade.getInstance().getVmStaticDao().get(vmId);
-        Map<String, Network> clusterNetworks =
-                Entities.entitiesByName(DbFacade.getInstance().getNetworkDao().getAllForCluster(vm.getVdsGroupId()));
-
-        for (VmNic iface : interfaces) {
-            Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
-            if (network != null && network.isExternal() && clusterNetworks.containsKey(network.getName())) {
-                NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(
-                        DbFacade.getInstance().getProviderDao().get(network.getProvidedBy().getProviderId()));
-                providerProxy.deallocate(iface);
-            }
-        }
     }
 
     public static void removeVmStatelessImages(Guid vmId, CommandContext context) {

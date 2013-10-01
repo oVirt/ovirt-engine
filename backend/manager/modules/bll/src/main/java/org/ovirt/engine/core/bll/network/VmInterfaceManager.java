@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transaction;
+
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -101,12 +103,23 @@ public class VmInterfaceManager {
     public void removeAll(Guid vmId) {
         List<VmNic> interfaces = getVmNicDao().getAllForVm(vmId);
         if (interfaces != null) {
+            removeFromExternalNetworks(interfaces);
+
             for (VmNic iface : interfaces) {
                 getMacPoolManager().freeMac(iface.getMacAddress());
                 getVmNicDao().remove(iface.getId());
                 getVmNetworkStatisticsDao().remove(iface.getId());
             }
         }
+    }
+
+    protected void removeFromExternalNetworks(List<VmNic> interfaces) {
+        Transaction transaction = TransactionSupport.suspend();
+        for (VmNic iface : interfaces) {
+            new ExternalNetworkManager(iface).deallocateIfExternal();
+        }
+
+        TransactionSupport.resume(transaction);
     }
 
     /**

@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -35,8 +36,9 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
@@ -87,6 +89,10 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         final List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskList(),
                 true,
                 false);
+
+        for (VmNic nic : getInterfaces()) {
+            new ExternalNetworkManager(nic).deallocateIfExternal();
+        }
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override

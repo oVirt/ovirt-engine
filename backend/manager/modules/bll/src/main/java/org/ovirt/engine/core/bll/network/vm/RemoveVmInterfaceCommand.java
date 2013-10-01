@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
@@ -10,7 +12,10 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> extends VmCommand<T> {
 
     private String interfaceName = "";
@@ -26,11 +31,12 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
     @Override
     protected void executeVmCommand() {
         this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getName());
-
-        // return mac to pool
         VmNic iface = getVmNicDao().get(getParameters().getInterfaceId());
 
         if (iface != null) {
+            new ExternalNetworkManager(iface).deallocateIfExternal();
+
+            // return mac to pool
             MacPoolManager.getInstance().freeMac(iface.getMacAddress());
             interfaceName = iface.getName();
 
@@ -42,11 +48,17 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         }
 
         // remove from db
-        getVmNicDao().remove(getParameters().getInterfaceId());
-        getDbFacade().getVmNetworkStatisticsDao().remove(getParameters().getInterfaceId());
-        getDbFacade().getVmDeviceDao().remove(new VmDeviceId(getParameters().getInterfaceId(),
-                getParameters().getVmId()));
-        setSucceeded(true);
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                getVmNicDao().remove(getParameters().getInterfaceId());
+                getDbFacade().getVmNetworkStatisticsDao().remove(getParameters().getInterfaceId());
+                getDbFacade().getVmDeviceDao().remove(new VmDeviceId(getParameters().getInterfaceId(),
+                        getParameters().getVmId()));
+                setSucceeded(true);
+                return null;
+            }
+        });
     }
 
     @Override
