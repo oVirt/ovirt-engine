@@ -107,6 +107,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     public final static int MAX_PCI_SLOTS = 26;
     // 3 IDE slots: 4 total minus 1 for CD
     public final static int MAX_IDE_SLOTS = 3;
+    private List<VmNic> interfaces;
 
     /**
      * This method checks that with the given parameters, the max PCI and IDE limits defined are not passed.
@@ -161,10 +162,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         getVmStaticDAO().remove(getVmId());
     }
 
+    protected List<VmNic> getInterfaces() {
+        if (interfaces == null) {
+            interfaces = getVmNicDao().getAllForVm(getVmId());
+        }
+
+        return interfaces;
+    }
+
     protected void removeVmNetwork() {
-        List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
-        if (interfaces != null) {
-            for (VmNic iface : interfaces) {
+        if (getInterfaces() != null) {
+            for (VmNic iface : getInterfaces()) {
                 MacPoolManager.getInstance().freeMac(iface.getMacAddress());
             }
         }
