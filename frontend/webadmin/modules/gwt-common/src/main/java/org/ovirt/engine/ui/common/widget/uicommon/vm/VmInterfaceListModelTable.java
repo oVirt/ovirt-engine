@@ -22,6 +22,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -193,9 +195,16 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
     }
 
     private void updateInfoPanel() {
-        VmNetworkInterface vmNetworkInterface = (VmNetworkInterface) getModel().getSelectedItem();
+        final VmNetworkInterface vmNetworkInterface = (VmNetworkInterface) getModel().getSelectedItem();
         if (vmNetworkInterface != null && !getTable().getSelectionModel().isSelected(vmNetworkInterface)) {
-            getTable().getSelectionModel().setSelected(vmNetworkInterface, true);
+            // first let list of items get updated, only then select item
+            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                @Override
+                public void execute() {
+                    getTable().getSelectionModel().setSelected(vmNetworkInterface, true);
+                }
+            });
         }
         vmInterfaceInfoPanel.updatePanel(vmNetworkInterface);
     }
