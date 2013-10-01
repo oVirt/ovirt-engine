@@ -58,6 +58,8 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     }
 
     void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
+        networks.enableColumnResizing();
+
         CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.assignAll())) {
             @Override
             protected void selectionChanged(Boolean value) {
@@ -95,12 +97,12 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             }
         };
 
-        networks.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
+        networks.addColumn(new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
                 return ((ClusterNetworkModel) model).getDisplayedName();
             }
-        }, constants.nameNetwork());
+        }, constants.nameNetwork(), "85px"); //$NON-NLS-1$
 
         networks.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
             @Override
@@ -201,7 +203,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 return false;
             }
 
-        }, constants.vmNetwork(), "90px"); //$NON-NLS-1$
+        }, constants.vmNetwork(), "80px"); //$NON-NLS-1$
 
         networks.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
             @Override
@@ -246,7 +248,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                          clusterNetworkModel.getCluster().getcompatibility_version().toString());
                 return migrationNetworkEnabled && clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
             }
-        }, constants.migrationNetwork(), "100px"); //$NON-NLS-1$
+        }, constants.migrationNetwork(), "105px"); //$NON-NLS-1$
     }
 
     @Override
