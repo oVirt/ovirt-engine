@@ -76,6 +76,10 @@ class FileLocations(object):
     OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG = config.ENGINE_WEBSOCKET_PROXY_CONFIG
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG = \
         config.ENGINE_NOTIFIER_SERVICE_CONFIG
+    OVIRT_ENGINE_OSINFO_REPOSITORY_DIR = os.path.join(
+        OVIRT_ENGINE_SYSCONFDIR,
+        'osinfo.conf.d',
+    )
 
     OVIRT_ENGINE_BINDIR = os.path.join(
         OVIRT_ENGINE_DATADIR,
@@ -433,6 +437,11 @@ class FileLocations(object):
     AIO_POST_INSTALL_CONFIG = os.path.join(
         '%s.d' % OVIRT_OVIRT_SETUP_CONFIG_FILE,
         '20-setup-aio.conf'
+    )
+
+    EXTRACTED_PRODUCTKEYS = os.path.join(
+        OVIRT_ENGINE_OSINFO_REPOSITORY_DIR,
+        '10-productkeys.properties',
     )
 
 
