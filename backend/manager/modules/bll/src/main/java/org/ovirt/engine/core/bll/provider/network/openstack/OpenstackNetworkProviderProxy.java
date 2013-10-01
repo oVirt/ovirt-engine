@@ -150,23 +150,26 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 
     @Override
     public Map<String, String> allocate(Network network, VmNic nic) {
-        deallocate(nic);
         try {
-            com.woorea.openstack.quantum.model.Network externalNetwork =
-                    getClient().networks().show(network.getProvidedBy().getExternalId()).execute();
-            PortForCreate port = new PortForCreate();
-            port.setAdminStateUp(true);
-            port.setName(nic.getName());
-            port.setTenantId(externalNetwork.getTenantId());
-            port.setMacAddress(nic.getMacAddress());
-            port.setNetworkId(externalNetwork.getId());
-            port.setDeviceOwner(DEVICE_OWNER);
-            port.setDeviceId(nic.getId().toString());
+            Port port = locatePort(nic);
 
-            Port createdPort = getClient().ports().create(port).execute();
+            if (port == null) {
+                com.woorea.openstack.quantum.model.Network externalNetwork =
+                        getClient().networks().show(network.getProvidedBy().getExternalId()).execute();
+                PortForCreate portForCreate = new PortForCreate();
+                portForCreate.setAdminStateUp(true);
+                portForCreate.setName(nic.getName());
+                portForCreate.setTenantId(externalNetwork.getTenantId());
+                portForCreate.setMacAddress(nic.getMacAddress());
+                portForCreate.setNetworkId(externalNetwork.getId());
+                portForCreate.setDeviceOwner(DEVICE_OWNER);
+                portForCreate.setDeviceId(nic.getId().toString());
+                port = getClient().ports().create(portForCreate).execute();
+            }
+
 
             Map<String, String> runtimeProperties = new HashMap<>();
-            runtimeProperties.put("vnic_id", createdPort.getId());
+            runtimeProperties.put("vnic_id", port.getId());
             runtimeProperties.put("provider_type", provider.getType().name());
             runtimeProperties.put("plugin_type", provider.getAdditionalProperties().getPluginType());
 
@@ -179,15 +182,25 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     @Override
     public void deallocate(VmNic nic) {
         try {
-            List<Port> ports = getClient().ports().list().execute().getList();
-            for (Port port : ports) {
-                if (DEVICE_OWNER.equals(port.getDeviceOwner()) && nic.getId().toString().equals(port.getDeviceId())) {
-                    getClient().ports().delete(port.getId()).execute();
-                }
+            Port port = locatePort(nic);
+
+            if (port != null) {
+                getClient().ports().delete(port.getId()).execute();
             }
         } catch (RuntimeException e) {
             throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
         }
+    }
+
+    private Port locatePort(VmNic nic) {
+        List<Port> ports = getClient().ports().list().execute().getList();
+        for (Port port : ports) {
+            if (DEVICE_OWNER.equals(port.getDeviceOwner()) && nic.getId().toString().equals(port.getDeviceId())) {
+                return port;
+            }
+        }
+
+        return null;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
