@@ -282,6 +282,9 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      */
     public void enableColumnResizing() {
         columnResizingEnabled = true;
+
+        // Column resize implementation needs table-layout:fixed (disable browser-specific table layout algorithm)
+        setWidth("100%", true); //$NON-NLS-1$
     }
 
     @Override
