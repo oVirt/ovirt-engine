@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.uicommonweb.models.gluster;
+package org.ovirt.engine.ui.uicommonweb.models;
 
 public class SizeConverter {
 

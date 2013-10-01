@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.renderer;
 
-import org.ovirt.engine.ui.uicommonweb.models.gluster.SizeConverter;
-import org.ovirt.engine.ui.uicommonweb.models.gluster.SizeConverter.SizeUnit;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 
 import com.google.gwt.text.shared.AbstractRenderer;
