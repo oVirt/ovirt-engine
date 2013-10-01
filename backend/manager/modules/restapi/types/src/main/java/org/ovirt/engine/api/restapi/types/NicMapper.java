@@ -53,8 +53,12 @@ public class NicMapper {
             }
         }
 
-        if (model.isSetVnicProfile() && model.getVnicProfile().isSetId()) {
-            entity.setVnicProfileId(GuidUtils.asGuid(model.getVnicProfile().getId()));
+        if (model.isSetVnicProfile()) {
+            if (model.getVnicProfile().isSetId()) {
+                entity.setVnicProfileId(GuidUtils.asGuid(model.getVnicProfile().getId()));
+            } else {
+                entity.setVnicProfileId(null);
+            }
         }
 
         return entity;

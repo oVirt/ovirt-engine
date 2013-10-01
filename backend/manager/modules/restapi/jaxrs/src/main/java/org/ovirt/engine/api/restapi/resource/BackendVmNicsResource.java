@@ -53,7 +53,11 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     protected class UpdateParametersProvider implements ParametersProvider<NIC, VmNetworkInterface> {
         @Override
         public VdcActionParametersBase getParameters(NIC incoming, VmNetworkInterface entity) {
-            return new AddVmInterfaceParameters(parentId, map(incoming, entity));
+            VmNetworkInterface nic = map(incoming, entity);
+            return new AddVmInterfaceParameters(parentId,
+                    nic,
+                    incoming.isSetNetwork() ? (incoming.getNetwork().isSetName() ? nic.getNetworkName() : "") : null,
+                    incoming.isSetPortMirroring() ? nic.isPortMirroring() : false);
         }
     }
 
@@ -170,7 +174,10 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
 
     @Override
     protected VdcActionParametersBase getAddParameters(VmNetworkInterface entity, NIC nic) {
-        return new AddVmInterfaceParameters(parentId, setNetwork(nic, entity));
+        return new AddVmInterfaceParameters(parentId,
+                setNetwork(nic, entity),
+                nic.isSetNetwork() ? entity.getNetworkName() : null,
+                nic.isSetPortMirroring() ? entity.isPortMirroring() : false);
     }
 
     @Override
@@ -201,7 +208,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
                     ni.setNetworkName(net.getName());
                 }
             } else {
-                ni.setNetworkName(null);
+                ni.setNetworkName("");
             }
         }
         return ni;
