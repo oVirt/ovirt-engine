@@ -6,11 +6,14 @@ import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 public abstract class DiskSizeColumn<T> extends RenderedTextColumn<T, Long> {
 
     public DiskSizeColumn() {
-        super(new DiskSizeRenderer<Long>(SizeConverter.SizeUnit.BYTES));
+        this(SizeConverter.SizeUnit.BYTES);
     }
 
     public DiskSizeColumn(SizeConverter.SizeUnit diskSizeUnit) {
         super(new DiskSizeRenderer<Long>(diskSizeUnit));
     }
 
+    public DiskSizeColumn(SizeConverter.SizeUnit diskSizeUnit, DiskSizeRenderer.Format format) {
+        super(new DiskSizeRenderer<Long>(diskSizeUnit, format));
+    }
 }

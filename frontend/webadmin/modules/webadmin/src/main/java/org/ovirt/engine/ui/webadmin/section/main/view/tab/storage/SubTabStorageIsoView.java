@@ -3,9 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -46,7 +48,8 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
         };
         getTable().addColumn(typeColumn, constants.typeIso(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<RepoImage> sizeColumn = new DiskSizeColumn<RepoImage>() {
+        TextColumnWithTooltip<RepoImage> sizeColumn = new DiskSizeColumn<RepoImage>(SizeConverter.SizeUnit.BYTES,
+                DiskSizeRenderer.Format.HUMAN_READABLE) {
             @Override
             protected Long getRawValue(RepoImage object) {
                 return object.getSize();
