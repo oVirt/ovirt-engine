@@ -55,7 +55,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
             groups = { CreateEntity.class, UpdateEntity.class })
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
-    private String hostname;
+    private String hostName;
 
     @EditableField
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
@@ -182,7 +182,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     public VdsStatic(String host_name, String ip, String uniqueId, int port, int ssh_port, String ssh_username, Guid vds_group_id, Guid vds_id,
             String vds_name, boolean server_SSL_enabled, VDSType vds_type) {
         this();
-        this.hostname = host_name;
+        this.hostName = host_name;
         this.managementIp = ip;
         this.uniqueId = uniqueId;
         this.port = port;
@@ -208,11 +208,11 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     }
 
     public String getHostName() {
-        return this.hostname;
+        return this.hostName;
     }
 
     public void setHostName(String value) {
-        this.hostname = value;
+        this.hostName = value;
     }
 
     public String getComment() {
@@ -527,7 +527,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
+        result = prime * result + ((hostName == null) ? 0 : hostName.hashCode());
         result = prime * result + ((consoleAddress == null) ? 0 : consoleAddress.hashCode());
         result = prime * result + ((managementIp == null) ? 0 : managementIp.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -571,7 +571,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         }
         VdsStatic other = (VdsStatic) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(hostname, other.hostname)
+                && ObjectUtils.objectsEqual(hostName, other.hostName)
                 && ObjectUtils.objectsEqual(consoleAddress, other.consoleAddress)
                 && ObjectUtils.objectsEqual(managementIp, other.managementIp)
                 && ObjectUtils.objectsEqual(name, other.name)
