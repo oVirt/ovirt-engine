@@ -192,14 +192,16 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
-        int numOfRemovedLuns = removeStorageDomainLuns(storageDomain);
-        if (numOfRemovedLuns > 0) {
-            List<StorageServerConnections> list = DbFacade.getInstance()
-                    .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
-            for (StorageServerConnections connection : FilterConnectionsUsedByOthers(list, storageDomain.getStorage())) {
-                DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
-            }
+        List<StorageServerConnections> list = DbFacade.getInstance()
+                .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
+        for (StorageServerConnections connection : FilterConnectionsUsedByOthers(list, storageDomain.getStorage())) {
+            DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
         }
+
+        // There is no need to remove entries from lun_storage_server_connection_map,
+        // as the foreign key from the luns table is defined as ON DELETE CASCADE.
+        removeStorageDomainLuns(storageDomain);
+
         return true;
     }
 
