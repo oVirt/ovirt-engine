@@ -372,8 +372,11 @@ install-layout: \
 	install -d -m 750 "$(DESTDIR)$(PKG_STATE_DIR)/backups"
 
 	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/files"
+	-rm -f "$(DESTDIR)$(DATA_DIR)/files/usbfilter.txt"
 	ln -s "$(PKG_SYSCONF_DIR)/usbfilter.txt" "$(DESTDIR)$(DATA_DIR)/files/usbfilter.txt"
+	-rm -f "$(DESTDIR)$(DATA_DIR)/files/novnc"
 	ln -s "/usr/share/novnc" "$(DESTDIR)$(DATA_DIR)/files/novnc"
+	-rm -f "$(DESTDIR)$(DATA_DIR)/files/spice-html5"
 	ln -s "/usr/share/spice-html5" "$(DESTDIR)$(DATA_DIR)/files/spice-html5"
 
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
