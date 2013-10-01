@@ -843,6 +843,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("500")
     DefaultMaxThreadPoolSize,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    DefaultMaxThreadWaitQueueSize,
+
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")

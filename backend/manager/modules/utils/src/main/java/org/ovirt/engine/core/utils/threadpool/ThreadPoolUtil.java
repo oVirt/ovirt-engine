@@ -3,13 +3,14 @@ package org.ovirt.engine.core.utils.threadpool;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +27,8 @@ public class ThreadPoolUtil {
 
     private static class InternalThreadExecutor extends ThreadPoolExecutor {
 
+        RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+
         /**
          * The pool which will be created with corePoolSize equal to ConfigValues.DefaultMinThreadPoolSize
          * maximumPoolSize equal to DefaultMaxThreadPoolSize
@@ -35,13 +38,33 @@ public class ThreadPoolUtil {
                     Config.<Integer> GetValue(ConfigValues.DefaultMaxThreadPoolSize),
                     60L,
                     TimeUnit.SECONDS,
-                    new SynchronousQueue<Runnable>());
+                    new ArrayBlockingQueue<Runnable>(Config.<Integer> GetValue(ConfigValues.DefaultMaxThreadWaitQueueSize)));
+
+        }
+
+        @Override
+        protected void beforeExecute(Thread t, Runnable r) {
+            super.beforeExecute(t, r);
+            t.setName("org.ovirt.thread." + t.getName());
+            if (log.isDebugEnabled()) {
+                log.debug("About to run task " + r.getClass().getName() + " from ", new Exception());
+            }
+
+            if (getQueue().size() > 0) {
+                log.warn("Executing a command: " + r.getClass().getName() + " , but note that there are "
+                        + getQueue().size() + " tasks in the queue.");
+            }
         }
 
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
             super.afterExecute(r, t);
             ThreadLocalParamsContainer.clean();
+        }
+
+        @Override
+        public RejectedExecutionHandler getRejectedExecutionHandler() {
+            return rejectedExecutionHandler;
         }
     }
 

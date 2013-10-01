@@ -85,6 +85,8 @@ select fn_db_add_config_value('DBEngine','Postgres','general');
 select fn_db_add_config_value('DebugTimerLogging','true','general');
 select fn_db_add_config_value('DefaultMaxThreadPoolSize','500','general');
 select fn_db_add_config_value('DefaultMinThreadPoolSize','50','general');
+select fn_db_add_config_value('DefaultMaxThreadWaitQueueSize','100','general');
+
 select fn_db_add_config_value('DefaultWindowsTimeZone','GMT Standard Time','general');
 select fn_db_add_config_value('DefaultGeneralTimeZone','Etc/GMT','general');
 --Handling Default Workgroup

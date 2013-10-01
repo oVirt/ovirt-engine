@@ -44,8 +44,9 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-                 mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
-                  mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20));
+            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
+            mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
+            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20));
 
     @Mock
     protected GlusterHooksDao hooksDao;
