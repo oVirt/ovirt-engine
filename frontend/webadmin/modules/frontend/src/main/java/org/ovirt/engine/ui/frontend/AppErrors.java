@@ -865,7 +865,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$vmStatus Not Responding")
     String VAR__VM_STATUS__NOT_RESPONDING();
 
-    @DefaultStringValue("$vmStatus Wair for Launch")
+    @DefaultStringValue("$vmStatus Wait for Launch")
     String VAR__VM_STATUS__WAIT_FOR_LAUNCH();
 
     @DefaultStringValue("$vmStatus Reboot in Progress")
