@@ -84,6 +84,8 @@
 %global vdsm_uid 36
 %global vdsm_user vdsm
 
+%global openstack_java_version 3.0.1
+
 # Macro to create an user:
 #
 # %1 user name
@@ -184,14 +186,14 @@ Requires:	apache-commons-jxpath
 Requires:	apache-sshd
 Requires:	jakarta-commons-httpclient
 Requires:	objectweb-asm
-Requires:	openstack-java-client
-Requires:	openstack-java-glance-client
-Requires:	openstack-java-glance-model
-Requires:	openstack-java-keystone-client
-Requires:	openstack-java-keystone-model
-Requires:	openstack-java-quantum-client
-Requires:	openstack-java-quantum-model
-Requires:	openstack-java-resteasy-connector
+Requires:	openstack-java-client >= %{openstack_java_version}
+Requires:	openstack-java-glance-client >= %{openstack_java_version}
+Requires:	openstack-java-glance-model >= %{openstack_java_version}
+Requires:	openstack-java-keystone-client >= %{openstack_java_version}
+Requires:	openstack-java-keystone-model >= %{openstack_java_version}
+Requires:	openstack-java-quantum-client >= %{openstack_java_version}
+Requires:	openstack-java-quantum-model >= %{openstack_java_version}
+Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 Requires:	postgresql-jdbc
 Requires:	quartz
 Requires:	spring-ldap
