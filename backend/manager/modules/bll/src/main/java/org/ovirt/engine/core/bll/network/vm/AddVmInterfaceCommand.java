@@ -136,10 +136,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        if (StringUtils.isNotEmpty(getMacAddress())) {
-            if (!validate(macAddressValid()) || !validate(macAvailable())) {
-                return false;
-            }
+        if (StringUtils.isNotEmpty(getMacAddress()) && !validate(macAvailable())) {
+            return false;
         } else if (MacPoolManager.getInstance().getAvailableMacsCount() <= 0) {
             addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;

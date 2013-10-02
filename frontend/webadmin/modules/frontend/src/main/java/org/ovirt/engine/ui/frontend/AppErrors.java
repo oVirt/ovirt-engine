@@ -1336,9 +1336,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("MAC Address is already in use.")
     String NETWORK_MAC_ADDRESS_IN_USE();
 
-    @DefaultStringValue("The specified MAC Address cannot be set.\n-Please check MAC Address validity.")
-    String NETWORK_INVALID_MAC_ADDRESS();
-
     @DefaultStringValue("Cannot ${action} ${type}. There is at least one running VM that uses this Network.")
     String NETWORK_INTERFACE_IN_USE_BY_VM();
 

@@ -23,7 +23,7 @@ public class VmNetworkInterfaceValidationTest {
 
     private static final String VALID_NIC_NAME = "nic";
 
-    private static final String VALID_MAC_ADDRESS = "01:23:45:67:89:ab";
+    private static final String VALID_MAC_ADDRESS = "00:23:45:67:89:ab";
 
     private static final Random random = new Random();
 

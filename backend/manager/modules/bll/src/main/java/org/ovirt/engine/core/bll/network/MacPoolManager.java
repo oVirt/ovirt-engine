@@ -24,6 +24,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MacPoolManager {
 
+    private static final String MAC_ADDRESS_MULTICAST_LSB = "13579bBdDfF";
     private static final int HEX_RADIX = 16;
     private static final String INIT_ERROR_MSG = "{0}: Error in initializing MAC Addresses pool manager.";
     private static final MacPoolManager INSTANCE = new MacPoolManager();
@@ -150,13 +151,12 @@ public class MacPoolManager {
             } else if (value.length() < 12) {
                 value = StringUtils.leftPad(value, 12, '0');
             }
-            StringBuilder builder = new StringBuilder();
-            for (int j = 0; j < value.length(); j += 2) {
-                builder.append(value.substring(j, j + 2));
-                builder.append(":");
+
+            value = createMacAddress(value);
+            if (value == null) {
+                break;
             }
-            value = builder.toString();
-            value = value.substring(0, value.length() - 1);
+
             if (!availableMacs.contains(value)) {
                 availableMacs.add(value);
             }
@@ -165,6 +165,26 @@ public class MacPoolManager {
             }
         }
         return true;
+    }
+
+    private String createMacAddress(String value) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int j = 0; j < value.length(); j += 2) {
+            String group = value.substring(j, j + 2);
+
+            // skip multi-cast MAC Addresses
+            if (j == 0 && StringUtils.contains(MAC_ADDRESS_MULTICAST_LSB, group.charAt(1))) {
+                return null;
+            }
+
+            builder.append(group);
+            if (j + 2 < value.length()) {
+                builder.append(":");
+            }
+        }
+
+        return builder.toString();
     }
 
     public String allocateNewMac() {

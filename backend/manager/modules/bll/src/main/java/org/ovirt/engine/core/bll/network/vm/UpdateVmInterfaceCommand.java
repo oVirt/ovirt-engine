@@ -211,7 +211,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         macShouldBeChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
-        if (macShouldBeChanged && (!validate(macAddressValid()) || !validate(macAvailable()))) {
+        if (macShouldBeChanged && !validate(macAvailable())) {
             return false;
         }
 

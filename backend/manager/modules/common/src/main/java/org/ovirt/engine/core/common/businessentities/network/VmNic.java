@@ -14,7 +14,8 @@ import org.ovirt.engine.core.compat.Guid;
  * <code>VmNic</code> defines a type of {@link NetworkInterface} for instances of {@link VM}.
  */
 public class VmNic extends NetworkInterface<VmNetworkStatistics> {
-    public static final String VALID_MAC_ADDRESS_FORMAT = "(\\p{XDigit}{2}:){5}\\p{XDigit}{2}";
+    public static final String UNICAST_MAC_ADDRESS_FORMAT = "\\p{XDigit}[02468aAcCeE](:\\p{XDigit}{2}){5}";
+    public static final String NON_NULLABLE_MAC_ADDRESS_FORMAT = "^.*(?<!(00:){5}00)$";
 
     private static final long serialVersionUID = 7428150502868988886L;
 
@@ -73,12 +74,15 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
 
     @NotNull(message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL, groups = { UpdateVmNic.class })
     @Pattern.List({
-            @Pattern(regexp = "(^$)|(" + VALID_MAC_ADDRESS_FORMAT + ")",
-                    message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
+            @Pattern(regexp = "(^$)|(" + UNICAST_MAC_ADDRESS_FORMAT + ")",
+                    message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
                     groups = { CreateEntity.class }),
-            @Pattern(regexp = VALID_MAC_ADDRESS_FORMAT,
-                    message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
-                    groups = { UpdateEntity.class })
+            @Pattern(regexp = UNICAST_MAC_ADDRESS_FORMAT,
+                    message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
+                    groups = { UpdateEntity.class }),
+            @Pattern(regexp = NON_NULLABLE_MAC_ADDRESS_FORMAT,
+                    message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
+                    groups = { CreateEntity.class, UpdateEntity.class })
     })
     @Override
     public String getMacAddress() {
