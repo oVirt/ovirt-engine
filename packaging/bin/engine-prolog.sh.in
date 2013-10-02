@@ -24,6 +24,8 @@ load_config() {
 		[ -r "${f}" ] && . "${f}"
 	done
 
+	export JAVA_HOME="$("${ENGINE_USR}/bin/java-home")" || die "Cannot set JAVA_HOME"
+
 	# we use jboss specific loader (jboss-modules.jar)
 	# setup module path
 	export JAVA_MODULEPATH="${ENGINE_USR}/modules:${JBOSS_HOME}/modules"

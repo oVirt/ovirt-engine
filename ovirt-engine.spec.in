@@ -719,6 +719,7 @@ fi
 %endif
 
 %files lib
+%{engine_data}/bin/java-home
 %{python_sitelib}/ovirt_engine/
 
 %files backend

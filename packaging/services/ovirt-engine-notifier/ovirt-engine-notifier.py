@@ -26,6 +26,7 @@ import config
 
 from ovirt_engine import configfile
 from ovirt_engine import service
+from ovirt_engine import java
 
 
 class Daemon(service.Daemon):
@@ -43,19 +44,7 @@ class Daemon(service.Daemon):
         self,
         pidfile,
         jbossModulesJar,
-        java,
     ):
-        # Check that the Java home directory exists and that it contais at
-        # least the java executable:
-        self.check(
-            name=self._config.get('JAVA_HOME'),
-            directory=True,
-        )
-        self.check(
-            name=java,
-            executable=True,
-        )
-
         # Check the required JBoss directories and files:
         self.check(
             name=self._config.get('JBOSS_HOME'),
@@ -122,23 +111,24 @@ class Daemon(service.Daemon):
             ),
         )
 
+        #
+        # the earliest so we can abort early.
+        #
+        self._executable = os.path.join(
+            java.Java().getJavaHome(),
+            'bin',
+            'java',
+        )
+
         jbossModulesJar = os.path.join(
             self._config.get('JBOSS_HOME'),
             'jboss-modules.jar',
-        )
-        java = os.path.join(
-            self._config.get('JAVA_HOME'),
-            'bin',
-            'java',
         )
 
         self._checkInstallation(
             pidfile=self.pidfile,
             jbossModulesJar=jbossModulesJar,
-            java=java,
         )
-
-        self._executable = java
 
         self._engineArgs = [
             'ovirt-engine-notifier',

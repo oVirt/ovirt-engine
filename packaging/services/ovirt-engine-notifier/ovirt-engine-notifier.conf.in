@@ -4,11 +4,6 @@
 #
 
 #
-# The location of the Java virtual machine used by the engine:
-#
-JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
-
-#
 # The location of the application server used by the engine:
 #
 JBOSS_HOME="@JBOSS_HOME@"
