@@ -39,6 +39,8 @@ public class OsRepositoryImplTest {
         preferences.node("/os/bados/derivedFrom").put("value", "nonExistingOs");
         preferences.node("/os/rhel8/id").put("value", "888");
         preferences.node("/os/rhel8/derivedFrom").put("value", "rhel7");
+        preferences.node("/os/windows_8/id").put("value", "20");
+        preferences.node("/backwardCompatibility").put("Windows8", "20");
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 
@@ -160,5 +162,11 @@ public class OsRepositoryImplTest {
     @Test
     public void testdefaultVersionedValue() {
         assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v3_2));
+    }
+
+    @Test
+    public void testBackwardCompatibility() {
+        assertEquals(20, OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("Windows8"));
+        assertEquals(20, OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_8"));
     }
 }
