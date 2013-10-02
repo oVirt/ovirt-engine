@@ -41,8 +41,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bindFrontendInfrastructure();
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
         bind(RootPresenter.class).asEagerSingleton();
-        bind(PlaceManager.class).to(placeManager);
-        bind(placeManager).in(Singleton.class);
+        bindTypeAndImplAsSingleton(PlaceManager.class, placeManager);
         bind(CurrentUser.class).in(Singleton.class);
         bind(LoggedInGatekeeper.class).in(Singleton.class);
         bind(ErrorPopupManager.class).to(ErrorPopupManagerImpl.class).in(Singleton.class);
@@ -75,13 +74,21 @@ public abstract class BaseSystemModule extends AbstractGinModule {
             Class<? extends CommonApplicationResources> resources,
             Class<? extends CommonApplicationTemplates> templates,
             Class<? extends DynamicMessages> dynamicMessages) {
-        bind(CommonApplicationConstants.class).to(constants).in(Singleton.class);
-        bind(CommonApplicationMessages.class).to(messages).in(Singleton.class);
-        bind(CommonApplicationResources.class).to(resources).in(Singleton.class);
-        bind(CommonApplicationTemplates.class).to(templates).in(Singleton.class);
-        bind(DynamicMessages.class).to(dynamicMessages).in(Singleton.class);
+        bindTypeAndImplAsSingleton(CommonApplicationConstants.class, constants);
+        bindTypeAndImplAsSingleton(CommonApplicationMessages.class, messages);
+        bindTypeAndImplAsSingleton(CommonApplicationResources.class, resources);
+        bindTypeAndImplAsSingleton(CommonApplicationTemplates.class, templates);
+        bindTypeAndImplAsSingleton(DynamicMessages.class, dynamicMessages);
         bind(AppErrors.class).in(Singleton.class);
         bind(VdsmErrors.class).in(Singleton.class);
+    }
+
+    /**
+     * Binds {@code type} to its {@code impl} so that injecting any of these yields the singleton {@code impl} instance.
+     */
+    private <T> void bindTypeAndImplAsSingleton(Class<T> type, Class<? extends T> impl) {
+        bind(type).to(impl);
+        bind(impl).in(Singleton.class);
     }
 
 }

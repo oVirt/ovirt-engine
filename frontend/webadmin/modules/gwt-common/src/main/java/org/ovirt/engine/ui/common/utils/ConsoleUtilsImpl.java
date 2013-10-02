@@ -20,9 +20,9 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     private static final String SECURE_ATTENTION_MAPPING = "ctrl+alt+end";// $NON-NLS-1$
 
     @Inject
-    public ConsoleUtilsImpl(Configurator configurator) {
+    public ConsoleUtilsImpl(Configurator configurator, ClientAgentType clientAgentType) {
         this.configurator = configurator;
-        this.clientAgentType = new ClientAgentType();
+        this.clientAgentType = clientAgentType;
     }
 
     private float extractNtVersion(String userAgentType) {

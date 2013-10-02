@@ -30,11 +30,12 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         new EventDefinition("documentationFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
     public Event documentationFileFetchedEvent = new Event(documentationFileFetchedEvent_Definition);
 
-    private static final ClientAgentType clientAgentType = new ClientAgentType();
+    private final ClientAgentType clientAgentType;
 
     @Inject
-    public WebAdminConfigurator(EventBus eventBus) {
+    public WebAdminConfigurator(EventBus eventBus, ClientAgentType clientAgentType) {
         super();
+        this.clientAgentType = clientAgentType;
         eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
         // This means that this is WebAdmin application.

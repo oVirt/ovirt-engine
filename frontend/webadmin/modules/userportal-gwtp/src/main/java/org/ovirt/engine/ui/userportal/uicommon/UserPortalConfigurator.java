@@ -41,13 +41,14 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     public Event usbFilterFileFetchedEvent = new Event(usbFilterFileFetchedEvent_Definition);
 
     private final UserPortalPlaceManager placeManager;
-
-    private static final ClientAgentType clientAgentType = new ClientAgentType();
+    private final ClientAgentType clientAgentType;
 
     @Inject
-    public UserPortalConfigurator(UserPortalPlaceManager placeManager, EventBus eventBus) {
+    public UserPortalConfigurator(UserPortalPlaceManager placeManager,
+            EventBus eventBus, ClientAgentType clientAgentType) {
         super();
         this.placeManager = placeManager;
+        this.clientAgentType = clientAgentType;
         eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
         // This means that it is UserPortal application.
