@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -29,9 +32,14 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
     private SuggestBox suggestBox;
 
-    private ListModelSuggestionDisplay suggestionDisplay = new ListModelSuggestionDisplay();
+    private ListModelSuggestionDisplay suggestionDisplay;
 
     public BaseListModelSuggestBox(MultiWordSuggestOracle suggestOracle) {
+        this(suggestOracle, 120);
+    }
+
+    public BaseListModelSuggestBox(MultiWordSuggestOracle suggestOracle, int maxSuggestionPanelHeightInPx) {
+        suggestionDisplay = new ListModelSuggestionDisplay(maxSuggestionPanelHeightInPx);
         suggestBox = new SuggestBox(suggestOracle, new TextBox(), suggestionDisplay);
 
         suggestBox.removeStyleName("gwt-SuggestBox"); //$NON-NLS-1$
@@ -174,9 +182,14 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
         private Widget suggestionMenu;
 
-        public ListModelSuggestionDisplay() {
+        public ListModelSuggestionDisplay(int maxSuggestionPanelHeightInPx) {
             // not be hidden under the panel
             getPopupPanel().getElement().getStyle().setZIndex(1);
+
+            Style suggestPopupContentStyle = getPopupPanel().getWidget().getElement().getParentElement().getStyle();
+            suggestPopupContentStyle.setHeight(100, Unit.PCT);
+            suggestPopupContentStyle.setPropertyPx("maxHeight", maxSuggestionPanelHeightInPx); //$NON-NLS-1$
+            suggestPopupContentStyle.setOverflowX(Overflow.HIDDEN);
         }
 
         // just to make it public
