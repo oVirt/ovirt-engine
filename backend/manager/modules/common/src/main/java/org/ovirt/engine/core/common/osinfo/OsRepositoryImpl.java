@@ -19,6 +19,7 @@ public enum OsRepositoryImpl implements OsRepository {
     INSTANCE;
 
     private static final String OS_ROOT_NODE = "/os/";
+    private static final String BACKWARD_COMPATIBILITY_ROOT_NODE = "/backwardCompatibility";
     /**
      * the configuration tree holding all the os data.
      */
@@ -29,18 +30,20 @@ public enum OsRepositoryImpl implements OsRepository {
      * db is 8 and the unique name is "rhel6"
      */
     private Map<Integer, String> idToUnameLookup;
+    private Map<String, Integer> backwardCompatibleNamesToIds;
 
     public void init(MapBackedPreferences preferences) {
         INSTANCE.preferences = preferences;
         emptyNode = preferences.node("emptyNode");
         buildIdToUnameLookup();
+        buildBackCompatMapping();
     }
 
     private void buildIdToUnameLookup() {
         try {
             String[] uniqueNames = preferences.node("/os").childrenNames();
             idToUnameLookup = new HashMap<Integer, String>(uniqueNames.length);
-            for (String uniqueName : Arrays.asList(uniqueNames)) {
+            for (String uniqueName : uniqueNames) {
                 Preferences idNode = getKeyNode(uniqueName, "id", null);
                 if (idNode != null) {
                     idToUnameLookup.put(idNode.getInt("value", 0), uniqueName);
@@ -48,6 +51,18 @@ public enum OsRepositoryImpl implements OsRepository {
             }
         } catch (BackingStoreException e) {
             throw new RuntimeException("Failed to initialize Os Repository due to " + e);
+        }
+    }
+
+    private void buildBackCompatMapping() {
+        try {
+            String[] entries = preferences.node(BACKWARD_COMPATIBILITY_ROOT_NODE).keys();
+            backwardCompatibleNamesToIds = new HashMap<String, Integer>(entries.length);
+            for (String oldOsName : entries) {
+                backwardCompatibleNamesToIds.put(oldOsName, preferences.node(BACKWARD_COMPATIBILITY_ROOT_NODE).getInt(oldOsName, 0));
+            }
+        } catch (BackingStoreException e) {
+            throw new RuntimeException("Failed to initialize Os Repository Backward Compatibility mappings due to " + e);
         }
     }
 
@@ -190,6 +205,11 @@ public enum OsRepositoryImpl implements OsRepository {
                 return entry.getKey();
             }
         }
+
+        if (getBackwardCompatibleNamesToIds().containsKey(uniqueOsName)) {
+            return getBackwardCompatibleNamesToIds().get(uniqueOsName);
+        }
+
         return 0;
     }
 
@@ -302,5 +322,9 @@ public enum OsRepositoryImpl implements OsRepository {
     @Override
     public boolean isSingleQxlDeviceEnabled(int osId) {
         return isLinux(osId);
+    }
+
+    public Map<String, Integer> getBackwardCompatibleNamesToIds() {
+        return backwardCompatibleNamesToIds;
     }
 }
