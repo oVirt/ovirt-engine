@@ -41,6 +41,16 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment[
+            otopicons.BaseEnv.SUPPRESS_ENVIRONMENT_KEYS
+        ].append(
+            osetupcons.ConfigEnv.ADMIN_PASSWORD
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
