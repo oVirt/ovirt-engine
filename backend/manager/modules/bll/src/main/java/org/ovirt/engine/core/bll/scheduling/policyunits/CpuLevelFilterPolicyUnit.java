@@ -24,19 +24,21 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
             List<VDS> hostsToRunOn = new ArrayList<VDS>();
             for (VDS host : hosts) {
                 String hostCpuName = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(host.getCpuFlags(), host.getVdsGroupCompatibilityVersion()).getCpuName();
-                int compareResult = CpuFlagsManagerHandler.compareCpuLevels(vm.getCpuName(), hostCpuName, vm.getVdsGroupCompatibilityVersion());
-                if (compareResult <= 0) {
-                    hostsToRunOn.add(host);
-                    log.debugFormat("Host {0} wasn't filtered out as it has a CPU level ({1}) which is higher or equal than the CPU level the VM was run with ({2})",
-                            host.getName(),
-                            hostCpuName,
-                            vm.getCpuName());
-                } else {
-                    log.debugFormat("Host {0} was filtered out as it has a CPU level ({1}) which is lower than the CPU level the VM was run with ({2})",
-                            host.getName(),
-                            hostCpuName,
-                            vm.getCpuName());
-                    filteredOutHosts = true;
+                if (StringUtils.isNotEmpty(hostCpuName)) {
+                    int compareResult = CpuFlagsManagerHandler.compareCpuLevels(vm.getCpuName(), hostCpuName, vm.getVdsGroupCompatibilityVersion());
+                    if (compareResult <= 0) {
+                        hostsToRunOn.add(host);
+                        log.debugFormat("Host {0} wasn't filtered out as it has a CPU level ({1}) which is higher or equal than the CPU level the VM was run with ({2})",
+                                host.getName(),
+                                hostCpuName,
+                                vm.getCpuName());
+                    } else {
+                        log.debugFormat("Host {0} was filtered out as it has a CPU level ({1}) which is lower than the CPU level the VM was run with ({2})",
+                                host.getName(),
+                                hostCpuName,
+                                vm.getCpuName());
+                        filteredOutHosts = true;
+                    }
                 }
             }
 
