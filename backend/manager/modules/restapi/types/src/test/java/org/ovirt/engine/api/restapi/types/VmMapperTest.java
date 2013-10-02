@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import junit.framework.Assert;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
@@ -34,6 +35,11 @@ public class VmMapperTest extends
 
     public VmMapperTest() {
         super(VM.class, VmStatic.class, org.ovirt.engine.core.common.businessentities.VM.class);
+    }
+
+    @BeforeClass
+    public static void beforeClass() {
+        OsTypeMockUtils.mockOsTypes();
     }
 
     @Override
@@ -158,7 +164,6 @@ public class VmMapperTest extends
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmIp("2.2.2.2");
         vm.setDynamicData(vmDynamic);
-        OsTypeMockUtils.mockOsTypes();
         VM map = VmMapper.map(vm, null);
         assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
         assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
@@ -171,7 +176,6 @@ public class VmMapperTest extends
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmFQDN("localhost.localdomain");
         vm.setDynamicData(vmDynamic);
-        OsTypeMockUtils.mockOsTypes();
         VM map = VmMapper.map(vm, null);
         assertNotNull(map.getGuestInfo().getFqdn());
         assertEquals(map.getGuestInfo().getFqdn(), "localhost.localdomain");
@@ -183,7 +187,6 @@ public class VmMapperTest extends
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmIp("2.2.2.2 2.2.2.3 2.2.2.4");
         vm.setDynamicData(vmDynamic);
-        OsTypeMockUtils.mockOsTypes();
         VM map = VmMapper.map(vm, null);
         assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
         assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
@@ -231,7 +234,6 @@ public class VmMapperTest extends
         entity.setStatus(VMStatus.Up);
         Guid guid = Guid.newGuid();
         entity.setRunOnVds(guid);
-        OsTypeMockUtils.mockOsTypes();
         VM model = VmMapper.map(entity, null);
         assertEquals(guid.toString(), model.getHost().getId());
     }
