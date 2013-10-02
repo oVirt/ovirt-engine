@@ -234,6 +234,19 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    private RpmVersion glusterVersion;
+
+    public RpmVersion getGlusterVersion() {
+        return glusterVersion;
+    }
+
+    public void setGlusterVersion(RpmVersion value) {
+        if (Version.OpInequality(glusterVersion, value)) {
+            glusterVersion = value;
+            onPropertyChanged(new PropertyChangedEventArgs("glusterVersion")); //$NON-NLS-1$
+        }
+    }
+
     private String iScsiInitiatorName;
 
     public String getIScsiInitiatorName()
@@ -1042,6 +1055,7 @@ public class HostGeneralModel extends EntityModel
         setLibvirtVersion(vds.getLibvirtVersion());
         setVdsmVersion(vds.getVersion());
         setSpiceVersion(vds.getSpiceVersion());
+        setGlusterVersion(vds.getGlusterVersion());
         setIScsiInitiatorName(vds.getIScsiInitiatorName());
 
         setSpmPriorityValue(vds.getVdsSpmPriority());

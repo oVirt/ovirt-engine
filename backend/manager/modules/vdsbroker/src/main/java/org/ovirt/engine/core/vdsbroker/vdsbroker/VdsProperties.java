@@ -128,6 +128,7 @@ public final class VdsProperties {
     public static final String qemuKvmPackageName = "qemu-kvm";
     public static final String vdsmPackageName = "vdsm";
     public static final String spiceServerPackageName = "spice-server";
+    public static final String GLUSTER_PACKAGE_NAME = "glusterfs";
 
     public static final String mem_available = "memAvailable";
     public static final String memFree = "memFree";

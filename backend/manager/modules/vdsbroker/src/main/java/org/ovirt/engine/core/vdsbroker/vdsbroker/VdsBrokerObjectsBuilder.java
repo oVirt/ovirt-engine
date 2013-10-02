@@ -442,6 +442,10 @@ public class VdsBrokerObjectsBuilder {
                 Map<String, Object> kernel = (Map<String, Object>) packages.get(VdsProperties.kernelPackageName);
                 vds.setKernelVersion(getPackageVersionFormated2(kernel));
             }
+            if (packages.containsKey(VdsProperties.GLUSTER_PACKAGE_NAME)) {
+                Map<String, Object> gluster = (Map<String, Object>) packages.get(VdsProperties.GLUSTER_PACKAGE_NAME);
+                vds.setGlusterVersion(getPackageRpmVersion("glusterfs", gluster));
+            }
         }
     }
 

@@ -54,6 +54,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     VersionLabel libvirtVersion = new VersionLabel();
     TextBoxLabel spiceVersion = new TextBoxLabel();
     TextBoxLabel kernelVersion = new TextBoxLabel();
+    VersionLabel glusterVersion = new VersionLabel();
     @Path("IScsiInitiatorName")
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
     TextBoxLabel cpuName = new TextBoxLabel();
@@ -130,6 +131,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         driver.initialize(this);
 
         boolean virtSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
+        boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 7);
@@ -140,7 +142,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.libvirtVersionHostGeneral(), libvirtVersion, 3, 0, virtSupported));
         formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 5, 0, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 6, 0, virtSupported));
+        formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 6, 0, glusterSupported));
 
         formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported));
         formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, 1, virtSupported));
@@ -156,6 +158,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 3, 2, virtSupported));
         formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 4, 2));
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 5, 2));
+        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 6, 2, virtSupported));
     }
 
     void initMemorySizeLabels() {

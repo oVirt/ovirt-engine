@@ -172,6 +172,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setKernelVersion(getKernelVersion());
         vds.setKvmVersion(getKvmVersion());
         vds.setLibvirtVersion(getLibvirtVersion());
+        vds.setGlusterVersion(getGlusterVersion());
         vds.setHooksStr(getHooksStr());
         vds.setActiveNic(getActiveNic());
 
@@ -1048,6 +1049,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setSpiceVersion(String value) {
         this.mVdsDynamic.setspice_version(value);
+    }
+
+    public RpmVersion getGlusterVersion() {
+        return this.mVdsDynamic.getGlusterVersion();
+    }
+
+    public void setGlusterVersion(RpmVersion value) {
+        this.mVdsDynamic.setGlusterVersion(value);
     }
 
     public String getKernelVersion() {

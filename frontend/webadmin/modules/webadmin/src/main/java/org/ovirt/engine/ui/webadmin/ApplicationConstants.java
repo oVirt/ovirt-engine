@@ -1325,6 +1325,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("SPICE Version")
     String spiceVersionHostGeneral();
 
+    @DefaultStringValue("GlusterFS Version")
+    String glusterVersionHostGeneral();
+
     @DefaultStringValue("iSCSI Initiator Name")
     String isciInitNameHostGeneral();
 

@@ -71,6 +71,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
             entity.setkvm_version(rs.getString("kvm_version"));
             entity.setlibvirt_version(new RpmVersion(rs.getString("libvirt_version")));
             entity.setspice_version(rs.getString("spice_version"));
+            entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
             entity.setkernel_version(rs.getString("kernel_version"));
             entity.setIScsiInitiatorName(rs
                     .getString("iscsi_initiator_name"));
@@ -137,6 +138,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("kvm_version", vds.getkvm_version())
                 .addValue("libvirt_version", vds.getlibvirt_version().getRpmName())
                 .addValue("spice_version", vds.getspice_version())
+                .addValue("gluster_version", vds.getGlusterVersion().getRpmName())
                 .addValue("kernel_version", vds.getkernel_version())
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
                 .addValue("transparent_hugepages_state",
@@ -195,6 +197,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("kvm_version", vds.getkvm_version())
                 .addValue("libvirt_version", vds.getlibvirt_version().getRpmName())
                 .addValue("spice_version", vds.getspice_version())
+                .addValue("gluster_version", vds.getGlusterVersion().getRpmName())
                 .addValue("kernel_version", vds.getkernel_version())
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
                 .addValue("transparent_hugepages_state",

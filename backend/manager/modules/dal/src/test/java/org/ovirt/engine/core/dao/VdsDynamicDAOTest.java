@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RpmVersion;
 
 public class VdsDynamicDAOTest extends BaseDAOTestCase {
     private VdsDynamicDAO dao;
@@ -105,6 +106,16 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         dao.updateNetConfigDirty(before.getId(), netConfigDirty);
         VdsDynamic after = dao.get(existingVds.getId());
         assertEquals(before, after);
+    }
+
+    @Test
+    public void testGlusterVersion() {
+        RpmVersion glusterVersion = new RpmVersion("glusterfs-3.4.0.34.1u2rhs-1.el6rhs");
+        VdsDynamic before = dao.get(existingVds.getId());
+        before.setGlusterVersion(glusterVersion);
+        dao.update(before);
+        VdsDynamic after = dao.get(existingVds.getId());
+        assertEquals(glusterVersion, after.getGlusterVersion());
     }
 
     @Test

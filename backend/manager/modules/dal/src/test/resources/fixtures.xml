@@ -2180,6 +2180,7 @@
         <column>libvirt_version</column>
         <column>spice_version</column>
         <column>kernel_version</column>
+        <column>gluster_version</column>
         <column>iscsi_initiator_name</column>
         <column>transparent_hugepages_state</column>
         <column>anonymous_hugepages</column>
@@ -2227,6 +2228,7 @@
             <null />
             <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
+            <value>glusterfs-3.4.0.34.1u2rhs-1.el6rhs</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
             <value>0</value>
@@ -2275,6 +2277,7 @@
             <null />
             <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
+            <value>glusterfs-3.4.0.34.1u2rhs-1.el6rhs</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
             <value>0</value>
@@ -2323,6 +2326,7 @@
             <null />
             <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
+            <value>glusterfs-3.4.0.34.1u2rhs-1.el6rhs</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
             <value>0</value>
@@ -2371,6 +2375,7 @@
             <null />
             <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
+            <value>glusterfs-3.4.0.34.1u2rhs-1.el6rhs</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
             <value>0</value>
@@ -2419,6 +2424,7 @@
             <null />
             <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
+            <value>glusterfs-3.4.0.34.1u2rhs-1.el6rhs</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
             <value>0</value>

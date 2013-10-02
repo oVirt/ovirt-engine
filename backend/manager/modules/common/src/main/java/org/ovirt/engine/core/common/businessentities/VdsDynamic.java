@@ -79,6 +79,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String spice_version;
 
+    private RpmVersion glusterVersion;
+
     private String kernel_version;
 
     private String iScsiInitiatorName;
@@ -152,6 +154,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirt_version = new RpmVersion();
+        glusterVersion = new RpmVersion();
         status = VDSStatus.Unassigned;
         previous_status = VDSStatus.Unassigned;
         nonOperationalReason = NonOperationalReason.NONE;
@@ -514,6 +517,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.kernel_version = value;
     }
 
+    public RpmVersion getGlusterVersion() {
+        return this.glusterVersion;
+    }
+
+    public void setGlusterVersion(RpmVersion value) {
+        this.glusterVersion = value;
+    }
+
     public String getbuild_name() {
         return this.buildName;
     }
@@ -598,6 +609,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((reserved_mem == null) ? 0 : reserved_mem.hashCode());
         result = prime * result + ((softwareVersion == null) ? 0 : softwareVersion.hashCode());
         result = prime * result + ((spice_version == null) ? 0 : spice_version.hashCode());
+        result = prime * result + ((glusterVersion == null) ? 0 : glusterVersion.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((supported_cluster_levels == null) ? 0 : supported_cluster_levels.hashCode());
         result = prime * result + ((supported_engines == null) ? 0 : supported_engines.hashCode());
@@ -661,6 +673,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(reserved_mem, other.reserved_mem)
                 && ObjectUtils.objectsEqual(getsoftware_version(), other.getsoftware_version())
                 && ObjectUtils.objectsEqual(spice_version, other.spice_version)
+                && ObjectUtils.objectsEqual(glusterVersion, other.glusterVersion)
                 && status == other.status
                 && ObjectUtils.objectsEqual(supported_cluster_levels, other.supported_cluster_levels)
                 && ObjectUtils.objectsEqual(supported_engines, other.supported_engines)
