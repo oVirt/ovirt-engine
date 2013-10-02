@@ -3,7 +3,6 @@ package org.ovirt.engine.core.config.entity.helper;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
 /**
@@ -16,7 +15,8 @@ import org.ovirt.engine.core.config.entity.ConfigKey;
  */
 public class MacAddressPoolRangesValueHelper extends StringValueHelper {
 
-    private static Pattern MAC_ADDRESS_PATTERN = Pattern.compile(VmNic.VALID_MAC_ADDRESS_FORMAT);
+    private static final String VALID_MAC_ADDRESS_FORMAT = "(\\p{XDigit}{2}:){5}\\p{XDigit}{2}";
+    private static final Pattern MAC_ADDRESS_PATTERN = Pattern.compile(VALID_MAC_ADDRESS_FORMAT);
 
     @Override
     public ValidationResult validate(ConfigKey key, String value) {

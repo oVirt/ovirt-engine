@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
@@ -74,12 +72,6 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
         return MacPoolManager.getInstance().isMacInUse(getMacAddress()) && !allowDupMacs
                 ? new ValidationResult(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE)
-                : ValidationResult.VALID;
-    }
-
-    protected ValidationResult macAddressValid() {
-        return Pattern.matches(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS, getMacAddress())
-                ? new ValidationResult(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS)
                 : ValidationResult.VALID;
     }
 

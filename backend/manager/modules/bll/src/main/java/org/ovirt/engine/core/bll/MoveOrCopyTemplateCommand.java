@@ -52,7 +52,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     private List<DiskImage> _templateDisks;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
-    private final static Pattern VALIDATE_MAC_ADDRESS = Pattern.compile(VmNic.VALID_MAC_ADDRESS_FORMAT);
+    private final static Pattern VALIDATE_MAC_ADDRESS = Pattern.compile(VmNic.UNICAST_MAC_ADDRESS_FORMAT);
 
     /**
      * Constructor for command creation when compensation is applied on startup
