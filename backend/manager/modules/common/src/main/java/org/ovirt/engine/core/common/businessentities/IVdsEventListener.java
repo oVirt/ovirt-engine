@@ -44,7 +44,7 @@ public interface IVdsEventListener {
 
     // void VdsNetworkConfigurationChanged(VDS vds);
 
-    void storagePoolUpEvent(StoragePool storagePool, boolean isNewSpm);
+    void storagePoolUpEvent(StoragePool storagePool);
 
 
     void storagePoolStatusChange(Guid storagePoolId, StoragePoolStatus status, AuditLogType auditLogType,

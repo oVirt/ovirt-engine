@@ -558,7 +558,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         if (DbFacade.getInstance().isStoragePoolMasterUp(_storagePoolId)) {
                             ResourceManager.getInstance()
                                     .getEventListener()
-                                    .storagePoolUpEvent(storagePool, _isSpmStartCalled);
+                                    .storagePoolUpEvent(storagePool);
                         }
                     } catch (RuntimeException exp) {
                         log.error("Error in StoragePoolUpEvent - ", exp);
@@ -576,7 +576,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private String gethostFromVds() {
-            _isSpmStartCalled = false;
             String returnValue = null;
             Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
@@ -720,8 +719,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
             return vdsRelevantForSpmSelection;
         }
-
-        private boolean _isSpmStartCalled;
 
         private String handleSelectedVdsForSPM(StoragePool storagePool, RefObject<VDS> selectedVds,
                                                RefObject<SpmStatusResult> spmStatus, StoragePoolStatus prevStatus) {
@@ -946,9 +943,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     new SpmStartVDSCommandParameters(selectedVds.argvalue.getId(), _storagePoolId,
                                             spmStatus.getSpmId(), spmStatus.getSpmLVER(), storagePool
                                                     .getrecovery_mode(), vdsSpmIdToFence != -1, storagePool.getStoragePoolFormatType())).getReturnValue();
-                    if (spmStatus != null && spmStatus.getSpmStatus() == SpmStatus.SPM) {
-                        _isSpmStartCalled = true;
-                    } else {
+                    if (spmStatus == null || spmStatus.getSpmStatus() != SpmStatus.SPM) {
                         ResourceManager
                                 .getInstance()
                                 .getEventListener()
