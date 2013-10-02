@@ -28,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
@@ -40,8 +39,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
@@ -172,9 +171,9 @@ public class NetworkModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
             final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
-            final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
         return new SearchableDetailTabModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>(
                 eventBus, defaultConfirmPopupProvider,
@@ -184,17 +183,14 @@ public class NetworkModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkHostListModel source,
                     UICommand lastExecutedCommand,
                     Model windowModel) {
-                if (windowModel instanceof HostBondInterfaceModel) {
-                    return hostBondPopupProvider.get();
-                }
 
-                if (source.getWindow() instanceof HostSetupNetworksModel) {
-                    // Resolve by dialog model
-                    if (windowModel instanceof HostInterfaceModel) {
-                        return setupNetworksInterfacePopupProvider.get();
-                    } else if (windowModel instanceof HostManagementNetworkModel) {
-                        return setupNetworksManagementPopupProvider.get();
-                    }
+                // Resolve by dialog model
+                if (windowModel instanceof HostBondInterfaceModel) {
+                    return setupNetworksBondPopupProvider.get();
+                } else if (windowModel instanceof HostInterfaceModel) {
+                    return setupNetworksInterfacePopupProvider.get();
+                } else if (windowModel instanceof HostManagementNetworkModel) {
+                    return setupNetworksManagementPopupProvider.get();
                 }
 
                 // Resolve by last executed command
