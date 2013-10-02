@@ -24,6 +24,7 @@ import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+from otopi import constants as otopicons
 from otopi import util
 from otopi import plugin
 
@@ -76,6 +77,11 @@ class Plugin(plugin.PluginBase):
                                 osetupcons.DBEnv.PASSWORD: d[4],
                                 osetupcons.DBEnv.NEW_DATABASE: False,
                             })
+                            self.environment[
+                                otopicons.CoreEnv.LOG_FILTER
+                            ].append(
+                                self.environment[osetupcons.DBEnv.PASSWORD]
+                            )
                             dbovirtutils = database.OvirtUtils(plugin=self)
                             dbovirtutils.tryDatabaseConnect()
                             if dbovirtutils.isNewDatabase():
