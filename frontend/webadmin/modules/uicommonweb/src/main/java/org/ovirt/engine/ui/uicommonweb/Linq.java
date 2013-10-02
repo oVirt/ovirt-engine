@@ -38,6 +38,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -1241,6 +1243,38 @@ public final class Linq
                 return cp1.isLocked() ? -1 : 1;
             }
             return lexoNumeric.compare(cp1.getName(), cp2.getName());
+        }
+    }
+
+    /**
+     * sort policy units by:
+     * first is external?
+     * second is disabled?
+     * third policyUnitType
+     * forth name (lexicography)
+     */
+    public final static class PolicyUnitComparator implements Comparator<PolicyUnit>, Serializable {
+        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(PolicyUnit pu1, PolicyUnit pu2) {
+            if (pu1.isInternal() != pu2.isInternal()) {
+                return !pu1.isInternal() ? -1 : 1;
+            }
+            if (pu1.isEnabled() != pu2.isEnabled()) {
+                return !pu1.isEnabled() ? -1 : 1;
+            }
+            if (pu1.getPolicyUnitType() != pu2.getPolicyUnitType()) {
+                if (pu1.getPolicyUnitType().equals(PolicyUnitType.Filter)
+                        || pu2.getPolicyUnitType().equals(PolicyUnitType.LoadBalancing)) {
+                    return -1;
+                }
+                if (pu2.getPolicyUnitType().equals(PolicyUnitType.Filter)
+                        || pu1.getPolicyUnitType().equals(PolicyUnitType.LoadBalancing)) {
+                    return 1;
+                }
+            }
+            return lexoNumeric.compare(pu1.getName(), pu2.getName());
         }
     }
 }

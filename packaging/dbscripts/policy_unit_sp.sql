@@ -67,3 +67,12 @@ BEGIN
     WHERE  id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION DeletePolicyUnit(v_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM policy_units
+   WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;

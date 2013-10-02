@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.ClusterPolicyListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ClusterPolicyPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ManagePolicyUnitPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -19,15 +20,18 @@ public class ClusterPolicyModelProvider extends SearchableTabModelProvider<Clust
 
     private final Provider<ClusterPolicyPopupPresenterWidget> clusterPolicyPopupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
+    private final Provider<ManagePolicyUnitPopupPresenterWidget> policyUnitPopupProvider;
 
     @Inject
     public ClusterPolicyModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ClusterPolicyPopupPresenterWidget> clusterPolicyPopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<ManagePolicyUnitPopupPresenterWidget> policyUnitPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider);
         this.clusterPolicyPopupProvider = clusterPolicyPopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
+        this.policyUnitPopupProvider = policyUnitPopupProvider;
     }
 
     @Override
@@ -42,6 +46,8 @@ public class ClusterPolicyModelProvider extends SearchableTabModelProvider<Clust
                 || lastExecutedCommand.equals(getModel().getEditCommand())
                 || lastExecutedCommand.equals(getModel().getCloneCommand())) {
             return clusterPolicyPopupProvider.get();
+        } else if (lastExecutedCommand.equals(getModel().getManagePolicyUnitCommand())) {
+            return policyUnitPopupProvider.get();
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }

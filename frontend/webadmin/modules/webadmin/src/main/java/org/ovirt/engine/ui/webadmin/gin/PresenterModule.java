@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuota
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ClusterPolicyPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ManagePolicyUnitPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
@@ -274,6 +275,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClust
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.QuotaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ManagePolicyUnitPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.DisksAllocationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
@@ -466,6 +468,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ClusterPolicyPopupPresenterWidget.class,
                 ClusterPolicyPopupPresenterWidget.ViewDef.class,
                 ClusterPolicyPopupView.class);
+        bindPresenterWidget(ManagePolicyUnitPopupPresenterWidget.class,
+                ManagePolicyUnitPopupPresenterWidget.ViewDef.class,
+                ManagePolicyUnitPopupView.class);
 
         // Main section: main tabs
         bindPresenter(MainTabPanelPresenter.class,

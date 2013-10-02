@@ -847,4 +847,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String UnitVmModel$CpuSharesAmount___CUSTOM();
 
+    String PolicyUnitType___Filter();
+
+    String PolicyUnitType___Weight();
+
+    String PolicyUnitType___LoadBalancing();
+
 }

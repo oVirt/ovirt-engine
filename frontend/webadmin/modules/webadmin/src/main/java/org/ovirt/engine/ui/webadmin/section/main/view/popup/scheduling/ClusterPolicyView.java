@@ -146,6 +146,13 @@ public class ClusterPolicyView extends Composite {
             }
         });
 
+        table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.managePolicyUnits()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return clusterPolicyModelProvider.getModel().getManagePolicyUnitCommand();
+            }
+        });
+
         splitLayoutPanel.add(table);
 
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
