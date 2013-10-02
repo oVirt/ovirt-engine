@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -179,19 +178,7 @@ public class SchedulingManager {
             updateInitialHostList(vdsList, hostWhiteList, false);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             Map<String, String> parameters = createClusterPolicyParameters(cluster);
-            if (destHostId != null) {
-                if (checkDestinationHost(vm,
-                        vdsList,
-                        destHostId,
-                        messages,
-                        policy,
-                        parameters,
-                        memoryChecker)) {
-                    return destHostId;
-                } else if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-                    return null;
-                }
-            }
+
             vdsList =
                     runFilters(policy.getFilters(),
                             vdsList,
@@ -203,6 +190,9 @@ public class SchedulingManager {
 
             if (vdsList == null || vdsList.size() == 0) {
                 return null;
+            }
+            if (vdsList != null && vdsList.contains(destHostId)) {
+                return destHostId;
             }
             if (policy.getFunctions() == null || policy.getFunctions().isEmpty()) {
                 return vdsList.get(0).getId();
@@ -233,19 +223,7 @@ public class SchedulingManager {
         updateInitialHostList(vdsList, vdsWhiteList, false);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         Map<String, String> parameters = createClusterPolicyParameters(cluster);
-        if (destVdsId != null) {
-            if (checkDestinationHost(vm,
-                    vdsList,
-                    destVdsId,
-                    messages,
-                    policy,
-                    parameters,
-                    noWaitingMemoryChecker)) {
-                return true;
-            } else if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-                return false;
-            }
-        }
+
         vdsList =
                 runFilters(policy.getFilters(),
                         vdsList,
