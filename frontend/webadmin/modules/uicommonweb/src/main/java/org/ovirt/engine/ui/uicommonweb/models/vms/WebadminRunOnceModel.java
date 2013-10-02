@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -70,14 +69,6 @@ public class WebadminRunOnceModel extends RunOnceModel {
             // set destination host if specified
             VDS defaultHost = (VDS) getDefaultHost().getSelectedItem();
             params.setDestinationVdsId(defaultHost != null ? defaultHost.getId() : null);
-        }
-
-        // Sysprep params
-        if (getSysPrepDomainName().getSelectedItem() != null)
-        {
-            params.setSysPrepDomainName(getSysPrepSelectedDomainName().getEntity().equals("") ? //$NON-NLS-1$
-                    (String) getSysPrepSelectedDomainName().getEntity()
-                    : (String) getSysPrepDomainName().getSelectedItem());
         }
 
         return params;

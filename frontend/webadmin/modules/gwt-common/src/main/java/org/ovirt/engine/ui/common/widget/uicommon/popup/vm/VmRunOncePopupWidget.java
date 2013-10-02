@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -327,6 +329,20 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     void initComboBox() {
         sysPrepDomainNameListBoxEditor = new ListModelListBoxEditor<Object>();
         sysPrepDomainNameTextBoxEditor = new EntityModelTextBoxEditor();
+
+        sysPrepDomainNameListBoxEditor.asListBox().addDomHandler(new FocusHandler() {
+            @Override
+            public void onFocus(FocusEvent event) {
+                sysPrepDomainNameListBoxEditor.asListBox().setSelectedIndex(-1);
+            }
+        }, FocusEvent.getType());
+
+        sysPrepDomainNameListBoxEditor.asListBox().addDomHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                runOnceModel.sysPrepListBoxChanged();
+            }
+        }, ChangeEvent.getType());
 
         sysPrepDomainNameComboBox = new ComboBox(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
 

@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-
-import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -26,18 +24,6 @@ public class UserPortalRunOnceModel extends RunOnceModel {
        setIsCustomPropertiesSheetVisible(false);
 
        getCustomProperties().setEntity(vm.getCustomProperties());
-   }
-
-   @Override
-   protected RunVmOnceParams createRunVmOnceParams() {
-       RunVmOnceParams params = super.createRunVmOnceParams();
-       // Sysprep params
-       if (getSysPrepDomainName().getSelectedItem() != null)
-       {
-           params.setSysPrepDomainName((String) getSysPrepDomainName().getSelectedItem());
-       }
-
-       return params;
    }
 
    @Override
