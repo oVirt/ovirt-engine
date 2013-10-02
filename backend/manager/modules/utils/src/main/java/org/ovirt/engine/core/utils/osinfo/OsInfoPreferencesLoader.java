@@ -99,6 +99,9 @@ public enum OsInfoPreferencesLoader implements OsLoader {
                     if (key.startsWith("value")) {
                         key = iterator.hasNext() ? key + "." + StringUtils.join(iterator, ".") : key;
                         break;
+                    } else if (!iterator.hasNext()) {
+                        // its a key without a multiple version values
+                        break;
                     } else {
                         node = node.node(key);
                     }
