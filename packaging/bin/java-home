@@ -1,0 +1,68 @@
+#!/bin/sh
+
+#
+# execute site local script if available
+#
+if [ -x "$0.local" ]; then
+	exec "$0.local"
+	exit 1
+fi
+
+validjre() {
+	local dir="$1"
+	local ret=1
+
+	if [ -x "${dir}/bin/java" ]; then
+		local version="$("${dir}/bin/java" -version 2>&1 | sed -e 's/^java version "1\.7\.0.*/VERSION_OK/' -e 's/^OpenJDK .*(.*).*/VENDOR_OK/')"
+		if echo "${version}" | grep -q "VERSION_OK" && echo "${version}" | grep -q "${VENDOR_OK}"; then
+			ret=0
+		fi
+	fi
+
+	return ${ret}
+}
+
+#
+# If system environment contains
+# our specific java look only this one
+#
+if [ -n "${OVIRT_ENGINE_JAVA_HOME}" ]; then
+	if validjre "${OVIRT_ENGINE_JAVA_HOME}"; then
+		echo "${OVIRT_ENGINE_JAVA_HOME}"
+		exit 0
+	else
+		exit 1
+	fi
+fi
+
+#
+# select alternates folder
+# if we find, first wins
+#
+for dir in /usr/lib/jvm/jre /usr/lib/jvm/jre-1.7.0 /usr/lib/jvm/jre-1.7.0_openjdk;  do
+	if validjre "${dir}"; then
+		echo "${dir}"
+		exit 0
+	fi
+done
+
+#
+# select from jvm folder
+# last which is not jdk wins
+# jre is preferred as it usually more stable
+#
+JAVA_HOME=""
+for dir in /usr/lib/jvm/*; do
+	if validjre "${dir}"; then
+		if [ -x "${dir}/bin/javac" ]; then
+			[ -z "${JAVA_HOME}" ] && JAVA_HOME="${dir}"
+		else
+			JAVA_HOME="${dir}"
+		fi
+	fi
+done
+
+[ -z "${JAVA_HOME}" ] && exit 1
+
+echo "${JAVA_HOME}"
+exit 0

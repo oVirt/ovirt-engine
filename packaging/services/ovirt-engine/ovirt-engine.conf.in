@@ -13,11 +13,6 @@
 SENSITIVE_KEYS=""
 
 #
-# The location of the Java virtual machine used by the engine:
-#
-JAVA_HOME=/bin/false
-
-#
 # The location of the application server used by the engine:
 #
 JBOSS_HOME="@JBOSS_HOME@"

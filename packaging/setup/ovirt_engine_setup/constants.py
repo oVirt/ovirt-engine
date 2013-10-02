@@ -306,10 +306,6 @@ class FileLocations(object):
         OVIRT_ENGINE_SERVICE_CONFIGD,
         '10-setup-protocols.conf',
     )
-    OVIRT_ENGINE_SERVICE_CONFIG_JAVA = os.path.join(
-        OVIRT_ENGINE_SERVICE_CONFIGD,
-        '10-setup-java.conf',
-    )
     OVIRT_ENGINE_SERVICE_CONFIG_JBOSS = os.path.join(
         OVIRT_ENGINE_SERVICE_CONFIGD,
         '10-setup-jboss.conf',
@@ -329,10 +325,6 @@ class FileLocations(object):
 
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIGD = (
         '%s.d' % OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG
-    )
-    OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG_JAVA = os.path.join(
-        OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIGD,
-        '10-setup-java.conf',
     )
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG_JBOSS = os.path.join(
         OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIGD,
