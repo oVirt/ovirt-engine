@@ -325,7 +325,7 @@ Requires:	libxml2-python
 Requires:	logrotate
 Requires:	m2crypto
 Requires:	nfs-utils
-Requires:	otopi >= 1.1.1-1
+Requires:	otopi >= 1.1.2-1
 Requires:	policycoreutils-python
 Requires:	python-psycopg2
 Requires:	yum
