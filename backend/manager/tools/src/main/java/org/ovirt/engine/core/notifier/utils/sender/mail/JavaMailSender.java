@@ -40,7 +40,7 @@ public class JavaMailSender {
     public JavaMailSender(NotificationProperties aMailProps) {
         Properties mailSessionProps = setCommonProperties(aMailProps);
 
-        mailSessionProps.put("mail.smtp.host", aMailProps.getProperty(NotificationProperties.MAIL_SERVER));
+        mailSessionProps.put("mail.host", aMailProps.getProperty(NotificationProperties.MAIL_SERVER));
         // enable SSL
         if (aMailProps.getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false)) {
             mailSessionProps.put("mail.transport.protocol", "smtps");
