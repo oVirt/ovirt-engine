@@ -184,6 +184,14 @@ Requires:	apache-commons-jxpath
 Requires:	apache-sshd
 Requires:	jakarta-commons-httpclient
 Requires:	objectweb-asm
+Requires:	openstack-java-client
+Requires:	openstack-java-glance-client
+Requires:	openstack-java-glance-model
+Requires:	openstack-java-keystone-client
+Requires:	openstack-java-keystone-model
+Requires:	openstack-java-quantum-client
+Requires:	openstack-java-quantum-model
+Requires:	openstack-java-resteasy-connector
 Requires:	postgresql-jdbc
 Requires:	quartz
 Requires:	spring-ldap
@@ -571,6 +579,14 @@ org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
 org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
 %if 0%{?fedora}
 %if %{fedora} >= 19
+com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
+com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
+com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
+com/woorea/openstack/sdk/main/keystone-model.jar openstack-java-sdk/keystone-model.jar
+com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-client.jar
+com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
+com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
+com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
 org/apache/commons/compress/main/commons-compress.jar
 org/apache/commons/configuration/main/commons-configuration.jar commons-configuration.jar
 org/apache/commons/httpclient/main/commons-httpclient.jar
