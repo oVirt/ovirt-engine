@@ -628,4 +628,46 @@ public class SchedulingManager {
                 .runBalance(policyUnit.getName(), hostIDs, cluster.getClusterPolicyProperties());
     }
 
+    /**
+     * returns all cluster policies names containing the specific policy unit.
+     * @param policyUnitId
+     * @return
+     */
+    public List<String> getClusterPoliciesNamesByPolicyUnitId(Guid policyUnitId) {
+        List<String> list = new ArrayList<String>();
+        PolicyUnit policyUnit = policyUnits.get(policyUnitId);
+        if (policyUnit != null) {
+            for (ClusterPolicy clusterPolicy : policyMap.values()) {
+                switch (policyUnit.getPolicyUnitType()) {
+                case Filter:
+                    if (clusterPolicy.getFilters().contains(policyUnitId)) {
+                        list.add(clusterPolicy.getName());
+                    }
+                    break;
+                case Weight:
+                    for (Pair<Guid, Integer> pair : clusterPolicy.getFunctions()) {
+                        if (pair.getFirst().equals(policyUnitId)) {
+                            list.add(clusterPolicy.getName());
+                            break;
+                        }
+                    }
+                    break;
+                case LoadBalancing:
+                    if (policyUnitId.equals(clusterPolicy.getBalance())) {
+                        list.add(clusterPolicy.getName());
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
+    public void removeExternalPolicyUnit(Guid policyUnitId) {
+        getPolicyUnitDao().remove(policyUnitId);
+        policyUnits.remove(policyUnitId);
+    }
+
 }

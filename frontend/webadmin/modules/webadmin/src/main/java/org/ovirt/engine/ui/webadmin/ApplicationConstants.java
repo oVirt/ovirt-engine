@@ -3285,4 +3285,22 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Rebalance NOT STARTED")
     String rebalanceNotStarted();
+
+    @DefaultStringValue("Manage Policy Units")
+    String managePolicyUnits();
+
+    @DefaultStringValue("Name")
+    String policyUnitName();
+
+    @DefaultStringValue("Type")
+    String policyUnitType();
+
+    @DefaultStringValue("Remove")
+    String removePolicyUnit();
+
+    @DefaultStringValue("Internal Policy Unit")
+    String internalPolicyUnit();
+
+    @DefaultStringValue("External Policy Unit")
+    String externalPolicyUnit();
 }

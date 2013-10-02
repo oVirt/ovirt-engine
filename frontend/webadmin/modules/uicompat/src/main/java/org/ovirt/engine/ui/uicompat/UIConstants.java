@@ -2114,5 +2114,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Stop Rebalance")
     String stopRebalance();
+
+    @DefaultStringValue("Manage Policy Units")
+    String managePolicyUnits();
 }
 

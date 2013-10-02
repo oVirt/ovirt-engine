@@ -20,19 +20,24 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel.CommandType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 public class ClusterPolicyListModel extends ListWithDetailsModel {
     public static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
-
+    private ManagePolicyUnitModel policyUnitModel;
     private ArrayList<PolicyUnit> policyUnits;
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
     private UICommand cloneCommand;
+    private UICommand managePolicyUnitCommand;
 
     public ClusterPolicyListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().clusterPolicyTitle());
@@ -41,6 +46,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setCloneCommand(new UICommand("Clone", this)); //$NON-NLS-1$
+        setManagePolicyUnitCommand(new UICommand("ShowPolicyUnit", this)); //$NON-NLS-1$
 
         setSearchPageSize(1000);
 
@@ -111,6 +117,9 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
                                     (ArrayList<PolicyUnit>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                             clusterPolicyListModel.setPolicyUnits(list);
                             clusterPolicyListModel.fetchClusterPolicies();
+                            if (policyUnitModel != null) {
+                                policyUnitModel.getPolicyUnits().setItems(sort(policyUnits));
+                            }
                         }
                     }));
 
@@ -179,6 +188,14 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
         this.cloneCommand = cloneCommand;
     }
 
+    public UICommand getManagePolicyUnitCommand() {
+        return managePolicyUnitCommand;
+    }
+
+    public void setManagePolicyUnitCommand(UICommand showPolicyUnitCommand) {
+        this.managePolicyUnitCommand = showPolicyUnitCommand;
+    }
+
     private void newEntity() {
         initClusterPolicy(CommandType.New, new ClusterPolicy());
     }
@@ -239,8 +256,42 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
         getSearchCommand().execute();
     }
 
+    private void managePolicyUnits() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        policyUnitModel = new ManagePolicyUnitModel();
+        policyUnitModel.setTitle(ConstantsManager.getInstance().getConstants().managePolicyUnits());
+        policyUnitModel.setHashName("manage_policy_units"); //$NON-NLS-1$
+
+        policyUnitModel.setPolicyUnits(new ListModel());
+        policyUnitModel.getPolicyUnits().setItems(sort(policyUnits));
+        policyUnitModel.getRefreshPolicyUnitsEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                setIsQueryFirstTime(true);
+                syncSearch();
+            }
+        });
+
+        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().close());
+        command.setIsCancel(true);
+        policyUnitModel.getCommands().add(command);
+
+        setWindow(policyUnitModel);
+    }
+
+    private ArrayList<PolicyUnit> sort(ArrayList<PolicyUnit> policyUnits) {
+        Collections.sort(policyUnits, new Linq.PolicyUnitComparator());
+        return policyUnits;
+    }
+
     private void cancel() {
         setWindow(null);
+        policyUnitModel = null;
     }
 
     private void initClusterPolicy(CommandType commandType, ClusterPolicy clusterPolicy) {
@@ -281,6 +332,8 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
             onRemove();
         } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
+        } else if (command == getManagePolicyUnitCommand()) { //$NON-NLS-1$
+            managePolicyUnits();
         }
     }
 

@@ -94,6 +94,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/Lock.png")
     ImageResource lockImage();
 
+    @Source("images/icn_external_policy.png")
+    ImageResource exteranlPolicyUnitImage();
+
     @Source("images/logo.png")
     ImageResource logoImage();
 

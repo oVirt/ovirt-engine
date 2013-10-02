@@ -679,6 +679,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Cluster Policy")
     String VAR__TYPE__CLUSTER_POLICY();
 
+    @DefaultStringValue("$type Policy Unit")
+    String VAR__TYPE__POLICY_UNIT();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -2725,6 +2728,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Function factor cannot be negative.")
     String ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_FACTOR_NEGATIVE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Policy unit is attached to the following cluster policies: ${cpNames}.")
+    String ACTION_TYPE_FAILED_CANNOT_REMOVE_POLICY_UNIT_ATTACHED_TO_CLUSTER_POLICY();
 
     @DefaultStringValue("Cannot ${action} ${type}. Cloud-Init is only supported on cluster compatibility version 3.3 and higher.")
     String ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED();
