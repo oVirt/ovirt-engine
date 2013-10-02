@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -179,19 +178,7 @@ public class SchedulingManager {
             updateInitialHostList(vdsList, hostWhiteList, false);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             Map<String, String> parameters = createClusterPolicyParameters(cluster);
-            if (destHostId != null) {
-                if (checkDestinationHost(vm,
-                        vdsList,
-                        destHostId,
-                        messages,
-                        policy,
-                        parameters,
-                        memoryChecker)) {
-                    return destHostId;
-                } else if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-                    return null;
-                }
-            }
+
             vdsList =
                     runFilters(policy.getFilters(),
                             vdsList,
@@ -203,6 +190,15 @@ public class SchedulingManager {
 
             if (vdsList == null || vdsList.size() == 0) {
                 return null;
+            }
+            // If a default destination host was specified and made it
+            // through all filters -> use it
+            if (vdsList != null) {
+                for (VDS vds: vdsList) {
+                    if (vds.getId().equals(destHostId)) {
+                        return destHostId;
+                    }
+                }
             }
             if (policy.getFunctions() == null || policy.getFunctions().isEmpty()) {
                 return vdsList.get(0).getId();
@@ -233,19 +229,7 @@ public class SchedulingManager {
         updateInitialHostList(vdsList, vdsWhiteList, false);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         Map<String, String> parameters = createClusterPolicyParameters(cluster);
-        if (destVdsId != null) {
-            if (checkDestinationHost(vm,
-                    vdsList,
-                    destVdsId,
-                    messages,
-                    policy,
-                    parameters,
-                    noWaitingMemoryChecker)) {
-                return true;
-            } else if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-                return false;
-            }
-        }
+
         vdsList =
                 runFilters(policy.getFilters(),
                         vdsList,
@@ -259,32 +243,6 @@ public class SchedulingManager {
             return false;
         }
         return true;
-    }
-
-    protected boolean checkDestinationHost(VM vm,
-            List<VDS> vdsList,
-            Guid destVdsId,
-            List<String> messages,
-            ClusterPolicy policy,
-            Map<String, String> parameters,
-            VdsFreeMemoryChecker memoryChecker) {
-        List<VDS> destVdsList = new ArrayList<VDS>();
-        for (VDS vds : vdsList) {
-            if (vds.getId().equals(destVdsId)) {
-                destVdsList.add(vds);
-                break;
-            }
-        }
-        destVdsList =
-                runFilters(policy.getFilters(),
-                        destVdsList,
-                        vm,
-                        parameters,
-                        policy.getFilterPositionMap(),
-                        messages,
-                        memoryChecker);
-
-        return destVdsList != null && destVdsList.size() == 1;
     }
 
     static List<Guid> getEntityIds(List<? extends BusinessEntity<Guid>> entities) {
