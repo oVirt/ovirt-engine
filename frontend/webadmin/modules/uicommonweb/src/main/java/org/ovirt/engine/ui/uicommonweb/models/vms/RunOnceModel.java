@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -552,7 +551,6 @@ public abstract class RunOnceModel extends Model
 
         // Initial Boot tab - Sysprep
         setSysPrepDomainName(new ListModel());
-        getSysPrepDomainName().getSelectedItemChangedEvent().addListener(this);
         setSysPrepSelectedDomainName(new EntityModel());
 
         setSysPrepUserName(new EntityModel().setIsChangable(false));
@@ -630,7 +628,6 @@ public abstract class RunOnceModel extends Model
         getIsLinuxOptionsAvailable().setEntity(getIsLinuxOS());
         setIsWindowsOS(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         getIsVmFirstRun().setEntity(!vm.isInitialized());
-        getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
 
         getCloudInit().init(vm, null);
 
@@ -707,6 +704,11 @@ public abstract class RunOnceModel extends Model
             params.setUseVnc((Boolean) getDisplayConsole_Vnc_IsSelected().getEntity());
         }
 
+        String selectedDomain = (String) getSysPrepSelectedDomainName().getEntity();
+        if (!StringHelper.isNullOrEmpty(selectedDomain)) {
+             params.setSysPrepDomainName(selectedDomain);
+        }
+
         return params;
     }
 
@@ -719,8 +721,7 @@ public abstract class RunOnceModel extends Model
                         VM selectedVM = (VM) vm;
                         List<String> images = (List<String>) returnValue;
 
-                        if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOsId()))
-                        {
+                        if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOsId())) {
                             // Add a pseudo floppy disk image used for Windows' sysprep.
                             if (!selectedVM.isInitialized()) {
                                 images.add(0, "[sysprep]"); //$NON-NLS-1$
@@ -744,30 +745,29 @@ public abstract class RunOnceModel extends Model
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
 
-                 @Override
-                 public void onSuccess(Object model, Object returnValue) {
-                     ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
 
-                     if (vmDisks.isEmpty()) {
-                         getRunAsStateless().setIsChangable(false);
-                         getRunAsStateless()
-                                .setChangeProhibitionReason(ConstantsManager.getInstance()
-                                        .getMessages()
-                                        .disklessVmCannotRunAsStateless());
-                         getRunAsStateless().setEntity(false);
-                     }
+                        if (vmDisks.isEmpty()) {
+                            getRunAsStateless().setIsChangable(false);
+                            getRunAsStateless()
+                                    .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                            .getMessages()
+                                            .disklessVmCannotRunAsStateless());
+                            getRunAsStateless().setEntity(false);
+                        }
 
-                     if (!isDisksContainBootableDisk(vmDisks))
-                     {
-                         BootSequenceModel bootSequenceModel = getBootSequence();
-                         bootSequenceModel.getHardDiskOption().setIsChangable(false);
-                         bootSequenceModel.getHardDiskOption()
-                                 .setChangeProhibitionReason(ConstantsManager.getInstance()
-                                         .getMessages()
-                                         .bootableDiskIsRequiredToBootFromDisk());
-                     }
-                 }
-             }));
+                        if (!isDisksContainBootableDisk(vmDisks)) {
+                            BootSequenceModel bootSequenceModel = getBootSequence();
+                            bootSequenceModel.getHardDiskOption().setIsChangable(false);
+                            bootSequenceModel.getHardDiskOption()
+                                    .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                            .getMessages()
+                                            .bootableDiskIsRequiredToBootFromDisk());
+                        }
+                    }
+                }));
     }
 
     private boolean isDisksContainBootableDisk(List<Disk> disks) {
@@ -857,6 +857,10 @@ public abstract class RunOnceModel extends Model
                 }), true);
     }
 
+    public void sysPrepListBoxChanged() {
+        getSysPrepSelectedDomainName().setEntity(getSysPrepDomainName().getSelectedItem());
+    }
+
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args)
     {
@@ -871,10 +875,6 @@ public abstract class RunOnceModel extends Model
             else if (sender == getFloppyImage())
             {
                 floppyImage_SelectedItemChanged();
-            }
-            else if (sender == getSysPrepDomainName())
-            {
-                sysPrepDomainName_SelectedItemChanged();
             }
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
@@ -947,11 +947,6 @@ public abstract class RunOnceModel extends Model
     private void IsoImage_SelectedItemChanged()
     {
         updateInitialRunFields();
-    }
-
-    private void sysPrepDomainName_SelectedItemChanged()
-    {
-        getSysPrepSelectedDomainName().setEntity(getSysPrepDomainName().getSelectedItem());
     }
 
     private void isAutoAssign_EntityChanged(Object sender, EventArgs args) {
