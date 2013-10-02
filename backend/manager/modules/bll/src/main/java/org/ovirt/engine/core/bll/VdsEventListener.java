@@ -246,12 +246,8 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void storagePoolUpEvent(StoragePool storagePool, boolean isNewSpm) {
-        if (isNewSpm) {
-            AsyncTaskManager.getInstance().StopStoragePoolTasks(storagePool);
-        } else {
-            AsyncTaskManager.getInstance().AddStoragePoolExistingTasks(storagePool);
-        }
+    public void storagePoolUpEvent(StoragePool storagePool) {
+        AsyncTaskManager.getInstance().AddStoragePoolExistingTasks(storagePool);
     }
 
     @Override

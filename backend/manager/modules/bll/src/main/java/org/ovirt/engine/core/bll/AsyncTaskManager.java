@@ -38,8 +38,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -747,28 +745,6 @@ public final class AsyncTaskManager {
         //in any case no need to hold them in the map that represents the tasksInDbAfterRestart
         tasksInDbAfterRestart.remove(sp.getId());
 
-    }
-
-    /**
-     * Retrieves all tasks from the specified storage pool and stops them.
-     *
-     * @param sp
-     */
-    public synchronized void StopStoragePoolTasks(final StoragePool sp) {
-        log.infoFormat("Attempting to get and stop tasks on storage pool '{0}'",
-                sp.getName());
-
-        AddStoragePoolExistingTasks(sp);
-
-        List<SPMAsyncTask> list = LinqUtils.filter(_tasks.values(), new Predicate<SPMAsyncTask>() {
-            @Override
-            public boolean eval(SPMAsyncTask a) {
-                return a.getStoragePoolID().equals(sp.getId());
-            }
-        });
-        for (SPMAsyncTask task : list) {
-            task.stopTask();
-        }
     }
 
     /**
