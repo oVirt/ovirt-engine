@@ -101,9 +101,7 @@ public class SimpleJdbcCallsHandler {
             final RowMapper<T> mapper,
             final MapSqlParameterSource parameterSource) {
         Map<String, Object> resultsMap = executeReadAndReturnMap(procedureName, mapper, parameterSource);
-        List<?> resultList = (List<?>) (resultsMap
-                .get(BaseDAODbFacade.RETURN_VALUE_PARAMETER));
-        return (resultList != null) ? (List<T>) resultList : null;
+        return (List<T>) (resultsMap.get(BaseDAODbFacade.RETURN_VALUE_PARAMETER));
     }
 
     public <T> Map<String, Object> executeReadAndReturnMap(final String procedureName,
