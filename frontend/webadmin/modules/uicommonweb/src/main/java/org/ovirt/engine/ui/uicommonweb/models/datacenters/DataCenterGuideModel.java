@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -59,6 +60,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavio
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
@@ -1387,6 +1389,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         cluster.setcompatibility_version(version);
         cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
+        if (model.getClusterPolicy().getSelectedItem() != null) {
+            ClusterPolicy selectedPolicy = (ClusterPolicy) model.getClusterPolicy().getSelectedItem();
+            cluster.setClusterPolicyId(selectedPolicy.getId());
+            cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet()
+                    .getEntity()));
+        }
 
         model.startProgress(null);
 
