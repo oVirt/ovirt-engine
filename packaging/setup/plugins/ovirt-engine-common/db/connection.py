@@ -142,17 +142,21 @@ class Plugin(plugin.PluginBase):
                     'Existing credential use failed',
                     exc_info=True,
                 )
-                self.logger.warning(
-                    _(
-                        'Cannot connect to database using existing '
-                        'credentials: {user}@{host}:{port}'
-                    ).format(
-                        host=dbenv[osetupcons.DBEnv.HOST],
-                        port=dbenv[osetupcons.DBEnv.PORT],
-                        database=dbenv[osetupcons.DBEnv.DATABASE],
-                        user=dbenv[osetupcons.DBEnv.USER],
-                    ),
+                msg = _(
+                    'Cannot connect to database using existing '
+                    'credentials: {user}@{host}:{port}'
+                ).format(
+                    host=dbenv[osetupcons.DBEnv.HOST],
+                    port=dbenv[osetupcons.DBEnv.PORT],
+                    database=dbenv[osetupcons.DBEnv.DATABASE],
+                    user=dbenv[osetupcons.DBEnv.USER],
                 )
+                if self.environment[
+                    osetupcons.CoreEnv.ACTION
+                ] == osetupcons.Const.ACTION_REMOVE:
+                    self.logger.warning(msg)
+                else:
+                    raise RuntimeError(msg)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
