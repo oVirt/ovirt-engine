@@ -309,6 +309,7 @@ public class RunVmValidator {
 
     /**
      * A general method for run vm validations. used in runVmCommand and in VmPoolCommandBase
+     *
      * @param vm
      * @param messages
      * @param vmDisks
@@ -321,6 +322,8 @@ public class RunVmValidator {
      * @param vdsSelector
      * @param vdsBlackList
      *            - hosts that we already tried to run on
+     * @param vdsWhiteList
+     *            - initial host list, mainly runOnSpecificHost (runOnce/migrateToHost)
      * @return
      */
     public boolean canRunVm(VM vm,
@@ -333,6 +336,7 @@ public class RunVmValidator {
             String floppyPath,
             Boolean runAsStateless,
             List<Guid> vdsBlackList,
+            List<Guid> vdsWhiteList,
             Guid destVds,
             VDSGroup vdsGroup) {
 
@@ -357,7 +361,7 @@ public class RunVmValidator {
         }
 
         if (!SchedulingManager.getInstance().canSchedule(
-                vdsGroup, vm, vdsBlackList, null, destVds, messages)) {
+                vdsGroup, vm, vdsBlackList, vdsWhiteList, destVds, messages)) {
             return false;
         }
 

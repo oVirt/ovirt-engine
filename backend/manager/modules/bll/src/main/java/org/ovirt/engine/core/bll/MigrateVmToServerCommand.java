@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -50,5 +53,10 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
 
         determineMigrationFailureForAuditLog();
         log();
+    }
+
+    @Override
+    protected List<Guid> getVdsWhiteList() {
+        return Arrays.asList(getVdsDestinationId());
     }
 }

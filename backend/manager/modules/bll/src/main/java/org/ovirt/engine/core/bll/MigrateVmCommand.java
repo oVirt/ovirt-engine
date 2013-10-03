@@ -92,7 +92,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 SchedulingManager.getInstance().schedule(getVdsGroup(),
                         getVm(),
                         getVdsBlackList(),
-                        getParameters().getInitialHosts(),
+                        getVdsWhiteList(),
                         destVds == null ? null : destVds.getId(),
                         new ArrayList<String>(),
                         new VdsFreeMemoryChecker(this));
@@ -388,5 +388,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             blackList.add(getVdsId());
         }
         return blackList;
+    }
+
+    // initial hosts list picked for scheduling, currently
+    // passed by load balancing process.
+    protected List<Guid> getVdsWhiteList() {
+        return getParameters().getInitialHosts();
     }
 }
