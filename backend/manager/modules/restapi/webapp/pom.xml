@@ -49,6 +49,7 @@
             WEB-INF/lib/restapi-definition.jar,
             WEB-INF/lib/restapi-jaxrs.jar,
             WEB-INF/lib/restapi-types.jar,
+            WEB-INF/lib/branding.jar,
           </packagingIncludes>
 
         </configuration>

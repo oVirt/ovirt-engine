@@ -6,6 +6,19 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
+  <context-param>
+    <param-name>obrandThemePath</param-name>
+    <param-value>/ovirt-engine-theme</param-value>
+  </context-param>
+  <context-param>
+    <param-name>obrandResourcePath</param-name>
+    <param-value>/ovirt-engine-theme-resource</param-value>
+  </context-param>
+  <context-param>
+    <param-name>obrandApplicationName</param-name>
+    <param-value>welcome</param-value>
+  </context-param>
+
   <!-- File servlet instance to serve the CA certificate: -->
   <servlet>
     <servlet-name>PKIResourceServlet.ca</servlet-name>
@@ -65,12 +78,25 @@
       <param-name>file</param-name>
       <param-value>%{ENGINE_MANUAL}</param-value>
     </init-param>
+    <init-param>
+        <param-name>localeDocsMissingURI</param-name>
+        <param-value>/ovirt-engine/docsmissing</param-value>
+    </init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>docs</servlet-name>
     <url-pattern>/docs/*</url-pattern>
   </servlet-mapping>
 
+  <!-- Servlet to forward to when the documentation in a particular locale is missing -->
+  <servlet>
+    <servlet-name>docsmissing</servlet-name>
+    <jsp-file>/WEB-INF/no_lang.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>docsmissing</servlet-name>
+    <url-pattern>/ovirt-engine/docsmissing</url-pattern>
+  </servlet-mapping>
   <!-- Files: -->
   <servlet>
     <servlet-name>files</servlet-name>
@@ -134,7 +160,7 @@
   <!-- Branding Servlet -->
   <servlet>
     <servlet-name>BrandingServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.branding.BrandingServlet</servlet-class>
+    <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>BrandingServlet</servlet-name>
@@ -144,7 +170,7 @@
   <!-- Branding Cascading Resource Servlet -->
   <servlet>
     <servlet-name>BrandingCascadingResourceServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.branding.BrandingCascadingResourceServlet</servlet-class>
+    <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>BrandingCascadingResourceServlet</servlet-name>
@@ -154,12 +180,23 @@
   <!-- PageNotFound Servlet -->
   <servlet>
     <servlet-name>PageNotFoundServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.servlet.PageNotFoundServlet</servlet-class>
+    <jsp-file>/WEB-INF/404.jsp</jsp-file>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>PageNotFoundServlet</servlet-name>
     <url-pattern>/404.html</url-pattern>
+  </servlet-mapping>
+
+  <!-- Welcome page -->
+  <servlet>
+    <servlet-name>WelcomeServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.WelcomeServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>WelcomeServlet</servlet-name>
+    <url-pattern>/ovirt-engine</url-pattern>
   </servlet-mapping>
 
   <!-- Filters -->
@@ -171,12 +208,12 @@
   <!-- Branding Filter, passes branding information to jsps -->
   <filter>
     <filter-name>BrandingFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.utils.servlet.BrandingFilter</filter-class>
+    <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
   </filter>
 
   <filter-mapping>
     <filter-name>LocaleFilter</filter-name>
-    <url-pattern>/ovirt-engine</url-pattern>
+    <url-pattern>/ovirt-engine/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
@@ -188,7 +225,8 @@
 
   <filter-mapping>
     <filter-name>BrandingFilter</filter-name>
-    <url-pattern>/ovirt-engine</url-pattern>
+    <url-pattern>/ovirt-engine/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 

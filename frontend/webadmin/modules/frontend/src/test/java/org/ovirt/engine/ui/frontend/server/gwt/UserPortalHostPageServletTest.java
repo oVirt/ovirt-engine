@@ -7,7 +7,6 @@ import static org.mockito.Mockito.spy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.utils.branding.BrandingTheme;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserPortalHostPageServletTest extends AbstractGwtDynamicHostPageServletTest<UserPortalHostPageServlet> {
@@ -26,11 +25,5 @@ public class UserPortalHostPageServletTest extends AbstractGwtDynamicHostPageSer
     @Test
     public void testFilterQueries() {
         assertTrue("Filter queries should be 'true'", testServlet.filterQueries()); //$NON-NLS-1$
-    }
-
-    @Test
-    public void testGetApplicationType() {
-        assertEquals("Application type should be 'USER_PORTAL'", //$NON-NLS-1$
-                testServlet.getApplicationType(), BrandingTheme.ApplicationType.USER_PORTAL);
     }
 }

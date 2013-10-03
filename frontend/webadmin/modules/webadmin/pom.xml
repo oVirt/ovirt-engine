@@ -118,6 +118,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>${engine.core.groupId}</groupId>
+      <artifactId>branding</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>

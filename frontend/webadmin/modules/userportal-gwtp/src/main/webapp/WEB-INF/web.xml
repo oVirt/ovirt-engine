@@ -2,29 +2,31 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 
     <display-name>oVirt UserPortal UI</display-name>
-
-    <!-- Filters -->
-    <filter-mapping>
-        <filter-name>LocaleFilter</filter-name>
-        <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
+    <!-- Application with context parameters -->
+    <context-param>
+      <param-name>obrandThemePath</param-name>
+      <param-value>/theme</param-value>
+    </context-param>
+    <context-param>
+      <param-name>obrandResourcePath</param-name>
+      <param-value>/theme-resource</param-value>
+    </context-param>
+  <context-param>
+    <param-name>obrandApplicationName</param-name>
+    <param-value>userportal</param-value>
+  </context-param>
 
     <filter-mapping>
         <filter-name>LocaleFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
     <filter-mapping>
         <filter-name>BrandingFilter</filter-name>
-        <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>BrandingFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
@@ -55,7 +57,7 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>PageNotFoundServlet</servlet-name>
+        <servlet-name>PageNotFoundForwardServlet</servlet-name>
         <url-pattern>/404.html</url-pattern>
     </servlet-mapping>
 

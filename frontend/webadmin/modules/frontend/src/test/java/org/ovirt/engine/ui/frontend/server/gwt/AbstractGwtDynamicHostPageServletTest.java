@@ -32,6 +32,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.ovirt.engine.core.branding.BrandingManager;
+import org.ovirt.engine.core.branding.BrandingTheme;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -39,8 +41,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.branding.BrandingManager;
-import org.ovirt.engine.core.utils.branding.BrandingTheme;
 
 public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamicHostPageServlet> {
 
@@ -92,6 +92,10 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         when(mockUser.getUserName()).thenReturn("admin"); //$NON-NLS-1$
         when(mockUser.getDomainControler()).thenReturn("internal"); //$NON-NLS-1$
         when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<BrandingTheme>());
+        when(mockUser.getUserId()).thenReturn(Guid.newGuid());
+        when(mockUser.getUserName()).thenReturn("admin"); //$NON-NLS-1$
+        when(mockUser.getDomainControler()).thenReturn("internal"); //$NON-NLS-1$
+        when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<BrandingTheme>()); //$NON-NLS-1$
         stubGetUserBySessionIdQuery();
         stubGetConfigurationValuePublicQuery();
         setUpTestServlet();

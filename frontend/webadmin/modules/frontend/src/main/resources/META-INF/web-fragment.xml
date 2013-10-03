@@ -48,7 +48,7 @@
     <!-- Branding Filter, passes branding information to jsps -->
     <filter>
         <filter-name>BrandingFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.utils.servlet.BrandingFilter</filter-class>
+        <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
     </filter>
 
     <servlet>
@@ -73,17 +73,25 @@
 
     <servlet>
         <servlet-name>BrandingServlet</servlet-name>
-        <servlet-class>org.ovirt.engine.core.utils.branding.BrandingServlet</servlet-class>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
     </servlet>
 
     <servlet>
         <servlet-name>BrandingCascadingResourceServlet</servlet-name>
-        <servlet-class>org.ovirt.engine.core.utils.branding.BrandingCascadingResourceServlet</servlet-class>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
     </servlet>
 
     <!-- PageNotFound Servlet -->
     <servlet>
-        <servlet-name>PageNotFoundServlet</servlet-name>
-        <servlet-class>org.ovirt.engine.core.utils.servlet.PageNotFoundServlet</servlet-class>
+        <servlet-name>PageNotFoundForwardServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.PageNotFoundForwardServlet</servlet-class>
+        <init-param>
+            <param-name>targetContext</param-name>
+            <param-value>/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>pageNotFoundURI</param-name>
+            <param-value>/404.html</param-value>
+        </init-param>
     </servlet>
 </web-fragment>

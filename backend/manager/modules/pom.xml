@@ -24,6 +24,7 @@
     <module>bll</module>
     <module>restapi</module>
     <module>root</module>
+    <module>branding</module>
   </modules>
 
   <dependencies>

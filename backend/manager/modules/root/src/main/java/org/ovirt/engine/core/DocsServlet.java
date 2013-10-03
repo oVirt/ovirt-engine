@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.util.Locale;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +34,16 @@ public class DocsServlet extends FileServlet {
     public static final String LANG_PAGE_SHOWN = "langPageShown";
 
     private static final String ENGLISH_HREF = "englishHref";
-    private static final String LANG_JSP = "/WEB-INF/help/no_lang.jsp";
+    private static final String LOCALE_DOCS_MISSING = "localeDocsMissingURI";
+
+    private String localeDocsMissing;
+
+    @Override
+    public void init(final ServletConfig config) throws ServletException {
+        // Let the parent do its work:
+        super.init(config);
+        localeDocsMissing = config.getInitParameter(LOCALE_DOCS_MISSING);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -43,19 +54,31 @@ public class DocsServlet extends FileServlet {
         file = checkForIndex(request, response, file, request.getPathInfo());
         if (file == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        } else if (!response.isCommitted()){ //If the response is committed, we have already redirected.
+        } else if (!response.isCommitted()) { //If the response is committed, we have already redirected.
             boolean languagePageShown = isLangPageShown(request);
-            if (!file.equals(originalFile) &&
-                    !file.getAbsolutePath().equals(replaceLocaleWithOtherLocale(originalFile.getAbsolutePath(), locale, locale))) {
+            if (!file.equals(originalFile)
+                    && !file.getAbsolutePath().equals(replaceLocaleWithOtherLocale(originalFile.getAbsolutePath(),
+                            locale, locale))) {
                 //We determined that we are going to redirect the user to the English version URI.
                 String redirect = request.getServletPath() + replaceLocaleWithUSLocale(request.getPathInfo(), locale);
                 if (!languagePageShown) {
                     setLangPageShown(response, true);
                     request.setAttribute(LocaleFilter.LOCALE, locale);
                     request.setAttribute(ENGLISH_HREF, redirect);
-                    RequestDispatcher dispatcher = request.getRequestDispatcher(LANG_JSP);
-                    if (dispatcher != null) {
-                        dispatcher.include(request, response);
+                    final ServletContext forwardContext = getServletContext().getContext(localeDocsMissing);
+                    if (forwardContext != null) {
+                        final RequestDispatcher dispatcher = forwardContext.getRequestDispatcher(localeDocsMissing);
+                        if (dispatcher != null) {
+                            dispatcher.forward(request, response);
+                        } else {
+                            log.error("Unable to determine dispatcher");
+                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                    "unable to determine dispatcher");
+                        }
+                    } else {
+                        log.error("Unable to determine forwarding context");
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                "unable to determine forward context");
                     }
                 } else {
                     //Redirect to English version of the document

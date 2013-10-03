@@ -69,7 +69,7 @@ import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.branding.BrandingManager;
+import org.ovirt.engine.core.branding.BrandingManager;
 
 public class BackendApiResource
     extends AbstractBackendActionableResource<API, Object>

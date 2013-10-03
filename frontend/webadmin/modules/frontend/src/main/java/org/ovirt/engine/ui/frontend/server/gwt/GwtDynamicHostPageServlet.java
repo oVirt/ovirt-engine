@@ -17,13 +17,13 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.ovirt.engine.core.branding.BrandingFilter;
+import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.utils.branding.BrandingManager;
-import org.ovirt.engine.core.utils.branding.BrandingTheme.ApplicationType;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 /**
@@ -44,9 +44,9 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         ATTR_STYLES("brandingStyle"), //$NON-NLS-1$
         ATTR_MESSAGES("messages"), //$NON-NLS-1$
         ATTR_LOCALE(LocaleFilter.LOCALE),
-        ATTR_APPLICATION_TYPE("applicationType"); //$NON-NLS-1$
+        ATTR_APPLICATION_TYPE(BrandingFilter.APPLICATION_NAME);
 
-        private String attributeKey;
+        private final String attributeKey;
 
         /**
          * Constructor for enum.
@@ -76,6 +76,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     private BackendLocal backend;
 
     private ObjectMapper mapper;
+
     private BrandingManager brandingManager;
 
     @EJB(beanInterface = BackendLocal.class,
@@ -101,9 +102,8 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         // Set attribute for selector script
         request.setAttribute(MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey(), getSelectorScriptName());
         // Set the messages that need to be replaced.
-        request.setAttribute(MD5Attributes.ATTR_MESSAGES.getKey(), getBrandingMessages(getLocaleFromRequest(request)));
-        // Set class of servlet
-        request.setAttribute(MD5Attributes.ATTR_APPLICATION_TYPE.getKey(), getApplicationType());
+        request.setAttribute(MD5Attributes.ATTR_MESSAGES.getKey(),
+                getBrandingMessages(getApplicationTypeFromRequest(request), getLocaleFromRequest(request)));
         // Set attribute for userInfo object
         VdcUser loggedInUser = getLoggedInUser(request.getSession().getId());
         if (loggedInUser != null) {
@@ -128,6 +128,16 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         } catch (NoSuchAlgorithmException ex) {
             throw new ServletException(ex);
         }
+    }
+
+    /**
+     * Retrieves the application type from the request object, this can return null if the
+     * attribute containing the application type is empty.
+     * @param request The {@code HttpServletRequest} object.
+     * @return A string containing the application type.
+     */
+    private String getApplicationTypeFromRequest(final HttpServletRequest request) {
+        return (String) request.getAttribute(BrandingFilter.APPLICATION_NAME);
     }
 
     @Override
@@ -157,18 +167,13 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     /**
      * Get a JavaScript associative array string that define the branding messages.
+     * @param applicationName the application name.
      * @param locale {@code Locale} to use to look up the messages.
      * @return The messages as a {@code String}
      */
-    private String getBrandingMessages(final Locale locale) {
-        return brandingManager.getMessages(getApplicationType().getPrefix(), locale);
+    private String getBrandingMessages(final String applicationName, final Locale locale) {
+        return brandingManager.getMessages(applicationName, locale);
     }
-
-    /**
-     * Get the application type the Servlet is serving for instance web admin or user portal.
-     * @return A {@code ApplicationType} defining the type of application served.
-     */
-    protected abstract ApplicationType getApplicationType();
 
     /**
      * @return {@code true} if all queries should be filtered according to user permissions, {@code false} otherwise.
