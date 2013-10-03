@@ -1517,6 +1517,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     UseFqdnForRdpIfAvailable(539),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    DwhHeartBeatInterval(540),
+
     Invalid(65535);
 
     private int intValue;
