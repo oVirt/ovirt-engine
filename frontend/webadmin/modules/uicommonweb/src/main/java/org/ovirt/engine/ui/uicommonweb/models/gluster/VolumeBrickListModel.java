@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvanc
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -119,31 +122,44 @@ public class VolumeBrickListModel extends SearchableListModel {
     {
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
-        if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
-                || getSelectedItems() == null || getSelectedItems().size() == 0
-                || getSelectedItems().size() == volumeEntity.getBricks().size())
-        {
-            getRemoveBricksCommand().setIsExecutionAllowed(false);
+        boolean allowRemove = true;
+        boolean allowReplace = true;
+        boolean allowAdvanced = true;
+
+        if (getSelectedItems() == null || getSelectedItems().size() == 0) {
+            allowRemove = false;
+            allowReplace = false;
+            allowAdvanced = false;
         }
-        else if(volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
-                && volumeEntity.getBricks().size() == VolumeListModel.REPLICATE_COUNT_DEFAULT)
-        {
-            getRemoveBricksCommand().setIsExecutionAllowed(false);
-        }
-        else if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE && getSelectedItems() == null
-                && getSelectedItems().size() > 1)
-        {
-            getRemoveBricksCommand().setIsExecutionAllowed(false);
-        }
-        else
-        {
-            getRemoveBricksCommand().setIsExecutionAllowed(true);
+        else {
+            GlusterAsyncTask task = volumeEntity.getAsyncTask();
+            if (task != null
+                    && (task.getStatus() == JobExecutionStatus.STARTED || task.getType() == GlusterTaskType.REMOVE_BRICK
+                            && task.getStatus() == JobExecutionStatus.FINISHED)) {
+                allowRemove = false;
+            }
+            else if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
+                    || getSelectedItems().size() == volumeEntity.getBricks().size()) {
+                allowRemove = false;
+            }
+            else if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
+                    && (volumeEntity.getBricks().size() == VolumeListModel.REPLICATE_COUNT_DEFAULT || getSelectedItems().size() > 1)) {
+                allowRemove = false;
+            }
+
+            if(getSelectedItems().size() == 1) {
+                allowReplace = true;
+                allowAdvanced = volumeEntity.isOnline() && ((GlusterBrickEntity) getSelectedItems().get(0)).isOnline();
+            }
+            else {
+                allowReplace = false;
+                allowAdvanced = false;
+            }
         }
 
-        getReplaceBrickCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
-        getBrickAdvancedDetailsCommand().setIsExecutionAllowed(getSelectedItems() != null
-                && getSelectedItems().size() == 1 && ((GlusterVolumeEntity) getEntity()).isOnline()
-                && getSelectedItems().get(0) != null && ((GlusterBrickEntity) getSelectedItems().get(0)).isOnline());
+        getRemoveBricksCommand().setIsExecutionAllowed(allowRemove);
+        getReplaceBrickCommand().setIsExecutionAllowed(allowReplace);
+        getBrickAdvancedDetailsCommand().setIsExecutionAllowed(allowAdvanced);
     }
 
     @Override
