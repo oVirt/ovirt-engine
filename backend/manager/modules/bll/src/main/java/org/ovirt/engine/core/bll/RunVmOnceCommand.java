@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -13,9 +14,11 @@ import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
@@ -104,5 +107,14 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             }
         }
         return list;
+    }
+
+    @Override
+    protected List<Guid> getVdsWhiteList() {
+        VDS destinationVds = getDestinationVds();
+        if (destinationVds != null) {
+            return Arrays.asList(destinationVds.getId());
+        }
+        return super.getVdsWhiteList();
     }
 }

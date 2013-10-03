@@ -661,7 +661,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 SchedulingManager.getInstance().schedule(getVdsGroup(),
                         getVm(),
                         getRunVdssList(),
-                        null,
+                        getVdsWhiteList(),
                         destinationVds == null ? null : destinationVds.getId(),
                         new ArrayList<String>(),
                         new VdsFreeMemoryChecker(this));
@@ -792,6 +792,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getParameters().getFloppyPath(),
                 getParameters().getRunAsStateless(),
                 getRunVdssList(),
+                getVdsWhiteList(),
                 getDestinationVds() != null ? getDestinationVds().getId() : null,
                 getVdsGroup())) {
             return false;
@@ -1084,5 +1085,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         } else {
             super.reportCompleted();
         }
+    }
+
+    // initial white list (null == all hosts)
+    protected List<Guid> getVdsWhiteList() {
+        return null;
     }
 }

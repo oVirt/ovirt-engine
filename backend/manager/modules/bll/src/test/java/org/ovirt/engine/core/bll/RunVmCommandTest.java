@@ -372,6 +372,7 @@ public class RunVmCommandTest {
                 anyString(),
                 anyBoolean(),
                 Matchers.anyListOf(Guid.class),
+                Matchers.anyListOf(Guid.class),
                 any(Guid.class),
                 any(VDSGroup.class))).thenReturn(true);
         doReturn(runVmValidator).when(command).getRunVmValidator();

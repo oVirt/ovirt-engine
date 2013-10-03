@@ -239,6 +239,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 runVmParams.getRunAsStateless(),
                 new ArrayList<Guid>(),
                 null,
+                null,
                 vdsGroup);
     }
 
