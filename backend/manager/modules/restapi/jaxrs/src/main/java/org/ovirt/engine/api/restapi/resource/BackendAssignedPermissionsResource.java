@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAssignedPermissionsResource
@@ -197,11 +196,11 @@ public class BackendAssignedPermissionsResource
     protected PermissionsOperationsParametes getPrincipal(permissions entity, Permission permission) {
         PermissionsOperationsParametes ret = null;
         if (isUserSubCollection() || permission.isSetUser()) {
-            VdcUser user = new VdcUser();
-            user.setUserId(isUserSubCollection()
+            DbUser user = new DbUser();
+            user.setId(isUserSubCollection()
                            ? targetId
                            : asGuid(permission.getUser().getId()));
-            user.setDomainControler(getCurrent().get(Principal.class).getDomain());
+            user.setDomain(getCurrent().get(Principal.class).getDomain());
             ret = new PermissionsOperationsParametes(entity, user);
         } else if (isGroupSubCollection() || permission.isSetGroup()) {
             LdapGroup group = new LdapGroup();

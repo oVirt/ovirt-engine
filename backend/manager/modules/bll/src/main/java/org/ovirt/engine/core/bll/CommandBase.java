@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.tags;
@@ -67,7 +68,6 @@ import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
@@ -171,7 +171,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected CommandBase(T parameters) {
         _parameters = parameters;
         // get the user from the session if the user is logged in
-        VdcUser user = SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(), true);
+        DbUser user = SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(), true);
         if (user != null) {
             setCurrentUser(user);
         } else
@@ -1027,7 +1027,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
 
         // Check the authorization:
-        if (!checkUserAuthorization(getCurrentUser().getUserId(), objectActionGroup, objectId, objectType)) {
+        if (!checkUserAuthorization(getCurrentUser().getId(), objectActionGroup, objectId, objectType)) {
             messages.add(permSubject.getMessage().name());
             return false;
         }

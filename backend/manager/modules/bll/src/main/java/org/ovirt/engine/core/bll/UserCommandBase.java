@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -56,13 +55,13 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
     }
 
     @SuppressWarnings("deprecation")
-    public static DbUser initUser(VdcUser vdcUser, String sessionId) {
-        DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(vdcUser.getUserId());
+    public static DbUser initUser(String sessionId, String domain, Guid id) {
+        DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(id);
         if (dbUser == null) {
             LdapUser adUser = (LdapUser) LdapFactory
-                    .getInstance(vdcUser.getDomainControler())
+                    .getInstance(domain)
                     .RunAdAction(AdActionType.GetAdUserByUserId,
-                            new LdapSearchByIdParameters(sessionId, vdcUser.getDomainControler(), vdcUser.getUserId()))
+                            new LdapSearchByIdParameters(sessionId, domain, id))
                     .getReturnValue();
             if (adUser == null) {
                 throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);

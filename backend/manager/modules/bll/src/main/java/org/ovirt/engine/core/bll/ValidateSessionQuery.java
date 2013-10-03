@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 /*
- * This query validates the session, returning the VdcUser which is logged in this session.
+ * This query validates the session, returning the user which is logged in this session.
  */
 public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
@@ -25,10 +25,10 @@ public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends Quer
         getQueryReturnValue().setSucceeded(false);
         if (sessionID != null) {
             log.debug("Input session ID is: " + sessionID);
-            VdcUser vdcUser = (VdcUser) getSessionUser(sessionID);
-            if (vdcUser != null) {
+            DbUser user = (DbUser) getSessionUser(sessionID);
+            if (user != null) {
                 log.debug("Found session user");
-                getQueryReturnValue().setReturnValue(vdcUser);
+                getQueryReturnValue().setReturnValue(user);
                 getQueryReturnValue().setSucceeded(true);
             } else {
                 getQueryReturnValue().setExceptionString("Session does not exist.");

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.system;
 
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
@@ -99,7 +99,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
     }
 
     protected void performLogin(T loginModel) {
-        VdcUser loggedUser = loginModel.getLoggedUser();
+        DbUser loggedUser = loginModel.getLoggedUser();
         String loginPassword = (String) loginModel.getPassword().getEntity();
 
         // UiCommon login preparation
@@ -156,7 +156,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
      * When a user is already logged in on the server, the server provides user data within the host page.
      */
     protected void handleAutoLogin(AutoLoginData autoLoginData) {
-        final VdcUser vdcUser = autoLoginData.getVdcUser();
+        final DbUser vdcUser = autoLoginData.getVdcUser();
 
         // Use deferred command because CommonModel change needs to happen
         // after all model providers have been properly initialized

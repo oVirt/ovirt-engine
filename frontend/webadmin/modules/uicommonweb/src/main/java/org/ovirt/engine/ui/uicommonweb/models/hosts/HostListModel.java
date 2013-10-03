@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -43,7 +44,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -1669,16 +1669,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (hasAdminSystemPermission == null) {
 
-            VdcUser vdcUser = Frontend.getLoggedInUser();
+            DbUser dbUser = Frontend.getLoggedInUser();
 
-            if (vdcUser == null) {
+            if (dbUser == null) {
                 hasAdminSystemPermission = false;
                 updateConfigureLocalStorageCommandAvailability1();
                 return;
             }
 
             Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId,
-                    new IdQueryParameters(vdcUser.getUserId()),
+                    new IdQueryParameters(dbUser.getId()),
                     new AsyncQuery(this, new INewAsyncCallback() {
 
                         @Override

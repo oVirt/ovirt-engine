@@ -28,7 +28,7 @@ public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<IdQuery
 
         // Mock the DAOs
         StorageDomainDAO storageDoaminDAOMock = mock(StorageDomainDAO.class);
-        when(storageDoaminDAOMock.get(storageDomainId, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(expected);
+        when(storageDoaminDAOMock.get(storageDomainId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
         when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDoaminDAOMock);
 
         getQuery().executeQueryCommand();

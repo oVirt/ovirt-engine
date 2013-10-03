@@ -61,10 +61,10 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
         getNetworkDAO().save(net);
-        NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getUserId(), net.getId());
+        NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), net.getId());
         VnicProfile profile = NetworkHelper.createVnicProfile(net);
         getVnicProfileDao().save(profile);
-        NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getUserId(), profile.getId(), true);
+        NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getId(), profile.getId(), true);
     }
 
     @Override

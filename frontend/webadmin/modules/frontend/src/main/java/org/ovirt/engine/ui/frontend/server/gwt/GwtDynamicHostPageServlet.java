@@ -17,11 +17,11 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.branding.BrandingManager;
 import org.ovirt.engine.core.utils.branding.BrandingTheme.ApplicationType;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
@@ -105,7 +105,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         // Set class of servlet
         request.setAttribute(MD5Attributes.ATTR_APPLICATION_TYPE.getKey(), getApplicationType());
         // Set attribute for userInfo object
-        VdcUser loggedInUser = getLoggedInUser(request.getSession().getId());
+        DbUser loggedInUser = getLoggedInUser(request.getSession().getId());
         if (loggedInUser != null) {
             request.setAttribute(MD5Attributes.ATTR_USER_INFO.getKey(), getUserInfoObject(loggedInUser));
         }
@@ -212,15 +212,15 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         return mapper.createArrayNode();
     }
 
-    protected VdcUser getLoggedInUser(String sessionId) {
-        return (VdcUser) runQuery(VdcQueryType.GetUserBySessionId, new VdcQueryParametersBase(), sessionId);
+    protected DbUser getLoggedInUser(String sessionId) {
+        return (DbUser) runQuery(VdcQueryType.GetUserBySessionId, new VdcQueryParametersBase(), sessionId);
     }
 
-    protected ObjectNode getUserInfoObject(VdcUser loggedInUser) {
+    protected ObjectNode getUserInfoObject(DbUser loggedInUser) {
         ObjectNode obj = createObjectNode();
-        obj.put("id", loggedInUser.getUserId().toString()); //$NON-NLS-1$
-        obj.put("userName", loggedInUser.getUserName()); //$NON-NLS-1$
-        obj.put("domain", loggedInUser.getDomainControler()); //$NON-NLS-1$
+        obj.put("id", loggedInUser.getId().toString()); //$NON-NLS-1$
+        obj.put("userName", loggedInUser.getLoginName()); //$NON-NLS-1$
+        obj.put("domain", loggedInUser.getDomain()); //$NON-NLS-1$
         return obj;
     }
 

@@ -34,7 +34,7 @@ public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryT
         when(paramsMock.getId()).thenReturn(vdsID);
 
         VdsDAO vdsDAOMock = mock(VdsDAO.class);
-        when(vdsDAOMock.get(vdsID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(vds);
+        when(vdsDAOMock.get(vdsID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(vds);
         when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAOMock);
 
         getQuery().executeQueryCommand();

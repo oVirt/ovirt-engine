@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
@@ -16,7 +16,7 @@ public class SessionDataContainer {
     private ConcurrentMap<String, Map<String, Object>> newContext =
             new ConcurrentHashMap<String, Map<String, Object>>();
 
-    private static final String VDC_USER_PARAMETER_NAME = "VdcUser";
+    private static final String USER_PARAMETER_NAME = "user";
     private static final String PASSWORD_PARAMETER_NAME = "password";
 
     private static SessionDataContainer dataProviderInstance = new SessionDataContainer();
@@ -165,18 +165,18 @@ public class SessionDataContainer {
      * @param sessionId
      *            -id of session
      */
-    public VdcUser addUserToThreadContext(String sessionId, boolean refresh) {
-        VdcUser vdcUser = ThreadLocalParamsContainer.getVdcUser();
-        if (vdcUser == null) {
+    public DbUser addUserToThreadContext(String sessionId, boolean refresh) {
+        DbUser dbUser = ThreadLocalParamsContainer.getUser();
+        if (dbUser == null) {
             if (!StringUtils.isEmpty(sessionId)) {
-                vdcUser = getUser(sessionId, refresh);
+                dbUser = getUser(sessionId, refresh);
                 ThreadLocalParamsContainer.setHttpSessionId(sessionId);
             } else {
-                vdcUser = getUser(refresh);
+                dbUser = getUser(refresh);
             }
-            ThreadLocalParamsContainer.setVdcUser(vdcUser);
+            ThreadLocalParamsContainer.setUser(dbUser);
         }
-        return vdcUser;
+        return dbUser;
     }
 
     /**
@@ -184,16 +184,16 @@ public class SessionDataContainer {
      * @param sessionId The session to set
      * @param user The user to set
      */
-    public final void setUser(String sessionId, VdcUser user) {
-        SetData(sessionId, VDC_USER_PARAMETER_NAME, user);
+    public final void setUser(String sessionId, DbUser user) {
+        SetData(sessionId, USER_PARAMETER_NAME, user);
     }
 
     /**
      * Sets the user for the current session
      * @param user The user to set
      */
-    public final boolean setUser(VdcUser user) {
-        return SetData(VDC_USER_PARAMETER_NAME, user);
+    public final boolean setUser(DbUser user) {
+        return SetData(USER_PARAMETER_NAME, user);
     }
 
     /**
@@ -201,13 +201,13 @@ public class SessionDataContainer {
      * @param refresh Whether refreshing the session is needed
      * @return The user set for the given {@link #session}
      */
-    public VdcUser getUser(String sessionId, boolean refresh) {
-        return (VdcUser) GetData(sessionId, VDC_USER_PARAMETER_NAME, refresh);
+    public DbUser getUser(String sessionId, boolean refresh) {
+        return (DbUser) GetData(sessionId, USER_PARAMETER_NAME, refresh);
     }
 
     /** @return The user set in the current session */
-    public VdcUser getUser(boolean refresh) {
-        return (VdcUser) GetData(VDC_USER_PARAMETER_NAME, refresh);
+    public DbUser getUser(boolean refresh) {
+        return (DbUser) GetData(USER_PARAMETER_NAME, refresh);
     }
 
     /**

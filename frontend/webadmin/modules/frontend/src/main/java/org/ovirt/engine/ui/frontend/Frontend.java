@@ -15,12 +15,12 @@ import java.util.logging.Logger;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -81,7 +81,7 @@ public class Frontend {
     private static Logger logger = Logger.getLogger(Frontend.class.getName());
     private static IFrontendEventsHandler eventsHandler;
     private static FrontendLoginHandler loginHandler;
-    private static VdcUser loggedUser;
+    private static DbUser loggedUser;
     private static ErrorTranslator canDoActionErrorsTranslator = null;
     private static ErrorTranslator vdsmErrorsTranslator = null;
     private static String loginPassword;
@@ -840,15 +840,15 @@ public class Frontend {
         });
     }
 
-    public static void LogoffAsync(VdcUser vdcUser, final AsyncQuery callback) {
+    public static void LogoffAsync(DbUser dbUser, final AsyncQuery callback) {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
-        LogoffAsync(vdcUser, callback, service);
+        LogoffAsync(dbUser, callback, service);
     }
 
-    static void LogoffAsync(VdcUser vdcUser, final AsyncQuery callback, final GenericApiGWTServiceAsync service) {
+    static void LogoffAsync(DbUser dbUser, final AsyncQuery callback, final GenericApiGWTServiceAsync service) {
         logger.finer("Frontend: Invoking async Logoff."); //$NON-NLS-1$
 
-        service.logOff(vdcUser, new AsyncCallback<VdcReturnValueBase>() {
+        service.logOff(dbUser, new AsyncCallback<VdcReturnValueBase>() {
             @Override
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from Logoff."); //$NON-NLS-1$
@@ -879,7 +879,7 @@ public class Frontend {
         return getLoggedInUser() != null;
     }
 
-    public static void initLoggedInUser(VdcUser loggedUser, String loginPassword) {
+    public static void initLoggedInUser(DbUser loggedUser, String loginPassword) {
         Frontend.loggedUser = loggedUser;
         Frontend.loginPassword = loginPassword;
     }
@@ -888,7 +888,7 @@ public class Frontend {
         initLoggedInUser(null, null);
     }
 
-    public static VdcUser getLoggedInUser() {
+    public static DbUser getLoggedInUser() {
         return loggedUser;
     }
 

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.auth;
 
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
@@ -23,7 +23,7 @@ public class CurrentUser implements HasHandlers {
     private final EventBus eventBus;
 
     private boolean loggedIn = false;
-    private VdcUser loggedUser;
+    private DbUser loggedUser;
 
     // Indicates that the user should be logged in automatically
     private boolean autoLogin = false;
@@ -46,7 +46,7 @@ public class CurrentUser implements HasHandlers {
         this.loggedIn = loggedIn;
     }
 
-    void setLoggedUser(VdcUser loggedUser) {
+    void setLoggedUser(DbUser loggedUser) {
         this.loggedUser = loggedUser;
     }
 
@@ -54,21 +54,21 @@ public class CurrentUser implements HasHandlers {
      * Returns the user name if the user is currently logged in, {@code null} otherwise.
      */
     public String getUserName() {
-        return isLoggedIn() ? loggedUser.getUserName() : null;
+        return isLoggedIn() ? loggedUser.getLoginName() : null;
     }
 
     /**
      * Returns the user authentication domain if the user is currently logged in, {@code null} otherwise.
      */
     public String getDomain() {
-        return isLoggedIn() ? loggedUser.getDomainControler() : null;
+        return isLoggedIn() ? loggedUser.getDomain() : null;
     }
 
     /**
      * Returns the user ID if the user is currently logged in, {@code null} otherwise.
      */
     public String getUserId() {
-        return isLoggedIn() ? loggedUser.getUserId().toString() : null;
+        return isLoggedIn() ? loggedUser.getId().toString() : null;
     }
 
     /**
@@ -111,7 +111,7 @@ public class CurrentUser implements HasHandlers {
     /**
      * User login callback, called after successful user authentication.
      */
-    public void onUserLogin(VdcUser loggedUser) {
+    public void onUserLogin(DbUser loggedUser) {
         setLoggedUser(loggedUser);
         setLoggedIn(true);
         fireLoginChangeEvent();

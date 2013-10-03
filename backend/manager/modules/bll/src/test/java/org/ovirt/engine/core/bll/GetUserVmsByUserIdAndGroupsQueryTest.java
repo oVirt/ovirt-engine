@@ -26,13 +26,13 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
     /** Tests that executing a query with the same user works when requesting disks */
     @Test
     public void testQueryWithSameUserAndDisks() {
-        assertExecuteQueryCommandResult(getUser().getUserId(), true, true);
+        assertExecuteQueryCommandResult(getUser().getId(), true, true);
     }
 
     /** Tests that executing a query with the same user works when not requesting disks */
     @Test
     public void testQueryWithSameUserNoDisks() {
-        assertExecuteQueryCommandResult(getUser().getUserId(), false, true);
+        assertExecuteQueryCommandResult(getUser().getId(), false, true);
     }
 
     @SuppressWarnings("rawtypes")

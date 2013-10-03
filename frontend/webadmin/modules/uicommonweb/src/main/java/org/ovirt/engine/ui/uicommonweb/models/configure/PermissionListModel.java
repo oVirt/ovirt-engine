@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -253,7 +252,7 @@ public class PermissionListModel extends SearchableListModel
             {
                 PermissionsOperationsParametes tempVar4 = new PermissionsOperationsParametes();
                 tempVar4.setPermission(perm);
-                tempVar4.setVdcUser(new VdcUser(user.getId(), user.getLoginName(), user.getDomain()));
+                tempVar4.setUser(user);
                 list.add(tempVar4);
             }
         }

@@ -54,7 +54,7 @@ public class GetAllVmSnapshotsByVmIdQueryTest
         // Disk Image DAO
         snapshotDaoMock = mock(SnapshotDao.class);
         when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
-        when(snapshotDaoMock.getAll(vmId, getUser().getUserId(), getQueryParameters().isFiltered()))
+        when(snapshotDaoMock.getAll(vmId, getUser().getId(), getQueryParameters().isFiltered()))
                 .thenReturn(Arrays.asList(snapshot));
     }
 

@@ -19,11 +19,11 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
@@ -138,8 +138,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected boolean isUserCanBeAuthenticated() {
         boolean authenticated = false;
-        VdcUser vdcUser = SessionDataContainer.getInstance().getUser(false);
-        if (vdcUser == null) {
+        DbUser dbUser = SessionDataContainer.getInstance().getUser(false);
+        if (dbUser == null) {
             boolean domainFound = false;
             List<String> vdcDomains = LdapBrokerUtils.getDomainsList();
             for (String domain : vdcDomains) {
@@ -184,11 +184,11 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             // Retrieve the MLA admin status of the user.
             // This may be redundant in some use-cases, but looking forward to Single Sign On,
             // we will want this info
-            VdcUser currentUser = new VdcUser(ldapUser);
-            boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(currentUser);
-            log.debugFormat("Checking if user {0} is an admin, result {1}", currentUser.getUserName(), isAdmin);
-            currentUser.setAdmin(isAdmin);
-            setCurrentUser(currentUser);
+            dbUser = new DbUser(ldapUser);
+            boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(dbUser);
+            log.debugFormat("Checking if user {0} is an admin, result {1}", dbUser.getLoginName(), isAdmin);
+            dbUser.setAdmin(isAdmin);
+            setCurrentUser(dbUser);
 
             // Add the user password to the session, as it will be needed later
             // when trying to log on to virtual machines:

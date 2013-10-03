@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RunVmParams extends VmOperationParameterBase {
@@ -19,7 +19,7 @@ public class RunVmParams extends VmOperationParameterBase {
     private String customProperties;
     private String privateFloppyPath;
     private String privateClientIp;
-    private VdcUser privateRequestingUser;
+    private DbUser requestingUser;
     private Guid _destinationVdsId;
     private InitializationType privateInitializationType;
     private Boolean privateRunAsStateless;
@@ -144,12 +144,12 @@ public class RunVmParams extends VmOperationParameterBase {
         privateClientIp = value;
     }
 
-    public VdcUser getRequestingUser() {
-        return privateRequestingUser;
+    public DbUser getRequestingUser() {
+        return requestingUser;
     }
 
-    public void setRequestingUser(VdcUser value) {
-        privateRequestingUser = value;
+    public void setRequestingUser(DbUser value) {
+        requestingUser = value;
     }
 
     public InitializationType getInitializationType() {

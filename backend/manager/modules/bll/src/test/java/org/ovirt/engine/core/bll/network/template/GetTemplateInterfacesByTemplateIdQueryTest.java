@@ -28,7 +28,7 @@ public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQuer
         when(paramsMock.getId()).thenReturn(templateID);
 
         VmNetworkInterfaceDao vmNetworkInterfaceDAOMock = mock(VmNetworkInterfaceDao.class);
-        when(vmNetworkInterfaceDAOMock.getAllForTemplate(templateID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        when(vmNetworkInterfaceDAOMock.getAllForTemplate(templateID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
         when(getDbFacadeMockInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDAOMock);
 
         getQuery().executeQueryCommand();

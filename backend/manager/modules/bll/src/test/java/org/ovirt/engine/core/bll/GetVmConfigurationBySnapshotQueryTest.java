@@ -81,7 +81,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
         diskImageDaoMock = mock(DiskImageDAO.class);
         when(dbFacadeMock.getDiskImageDao()).thenReturn(diskImageDaoMock);
-        when(snapshotDaoMock.get(existingSnapshotId, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(existingSnapshot);
+        when(snapshotDaoMock.get(existingSnapshotId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(existingSnapshot);
         when(diskImageDaoMock.get(existingImageId)).thenReturn(existingDiskImage);
     }
 

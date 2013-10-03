@@ -137,13 +137,13 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         DbUser nonAdminUser = dbFacade.getDbUserDao().getByUsername("userportal2@testportal.redhat.com");
 
         assertNotNull(nonAdminUser);
-        assertFalse(nonAdminUser.getLastAdminCheckStatus());
+        assertFalse(nonAdminUser.isAdmin());
 
         // execute and validate when not admin
         dbFacade.updateLastAdminCheckStatus(nonAdminUser.getId());
         nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
 
-        assertFalse(nonAdminUser.getLastAdminCheckStatus());
+        assertFalse(nonAdminUser.isAdmin());
 
         permissions perms = new permissions();
         perms.setRoleType(RoleType.ADMIN);
@@ -162,7 +162,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         dbFacade.updateLastAdminCheckStatus(nonAdminUser.getId());
         nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
 
-        assertTrue(nonAdminUser.getLastAdminCheckStatus());
+        assertTrue(nonAdminUser.isAdmin());
     }
 
     @Test

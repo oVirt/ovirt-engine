@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
@@ -52,8 +51,8 @@ public class MultiLevelAdministrationHandler {
      * @param userId
      * @return True if user is admin
      */
-    public static boolean isAdminUser(VdcUser user) {
-        List<Role> userRoles = getRoleDAO().getAllForUserAndGroups(user.getUserId(), user.getGroupIds());
+    public static boolean isAdminUser(DbUser user) {
+        List<Role> userRoles = getRoleDAO().getAllForUserAndGroups(user.getId(), user.getGroupIds());
 
         for (Role r : userRoles) {
             if (r.getType() == RoleType.ADMIN) {
@@ -82,8 +81,8 @@ public class MultiLevelAdministrationHandler {
      */
     public static void setIsAdminGUIFlag(Guid userId, boolean hasPermissions) {
         DbUser user = getDbUserDAO().get(userId);
-        if (user.getLastAdminCheckStatus() != hasPermissions) {
-            user.setLastAdminCheckStatus(hasPermissions);
+        if (user.isAdmin() != hasPermissions) {
+            user.setAdmin(hasPermissions);
             getDbUserDAO().update(user);
         }
     }

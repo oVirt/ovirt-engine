@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -455,7 +454,7 @@ public class UserListModel extends ListWithDetailsModel
             if (!item.isGroup())
             {
                 AddUserParameters tempVar = new AddUserParameters();
-                tempVar.setVdcUser(new VdcUser(item.getId(), item.getLoginName(), item.getDomain()));
+                tempVar.setUser(item);
                 parameters.add(tempVar);
             }
             else

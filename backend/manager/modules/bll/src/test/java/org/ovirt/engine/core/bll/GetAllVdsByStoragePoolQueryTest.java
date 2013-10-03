@@ -29,7 +29,7 @@ public class GetAllVdsByStoragePoolQueryTest extends AbstractUserQueryTest<IdQue
 
         // Mock the DAO
         VdsDAO vdsDAOMock = mock(VdsDAO.class);
-        when(vdsDAOMock.getAllForStoragePool(spId, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(result);
+        when(vdsDAOMock.getAllForStoragePool(spId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(result);
         when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDAOMock);
 
         // Execute the query

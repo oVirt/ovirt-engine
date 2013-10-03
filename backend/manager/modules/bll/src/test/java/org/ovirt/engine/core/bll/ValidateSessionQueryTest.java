@@ -5,8 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ValidateSessionQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, ValidateSessionQuery<VdcQueryParametersBase>> {
@@ -15,13 +15,17 @@ public class ValidateSessionQueryTest extends AbstractUserQueryTest<VdcQueryPara
     public void testSuccessfulSessionId() {
         when(params.getSessionId()).thenReturn("good_session_id");
 
-        when(getQuery().getSessionUser("good_session_id")).thenReturn(new VdcUser(Guid.newGuid(), "myUser", "myDomain"));
+        DbUser result = new DbUser();
+        result.setId(Guid.newGuid());
+        result.setLoginName("myUser");
+        result.setDomain("myDomain");
+        when(getQuery().getSessionUser("good_session_id")).thenReturn(result);
         getQuery().execute();
         assertTrue(getQuery().getQueryReturnValue().getSucceeded());
-        assertTrue(getQuery().getQueryReturnValue().getReturnValue() instanceof VdcUser);
-        VdcUser user = (VdcUser) getQuery().getQueryReturnValue().getReturnValue();
-        assertTrue(user.getDomainControler().equals("myDomain"));
-        assertTrue(user.getUserName().equals("myUser"));
+        assertTrue(getQuery().getQueryReturnValue().getReturnValue() instanceof DbUser);
+        DbUser user = (DbUser) getQuery().getQueryReturnValue().getReturnValue();
+        assertTrue(user.getDomain().equals("myDomain"));
+        assertTrue(user.getLoginName().equals("myUser"));
     }
 
     @Test

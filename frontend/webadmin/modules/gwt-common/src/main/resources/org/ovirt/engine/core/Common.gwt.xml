@@ -177,7 +177,6 @@
 		<include name="common/AuditLogType.java" />
 		<include name="common/AuditLogTimeInterval.java" />
 		<include name="common/AuditLogSeverity.java" />
-		<include name="common/users/VdcUser.java" />
 		<include name="common/utils/EnumUtils.java" />
 		<include name="common/utils/RpmVersionUtils.java" />
 		<include name="common/utils/ListUtils.java" />

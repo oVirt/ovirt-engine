@@ -27,7 +27,7 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryPa
         when(paramsMock.getId()).thenReturn(storagePoolID);
 
         StoragePoolDAO storagePoolDAOMock = mock(StoragePoolDAO.class);
-        when(storagePoolDAOMock.get(storagePoolID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        when(storagePoolDAOMock.get(storagePoolID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
         when(dbFacadeMock.getStoragePoolDao()).thenReturn(storagePoolDAOMock);

@@ -7,12 +7,12 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -100,16 +100,16 @@ public class UserPortalLoginModel extends LoginModel
         }
     }
 
-    private VdcUser privateLoggedUser;
+    private DbUser privateLoggedUser;
 
     @Override
-    public VdcUser getLoggedUser()
+    public DbUser getLoggedUser()
     {
         return privateLoggedUser;
     }
 
     @Override
-    protected void setLoggedUser(VdcUser value)
+    protected void setLoggedUser(DbUser value)
     {
         privateLoggedUser = value;
     }
@@ -209,7 +209,7 @@ public class UserPortalLoginModel extends LoginModel
                         boolean success = returnValue != null && returnValue.getSucceeded();
                         if (success)
                         {
-                            model.setLoggedUser((VdcUser) returnValue.getActionReturnValue());
+                            model.setLoggedUser((DbUser) returnValue.getActionReturnValue());
                             model.raiseLoggedInEvent();
                         }
                         else
@@ -277,7 +277,7 @@ public class UserPortalLoginModel extends LoginModel
 
     // Update IsENGINEUser flag.
     // Get 'ENGINEUser' role's ActionGroups (and proceed to Step2).
-    public void updateIsENGINEUser(VdcUser LoggedUser)
+    public void updateIsENGINEUser(DbUser LoggedUser)
     {
         setENGINEUserActionGroupList(new ArrayList<ActionGroup>());
         this.setLoggedUser(LoggedUser);
@@ -357,7 +357,7 @@ public class UserPortalLoginModel extends LoginModel
                         return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid()) &&
                                 permission.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid());
                     }
-                }), loginModel.getLoggedUser().getUserId());
+                }), loginModel.getLoggedUser().getId());
     }
 
     // Create a list of ActionGroups associated with the user by retrieving each role's ActionGroups (and proceed to

@@ -11,7 +11,7 @@ import static org.mockito.Mockito.spy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 /**
@@ -23,7 +23,7 @@ public class SessionDataContainerTest {
     private static final String TEST_KEY = "someKey";
     private static final String TEST_VALUE = "someValue";
     private static final String TEST_SESSION_ID = "someSession";
-    private static final String USER = "VdcUser";
+    private static final String USER = "user";
 
     @Before
     public void setUpContainer() {
@@ -80,7 +80,7 @@ public class SessionDataContainerTest {
 
     @Test
     public void testGetUserAndSetUserWithSessionParam() {
-        VdcUser user = mock(VdcUser.class);
+        DbUser user = mock(DbUser.class);
         container.setUser(TEST_SESSION_ID, user);
         assertEquals("Get should return the value with a given session",
                 user,
@@ -90,7 +90,7 @@ public class SessionDataContainerTest {
     @Test
     public void testGetUserAndSetUserWithoutSessionParam() {
         ThreadLocalParamsContainer.setHttpSessionId(TEST_SESSION_ID);
-        VdcUser user = mock(VdcUser.class);
+        DbUser user = mock(DbUser.class);
         container.setUser(user);
         assertEquals("Get should return the value with a given session",
                 user,
@@ -182,7 +182,7 @@ public class SessionDataContainerTest {
 
     /** Initializes the {@link #key} data */
     private void initDataForClearTest(String key) {
-        container.SetData(TEST_SESSION_ID, key, mock(VdcUser.class));
+        container.SetData(TEST_SESSION_ID, key, mock(DbUser.class));
     }
 
     @Test

@@ -9,10 +9,10 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -58,14 +58,16 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     }
 
     String getConsoleUserName() {
-        VdcUser user = getCurrentUser();
-        String domain = user.getDomainControler();
-        String name = user.getUserName();
-        if (StringUtils.isEmpty(name) || name.contains("@") || StringUtils.isEmpty(domain)) {
-            return name;
-        } else {
-            return name + "@" + domain;
+        DbUser user = getCurrentUser();
+        String domain = user.getDomain();
+        String name = user.getLoginName();
+        if (StringUtils.isEmpty(name)) {
+            return null;
         }
+        if (name.contains("@") || StringUtils.isEmpty(domain)) {
+            return name;
+        }
+        return name + "@" + domain;
     }
 
     /**
@@ -85,7 +87,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
         // If this is not the first user to connect to the console then it does need
         // additional permissions:
-        final Guid currentId = getCurrentUser().getUserId();
+        final Guid currentId = getCurrentUser().getId();
         final Guid previousId = vm.getConsoleUserId();
         if (previousId != null && !previousId.equals(currentId)) {
             log.warnFormat("User \"{0}\" is trying to take the console of virtual machine \"{1}\", but the console is already taken by user \"{2}\".", currentId, vm.getId(), previousId);
@@ -134,8 +136,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // Update the dynamic information of the virtual machine in memory (we need it
         // to update the database later):
         final VM vm = getVm();
-        final VdcUser user = getCurrentUser();
-        vm.setConsoleUserId(user.getUserId());
+        final DbUser user = getCurrentUser();
+        vm.setConsoleUserId(user.getId());
         vm.setConsoleCurrentUserName(getConsoleUserName());
 
         // If the virtual machine has the allow reconnect flag or the user
@@ -175,8 +177,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     private void dontSendTicket() {
         // Send messages to the log explaining the situation:
         final VM vm = getVm();
-        final VdcUser user = getCurrentUser();
-        log.warnFormat("Can't give console of virtual machine \"{0}\" to user \"{1}\", it has probably been taken by another user.", vm.getId(), user.getUserId());
+        final DbUser user = getCurrentUser();
+        log.warnFormat("Can't give console of virtual machine \"{0}\" to user \"{1}\", it has probably been taken by another user.", vm.getId(), user.getId());
 
         // Set the result messages indicating that the operation failed:
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_USE_BY_OTHER_USER);
@@ -191,12 +193,12 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
      */
     private void sendTicket() {
         // Send the ticket to the virtual machine:
-        final VdcUser user = getCurrentUser();
+        final DbUser user = getCurrentUser();
         final boolean sent = Backend
             .getInstance()
             .getResourceManager()
             .RunVdsCommand(VDSCommandType.SetVmTicket,
-                    new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, mValidTime, user.getUserName(), user.getUserId())).getSucceeded();
+                    new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, mValidTime, user.getLoginName(), user.getId())).getSucceeded();
 
         // Return the ticket only if sending it to the virtual machine succeeded:
         if (sent) {

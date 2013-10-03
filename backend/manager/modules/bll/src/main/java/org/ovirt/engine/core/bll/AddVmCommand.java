@@ -828,7 +828,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void addVmPermission() {
         UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
         if ((getParameters()).isMakeCreatorExplicitOwner()) {
-            permissionsToAdd.addPermission(getCurrentUser().getUserId(), PredefinedRoles.VM_OPERATOR.getId(),
+            permissionsToAdd.addPermission(getCurrentUser().getId(), PredefinedRoles.VM_OPERATOR.getId(),
                     getVmId(), VdcObjectType.VM);
         }
 
@@ -847,7 +847,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
         PermissionDAO dao = getDbFacade().getPermissionDao();
 
-        List<permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getCurrentUser().getUserId(), false);
+        List<permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getCurrentUser().getId(), false);
 
         for (permissions templatePermission : templatePermissions) {
             boolean templateOwnerRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_OWNER.getId());
@@ -868,7 +868,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         permissions[] permsArray = new permissions[newDiskImageIds.size()];
         for (int i = 0; i < newDiskImageIds.size(); i++) {
             permsArray[i] =
-                    new permissions(getCurrentUser().getUserId(),
+                    new permissions(getCurrentUser().getId(),
                             PredefinedRoles.DISK_OPERATOR.getId(),
                             newDiskImageIds.get(i),
                             VdcObjectType.Disk);

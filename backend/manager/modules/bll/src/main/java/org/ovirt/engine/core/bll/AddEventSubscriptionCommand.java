@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -48,8 +47,11 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                         // If user exists in AD and does not exist in DB - try to add it to DB
                         // If an exception is thrown while trying, handle it and and fail with the relevant message
                         try {
-                            user = UserCommandBase.initUser(new VdcUser(subscriberId, "", domain), getParameters()
-                                    .getSessionId());
+                            user = UserCommandBase.initUser(
+                                getParameters().getSessionId(),
+                                domain,
+                                subscriberId
+                            );
                             retValue = ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(),
                                                 user);
                         } catch (VdcBLLException vdcBllException) {

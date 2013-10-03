@@ -55,7 +55,7 @@ public class DbUser extends IVdcQueryable {
      * calculating this field is for the GUI user to understand who is admin in
      * a snap on the user grid.
      */
-    private boolean lastAdminCheckStatus;
+    private boolean isAdmin;
 
 
     /**
@@ -84,7 +84,7 @@ public class DbUser extends IVdcQueryable {
         id = ldapUser.getUserId();
         externalId = new ExternalId(ldapUser.getUserId().toByteArray());
         domain = ldapUser.getDomainControler();
-        loginName = getFullLoginName(ldapUser);
+        loginName = ldapUser.getUserName();
         firstName = ldapUser.getName();
         lastName = ldapUser.getSurName();
         department = ldapUser.getDepartment();
@@ -205,29 +205,12 @@ public class DbUser extends IVdcQueryable {
         return getId();
     }
 
-    public void setLastAdminCheckStatus(boolean value) {
-        lastAdminCheckStatus = value;
+    public void setAdmin(boolean value) {
+        isAdmin = value;
     }
 
-    public boolean getLastAdminCheckStatus() {
-        return lastAdminCheckStatus;
-    }
-
-    private String getFullLoginName(LdapUser ldapUser) {
-        String fullName = ldapUser.getUserName();
-        if (fullName.indexOf("@") == -1) {
-            fullName = fullName +"@"+ ldapUser.getDomainControler();
-        }
-        return fullName;
-    }
-
-    /**
-     * Returns the set of group names as an array.
-     *
-     * @return the group names
-     */
-    public String[] getGroupNamesAsArray() {
-        return groupNames.split(",");
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
     public void setGroupIds(String groupIds) {
@@ -248,7 +231,7 @@ public class DbUser extends IVdcQueryable {
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((groupNames == null) ? 0 : groupNames.hashCode());
-        result = prime * result + (lastAdminCheckStatus ? 1231 : 1237);
+        result = prime * result + (isAdmin ? 1231 : 1237);
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((note == null) ? 0 : note.hashCode());
         result = prime * result + ((role == null) ? 0 : role.hashCode());
@@ -276,7 +259,7 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(email, other.email)
                 && ObjectUtils.objectsEqual(groupNames, other.groupNames)
-                && lastAdminCheckStatus == other.lastAdminCheckStatus
+                && isAdmin == other.isAdmin
                 && ObjectUtils.objectsEqual(firstName, other.firstName)
                 && ObjectUtils.objectsEqual(note, other.note)
                 && ObjectUtils.objectsEqual(role, other.role)

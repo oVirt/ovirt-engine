@@ -68,7 +68,7 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
                 enclosingCommand.getParameters().setDestinationImageId(newDiskImage.getImageId());
                 enclosingCommand.getParameters().getDiskImage().setImageId(newDiskImage.getImageId());
                 MultiLevelAdministrationHandler.addPermission(new permissions(
-                        enclosingCommand.getCurrentUser().getUserId(), PredefinedRoles.DISK_OPERATOR.getId(),
+                        enclosingCommand.getCurrentUser().getId(), PredefinedRoles.DISK_OPERATOR.getId(),
                         newDiskImage.getId(), VdcObjectType.Disk));
             }
 

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.auth;
 
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -29,8 +29,12 @@ public final class AutoLoginData extends JavaScriptObject {
         return this.domain;
     }-*/;
 
-    public VdcUser getVdcUser() {
-        return new VdcUser(Guid.createGuidFromStringDefaultEmpty(getId()), getUserName(), getDomain());
+    public DbUser getVdcUser() {
+        DbUser user = new DbUser();
+        user.setId(Guid.createGuidFromStringDefaultEmpty(getId()));
+        user.setDomain(getDomain());
+        user.setLoginName(getUserName());
+        return user;
     }
 
 }

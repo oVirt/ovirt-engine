@@ -102,7 +102,7 @@ public class GetImagesListByStoragePoolIdQueryTest
         StoragePoolDAO storagePoolDAOMock = mock(StoragePoolDAO.class);
         when(storagePoolDAOMock.get(
                 storagePoolId,
-                getUser().getUserId(),
+                getUser().getId(),
                 getQueryParameters().isFiltered())).thenReturn(pool);
         when(getQuery().getDbFacade().getStoragePoolDao()).thenReturn(storagePoolDAOMock);
     }

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -29,7 +30,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -255,7 +255,7 @@ public class BackendResource extends BaseBackendResource {
         ThreadPoolUtil.execute(new Runnable() {
             SessionHelper sh = getSessionHelper();
             VdcActionParametersBase sp = sessionize(params);
-            VdcUser user = getCurrent().get(VdcUser.class);
+            DbUser user = getCurrent().get(DbUser.class);
 
             @Override
             public void run() {
@@ -263,7 +263,7 @@ public class BackendResource extends BaseBackendResource {
                     backend.RunAction(task, sp);
                 } finally {
                     if (user != null) {
-                        backend.Logoff(sh.sessionize(new LogoutUserParameters(user.getUserId())));
+                        backend.Logoff(sh.sessionize(new LogoutUserParameters(user.getId())));
                     }
                     sh.clean();
                 }

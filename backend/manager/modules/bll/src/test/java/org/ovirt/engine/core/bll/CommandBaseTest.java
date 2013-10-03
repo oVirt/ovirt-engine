@@ -25,8 +25,8 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
@@ -92,8 +92,8 @@ public class CommandBaseTest {
     public void testConstructor() {
         session = RandomStringUtils.random(10);
 
-        VdcUser user = mock(VdcUser.class);
-        when(user.getUserId()).thenReturn(Guid.EVERYONE);
+        DbUser user = mock(DbUser.class);
+        when(user.getId()).thenReturn(Guid.EVERYONE);
 
         // Mock the parameters
         VdcActionParametersBase paramterMock = mock(VdcActionParametersBase.class);
@@ -105,8 +105,8 @@ public class CommandBaseTest {
         CommandBase<VdcActionParametersBase> command = new CommandBaseDummy(paramterMock);
 
         // Check the session
-        assertEquals("wrong user id on command", user.getUserId(), command.getUserId());
-        assertEquals("wrong user id on threadlocal", user, ThreadLocalParamsContainer.getVdcUser());
+        assertEquals("wrong user id on command", user.getId(), command.getUserId());
+        assertEquals("wrong user id on threadlocal", user, ThreadLocalParamsContainer.getUser());
     }
 
     /**

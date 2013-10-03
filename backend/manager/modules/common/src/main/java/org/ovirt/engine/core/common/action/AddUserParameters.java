@@ -2,25 +2,25 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.users.VdcUser;
 
 public class AddUserParameters extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = 3345484510595493227L;
 
-    private VdcUser vdcUser;
+    private DbUser user;
 
     private LdapGroup adGroup;
 
     private LdapUser ldapUser;
 
-    public void setVdcUser(VdcUser vdcUser) {
-        this.vdcUser = vdcUser;
+    public void setUser(DbUser user) {
+        this.user = user;
     }
 
-    public VdcUser getVdcUser() {
-        return vdcUser;
+    public DbUser getUser() {
+        return user;
     }
 
     public void setAdGroup(LdapGroup adGroup) {

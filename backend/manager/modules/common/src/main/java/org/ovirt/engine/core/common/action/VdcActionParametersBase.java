@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,7 +20,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
     private Guid commandId;
     private transient String sessionid;
     private boolean shouldbelogged;
-    private VdcUser parametersCurrentUser;
+    private DbUser parametersCurrentUser;
     private TransactionScopeOption transctionOption;
 
     private transient CommandExecutionReason executionReason;
@@ -93,11 +93,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
         sessionid = value;
     }
 
-    public VdcUser getParametersCurrentUser() {
+    public DbUser getParametersCurrentUser() {
         return parametersCurrentUser;
     }
 
-    public void setParametersCurrentUser(VdcUser value) {
+    public void setParametersCurrentUser(DbUser value) {
         parametersCurrentUser = value;
     }
 
@@ -340,7 +340,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
         builder.append(getCommandId());
         builder.append(", user: "); //$NON-NLS-1$
         if (getParametersCurrentUser() != null) {
-            builder.append(getParametersCurrentUser().getUserName());
+            builder.append(getParametersCurrentUser().getLoginName());
         }
         builder.append(", commandType: "); //$NON-NLS-1$
         builder.append(getCommandType());

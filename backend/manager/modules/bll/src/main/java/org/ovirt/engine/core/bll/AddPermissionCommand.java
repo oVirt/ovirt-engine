@@ -51,8 +51,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
         // check if no ad_element_id in permission or id doesn't equal to sent
         // user or group
         if ((adElementId == null)
-                || (getParameters().getVdcUser() != null && !getParameters().getVdcUser()
-                        .getUserId()
+                || (getParameters().getUser() != null && !getParameters().getUser()
+                        .getId()
                         .equals(adElementId))
                 || (getParameters().getAdGroup() != null && !getParameters().getAdGroup().getid().equals(adElementId))) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_USER_ID_MISMATCH);
@@ -60,7 +60,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
         }
         // if user and group not sent check user/group is in the db in order to
         // give permission
-        if (getParameters().getVdcUser() == null
+        if (getParameters().getUser() == null
                 && getParameters().getAdGroup() == null
                 && getDbUserDAO().get(adElementId) == null
                 && getAdGroupDAO().get(adElementId) == null) {
@@ -96,8 +96,12 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
 
         if (permission == null) {
             // try to add user to db if vdcUser sent
-            if (getParameters().getVdcUser() != null && _dbUser == null) {
-                _dbUser = UserCommandBase.initUser(getParameters().getVdcUser(), getParameters().getSessionId());
+            if (getParameters().getUser() != null && _dbUser == null) {
+                _dbUser = UserCommandBase.initUser(
+                    getParameters().getSessionId(),
+                    getParameters().getUser().getDomain(),
+                    getParameters().getUser().getId()
+                 );
             }
             // try to add group to db if adGroup sent
             else if (getParameters().getAdGroup() != null) {
@@ -151,7 +155,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
         // if the user does not exist in the database we need to
         // check if the logged in user has permissions to add another
         // user from the directory service
-        if (getParameters().getVdcUser() != null && _dbUser == null) {
+        if (getParameters().getUser() != null && _dbUser == null) {
             permissionsSubject.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 VdcActionType.AddUser.getActionGroup()));

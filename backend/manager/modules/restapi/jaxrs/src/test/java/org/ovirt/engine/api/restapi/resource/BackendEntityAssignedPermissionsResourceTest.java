@@ -24,7 +24,7 @@ public class BackendEntityAssignedPermissionsResourceTest
               VdcQueryType.GetPermissionsForObject,
               new GetPermissionsForObjectParameters(GUIDS[1]),
               DataCenter.class,
-              "VdcUser.UserId",
+              "User.Id",
               "ObjectId");
     }
 

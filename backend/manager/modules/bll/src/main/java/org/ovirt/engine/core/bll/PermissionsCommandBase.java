@@ -76,7 +76,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
                 getPermissionDAO()
                         .getForRoleAndAdElementAndObjectWithGroupCheck(
                                 PredefinedRoles.SUPER_USER.getId(),
-                                getCurrentUser().getUserId(),
+                                getCurrentUser().getId(),
                                 MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID);
         return superUserPermission != null;
     }

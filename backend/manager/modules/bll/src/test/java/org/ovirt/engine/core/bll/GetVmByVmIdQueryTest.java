@@ -26,7 +26,7 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameter
         when(paramsMock.getId()).thenReturn(vmID);
 
         VmDAO vmDAOMock = mock(VmDAO.class);
-        when(vmDAOMock.get(vmID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        when(vmDAOMock.get(vmID, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
         when(getQuery().getDbFacade().getVmDao()).thenReturn(vmDAOMock);
 
         doNothing().when(getQuery()).updateVMDetails(expectedResult);

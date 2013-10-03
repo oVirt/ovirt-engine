@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -105,7 +105,7 @@ public class AuditLogableBaseTest {
     @Test
     public void getUserIdVdcUserDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VdcUser u = new VdcUser();
+        final DbUser u = new DbUser();
         b.setCurrentUser(u);
         final Guid g = b.getUserId();
         assertEquals(Guid.Empty, g);
@@ -114,8 +114,8 @@ public class AuditLogableBaseTest {
     @Test
     public void getUserIdVdcUserId() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VdcUser u = new VdcUser();
-        u.setUserId(GUID);
+        final DbUser u = new DbUser();
+        u.setId(GUID);
         b.setCurrentUser(u);
         final Guid g = b.getUserId();
         assertEquals(GUID, g);
@@ -147,8 +147,8 @@ public class AuditLogableBaseTest {
     @Test
     public void GetUserNameFromUser() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VdcUser u = new VdcUser();
-        u.setUserName(NAME);
+        final DbUser u = new DbUser();
+        u.setLoginName(NAME);
         b.setCurrentUser(u);
         final String un = b.getUserName();
         assertEquals(NAME, un);
@@ -157,25 +157,25 @@ public class AuditLogableBaseTest {
     @Test
     public void currentUserDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VdcUser u = b.getCurrentUser();
+        final DbUser u = b.getCurrentUser();
         assertNull(u);
     }
 
     @Test
     public void currentUserNull() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VdcUser u = null;
+        final DbUser u = null;
         b.setCurrentUser(u);
-        final VdcUser cu = b.getCurrentUser();
+        final DbUser cu = b.getCurrentUser();
         assertEquals(u, cu);
     }
 
     @Test
     public void currentUser() {
         final AuditLogableBase b = new AuditLogableBase();
-        final VdcUser u = new VdcUser();
+        final DbUser u = new DbUser();
         b.setCurrentUser(u);
-        final VdcUser cu = b.getCurrentUser();
+        final DbUser cu = b.getCurrentUser();
         assertEquals(u, cu);
     }
 

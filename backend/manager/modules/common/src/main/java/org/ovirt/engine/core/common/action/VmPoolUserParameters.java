@@ -1,25 +1,25 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements java.io.Serializable {
     private static final long serialVersionUID = -5672324868972973061L;
 
-    public VmPoolUserParameters(Guid vmPoolId, VdcUser user, boolean isInternal) {
-        super(vmPoolId, user.getUserId());
-        setVdcUserData(user);
+    public VmPoolUserParameters(Guid vmPoolId, DbUser user, boolean isInternal) {
+        super(vmPoolId, user.getId());
+        setUser(user);
         setIsInternal(isInternal);
     }
 
-    private VdcUser privateVdcUserData;
+    private DbUser user;
 
-    public VdcUser getVdcUserData() {
-        return privateVdcUserData;
+    public DbUser getUser() {
+        return user;
     }
 
-    private void setVdcUserData(VdcUser value) {
-        privateVdcUserData = value;
+    private void setUser(DbUser value) {
+        user = value;
     }
 
     private boolean privateIsInternal;

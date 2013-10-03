@@ -14,11 +14,11 @@ import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 
 import com.google.gwt.rpc.server.RpcServlet;
@@ -132,7 +132,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     }
 
     @Override
-    public VdcUser getLoggedInUser() {
+    public DbUser getLoggedInUser() {
         VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
         queryParams.setSessionId(getSessionId());
         queryParams.setHttpSessionId(getSessionId());
@@ -146,7 +146,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
             if (vqrv.getReturnValue() == null) {
                 return null;
             }
-            return (VdcUser) vqrv.getReturnValue();
+            return (DbUser) vqrv.getReturnValue();
         } else {
             // For unknown reason the result was failed be returned.
             return null;
@@ -154,8 +154,8 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     }
 
     @Override
-    public VdcReturnValueBase logOff(VdcUser userToLogoff) {
-        LogoutUserParameters params = new LogoutUserParameters(userToLogoff.getUserId());
+    public VdcReturnValueBase logOff(DbUser userToLogoff) {
+        LogoutUserParameters params = new LogoutUserParameters(userToLogoff.getId());
         params.setSessionId(getSessionId());
         VdcReturnValueBase returnValue = getBackend().Logoff(params);
         return returnValue;

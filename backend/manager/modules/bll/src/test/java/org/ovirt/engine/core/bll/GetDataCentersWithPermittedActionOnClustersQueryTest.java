@@ -36,7 +36,7 @@ public class GetDataCentersWithPermittedActionOnClustersQueryTest
 
         // Mock the DAO
         StoragePoolDAO storagePoolDAOMock = mock(StoragePoolDAO.class);
-        when(storagePoolDAOMock.getDataCentersWithPermittedActionOnClusters(getUser().getUserId(), getActionGroup(), true, false)).thenReturn(Collections.singletonList(expected));
+        when(storagePoolDAOMock.getDataCentersWithPermittedActionOnClusters(getUser().getId(), getActionGroup(), true, false)).thenReturn(Collections.singletonList(expected));
         when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDAOMock);
 
         getQuery().executeQueryCommand();

@@ -7,10 +7,10 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -32,7 +32,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     protected void initCredentials(String domain) {
-        VdcUser curUser;
+        DbUser curUser;
         String curPassword;
         SessionDataContainer sessionDataContainer = SessionDataContainer.getInstance();
         if (StringUtils.isEmpty(getParameters().getSessionId())) {
@@ -44,9 +44,9 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         }
         // verify that in auto login mode , user is not taken from session.
         if (curUser != null && !StringUtils.isEmpty(curPassword)) {
-            setLoginName(curUser.getUserName());
+            setLoginName(curUser.getLoginName());
             setPassword(curPassword);
-            setAuthenticationDomain(curUser.getDomainControler());
+            setAuthenticationDomain(curUser.getDomain());
         } else {
             Domain domainObject = UsersDomainsCacheManagerService.getInstance().getDomain(domain);
             if (domainObject != null) {

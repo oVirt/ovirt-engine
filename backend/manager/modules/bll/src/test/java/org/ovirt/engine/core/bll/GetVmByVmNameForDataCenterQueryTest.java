@@ -28,7 +28,7 @@ public class GetVmByVmNameForDataCenterQueryTest extends AbstractUserQueryTest<G
         when(paramsMock.getDataCenterId()).thenReturn(dataCenterId);
 
         VmDAO vmDAOMock = mock(VmDAO.class);
-        when(vmDAOMock.getByNameForDataCenter(dataCenterId, VM_NAME, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        when(vmDAOMock.getByNameForDataCenter(dataCenterId, VM_NAME, getUser().getId(), paramsMock.isFiltered())).thenReturn(expectedResult);
         when(getQuery().getDbFacade().getVmDao()).thenReturn(vmDAOMock);
 
         doNothing().when(getQuery()).updateVMDetails(expectedResult);

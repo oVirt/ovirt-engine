@@ -28,7 +28,7 @@ public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQuery
         StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
         when(storageDomainDAOMock.getAllForStoragePool
                 (storagePoolID,
-                        getUser().getUserId(),
+                        getUser().getId(),
                         getQueryParameters().isFiltered())).
                 thenReturn(Collections.singletonList(domain));
 

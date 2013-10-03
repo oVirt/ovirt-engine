@@ -24,8 +24,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcFault;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -695,7 +695,7 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.initLoggedInUser(new VdcUser(), testPassword);
+        Frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
         Frontend.LoginAsync(testUser, testPassword, testDomain, mockAsyncQuery, mockService);
         verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), callbackAction.capture());
@@ -724,7 +724,7 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.initLoggedInUser(new VdcUser(), testPassword);
+        Frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
         Frontend.LoginAsync(testUser, testPassword, testDomain, mockAsyncQuery, mockService);
         verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), callbackAction.capture());
@@ -753,7 +753,7 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.initLoggedInUser(new VdcUser(), testPassword);
+        Frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
         Frontend.LoginAsync(testUser, testPassword, testDomain, mockAsyncQuery, mockService);
         verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), callbackAction.capture());
@@ -779,8 +779,8 @@ public class FrontendActionTest {
     public void testLogoffAsync_ignored_failure() {
         Object model = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(model);
-        VdcUser testUser = new VdcUser();
-        testUser.setUserName("testUser"); //$NON-NLS-1$
+        DbUser testUser = new DbUser();
+        testUser.setLoginName("testUser"); //$NON-NLS-1$
         Frontend.LogoffAsync(testUser, mockAsyncQuery, mockService);
         verify(mockService).logOff(eq(testUser), callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
@@ -804,8 +804,8 @@ public class FrontendActionTest {
     public void testLogoffAsync_404_failure() {
         Object model = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(model);
-        VdcUser testUser = new VdcUser();
-        testUser.setUserName("testUser"); //$NON-NLS-1$
+        DbUser testUser = new DbUser();
+        testUser.setLoginName("testUser"); //$NON-NLS-1$
         Frontend.LogoffAsync(testUser, mockAsyncQuery, mockService);
         verify(mockService).logOff(eq(testUser), callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND, "404 status code"); //$NON-NLS-1$
@@ -828,8 +828,8 @@ public class FrontendActionTest {
     public void testLogoffAsync_success() {
         Object model = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(model);
-        VdcUser testUser = new VdcUser();
-        testUser.setUserName("testUser"); //$NON-NLS-1$
+        DbUser testUser = new DbUser();
+        testUser.setLoginName("testUser"); //$NON-NLS-1$
         Frontend.LogoffAsync(testUser, mockAsyncQuery, mockService);
         verify(mockService).logOff(eq(testUser), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();

@@ -24,7 +24,7 @@ public class GetVmGuestAgentInterfacesByVmIdQueryTest
 
         getQuery().executeQueryCommand();
         verify(vmGuestAgentInterfaceDao).getAllForVm(vmId,
-                getUser().getUserId(),
+                getUser().getId(),
                 getQueryParameters().isFiltered());
     }
 }

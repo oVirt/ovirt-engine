@@ -135,7 +135,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                         AuditLogType.ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES);
 
         for (VmNetworkInterface iface : vmFromConfiguration.getInterfaces()) {
-            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser().getUserId());
+            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser().getId());
         }
 
         vnicProfileHelper.auditInvalidInterfaces(getVmName());

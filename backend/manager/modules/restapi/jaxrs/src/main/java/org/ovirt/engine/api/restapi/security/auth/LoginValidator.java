@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -93,11 +93,11 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         params.setSessionId(sessionId);
         VdcQueryReturnValue queryReturnValue = backend.RunPublicQuery(VdcQueryType.ValidateSession, params);
         if (queryReturnValue != null) {
-            VdcUser vdcUser = queryReturnValue.getReturnValue();
-            if (vdcUser != null) {
-                principal = new Principal(vdcUser.getUserName(), null, vdcUser.getDomainControler());
+            DbUser user = queryReturnValue.getReturnValue();
+            if (user != null) {
+                principal = new Principal(user.getLoginName(), null, user.getDomain());
                 sessionHelper.setSessionId(sessionId);
-                current.set(vdcUser);
+                current.set(user);
             }
         }
         if (principal != null) {
@@ -110,7 +110,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
 
     private boolean loginSuccess(Principal principal, VdcReturnValueBase ret) {
         LOG.debugFormat(LOGIN_SUCCESS, principal.getUser(), principal.getDomain());
-        // cache VdcUser in Current so that it will be available
+        // cache user in Current so that it will be available
         // for logoff action on postProcess() traversal
         current.set(ret.getActionReturnValue());
         current.set(getApplicationMode());
@@ -134,7 +134,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
 
     private void validateSessionSucceeded(VdcQueryReturnValue ret) {
         LOG.debugFormat(VALIDATE_SESSION_SUCCESS);
-        // cache VdcUser in Current so that it will be available
+        // cache user in Current so that it will be available
         // for logoff action on postProcess() traversal
         current.set(ret.getReturnValue());
     }
@@ -166,11 +166,11 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         HttpSession httpSession = getCurrentSession(false);
         if (!current.get(MetaData.class).hasKey("async") ||
                 (!(Boolean.TRUE.equals((Boolean) current.get(MetaData.class).get("async"))))) {
-            VdcUser user = current.get(VdcUser.class);
+            DbUser user = current.get(DbUser.class);
             if (user != null) {
                 if (!persistentSession) {
                     backend.Logoff(
-                            sessionHelper.sessionize(new LogoutUserParameters(user.getUserId())));
+                            sessionHelper.sessionize(new LogoutUserParameters(user.getId())));
                     if (httpSession != null) {
                         httpSession.invalidate();
                     }

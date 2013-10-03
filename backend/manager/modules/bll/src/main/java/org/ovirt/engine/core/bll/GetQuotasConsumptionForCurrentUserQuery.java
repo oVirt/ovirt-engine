@@ -13,7 +13,7 @@ public class GetQuotasConsumptionForCurrentUserQuery<P extends VdcQueryParameter
 
     @Override
     protected void executeQueryCommand() {
-        List<Quota> quotaList = getDbFacade().getQuotaDao().getQuotaByAdElementId(getUser().getUserId(), null, true);
+        List<Quota> quotaList = getDbFacade().getQuotaDao().getQuotaByAdElementId(getUser().getId(), null, true);
         getQueryReturnValue().setReturnValue(QuotaManager.getInstance().generatePerUserUsageReport(quotaList));
     }
 }

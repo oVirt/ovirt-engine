@@ -12,9 +12,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
@@ -85,11 +85,11 @@ public class QueriesCommandBaseTest {
                         Guid guid = mock(Guid.class);
 
                         // Set up the user id env.
-                        VdcUser user = mock(VdcUser.class);
-                        when(user.getUserId()).thenReturn(guid);
+                        DbUser user = mock(DbUser.class);
+                        when(user.getId()).thenReturn(guid);
                         when(user.isAdmin()).thenReturn(isUserAdmin);
                         ThreadLocalParamsContainer.setHttpSessionId(sessionId);
-                        ThreadLocalParamsContainer.setVdcUser(user);
+                        ThreadLocalParamsContainer.setUser(user);
 
                         // Mock-Set the query as admin/user
                         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
@@ -113,10 +113,10 @@ public class QueriesCommandBaseTest {
 
     @Test
     public void testGetUserID() {
-        VdcUser user = mock(VdcUser.class);
-        when(user.getUserId()).thenReturn(Guid.EVERYONE);
+        DbUser user = mock(DbUser.class);
+        when(user.getId()).thenReturn(Guid.EVERYONE);
 
-        ThreadLocalParamsContainer.setVdcUser(user);
+        ThreadLocalParamsContainer.setUser(user);
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(new VdcQueryParametersBase());
 
         assertEquals("wrong guid", Guid.EVERYONE, query.getUserID());

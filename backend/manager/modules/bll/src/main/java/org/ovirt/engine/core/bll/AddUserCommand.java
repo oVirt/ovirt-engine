@@ -30,10 +30,10 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
     protected boolean canDoAction() {
         Guid userId = null;
         String domain = null;
-        if (getParameters().getVdcUser() != null) {
-            addCustomValue("NewUserName", getParameters().getVdcUser().getUserName());
-            userId = getParameters().getVdcUser().getUserId();
-            domain = getParameters().getVdcUser().getDomainControler();
+        if (getParameters().getUser() != null) {
+            addCustomValue("NewUserName", getParameters().getUser().getLoginName());
+            userId = getParameters().getUser().getId();
+            domain = getParameters().getUser().getDomain();
             LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).RunAdAction(AdActionType.GetAdUserByUserId,
                     new LdapSearchByIdParameters(domain, userId)).getReturnValue();
             if (adUser == null) {

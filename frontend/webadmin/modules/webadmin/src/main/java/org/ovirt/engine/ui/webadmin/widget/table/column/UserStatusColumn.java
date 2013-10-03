@@ -11,7 +11,7 @@ public class UserStatusColumn extends WebAdminImageResourceColumn<DbUser> {
 
     @Override
     public ImageResource getValue(DbUser user) {
-        if (user.getLastAdminCheckStatus()) {
+        if (user.isAdmin()) {
             return getApplicationResources().adminImage();
         }
         if (user.isGroup()) {

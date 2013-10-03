@@ -16,11 +16,11 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolResourceTest
@@ -86,9 +86,9 @@ public class BackendVmPoolResourceTest
 
 
     private void setUpGetUserExpectations() {
-        VdcUser user = new VdcUser();
-        user.setUserId(GUIDS[0]);
-        expect(sessionHelper.getCurrent().get(VdcUser.class)).andReturn(user).anyTimes();
+        DbUser user = new DbUser();
+        user.setId(GUIDS[0]);
+        expect(sessionHelper.getCurrent().get(DbUser.class)).andReturn(user).anyTimes();
     }
 
     private void setUpGetVmExpectations(int times) throws Exception {

@@ -25,7 +25,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Id
         Network networkMock = mock(Network.class);
 
         NetworkDao networkDAOMock = mock(NetworkDao.class);
-        when(networkDAOMock.getAllForCluster(clusterID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(networkMock));
+        when(networkDAOMock.getAllForCluster(clusterID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(networkMock));
 
         DbFacade dbFacade = getDbFacadeMockInstance();
         when(dbFacade.getNetworkDao()).thenReturn(networkDAOMock);

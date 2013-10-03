@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -115,17 +115,17 @@ public class LoginModel extends Model
         }
     }
 
-    private VdcUser privateLoggedUser;
+    private DbUser privateLoggedUser;
 
     // If true, indicates that the model is in the process of logging in automatically
     private boolean loggingInAutomatically = false;
 
-    public VdcUser getLoggedUser()
+    public DbUser getLoggedUser()
     {
         return privateLoggedUser;
     }
 
-    protected void setLoggedUser(VdcUser value)
+    protected void setLoggedUser(DbUser value)
     {
         privateLoggedUser = value;
     }
@@ -254,13 +254,13 @@ public class LoginModel extends Model
             public void onSuccess(Object model, Object result)
             {
                 LoginModel loginModel = (LoginModel) model;
-                VdcUser user = null;
+                DbUser user = null;
                 if (result != null)
                 {
                     VdcReturnValueBase returnValue = (VdcReturnValueBase) result;
                     if (returnValue.getSucceeded())
                     {
-                        user = (VdcUser) returnValue.getActionReturnValue();
+                        user = (DbUser) returnValue.getActionReturnValue();
                         loginModel.setLoggedUser(user);
                     }
                     if (user == null)
@@ -292,11 +292,11 @@ public class LoginModel extends Model
         AsyncDataProvider.initCache(this);
     }
 
-    public void autoLogin(VdcUser user)
+    public void autoLogin(DbUser user)
     {
         loggingInAutomatically = true;
-        getUserName().setEntity(user.getUserName());
-        getDomain().setSelectedItem(user.getDomainControler());
+        getUserName().setEntity(user.getLoginName());
+        getDomain().setSelectedItem(user.getDomain());
         disableLoginScreen();
         setLoggedUser(user);
         raiseLoggedInEvent();

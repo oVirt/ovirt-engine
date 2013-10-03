@@ -68,7 +68,7 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
             result = false;
         } else {
-            if (getCurrentUser().getUserId().equals(getParameters().getAdElementId())) {
+            if (getCurrentUser().getId().equals(getParameters().getAdElementId())) {
                 addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_HIMSELF);
                 result = false;
             } else {

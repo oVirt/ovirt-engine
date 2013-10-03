@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -68,12 +68,12 @@ public class ValidateSession extends HttpServlet {
             returnValue = queryReturnValue.getSucceeded();
 
             if (returnValue) {
-                VdcUser vdcUser = queryReturnValue.getReturnValue();
+                DbUser user = queryReturnValue.getReturnValue();
 
                 // We get the user name only in case the validation succeeded, and the user is an administrator
-                if (vdcUser.isAdmin()) {
+                if (user.isAdmin()) {
                     log.debug("Getting user name");
-                    printUPNToResponse(response, getUPN(vdcUser));
+                    printUPNToResponse(response, getUPN(user));
                 } else {
                     log.error("User is not authorized to perform operation");
                     returnValue = false;
@@ -95,10 +95,10 @@ public class ValidateSession extends HttpServlet {
 
     }
 
-    private String getUPN(VdcUser vdcUser) {
-        String retVal = vdcUser.getUserName();
+    private String getUPN(DbUser user) {
+        String retVal = user.getLoginName();
         if (!retVal.contains("@")) {
-            retVal = retVal + "@" + vdcUser.getDomainControler();
+            retVal = retVal + "@" + user.getDomain();
         }
         return retVal;
     }

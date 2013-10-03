@@ -19,7 +19,7 @@ public class BackendUserAssignedPermissionsResourceTest
               VdcQueryType.GetPermissionsByAdElementId,
               new IdQueryParameters(GUIDS[1]),
               User.class,
-              "VdcUser.UserId",
+              "User.Id",
               "Id");
     }
 

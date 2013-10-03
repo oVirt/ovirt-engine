@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.ArrayList;
 import java.util.List;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
@@ -71,7 +71,7 @@ public class CommonModel extends ListModel
     private String searchStringPrefix;
     private boolean hasSearchStringPrefix;
     private String searchString;
-    private VdcUser loggedInUser;
+    private DbUser loggedInUser;
     private List<AuditLog> privateEvents;
     private AuditLog lastEvent;
     private AuditLog lastAlert;
@@ -1246,12 +1246,12 @@ public class CommonModel extends ListModel
         }
     }
 
-    public VdcUser getLoggedInUser()
+    public DbUser getLoggedInUser()
     {
         return loggedInUser;
     }
 
-    public void setLoggedInUser(VdcUser value)
+    public void setLoggedInUser(DbUser value)
     {
         if (loggedInUser != value)
         {

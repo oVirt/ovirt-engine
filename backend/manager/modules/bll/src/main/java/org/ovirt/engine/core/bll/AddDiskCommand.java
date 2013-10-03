@@ -424,7 +424,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private void addDiskPermissions(Disk disk) {
         permissions perms =
-                new permissions(getCurrentUser().getUserId(),
+                new permissions(getCurrentUser().getId(),
                         PredefinedRoles.DISK_OPERATOR.getId(),
                         disk.getId(),
                         VdcObjectType.Disk);

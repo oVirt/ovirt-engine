@@ -31,7 +31,7 @@ public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<IdQuer
 
         query.executeQueryCommand();
 
-        verify(daoMock).getAllForVm(guid, getUser().getUserId(), getQueryParameters().isFiltered());
+        verify(daoMock).getAllForVm(guid, getUser().getId(), getQueryParameters().isFiltered());
     }
 }
 

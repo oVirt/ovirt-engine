@@ -81,9 +81,9 @@ public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventList
                                  var redirectClipboard = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::getRedirectClipboard()();
                                  var redirectSmartCards = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::getRedirectSmartCards()();
                                     var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::disconnectedEvent;
-                                    var userName = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::getVdcUserNameAndDomain()();
-                                    var password = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::getVdcUserPassword()();
-                                    var domain = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::getVdcUserDomainController()();
+                                    var userName = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::getUserNameAndDomain()();
+                                    var password = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::getUserPassword()();
+                                    var domain = this.@org.ovirt.engine.ui.common.uicommon.RdpPluginImpl::getUserDomainController()();
                                     var model = this;
 
                                  //var MsRdpClient = document.getElementById("MsRdpClient_"+server);

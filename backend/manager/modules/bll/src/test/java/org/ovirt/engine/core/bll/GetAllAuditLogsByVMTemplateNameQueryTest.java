@@ -30,7 +30,7 @@ public class GetAllAuditLogsByVMTemplateNameQueryTest
         // Mock the DAOs
         AuditLogDAO auditLogDAOMock = mock(AuditLogDAO.class);
         when(auditLogDAOMock.getAllByVMTemplateName(vmTemplateName,
-                getUser().getUserId(),
+                getUser().getId(),
                 getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(expectedResult));
         when(getDbFacadeMockInstance().getAuditLogDao()).thenReturn(auditLogDAOMock);
 

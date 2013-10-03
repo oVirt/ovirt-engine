@@ -6,7 +6,7 @@ import static junit.framework.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 
 public class SetVmTicketCommandTest {
     // The command that will be tested:
@@ -23,7 +23,7 @@ public class SetVmTicketCommandTest {
      */
     @Test
     public void testNullConsoleUserNameWhenNoUserSet() {
-        VdcUser user = new VdcUser();
+        DbUser user = new DbUser();
         command.setCurrentUser(user);
         assertNull(command.getConsoleUserName());
     }
@@ -34,9 +34,9 @@ public class SetVmTicketCommandTest {
      */
     @Test
     public void testOnlyLoginNameWhenNoDirectorySet() {
-        VdcUser user = new VdcUser();
-        user.setUserName("Legolas");
-        user.setDomainControler("");
+        DbUser user = new DbUser();
+        user.setLoginName("Legolas");
+        user.setDomain("");
         command.setCurrentUser(user);
         assertEquals(command.getConsoleUserName(), "Legolas");
     }
@@ -47,9 +47,9 @@ public class SetVmTicketCommandTest {
      */
     @Test
     public void testLoginNameAtDirectoryWhenDirectorySet() {
-        VdcUser user = new VdcUser();
-        user.setUserName("Legolas");
-        user.setDomainControler("MiddleEarth.com");
+        DbUser user = new DbUser();
+        user.setLoginName("Legolas");
+        user.setDomain("MiddleEarth.com");
         command.setCurrentUser(user);
         assertEquals(command.getConsoleUserName(), "Legolas@MiddleEarth.com");
     }

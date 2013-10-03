@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AdGroupDAO;
@@ -54,7 +54,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AuditLogableBase extends TimeoutBase {
     private static final long serialVersionUID = -4764813076922800727L;
     private Guid mVmId = Guid.Empty;
-    private VdcUser mVdcUser;
+    private DbUser dbUser;
     private Guid mUserId = Guid.Empty;
     private String mUserName;
     private String mVmName;
@@ -127,7 +127,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public Guid getUserId() {
         if (mUserId != null && mUserId.equals(Guid.Empty) && getCurrentUser() != null) {
-            mUserId = getCurrentUser().getUserId();
+            mUserId = getCurrentUser().getId();
         }
         return mUserId;
     }
@@ -138,7 +138,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getUserName() {
         if (StringUtils.isEmpty(mUserName) && getCurrentUser() != null) {
-            mUserName = getCurrentUser().getUserName();
+            mUserName = getCurrentUser().getLoginName();
         }
         return mUserName;
     }
@@ -147,12 +147,12 @@ public class AuditLogableBase extends TimeoutBase {
         mUserName = value;
     }
 
-    public VdcUser getCurrentUser() {
-        return mVdcUser;
+    public DbUser getCurrentUser() {
+        return dbUser;
     }
 
-    public void setCurrentUser(final VdcUser value) {
-        mVdcUser = value;
+    public void setCurrentUser(final DbUser value) {
+        dbUser = value;
     }
 
     public Guid getVmTemplateId() {

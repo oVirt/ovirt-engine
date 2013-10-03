@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 
 import com.google.gwt.rpc.client.RpcService;
 
@@ -32,9 +32,9 @@ public interface GenericApiGWTService extends RpcService {
             ArrayList<VdcActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllCanDoPass);
 
-    public VdcUser getLoggedInUser();
+    public DbUser getLoggedInUser();
 
-    public VdcReturnValueBase logOff(VdcUser userToLogoff);
+    public VdcReturnValueBase logOff(DbUser userToLogoff);
 
     public VdcReturnValueBase Login(String user, String password, String domain);
 }

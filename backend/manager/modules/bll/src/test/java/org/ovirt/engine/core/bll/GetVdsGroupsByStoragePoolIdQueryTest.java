@@ -31,7 +31,7 @@ public class GetVdsGroupsByStoragePoolIdQueryTest extends AbstractUserQueryTest<
         // Mock the DAO
         VdsGroupDAO vdsGroupDAOMock = mock(VdsGroupDAO.class);
         when(vdsGroupDAOMock.getAllForStoragePool(storagePoolId,
-                getUser().getUserId(),
+                getUser().getId(),
                 getQueryParameters().isFiltered())).
                 thenReturn(result);
         when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGroupDAOMock);

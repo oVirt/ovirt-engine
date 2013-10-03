@@ -25,13 +25,13 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class LoginValidatorTest extends Assert {
@@ -131,7 +131,7 @@ public class LoginValidatorTest extends Assert {
         expect(result.getCanDoAction()).andReturn(canDo);
         expect(result.getSucceeded()).andReturn(success).anyTimes();
 
-        VdcUser user = control.createMock(VdcUser.class);
+        DbUser user = control.createMock(DbUser.class);
         if (canDo && success) {
             expect(result.getActionReturnValue()).andReturn(user);
             VdcQueryReturnValue appModeResult = new VdcQueryReturnValue();
@@ -150,7 +150,7 @@ public class LoginValidatorTest extends Assert {
     private Principal setUpValidateSession(boolean success) {
         VdcQueryReturnValue queryReturnValue = control.createMock(VdcQueryReturnValue.class);
         Principal principal = new Principal(USER, SECRET, DOMAIN);
-        VdcUser user = control.createMock(VdcUser.class);
+        DbUser user = control.createMock(DbUser.class);
         expect(backend.RunPublicQuery(eq(VdcQueryType.ValidateSession), eqQueryParams(VdcQueryParametersBase.class,
                 new String[] { "SessionId" },
                 new Object[] { sessionId }) )).andReturn(queryReturnValue);
@@ -166,9 +166,9 @@ public class LoginValidatorTest extends Assert {
 
     private ServerResponse setUpLogoutExpectations() {
         VdcReturnValueBase result = control.createMock(VdcReturnValueBase.class);
-        VdcUser user = control.createMock(VdcUser.class);
-        expect(current.get(VdcUser.class)).andReturn(user);
-        expect(user.getUserId()).andReturn(GUID);
+        DbUser user = control.createMock(DbUser.class);
+        expect(current.get(DbUser.class)).andReturn(user);
+        expect(user.getId()).andReturn(GUID);
         expect(
             backend.Logoff((LogoutUserParameters) eqActionParams(LogoutUserParameters.class,
                     new String[] { "UserId", "SessionId" },

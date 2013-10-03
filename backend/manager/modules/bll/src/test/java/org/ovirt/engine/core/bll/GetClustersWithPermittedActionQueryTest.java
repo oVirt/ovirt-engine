@@ -27,7 +27,7 @@ public class GetClustersWithPermittedActionQueryTest
 
         // Mock the DAO
         VdsGroupDAO vdsGroupDAOMock = mock(VdsGroupDAO.class);
-        when(vdsGroupDAOMock.getClustersWithPermittedAction(getUser().getUserId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
+        when(vdsGroupDAOMock.getClustersWithPermittedAction(getUser().getId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
         when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGroupDAOMock);
 
         getQuery().executeQueryCommand();

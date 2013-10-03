@@ -28,7 +28,7 @@ public class GetVdsGroupByIdQueryTest extends AbstractUserQueryTest<IdQueryParam
 
         // Mock the DAOs
         VdsGroupDAO vdsGropDAOMock = mock(VdsGroupDAO.class);
-        when(vdsGropDAOMock.get(vdsGroupID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(expected);
+        when(vdsGropDAOMock.get(vdsGroupID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(expected);
         when(getDbFacadeMockInstance().getVdsGroupDao()).thenReturn(vdsGropDAOMock);
 
         getQuery().executeQueryCommand();

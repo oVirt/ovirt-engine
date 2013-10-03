@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -265,7 +264,7 @@ public class QuotaUserListModel extends SearchableListModel {
             }
             else
             {
-                permissionParams.setVdcUser(new VdcUser(user.getId(), user.getLoginName(), user.getDomain()));
+                permissionParams.setUser(user);
             }
             permissionParams.setPermission(perm);
             list.add(permissionParams);

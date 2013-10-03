@@ -573,12 +573,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private void addPermission() {
         UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
 
-        addPermissionForTemplate(permissionsToAdd, getCurrentUser().getUserId(), PredefinedRoles.TEMPLATE_OWNER);
+        addPermissionForTemplate(permissionsToAdd, getCurrentUser().getId(), PredefinedRoles.TEMPLATE_OWNER);
         // if the template is for public use, set EVERYONE as a TEMPLATE_USER.
         if (getParameters().isPublicUse()) {
             addPermissionForTemplate(permissionsToAdd, MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
         } else {
-            addPermissionForTemplate(permissionsToAdd, getCurrentUser().getUserId(), PredefinedRoles.TEMPLATE_USER);
+            addPermissionForTemplate(permissionsToAdd, getCurrentUser().getId(), PredefinedRoles.TEMPLATE_USER);
         }
 
         copyVmPermissions(permissionsToAdd);
@@ -596,7 +596,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         PermissionDAO dao = getDbFacade().getPermissionDao();
 
-        List<permissions> vmPermissions = dao.getAllForEntity(getVmId(), getCurrentUser().getUserId(), false);
+        List<permissions> vmPermissions = dao.getAllForEntity(getVmId(), getCurrentUser().getId(), false);
 
         for (permissions vmPermission : vmPermissions) {
             permissionsToAdd.addPermission(vmPermission.getad_element_id(), vmPermission.getrole_id(),
