@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.branding.BrandingTheme.ApplicationType;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginDataManager;
 
@@ -37,11 +36,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     @Override
     protected String getSelectorScriptName() {
         return "webadmin.nocache.js"; //$NON-NLS-1$
-    }
-
-    @Override
-    public ApplicationType getApplicationType() {
-        return ApplicationType.WEBADMIN;
     }
 
     @Override

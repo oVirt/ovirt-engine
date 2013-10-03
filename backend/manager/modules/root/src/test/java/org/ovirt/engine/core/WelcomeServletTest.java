@@ -21,12 +21,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.branding.BrandingManager;
+import org.ovirt.engine.core.branding.BrandingTheme;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.branding.BrandingManager;
-import org.ovirt.engine.core.utils.branding.BrandingTheme;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 @RunWith(MockitoJUnitRunner.class)

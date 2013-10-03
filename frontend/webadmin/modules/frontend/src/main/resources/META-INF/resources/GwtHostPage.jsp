@@ -1,19 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="obrand" uri="obrand" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="shortcut icon" href="${pageContext.request.contextPath}/theme-resource/favicon" type="image/x-icon" />
+    <obrand:favicon />
     <meta name="gwt:property" content="locale=${requestScope['locale']}">
-    <c:if test="${requestScope['brandingStyle'] != null}">
-        <c:forEach items="${requestScope['brandingStyle']}" var="theme">
-            <c:if test="${theme.getThemeStyleSheet(requestScope['applicationType']) != null}">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/theme${theme.path}/${theme.getThemeStyleSheet(requestScope['applicationType'])}">
-            </c:if>
-        </c:forEach>
-    </c:if>
+    <obrand:stylesheets />
     <script type="text/javascript">
         <c:if test="${requestScope['userInfo'] != null}">
             var userInfo = <c:out value="${requestScope['userInfo']}" escapeXml="false"/>;

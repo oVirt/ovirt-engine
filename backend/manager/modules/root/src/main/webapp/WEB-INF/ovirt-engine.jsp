@@ -1,20 +1,15 @@
 <%@ page pageEncoding="UTF-8" session="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="obrand" uri="obrand" %>
 <fmt:setBundle basename="languages" var="lang" />
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <link rel="shortcut icon" href="${pageContext.request.contextPath}/ovirt-engine-theme-resource/favicon" type="image/x-icon" />
+    <obrand:favicon />
     <title><fmt:message key="obrand.welcome.title" /></title>
-    <c:if test="${requestScope['brandingStyle'] != null}">
-        <c:forEach items="${requestScope['brandingStyle']}" var="theme">
-            <c:if test="${theme.getThemeStyleSheet(requestScope['applicationType']) != null}">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/ovirt-engine-theme${theme.path}/${theme.getThemeStyleSheet(requestScope['applicationType'])}">
-            </c:if>
-        </c:forEach>
-    </c:if>
+    <obrand:stylesheets />
     <script src="splash.js" type="text/javascript"></script>
 </head>
 <body onload="pageLoaded()">

@@ -73,6 +73,11 @@
       <artifactId>commons-lang</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>branding</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

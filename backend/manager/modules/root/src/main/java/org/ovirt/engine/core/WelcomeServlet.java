@@ -6,31 +6,22 @@ import java.util.Locale;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.branding.BrandingManager;
-import org.ovirt.engine.core.utils.branding.BrandingTheme;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 /**
  * This Servlet serves the welcome page to allow users to select either web admin or user portal.
  */
-@WebServlet(value = "/ovirt-engine")
 public class WelcomeServlet extends HttpServlet {
-    /**
-     * Logger.
-     */
-    private static final Logger log = Logger.getLogger(WelcomeServlet.class);
-
     /**
      * Generated UID.
      */
@@ -50,11 +41,6 @@ public class WelcomeServlet extends HttpServlet {
      * The request attribute containing the version.
      */
     private static final String VERSION = "version";
-
-    /**
-     * Application type attribute key.
-     */
-    private static final String APPLICATION_TYPE = "applicationType";
 
     /**
      * Back-end bean for database access.
@@ -93,7 +79,6 @@ public class WelcomeServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
         ServletException {
         request.setAttribute(LOCALE_KEYS, LocaleFilter.getLocaleKeys());
-        request.setAttribute(APPLICATION_TYPE, BrandingTheme.ApplicationType.WELCOME);
         String oVirtVersion = backend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
                         ConfigCommon.defaultConfigurationVersion)).getReturnValue();

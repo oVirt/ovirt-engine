@@ -55,6 +55,12 @@
       <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>${engine.core.groupId}</groupId>
+      <artifactId>branding</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <build>
     <resources>
