@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.config;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.EngineWorkingMode;
@@ -9,25 +8,25 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("9b9002d1-ec33-4083-8a7b-31f6b8931648")
-    AdUserId(0),
+    AdUserId,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Postgres")
-    DBEngine(1),
+    DBEngine,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("administrator")
-    AdUserName(5),
+    AdUserName,
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("EXAMPLE.COM:123456")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.DomainsPasswordMap)
-    AdUserPassword(8),
+    AdUserPassword,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("123456")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    LocalAdminPassword(9),
+    LocalAdminPassword,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("EXAMPLE.COM")
-    DomainName(10),
+    DomainName,
 
     /**
      * Timeout in seconds for the completion of calls to VDSM. It should
@@ -36,14 +35,14 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("180")
-    vdsTimeout(11),
+    vdsTimeout,
 
     /**
      * The number of times to retry host operations when there are IO errors.
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
-    vdsRetries(393),
+    vdsRetries,
 
     /**
      * Timeout for establishment of connections with hosts. This should be quite
@@ -52,767 +51,767 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
-    vdsConnectionTimeout(394),
+    vdsConnectionTimeout,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
-    VdsRefreshRate(12),
+    VdsRefreshRate,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    AsyncTaskPollingRate(13),
+    AsyncTaskPollingRate,
 
     /**
      * The rate (in seconds) to refresh the cache that holds the asynchronous tasks' statuses.
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    AsyncTaskStatusCacheRefreshRateInSeconds(15),
+    AsyncTaskStatusCacheRefreshRateInSeconds,
 
     /**
      * The period of time (in minutes) to hold the asynchronous tasks' statuses in the asynchronous tasks cache.
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    AsyncTaskStatusCachingTimeInMinutes(16),
+    AsyncTaskStatusCachingTimeInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3000")
-    AsyncTaskZombieTaskLifeInMinutes(17),
+    AsyncTaskZombieTaskLifeInMinutes,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3600")
-    UserRefreshRate(18),
+    UserRefreshRate,
     @TypeConverterAttribute(java.util.Date.class)
     @DefaultValueAttribute("03:35:35")
-    AuditLogCleanupTime(19),
+    AuditLogCleanupTime,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    AuditLogAgingThreshold(20),
+    AuditLogAgingThreshold,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("drac5,ilo,ipmilan,rsa,bladecenter,alom,apc,eps,wti,rsb")
-    VdsFenceType(24),
+    VdsFenceType,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port")
-    VdsFenceOptionMapping(26),
+    VdsFenceOptionMapping,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("secure=bool,port=int,slot=int")
-    VdsFenceOptionTypes(27),
+    VdsFenceOptionTypes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    FenceStopStatusRetries(28),
+    FenceStopStatusRetries,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    FenceStopStatusDelayBetweenRetriesInSec(29),
+    FenceStopStatusDelayBetweenRetriesInSec,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("180")
-    FenceQuietTimeBetweenOperationsInSec(30),
+    FenceQuietTimeBetweenOperationsInSec,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("cluster,dc")
-    FenceProxyDefaultPreferences(31),
+    FenceProxyDefaultPreferences,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/updates/ovirt-node-image.iso")
-    oVirtUploadPath(32),
+    oVirtUploadPath,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/rhev-hypervisor")
-    oVirtISOsRepositoryPath(33),
+    oVirtISOsRepositoryPath,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/vdsm-reg/vdsm-upgrade")
-    oVirtUpgradeScriptName(34),
+    oVirtUpgradeScriptName,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    VdsCertificateValidityInYears(38),
+    VdsCertificateValidityInYears,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("USERID")
-    UserId(44),
+    UserId,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("PASSW0RD")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    Password(45),
+    Password,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    SearchResultsLimit(48),
+    SearchResultsLimit,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
-    VDSAttemptsToResetCount(49),
+    VDSAttemptsToResetCount,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    TimeoutToResetVdsInSeconds(50),
+    TimeoutToResetVdsInSeconds,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKey2003(52),
+    ProductKey2003,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKey2003x64(53),
+    ProductKey2003x64,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKey2008(54),
+    ProductKey2008,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKey2008x64(55),
+    ProductKey2008x64,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKey2008R2(56),
+    ProductKey2008R2,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKeyWindow7(57),
+    ProductKeyWindow7,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKeyWindow7x64(58),
+    ProductKeyWindow7x64,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKey(59),
+    ProductKey,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    FreeSpaceLow(60),
+    FreeSpaceLow,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    FreeSpaceCriticalLowInGB(61),
+    FreeSpaceCriticalLowInGB,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    MacPoolRanges(62),
+    MacPoolRanges,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    HasCluster(63),
+    HasCluster,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("1.0.0.0")
-    VdcVersion(64),
+    VdcVersion,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    SSLEnabled(65),
+    SSLEnabled,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("DEFAULT")
-    CipherSuite(66),
+    CipherSuite,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("40")
-    StoragePoolNameSizeLimit(69),
+    StoragePoolNameSizeLimit,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("50")
-    StorageDomainNameSizeLimit(70),
+    StorageDomainNameSizeLimit,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    NumberOfFailedRunsOnVds(73),
+    NumberOfFailedRunsOnVds,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    TimeToReduceFailedRunOnVdsInMinutes(74),
+    TimeToReduceFailedRunOnVdsInMinutes,
     /**
      * In default rerun Vm on all Available desktops
      */
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    MaxRerunVmOnVdsCount(75),
+    MaxRerunVmOnVdsCount,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepXPPath(79),
+    SysPrepXPPath,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrep2K3Path(80),
+    SysPrep2K3Path,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrep2K8Path(81),
+    SysPrep2K8Path,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrep2K8x64Path(82),
+    SysPrep2K8x64Path,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrep2K8R2Path(83),
+    SysPrep2K8R2Path,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepWindows7Path(84),
+    SysPrepWindows7Path,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepWindows7x64Path(85),
+    SysPrepWindows7x64Path,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
-    MaxVmsInPool(87),
+    MaxVmsInPool,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    VmPoolLeaseDays(88),
+    VmPoolLeaseDays,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("12:00")
-    VmPoolLeaseStartTime(89),
+    VmPoolLeaseStartTime,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("12:00")
-    VmPoolLeaseEndTime(90),
+    VmPoolLeaseEndTime,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("LDAP")
-    AuthenticationMethod(92),
+    AuthenticationMethod,
     @Reloadable
     @TypeConverterAttribute(java.util.List.class)
     @DefaultValueAttribute("1,2,4")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    ValidNumOfMonitors(93),
+    ValidNumOfMonitors,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
-    MaxNumOfVmCpus(94),
+    MaxNumOfVmCpus,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
-    MaxNumOfVmSockets(95),
+    MaxNumOfVmSockets,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
-    MaxNumOfCpuPerSocket(96),
+    MaxNumOfCpuPerSocket,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
-    NumberVmRefreshesBeforeSave(97),
+    NumberVmRefreshesBeforeSave,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    AutoRepoDomainRefreshTime(99),
+    AutoRepoDomainRefreshTime,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    InstallVds(108),
+    InstallVds,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    EnableUSBAsDefault(110),
+    EnableUSBAsDefault,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
-    SSHInactivityTimoutSeconds(111),
+    SSHInactivityTimoutSeconds,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    ServerRebootTimeout(112),
+    ServerRebootTimeout,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("40")
-    VmGracefulShutdownTimeout(113),
+    VmGracefulShutdownTimeout,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    VmPriorityMaxValue(114),
+    VmPriorityMaxValue,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Shutting Down")
-    VmGracefulShutdownMessage(115),
+    VmGracefulShutdownMessage,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("smain,sinputs,scursor,splayback,srecord,sdisplay,ssmartcard,susbredir")
-    SpiceSecureChannels(117),
+    SpiceSecureChannels,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("shift+f12")
-    SpiceReleaseCursorKeys(119),
+    SpiceReleaseCursorKeys,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("shift+f11")
-    SpiceToggleFullScreenKeys(120),
+    SpiceToggleFullScreenKeys,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    SpiceUsbAutoShare(121),
+    SpiceUsbAutoShare,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    EncryptHostCommunication(123),
+    EncryptHostCommunication,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("oVirt")
-    OrganizationName(125),
+    OrganizationName,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    IsMultilevelAdministrationOn(127),
+    IsMultilevelAdministrationOn,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    VdsRecoveryTimeoutInMintues(128),
+    VdsRecoveryTimeoutInMintues,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8192")
-    MaxBlockDiskSize(129),
+    MaxBlockDiskSize,
     // the order is- {level}:{name}:{flags}:{vdsm};
     // {level}:{name}:{flags}:{vdsm};1:cpu_name:cpu_flags,..,:vdsm_exec,+..,-..;..
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("1:pentium3:vmx:pentium3;2:intel-qemu64-nx:vmx,sse2:qemu64,-nx,+sse2;3:intel-qemu64:vmx,sse2,nx:qemu64,+sse2;2:amd-qemu64-nx:svm,sse2:qemu64,-nx,+sse2;3:amd-qemu64:svm,sse2,nx:qemu64,+sse2")
-    ServerCPUList(130),
+    ServerCPUList,
     @Reloadable
     @TypeConverterAttribute(java.util.List.class)
     @DefaultValueAttribute("ovirt-guest-agent-common,ovirt-guest-agent")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    AgentAppName(132),
+    AgentAppName,
     @Reloadable
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"windows\":\"RHEV-Spice\",\"linux\":\"xorg-x11-drv-qxl\"}")
-    SpiceDriverNameInGuest(133),
+    SpiceDriverNameInGuest,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("RHEV-toolsSetup_")
-    GuestToolsSetupIsoPrefix(134),
+    GuestToolsSetupIsoPrefix,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    VcpuConsumptionPercentage(135),
+    VcpuConsumptionPercentage,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/images/import/")
-    ImportDefaultPath(138),
+    ImportDefaultPath,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("None")
-    VdsSelectionAlgorithm(139),
+    VdsSelectionAlgorithm,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    EnableVdsLoadBalancing(140),
+    EnableVdsLoadBalancing,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
-    VdsLoadBalancingeIntervalInMinutes(141),
+    VdsLoadBalancingeIntervalInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
-    LowUtilizationForEvenlyDistribute(142),
+    LowUtilizationForEvenlyDistribute,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("6")
-    LowUtilizationForPowerSave(143),
+    LowUtilizationForPowerSave,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    HighUtilizationForEvenlyDistribute(144),
+    HighUtilizationForEvenlyDistribute,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    HighUtilizationForPowerSave(145),
+    HighUtilizationForPowerSave,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("80")
-    UtilizationThresholdInPercent(146),
+    UtilizationThresholdInPercent,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
-    CpuOverCommitDurationMinutes(147),
+    CpuOverCommitDurationMinutes,
     // a default of 120% memory over commit.
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    MaxVdsMemOverCommit(148),
+    MaxVdsMemOverCommit,
     // a default of 120% memory over commit.
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    MaxVdsMemOverCommitForServers(149),
+    MaxVdsMemOverCommitForServers,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    AutoInstallCertificateOnApprove(165),
+    AutoInstallCertificateOnApprove,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    DebugTimerLogging(169),
+    DebugTimerLogging,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    AutoApprovePatterns(171),
+    AutoApprovePatterns,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("99408929-82CF-4DC7-A532-9D998063FA95")
-    AutoRegistrationDefaultVdsGroupID(172),
+    AutoRegistrationDefaultVdsGroupID,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    StoragePoolRefreshTimeInSeconds(179),
+    StoragePoolRefreshTimeInSeconds,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    StoragePoolNonOperationalResetTimeoutInMin(180),
+    StoragePoolNonOperationalResetTimeoutInMin,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
-    StorageDomainFalureTimeoutInMinutes(181),
+    StorageDomainFalureTimeoutInMinutes,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ComputerADPaths(182),
+    ComputerADPaths,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    SPMFailOverAttempts(192),
+    SPMFailOverAttempts,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ON")
-    LockPolicy(193),
+    LockPolicy,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    LockRenewalIntervalSec(194),
+    LockRenewalIntervalSec,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    LeaseTimeSec(195),
+    LeaseTimeSec,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    IoOpTimeoutSec(196),
+    IoOpTimeoutSec,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    LeaseRetries(197),
+    LeaseRetries,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("en-us")
-    VncKeyboardLayout(203),
+    VncKeyboardLayout,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    SpmCommandFailOverRetries(204),
+    SpmCommandFailOverRetries,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
-    SpmVCpuConsumption(205),
+    SpmVCpuConsumption,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    RedirectServletReportsPage(251),
+    RedirectServletReportsPage,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    EnableSpiceRootCertificateValidation(206),
+    EnableSpiceRootCertificateValidation,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100000")
-    MaxMacsCountInPool(207),
+    MaxMacsCountInPool,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    NumberOfVmsForTopSizeVms(208),
+    NumberOfVmsForTopSizeVms,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("256")
-    VMMinMemorySizeInMB(210),
+    VMMinMemorySizeInMB,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20480")
-    VM32BitMaxMemorySizeInMB(211),
+    VM32BitMaxMemorySizeInMB,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("268435456")
-    VM64BitMaxMemorySizeInMB(212),
+    VM64BitMaxMemorySizeInMB,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
-    BlockMigrationOnSwapUsagePercentage(213),
+    BlockMigrationOnSwapUsagePercentage,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    EnableSwapCheck(214),
+    EnableSwapCheck,
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    SendSMPOnRunVm(215),
+    SendSMPOnRunVm,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(" WHERE RowNum BETWEEN %1$s AND %2$s")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
     realValue = "PagingSyntax")
-    DBPagingSyntax(217),
+    DBPagingSyntax,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Range")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
     realValue = "PagingType")
-    DBPagingType(218),
+    DBPagingType,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
     realValue = "SearchTemplate")
-    DBSearchTemplate(219),
+    DBSearchTemplate,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(" OFFSET {0} LIMIT {1}")
-    PostgresPagingSyntax(223),      // used by behaviour DBPagingSyntax
+    PostgresPagingSyntax,      // used by behaviour DBPagingSyntax
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Offset")
-    PostgresPagingType(224),        // used by behaviour DBPagingType
+    PostgresPagingType,        // used by behaviour DBPagingType
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SELECT * FROM ( {1}) as T1 {2}")
-    PostgresSearchTemplate(225),    // used by behaviour DBSearchTemplate
+    PostgresSearchTemplate,    // used by behaviour DBSearchTemplate
     @Reloadable
     @TypeConverterAttribute(java.util.HashSet.class)
     @DefaultValueAttribute("4.4,4.5")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)
-    SupportedVDSMVersions(227),
+    SupportedVDSMVersions,
     @TypeConverterAttribute(java.util.HashSet.class)
     @DefaultValueAttribute("2.2,3.0")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)
-    SupportedClusterLevels(228),
+    SupportedClusterLevels,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ENGINE")
-    OvfVirtualSystemType(229),
+    OvfVirtualSystemType,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    WaitForVdsInitInSec(230),
+    WaitForVdsInitInSec,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    OvfUpdateIntervalInMinutes(231),
+    OvfUpdateIntervalInMinutes,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    OvfItemsCountPerUpdate(232),
+    OvfItemsCountPerUpdate,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("GMT Standard Time")
-    DefaultWindowsTimeZone(260),
+    DefaultWindowsTimeZone,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Etc/GMT")
-    DefaultGeneralTimeZone(261),
+    DefaultGeneralTimeZone,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("389")
-    LDAPServerPort(263),
+    LDAPServerPort,
 
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    SANWipeAfterDelete(267),
+    SANWipeAfterDelete,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/etc/ovirt-engine")
-    ConfigDir(267),
+    ConfigDir,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/ovirt-engine")
-    DataDir(268),
+    DataDir,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    UserSessionTimeOutInterval(269),
+    UserSessionTimeOutInterval,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    UserSessionTimeOutInvalidationInterval(270),
+    UserSessionTimeOutInvalidationInterval,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/images/rhev")
-    RhevhLocalFSPath(290),
+    RhevhLocalFSPath,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("default:GSSAPI")
-    LDAPSecurityAuthentication(271),
+    LDAPSecurityAuthentication,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    UserDefinedVMProperties(272),
+    UserDefinedVMProperties,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    PredefinedVMProperties(273),
+    PredefinedVMProperties,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("250")
-    MaxNumberOfHostsInStoragePool(274),
+    MaxNumberOfHostsInStoragePool,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("15")
-    MaxVmNameLengthWindows(276),
+    MaxVmNameLengthWindows,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("64")
-    MaxVmNameLengthNonWindows(277),
+    MaxVmNameLengthNonWindows,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("255")
-    MaxVdsNameLength(278),
+    MaxVdsNameLength,
 
     @Reloadable
     @TypeConverterAttribute(Double.class)
     @DefaultValueAttribute("30")
-    MaxStorageVdsTimeoutCheckSec(279),
+    MaxStorageVdsTimeoutCheckSec,
 
     @Reloadable
     @TypeConverterAttribute(Double.class)
     @DefaultValueAttribute("5")
-    MaxStorageVdsDelayCheckSec(280),
+    MaxStorageVdsDelayCheckSec,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
-    DisableFenceAtStartupInSec(281),
+    DisableFenceAtStartupInSec,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    NicDHCPDelayGraceInMS(282),
+    NicDHCPDelayGraceInMS,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    FindFenceProxyRetries(283),
+    FindFenceProxyRetries,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    FindFenceProxyDelayBetweenRetriesInSec(284),
+    FindFenceProxyDelayBetweenRetriesInSec,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1024")
-    LogPhysicalMemoryThresholdInMB(285),
+    LogPhysicalMemoryThresholdInMB,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("auth-conf")
-    SASL_QOP(286),
+    SASL_QOP,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
-    LdapQueryPageSize(288),
+    LdapQueryPageSize,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    MaxLDAPQueryPartsNumber(289),
+    MaxLDAPQueryPartsNumber,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    FenceStartStatusRetries(290),
+    FenceStartStatusRetries,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    FenceStartStatusDelayBetweenRetriesInSec(291),
+    FenceStartStatusDelayBetweenRetriesInSec,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    LDAPQueryTimeout(292),
+    LDAPQueryTimeout,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("default,ich6")
-    DesktopAudioDeviceType(294),
+    DesktopAudioDeviceType,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("0")
-    SupportedStorageFormats(296),
+    SupportedStorageFormats,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
     realValue = "LikeSyntax")
-    DBLikeSyntax(298),
+    DBLikeSyntax,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
-    PostgresLikeSyntax(300),    // used by behaviour DBLikeSyntax
+    PostgresLikeSyntax,    // used by behaviour DBLikeSyntax
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
     realValue = "I18NPrefix")
-    DBI18NPrefix(301),
+    DBI18NPrefix,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    PostgresI18NPrefix(303),    // used by behaviour DBI18NPrefix
+    PostgresI18NPrefix,    // used by behaviour DBI18NPrefix
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60000")
-    UknownTaskPrePollingLapse(304),
+    UknownTaskPrePollingLapse,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    LdapServers(305),
+    LdapServers,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("3.0.0.0")
-    ProductRPMVersion(307),
+    ProductRPMVersion,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10000")
-    MaxAuditLogMessageLength(308),
+    MaxAuditLogMessageLength,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepDefaultUser(309),
+    SysPrepDefaultUser,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     @DefaultValueAttribute("")
-    SysPrepDefaultPassword(310),
+    SysPrepDefaultPassword,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ilo3=ipmilan")
-    FenceAgentMapping(311),
+    FenceAgentMapping,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ilo3:lanplus,power_wait=4")
-    FenceAgentDefaultParams(312),
+    FenceAgentDefaultParams,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("admin")
-    AdminUser(313),
+    AdminUser,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("internal")
-    AdminDomain(314),
+    AdminDomain,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    AdminPassword(315),
+    AdminPassword,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    SignCertTimeoutInSeconds(316),
+    SignCertTimeoutInSeconds,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("600")
-    OtpExpirationInSeconds(317),
+    OtpExpirationInSeconds,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
-    ConnectToServerTimeoutInSeconds(318),
+    ConnectToServerTimeoutInSeconds,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    IPTablesConfig(319),
+    IPTablesConfig,
 
     /**
      * Lower threshold for disk space on host to be considered low, in MB.
@@ -820,7 +819,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
-    VdsLocalDisksLowFreeSpace(321),
+    VdsLocalDisksLowFreeSpace,
 
     /**
      * Lower threshold for disk space on host to be considered critically low (almost out of space), in MB.
@@ -828,60 +827,60 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("500")
-    VdsLocalDisksCriticallyLowFreeSpace(322),
+    VdsLocalDisksCriticallyLowFreeSpace,
 
     /**
      * The minimal size of the internal thread pool. Minimal number of threads in pool
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("50")
-    DefaultMinThreadPoolSize(323),
+    DefaultMinThreadPoolSize,
 
     /**
      * The size of the internal thread pool
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("500")
-    DefaultMaxThreadPoolSize(324),
+    DefaultMaxThreadPoolSize,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
-    InitStorageSparseSizeInGB(326),
+    InitStorageSparseSizeInGB,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirtmgmt")
-    ManagementNetwork(328),
+    ManagementNetwork,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("5.8")
-    OvirtInitialSupportedIsoVersion(329),
+    OvirtInitialSupportedIsoVersion,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("rhevh")
-    OvirtIsoPrefix(330),
+    OvirtIsoPrefix,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("80")
-    QuotaThresholdVdsGroup(331),
+    QuotaThresholdVdsGroup,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("80")
-    QuotaThresholdStorage(332),
+    QuotaThresholdStorage,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
-    QuotaGraceVdsGroup(333),
+    QuotaGraceVdsGroup,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
-    QuotaGraceStorage(334),
+    QuotaGraceStorage,
 
     // This value indicates devices that although are given to us by VDSM
     // are still treated as managed devices
@@ -889,165 +888,165 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ManagedDevicesWhiteList(336),
+    ManagedDevicesWhiteList,
 
     /**
      * The origin type to be used for VM and VM template creation
      */
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("OVIRT")
-    OriginType(336),
+    OriginType,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    HotPlugEnabled(337),
+    HotPlugEnabled,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    HotPlugUnsupportedOsList(338),
+    HotPlugUnsupportedOsList,
 
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    AllowDuplicateMacAddresses(339),
+    AllowDuplicateMacAddresses,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    SetupNetworksPollingTimeout(340),
+    SetupNetworksPollingTimeout,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    JobCleanupRateInMinutes(341),
+    JobCleanupRateInMinutes,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    SucceededJobCleanupTimeInMinutes(342),
+    SucceededJobCleanupTimeInMinutes,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    FailedJobCleanupTimeInMinutes(343),
+    FailedJobCleanupTimeInMinutes,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    JobPageSize(344),
+    JobPageSize,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    VmPoolMonitorIntervalInMinutes(344),
+    VmPoolMonitorIntervalInMinutes,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    VmPoolMonitorBatchSize(345),
+    VmPoolMonitorBatchSize,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("0 0/5 * * * ?")
-    AutoRecoverySchedule(346),
+    AutoRecoverySchedule,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    VmPoolMonitorMaxAttempts(347),
+    VmPoolMonitorMaxAttempts,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    LiveSnapshotEnabled(348),
+    LiveSnapshotEnabled,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("9000")
-    MaxMTU(349),
+    MaxMTU,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    PosixStorageEnabled(350),
+    PosixStorageEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    SendVmTicketUID(351),
+    SendVmTicketUID,
 
     @DefaultValueAttribute("")
     @TypeConverterAttribute(String.class)
-    LDAPProviderTypes(352),
+    LDAPProviderTypes,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    AdvancedNFSOptionsEnabled(353),
+    AdvancedNFSOptionsEnabled,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8192")
-    PayloadSize(354),
+    PayloadSize,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("255")
-    ApplicationMode(355),
+    ApplicationMode,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("4")
-    NumberOfUSBSlots(356),
+    NumberOfUSBSlots,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    NativeUSBEnabled(357),
+    NativeUSBEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    ShareableDiskEnabled(358),
+    ShareableDiskEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    CpuPinningEnabled(359),
+    CpuPinningEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    DirectLUNDiskEnabled(360),
+    DirectLUNDiskEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    FilteringLUNsEnabled(361),
+    FilteringLUNsEnabled,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("animation")
-    WANDisableEffects(362),
+    WANDisableEffects,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
-    WANColorDepth(363),
+    WANColorDepth,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    VmPoolMaxSubsequentFailures(364),
+    VmPoolMaxSubsequentFailures,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    CpuPinMigrationEnabled(365),
+    CpuPinMigrationEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    SupportForceCreateVG(366),
+    SupportForceCreateVG,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    NonVmNetworkSupported(367),
+    NonVmNetworkSupported,
 
     @TypeConverterAttribute(java.util.List.class)
     @DefaultValueAttribute("0,2")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    DisconnectPoolOnReconstruct(368),
+    DisconnectPoolOnReconstruct,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    NetworkConnectivityCheckTimeoutInSeconds(369),
+    NetworkConnectivityCheckTimeoutInSeconds,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    SupportBridgesReportByVDSM(370),
+    SupportBridgesReportByVDSM,
 
     @Reloadable
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"storage domains\":\"true\",\"hosts\":\"true\"}")
-    AutoRecoveryAllowedTypes(371),
+    AutoRecoveryAllowedTypes,
 
     /*
      * umask is required to allow only self access
@@ -1064,101 +1063,101 @@ public enum ConfigValues {
         "tar --warning=no-timestamp -C \"${MYTMP}\" -x && " +
         "@ENVIRONMENT@ \"${MYTMP}\"/setup DIALOG/dialect=str:machine DIALOG/customization=bool:True"
     )
-    BootstrapCommand(373),
+    BootstrapCommand,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10000")
-    BootstrapCacheRefreshInterval(374),
+    BootstrapCacheRefreshInterval,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/ovirt-host-deploy/interface-3")
-    BootstrapPackageDirectory(375),
+    BootstrapPackageDirectory,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirt-host-deploy.tar")
-    BootstrapPackageName(376),
+    BootstrapPackageName,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirt-engine")
-    SSHKeyAlias(377),
+    SSHKeyAlias,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    LDAPOperationTimeout(378),
+    LDAPOperationTimeout,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    LDAPConnectTimeout(379),
+    LDAPConnectTimeout,
 
     /*
      * Whether to allow a cluster with both Virt and Gluster services enabled
      */
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    AllowClusterWithVirtGlusterEnabled(380),
+    AllowClusterWithVirtGlusterEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    EnableMACAntiSpoofingFilterRules(381),
+    EnableMACAntiSpoofingFilterRules,
     // Gluster peer status command
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("gluster peer status --xml")
-    GlusterPeerStatusCommand(378),
+    GlusterPeerStatusCommand,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    MTUOverrideSupported(382),
+    MTUOverrideSupported,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1800")
-    SSHInactivityHardTimoutSeconds(383),
+    SSHInactivityHardTimoutSeconds,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("virt")
-    GlusterVolumeOptionGroupVirtValue(384),
+    GlusterVolumeOptionGroupVirtValue,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("36")
-    GlusterVolumeOptionOwnerUserVirtValue(385),
+    GlusterVolumeOptionOwnerUserVirtValue,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("36")
-    GlusterVolumeOptionOwnerGroupVirtValue(386),
+    GlusterVolumeOptionOwnerGroupVirtValue,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    IPTablesConfigForVirt(387),
+    IPTablesConfigForVirt,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    IPTablesConfigForGluster(388),
+    IPTablesConfigForGluster,
 
     // Host time drift
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    EnableHostTimeDrift(389),
+    EnableHostTimeDrift,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
-    HostTimeDriftInSec(390),
+    HostTimeDriftInSec,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10000")
-    ThrottlerMaxWaitForVdsUpdateInMillis(391),
+    ThrottlerMaxWaitForVdsUpdateInMillis,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    OnlyRequiredNetworksMandatoryForVdsSelection(392),
+    OnlyRequiredNetworksMandatoryForVdsSelection,
 
     @Reloadable
     @TypeConverterAttribute(EngineWorkingMode.class)
     @DefaultValueAttribute("Active")
-    EngineMode(393),
+    EngineMode,
 
     /**
      * Refresh rate (in seconds) for light-weight gluster data i.e. data that can be fetched without much of an overhead
@@ -1166,7 +1165,7 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
-    GlusterRefreshRateLight(395),
+    GlusterRefreshRateLight,
 
     /**
      * Refresh rate (in seconds) for heavy-weight gluster data i.e. commands to fetch such data adds a considerable
@@ -1174,374 +1173,352 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
-    GlusterRefreshRateHeavy(396),
+    GlusterRefreshRateHeavy,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    BootstrapMinimalVdsmVersion(397),
+    BootstrapMinimalVdsmVersion,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    SupportForceExtendVG(398),
+    SupportForceExtendVG,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    MinimalETLVersion(400),
+    MinimalETLVersion,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepWindows8Path(401),
+    SysPrepWindows8Path,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKeyWindows8(402),
+    ProductKeyWindows8,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepWindows8x64Path(403),
+    SysPrepWindows8x64Path,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKeyWindows8x64(404),
+    ProductKeyWindows8x64,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepWindows2012x64Path(405),
+    SysPrepWindows2012x64Path,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ProductKeyWindows2012x64(406),
+    ProductKeyWindows2012x64,
 
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    NetworkLinkingSupported(407),
+    NetworkLinkingSupported,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    QuotaCacheIntervalInMinutes(408),
+    QuotaCacheIntervalInMinutes,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    MinimumPercentageToUpdateQuotaCache(409),
+    MinimumPercentageToUpdateQuotaCache,
 
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    HardwareInfoEnabled(410),
+    HardwareInfoEnabled,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("95")
-    LogMaxPhysicalMemoryUsedThresholdInPercentage(411),
+    LogMaxPhysicalMemoryUsedThresholdInPercentage,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("95")
-    LogMaxCpuUsedThresholdInPercentage(412),
+    LogMaxCpuUsedThresholdInPercentage,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("95")
-    LogMaxNetworkUsedThresholdInPercentage(413),
+    LogMaxNetworkUsedThresholdInPercentage,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("256")
-    LogMinFreeSwapThresholdInMB(414),
+    LogMinFreeSwapThresholdInMB,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("95")
-    LogMaxSwapUsedThresholdInPercentage(415),
+    LogMaxSwapUsedThresholdInPercentage,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    TunnelMigrationEnabled(416),
+    TunnelMigrationEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    MigrationSupportForNativeUsb(417),
+    MigrationSupportForNativeUsb,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("9")
-    PgMajorRelease(418),
+    PgMajorRelease,
 
     @TypeConverterAttribute(java.util.List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     @DefaultValueAttribute("ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr")
-    VncKeyboardLayoutValidValues(419),
+    VncKeyboardLayoutValidValues,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SpiceProxyDefault(420),
+    SpiceProxyDefault,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    GlusterFsStorageEnabled(421),
+    GlusterFsStorageEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    GlusterSupport(422),
+    GlusterSupport,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    GlusterRefreshHeavyWeight(423),
+    GlusterRefreshHeavyWeight,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    GlusterHooksEnabled(424),
+    GlusterHooksEnabled,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("600")
-    GlusterRefreshRateHooks(425),
+    GlusterRefreshRateHooks,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    GlusterServicesEnabled(426),
+    GlusterServicesEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    GlusterHostUUIDSupport(427),
+    GlusterHostUUIDSupport,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    GlusterAysncTasksSupport(428),
+    GlusterAysncTasksSupport,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")
-    PollUri(427),
+    PollUri,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("TrustStore.jks")
-    AttestationTruststore(428),
+    AttestationTruststore,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8443")
-    AttestationPort(429),
+    AttestationPort,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("password")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    AttestationTruststorePass(430),
+    AttestationTruststorePass,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    AttestationServer(431),
+    AttestationServer,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    AttestationFirstStageSize(432),
+    AttestationFirstStageSize,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    SecureConnectionWithOATServers(433),
+    SecureConnectionWithOATServers,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
-    AttestationSecondStageSize(434),
+    AttestationSecondStageSize,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    GlusterRefreshRateTasks(435),
+    GlusterRefreshRateTasks,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
-    KeystoneAuthUrl(427),
+    KeystoneAuthUrl,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
-    ClientModeSpiceDefault(501),
+    ClientModeSpiceDefault,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    MigrationNetworkEnabled(502),
+    MigrationNetworkEnabled,
 
     @Reloadable
     @TypeConverterAttribute(Double.class)
     @DefaultValueAttribute("20")
-    DelayResetForSpmInSeconds(503),
+    DelayResetForSpmInSeconds,
 
     @Reloadable
     @TypeConverterAttribute(Double.class)
     @DefaultValueAttribute("0.5")
-    DelayResetPerVmInSeconds(504),
+    DelayResetPerVmInSeconds,
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/bin/vdsm-tool vdsm-id")
-    GetVdsmIdByVdsmToolCommand(505),
+    GetVdsmIdByVdsmToolCommand,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
-    ClientModeRdpDefault(506),
+    ClientModeRdpDefault,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Off")
-    WebSocketProxy(507),
+    WebSocketProxy,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    WebSocketProxyTicketValiditySeconds(508),
+    WebSocketProxyTicketValiditySeconds,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    SupportCustomDeviceProperties(509),
+    SupportCustomDeviceProperties,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    CustomDeviceProperties(510),
+    CustomDeviceProperties,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    MultipleGatewaysSupported(505),
+    MultipleGatewaysSupported,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    MemorySnapshotSupported(511),
+    MemorySnapshotSupported,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/osinfo.conf.d")
-    OsRepositoryConfDir(512),
+    OsRepositoryConfDir,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    VirtIoScsiEnabled(513),
+    VirtIoScsiEnabled,
 
     @Reloadable
     @TypeConverterAttribute(java.util.List.class)
     @DefaultValueAttribute("WindowsXP,RHEL5,RHEL5x64,RHEL4,RHEL4x64,RHEL3,RHEL3x64")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    VirtIoScsiUnsupportedOsList(514),
+    VirtIoScsiUnsupportedOsList,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/bin/vdsm-tool service-restart vdsmd")
-    SshSoftFencingCommand(515),
+    SshSoftFencingCommand,
 
     @TypeConverterAttribute(java.util.List.class)
     @DefaultValueAttribute("rhel6.2.0,pc-1.0")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    ClusterEmulatedMachines(516),
+    ClusterEmulatedMachines,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1024")
-    MaxAverageNetworkQoSValue(517),
+    MaxAverageNetworkQoSValue,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2048")
-    MaxPeakNetworkQoSValue(518),
+    MaxPeakNetworkQoSValue,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10240")
-    MaxBurstNetworkQoSValue(519),
+    MaxBurstNetworkQoSValue,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    QoSInboundAverageDefaultValue(520),
+    QoSInboundAverageDefaultValue,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    QoSInboundPeakDefaultValue(521),
+    QoSInboundPeakDefaultValue,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    QoSInboundBurstDefaultValue(522),
+    QoSInboundBurstDefaultValue,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    SingleQxlPciEnabled(523),
+    SingleQxlPciEnabled,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    UserMessageOfTheDay(524),
+    UserMessageOfTheDay,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    IterationsWithBalloonProblem(525),
+    IterationsWithBalloonProblem,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    QoSOutboundAverageDefaultValue(526),
+    QoSOutboundAverageDefaultValue,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    QoSOutboundPeakDefaultValue(527),
+    QoSOutboundPeakDefaultValue,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    QoSOutboundBurstDefaultValue(528),
+    QoSOutboundBurstDefaultValue,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    NormalizedMgmgNetworkEnabled(529),
+    NormalizedMgmgNetworkEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    MomPoliciesOnHostSupported(530),
+    MomPoliciesOnHostSupported,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("http://localhost:18781/")
-    ExternalSchedulerServiceURL(531),
+    ExternalSchedulerServiceURL,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    ExternalSchedulerConnectionTimeout(532),
+    ExternalSchedulerConnectionTimeout,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120000")
-    ExternalSchedulerResponseTimeout(533),
+    ExternalSchedulerResponseTimeout,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    ExternalSchedulerEnabled(534),
+    ExternalSchedulerEnabled,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
-    MaxSchedulerWeight(535),
+    MaxSchedulerWeight,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    NetworkQosSupported(536),
+    NetworkQosSupported,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    CloudInitSupported(537),
+    CloudInitSupported,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    AutoStartVmsRunnerIntervalInSeconds(538),
+    AutoStartVmsRunnerIntervalInSeconds,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    UseFqdnForRdpIfAvailable(539),
+    UseFqdnForRdpIfAvailable,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    DwhHeartBeatInterval(540),
+    DwhHeartBeatInterval,
 
-    Invalid(65535);
-
-    private int intValue;
-    private static Map<Integer, ConfigValues> mappings;
-
-    static {
-        mappings = new HashMap<Integer, ConfigValues>();
-        for (ConfigValues action : values()) {
-            mappings.put(action.getValue(), action);
-        }
-    }
-
-    private ConfigValues(int value) {
-        intValue = value;
-    }
-
-    public int getValue() {
-        return intValue;
-    }
-
-    public static ConfigValues forValue(int value) {
-        return mappings.get(value);
-    }
+    Invalid;
 }
