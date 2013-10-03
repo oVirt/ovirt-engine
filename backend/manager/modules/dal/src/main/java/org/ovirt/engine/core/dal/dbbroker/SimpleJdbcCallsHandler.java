@@ -100,16 +100,8 @@ public class SimpleJdbcCallsHandler {
     public <T> List<T> executeReadList(final String procedureName,
             final RowMapper<T> mapper,
             final MapSqlParameterSource parameterSource) {
-        Map<String, Object> resultsMap = executeReadAndReturnMap(procedureName, mapper, parameterSource);
+        Map<String, Object> resultsMap = executeImpl(procedureName, parameterSource, createCallForRead(procedureName, mapper, parameterSource));
         return (List<T>) (resultsMap.get(BaseDAODbFacade.RETURN_VALUE_PARAMETER));
-    }
-
-    public <T> Map<String, Object> executeReadAndReturnMap(final String procedureName,
-            final RowMapper<T> mapper,
-            final MapSqlParameterSource parameterSource) {
-        Map<String, Object> resultsMap =
-                executeImpl(procedureName, parameterSource, createCallForRead(procedureName, mapper, parameterSource));
-        return resultsMap;
     }
 
     private CallCreator createCallForRead(final String procedureName,
