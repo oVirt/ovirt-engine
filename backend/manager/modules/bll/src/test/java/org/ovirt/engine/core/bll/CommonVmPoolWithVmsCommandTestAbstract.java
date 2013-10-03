@@ -131,7 +131,8 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     }
 
     private void mockVds() {
-        mockGetImageDomainsListVdsCommand(100, 100);
+        mockGetStorageDomainList(100, 100);
+        mockGetImagesList();
     }
 
     private void mockGlobalParameters() {
@@ -142,14 +143,10 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         storagePool = mockStoragePool();
     }
 
-    protected void mockGetImageDomainsListVdsCommand(int availableDiskSizeFirstDomain,
-            int availableDiskSizeSecondDomain) {
-        mockGetStorageDomainList(availableDiskSizeFirstDomain, availableDiskSizeSecondDomain);
-
-        // Mock VDS return value.
+    private void mockGetImagesList() {
         VDSReturnValue returnValue = new VDSReturnValue();
-        returnValue.setReturnValue(mockStorageGuidList(storageDomainsList));
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GetImageDomainsList),
+        returnValue.setReturnValue(new ArrayList<Guid>());
+        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GetImagesList),
                 Matchers.<VDSParametersBase> any(VDSParametersBase.class))).thenReturn(returnValue);
     }
 

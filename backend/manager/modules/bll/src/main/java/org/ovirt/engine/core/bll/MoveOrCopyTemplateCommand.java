@@ -34,9 +34,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -235,20 +234,29 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     protected boolean checkIfDisksExist(Iterable<DiskImage> disksList) {
+        Map<Guid, List<Guid>> alreadyRetrieved = new HashMap<>();
         for (DiskImage disk : disksList) {
-            VDSReturnValue runVdsCommand = getBackend()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.GetImageDomainsList,
-                            new GetImageDomainsListVDSCommandParameters(getStoragePool().getId(), disk.getId()));
-            if (runVdsCommand.getSucceeded()) {
-                ArrayList<Guid> domains = (ArrayList<Guid>) runVdsCommand.getReturnValue();
-                if (domains.contains(imageToDestinationDomainMap.get(disk.getId()))) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
+            Guid targetStorageDomainId = imageToDestinationDomainMap.get(disk.getId());
+            List<Guid> imagesOnStorageDomain = alreadyRetrieved.get(targetStorageDomainId);
+
+            if (imagesOnStorageDomain == null) {
+                VDSReturnValue returnValue = runVdsCommand(
+                        VDSCommandType.GetImagesList,
+                        new GetImagesListVDSCommandParameters(targetStorageDomainId, getStoragePoolId())
+                );
+
+                if (returnValue.getSucceeded()) {
+                    imagesOnStorageDomain = (List<Guid>) returnValue.getReturnValue();
+                    alreadyRetrieved.put(targetStorageDomainId, imagesOnStorageDomain);
+                } else {
+                    addCanDoActionMessage(String.format("$sdName %1$s", getStorageDomain(targetStorageDomainId).getName()));
+                    addCanDoActionMessage(VdcBllMessages.ERROR_GET_IMAGE_LIST);
                     return false;
                 }
-            } else if (runVdsCommand.getVdsError().getCode() == VdcBllErrors.GetStorageDomainListError) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_GET_STORAGE_DOMAIN_LIST);
+            }
+
+            if (imagesOnStorageDomain.contains(disk.getId())) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
                 return false;
             }
         }

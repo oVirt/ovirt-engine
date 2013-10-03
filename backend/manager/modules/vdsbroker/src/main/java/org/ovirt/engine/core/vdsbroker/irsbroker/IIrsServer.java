@@ -69,8 +69,6 @@ public interface IIrsServer {
 
     OneUuidReturnForXmlRpc syncImageData(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID, String syncType);
 
-    StorageDomainGuidListReturnForXmlRpc getImageDomainsList(String spUUID, String imgUUID);
-
     StatusOnlyReturnForXmlRpc setMaxHosts(int maxHosts);
 
     StatusOnlyReturnForXmlRpc updateVM(String spUUID, Map[] vms);

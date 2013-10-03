@@ -2761,4 +2761,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Action type cannot be empty.")
     String ACTION_TYPE_EMPTY_ACTION_TYPE();
+
+    @DefaultStringValue("Cannot get list of images from Storage Domain '${sdName}'. Please try again later.")
+    String ERROR_GET_IMAGE_LIST();
 }

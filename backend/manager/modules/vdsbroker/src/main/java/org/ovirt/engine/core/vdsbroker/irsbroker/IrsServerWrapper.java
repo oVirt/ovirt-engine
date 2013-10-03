@@ -225,13 +225,6 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
-    public StorageDomainGuidListReturnForXmlRpc getImageDomainsList(String spUUID, String imgUUID) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.getImageDomainsList(spUUID, imgUUID);
-        StorageDomainGuidListReturnForXmlRpc wrapper = new StorageDomainGuidListReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc setMaxHosts(int maxHosts) {
         Map<String, Object> xmlRpcReturnValue = irsServer.setMaxHosts(maxHosts);
         StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);

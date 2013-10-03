@@ -794,6 +794,8 @@ public enum VdcBllMessages {
     /* VDSM Error that propagates up to the client. See VdcBLLErrors */
     ERROR_GET_STORAGE_DOMAIN_LIST(ErrorType.INTERNAL_ERROR), // VdcBllErrors.GetStorageDomainListError
 
+    ERROR_GET_IMAGE_LIST(ErrorType.INTERNAL_ERROR),
+
     USER_CANNOT_FORCE_RECONNECT_TO_VM(ErrorType.CONFLICT),
     // Engine maintenance mode
     ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE(ErrorType.CONFLICT),

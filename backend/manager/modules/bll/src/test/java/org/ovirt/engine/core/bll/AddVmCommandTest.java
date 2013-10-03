@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -47,9 +46,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -107,7 +103,6 @@ public class AddVmCommandTest {
         mockStorageDomainDAOGetForStoragePool();
         mockVmTemplateDAOReturnVmTemplate();
         mockDiskImageDAOGetSnapshotById();
-        mockGetImageDomainsListVdsCommand();
         mockVerifyAddVM(cmd);
         mockConfig();
         mockConfigSizeDefaults();
@@ -330,7 +325,6 @@ public class AddVmCommandTest {
         mockDiskImageDAOGetSnapshotById();
         mockStorageDomainDAOGetForStoragePool(domainSizeGB);
         mockStorageDomainDAOGet(domainSizeGB);
-        mockGetImageDomainsListVdsCommand();
         mockConfig();
         mockConfigSizeRequirements(sizeRequired);
         VM vm = createVm();
@@ -440,15 +434,6 @@ public class AddVmCommandTest {
         img.setId(Guid.newGuid());
         img.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         return img;
-    }
-
-    private void mockGetImageDomainsListVdsCommand() {
-        ArrayList<Guid> guids = new ArrayList<Guid>(1);
-        guids.add(Guid.newGuid());
-        VDSReturnValue returnValue = new VDSReturnValue();
-        returnValue.setReturnValue(guids);
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GetImageDomainsList),
-                Matchers.<VDSParametersBase> any(VDSParametersBase.class))).thenReturn(returnValue);
     }
 
     protected StorageDomain createStorageDomain(int availableSpace) {
