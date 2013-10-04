@@ -116,6 +116,7 @@ import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.JobsResource;
+import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.PermissionResource;
@@ -229,7 +230,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(DataCenterResource.class, DataCentersResource.class);
         TYPES.put(DataCenter.class, map);
 
-        map = new ParentToCollectionMap(DiskResource.class, DisksResource.class);
+        map = new ParentToCollectionMap(MovableCopyableDiskResource.class, DisksResource.class);
         map.add(VmDiskResource.class, VmDisksResource.class, VM.class);
         map.add(TemplateDiskResource.class, TemplateDisksResource.class, Template.class);
         map.add(DiskResource.class, DisksResource.class, StorageDomain.class);

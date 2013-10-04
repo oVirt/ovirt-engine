@@ -30,17 +30,10 @@ import org.ovirt.engine.api.model.Disk;
 
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface TemplateDiskResource extends ReadOnlyDeviceResource<Disk> {
+public interface TemplateDiskResource extends ReadOnlyDeviceResource<Disk>, CopyableResource {
 
     @Path("{action: (copy)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
-
-    @POST
-    @Formatted
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    @Actionable
-    @Path("copy")
-    public Response copy(Action action);
 
     @POST
     @Formatted

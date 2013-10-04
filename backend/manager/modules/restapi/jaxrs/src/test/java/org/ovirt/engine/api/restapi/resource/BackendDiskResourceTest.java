@@ -2,14 +2,23 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
 
+import java.util.Collections;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
+import org.ovirt.engine.core.common.action.MoveDiskParameters;
+import org.ovirt.engine.core.common.action.MoveDisksParameters;
+import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -17,10 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-
 
 public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDiskResource>{
 
@@ -62,6 +67,36 @@ public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk
         verifyActionResponse(resource.doExport(action));
     }
 
+    @Test
+    public void testMoveById() throws  Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+                IdQueryParameters.class,
+                new String[] {"Id"},
+                new Object[] {DISK_ID},
+                getEntity(1));
+        setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,
+                MoveDisksParameters.class,
+                new String[] {"ParametersList"},
+                new Object[] {Collections.singletonList(new MoveDiskParameters(GUIDS[1], Guid.Empty, GUIDS[3]))},
+                true, true, null, null, true));
+        verifyActionResponse(resource.move(setUpParams(false)), "disks/" + DISK_ID, false);
+    }
+
+    @Test
+    public void testCopyById() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+                IdQueryParameters.class,
+                new String[] {"Id"},
+                new Object[] {DISK_ID},
+                getEntity(1));
+        setUriInfo(setUpActionExpectations(VdcActionType.MoveOrCopyDisk, MoveOrCopyImageGroupParameters.class,
+                new String[] {"ImageId", "SourceDomainId", "StorageDomainId", "Operation"},
+                new Object[] {GUIDS[1], Guid.Empty, GUIDS[3], ImageOperation.Copy},
+                true, true, null, null, true));
+        verifyActionResponse(resource.copy(setUpParams(false)), "disks/" + DISK_ID, false);
+    }
+
+
     private void verifyActionResponse(Response r) throws Exception {
         verifyActionResponse(r, "/disks/" + PARENT_ID, false);
     }
@@ -93,6 +128,7 @@ public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk
     protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
+        entity.setImageId(GUIDS[1]);
         entity.setvolumeFormat(VolumeFormat.RAW);
         entity.setDiskInterface(DiskInterface.VirtIO);
         entity.setImageStatus(ImageStatus.OK);
@@ -125,4 +161,15 @@ public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk
         assertTrue(model.isPropagateErrors());
     }
 
+    private Action setUpParams(boolean byName) {
+        Action action = new Action();
+        StorageDomain sd = new StorageDomain();
+        if (byName) {
+            sd.setName(NAMES[2]);
+        } else {
+            sd.setId(GUIDS[3].toString());
+        }
+        action.setStorageDomain(sd);
+        return action;
+    }
 }

@@ -74,6 +74,7 @@ public class FeaturesHelper {
         }
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_4)) {
             addGlusterBricksFeature(features);
+            addFeatureCopyMoveDiskInAdditionalContext(features);
         }
         return features;
     }
@@ -393,4 +394,10 @@ public class FeaturesHelper {
         features.getFeature().add(feature);
     }
 
+    private void addFeatureCopyMoveDiskInAdditionalContext(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Copy and Move backend disk");
+        feature.setDescription("Support for copy/move disk in additional context.");
+        features.getFeature().add(feature);
+    }
 }

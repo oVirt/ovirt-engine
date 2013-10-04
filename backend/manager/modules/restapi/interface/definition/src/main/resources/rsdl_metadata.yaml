@@ -963,6 +963,34 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
+  name: /ovirt-engine/api/disks/{disk:id}/move|rel=move
+  description: move a disk to a different storage domain
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: move a disk to a different storage domain
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+      Filter: {value: true|false, required: false}
+  name: /ovirt-engine/api/disks/{disk:id}/copy|rel=copy
+  description: copy a disk to a different storage domain
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: copy a disk to a different storage domain
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+      Filter: {value: true|false, required: false}
 - name: /ovirt-engine/api/disks|rel=add
   description: add a new disk the system
   request:

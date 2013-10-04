@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Collections;
+
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
@@ -8,17 +10,22 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
-import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.MoveDiskParameters;
+import org.ovirt.engine.core.common.action.MoveDisksParameters;
+import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendDiskResource extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.Disk> implements DiskResource {
+public class BackendDiskResource extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>
+        implements MovableCopyableDiskResource {
 
     protected BackendDiskResource(String id) {
         super(id, Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class);
@@ -55,6 +62,32 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     @Override
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid) {
         return inject(new BackendActionResource(action, oid));
+    }
+
+    @Override
+    public Response move(Action action) {
+        validateParameters(action, "storageDomain.id|name");
+        Guid storageDomainId = getStorageDomainId(action);
+        Guid imageId = asGuid(get().getImageId());
+        MoveDisksParameters params =
+                new MoveDisksParameters(Collections.singletonList(new MoveDiskParameters(
+                        imageId,
+                        Guid.Empty,
+                        storageDomainId)));
+        return doAction(VdcActionType.MoveDisks, params, action);
+    }
+
+    @Override
+    public Response copy(Action action) {
+        validateParameters(action, "storageDomain.id|name");
+        Guid storageDomainId = getStorageDomainId(action);
+        Guid imageId = asGuid(get().getImageId());
+        MoveOrCopyImageGroupParameters params =
+                new MoveOrCopyImageGroupParameters(imageId,
+                        Guid.Empty,
+                        storageDomainId,
+                        ImageOperation.Copy);
+        return doAction(VdcActionType.MoveOrCopyDisk, params, action);
     }
 
     @Override
