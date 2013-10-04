@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.SyncImageGroupDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -22,6 +23,11 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
 
     @Override
     protected void beforeTask() {
+        if (Guid.Empty.equals(getEnclosingCommand().getParameters().getVdsId())) {
+            throw new VdcBLLException(VdcBllErrors.down,
+                    "VM " + getEnclosingCommand().getParameters().getVmId() + " is not running on any VDS");
+        }
+
         // Start disk migration
         VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters
                 (getEnclosingCommand().getParameters().getVdsId(),
@@ -65,6 +71,12 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
 
     @Override
     protected void revertTask() {
+        if (Guid.Empty.equals(getEnclosingCommand().getParameters().getVdsId())) {
+            log.errorFormat("VM {0} is not running on any VDS, skipping VmReplicateDiskFinish",
+                    getEnclosingCommand().getParameters().getVmId());
+            return;
+        }
+
         // Undo the replicateStart - use replicateFinish back to the source
         VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters
                 (getEnclosingCommand().getParameters().getVdsId(),
