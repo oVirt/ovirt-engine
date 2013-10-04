@@ -22,7 +22,6 @@ public class GetGlusterVolumeRebalanceStatusQuery<P extends GlusterVolumeQueries
 
     private Guid clusterId;
     private GlusterVolumeEntity volume;
-    private GlusterAsyncTask asyncTask;
 
     public GetGlusterVolumeRebalanceStatusQuery(P parameters) {
         super(parameters);
@@ -41,12 +40,6 @@ public class GetGlusterVolumeRebalanceStatusQuery<P extends GlusterVolumeQueries
             if (clusterId == null) {
                 clusterId = volume.getClusterId();
             }
-            asyncTask = volume.getAsyncTask();
-            if (asyncTask == null) {
-                // Set status as null and return as there is not rebalance task started
-                getQueryReturnValue().setReturnValue(null);
-                return;
-            }
 
             getQueryReturnValue().setReturnValue(fetchTaskStatusDetails());
         }
@@ -59,9 +52,15 @@ public class GetGlusterVolumeRebalanceStatusQuery<P extends GlusterVolumeQueries
 
         // Set the volume re-balance start time
         GlusterVolumeTaskStatusEntity entity = (GlusterVolumeTaskStatusEntity) returnValue.getReturnValue();
-        List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
-        if (stepsList != null && !stepsList.isEmpty()) {
-            entity.setStartTime(stepsList.get(0).getStartTime());
+        GlusterAsyncTask asyncTask = volume.getAsyncTask();
+        if (asyncTask != null) {
+            Guid taskId = asyncTask.getTaskId();
+            if (taskId != null) {
+                List<Step> stepsList = getStepDao().getStepsByExternalId(taskId);
+                if (stepsList != null && !stepsList.isEmpty()) {
+                    entity.setStartTime(stepsList.get(0).getStartTime());
+                }
+            }
         }
 
         // Set the host ip in status details
