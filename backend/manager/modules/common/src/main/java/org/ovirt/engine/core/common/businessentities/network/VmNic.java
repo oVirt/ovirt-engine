@@ -22,7 +22,7 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
     protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL =
             "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL";
     protected static final String VALIDATION_MESSAGE_NAME_NOT_NULL = "VALIDATION.VM.NETWORK.NAME.NOT_NULL";
-    protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_INVALID = "VALIDATION.VM.NETWORK.MAC.ADDRESS.INVALID";
+    public static final String VALIDATION_MESSAGE_MAC_ADDRESS_INVALID = "VALIDATION.VM.NETWORK.MAC.ADDRESS.INVALID";
 
     private Guid vmId;
     private Guid vnicProfileId;
