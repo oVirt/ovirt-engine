@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -68,8 +69,8 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
-    protected String getWarning() {
-        return constants.cannotMoveDisks();
+    protected String getWarning(List<String> disks) {
+        return messages.cannotMoveDisks(StringHelper.join(", ", disks.toArray())); //$NON-NLS-1$
     }
 
     @Override

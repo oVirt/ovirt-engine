@@ -31,10 +31,12 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class DisksAllocationModel extends EntityModel
 {
     protected static UIConstants constants = ConstantsManager.getInstance().getConstants();
+    protected static UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private final IEventListener quota_storageEventListener = new IEventListener() {
         @Override

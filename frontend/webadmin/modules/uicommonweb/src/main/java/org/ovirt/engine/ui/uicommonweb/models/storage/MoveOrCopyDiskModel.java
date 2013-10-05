@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -71,13 +72,16 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         this.vmId = vmId;
     }
 
+    // Disks that cannot be moved/copied
+    protected List<String> problematicDisks = new ArrayList<String>();
+
     public abstract void init(ArrayList<DiskImage> diskImages);
 
     protected abstract void initStorageDomains();
 
     protected abstract VdcActionType getActionType();
 
-    protected abstract String getWarning();
+    protected abstract String getWarning(List<String> disks);
 
     protected abstract String getNoActiveSourceDomainMessage();
 
@@ -139,8 +143,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected void postInitStorageDomains() {
-        boolean showWarning = false;
-
         for (DiskModel disk : getDisks()) {
             DiskImage diskImage = ((DiskImage) disk.getDisk());
 
@@ -162,7 +164,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
             // Add prohibition reasons
             if (sourceStorageDomains.isEmpty() || destStorageDomains.isEmpty()) {
-                showWarning = true;
+                problematicDisks.add((String) disk.getAlias().getEntity());
                 updateChangeability(disk, isDiskBasedOnTemplate,
                         sourceStorageDomains.isEmpty(), destStorageDomains.isEmpty());
             }
@@ -176,7 +178,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
 
         sortDisks();
-        postCopyOrMoveInit(showWarning);
+        postCopyOrMoveInit();
     }
 
     private void updateChangeability(DiskModel disk, boolean isDiskBasedOnTemplate, boolean noSources, boolean noTargets) {
@@ -195,7 +197,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         disk.getSourceStorageDomainName().setEntity(sourceStorageName);
     }
 
-    protected void postCopyOrMoveInit(boolean showWarning) {
+    protected void postCopyOrMoveInit() {
         ICommandTarget target = (ICommandTarget) getEntity();
 
         if (getActiveStorageDomains().isEmpty()) {
@@ -209,8 +211,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
         else
         {
-            if (showWarning) {
-                setMessage(getWarning());
+            if (!problematicDisks.isEmpty()) {
+                setMessage(getWarning(problematicDisks));
             }
 
             UICommand actionCommand = new UICommand("OnExecute", this); //$NON-NLS-1$

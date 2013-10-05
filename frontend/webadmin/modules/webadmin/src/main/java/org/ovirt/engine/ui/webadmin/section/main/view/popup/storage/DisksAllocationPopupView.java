@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.HTML;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
@@ -13,7 +18,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksAllocationModel> implements DisksAllocationPopupPresenterWidget.ViewDef {
@@ -21,6 +25,10 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DisksAllocationPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+
+    SafeHtml warningImage;
 
     @UiField
     FlowPanel messagePanel;
@@ -34,6 +42,9 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     @Inject
     public DisksAllocationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
+
+        warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
+                resources.logWarningImage()).getHTML());
 
         disksAllocationView = new DisksAllocationView(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -54,9 +65,11 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     public void setMessage(String message) {
         super.setMessage(message);
 
-        boolean isMessageEmpty = message == null || message.isEmpty();
-        messagePanel.setVisible(!isMessageEmpty);
-        messagePanel.add(new Label(message));
+        if (message != null && !message.isEmpty()) {
+            messagePanel.add(new HTML(templates.iconWithText(warningImage, message)));
+        }
+
+        messagePanel.setVisible(messagePanel.iterator().hasNext());
     }
 
 }

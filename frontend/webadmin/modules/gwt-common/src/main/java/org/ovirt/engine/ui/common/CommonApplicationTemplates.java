@@ -82,4 +82,6 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<div style='width: {0}; font-style: italic;'>{1}</div>")
     SafeHtml italicFixedWidth(String pxWidth, String text);
 
+    @Template("<span>{0} {1}</span>")
+    SafeHtml iconWithText(SafeHtml icon, String text);
 }

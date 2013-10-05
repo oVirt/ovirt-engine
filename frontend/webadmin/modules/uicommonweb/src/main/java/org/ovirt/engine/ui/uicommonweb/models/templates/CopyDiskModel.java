@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -67,8 +69,8 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
-    protected String getWarning() {
-        return constants.cannotCopyDisks();
+    protected String getWarning(List<String> disks) {
+        return messages.cannotCopyDisks(StringHelper.join(", ", disks.toArray())); //$NON-NLS-1$
     }
 
     @Override

@@ -907,13 +907,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String diskExistsOnAllActiveStorageDomainsMsg();
 
     @DefaultStringValue("The Template that the VM is based on does not exist on any active Storage Domain")
-    String noActiveStorageDomainWithTemplateMsg();
-
-    @DefaultStringValue("Warning: Some of the disks cannot be moved")
-    String cannotMoveDisks();
-
-    @DefaultStringValue("Warning: Some of the disks cannot be copied")
-    String cannotCopyDisks();
+    String noActiveStorageDomainWithTemplateMsg();;
 
     @DefaultStringValue("Field value should follow: <parameter=value;parameter=value;...>")
     String fieldValueShouldFollowMsg();
@@ -1728,7 +1722,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Wipe after delete is not supported for file domains")
     String wipeAfterDeleteNotSupportedForFileDomains();
 
-    @DefaultStringValue("Note: Moving the disk(s) while the VM is running")
+    @DefaultStringValue("Moving disk(s) while the VM is running")
     String liveStorageMigrationWarning();
 
     @DefaultStringValue("Cannot remove more than one brick from a Replicate volume at a time")

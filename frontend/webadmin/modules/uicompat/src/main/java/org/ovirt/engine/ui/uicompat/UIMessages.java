@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
+import com.google.gwt.i18n.client.Constants;
+
 import java.util.Date;
 import java.util.List;
 
@@ -297,4 +299,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("No Rebalance ever happened on volume :  {0}")
     String rebalanceStatusConfirmationMessage(String name);
+
+    @DefaultMessage("The following disks cannot be moved: {0}")
+    String cannotMoveDisks(String disks);
+
+    @DefaultMessage("The following disks cannot be copied: {0}")
+    String cannotCopyDisks(String disks);
 }
