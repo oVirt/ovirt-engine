@@ -54,22 +54,27 @@ class Plugin(plugin.PluginBase):
             )
             os.close(fd)
             os.chmod(pgpass, 0o600)
-        with open(pgpass, 'w') as f:
-            f.write(
-                (
-                    '# DB USER credentials.\n'
-                    '{host}:{port}:{database}:{user}:{password}\n'
-                ).format(
-                    host=self.environment[osetupcons.DBEnv.HOST],
-                    port=self.environment[osetupcons.DBEnv.PORT],
-                    database=self.environment[osetupcons.DBEnv.DATABASE],
-                    user=self.environment[osetupcons.DBEnv.USER],
-                    password=osetuputil.escape(
-                        self.environment[osetupcons.DBEnv.PASSWORD],
-                        ':\\',
+        self.logger.debug(
+            'Password==None %s',
+            self.environment[osetupcons.DBEnv.PASSWORD] is None,
+        )
+        if self.environment[osetupcons.DBEnv.PASSWORD] is not None:
+            with open(pgpass, 'w') as f:
+                f.write(
+                    (
+                        '# DB USER credentials.\n'
+                        '{host}:{port}:{database}:{user}:{password}\n'
+                    ).format(
+                        host=self.environment[osetupcons.DBEnv.HOST],
+                        port=self.environment[osetupcons.DBEnv.PORT],
+                        database=self.environment[osetupcons.DBEnv.DATABASE],
+                        user=self.environment[osetupcons.DBEnv.USER],
+                        password=osetuputil.escape(
+                            self.environment[osetupcons.DBEnv.PASSWORD],
+                            ':\\',
+                        ),
                     ),
-                ),
-            )
+                )
 
         self.environment[
             osetupcons.DBEnv.PGPASS_FILE
