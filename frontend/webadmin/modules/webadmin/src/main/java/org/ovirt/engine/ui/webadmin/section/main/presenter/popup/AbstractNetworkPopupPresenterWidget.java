@@ -18,6 +18,7 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
 
         void updateVisibility();
 
+        void toggleProfilesVisibility(boolean visible);
     }
 
     public AbstractNetworkPopupPresenterWidget(EventBus eventBus, V view) {
@@ -39,6 +40,14 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
                 if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     getView().setMessageLabel(model.getMessage());
                 }
+            }
+        });
+
+        getView().toggleProfilesVisibility((Boolean) model.getIsVmNetwork().getEntity());
+        model.getIsVmNetwork().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getView().toggleProfilesVisibility((Boolean) model.getIsVmNetwork().getEntity());
             }
         });
     }

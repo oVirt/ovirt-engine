@@ -366,6 +366,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         messageLabel.setVisible(false);
     }
 
+    @Override
+    public void toggleProfilesVisibility(boolean visible) {
+        profilesTab.setVisible(visible);
+    }
+
     interface WidgetStyle extends CssResource {
         String mtuEditor();
 
