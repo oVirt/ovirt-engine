@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -25,8 +24,11 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -110,13 +112,35 @@ public class NewNetworkModel extends NetworkModel {
 
     @Override
     protected void initProfiles() {
-        List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
+        Iterable<VnicProfileModel> existingProfiles = getProfiles().getItems();
+        if (existingProfiles == null) {
+            // first run (dialog has just been opened and default DC chosen), create default entry
+            List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
+            profiles.add(createDefaultProfile());
+            getProfiles().setItems(profiles);
+        } else {
+            // not first run (user picked different DC), want to keep existing entries and update DC-related properties
+            for (VnicProfileModel profile : existingProfiles) {
+                profile.updateDc(getSelectedDc().getcompatibility_version(), false, getSelectedDc().getId(), null);
+            }
+        }
+    }
 
-        NewVnicProfileModel newModel =
+    private VnicProfileModel createDefaultProfile() {
+        final NewVnicProfileModel newModel =
                 new NewVnicProfileModel(getSourceListModel(), getSelectedDc().getcompatibility_version(), false,
                         getSelectedDc().getId());
-        profiles.add(newModel);
-        getProfiles().setItems(profiles);
+
+        // make sure default profile's name is in sync with network's name
+        getName().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                newModel.getName().setEntity(getName().getEntity());
+            }
+        });
+
+        return newModel;
     }
 
     @Override
@@ -151,16 +175,7 @@ public class NewNetworkModel extends NetworkModel {
 
         final AddNetworkStoragePoolParameters parameters =
                 new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
-
-        boolean hasProfiles = false;
-        for (VnicProfileModel profileModel : ((List<VnicProfileModel>) getProfiles().getItems())) {
-            if (!StringHelper.isNullOrEmpty(profileModel.getProfile().getName())) {
-                hasProfiles = true;
-                break;
-            }
-        }
-
-        parameters.setVnicProfileRequired(!hasProfiles);
+        parameters.setVnicProfileRequired(false);
 
         // New network
         if ((Boolean) getExport().getEntity()) {

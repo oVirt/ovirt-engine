@@ -15,7 +15,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
             VnicProfile profile,
             Guid dcId,
             boolean customPropertiesVisible) {
-        super(sourceModel, dcCompatibilityVersion, customPropertiesVisible, dcId);
+        super(sourceModel, dcCompatibilityVersion, customPropertiesVisible, dcId, profile.getNetworkQosId());
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfileTitle());
         setHashName("edit_vnic_profile"); //$NON-NLS-1$
 
@@ -24,7 +24,6 @@ public class EditVnicProfileModel extends VnicProfileModel {
         getName().setEntity(profile.getName());
         getDescription().setEntity(profile.getDescription());
         getPortMirroring().setEntity(getProfile().isPortMirroring());
-        initNetworkQoSList(getProfile().getNetworkQosId());
         getPublicUse().setIsAvailable(false);
     }
 

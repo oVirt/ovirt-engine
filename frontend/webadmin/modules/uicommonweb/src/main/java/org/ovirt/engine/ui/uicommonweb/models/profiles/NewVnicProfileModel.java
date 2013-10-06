@@ -10,12 +10,13 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVnicProfileModel extends VnicProfileModel {
 
-    public NewVnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, boolean customPropertiesVisible,
-                               Guid dcId) {
-        super(sourceModel, dcCompatibilityVersion, customPropertiesVisible, dcId);
+    public NewVnicProfileModel(EntityModel sourceModel,
+            Version dcCompatibilityVersion,
+            boolean customPropertiesVisible,
+            Guid dcId) {
+        super(sourceModel, dcCompatibilityVersion, customPropertiesVisible, dcId, null);
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfileTitle());
         setHashName("new_vnic_profile"); //$NON-NLS-1$
-        initNetworkQoSList(null);
         getPortMirroring().setEntity(false);
     }
 
