@@ -400,7 +400,7 @@ public class IsoDomainListSyncronizer {
    /**
      * Reset the list of problematic repository files, before starting the refresh procedure.
      * uses for multy thread caching.
-     * @see #addRepoFileToProblematicList()
+     * @see #addRepoFileToProblematicList(List<RepoImage>)
      */
     private synchronized void resetProblematicList() {
         problematicRepoFileList.clear();
@@ -583,12 +583,10 @@ public class IsoDomainListSyncronizer {
      * Try to update the cached table from the VDSM, if succeeded fetch the file list again from the DB. if not ,handle
      * the log message.
      *
-     * @param IsoStorageDomainId
-     *            - The storage domain Id we want to get the file list from.
-     * @param fileListMD
-     *            - File list of repository files.
-     * @param repoFileMetaData
-     *            - repository file we fetch the domain counting on its domain id.
+     * @param storagePoolId
+     *            - The storage pool id we want to get the file list from.
+     * @param storageDomainId
+     *            - The storage domain id we want to get the file list from.
      */
     private synchronized void refreshActivatedStorageDomainFromVdsm(Guid storagePoolId, Guid storageDomainId) {
         if (!updateIsoListFromVDSM(storagePoolId, storageDomainId)) {

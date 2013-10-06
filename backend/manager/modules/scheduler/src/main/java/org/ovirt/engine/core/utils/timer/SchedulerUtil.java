@@ -11,7 +11,7 @@ import org.quartz.Trigger;
 public interface SchedulerUtil {
 
     /**
-     * schedules a fixed-delay job to run the method with the given name on the
+     * Schedules a fixed-delay job to run the method with the given name on the
      * given instance.
      *
      * @param instance
@@ -39,7 +39,7 @@ public interface SchedulerUtil {
                                          TimeUnit timeUnit);
 
     /**
-     * schedules a one time job.
+     * Schedules a one time job.
      *
      * @param instance
      *            - the instance to activate the method on timeout
@@ -63,7 +63,7 @@ public interface SchedulerUtil {
                                       TimeUnit timeUnit);
 
     /**
-     * reschedule the job associated with the given old trigger with the new
+     * Reschedule the job associated with the given old trigger with the new
      * trigger.
      *
      * @param oldTriggerName
@@ -76,7 +76,7 @@ public interface SchedulerUtil {
     void rescheduleAJob(String oldTriggerName, String oldTriggerGroup, Trigger newTrigger);
 
     /**
-     * pauses the job with the given jobId
+     * Pauses the job with the given jobId.
      *
      * @param jobId
      *            - the id of the job to be paused
@@ -92,7 +92,7 @@ public interface SchedulerUtil {
     public void deleteJob(String jobId);
 
     /**
-     * resumes the job with the given jobId
+     * Resumes the job with the given jobId.
      *
      * @param jobId
      *            - the id of the job to be resumed
@@ -100,7 +100,7 @@ public interface SchedulerUtil {
     public void resumeJob(String jobId);
 
     /**
-     * Execute immediately the job with the given jobId
+     * Execute immediately the job with the given jobId.
      *
      * @param jobId
      *            - the id of the job to be triggered
@@ -114,7 +114,7 @@ public interface SchedulerUtil {
     public void shutDown();
 
     /**
-     * Starts the scheduler
+     * Starts the scheduler.
      */
     public void create();
 
@@ -124,7 +124,7 @@ public interface SchedulerUtil {
     Scheduler getRawScheduler();
 
     /**
-     * schedules a cron job.
+     * Schedules a cron job.
      *
      * @param instance
      *            - the instance to activate the method on timeout
@@ -145,7 +145,7 @@ public interface SchedulerUtil {
                             String cronExpression);
 
     /**
-     * schedules a job with a configurable delay.
+     * Schedules a job with a configurable delay.
      *
      * @param instance
      *            - the instance to activate the method on timeout
@@ -157,8 +157,6 @@ public interface SchedulerUtil {
      *            - the method input parameters
      * @param initialDelay
      *            - the initial delay before the first activation
-     * @param taskDelay
-     *            - the name of the config value that sets the delay between jobs
      * @param timeUnit
      *            - the unit of time used for initialDelay and taskDelay.
      * @return the scheduled job id
