@@ -50,6 +50,7 @@ public class PolicyUnitImpl extends PolicyUnit {
             else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
                 return new NoneBalancePolicyUnit(policyUnit);
             }
+            break;
         case "OptimalForPowerSaving":
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
                 return new PowerSavingWeightPolicyUnit(policyUnit);
@@ -57,6 +58,7 @@ public class PolicyUnitImpl extends PolicyUnit {
             else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
                 return new PowerSavingBalancePolicyUnit(policyUnit);
             }
+            break;
         case "OptimalForEvenDistribution":
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
                 return new EvenDistributionWeightPolicyUnit(policyUnit);
@@ -64,9 +66,11 @@ public class PolicyUnitImpl extends PolicyUnit {
             else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
                 return new EvenDistributionBalancePolicyUnit(policyUnit);
             }
+            break;
         default:
-            throw new NotImplementedException("policyUnit: " + policyUnit.getName());
+            break;
         }
+        throw new NotImplementedException("policyUnit: " + policyUnit.getName());
     }
 
     protected static final Log log = LogFactory.getLog(PolicyUnitImpl.class);
