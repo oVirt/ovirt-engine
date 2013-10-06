@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -77,6 +78,12 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
             performPlugCommand(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
         }
         getVmDeviceDao().remove(vmDevice.getId());
+
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            // clears snapshot ID
+            getImageDao().updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
+        }
+
         // update cached image
         VmHandler.updateDisksFromDb(getVm());
         // update vm device boot order
