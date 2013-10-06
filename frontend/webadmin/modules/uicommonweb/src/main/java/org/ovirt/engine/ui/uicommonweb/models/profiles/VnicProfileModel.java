@@ -44,8 +44,8 @@ public abstract class VnicProfileModel extends Model {
     private EntityModel publicUse;
     private EntityModel description;
     private final EntityModel sourceModel;
-    private final Version dcCompatibilityVersion;
-    private final boolean customPropertiesSupported;
+    private Version dcCompatibilityVersion;
+    private boolean customPropertiesSupported;
     private ListModel network;
     private ListModel networkQoS;
     private VnicProfile vnicProfile = null;
@@ -136,16 +136,12 @@ public abstract class VnicProfileModel extends Model {
         this.dcId = dcId;
     }
 
-    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, boolean customPropertiesVisible,
-                            Guid dcId) {
+    public VnicProfileModel(EntityModel sourceModel,
+            Version dcCompatibilityVersion,
+            boolean customPropertiesVisible,
+            Guid dcId,
+            Guid qosId) {
         this.sourceModel = sourceModel;
-        this.dcCompatibilityVersion = dcCompatibilityVersion;
-        this.customPropertiesVisible = customPropertiesVisible;
-        this.dcId = dcId;
-
-        customPropertiesSupported =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
-                        dcCompatibilityVersion.toString());
 
         setName(new EntityModel());
         setNetwork(new ListModel());
@@ -156,10 +152,23 @@ public abstract class VnicProfileModel extends Model {
         publicUse.setEntity(true);
         setPublicUse(publicUse);
         setDescription(new EntityModel());
+
+        updateDc(dcCompatibilityVersion, customPropertiesVisible, dcId, qosId);
+        initCommands();
+    }
+
+    public void updateDc(Version dcCompatibilityVersion, boolean customPropertiesVisible, Guid dcId, Guid qosId) {
+        this.dcCompatibilityVersion = dcCompatibilityVersion;
+        this.customPropertiesVisible = customPropertiesVisible;
+        this.dcId = dcId;
+
+        customPropertiesSupported =
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
+                        dcCompatibilityVersion.toString());
+
         getPortMirroring().setIsChangable(isPortMirroringSupported());
         initCustomPropertySheet();
-
-        initCommands();
+        initNetworkQoSList(qosId);
     }
 
     protected boolean isPortMirroringSupported() {
@@ -295,7 +304,7 @@ public abstract class VnicProfileModel extends Model {
         }
     }
 
-    public void initNetworkQoSList(final Guid selectedItemId) {
+    private void initNetworkQoSList(final Guid selectedItemId) {
         if (getDcId() == null) {
             return;
         }
