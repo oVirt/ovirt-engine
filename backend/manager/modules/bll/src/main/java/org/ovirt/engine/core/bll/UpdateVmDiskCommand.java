@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -476,8 +477,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean shouldUpdateImageProperties() {
-        return (getOldDisk().getDiskStorageType() == DiskStorageType.IMAGE) &&
-                !((DiskImage) getOldDisk()).getQuotaId().equals(getQuotaId());
+        if (getOldDisk().getDiskStorageType() != DiskStorageType.IMAGE) {
+            return false;
+        }
+        Guid oldQuotaId = ((DiskImage) getOldDisk()).getQuotaId();
+        return !ObjectUtils.objectsEqual(oldQuotaId, getQuotaId());
     }
 
     private boolean isAtLeastOneVmIsNotDown(List<VM> vmsDiskPluggedTo) {
