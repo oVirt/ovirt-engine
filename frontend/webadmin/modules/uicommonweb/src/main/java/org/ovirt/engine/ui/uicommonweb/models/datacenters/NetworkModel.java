@@ -438,11 +438,15 @@ public abstract class NetworkModel extends Model
     protected abstract void executeSave();
 
     protected void postSaveAction(Guid networkGuid, boolean succeeded) {
-        if (succeeded)
-        {
-            performProfilesActions(networkGuid);
+        if (succeeded) {
+            if ((Boolean) getIsVmNetwork().getEntity()) {
+                performProfilesActions(networkGuid);
+                stopProgress();
+            } else {
+                stopProgress();
+                cancel();
+            }
         }
-        stopProgress();
     }
 
     protected abstract void performProfilesActions(Guid networkGuid);
