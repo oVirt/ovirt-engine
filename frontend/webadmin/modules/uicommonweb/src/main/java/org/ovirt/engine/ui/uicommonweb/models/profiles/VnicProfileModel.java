@@ -162,10 +162,6 @@ public abstract class VnicProfileModel extends Model {
         initCommands();
     }
 
-    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, Guid dcId) {
-        this(sourceModel, dcCompatibilityVersion, true, dcId);
-    }
-
     protected boolean isPortMirroringSupported() {
         Version v31 = new Version(3, 1);
         boolean isLessThan31 = getDcCompatibilityVersion().compareTo(v31) < 0;
