@@ -49,14 +49,6 @@ public final class CpuFlagsManagerHandler {
         return new ArrayList<ServerCpu>();
     }
 
-    public static ServerCpu FindMaxServerCpu(String clusterCpuName, String serverFlags, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.FindMaxServerCpu(clusterCpuName, serverFlags);
-        }
-        return null;
-    }
-
     /**
      * Returns missing CPU flags if any, or null if the server match the cluster
      * CPU flags
@@ -72,14 +64,6 @@ public final class CpuFlagsManagerHandler {
             return cpuFlagsManager.missingServerCpuFlags(clusterCpuName, serverFlags);
         }
         return null;
-    }
-
-    public static boolean CheckIfServerAndClusterCanFit(String clusterCpuName, String serverFlags, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.CheckIfServerAndClusterCanFit(clusterCpuName, serverFlags);
-        }
-        return false;
     }
 
     public static boolean CheckIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
@@ -200,63 +184,6 @@ public final class CpuFlagsManagerHandler {
         }
 
         /**
-         * Finds max server cpu by cluster name and server cpu flags
-         *
-         * @param clusterCpuName
-         * @param serverFlags
-         * @return
-         */
-        public ServerCpu FindMaxServerCpu(String clusterCpuName, String serverFlags) {
-            ServerCpu result = null;
-            ServerCpu clusterCpu = null;
-            // if there are flags but no cluster or cant find cluster
-            if (!StringUtils.isEmpty(serverFlags) && clusterCpuName != null) {
-                if (!((clusterCpu = _intelCpuByNameDictionary.get(clusterCpuName)) != null)
-                        && !((clusterCpu = _amdCpuByNameDictionary.get(clusterCpuName)) != null)) {
-                    result = FindMaxServerCpuByFlags(serverFlags);
-                } else {
-                    HashSet<String> lstFlags = new HashSet<String>(
-                            Arrays.asList(serverFlags.split("[,]", -1)));
-
-                    // check if to search in intel or amd
-                    result =
-                            (lstFlags.contains(_intelFlag)) ? FindServerCpuByFlags(lstFlags, clusterCpu, _intelCpuList)
-                                    : FindServerCpuByFlags(lstFlags, clusterCpu, _amdCpuList);
-                }
-            }
-            return result;
-        }
-
-        private ServerCpu FindServerCpuByFlags(Set<String> lstFlags, ServerCpu clusterCpu,
-                List<ServerCpu> fullList) {
-            ServerCpu result = null;
-
-            int i;
-            // check if server ok with cluster
-            if (CheckIfFlagsContainsCpuFlags(clusterCpu, lstFlags)) {
-                // then should look up
-                for (i = fullList.indexOf(clusterCpu) + 1; i < fullList.size(); i++) {
-                    if (!CheckIfFlagsContainsCpuFlags(fullList.get(i), lstFlags)) {
-                        break;
-                    }
-                }
-                result = fullList.get(i - 1);
-            } else {
-                // then should look down
-                for (i = fullList.indexOf(clusterCpu) - 1; i >= 0; i--) {
-                    if (CheckIfFlagsContainsCpuFlags(fullList.get(i), lstFlags)) {
-                        break;
-                    }
-                }
-                // If i is lower than 0 then server cpu could not found
-                if (i >= 0) {
-                    result = fullList.get(i);
-                }
-            }
-            return result;
-        }
-
-        /**
          * Returns missing CPU flags if any, or null if the server match the
          * cluster CPU flags
          *
@@ -300,30 +227,6 @@ public final class CpuFlagsManagerHandler {
         private boolean CheckIfFlagsContainsCpuFlags(ServerCpu clusterCpu, Set<String> lstServerflags) {
             return CollectionUtils.intersection(clusterCpu.getFlags(), lstServerflags).size() == clusterCpu.getFlags()
                     .size();
-        }
-
-        /**
-         * This method only check if server and cluster have the same cpu (intel
-         * or amd)
-         *
-         * @param clusterCpuName
-         * @param serverFlags
-         * @return
-         */
-        public boolean CheckIfServerAndClusterCanFit(String clusterCpuName, String serverFlags) {
-            if (clusterCpuName == null) {
-                return false;
-            } else {
-                if (StringUtils.isEmpty(serverFlags)) {
-                    return true;
-                } else {
-                    Set<String> lstServerflags = new HashSet<String>(
-                            Arrays.asList(serverFlags.split("[,]", -1)));
-
-                    return (lstServerflags.contains(_intelFlag)) ? _intelCpuByNameDictionary
-                            .containsKey(clusterCpuName) : _amdCpuByNameDictionary.containsKey(clusterCpuName);
-                }
-            }
         }
 
         /**
