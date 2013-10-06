@@ -107,10 +107,14 @@ public class EditNetworkModel extends NetworkModel {
                     profilesModels.add(editModel);
                     editModel.getName().setIsChangable(false);
                 }
-                if (profilesModels.isEmpty()){
-                    VnicProfileModel newProfileModel = new NewVnicProfileModel(getSourceListModel(),
-                            getSelectedDc().getcompatibility_version(), false, getSelectedDc().getId());
-                    profilesModels.add(newProfileModel);
+                if (profilesModels.isEmpty()) {
+                    if ((Boolean) getIsVmNetwork().getEntity()) {
+                        VnicProfileModel newProfileModel = new NewVnicProfileModel(getSourceListModel(),
+                                getSelectedDc().getcompatibility_version(), false, getSelectedDc().getId());
+                        profilesModels.add(newProfileModel);
+                    } else {
+                        profilesModels.add(createDefaultProfile());
+                    }
                 }
                 getProfiles().setItems(profilesModels);
                 originalProfileModels = profilesModels;
