@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
@@ -129,6 +130,24 @@ public abstract class NetworkModel extends Model
         onExportChanged();
         updateVlanTagChangeability();
         updateMtuChangeability();
+    }
+
+    protected VnicProfileModel createDefaultProfile() {
+        final NewVnicProfileModel newModel =
+                new NewVnicProfileModel(getSourceListModel(), getSelectedDc().getcompatibility_version(), false,
+                        getSelectedDc().getId());
+
+        // make sure default profile's name is in sync with network's name
+        newModel.getName().setEntity(getName().getEntity());
+        getName().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                newModel.getName().setEntity(getName().getEntity());
+            }
+        });
+
+        return newModel;
     }
 
     private void initExternalProviderList() {

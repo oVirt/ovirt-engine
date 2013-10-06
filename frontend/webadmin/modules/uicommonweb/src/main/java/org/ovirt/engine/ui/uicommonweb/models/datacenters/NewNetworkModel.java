@@ -21,14 +21,10 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -124,23 +120,6 @@ public class NewNetworkModel extends NetworkModel {
                 profile.updateDc(getSelectedDc().getcompatibility_version(), false, getSelectedDc().getId(), null);
             }
         }
-    }
-
-    private VnicProfileModel createDefaultProfile() {
-        final NewVnicProfileModel newModel =
-                new NewVnicProfileModel(getSourceListModel(), getSelectedDc().getcompatibility_version(), false,
-                        getSelectedDc().getId());
-
-        // make sure default profile's name is in sync with network's name
-        getName().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                newModel.getName().setEntity(getName().getEntity());
-            }
-        });
-
-        return newModel;
     }
 
     @Override
