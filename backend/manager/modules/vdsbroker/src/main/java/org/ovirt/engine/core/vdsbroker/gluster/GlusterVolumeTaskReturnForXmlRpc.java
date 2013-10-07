@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusDetail;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 
 public class GlusterVolumeTaskReturnForXmlRpc extends GlusterTaskInfoReturnForXmlRpc {
     private static final String HOST_LIST = "hosts";
@@ -24,30 +25,33 @@ public class GlusterVolumeTaskReturnForXmlRpc extends GlusterTaskInfoReturnForXm
         super(innerMap);
 
         if (innerMap.containsKey(HOST_LIST)) {
-            for (Object nodeStatus : (Object[])innerMap.get(HOST_LIST)) {
-                statusDetails.getHostwiseStatusDetails().add(getStatusForNode((Map<String, Object>)nodeStatus));
+            for (Object nodeStatus : (Object[]) innerMap.get(HOST_LIST)) {
+                statusDetails.getHostwiseStatusDetails().add(getStatusForNode((Map<String, Object>) nodeStatus));
             }
         }
 
         if (innerMap.containsKey(SUMMARY)) {
-            populateGlusterVolumeTaskStatusDetail(statusDetails.getStatusSummary(), (Map<String, Object>)innerMap.get(SUMMARY));
+            populateGlusterVolumeTaskStatusDetail(statusDetails.getStatusSummary(),
+                    (Map<String, Object>) innerMap.get(SUMMARY));
         }
     }
 
     private GlusterVolumeTaskStatusForHost getStatusForNode(Map<String, Object> nodeStatus) {
         GlusterVolumeTaskStatusForHost rebalanceStatusForHost = new GlusterVolumeTaskStatusForHost();
-        rebalanceStatusForHost.setHostName((String)nodeStatus.get(HOST_NAME));
+        rebalanceStatusForHost.setHostName((String) nodeStatus.get(HOST_NAME));
         populateGlusterVolumeTaskStatusDetail(rebalanceStatusForHost, nodeStatus);
 
         return rebalanceStatusForHost;
     }
 
     private void populateGlusterVolumeTaskStatusDetail(GlusterVolumeTaskStatusDetail detail, Map<String, Object> map) {
-        detail.setFilesScanned((Integer)map.get(FILES_SCANNED));
-        detail.setFilesMoved((Integer)map.get(FILES_MOVED));
-        detail.setFilesFailed((Integer)map.get(FILES_FAILED));
-        detail.setTotalSizeMoved(((Integer)map.get(TOTAL_SIZE_MOVED)).longValue());
-        detail.setStatus(GlusterAsyncTaskStatus.from((String)map.get(STATUS)).getJobExecutionStatus());
+        detail.setFilesScanned(map.containsKey(FILES_SCANNED) ? Long.valueOf(map.get(FILES_SCANNED).toString()) : 0);
+        detail.setFilesMoved(map.containsKey(FILES_MOVED) ? Long.valueOf(map.get(FILES_MOVED).toString()) : 0);
+        detail.setFilesFailed(map.containsKey(FILES_FAILED) ? Long.valueOf(map.get(FILES_FAILED).toString()) : 0);
+        detail.setTotalSizeMoved(map.containsKey(TOTAL_SIZE_MOVED) ? Long.valueOf(map.get(TOTAL_SIZE_MOVED).toString())
+                : 0);
+        detail.setStatus(map.containsKey(STATUS) ? GlusterAsyncTaskStatus.from(map.get(STATUS).toString())
+                .getJobExecutionStatus() : JobExecutionStatus.UNKNOWN);
     }
 
     public GlusterVolumeTaskStatusEntity getStatusDetails() {

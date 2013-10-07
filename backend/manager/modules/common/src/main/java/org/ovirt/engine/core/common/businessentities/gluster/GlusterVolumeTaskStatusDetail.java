@@ -7,21 +7,21 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 public class GlusterVolumeTaskStatusDetail implements Serializable {
     private static final long serialVersionUID = -1134758927239004416L;
 
-    private int filesMoved;
+    private long filesMoved;
     private long totalSizeMoved;
-    private int filesScanned;
-    private int filesFailed;
-    private int filesSkipped;
-    private int runTime;
+    private long filesScanned;
+    private long filesFailed;
+    private long filesSkipped;
+    private double runTime;
     private JobExecutionStatus status;
 
     public GlusterVolumeTaskStatusDetail() {
     }
 
-    public int getFilesMoved() {
+    public long getFilesMoved() {
         return filesMoved;
     }
-    public void setFilesMoved(int filesMoved) {
+    public void setFilesMoved(long filesMoved) {
         this.filesMoved = filesMoved;
     }
     public long getTotalSizeMoved() {
@@ -30,28 +30,28 @@ public class GlusterVolumeTaskStatusDetail implements Serializable {
     public void setTotalSizeMoved(long size) {
         this.totalSizeMoved = size;
     }
-    public int getFilesScanned() {
+    public long getFilesScanned() {
         return filesScanned;
     }
-    public void setFilesScanned(int totalScannedCount) {
+    public void setFilesScanned(long totalScannedCount) {
         this.filesScanned = totalScannedCount;
     }
-    public int getFilesFailed() {
+    public long getFilesFailed() {
         return filesFailed;
     }
-    public void setFilesFailed(int failuresCount) {
+    public void setFilesFailed(long failuresCount) {
         this.filesFailed = failuresCount;
     }
-    public int getFilesSkipped() {
+    public long getFilesSkipped() {
         return filesSkipped;
     }
-    public void setFilesSkipped(int filesSkipped) {
+    public void setFilesSkipped(long filesSkipped) {
         this.filesSkipped = filesSkipped;
     }
-    public int getRunTime() {
+    public double getRunTime() {
         return runTime;
     }
-    public void setRunTime(int runTime) {
+    public void setRunTime(double runTime) {
         this.runTime = runTime;
     }
     public JobExecutionStatus getStatus() {
