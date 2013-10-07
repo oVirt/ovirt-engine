@@ -3029,7 +3029,7 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.tag.name: 'xs:string'}
+        optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.tag.id|name: 'xs:string'}
         description: update the name, description or parent tag of the specified tag in the system
     urlparams: {}
     headers:
