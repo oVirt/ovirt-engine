@@ -215,6 +215,6 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
 
         getQuery().executeQueryCommand();
         VdcQueryReturnValue returnValue = (VdcQueryReturnValue)getQuery().getReturnValue();
-        assertEquals(VdcBllMessages.GLUSTER_VOLUME_ID_INVALID, returnValue.getExceptionString());
+        assertEquals(VdcBllMessages.GLUSTER_VOLUME_ID_INVALID.toString(), returnValue.getExceptionString());
     }
 }
