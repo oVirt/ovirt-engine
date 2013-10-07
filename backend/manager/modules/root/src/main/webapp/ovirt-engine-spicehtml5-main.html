@@ -134,6 +134,30 @@
                 }catch(e) {alert(e);}
             }
 
+            /*
+            * This functions emulates the sendCtrlAltDel from inputs.js from
+            * version 0.1.3. As soon as we upgrade to that version, this function
+            * should be removed!
+            */
+            function sendCtrlAltDel() {
+                if (sc && sc.inputs && sc.inputs.state === "ready") {
+                    var key = new SpiceMsgcKeyDown();
+                    var msg = new SpiceMiniData();
+
+                    update_modifier(true, KEY_LCtrl, sc);
+                    update_modifier(true, KEY_Alt, sc);
+
+                    key.code = KEY_KP_Decimal;
+                    msg.build_msg(SPICE_MSGC_INPUTS_KEY_DOWN, key);
+                    sc.inputs.send_msg(msg);
+                    msg.build_msg(SPICE_MSGC_INPUTS_KEY_UP, key);
+                    sc.inputs.send_msg(msg);
+
+                    if(Ctrl_state == false) update_modifier(false, KEY_LCtrl, sc);
+                    if(Alt_state == false) update_modifier(false, KEY_Alt, sc);
+                }
+            }
+
             if (window.addEventListener) {
                 // For standards-compliant web browsers
                 window.addEventListener("message", connectToConsole, false);
@@ -142,6 +166,19 @@
             }
         </script>
 
+        <style>
+            .control-panel {
+                margin-top: 5px;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 1.1em;
+                width: 800px;
+                min-height: 20px;
+                padding: 5px;
+                border: solid #222222 1px;
+                background-color: #333333;
+            }
+        </style>
     </head>
 
     <body>
@@ -152,6 +189,12 @@
 
         <div id="spice-area">
             <div id="spice-screen" class="spice-screen"></div>
+        </div>
+
+        <div class="control-panel">
+            <button type="button" onclick="sendCtrlAltDel()">
+                Send Ctrl-Alt-Delete
+            </button>
         </div>
 
         <div id="message-div" class="spice-message" style="display: none"></div>
