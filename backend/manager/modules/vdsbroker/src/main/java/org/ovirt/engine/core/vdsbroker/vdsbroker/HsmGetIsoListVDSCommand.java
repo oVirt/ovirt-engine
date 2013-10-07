@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.HSMGetIsoListParameters;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 
 public class HsmGetIsoListVDSCommand<P extends HSMGetIsoListParameters> extends VdsBrokerCommand<P> {
-    private IsoListReturnForXmlRpc isoList;
+    private FileStatsReturnForXmlRpc isoList;
 
     public HsmGetIsoListVDSCommand(P parameters) {
         super(parameters);

@@ -1622,5 +1622,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     ChangePasswordMsg,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GetFileStats,
+
     Invalid;
 }

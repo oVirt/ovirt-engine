@@ -93,16 +93,23 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
-    public IsoListReturnForXmlRpc getIsoList(String spUUID) {
+    public FileStatsReturnForXmlRpc getIsoList(String spUUID) {
         Map<String, Object> xmlRpcReturnValue = irsServer.getIsoList(spUUID);
-        IsoListReturnForXmlRpc wrapper = new IsoListReturnForXmlRpc(xmlRpcReturnValue);
+        FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
 
     @Override
-    public IsoListReturnForXmlRpc getFloppyList(String spUUID) {
+    public FileStatsReturnForXmlRpc getFloppyList(String spUUID) {
         Map<String, Object> xmlRpcReturnValue = irsServer.getFloppyList(spUUID);
-        IsoListReturnForXmlRpc wrapper = new IsoListReturnForXmlRpc(xmlRpcReturnValue);
+        FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    @Override
+    public FileStatsReturnForXmlRpc getFileStats(String sdUUID, String pattern, boolean caseSensitive) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.getFileStats(sdUUID, pattern, caseSensitive);
+        FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
 

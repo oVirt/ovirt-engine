@@ -16,7 +16,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnFor
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 
@@ -126,7 +126,7 @@ public interface IVdsServer {
 
     StorageDomainListReturnForXmlRpc getStorageDomainsList(String spUUID, int domainType, int poolType, String path);
 
-    IsoListReturnForXmlRpc getIsoList(String spUUID);
+    FileStatsReturnForXmlRpc getIsoList(String spUUID);
 
     OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList);
 
