@@ -270,6 +270,7 @@ public enum VdcQueryType implements Serializable {
     GetGlusterClusterServiceByClusterId,
     GetGlusterVolumeRebalanceStatus,
     GetGlusterVolumeRemoveBricksStatus,
+    GetGlusterVolumeByTaskId,
 
     GetDefaultConfigurationVersion(VdcQueryAuthType.User),
     OsRepository(VdcQueryAuthType.User),

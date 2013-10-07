@@ -184,6 +184,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         GlusterVolumeEntity volume = getCallsHandler().executeRead(
                 "GetGlusterVolumeByGlusterTaskId", volumeRowMapper,
                 getCustomMapSqlParameterSource().addValue("task_id", taskId));
+        fetchRelatedEntities(volume);
         return volume;
     }
 
