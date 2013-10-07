@@ -31,8 +31,7 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
     @Override
     /**
      * Enables to send update procedure name as a parameter that overrides the default
-     * one.
-     * In case this parameter is null the default procedure is used.
+     * one. In case this parameter is null the default procedure is used.
      */
     public void updateAll(String procedureName, Collection<T> entities) {
         if (procedureName == null) {
@@ -44,9 +43,8 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
     }
 
     /**
-     * Enables to send update procedure name as a parameter that overrides the default
-     * one.
-     * In case this parameter is null the default procedure is used.
+     * Enables to send update procedure name as a parameter that overrides the default one. In case this parameter is
+     * null the default procedure is used.
      */
     protected void updateAllInBatch(String procedureName,
             Collection<T> paramValues,
@@ -60,6 +58,21 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
         for (ID id : ids) {
             remove(id);
         }
+    }
+
+    /**
+     * Enables to send remove procedure name as a parameter that overrides the default one. In case this parameter is
+     * null, default procedure is used.
+     */
+    protected void removeAllInBatch(String procedureName, Collection<T> paramValues, MapSqlParameterMapper<T> mapper) {
+        getCallsHandler().executeStoredProcAsBatch(procedureName == null ? getProcedureNameForRemove() : procedureName,
+                paramValues,
+                mapper);
+    }
+
+    @Override
+    public void removeAllInBatch(Collection<T> entities) {
+        removeAllInBatch(getProcedureNameForRemove(), entities, getBatchMapper());
     }
 
     @Override

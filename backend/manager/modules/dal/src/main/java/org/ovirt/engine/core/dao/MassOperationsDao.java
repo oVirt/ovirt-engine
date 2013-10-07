@@ -43,6 +43,13 @@ public interface MassOperationsDao<T extends BusinessEntity<?>, ID extends Seria
     void removeAll(Collection<ID> ids);
 
     /**
+     * Calls a remove stored procedure multiple times in a batch
+     *
+     * @param entities
+     */
+    void removeAllInBatch(Collection<T> entities);
+
+    /**
      * Calls an update stored procedure multiple timse in a batch
      *
      * @param procedureName
