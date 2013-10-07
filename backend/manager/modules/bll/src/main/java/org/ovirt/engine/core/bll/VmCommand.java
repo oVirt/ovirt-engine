@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
@@ -435,6 +436,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected DiskImageDAO getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
+    }
+
+    protected ImageDao getImageDao() {
+        return getDbFacade().getImageDao();
     }
 
     protected boolean checkPayload(VmPayload payload, String isoPath) {
