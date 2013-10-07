@@ -32,8 +32,8 @@ public class TimeZoneModel {
         cachedTimeZoneModels.put(timeZoneType, models);
     }
 
-    private String timeZoneKey = null;
-    private TimeZoneType timeZoneType = TimeZoneType.GENERAL_TIMEZONE;
+    private final String timeZoneKey;
+    private final TimeZoneType timeZoneType;
 
     public TimeZoneModel(String timeZoneKey, TimeZoneType timeZoneType) {
         this.timeZoneKey = timeZoneKey;
@@ -51,11 +51,11 @@ public class TimeZoneModel {
 
     public String getDisplayValue() {
         if (isDefault()) {
-            final String defaultTimeZoneKey = (String) AsyncDataProvider.getConfigValuePreConverted(timeZoneType.getDefaultTimeZoneConfigurationKey());
+            String defaultTimeZoneKey = (String) AsyncDataProvider.getConfigValuePreConverted(timeZoneType.getDefaultTimeZoneConfigurationKey());
             // check if default timezone is correct
             if (!timeZoneType.getTimeZoneList().containsKey(defaultTimeZoneKey)) {
                 // if not show GMT
-                timeZoneKey = timeZoneType.getUltimateFallback();
+                defaultTimeZoneKey = timeZoneType.getUltimateFallback();
             }
             return timeZoneType.getTimeZoneList().get(defaultTimeZoneKey);
         } else {
