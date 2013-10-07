@@ -201,11 +201,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
-    @EditableField
+    @EditableOnVmStatusField
     @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     private MigrationSupport migrationSupport;
 
-    @EditableField
+    @EditableOnVmStatusField
     private Guid dedicatedVmForVds;
 
     @EditableOnVmStatusField

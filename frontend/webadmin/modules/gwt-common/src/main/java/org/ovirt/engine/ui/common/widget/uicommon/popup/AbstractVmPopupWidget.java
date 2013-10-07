@@ -413,6 +413,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public Label specificHostLabel;
 
     @UiField(provided = true)
+    public InfoIcon nonEditableWhileVmNotDownInfo;
+
+    @UiField(provided = true)
     @Path(value = "defaultHost.selectedItem")
     @WithElementId("defaultHost")
     public ListModelListBoxEditor<Object> defaultHostEditor;
@@ -640,6 +643,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                         .replaceAll("(\r\n|\n)", "<br />")), resources);//$NON-NLS-1$ //$NON-NLS-2$
         isVirtioScsiEnabledInfoIcon =
                 new InfoIcon(applicationTemplates.italicText(constants.isVirtioScsiEnabledInfo()), resources);
+        nonEditableWhileVmNotDownInfo =
+                new InfoIcon(applicationTemplates.italicText(constants.nonEditableMigrationFieldsWhileVmNotDownInfo()),
+                        resources);
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);

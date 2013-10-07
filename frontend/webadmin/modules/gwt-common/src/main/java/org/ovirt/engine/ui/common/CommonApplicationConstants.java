@@ -1569,4 +1569,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("FQDN")
     String fqdn();
+
+    @DefaultStringValue("The fields under 'Start Running On' and 'Migration Options' aren't editable while the VM isn't down")
+    String nonEditableMigrationFieldsWhileVmNotDownInfo();
 }
