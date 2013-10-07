@@ -32,9 +32,11 @@ public interface IIrsServer {
     OneUuidReturnForXmlRpc importCandidate(String sdUUID, String vmGUID, String templateGUID, String templateVolGUID,
             String path, String type, String force);
 
-    IsoListReturnForXmlRpc getIsoList(String spUUID);
+    FileStatsReturnForXmlRpc getIsoList(String spUUID);
 
-    IsoListReturnForXmlRpc getFloppyList(String spUUID);
+    FileStatsReturnForXmlRpc getFloppyList(String spUUID);
+
+    FileStatsReturnForXmlRpc getFileStats(String sdUUID, String pattern, boolean caseSensitive);
 
     StorageStatusReturnForXmlRpc activateStorageDomain(String sdUUID, String spUUID);
 

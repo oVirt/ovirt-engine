@@ -211,4 +211,13 @@ public class FeatureSupported {
     public static boolean hotPlugCpu(Version version, ArchitectureType arch) {
         return supportedInConfig(ConfigValues.HotPlugCpuSupported, version, arch);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if get file stats is supported for the given version.
+     */
+    public static boolean getFileStats(Version version) {
+        return supportedInConfig(ConfigValues.GetFileStats, version);
+    }
 }

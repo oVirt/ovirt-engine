@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class IsoListReturnForXmlRpc extends StatusReturnForXmlRpc {
+public final class FileStatsReturnForXmlRpc extends StatusReturnForXmlRpc {
 
     private Map<String, Map<String, Object>> fileStats;
 
-    public IsoListReturnForXmlRpc(Map<String, Object> innerMap) {
+    public FileStatsReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
         // New VDSM returns a map with file names as key and file stats as value.
         // The map contains all files even those without proper permissions.

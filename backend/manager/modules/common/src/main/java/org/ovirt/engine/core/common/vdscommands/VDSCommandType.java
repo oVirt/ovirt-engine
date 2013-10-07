@@ -71,6 +71,7 @@ public enum VDSCommandType {
     ResetIrs("org.ovirt.engine.core.vdsbroker.irsbroker"),
     GetIsoList("org.ovirt.engine.core.vdsbroker.irsbroker"),
     HsmGetIsoList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetFileStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetFloppyList("org.ovirt.engine.core.vdsbroker.irsbroker"),
     CreateStorageDomain("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ActivateStorageDomain("org.ovirt.engine.core.vdsbroker.irsbroker"),

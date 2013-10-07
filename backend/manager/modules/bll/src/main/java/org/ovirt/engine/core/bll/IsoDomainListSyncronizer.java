@@ -16,12 +16,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -30,6 +32,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.GetFileStatsParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -40,6 +43,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -67,6 +71,7 @@ public class IsoDomainListSyncronizer {
     private int isoDomainRefreshRate;
     RepoFileMetaDataDAO repoStorageDom;
     ProviderDao providerDao;
+
     public static final String TOOL_CLUSTER_LEVEL = "clusterLevel";
     public static final String TOOL_VERSION = "toolVersion";
     public static final String REGEX_TOOL_PATTERN =
@@ -74,6 +79,8 @@ public class IsoDomainListSyncronizer {
                     getGuestToolsSetupIsoPrefix(),
                     TOOL_CLUSTER_LEVEL,
                     TOOL_VERSION);
+    public static final String ISO_FILE_PATTERN = "*.iso";
+    public static final String FLOPPY_FILE_PATTERN = "*.vfd";
 
     // Not kept as static member to enable reloading the config value
     public static String getGuestToolsSetupIsoPrefix() {
@@ -637,14 +644,26 @@ public class IsoDomainListSyncronizer {
      */
     private boolean updateIsoListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
         boolean refreshIsoSucceeded = false;
+        VDSReturnValue returnValue;
+
         if (repoStorageDomainId != null) {
             try {
-                // Get Iso domain file list from storage pool.
-                VDSReturnValue returnValue = Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.GetIsoList,
-                                new IrsBaseVDSCommandParameters(repoStoragePoolId));
+                StoragePool dc = getStoragePoolDAO().get(repoStoragePoolId);
+                if (FeatureSupported.getFileStats(dc.getcompatibility_version())) {
+                    returnValue = Backend
+                            .getInstance()
+                            .getResourceManager()
+                            .RunVdsCommand(VDSCommandType.GetFileStats,
+                                    new GetFileStatsParameters(repoStoragePoolId,
+                                            repoStorageDomainId, ISO_FILE_PATTERN, false));
+                } else {
+                    returnValue = Backend
+                            .getInstance()
+                            .getResourceManager()
+                            .RunVdsCommand(VDSCommandType.GetIsoList,
+                                    new IrsBaseVDSCommandParameters(repoStoragePoolId));
+                }
+
                 @SuppressWarnings("unchecked")
                 Map<String, Map<String, Object>> fileStats =
                         (Map<String, Map<String, Object>>) returnValue.getReturnValue();
@@ -677,14 +696,26 @@ public class IsoDomainListSyncronizer {
      */
     private boolean updateFloppyListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
         boolean refreshFloppySucceeded = false;
+        VDSReturnValue returnValue;
+
         if (repoStorageDomainId != null) {
             try {
-                // Get Iso domain floppy file list from storage pool.
-                VDSReturnValue returnValue = Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.GetFloppyList,
-                                new IrsBaseVDSCommandParameters(repoStoragePoolId));
+                StoragePool dc = getStoragePoolDAO().get(repoStoragePoolId);
+                if (FeatureSupported.getFileStats(dc.getcompatibility_version())) {
+                    returnValue = Backend
+                            .getInstance()
+                            .getResourceManager()
+                            .RunVdsCommand(VDSCommandType.GetFileStats,
+                                    new GetFileStatsParameters(repoStoragePoolId,
+                                            repoStorageDomainId, FLOPPY_FILE_PATTERN, false));
+                } else {
+                    returnValue = Backend
+                            .getInstance()
+                            .getResourceManager()
+                            .RunVdsCommand(VDSCommandType.GetFloppyList,
+                                    new IrsBaseVDSCommandParameters(repoStoragePoolId));
+                }
+
                 @SuppressWarnings("unchecked")
                 Map<String, Map<String, Object>> fileStats =
                         (Map<String, Map<String, Object>>) returnValue.getReturnValue();
@@ -780,5 +811,9 @@ public class IsoDomainListSyncronizer {
 
     private StorageDomainDAO getStorageDomainDAO() {
         return DbFacade.getInstance().getStorageDomainDao();
+    }
+
+    private StoragePoolDAO getStoragePoolDAO() {
+        return DbFacade.getInstance().getStoragePoolDao();
     }
 }

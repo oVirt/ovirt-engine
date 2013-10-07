@@ -5,7 +5,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> extends GetIsoListVDSCommand<P> {
-    protected IsoListReturnForXmlRpc floppyList;
+    protected FileStatsReturnForXmlRpc floppyList;
 
     public GetFloppyListVDSCommand(P parameters) {
         super(parameters);

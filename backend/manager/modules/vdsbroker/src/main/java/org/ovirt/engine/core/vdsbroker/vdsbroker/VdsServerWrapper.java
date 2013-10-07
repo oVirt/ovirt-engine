@@ -18,7 +18,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnFor
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -574,15 +574,14 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public IsoListReturnForXmlRpc getIsoList(String spUUID) {
+    public FileStatsReturnForXmlRpc getIsoList(String spUUID) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getIsoList(spUUID);
-            IsoListReturnForXmlRpc wrapper = new IsoListReturnForXmlRpc(xmlRpcReturnValue);
+            FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
-
     }
 
     @Override
