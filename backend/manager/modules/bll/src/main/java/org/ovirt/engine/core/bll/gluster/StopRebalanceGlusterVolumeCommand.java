@@ -55,16 +55,16 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
                 runVdsCommand(VDSCommandType.StopRebalanceGlusterVolume,
                         new GlusterVolumeVDSParameters(upServer.getId(),
                                 getGlusterVolumeName()));
-        setSucceeded(vdsReturnaValue.getSucceeded());
-        if (!getSucceeded()) {
+        if (!vdsReturnaValue.getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP_FAILED, vdsReturnaValue.getVdsError()
                     .getMessage());
+            setSucceeded(false);
             return;
         }
 
         endStepJob();
         releaseVolumeLock();
-        getReturnValue().setActionReturnValue(vdsReturnaValue);
+        setSucceeded(vdsReturnaValue.getSucceeded());
     }
 
     @Override
