@@ -446,7 +446,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         else if (command.equals(getRemoveVolumeCommand())) {
             removeVolume();
         } else if(command.getName().equals("rebalanceNotStarted")) {//$NON-NLS-1$
-            setConfirmWindow(null);
+            closeConfirmationWindow();
         }
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
@@ -473,6 +473,14 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         } else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             onRemoveVolume();
         }
+    }
+
+    private void closeConfirmationWindow() {
+        if(getConfirmWindow() == null) {
+            return;
+        }
+        getConfirmWindow().stopProgress();
+        setConfirmWindow(null);
     }
 
     private void startRebalance() {
@@ -564,20 +572,22 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setConfirmWindow(cModel);
         cModel.setTitle(ConstantsManager.getInstance().getConstants().rebalanceStatusTitle());
         cModel.startProgress(ConstantsManager.getInstance().getConstants().rebalanceStatusFetchMessage());//$NON-NLS-1$
+
         final UICommand rebalanceStatusOk = new UICommand("rebalanceNotStarted", VolumeListModel.this);//$NON-NLS-1$
         rebalanceStatusOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
         rebalanceStatusOk.setIsCancel(true);
+        cModel.getCommands().add(rebalanceStatusOk);
+
         AsyncDataProvider.getGlusterRebalanceStatus(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 GlusterVolumeTaskStatusEntity rebalanceStatusEntity =
                         (GlusterVolumeTaskStatusEntity) returnValue;
-                cModel.stopProgress();
                 if ((rebalanceStatusEntity == null) || (rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.UNKNOWN)) {
+                    cModel.stopProgress();
                     cModel.setMessage(ConstantsManager.getInstance().getMessages().rebalanceStatusConfirmationMessage(volumeEntity.getName()));
-                    cModel.getCommands().add(rebalanceStatusOk);
                 } else {
-                    setConfirmWindow(null);
+                    closeConfirmationWindow();
                     VolumeRebalanceStatusModel rebalanceStatusModel =
                             new VolumeRebalanceStatusModel(volumeEntity);
                     rebalanceStatusModel.setTitle(ConstantsManager.getInstance()
