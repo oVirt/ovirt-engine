@@ -1572,4 +1572,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Attach a VirtIO-SCSI controller when running the VM")
     String isVirtioScsiEnabledInfo();
+
+    @DefaultStringValue("The fields under 'Start Running On' and 'Migration Options' aren't editable while the VM isn't down")
+    String nonEditableMigrationFieldsWhileVmNotDownInfo();
 }

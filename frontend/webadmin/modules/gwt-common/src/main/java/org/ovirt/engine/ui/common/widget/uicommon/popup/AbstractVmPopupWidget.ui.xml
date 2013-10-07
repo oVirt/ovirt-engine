@@ -470,6 +470,7 @@
 			<t:DialogTab ui:field="hostTab">
 				<t:content>
 					<g:FlowPanel>
+						<d:InfoIcon ui:field="nonEditableWhileVmNotDownInfo" addStyleNames="{style.labelToCoupleCoupleLeft}"/>
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
 						<g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
 							<e:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
