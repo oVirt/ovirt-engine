@@ -120,7 +120,7 @@ public class QuotaModule extends AbstractGinModule {
     public SearchableDetailModelProvider<permissions, QuotaListModel, QuotaUserListModel> getQuotaUserListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
-            final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<permissions, QuotaListModel, QuotaUserListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 QuotaListModel.class,
