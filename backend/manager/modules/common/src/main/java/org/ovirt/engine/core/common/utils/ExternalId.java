@@ -20,9 +20,18 @@ public class ExternalId implements Serializable {
     // a key in a hash map:
     private int hash;
 
+    /**
+     * This constructor is intended only for serialization support, please
+     * don't use it directly.
+     */
+    public ExternalId() {
+        bytes = new byte[0];
+        hash = Arrays.hashCode(bytes);
+    }
+
     public ExternalId(byte[] values) {
-        this.bytes = values;
-        this.hash = Arrays.hashCode(values);
+        bytes = values;
+        hash = Arrays.hashCode(bytes);
     }
 
     /**
@@ -56,6 +65,7 @@ public class ExternalId implements Serializable {
         for (int i = 0; i < values.length; i++) {
             bytes[i] = (byte) (values[i] & 0xff);
         }
+        hash = Arrays.hashCode(bytes);
     }
 
     public byte[] getBytes() {
