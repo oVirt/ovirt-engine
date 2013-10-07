@@ -13,8 +13,8 @@ import org.ovirt.engine.api.model.StatisticUnit;
 import org.ovirt.engine.api.model.Value;
 import org.ovirt.engine.api.model.ValueType;
 import org.ovirt.engine.api.model.Values;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.BackendFailureException;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Subclasses encapsulate the subject-specific aspects of a statistical query
@@ -55,6 +55,11 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
 
     public Statistic setDatum(Statistic statistic, BigDecimal datum) {
         statistic.getValues().getValues().get(0).setDatum(datum);
+        return statistic;
+    }
+
+    public Statistic setDatum(Statistic statistic, String datum) {
+        statistic.getValues().getValues().get(0).setDetail(datum);
         return statistic;
     }
 

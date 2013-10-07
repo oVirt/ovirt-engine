@@ -326,6 +326,7 @@
           <xs:element ref="nic" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="brick" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="step" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -372,6 +373,7 @@
   <xs:complexType name="Value">
     <xs:sequence>
       <xs:element name="datum" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="detail" type="xs:string" minOccurs="1" maxOccurs="1"/>
       <!-- will in the future also include a timestamp element,
            when historical data is supported -->
     </xs:sequence>
@@ -393,6 +395,7 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="INTEGER"/>
       <xs:enumeration value="DECIMAL"/>
+      <xs:enumeration value="STRING"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -3605,10 +3608,12 @@
           <xs:element name="start_time" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
           <xs:element name="end_time" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
           <xs:element name="external" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="external_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
 
 <xs:complexType name="Steps">
     <xs:complexContent>

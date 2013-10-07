@@ -4222,6 +4222,25 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
+- name: /api/jobs/{job:id}/steps/{step:id}/statistics|rel=get
+  description: get the detailed step status for monitoring
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+
+- name: /api/jobs/{job:id}/steps/{step:id}/statistics/{statistic:id}|rel=get
+  description: get the detail statistic for a given step
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+
 - name: /api/storageconnections|rel=get
   description: get the list of all storage connections in the system
   request:

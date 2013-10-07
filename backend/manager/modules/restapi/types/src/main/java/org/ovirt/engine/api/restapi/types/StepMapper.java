@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import java.sql.Date;
 import java.util.Calendar;
 
+import org.ovirt.engine.api.model.ExternalSystemType;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
@@ -35,6 +36,10 @@ public class StepMapper {
             model.setEndTime(TypeConversionHelper.toXMLGregorianCalendar(entity.getEndTime(), null));
         }
         model.setExternal(entity.isExternal());
+        if (entity.getExternalSystem() != null && entity.getExternalSystem().getType() != null) {
+            model.setExternalType(map(entity.getExternalSystem().getType()));
+        }
+
         return model;
     }
 
@@ -99,5 +104,18 @@ public class StepMapper {
             return StepEnum.FINALIZING;
         }
         return StepEnum.UNKNOWN;
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.job.ExternalSystemType.class,
+            to = ExternalSystemType.class)
+    public static String map(org.ovirt.engine.core.common.job.ExternalSystemType type) {
+        switch (type) {
+        case VDSM:
+            return ExternalSystemType.VDSM.toString();
+        case GLUSTER:
+            return ExternalSystemType.GLUSTER.toString();
+        default:
+            return null;
+        }
     }
 }
