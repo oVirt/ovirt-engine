@@ -247,7 +247,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Bricks")
     String bricksTitle();
 
-    @DefaultStringValue("Volume Rebalance Status")
+    @DefaultStringValue("Rebalance Status")
     String volumeRebalanceStatusTitle();
 
     @DefaultStringValue("Virtual Machines")
