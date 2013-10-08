@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CompositeCell;
@@ -22,7 +23,8 @@ public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends C
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
-        if (value == null || value.getAsyncTask() == null) {
+        if (value == null || value.getAsyncTask() == null || value.getAsyncTask().getStatus() == null
+                || value.getAsyncTask().getStatus() == JobExecutionStatus.UNKNOWN) {
             return;
         }
 

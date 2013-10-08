@@ -1,17 +1,17 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 
 import com.google.gwt.user.cellview.client.Column;
 
-public class VolumeActivityStatusColumn extends Column<GlusterVolumeEntity, GlusterVolumeEntity> {
+public class VolumeActivityStatusColumn<T extends GlusterTaskSupport> extends Column<T, GlusterTaskSupport> {
 
     public VolumeActivityStatusColumn() {
-        super(new VolumeActivityStatusCell());
+        super(new VolumeActivityStatusCell<GlusterTaskSupport>());
     }
 
     @Override
-    public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
+    public GlusterTaskSupport getValue(T object) {
         return object;
     }
 

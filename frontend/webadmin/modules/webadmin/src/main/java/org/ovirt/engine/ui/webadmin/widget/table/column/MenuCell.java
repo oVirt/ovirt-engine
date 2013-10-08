@@ -38,9 +38,17 @@ public class MenuCell<T> extends AbstractCell<T> {
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
-        ImageResource image = resources.triangleDown();
+        if (!isVisible(value)) {
+            return;
+        }
+
+        ImageResource image = resources.expanderDownImage();
         SafeHtml imageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(image).getHTML());
         sb.append(templates.image(imageHtml));
+    }
+
+    protected boolean isVisible(T value) {
+        return true;
     }
 
     public void onBrowserEvent(Context context,

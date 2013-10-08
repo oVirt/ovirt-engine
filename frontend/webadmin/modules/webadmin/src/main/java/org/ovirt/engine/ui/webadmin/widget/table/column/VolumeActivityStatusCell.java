@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -14,7 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class VolumeActivityStatusCell extends AbstractCell<GlusterVolumeEntity> {
+public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends AbstractCell<T> {
 
     ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
 
@@ -23,19 +23,19 @@ public class VolumeActivityStatusCell extends AbstractCell<GlusterVolumeEntity> 
     ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
 
     @Override
-    public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb) {
-        // Nothing to render if no volume is provided, or if volume has no task:
-        if (volume == null || volume.getAsyncTask() == null) {
+    public void render(Context context, T value, SafeHtmlBuilder sb) {
+        // Nothing to render if no task is provided, or if task status is empty:
+        if (value == null || value.getAsyncTask() == null || value.getAsyncTask().getStatus() == null) {
             return;
         }
 
-        // Find the image corresponding to the task on the volume:
-        GlusterTaskType taskType = volume.getAsyncTask().getType();
+        // Find the image corresponding to the task
+        GlusterTaskType taskType = value.getAsyncTask().getType();
         ImageResource taskImage = null;
         String tooltip = ""; //$NON-NLS-1$
 
         if (taskType == GlusterTaskType.REBALANCE) {
-            switch (volume.getAsyncTask().getStatus()) {
+            switch (value.getAsyncTask().getStatus()) {
             case STARTED:
                 taskImage = resources.rebalanceRunning();
                 tooltip = constants.rebalanceInProgress();

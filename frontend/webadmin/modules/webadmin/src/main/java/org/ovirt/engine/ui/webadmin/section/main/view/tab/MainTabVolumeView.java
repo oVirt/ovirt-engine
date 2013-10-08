@@ -4,6 +4,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
@@ -87,24 +89,24 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         getTable().addColumn(numOfBricksColumn, constants.numberOfBricksVolume(), "150px"); //$NON-NLS-1$
 
 
-        MenuCell<GlusterVolumeEntity> rebalanceMenuCell = getRebalanceActivityMenu(constants);
-        List<HasCell<GlusterVolumeEntity, ?>> list = new ArrayList<HasCell<GlusterVolumeEntity, ?>>();
-        list.add(new VolumeActivityStatusColumn());
-        list.add(new Column<GlusterVolumeEntity, GlusterVolumeEntity>(new VolumeActivitySeperatorCell<GlusterVolumeEntity>()) {
+        MenuCell<GlusterTaskSupport> rebalanceMenuCell = getRebalanceActivityMenu(constants);
+        List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
+        list.add(new VolumeActivityStatusColumn<GlusterTaskSupport>());
+        list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeActivitySeperatorCell<GlusterTaskSupport>()) {
             @Override
-            public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
+            public GlusterTaskSupport getValue(GlusterTaskSupport object) {
                 return object;
             }
 
         });
-        list.add(new Column<GlusterVolumeEntity, GlusterVolumeEntity>(rebalanceMenuCell) {
+        list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(rebalanceMenuCell) {
             @Override
-            public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
+            public GlusterTaskSupport getValue(GlusterTaskSupport object) {
                 return object;
             }
         });
 
-        getTable().addColumn(new VolumeActivityColumn(list),
+        getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(list),
                 constants.activitiesOnVolume(),
                 "100px"); //$NON-NLS-1$
 
@@ -147,8 +149,13 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         });
     }
 
-    private MenuCell<GlusterVolumeEntity> getRebalanceActivityMenu(ApplicationConstants constants) {
-        MenuCell<GlusterVolumeEntity> menuCell = new MenuCell<GlusterVolumeEntity>();
+    private MenuCell<GlusterTaskSupport> getRebalanceActivityMenu(ApplicationConstants constants) {
+        MenuCell<GlusterTaskSupport> menuCell = new MenuCell<GlusterTaskSupport>() {
+            @Override
+            protected boolean isVisible(GlusterTaskSupport value) {
+                return value.getAsyncTask() != null && value.getAsyncTask().getType() == GlusterTaskType.REBALANCE;
+            }
+        };
         menuCell.addMenuItem(constants.statusRebalance(), getMainModel().getStatusRebalanceCommand());
         menuCell.addMenuItem(constants.stopRebalance(), getMainModel().getStopRebalanceCommand());
         return menuCell;

@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.resources.client.ClientBundle;
@@ -12,7 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class VolumeActivitySeperatorCell<T extends GlusterTaskSupport> extends AbstractCell<T> {
+public class VolumeActivitySeperatorCell<T> extends AbstractCell<T> {
 
     public interface Resources extends ClientBundle {
 
