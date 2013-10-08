@@ -1587,6 +1587,15 @@ SELECT gluster_volumes.*,
 FROM gluster_volumes
 INNER JOIN vds_groups ON gluster_volumes.cluster_id = vds_groups.vds_group_id;
 
+CREATE OR REPLACE VIEW gluster_volume_bricks_view
+AS
+SELECT gluster_volume_bricks.*,
+       vds_static.host_name AS vds_name,
+       gluster_volumes.vol_name AS volume_name
+FROM gluster_volume_bricks
+INNER JOIN vds_static ON vds_static.vds_id = gluster_volume_bricks.server_id
+INNER JOIN gluster_volumes ON gluster_volumes.id = gluster_volume_bricks.volume_id;
+
 CREATE OR REPLACE VIEW gluster_volume_task_steps
 AS
 SELECT step.*,

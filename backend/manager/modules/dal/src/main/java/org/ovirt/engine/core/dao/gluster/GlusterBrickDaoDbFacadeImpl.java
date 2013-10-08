@@ -97,34 +97,24 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                 .addValue("status", EnumUtils.nameOrNull(brick.getStatus()));
     }
 
-    /**
-     * This is not a static class since it invokes a non-static method (getHostNameOfServer) of the parent class.
-     */
-    private final class GlusterBrickRowMapper implements RowMapper<GlusterBrickEntity> {
+    private static final class GlusterBrickRowMapper implements RowMapper<GlusterBrickEntity> {
         @Override
         public GlusterBrickEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterBrickEntity brick = new GlusterBrickEntity();
             brick.setId(getGuidDefaultEmpty(rs, "id"));
             brick.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
+            brick.setVolumeName(rs.getString("volume_name"));
 
             Guid serverId = getGuidDefaultEmpty(rs, "server_id");
             brick.setServerId(serverId);
-            // Update the brick with server name. This is useful as the brick is typically represented in the form
-            // serverName:brickDirectory though the database table (gluster_volume_bricks) stores just the server id
-            brick.setServerName(getHostNameOfServer(serverId));
+            brick.setServerName(rs.getString("vds_name"));
 
             brick.setBrickDirectory(rs.getString("brick_dir"));
             brick.setBrickOrder(rs.getInt("brick_order"));
             brick.setStatus(GlusterStatus.valueOf(rs.getString("status")));
             brick.getAsyncTask().setTaskId(getGuid(rs, "task_id"));
             return brick;
-        }
-
-        private String getHostNameOfServer(Guid serverId) {
-            return jdbcTemplate.queryForObject("select host_name from vds_static where vds_id = ?",
-                    String.class,
-                    serverId.getUuid());
         }
     }
 

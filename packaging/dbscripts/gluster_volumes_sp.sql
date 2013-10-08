@@ -163,44 +163,44 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterBrickById(v_id UUID)
-    RETURNS SETOF gluster_volume_bricks STABLE
+    RETURNS SETOF gluster_volume_bricks_view STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
-    FROM gluster_volume_bricks
+    FROM gluster_volume_bricks_view
     WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetBricksByGlusterVolumeGuid(v_volume_id UUID)
-    RETURNS SETOF gluster_volume_bricks STABLE
+    RETURNS SETOF gluster_volume_bricks_view STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
-    FROM  gluster_volume_bricks
+    FROM  gluster_volume_bricks_view
     WHERE volume_id = v_volume_id
     ORDER BY brick_order;
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterVolumeBricksByServerGuid(v_server_id UUID)
-RETURNS SETOF gluster_volume_bricks STABLE
+RETURNS SETOF gluster_volume_bricks_view STABLE
 AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
-FROM  gluster_volume_bricks
+FROM  gluster_volume_bricks_view
 WHERE server_id = v_server_id
 ORDER BY brick_order;
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetBrickByServerIdAndDirectory(v_server_id UUID, v_brick_dir VARCHAR(4096))
-    RETURNS SETOF gluster_volume_bricks STABLE
+    RETURNS SETOF gluster_volume_bricks_view STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
-    FROM  gluster_volume_bricks
+    FROM  gluster_volume_bricks_view
     WHERE server_id = v_server_id
     AND brick_dir = v_brick_dir;
 END; $procedure$

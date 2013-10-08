@@ -29,6 +29,8 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityW
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { AddBrick.class })
     private Guid volumeId;
 
+    private String volumeName;
+
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.SERVER_ID.NOT_NULL", groups = { CreateEntity.class })
     private Guid serverId;
 
@@ -194,6 +196,14 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityW
     @Override
     public void setAsyncTask(GlusterAsyncTask asyncTask) {
         this.asyncTask = asyncTask;
+    }
+
+    public String getVolumeName() {
+        return volumeName;
+    }
+
+    public void setVolumeName(String volumeName) {
+        this.volumeName = volumeName;
     }
 
 }
