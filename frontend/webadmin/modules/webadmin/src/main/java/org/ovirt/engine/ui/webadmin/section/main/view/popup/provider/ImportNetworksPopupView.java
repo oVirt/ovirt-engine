@@ -222,7 +222,6 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                 model.getImportedNetworks(),
                 model.getAddImportCommand(),
                 model.getCancelImportCommand());
-        dcColumn.edit(model.getDataCenters());
         driver.edit(model);
     }
 

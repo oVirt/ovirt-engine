@@ -7,10 +7,6 @@ import java.util.Map;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-
 import com.google.gwt.cell.client.AbstractInputCell;
 import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -34,37 +30,18 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
     private static final String PATTERN_SELECT = "<select"; //$NON-NLS-1$
     private static final String REPLACEMENT_SELECT = "<select disabled"; //$NON-NLS-1$
 
-    private ListModel model;
     private SelectionCell delegate;
     private Map<String, T> entityByName;
     private final Renderer<T> renderer;
-    private final IEventListener itemsChangedListener;
 
     public ListModelListBoxCell(final Renderer<T> renderer) {
         super("change"); //$NON-NLS-1$
         this.renderer = renderer;
         delegate = new SelectionCell(new ArrayList<String>()); // just to avoid null pointer in setSelection()
-
-        itemsChangedListener = new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                setOptions();
-            }
-        };
-    }
-
-    public void edit(final ListModel model) {
-        if (this.model != null) {
-            this.model.getItemsChangedEvent().removeListener(itemsChangedListener);
-        }
-        this.model = model;
-        model.getItemsChangedEvent().addListener(itemsChangedListener);
-        setOptions();
     }
 
     @SuppressWarnings("unchecked")
-    private void setOptions() {
+    private void setOptions(ListModel model) {
         Iterable<T> items = model.getItems();
         if (items == null) {
             items = new ArrayList<T>();
@@ -83,6 +60,7 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
     @SuppressWarnings("unchecked")
     @Override
     public void render(Context context, ListModel value, SafeHtmlBuilder sb) {
+        setOptions(value);
         SafeHtmlBuilder sbDelegate = new SafeHtmlBuilder();
         delegate.render(context, renderer.render((T) value.getSelectedItem()), sbDelegate);
         if (value.getIsChangable()) {

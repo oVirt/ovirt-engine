@@ -45,7 +45,6 @@ public class ImportNetworksModel extends Model {
 
     private final SearchableListModel sourceListModel;
 
-    private final ListModel dataCenters = new ListModel();
     private final ListModel providers = new ListModel();
     private final ListModel providerNetworks = new ListModel();
     private final ListModel importedNetworks = new ListModel();
@@ -53,11 +52,7 @@ public class ImportNetworksModel extends Model {
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
 
-    Map<Guid, Collection<VDSGroup>> dcClusters;
-
-    public ListModel getDataCenters() {
-        return dataCenters;
-    }
+    private Map<Guid, Collection<VDSGroup>> dcClusters;
 
     public ListModel getProviderNetworks() {
         return providerNetworks;
@@ -110,7 +105,6 @@ public class ImportNetworksModel extends Model {
         startProgress(null);
         AsyncDataProvider.GetAllNetworkProviders(new AsyncQuery(this, new INewAsyncCallback() {
 
-            @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 stopProgress();
@@ -127,10 +121,11 @@ public class ImportNetworksModel extends Model {
             return;
         }
 
+        final List<StoragePool> dataCenters = new LinkedList<StoragePool>();
+
         final AsyncQuery networkQuery = new AsyncQuery();
         networkQuery.asyncCallback = new INewAsyncCallback() {
 
-            @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 Iterable<Network> networks = (Iterable<Network>) returnValue;
@@ -139,9 +134,8 @@ public class ImportNetworksModel extends Model {
                     ExternalNetwork externalNetwork = new ExternalNetwork();
                     externalNetwork.setNetwork(network);
                     externalNetwork.setDisplayName(network.getName());
-                    Iterable<StoragePool> dcList = getDataCenters().getItems();
-                    externalNetwork.getDataCenters().setItems(dcList);
-                    externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(dcList));
+                    externalNetwork.getDataCenters().setItems(dataCenters);
+                    externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
                     externalNetwork.setPublicUse(true);
                     items.add(externalNetwork);
                 }
@@ -158,10 +152,8 @@ public class ImportNetworksModel extends Model {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                List<StoragePool> dataCenters = (List<StoragePool>) returnValue;
+                dataCenters.addAll((Collection<StoragePool>) returnValue);
                 Collections.sort(dataCenters, new NameableComparator());
-                getDataCenters().setItems(dataCenters);
-                getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
 
                 AsyncDataProvider.GetExternalNetworkList(networkQuery, provider.getId());
             }
