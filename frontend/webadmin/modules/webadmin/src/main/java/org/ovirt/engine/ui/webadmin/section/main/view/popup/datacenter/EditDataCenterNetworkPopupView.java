@@ -15,7 +15,6 @@ public class EditDataCenterNetworkPopupView extends EditNetworkPopupView impleme
             ApplicationResources resources,
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources, constants, templates);
-        mainPanel.setHeight("290px"); //$NON-NLS-1$
     }
 
     @Override
