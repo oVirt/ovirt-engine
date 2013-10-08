@@ -1,17 +1,21 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddQuotaCommand extends QuotaCRUDCommand {
 
@@ -37,15 +41,40 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     @Override
     protected void executeCommand() {
         setQuotaParameter();
+        if (getParameters().isCopyPermissions()) {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                    return executeAddQutoa();
+                }
+            });
+        } else {
+            executeAddQutoa();
+        }
+    }
+
+    private Void executeAddQutoa() {
         getQuotaDAO().save(getQuota());
+        if (getParameters().isCopyPermissions()) {
+            copyQuotaPermissions();
+        }
         getReturnValue().setSucceeded(true);
+        return null;
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getStoragePoolId(),
+        List<PermissionSubject> permissionsSubject = new ArrayList<PermissionSubject>();
+        permissionsSubject.add(new PermissionSubject(getStoragePoolId(),
                 VdcObjectType.StoragePool,
                 getActionType().getActionGroup()));
+        if (getParameters().isCopyPermissions()) {
+            permissionsSubject.add(new PermissionSubject(getStoragePoolId(),
+                    VdcObjectType.StoragePool,
+                    ActionGroup.MANIPULATE_PERMISSIONS));
+        }
+        return permissionsSubject;
     }
 
     @Override
@@ -82,5 +111,21 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_ADD_QUOTA : AuditLogType.USER_FAILED_ADD_QUOTA;
+    }
+
+    private void copyQuotaPermissions() {
+        UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
+        List<permissions> vmPermissions =
+                getDbFacade().getPermissionDao().getAllForEntity(getParameters().getQuotaId(),
+                        getCurrentUser().getId(),
+                        false);
+        for (permissions vmPermission : vmPermissions) {
+            permissionsToAdd.addPermission(vmPermission.getad_element_id(), vmPermission.getrole_id(),
+                    getQuotaId(), vmPermission.getObjectType());
+        }
+        if (!permissionsToAdd.isEmpty()) {
+            List<permissions> permissionsList = permissionsToAdd.asPermissionList();
+            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new permissions[permissionsList.size()]));
+        }
     }
 }

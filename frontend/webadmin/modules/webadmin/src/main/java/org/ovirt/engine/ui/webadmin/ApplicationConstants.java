@@ -2099,6 +2099,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center")
     String dataCenterQuotaPopup();
 
+    @DefaultStringValue("Copy consumers and permissions")
+    String copyQuotaPermissionsQuotaPopup();
+
     @DefaultStringValue("Memory & CPU")
     String memAndCpuQuotaPopup();
 

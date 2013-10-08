@@ -26,6 +26,8 @@ public class QuotaModel extends EntityModel {
     EntityModel description;
     ListModel dataCenter;
 
+    EntityModel copyPermissions;
+
     EntityModel graceStorage;
     EntityModel thresholdStorage;
     EntityModel graceCluster;
@@ -150,6 +152,14 @@ public class QuotaModel extends EntityModel {
         this.dataCenter = dataCenter;
     }
 
+    public EntityModel getCopyPermissions() {
+        return copyPermissions;
+    }
+
+    public void setCopyPermissions(EntityModel copyPermissions) {
+        this.copyPermissions = copyPermissions;
+    }
+
     public EntityModel getGraceStorage() {
         return graceStorage;
     }
@@ -189,7 +199,8 @@ public class QuotaModel extends EntityModel {
         setName(new EntityModel());
         setDescription(new EntityModel());
         setDataCenter(new ListModel());
-
+        setCopyPermissions(new EntityModel(false));
+        getCopyPermissions().setIsAvailable(false); // visible on copy quota.
         setGraceCluster(new EntityModel());
         getGraceCluster().setEntity(20);
         setThresholdCluster(new EntityModel());
