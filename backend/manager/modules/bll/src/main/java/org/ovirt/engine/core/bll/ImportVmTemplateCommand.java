@@ -58,9 +58,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmTemplateParameters>
         implements QuotaStorageDependent {
 
-    private final List<Guid> diskGuidList = new ArrayList<Guid>();
-    private final List<Guid> imageGuidList = new ArrayList<Guid>();
-
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
@@ -213,8 +210,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     private void initImportClonedTemplateDisks() {
         for (DiskImage image : getParameters().getImages()) {
-            diskGuidList.add(image.getId());
-            imageGuidList.add(image.getImageId());
+            newDiskIdForDisk.put(image.getId(), image);
             if (getParameters().isImportAsNewEntity()) {
                 image.setId(Guid.newGuid());
                 image.setImageId(Guid.newGuid());
@@ -294,13 +290,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
             @Override
             public Void runInTransaction() {
-                int i = 0;
                 for (DiskImage disk : disks) {
-                    Guid destinationDomain = imageToDestinationDomainMap.get(diskGuidList.get(i));
+                    Guid originalDiskId = newDiskIdForDisk.get(disk.getId()).getId();
+                    Guid destinationDomain = imageToDestinationDomainMap.get(originalDiskId);
                     MoveOrCopyImageGroupParameters tempVar =
                             new MoveOrCopyImageGroupParameters(containerID,
-                                    diskGuidList.get(i),
-                                    imageGuidList.get(i),
+                                    originalDiskId,
+                                    newDiskIdForDisk.get(disk.getId()).getImageId(),
                                     disk.getId(),
                                     disk.getImageId(),
                                     destinationDomain,
@@ -316,7 +312,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     tempVar.setImportEntity(true);
                     tempVar.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, containerID));
                     for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
-                        if (diskGuidList.get(i).equals(diskImage.getId())) {
+                        if (originalDiskId.equals(diskImage.getId())) {
                             tempVar.setQuotaId(diskImage.getQuotaId());
                             break;
                         }
@@ -335,7 +331,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     }
 
                     getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
-                    i++;
                 }
                 return null;
             }

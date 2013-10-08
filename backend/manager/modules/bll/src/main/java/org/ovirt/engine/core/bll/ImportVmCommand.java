@@ -103,11 +103,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private List<DiskImage> imageList;
 
-    /**
-     * Map which contains the disk id (new generated id if the disk is cloned) and the disk parameters from the export
-     * domain.
-     */
-    private final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
     private final List<String> macsAdded = new ArrayList<String>();
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 

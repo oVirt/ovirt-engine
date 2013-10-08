@@ -46,6 +46,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @Deprecated
 public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
 
+    /**
+     * Map which contains the disk id (new generated id if the disk is cloned) and the disk parameters from the export
+     * domain.
+     */
+    protected final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
     private List<PermissionSubject> permissionCheckSubject;
