@@ -176,10 +176,6 @@ public class OvfVmReader extends OvfReader {
         if (node != null) {
             _vm.getStaticData().setInitialized(Boolean.parseBoolean(node.InnerText));
         }
-        node = content.SelectSingleNode("TimeZone");
-        if (node != null) {
-            _vm.getStaticData().setTimeZone(node.InnerText);
-        }
         node = content.SelectSingleNode("quota_id");
         if (node != null) {
             _vm.getStaticData().setQuotaId(new Guid(node.InnerText));
