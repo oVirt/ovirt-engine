@@ -11,6 +11,7 @@ public class GetVirtioScsiControllersQuery<P extends IdQueryParameters> extends 
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(VmDeviceUtils.getVirtioScsiControllers(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(VmDeviceUtils.getVirtioScsiControllers(getParameters().getId(),
+                getUserID(), getParameters().isFiltered()));
     }
 }
