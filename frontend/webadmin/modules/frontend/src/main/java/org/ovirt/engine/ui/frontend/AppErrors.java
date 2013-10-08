@@ -2129,6 +2129,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Quota has no sufficient cluster resources.")
     String ACTION_TYPE_FAILED_QUOTA_VDS_GROUP_LIMIT_EXCEEDED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The user is not a consumer of the Quota assigned to the resource.")
+    String USER_NOT_AUTHORIZED_TO_CONSUME_QUOTA();
+
     // Internal
     @DefaultStringValue("Permission denied. Query you try to run not public.")
     String USER_CANNOT_RUN_QUERY_NOT_PUBLIC();
