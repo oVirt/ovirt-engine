@@ -230,4 +230,11 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         return getCallsHandler().executeReadList("GetStoragePoolsByClusterService", mapper, parameterSource);
     }
 
+    @Override
+    public List<Guid> getDcIdByExternalNetworkId(String externalId) {
+        return getCallsHandler().executeReadList("GetDcIdByExternalNetworkId",
+                createGuidMapper(),
+                getCustomMapSqlParameterSource().addValue("external_id", externalId));
+    }
+
 }

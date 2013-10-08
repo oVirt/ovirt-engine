@@ -226,6 +226,29 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         }
     }
 
+    /**
+     * Ensures that multiple data centers are returned if an external network had been imported to more than one.
+     */
+    @Test
+    public void testDataCentersByExternalNetworkId() {
+        List<Guid> result = dao.getDcIdByExternalNetworkId(FixturesTool.EXTERNAL_NETWORK_ID);
+
+        assertNotNull(result);
+        assertTrue(result.size() > 1);
+        assertTrue(!result.get(0).equals(result.get(1)));
+    }
+
+    /**
+     * Ensures that no data centers are returned for an external network that hadn't been imported.
+     */
+    @Test
+    public void testNoDataCentersByExternalNetworkId() {
+        List<Guid> result = dao.getDcIdByExternalNetworkId("foo");
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
     @Test
     public void testSave() {
         dao.save(newPool);
