@@ -9,6 +9,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
@@ -41,6 +43,12 @@ public class PolicyUnitImpl extends PolicyUnit {
             return new MemoryPolicyUnit(policyUnit);
         case "Network":
             return new NetworkPolicyUnit(policyUnit);
+        case "HA":
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+                return new HostedEngineHAClusterWeightPolicyUnit(policyUnit);
+            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
+                return new HostedEngineHAClusterFilterPolicyUnit(policyUnit);
+            }
         case "CPU-Level":
             return new CpuLevelFilterPolicyUnit(policyUnit);
         case "None":

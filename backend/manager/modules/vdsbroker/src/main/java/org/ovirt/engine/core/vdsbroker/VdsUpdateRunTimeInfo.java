@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -1568,6 +1569,7 @@ public class VdsUpdateRunTimeInfo {
                 if (StringUtils.equals(HOSTED_ENGINE_VM_NAME, vmNameOnHost)) {
                     vmStatic.setName(vmNameOnHost);
                     vmStatic.setOrigin(OriginType.HOSTED_ENGINE);
+                    vmStatic.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
                 } else {
                     vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
                     vmStatic.setOrigin(OriginType.EXTERNAL);
