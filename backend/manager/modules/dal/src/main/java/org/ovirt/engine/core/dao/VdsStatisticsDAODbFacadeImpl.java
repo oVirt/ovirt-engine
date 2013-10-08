@@ -78,7 +78,8 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                 .addValue("swap_total", stats.getswap_total())
                 .addValue("ksm_cpu_percent", stats.getksm_cpu_percent())
                 .addValue("ksm_pages", stats.getksm_pages())
-                .addValue("ksm_state", stats.getksm_state());
+                .addValue("ksm_state", stats.getksm_state())
+                .addValue("ha_score", stats.getHighlyAvailableScore());
 
         getCallsHandler().executeModification("InsertVdsStatistics", parameterSource);
     }
@@ -102,7 +103,8 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                 .addValue("swap_total", stats.getswap_total())
                 .addValue("ksm_cpu_percent", stats.getksm_cpu_percent())
                 .addValue("ksm_pages", stats.getksm_pages())
-                .addValue("ksm_state", stats.getksm_state());
+                .addValue("ksm_state", stats.getksm_state())
+                .addValue("ha_score", stats.getHighlyAvailableScore());
 
         getCallsHandler().executeModification("UpdateVdsStatistics", parameterSource);
     }

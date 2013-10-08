@@ -66,6 +66,7 @@ public final class VdsProperties {
     public static final String vm_migrating = "vmMigrating";
     public static final String images_last_check = "imagesLastCheck";
     public static final String images_last_delay = "imagesLastDelay";
+    public static final String ha_score = "haScore";
 
     public static final String INTERFACE = "iface";
 

@@ -556,6 +556,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         this.mVdsDynamic.setvm_active(value);
     }
 
+    public Integer getHighlyAvailableScore() {
+        return this.mVdsStatistics.getHighlyAvailableScore();
+    }
+
+    public void setHighlyAvailableScore(Integer value) {
+        this.mVdsStatistics.setHighlyAvailableScore(value);
+    }
+
     public int getVmCount() {
         return this.mVdsDynamic.getvm_count();
     }

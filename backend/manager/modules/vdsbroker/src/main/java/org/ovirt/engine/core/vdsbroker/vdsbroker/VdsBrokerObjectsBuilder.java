@@ -627,6 +627,8 @@ public class VdsBrokerObjectsBuilder {
         vds.setVmMigrating(AssignIntValue(xmlRpcStruct, VdsProperties.vm_migrating));
         updateVDSDomainData(vds, xmlRpcStruct);
         updateLocalDisksUsage(vds, xmlRpcStruct);
+        Integer haScore = AssignIntValue(xmlRpcStruct, VdsProperties.ha_score);
+        vds.setHighlyAvailableScore(haScore != null ? haScore : 0);
     }
 
     /**

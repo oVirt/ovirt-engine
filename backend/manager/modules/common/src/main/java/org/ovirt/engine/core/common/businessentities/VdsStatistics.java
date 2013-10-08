@@ -24,6 +24,10 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Integer ksm_cpu_percent;
     private Long ksm_pages;
     private Boolean ksm_state;
+    // Score in a hosted engine environment
+    // Score 0 means no HA agents are on this host
+    // Positive score means there is an agent
+    private Integer highlyAvailableScore;
 
     public VdsStatistics() {
         this.cpu_idle = BigDecimal.ZERO;
@@ -36,6 +40,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         swap_free = 0L;
         swap_total = 0L;
         ksm_pages = 0L;
+        highlyAvailableScore = 0;
     }
 
     @Override
@@ -57,6 +62,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         result = prime * result + ((ksm_cpu_percent == null) ? 0 : ksm_cpu_percent.hashCode());
         result = prime * result + ((swap_total == null) ? 0 : swap_total.hashCode());
         result = prime * result + ((swap_free == null) ? 0 : swap_free.hashCode());
+        result = prime * result + ((highlyAvailableScore == null) ? 0 : highlyAvailableScore.hashCode());
         return result;
     }
 
@@ -86,7 +92,8 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(ksm_pages, other.ksm_pages)
                 && ObjectUtils.objectsEqual(ksm_cpu_percent, other.ksm_cpu_percent)
                 && ObjectUtils.objectsEqual(swap_total, other.swap_total)
-                && ObjectUtils.objectsEqual(swap_free, other.swap_free));
+                && ObjectUtils.objectsEqual(swap_free, other.swap_free)
+                && ObjectUtils.objectsEqual(highlyAvailableScore, other.highlyAvailableScore));
     }
 
     public Double getcpu_idle() {
@@ -230,6 +237,14 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     public void setksm_state(Boolean value) {
         this.ksm_state = value;
+    }
+
+    public Integer getHighlyAvailableScore() {
+        return highlyAvailableScore;
+    }
+
+    public void setHighlyAvailableScore(Integer value) {
+        highlyAvailableScore = value;
     }
 
 }
