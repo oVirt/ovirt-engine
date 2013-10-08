@@ -626,7 +626,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                                 break;
                                             }
                                         }
-                                        if (!hasQuotaInList) {
+                                        // Add the quota to the list only in edit mode
+                                        if (!hasQuotaInList && !getModel().getIsNew()) {
                                             Quota quota = new Quota();
                                             quota.setId(defaultQuota);
                                             quota.setQuotaName(quotaName);

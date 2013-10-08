@@ -1051,10 +1051,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private static final Log log = LogFactory.getLog(RunVmCommand.class);
 
     @Override
-    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
-    }
-
-    @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
