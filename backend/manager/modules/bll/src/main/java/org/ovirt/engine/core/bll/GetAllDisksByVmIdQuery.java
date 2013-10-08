@@ -28,7 +28,9 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
         Map<Guid, VmDevice> disksVmDevices = getDisksVmDeviceMap();
         List<Disk> disks = new ArrayList<Disk>(allDisks);
         for (Disk disk : allDisks) {
-            disk.setPlugged(disksVmDevices.get(disk.getId()).getIsPlugged());
+            VmDevice diskDevice = disksVmDevices.get(disk.getId());
+            disk.setPlugged(diskDevice.getIsPlugged());
+            disk.setReadOnly(diskDevice.getIsReadOnly());
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage));

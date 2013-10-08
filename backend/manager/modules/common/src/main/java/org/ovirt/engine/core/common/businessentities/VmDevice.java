@@ -63,7 +63,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     /**
      * The device read-only flag
      */
-    private boolean isReadOnly;
+    private Boolean isReadOnly;
 
     /**
      * The device flag indicating whether the device
@@ -91,7 +91,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
             Map<String, Object> specParams,
             boolean isManaged,
             Boolean isPlugged,
-            boolean isReadOnly,
+            Boolean isReadOnly,
             String alias,
             Map<String, String> customProperties,
             Guid snapshotId) {
@@ -196,11 +196,11 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.isPlugged = isPlugged;
     }
 
-    public boolean getIsReadOnly() {
-        return isReadOnly;
+    public Boolean getIsReadOnly() {
+        return isReadOnly == null ? Boolean.FALSE : isReadOnly;
     }
 
-    public void setIsReadOnly(boolean isReadOnly) {
+    public void setIsReadOnly(Boolean isReadOnly) {
         this.isReadOnly = isReadOnly;
     }
 
@@ -240,7 +240,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         result = prime * result + ((specParams == null) ? 0 : specParams.hashCode());
         result = prime * result + (isManaged ? 1231 : 1237);
         result = prime * result + (isPlugged ? 1231 : 1237);
-        result = prime * result + (isReadOnly ? 1231 : 1237);
+        result = prime * result + (getIsReadOnly() ? 1231 : 1237);
         result = prime * result + alias.hashCode();
         result = prime * result + (customProperties == null ? 0 : customProperties.hashCode());
         result = prime * result + (snapshotId == null ? 0 : snapshotId.hashCode());
@@ -267,7 +267,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
                 && ObjectUtils.objectsEqual(specParams, other.specParams)
                 && isManaged == other.isManaged
                 && getIsPlugged().equals(other.getIsPlugged())
-                && isReadOnly == other.isReadOnly
+                && getIsReadOnly().equals(other.getIsReadOnly())
                 && alias.equals(other.alias)
                 && ObjectUtils.objectsEqual(customProperties, other.customProperties)
                 && ObjectUtils.objectsEqual(snapshotId, other.snapshotId));

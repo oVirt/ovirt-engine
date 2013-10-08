@@ -49,7 +49,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -260,16 +259,31 @@ public class UpdateVmDiskCommandTest {
 
         initializeCommand(parameters);
 
-        VmDeviceId vmDeviceId = new VmDeviceId(diskImageGuid, vmId);
-        VmDevice device = new VmDevice();
-        device.setId(vmDeviceId);
-
-        doReturn(device).when(vmDeviceDAO).get(vmDeviceId);
+        VmDevice device = createVmDevice(diskImageGuid, vmId);
+        doReturn(device).when(vmDeviceDAO).get(device.getId());
 
         command.executeVmCommand();
 
-        // verify that device addressed was cleared exactly once
+        // verify that device address was cleared exactly once
         verify(vmDeviceDAO, times(1)).clearDeviceAddress(device.getDeviceId());
+    }
+
+    @Test
+    public void testUpdateReadOnlyPropertyOnChange() {
+        // Disk should be updated as Read Only
+        final UpdateVmDiskParameters parameters = createParameters();
+        parameters.getDiskInfo().setReadOnly(true);
+
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+
+        VmDevice device = createVmDevice(diskImageGuid, vmId);
+        doReturn(device).when(vmDeviceDAO).get(device.getId());
+
+        initializeCommand(parameters);
+        command.executeVmCommand();
+
+        device.setIsReadOnly(true);
+        verify(vmDeviceDAO, times(1)).update(device);
     }
 
     private void initializeCommand(UpdateVmDiskParameters params) {
@@ -302,12 +316,12 @@ public class UpdateVmDiskCommandTest {
         doReturn(imageDao).when(command).getImageDao();
         doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
         doReturn(vmDAO).when(command).getVmDAO();
-        doNothing().when(command).updateVmDisksAndDevice();
+        doReturn(diskDao).when(command).getDiskDao();
+        doNothing().when(command).reloadDisks();
+        doNothing().when(command).updateBootOrder();
         doNothing().when(vmStaticDAO).incrementDbGeneration(any(Guid.class));
 
         ejbRule.mockResource(ContainerManagedResourceType.TRANSACTION_MANAGER, new DummyTransactionManager());
-        DbFacadeLocator.setDbFacade(dbFacade);
-        doReturn(diskDao).when(dbFacade).getDiskDao();
 
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
@@ -369,18 +383,7 @@ public class UpdateVmDiskCommandTest {
         List<Pair<VM, VmDevice>> vmsWithVmDevice = new ArrayList<>();
         if (vms != null) {
             for (VM vm : vms) {
-            VmDevice device = new VmDevice(new VmDeviceId(diskImageGuid, vm.getId()),
-                    VmDeviceGeneralType.DISK,
-                    VmDeviceType.DISK.getName(),
-                    "",
-                    0,
-                    null,
-                    true,
-                    Boolean.TRUE,
-                    false,
-                    "",
-                    null,
-                    null);
+            VmDevice device = createVmDevice(diskImageGuid, vm.getId());
             vmsWithVmDevice.add(new Pair<>(vm, device));
             }
         } else {
@@ -451,5 +454,20 @@ public class UpdateVmDiskCommandTest {
         disk.setvolumeFormat(volumeFormat);
         disk.setShareable(true);
         return disk;
+    }
+
+    private VmDevice createVmDevice(Guid diskId, Guid vmId) {
+        return new VmDevice(new VmDeviceId(diskId, vmId),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.DISK.getName(),
+                "",
+                0,
+                null,
+                true,
+                true,
+                false,
+                "",
+                null,
+                null);
     }
 }

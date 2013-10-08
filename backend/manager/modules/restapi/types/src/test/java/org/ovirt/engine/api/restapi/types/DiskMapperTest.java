@@ -35,6 +35,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         assertEquals(model.getFormat(), transform.getFormat());
         assertEquals(model.getInterface(), transform.getInterface());
         assertEquals(model.isActive(), transform.isActive());
+        assertEquals(model.isReadOnly(), transform.isReadOnly());
         assertNotNull(model.getSnapshot());
         assertEquals(model.getSnapshot().getId(), transform.getSnapshot().getId());
         assertEquals("unexpected status", model.getStatus().getState(), transform.getStatus().getState());
@@ -77,5 +78,22 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         model.setSize(null);
         entity = DiskMapper.map(model, null);
         assertEquals(entity.getSize(), 888888);
+    }
+
+    @Test
+    public void testReadOnlyMapping() {
+        Disk model = new Disk();
+        model.setReadOnly(true);
+
+        org.ovirt.engine.core.common.businessentities.Disk entity = DiskMapper.map(model, null);
+        assertTrue(entity.getReadOnly());
+
+        model.setReadOnly(false);
+        entity = DiskMapper.map(model, null);
+        assertFalse(entity.getReadOnly());
+
+        model.setReadOnly(null);
+        entity = DiskMapper.map(model, null);
+        assertNull(entity.getReadOnly());
     }
 }

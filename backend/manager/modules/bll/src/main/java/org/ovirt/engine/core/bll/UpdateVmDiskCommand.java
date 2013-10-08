@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -155,7 +154,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
 
         DiskValidator diskValidator = getDiskValidator(getNewDisk());
-        return validateCanUpdateShareable() && validate(diskValidator.isVirtIoScsiValid(getVm()));
+        return validateCanUpdateShareable() && validateCanUpdateReadOnly() &&
+                validate(diskValidator.isVirtIoScsiValid(getVm()));
     }
 
     @Override
@@ -239,6 +239,13 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return true;
     }
 
+    private boolean validateCanUpdateReadOnly() {
+        if (shouldUpdateReadOnly() && getVm().getStatus() != VMStatus.Down) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+        }
+        return true;
+    }
+
     private boolean validateCanResizeDisk() {
         DiskImage newDiskImage = (DiskImage) getNewDisk();
 
@@ -301,7 +308,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             @Override
             public Object runInTransaction() {
                 getVmStaticDAO().incrementDbGeneration(getVm().getId());
-                clearAddressOnInterfaceChange();
+                updateDeviceProperties();
                 getBaseDiskDao().update(disk);
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) disk;
@@ -312,17 +319,22 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     getImageDao().update(diskImage.getImage());
                     updateQuota(diskImage);
                 }
-                updateVmDisksAndDevice();
+
+                reloadDisks();
+                updateBootOrder();
 
                 setSucceeded(true);
                 return null;
             }
 
-            private void clearAddressOnInterfaceChange() {
-                // clear the disk address if the type has changed
+            private void updateDeviceProperties() {
+                if (shouldUpdateReadOnly()) {
+                    vmDeviceForVm.setIsReadOnly(getNewDisk().getReadOnly());
+                    getVmDeviceDao().update(vmDeviceForVm);
+                }
+
                 if (getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface()) {
-                    VmDeviceId deviceId = new VmDeviceId(getOldDisk().getId(), getVmId());
-                    getVmDeviceDao().clearDeviceAddress(getVmDeviceDao().get(deviceId).getDeviceId());
+                    getVmDeviceDao().clearDeviceAddress(getOldDisk().getId());
                 }
             }
         });
@@ -348,13 +360,15 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         diskToUpdate.setDiskAlias(getNewDisk().getDiskAlias());
         diskToUpdate.setDiskDescription(getNewDisk().getDiskDescription());
         diskToUpdate.setShareable(getNewDisk().isShareable());
+        diskToUpdate.setReadOnly(getNewDisk().getReadOnly());
         diskToUpdate.setSgio(getNewDisk().getSgio());
     }
 
-    protected void updateVmDisksAndDevice() {
-        // update cached image
+    protected void reloadDisks() {
         VmHandler.updateDisksFromDb(getVm());
-        // update vm device boot order
+    }
+
+    protected void updateBootOrder() {
         VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
     }
 
@@ -513,6 +527,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
         Guid oldQuotaId = ((DiskImage) getOldDisk()).getQuotaId();
         return !ObjectUtils.objectsEqual(oldQuotaId, getQuotaId());
+    }
+
+    private boolean shouldUpdateReadOnly() {
+        return !vmDeviceForVm.getIsReadOnly().equals(getNewDisk().getReadOnly());
     }
 
     private boolean isAtLeastOneVmIsNotDown(List<VM> vmsDiskPluggedTo) {

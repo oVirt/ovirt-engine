@@ -105,6 +105,7 @@ public class OvfVmReader extends OvfReader {
                 }
                 VmDevice readDevice = readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
                 image.setPlugged(readDevice.getIsPlugged());
+                image.setReadOnly(readDevice.getIsReadOnly());
             } else if (OvfHardware.Network.equals(resourceType)) {
                 VmNetworkInterface iface = getNetwotkInterface(node);
                 updateSingleNic(node, iface);

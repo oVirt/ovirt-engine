@@ -520,7 +520,8 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.sgio: xs:string
-        description: update the size, boot flag and other parameters of the disk attached to the virtual machine
+          disk.read_only: xs:boolean
+          description: update the size, boot flag and other parameters of the disk attached to the virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -557,7 +558,9 @@ actions:
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
         description: add a new direct lun disk to the virtual machine, this operation does not require size but needs lun connection details
       - mandatoryArguments: {disk.id: 'xs:string'}
-        optionalArguments: {disk.active: 'xs:boolean'}
+        optionalArguments: 
+          disk.active: xs:boolean
+          disk.read_only: xs:boolean
         description: attach a disk to the virtual machine
       - mandatoryArguments: {disk.id: 'xs:string', disk.snapshot.id: 'xs:string'}
         optionalArguments: {disk.active: 'xs:boolean'}

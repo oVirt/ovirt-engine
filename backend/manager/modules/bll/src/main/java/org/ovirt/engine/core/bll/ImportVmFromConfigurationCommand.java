@@ -70,7 +70,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     private AuditLogType attemptToAttachDisksToImportedVm(Collection<Disk> disks){
         List<String> failedDisks = new LinkedList<>();
         for (Disk disk : disks) {
-            AttachDettachVmDiskParameters params = new AttachDettachVmDiskParameters(getVm().getId(), disk.getId(), disk.getPlugged());
+            AttachDettachVmDiskParameters params = new AttachDettachVmDiskParameters(getVm().getId(),
+                    disk.getId(), disk.getPlugged(), disk.getReadOnly());
             VdcReturnValueBase returnVal = getBackend().runInternalAction(VdcActionType.AttachDiskToVm, params);
             if (!returnVal.getSucceeded()) {
                 failedDisks.add(disk.getDiskAlias());

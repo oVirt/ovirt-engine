@@ -24,7 +24,13 @@ public abstract class Disk extends BaseDisk {
     private VmEntityType vmEntityType;
     private int numberOfVms;
     private ArrayList<String> vmNames;
+
+    /**
+     * Plugged and readOnly are of type Boolean (as opposed to boolean) since they are optional.
+     * In case the disk is not in a vm context, null will ensure they are invisible.
+     */
     private Boolean plugged;
+    private Boolean readOnly;
 
     /**
      * @return Whether taking snapshots of this disk is allowed
@@ -52,6 +58,14 @@ public abstract class Disk extends BaseDisk {
         this.plugged = plugged;
     }
 
+    public Boolean getReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(Boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
     public abstract long getSize();
 
     @Override
@@ -59,6 +73,7 @@ public abstract class Disk extends BaseDisk {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((plugged == null) ? 0 : plugged.hashCode());
+        result = prime * result + ((readOnly == null) ? 0 : readOnly.hashCode());
         result = prime * result + ((vmNames == null) ? 0 : vmNames.hashCode());
         result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
         result = prime * result + numberOfVms;
@@ -78,6 +93,7 @@ public abstract class Disk extends BaseDisk {
         }
         Disk other = (Disk) obj;
         return (ObjectUtils.objectsEqual(plugged, other.plugged)
+                && ObjectUtils.objectsEqual(readOnly, other.readOnly)
                 && ObjectUtils.objectsEqual(vmNames, other.vmNames)
                 && vmEntityType == other.vmEntityType
                 && numberOfVms == other.numberOfVms);

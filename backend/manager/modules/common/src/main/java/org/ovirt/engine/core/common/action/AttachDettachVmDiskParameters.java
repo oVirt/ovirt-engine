@@ -8,18 +8,20 @@ public class AttachDettachVmDiskParameters extends VmDiskOperationParameterBase 
 
     private static final long serialVersionUID = 5640716432695539552L;
     private boolean isPlugUnPlug;
+    private boolean isReadOnly;
 
     public AttachDettachVmDiskParameters() {
     }
 
     public AttachDettachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug) {
+        this(vmId, diskId, isPlugUnPlug, false);
+    }
+
+    public AttachDettachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug, boolean isReadOnly) {
         super(vmId, null);
         setEntityInfo(new EntityInfo(VdcObjectType.Disk, diskId));
         this.isPlugUnPlug = isPlugUnPlug;
-    }
-
-    public AttachDettachVmDiskParameters(Guid vmId, Guid diskId) {
-        this(vmId, diskId, false);
+        this.isReadOnly = isReadOnly;
     }
 
     public void setPlugUnPlug(boolean isPlugUnPlug) {
@@ -30,4 +32,11 @@ public class AttachDettachVmDiskParameters extends VmDiskOperationParameterBase 
         return isPlugUnPlug;
     }
 
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.isReadOnly = readOnly;
+    }
 }

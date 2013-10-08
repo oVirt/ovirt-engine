@@ -145,6 +145,20 @@ public class BackendVmDiskResourceTest
     }
 
     @Test
+    public void testUpdateReadOnly() throws Exception {
+        setUpGetEntityExpectations(2);
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmDisk,
+                UpdateVmDiskParameters.class,
+                new String[] { "VmId", "DiskId", "DiskInfo.ReadOnly" },
+                new Object[] { PARENT_ID, GUIDS[1], Boolean.TRUE },
+                true,
+                true));
+
+        Disk disk = resource.update(getUpdate());
+        assertNotNull(disk);
+    }
+
+    @Test
     public void testActivate() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.HotPlugDiskToVm,
                                            HotPlugDiskToVmParameters.class,
@@ -252,6 +266,7 @@ public class BackendVmDiskResourceTest
     protected Disk getUpdate() {
         Disk update = new Disk();
         update.setWipeAfterDelete(false);
+        update.setReadOnly(false);
         return update;
     }
 

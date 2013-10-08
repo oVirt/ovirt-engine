@@ -356,7 +356,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                             VmDeviceType.DISK,
                             null,
                             getVm().getStatus() == VMStatus.Down,
-                            false,
+                            Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
                             null);
                 }
                 return null;
@@ -392,7 +392,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     VmDeviceType.DISK,
                     null,
                     getVm().getStatus() == VMStatus.Down,
-                    false,
+                    Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
                     null));
             getCompensationContext().stateChanged();
         }

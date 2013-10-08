@@ -1195,7 +1195,7 @@ public class VdsUpdateRunTimeInfo {
                     o == null ? new HashMap<String, Object>() : (Map<String, Object>) o,
                     false,
                     true,
-                    false,
+                    Boolean.getBoolean((String) device.get(VdsProperties.ReadOnly)),
                     alias,
                     null,
                     null);

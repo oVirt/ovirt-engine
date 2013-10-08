@@ -509,7 +509,7 @@ public class VmDeviceUtils {
             VmDeviceType device,
             Map<String, Object> specParams,
             boolean plugged,
-            boolean readOnly,
+            Boolean readOnly,
             String address,
             Map<String, String> customProp) {
         VmDevice managedDevice = addManagedDevice(id, type, device, specParams, plugged, readOnly, customProp);
@@ -533,7 +533,7 @@ public class VmDeviceUtils {
             VmDeviceType device,
             Map<String, Object> specParams,
             boolean is_plugged,
-            boolean isReadOnly,
+            Boolean isReadOnly,
             Map<String, String> customProp) {
         VmDevice managedDevice =
             new VmDevice(id,
