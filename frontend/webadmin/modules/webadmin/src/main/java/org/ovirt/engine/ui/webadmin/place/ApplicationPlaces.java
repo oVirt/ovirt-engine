@@ -175,6 +175,9 @@ public class ApplicationPlaces {
     public static final String hostGlusterSwiftSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "gluster_swift"; //$NON-NLS-1$
 
+    public static final String hostBricksSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
+            + "gluster_bricks"; //$NON-NLS-1$
+
     public static final String hostPermissionSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 

@@ -62,6 +62,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
@@ -273,6 +274,8 @@ public interface ClientGinjectorExtension {
     SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> getSubTabHostPermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> getSubTabHostEventModelProvider();
+
+    SearchableDetailModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel> getSubTabHostBricksModelProvider();
 
     // Pool
 

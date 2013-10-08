@@ -385,6 +385,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Host Hooks")
     String hostHooksTitle();
 
+    @DefaultStringValue("Bricks")
+    String hostBricksTitle();
+
     @DefaultStringValue("Edit Management Network")
     String editManagementNetworkTitle();
 

@@ -306,6 +306,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         this.glusterSwiftModel = glusterSwiftModel;
     }
 
+    private HostBricksListModel hostBricksListModel;
+
+    public HostBricksListModel getHostBricksListModel() {
+        return hostBricksListModel;
+    }
+
+    public void setHostBricksListModel(HostBricksListModel hostBricksListModel) {
+        this.hostBricksListModel = hostBricksListModel;
+    }
+
     protected Object[] getSelectedKeys()
     {
         if (getSelectedItems() == null)
@@ -1500,6 +1510,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         generalModel.getRequestGOToEventsTabEvent().addListener(this);
 
         setGlusterSwiftModel(new HostGlusterSwiftListModel());
+        setHostBricksListModel(new HostBricksListModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(generalModel);
@@ -1510,6 +1521,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         list.add(getHostEventListModel());
         list.add(new HostHooksListModel());
         list.add(getGlusterSwiftModel());
+        list.add(getHostBricksListModel());
         list.add(new PermissionListModel());
         setDetailModels(list);
     }
@@ -1520,6 +1532,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         VDS vds = (VDS) getSelectedItem();
         getGlusterSwiftModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService()
                 && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getVdsGroupCompatibilityVersion()));
+        getHostBricksListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService());
     }
 
     @Override

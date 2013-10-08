@@ -199,6 +199,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Label")
     String networkLabel();
 
+    @Override
     @DefaultStringValue("Comment")
     String commentLabel();
 
@@ -408,6 +409,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Gluster Swift")
     String hostGlusterSwiftSubTabLabel();
+
+    @DefaultStringValue("Bricks")
+    String hostBricksSubTabLabel();
 
     @DefaultStringValue("Permissions")
     String hostPermissionSubTabLabel();
@@ -2053,6 +2057,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Restart Swift")
     String restartGlusterSwiftInHost();
 
+    // Host Bricks
+    @DefaultStringValue("Volume")
+    String volumeName();
+
+    @DefaultStringValue("Brick Directory")
+    String brickDirectory();
+
     // Group
     @DefaultStringValue("Group Name")
     String groupNameGroup();
@@ -2951,6 +2962,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("free")
     String free();
 
+    @Override
     @DefaultStringValue("Unknown")
     String unknown();
 
@@ -3196,6 +3208,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("For allowing PK authentication, copy the following PK to host under .ssh/authorized_keys")
     String publicKeyUsage();
 
+    @Override
     @DefaultStringValue("Network")
     String networkProfilePopup();
 

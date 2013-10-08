@@ -1,0 +1,83 @@
+package org.ovirt.engine.ui.uicommonweb.models.hosts;
+
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+@SuppressWarnings("unused")
+public class HostBricksListModel extends SearchableListModel
+{
+
+    @Override
+    public VDS getEntity()
+    {
+        return (VDS) super.getEntity();
+    }
+
+    public void setEntity(VDS value)
+    {
+        super.setEntity(value);
+    }
+
+    public HostBricksListModel()
+    {
+        setTitle(ConstantsManager.getInstance().getConstants().hostBricksTitle());
+        setHashName("gluster_bricks"); // $//$NON-NLS-1$
+        setAvailableInModes(ApplicationMode.GlusterOnly);
+    }
+
+    @Override
+    protected void onEntityChanged()
+    {
+        super.onEntityChanged();
+        getSearchCommand().execute();
+    }
+
+    @Override
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    {
+        super.entityPropertyChanged(sender, e);
+        getSearchCommand().execute();
+    }
+
+    @Override
+    public void search()
+    {
+        if (getEntity() != null)
+        {
+            super.search();
+        }
+    }
+
+    @Override
+    protected void syncSearch()
+    {
+        if (getEntity() == null)
+        {
+            return;
+        }
+
+        AsyncDataProvider.getGlusterBricksForServer(new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<GlusterBrickEntity> glusterBricks = (List<GlusterBrickEntity>) returnValue;
+                setItems(glusterBricks);
+            }
+        }), getEntity().getId());
+
+    }
+
+    @Override
+    protected String getListName() {
+        return "HostBricksListModel"; //$NON-NLS-1$
+    }
+}

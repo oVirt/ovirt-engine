@@ -1310,6 +1310,17 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetGlusterHooks, new GlusterParameters(clusterId), aQuery);
     }
 
+    public static void getGlusterBricksForServer(AsyncQuery aQuery, Guid serverId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? source : new ArrayList<GlusterBrickEntity>();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeBricksByServerId, new IdQueryParameters(serverId), aQuery);
+    }
+
     public static void getGlusterHook(AsyncQuery aQuery, Guid hookId, boolean includeServerHooks) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

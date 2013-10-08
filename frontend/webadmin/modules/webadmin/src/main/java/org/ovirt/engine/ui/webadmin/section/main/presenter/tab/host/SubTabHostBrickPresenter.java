@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
@@ -23,11 +23,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabHostGlusterSwiftPresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostGlusterSwiftListModel, SubTabHostGlusterSwiftPresenter.ViewDef, SubTabHostGlusterSwiftPresenter.ProxyDef> {
+public class SubTabHostBrickPresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostBricksListModel, SubTabHostBrickPresenter.ViewDef, SubTabHostBrickPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.hostGlusterSwiftSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabHostGlusterSwiftPresenter> {
+    @NameToken(ApplicationPlaces.hostBricksSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabHostBrickPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
@@ -35,14 +35,13 @@ public class SubTabHostGlusterSwiftPresenter extends AbstractSubTabPresenter<VDS
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.hostGlusterSwiftSubTabLabel(), 8, modelProvider);
+            SearchableDetailModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.hostBricksSubTabLabel(), 4, modelProvider);
     }
 
     @Inject
-    public SubTabHostGlusterSwiftPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager,
-            SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> modelProvider) {
+    public SubTabHostBrickPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, SearchableDetailModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
