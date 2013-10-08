@@ -1001,7 +1001,11 @@ public class VmDeviceUtils {
     }
 
     public static List<VmDevice> getVirtioScsiControllers(Guid vmId) {
+        return getVirtioScsiControllers(vmId, null, false);
+    }
+
+    public static List<VmDevice> getVirtioScsiControllers(Guid vmId, Guid userID, boolean isFiltered) {
         return dao.getVmDeviceByVmIdTypeAndDevice(
-                vmId, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName());
+                vmId, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName(), userID, isFiltered);
     }
 }
