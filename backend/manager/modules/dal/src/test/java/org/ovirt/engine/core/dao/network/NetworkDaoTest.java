@@ -23,7 +23,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     private Network new_net;
     private static final String EXISTING_NETWORK_NAME1 = "engine";
     private static final String EXISTING_NETWORK_NAME2 = "engine3";
-    private static final int NUM_OF_NETWORKS = 5;
+    private static final int NUM_OF_NETWORKS = 6;
 
     @Override
     public void setUp() throws Exception {

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
@@ -128,15 +129,24 @@ public class ImportNetworksModel extends Model {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                Iterable<Network> networks = (Iterable<Network>) returnValue;
+                Map<Network, Set<Guid>> externalNetworkToDataCenters = (Map<Network, Set<Guid>>) returnValue;
                 List<ExternalNetwork> items = new LinkedList<ExternalNetwork>();
-                for (Network network : networks) {
+                for (Network network : externalNetworkToDataCenters.keySet()) {
                     ExternalNetwork externalNetwork = new ExternalNetwork();
                     externalNetwork.setNetwork(network);
                     externalNetwork.setDisplayName(network.getName());
-                    externalNetwork.getDataCenters().setItems(dataCenters);
-                    externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
                     externalNetwork.setPublicUse(true);
+
+                    Set<Guid> attachedDataCenters = externalNetworkToDataCenters.get(network);
+                    List<StoragePool> availableDataCenters = new LinkedList<StoragePool>();
+                    for (StoragePool dc : dataCenters) {
+                        if (!attachedDataCenters.contains(dc.getId())) {
+                            availableDataCenters.add(dc);
+                        }
+                    }
+                    externalNetwork.getDataCenters().setItems(availableDataCenters);
+                    externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(availableDataCenters));
+
                     items.add(externalNetwork);
                 }
                 Collections.sort(items, new Linq.ExternalNetworkComparator());
@@ -155,7 +165,7 @@ public class ImportNetworksModel extends Model {
                 dataCenters.addAll((Collection<StoragePool>) returnValue);
                 Collections.sort(dataCenters, new NameableComparator());
 
-                AsyncDataProvider.GetExternalNetworkList(networkQuery, provider.getId());
+                AsyncDataProvider.getExternalNetworkMap(networkQuery, provider.getId());
             }
         };
 

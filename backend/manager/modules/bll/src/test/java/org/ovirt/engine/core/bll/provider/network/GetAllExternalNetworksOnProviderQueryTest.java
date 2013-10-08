@@ -6,7 +6,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +20,10 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,6 +35,9 @@ public class GetAllExternalNetworksOnProviderQueryTest
 
     @Mock
     private ProviderDao providerDao;
+
+    @Mock
+    private StoragePoolDAO dcDao;
 
     @Mock
     private ProviderProxyFactory providerProxyFactory;
@@ -46,8 +54,18 @@ public class GetAllExternalNetworksOnProviderQueryTest
         when(getQuery().getProviderProxyFactory()).thenReturn(providerProxyFactory);
         when(providerProxyFactory.create(networkProvider)).thenReturn(client);
 
-        List<Network> expected = Arrays.asList(mock(Network.class));
-        when(client.getAll()).thenReturn(expected);
+        Network network = mock(Network.class);
+        ProviderNetwork providerNetwork = mock(ProviderNetwork.class);
+        when(client.getAll()).thenReturn(Arrays.asList(network));
+        when(network.getProvidedBy()).thenReturn(providerNetwork);
+        when(providerNetwork.getExternalId()).thenReturn("");
+
+        Guid id = mock(Guid.class);
+        when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(dcDao);
+        when(dcDao.getDcIdByExternalNetworkId(any(String.class))).thenReturn(Arrays.asList(id));
+
+        Map<Network, Set<Guid>> expected = new HashMap<Network, Set<Guid>>();
+        expected.put(network, Collections.singleton(id));
 
         GetAllExternalNetworksOnProviderQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();

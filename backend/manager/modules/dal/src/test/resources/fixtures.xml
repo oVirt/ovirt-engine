@@ -890,6 +890,22 @@
             <value>52d5c1c6-cb15-4832-b2a4-023770607200</value>
         </row>
         <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607201</value>
+            <value>external</value>
+            <value>Some external network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105e</value>
+            <value>0</value>
+            <value>true</value>
+            <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
+            <value>52d5c1c6-cb15-4832-b2a4-023770607200</value>
+        </row>
+        <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607191</value>
             <value>engine4</value>
             <value>Management Network</value>

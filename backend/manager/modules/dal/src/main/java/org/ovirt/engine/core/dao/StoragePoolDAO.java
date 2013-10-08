@@ -120,4 +120,13 @@ public interface StoragePoolDAO extends GenericDao<StoragePool, Guid>, StatusAwa
      */
     List<StoragePool> getDataCentersByClusterService(boolean supportsVirtService, boolean supportsGlusterService);
 
+    /**
+     * Retrieves the IDs of all data centers to which an external network has been imported.
+     *
+     * @param externalId
+     *            the external network's external ID.
+     * @return the list of data center IDs.
+     */
+    List<Guid> getDcIdByExternalNetworkId(String externalId);
+
 }

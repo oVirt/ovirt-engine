@@ -434,6 +434,9 @@ public class FixturesTool {
     public static final Guid PROVIDER_ID = new Guid("1115c1c6-cb15-4832-b2a4-023770607111");
 
     public static final ProviderType PROVIDER_TYPE = ProviderType.OPENSTACK_NETWORK;
+
+    public static final String EXTERNAL_NETWORK_ID = "52d5c1c6-cb15-4832-b2a4-023770607200";
+
     /**
      * Cluster Policy
      */

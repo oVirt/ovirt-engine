@@ -723,3 +723,15 @@ WHERE EXISTS  ( SELECT 1
 		);
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetDcIdByExternalNetworkId(v_external_id text)
+RETURNS SETOF UUID STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT storage_pool_id
+    FROM network
+    WHERE provider_network_external_id = v_external_id;
+END; $procedure$
+LANGUAGE plpgsql;

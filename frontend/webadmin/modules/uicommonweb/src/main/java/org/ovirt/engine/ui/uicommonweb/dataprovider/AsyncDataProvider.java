@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Set;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.TimeZoneType;
@@ -3274,14 +3276,12 @@ public final class AsyncDataProvider {
         }
     }
 
-    public static void GetExternalNetworkList(AsyncQuery aQuery, Guid providerId) {
+    public static void getExternalNetworkMap(AsyncQuery aQuery, Guid providerId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source == null)
-                {
-                    return new ArrayList<Network>();
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source == null) {
+                    return new HashMap<Network, Set<Guid>>();
                 }
                 return source;
             }
