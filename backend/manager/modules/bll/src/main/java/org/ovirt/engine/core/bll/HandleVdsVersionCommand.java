@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
@@ -44,14 +45,24 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
     protected void executeCommand() {
         VDS vds = getVds();
         VDSGroup cluster = getVdsGroup();
+        boolean isEngineSupportedByVdsm = false;
 
-        // check that vdc support vds OR vds support vdc
+        // partialVdcVersion will hold the engine's version (minor and major parts),
+        // this will be compared to vdsm supported engines to see if vdsm can be added
+        // to cluster
+        Version partialVdcVersion =
+                new Version(new Version(Config.<String> GetValue(ConfigValues.VdcVersion)).toString(2));
         RpmVersion vdsVersion = vds.getVersion();
         Version vdsmVersion = new Version(vdsVersion.getMajor(), vdsVersion.getMinor());
+        if (!StringUtils.isEmpty(vds.getSupportedEngines())) {
+            isEngineSupportedByVdsm = vds.getSupportedENGINESVersionsSet().contains(partialVdcVersion);
+        }
 
-        // move to non operational if vds-vdc version not supported OR cluster
-        // version is not supported
-        if (!Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion)) {
+        // If vdsm doesn't support the engine's version (engine's version is not included
+        // vdsm supprtedEngineVersions list) we move on and check if engine
+        // and cluster supports the specific vdsm version. which is sufficient
+        if (!isEngineSupportedByVdsm &&
+            !Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion)) {
             reportNonOperationReason(NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER,
                                      Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).toString(),
                                      vdsmVersion.toString());
