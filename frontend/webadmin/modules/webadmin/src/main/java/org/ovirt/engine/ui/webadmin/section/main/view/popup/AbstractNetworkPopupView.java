@@ -277,9 +277,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             @Override
             protected void selectionChanged(Boolean value) {
                 for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
-                    if (networkClusterModel.getIsChangable()) {
-                        networkClusterModel.setRequired(value);
-                    }
+                    networkClusterModel.setRequired(value);
                 }
                 refreshClustersTable();
             }
@@ -287,7 +285,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             @Override
             public Boolean getValue() {
                 for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
-                    if (networkClusterModel.getIsChangable() && !networkClusterModel.isRequired()) {
+                    if (!networkClusterModel.isRequired()) {
                         return false;
                     }
                 }
