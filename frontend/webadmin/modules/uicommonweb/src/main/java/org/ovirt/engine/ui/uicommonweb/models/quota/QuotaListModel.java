@@ -323,7 +323,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
         Guid guid = quota.getId();
 
+        QuotaCRUDParameters parameters = new QuotaCRUDParameters(quota);
         if (isClone) {
+            parameters.setCopyPermissions((Boolean) model.getCopyPermissions().getEntity());
+            parameters.setQuotaId(quota.getId());
             quota.setId(Guid.Empty);
         }
 
@@ -332,7 +335,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             actionType = VdcActionType.UpdateQuota;
         }
         Frontend.RunAction(actionType,
-                new QuotaCRUDParameters(quota),
+                parameters,
                 new IFrontendActionAsyncCallback() {
 
                     @Override
@@ -387,6 +390,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             command = new UICommand("onCloneQuota", this); //$NON-NLS-1$
             qModel.getName().setEntity(COPY_OF + outer_quota.getQuotaName());
             qModel.getDescription().setEntity(""); //$NON-NLS-1$
+            qModel.getCopyPermissions().setIsAvailable(true);
         }
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);

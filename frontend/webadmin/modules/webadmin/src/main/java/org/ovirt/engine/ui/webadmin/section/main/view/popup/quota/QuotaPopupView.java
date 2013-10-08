@@ -9,11 +9,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.form.Slider.SliderValueChange;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
@@ -79,6 +81,11 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     @Path(value = "dataCenter.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Object> dataCenterEditor;
+
+    @UiField(provided = true)
+    @Path(value = "copyPermissions.entity")
+    @WithElementId("copyPermissions")
+    EntityModelCheckBoxEditor copyPermissionsEditor;
 
     @UiField
     @Ignore
@@ -179,6 +186,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         super(eventBus, resources);
         initListBoxEditors();
         initRadioButtonEditors();
+        initCheckBoxes();
         initSliders();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -186,6 +194,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         addStyles();
         driver.initialize(this);
         initTables(constants, messages);
+    }
+
+    private void initCheckBoxes() {
+        copyPermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private void addStyles() {
@@ -413,6 +425,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         nameEditor.setLabel(constants.nameQuotaPopup());
         descriptionEditor.setLabel(constants.descriptionQuotaPopup());
         dataCenterEditor.setLabel(constants.dataCenterQuotaPopup());
+        copyPermissionsEditor.setLabel(constants.copyQuotaPermissionsQuotaPopup());
         memAndCpuLabel.setText(constants.memAndCpuQuotaPopup());
         storageLabel.setText(constants.storageQuotaPopup());
         globalClusterQuotaRadioButtonEditor.setLabel(constants.ultQuotaForAllClustersQuotaPopup());

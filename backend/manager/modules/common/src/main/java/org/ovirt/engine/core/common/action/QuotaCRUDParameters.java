@@ -10,6 +10,7 @@ public class QuotaCRUDParameters extends StoragePoolParametersBase implements Se
 
     private Guid quotaId;
     private Quota quota;
+    private boolean copyPermissions;
 
     public QuotaCRUDParameters() {
     }
@@ -33,5 +34,13 @@ public class QuotaCRUDParameters extends StoragePoolParametersBase implements Se
 
     public void setQuota(Quota value) {
         quota = value;
+    }
+
+    public boolean isCopyPermissions() {
+        return copyPermissions;
+    }
+
+    public void setCopyPermissions(boolean copyPermissions) {
+        this.copyPermissions = copyPermissions;
     }
 }

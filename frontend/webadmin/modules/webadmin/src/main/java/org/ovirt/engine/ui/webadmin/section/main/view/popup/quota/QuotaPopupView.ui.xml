@@ -63,6 +63,7 @@
 					<g:HorizontalPanel>
 						<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
 					</g:HorizontalPanel>
+					<e:EntityModelCheckBoxEditor ui:field="copyPermissionsEditor" />
 				</g:FlowPanel>
 				<g:Label ui:field="memAndCpuLabel" addStyleNames="{style.labelStyle}"/>
 				<g:HorizontalPanel addStyleNames="{style.marginPanel}">
