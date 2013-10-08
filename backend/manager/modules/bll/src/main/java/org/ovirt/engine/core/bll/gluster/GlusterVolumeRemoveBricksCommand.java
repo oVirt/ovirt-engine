@@ -49,9 +49,10 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         }
 
         GlusterBrickValidator brickValidator = new GlusterBrickValidator();
-        return validate(brickValidator.validateBricks(getParameters().getBricks(),
+        return validate(brickValidator.canRemoveBrick(getParameters().getBricks(),
                 getGlusterVolume(),
-                getParameters().getReplicaCount()));
+                getParameters().getReplicaCount(),
+                true));
     }
 
     @Override

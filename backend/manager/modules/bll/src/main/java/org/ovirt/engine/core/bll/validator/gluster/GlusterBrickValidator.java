@@ -21,7 +21,9 @@ public class GlusterBrickValidator {
      *            The bricks to validate
      * @return true if all bricks have valid ids, else false
      */
-    public ValidationResult validateBricks(List<GlusterBrickEntity> bricks, GlusterVolumeEntity volumeEntity, int replicaCount) {
+    public ValidationResult canRemoveBrick(List<GlusterBrickEntity> bricks,
+            GlusterVolumeEntity volumeEntity,
+            int replicaCount, boolean forceRemove) {
         if (bricks.isEmpty()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
         }
@@ -43,7 +45,7 @@ public class GlusterBrickValidator {
             }
 
             GlusterBrickEntity brickFromVolume = volumeEntity.getBrickWithId(brick.getId());
-            if(brickFromVolume == null) {
+            if (brickFromVolume == null) {
                 brickFromVolume = volumeEntity.getBrickWithQualifiedName(brick.getQualifiedName());
             }
 
@@ -51,8 +53,37 @@ public class GlusterBrickValidator {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_BRICK_INVALID);
             } else {
                 // Fill required details from volume data
+                brick.setId(brickFromVolume.getId());
                 brick.setServerName(brickFromVolume.getServerName());
                 brick.setBrickDirectory(brickFromVolume.getBrickDirectory());
+            }
+
+        }
+
+        if (!forceRemove) {
+            return canRebalance(volumeEntity);
+        } else {
+            return ValidationResult.VALID;
+        }
+    }
+
+    public ValidationResult canRebalance(GlusterVolumeEntity volumeEntity) {
+        int replicaCount = 1;
+        List<GlusterBrickEntity> bricks = volumeEntity.getBricks();
+        if (volumeEntity.getVolumeType().isReplicatedType()) {
+            replicaCount = volumeEntity.getReplicaCount();
+        }
+
+        int brickIndex = 0, replicaIndex = 0;
+        while (brickIndex < bricks.size()) {
+            for (replicaIndex = 0; replicaIndex < replicaCount; replicaIndex++) {
+                if (bricks.get(brickIndex + replicaIndex).isOnline()) {
+                    brickIndex = brickIndex + replicaCount;
+                    break;
+                }
+            }
+            if (replicaIndex == replicaCount) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN);
             }
 
         }

@@ -2519,6 +2519,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Brick ID is required.")
     String ACTION_TYPE_FAILED_BRICK_ID_REQUIRED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. One or more bricks are down.")
+    String ACTION_TYPE_FAILED_ONE_OR_MORE_BRICKS_ARE_DOWN();
+
     @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be reduced by more than one.")
     String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE();
 

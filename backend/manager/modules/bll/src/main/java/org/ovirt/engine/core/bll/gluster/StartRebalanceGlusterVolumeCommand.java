@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
@@ -46,7 +47,8 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_DISTRIBUTED_AND_HAS_SINGLE_BRICK);
         }
 
-        return true;
+        GlusterBrickValidator brickValidator = new GlusterBrickValidator();
+        return validate(brickValidator.canRebalance(glusterVolume));
     }
 
     @Override
