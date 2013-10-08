@@ -6,9 +6,9 @@
 
 	<ui:style>
 		.tablePanel {
-		height: 330px;
-		width: 770px;
-		padding: 10px;
+		height: 415px;
+		width: 781px;
+		padding: 1px;
 		border: 1px solid #CED8DF;
 		}
 
