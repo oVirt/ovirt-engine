@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -13,6 +15,9 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -32,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -192,6 +198,32 @@ public class ImportVmCommandTest {
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
+    }
+
+    /**
+     * Checking that managed device are sync with the new Guids of disk
+     */
+    @Test
+    public void testManagedDeviceSyncWithNewDiskId() {
+        ImportVmParameters parameters = createParameters();
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<>(parameters);
+        List<DiskImage> diskList = new ArrayList<>();
+        DiskImage diskImage = new DiskImage();
+        diskImage.setStorageIds(new ArrayList<Guid>());
+        DiskImage diskImage2 = new DiskImage();
+        diskImage2.setStorageIds(new ArrayList<Guid>());
+        diskList.add(diskImage);
+        diskList.add(diskImage2);
+        DiskImage disk = ImagesHandler.getActiveVolumeDisk(diskList);
+        Map<Guid, VmDevice> managedDevices = new HashMap<>();
+        managedDevices.put(disk.getId(), new VmDevice());
+        Guid beforeOldDiskId = disk.getId();
+        command.generateNewDiskId(diskList, disk);
+        command.updateManagedDeviceMap(disk, managedDevices);
+        Guid oldDiskId = command.newDiskIdForDisk.get(disk.getId()).getId();
+        assertEquals("The old disk id should be similar to the value at the newDiskIdForDisk.", beforeOldDiskId, oldDiskId);
+        assertNotNull("The manged deivce should return the disk device by the new key", managedDevices.get(disk.getId()));
+        assertNull("The manged deivce should not return the disk device by the old key", managedDevices.get(beforeOldDiskId));
     }
 
     /* Tests for alias generation in addVmImagesAndSnapshots() */

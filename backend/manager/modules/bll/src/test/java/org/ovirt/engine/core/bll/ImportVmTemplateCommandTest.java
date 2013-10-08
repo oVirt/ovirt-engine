@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -9,6 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -300,4 +305,25 @@ public class ImportVmTemplateCommandTest {
                         command.getValidationGroups().toArray(new Class<?>[0]));
         Assert.isTrue(validate.isEmpty());
     }
+
+    /**
+     * Checking that managed device are sync with the new Guids of disk
+     */
+    @Test
+    public void testManagedDeviceSyncWithNewDiskId() {
+        ImportVmTemplateParameters parameters = createParameters();
+        ImportVmTemplateCommand command = spy(new ImportVmTemplateCommand(parameters));
+        DiskImage disk = new DiskImage();
+        disk.setStorageIds(new ArrayList<Guid>());
+        Map<Guid, VmDevice> managedDevices = new HashMap<>();
+        managedDevices.put(disk.getId(), new VmDevice());
+        Guid beforeOldDiskId = disk.getId();
+        command.generateNewDiskId(disk);
+        command.updateManagedDeviceMap(disk, managedDevices);
+        Guid oldDiskId = command.newDiskIdForDisk.get(disk.getId()).getId();
+        assertEquals("The old disk id should be similar to the value at the newDiskIdForDisk.", beforeOldDiskId, oldDiskId);
+        assertNotNull("The manged deivce should return the disk device by the new key", managedDevices.get(disk.getId()));
+        assertNull("The manged deivce should not return the disk device by the old key", managedDevices.get(beforeOldDiskId));
+    }
+
 }

@@ -792,6 +792,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
                 if (getParameters().isImportAsNewEntity()) {
                     generateNewDiskId(diskList, disk);
+                    updateManagedDeviceMap(disk, getVm().getStaticData().getManagedDeviceMap());
                 } else {
                     newDiskIdForDisk.put(disk.getId(), disk);
                 }
@@ -829,28 +830,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
             updateActiveSnapshot(snapshotId);
-        }
-    }
-
-    /**
-     * Cloning a new disk with a new generated id, with the same volumes and parameters as <code>disk</code>. Also
-     * adding the disk to <code>newDiskGuidForDisk</code> map, so we will be able to link between the new cloned disk
-     * and the old disk id.
-     *
-     * @param diskList
-     *            - All the disk volumes
-     * @param disk
-     *            - The disk which is about to be cloned
-     */
-    private void generateNewDiskId(List<DiskImage> diskList, DiskImage disk) {
-        Guid newGuidForDisk = Guid.newGuid();
-
-        // Copy the disk so it will preserve the old disk id and image id.
-        newDiskIdForDisk.put(newGuidForDisk, DiskImage.copyOf(disk));
-        disk.setId(newGuidForDisk);
-        disk.setImageId(Guid.newGuid());
-        for (DiskImage diskImage : diskList) {
-            diskImage.setId(disk.getId());
         }
     }
 

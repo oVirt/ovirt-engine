@@ -210,10 +210,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     private void initImportClonedTemplateDisks() {
         for (DiskImage image : getParameters().getImages()) {
-            newDiskIdForDisk.put(image.getId(), image);
             if (getParameters().isImportAsNewEntity()) {
-                image.setId(Guid.newGuid());
-                image.setImageId(Guid.newGuid());
+                generateNewDiskId(image);
+                updateManagedDeviceMap(image, getVmTemplate().getManagedDeviceMap());
+            } else {
+                newDiskIdForDisk.put(image.getId(), image);
             }
         }
     }
