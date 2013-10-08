@@ -19,9 +19,4 @@ public abstract class ListModelListBoxColumn<T, S> extends Column<T, ListModel> 
         super(new ListModelListBoxCell<S>(renderer));
     }
 
-    @SuppressWarnings("unchecked")
-    public void edit(ListModel model) {
-        ((ListModelListBoxCell<S>) getCell()).edit(model);
-    }
-
 }
