@@ -313,11 +313,20 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
      */
     private void fetchRelatedEntities(GlusterVolumeEntity volume) {
         if (volume != null) {
-            volume.setBricks(dbFacade.getGlusterBrickDao().getBricksOfVolume(volume.getId()));
             volume.setOptions(dbFacade.getGlusterOptionDao().getOptionsOfVolume(volume.getId()));
             volume.setAccessProtocols(new HashSet<AccessProtocol>(getAccessProtocolsOfVolume(volume.getId())));
             volume.setTransportTypes(new HashSet<TransportType>(getTransportTypesOfVolume(volume.getId())));
             volume.setAsyncTask(getAsyncTaskOfVolume(volume.getId()));
+            List<GlusterBrickEntity> bricks = dbFacade.getGlusterBrickDao().getBricksOfVolume(volume.getId());
+            if (volume.getAsyncTask() != null && volume.getAsyncTask().getTaskId() != null) {
+                for (GlusterBrickEntity brick: bricks) {
+                    if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null &&
+                            brick.getAsyncTask().getTaskId().equals(volume.getAsyncTask().getTaskId())) {
+                        brick.setAsyncTask(volume.getAsyncTask());
+                    }
+                }
+            }
+            volume.setBricks(bricks);
         }
     }
 
