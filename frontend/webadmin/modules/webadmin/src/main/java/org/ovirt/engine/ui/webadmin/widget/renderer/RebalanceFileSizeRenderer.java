@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
 import org.ovirt.engine.ui.uicommonweb.models.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class RebalanceFileSizeRenderer<T extends Number> extends AbstractRenderer<T> {
@@ -13,17 +14,21 @@ public class RebalanceFileSizeRenderer<T extends Number> extends AbstractRendere
     @Override
     public String render(T size) {
         if(size.longValue() > SizeConverter.BYTES_IN_GB) {
-            return messages.rebalanceFileSizeGb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.GB).longValue());
+            return messages.rebalanceFileSizeGb(formatSize(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.GB).doubleValue()));
         } else if(size.longValue() > SizeConverter.BYTES_IN_MB) {
-            return messages.rebalanceFileSizeMb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.MB).longValue());
+            return messages.rebalanceFileSizeMb(formatSize(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.MB).doubleValue()));
         } else if(size.longValue() > SizeConverter.BYTES_IN_KB) {
-            return messages.rebalanceFileSizeKb(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.KB).longValue());
+            return messages.rebalanceFileSizeKb(formatSize(SizeConverter.convert(size.longValue(), SizeUnit.BYTES, SizeUnit.KB).doubleValue()));
         } else {
-            return messages.rebalanceFileSizeBytes(size.longValue());
+            return messages.rebalanceFileSizeBytes(formatSize(size.doubleValue()));
         }
     }
 
     public RebalanceFileSizeRenderer(ApplicationMessages messages) {
         this.messages = messages;
+    }
+
+    public String formatSize(double size) {
+        return NumberFormat.getFormat("#.##").format(size);//$NON-NLS-1$
     }
 }

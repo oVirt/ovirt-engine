@@ -93,14 +93,14 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
 
     @DefaultMessage("{0} Bytes")
-    String rebalanceFileSizeBytes(long size);
+    String rebalanceFileSizeBytes(String size);
 
-    @DefaultMessage("{0} Kb")
-    String rebalanceFileSizeKb(long size);
+    @DefaultMessage("{0} KB")
+    String rebalanceFileSizeKb(String size);
 
-    @DefaultMessage("{0} Mb")
-    String rebalanceFileSizeMb(long size);
+    @DefaultMessage("{0} MB")
+    String rebalanceFileSizeMb(String size);
 
-    @DefaultMessage("{0} Gb")
-    String rebalanceFileSizeGb(long size);
+    @DefaultMessage("{0} GB")
+    String rebalanceFileSizeGb(String size);
 }
