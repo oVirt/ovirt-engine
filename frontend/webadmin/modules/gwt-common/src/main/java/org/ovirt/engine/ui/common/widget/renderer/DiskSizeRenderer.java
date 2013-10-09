@@ -54,12 +54,14 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
         }
     }
 
-    private String renderGigabyteSize(long sizeInBytes) {
-        long sizeInGB = SizeConverter.convert(sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeUnit.GB).longValue();
+    private String renderGigabyteSize(long size) {
+        long sizeInGB = (unit == SizeUnit.GB) ?
+                size : SizeConverter.convert(size, unit, SizeUnit.GB).longValue();
         return sizeInGB >= 1 ? sizeInGB + " GB" : "< 1 GB"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private String renderHumanReadableSize(long sizeInBytes) {
+    private String renderHumanReadableSize(long size) {
+        long sizeInBytes = SizeConverter.convert(size, unit, SizeUnit.BYTES).longValue();
         if(sizeInBytes > SizeConverter.BYTES_IN_GB) {
             return SizeConverter.convert(sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeUnit.GB).longValue() + " GB"; //$NON-NLS-1$
         } else if(sizeInBytes > SizeConverter.BYTES_IN_MB) {
