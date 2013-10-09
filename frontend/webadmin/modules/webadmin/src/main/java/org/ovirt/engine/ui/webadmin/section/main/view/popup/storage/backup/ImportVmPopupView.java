@@ -136,12 +136,15 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     protected final ApplicationConstants constants;
 
+    protected final ApplicationResources resources;
+
     @Inject
     public ImportVmPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants) {
         super(eventBus, resources);
         this.constants = constants;
+        this.resources = resources;
 
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -404,6 +407,25 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
         };
         diskTable.addColumn(nameColumn, constants.nameDisk(), "100px"); //$NON-NLS-1$
+
+        ImageResourceColumn<DiskImage> bootableDiskColumn = new ImageResourceColumn<DiskImage>() {
+            @Override
+            public ImageResource getValue(DiskImage object) {
+                setTitle(object.isBoot() ? getDefaultTitle() : null);
+                return object.isBoot() ? getDefaultImage() : null;
+            }
+
+            @Override
+            public String getDefaultTitle() {
+                return constants.bootableDisk();
+            }
+
+            @Override
+            public ImageResource getDefaultImage() {
+                return resources.bootableDiskIcon();
+            }
+        };
+        diskTable.addColumnWithHtmlHeader(bootableDiskColumn, bootableDiskColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
