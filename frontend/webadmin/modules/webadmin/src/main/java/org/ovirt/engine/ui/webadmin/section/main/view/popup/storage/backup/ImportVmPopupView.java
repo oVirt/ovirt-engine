@@ -400,6 +400,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     private void initDiskTable() {
         diskTable = new ListModelObjectCellTable<DiskImage, SearchableListModel>();
+        diskTable.enableColumnResizing();
         TextColumnWithTooltip<DiskImage> aliasColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
@@ -433,7 +434,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getSize();
             }
         };
-        diskTable.addColumn(sizeColumn, constants.provisionedSizeDisk(), "100px"); //$NON-NLS-1$
+        diskTable.addColumn(sizeColumn, constants.provisionedSizeDisk(), "130px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -441,7 +442,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getActualSizeInBytes();
             }
         };
-        diskTable.addColumn(actualSizeColumn, constants.sizeDisk(), "100px"); //$NON-NLS-1$
+        diskTable.addColumn(actualSizeColumn, constants.sizeDisk(), "130px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -449,7 +450,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getCreationDate();
             }
         };
-        diskTable.addColumn(dateCreatedColumn, constants.dateCreatedInterface(), "100px"); //$NON-NLS-1$
+        diskTable.addColumn(dateCreatedColumn, constants.dateCreatedInterface(), "120px"); //$NON-NLS-1$
 
         diskTable.setSelectionModel(new NoSelectionModel<DiskImage>());
 
@@ -497,7 +498,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
         });
 
-        diskTable.addColumn(allocationColumn, constants.allocationDisk(), "80px"); //$NON-NLS-1$
+        diskTable.addColumn(allocationColumn, constants.allocationDisk(), "150px"); //$NON-NLS-1$
     }
 
     private void addStorageDomainsColumn() {
@@ -543,7 +544,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
         });
 
-        diskTable.addColumn(storageDomainsColumn, constants.storageDomainDisk(), "100px"); //$NON-NLS-1$
+        diskTable.addColumn(storageDomainsColumn, constants.storageDomainDisk(), "180px"); //$NON-NLS-1$
 
     }
 
