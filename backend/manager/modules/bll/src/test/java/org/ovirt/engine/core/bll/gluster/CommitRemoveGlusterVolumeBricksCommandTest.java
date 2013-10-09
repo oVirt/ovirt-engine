@@ -144,25 +144,17 @@ public class CommitRemoveGlusterVolumeBricksCommandTest {
         return bricks;
     }
 
+    @SuppressWarnings("unchecked")
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
         when(cmd.getBackend()).thenReturn(backend);
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
-        doNothing().when(cmd).endStepJob();
+        doNothing().when(cmd).endStepJobCommitted();
         doNothing().when(cmd).releaseVolumeLock();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(succeeded);
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
-        } else {
-            GlusterAsyncTask task = new GlusterAsyncTask();
-            task.setMessage("successful");
-            task.setStatus(JobExecutionStatus.FINISHED);
-            task.setStepId(Guid.newGuid());
-            task.setTaskId(Guid.newGuid());
-            task.setType(GlusterTaskType.REMOVE_BRICK);
-
-            vdsReturnValue.setReturnValue(task);
         }
 
         when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.CommitRemoveGlusterVolumeBricks),
@@ -182,6 +174,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest {
         };
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testExecuteCommand() {
         cmd =
@@ -192,7 +185,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest {
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd, times(1)).endStepJob();
+        verify(cmd, times(1)).endStepJobCommitted();
         verify(cmd, times(1)).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT);
     }
@@ -207,7 +200,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest {
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd, never()).endStepJob();
+        verify(cmd, never()).endStepJobAborted();
         verify(cmd, never()).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT_FAILED);
     }

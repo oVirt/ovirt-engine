@@ -136,7 +136,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
         when(cmd.getBackend()).thenReturn(backend);
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
-        doNothing().when(cmd).endStepJob();
+        doNothing().when(cmd).endStepJobAborted();
         doNothing().when(cmd).releaseVolumeLock();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
@@ -174,7 +174,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd).endStepJob();
+        verify(cmd).endStepJobAborted();
         verify(cmd).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP);
     }
@@ -187,7 +187,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd, never()).endStepJob();
+        verify(cmd, never()).endStepJobAborted();
         verify(cmd, never()).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP_FAILED);
     }

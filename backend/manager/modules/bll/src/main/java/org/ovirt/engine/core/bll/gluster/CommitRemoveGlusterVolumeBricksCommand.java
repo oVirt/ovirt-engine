@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -7,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -60,7 +63,7 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
                 runVdsCommand(VDSCommandType.CommitRemoveGlusterVolumeBricks,
                         new GlusterVolumeRemoveBricksVDSParameters(getUpServer().getId(),
                                 volume.getName(),
-                                volume.getBricks()));
+                                getParameters().getBricks()));
         setSucceeded(returnValue.getSucceeded());
         if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT_FAILED, returnValue.getVdsError()
@@ -68,9 +71,20 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
             return;
         }
 
-        endStepJob();
+        endStepJobCommitted();
         releaseVolumeLock();
         getReturnValue().setActionReturnValue(returnValue.getReturnValue());
+    }
+
+    protected void endStepJobCommitted() {
+        endStepJob(JobExecutionStatus.FINISHED, getStepMessageMap(JobExecutionStatus.FINISHED),true);
+    }
+
+    @Override
+    protected Map<String, String> getStepMessageMap(JobExecutionStatus status) {
+        Map<String, String> stepMessageMap = super.getStepMessageMap(status);
+        stepMessageMap.put(GlusterConstants.JOB_STATUS, "COMMITTED");
+        return stepMessageMap;
     }
 
     @Override

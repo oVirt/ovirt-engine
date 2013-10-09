@@ -40,6 +40,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class GlusterTasksSyncJob extends GlusterJob  {
+    private static final String REBALANCE_IN_PROGRESS = "IN PROGRESS";
+    private static final String REMOVE_BRICK_FAILED = "MIGRATION FAILED";
+    private static final String REMOVE_BRICK_IN_PROGRESS = "MIGRATION IN PROGRESS";
+    private static final String REMOVE_BRICK_FINISHED = "MIGRATION COMPLETE";
+
     private static final Log log = LogFactory.getLog(GlusterTasksSyncJob.class);
 
     private static GlusterTasksSyncJob instance = new GlusterTasksSyncJob();
@@ -118,6 +123,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                     continue;
                 }
                 step.setDescription(getTaskMessage(cluster,step.getStepType(),task));
+                step.setStatus(task.getStatus());
                 if (hasTaskCompleted(task)) {
                     step.markStepEnded(task.getStatus());
                     endStepJob(step);
@@ -301,9 +307,39 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         Map<String, String> values = new HashMap<String, String>();
         values.put(GlusterConstants.CLUSTER, cluster.getName());
         values.put(GlusterConstants.VOLUME, task.getTaskParameters().getVolumeName());
-        values.put("status", task.getStatus().toString());
-        values.put("info", task.getMessage());
+        String jobStatus = getJobStatusInfo(task);
+        values.put(GlusterConstants.JOB_STATUS, jobStatus);
+        values.put(GlusterConstants.JOB_INFO, task.getMessage());
         return values;
+    }
+
+    private static String getJobStatusInfo(GlusterAsyncTask task) {
+        String jobStatus = task.getStatus().toString();
+        if (task.getType() == GlusterTaskType.REMOVE_BRICK) {
+            switch (task.getStatus()) {
+            case FINISHED:
+                jobStatus = REMOVE_BRICK_FINISHED;
+                break;
+            case STARTED:
+                jobStatus = REMOVE_BRICK_IN_PROGRESS;
+                break;
+            case FAILED:
+                jobStatus = REMOVE_BRICK_FAILED;
+                break;
+            default:
+                break;
+            }
+        }
+        if (task.getType() == GlusterTaskType.REBALANCE) {
+            switch (task.getStatus()) {
+            case STARTED:
+                jobStatus = REBALANCE_IN_PROGRESS;
+                break;
+            default:
+                break;
+            }
+        }
+        return jobStatus;
     }
 
     private boolean supportsGlusterAsyncTasksFeature(VDSGroup cluster) {

@@ -56,8 +56,8 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         Map<String, String> values = new HashMap<String, String>();
         values.put(GlusterConstants.CLUSTER, getVdsGroupName());
         values.put(GlusterConstants.VOLUME, getGlusterVolumeName());
-        values.put("status", status.toString());
-        values.put("info", " ");
+        values.put(GlusterConstants.JOB_STATUS, status.toString());
+        values.put(GlusterConstants.JOB_INFO, " ");
         return values;
     }
 
@@ -76,17 +76,21 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
                                 getStepMessageMap(JobExecutionStatus.STARTED)));
     }
 
-    protected void endStepJob() {
+    protected void endStepJobAborted() {
+        endStepJob(JobExecutionStatus.ABORTED, getStepMessageMap(JobExecutionStatus.ABORTED), false);
+    }
+
+    protected void endStepJob(JobExecutionStatus status, Map<String, String> stepMessageMap, boolean exitStatus) {
         GlusterAsyncTask asyncTask = getGlusterVolume().getAsyncTask();
-        // Gluster Volume Rebalance Task will have only one step ( REBALANCING_VOLUME )
+        // Gluster Task will be associated with only one step ( REBALANCING_VOLUME or REMOVING_BRICK)
         Step step = getStepDao().getStepsByExternalId(asyncTask.getTaskId()).get(0);
-        step.markStepEnded(JobExecutionStatus.ABORTED);
+        step.markStepEnded(status);
         step.setDescription(ExecutionMessageDirector.resolveStepMessage(getStepType(),
-                getStepMessageMap(JobExecutionStatus.ABORTED)));
+                stepMessageMap));
         JobRepositoryFactory.getJobRepository().updateStep(step);
 
         ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
-        ExecutionHandler.endTaskJob(finalContext, false);
+        ExecutionHandler.endTaskJob(finalContext, exitStatus);
     }
 
     protected GlusterAsyncTask handleTaskReturn(GlusterAsyncTask asyncTask) {

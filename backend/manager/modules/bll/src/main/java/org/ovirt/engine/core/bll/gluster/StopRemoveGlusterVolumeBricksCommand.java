@@ -66,7 +66,7 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
             return;
         }
 
-        endStepJob();
+        endStepJobAborted();
         releaseVolumeLock();
         getReturnValue().setActionReturnValue(returnValue.getReturnValue());
     }
