@@ -582,6 +582,7 @@ org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
 org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
 %if 0%{?fedora}
 %if %{fedora} >= 19
+com/mchange/c3p0/main/c3p0.jar
 com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
 com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
 com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
@@ -590,6 +591,7 @@ com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-
 com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
 com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
 com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
+org/aopalliance/main/aopalliance.jar
 org/apache/commons/compress/main/commons-compress.jar
 org/apache/commons/configuration/main/commons-configuration.jar commons-configuration.jar
 org/apache/commons/httpclient/main/commons-httpclient.jar
@@ -610,6 +612,7 @@ org/springframework/main/spring-instrument.jar springframework/spring-instrument
 org/springframework/main/spring-jdbc.jar springframework/spring-jdbc.jar
 org/springframework/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
 org/springframework/main/spring-tx.jar springframework/spring-tx.jar
+org/tukaani/xz/main/xz.jar
 %endif
 %endif
 __EOF__

@@ -89,6 +89,9 @@
     <infinispan.version>5.2.5.Final</infinispan.version>
     <snakeyaml.version>1.8</snakeyaml.version>
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
+    <tukaani-xz.version>1.0</tukaani-xz.version>
+    <c3p0.version>0.9.1.1</c3p0.version>
+    <aopalliance.version>1.0</aopalliance.version>
 
     <!-- OpenStack -->
     <openstack-client.version>3.0.1</openstack-client.version>
