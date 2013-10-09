@@ -400,13 +400,13 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     private void initDiskTable() {
         diskTable = new ListModelObjectCellTable<DiskImage, SearchableListModel>();
-        TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
+        TextColumnWithTooltip<DiskImage> aliasColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskAlias();
             }
         };
-        diskTable.addColumn(nameColumn, constants.nameDisk(), "100px"); //$NON-NLS-1$
+        diskTable.addColumn(aliasColumn, constants.aliasDisk(), "100px"); //$NON-NLS-1$
 
         ImageResourceColumn<DiskImage> bootableDiskColumn = new ImageResourceColumn<DiskImage>() {
             @Override

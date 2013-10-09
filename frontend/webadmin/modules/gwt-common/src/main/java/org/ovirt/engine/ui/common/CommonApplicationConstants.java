@@ -810,9 +810,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Data Center")
     String dataCenter();
 
-    @DefaultStringValue("Name")
-    String nameDisk();
-
     @DefaultStringValue("Actual Size")
     String sizeDisk();
 
