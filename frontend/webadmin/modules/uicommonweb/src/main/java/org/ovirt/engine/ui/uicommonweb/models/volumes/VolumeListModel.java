@@ -603,7 +603,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
                         UICommand stopRebalanceFromStatus =
                                 new UICommand("stop_rebalance_from_status", VolumeListModel.this);//$NON-NLS-1$
-                        stopRebalanceFromStatus.setIsCancel(true);
+
                         stopRebalanceFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRebalance());
                         rebalanceStatusModel.getCommands().add(stopRebalanceFromStatus);
 
