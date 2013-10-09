@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.vnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -10,6 +11,8 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.Align;
 
 import com.google.gwt.core.client.GWT;
@@ -42,6 +45,9 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     public EntityModelCheckBoxEditor publicUseEditor;
 
     @UiField(provided = true)
+    public InfoIcon publicInfo;
+
+    @UiField(provided = true)
     @Path(value = "networkQoS.selectedItem")
     @WithElementId("networkQoS")
     public ListModelListBoxEditor<Object> networkQoSEditor;
@@ -54,9 +60,12 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     private final Driver driver = GWT.create(Driver.class);
 
     private final static ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private final static ApplicationResources resources = GWT.create(ApplicationResources.class);
+    private final static ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
 
     public VnicProfileWidget() {
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        publicInfo = new InfoIcon(templates.italicText(constants.profilePublicUseLabel()), resources);
         networkQoSEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
