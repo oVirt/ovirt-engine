@@ -3,8 +3,8 @@ package org.ovirt.engine.api.model;
 import org.apache.commons.lang.StringUtils;
 
 public enum WatchdogModel {
-    I6300ESB,
-    IB700;
+    I6300ESB;
+
     public String value() {
         return this.name().toLowerCase();
     }

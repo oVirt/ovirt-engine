@@ -795,8 +795,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VmWatchdogType___i6300esb();
 
-    String VmWatchdogType___ib700();
-
     String VmWatchdogAction___NONE();
 
     String VmWatchdogAction___RESET();

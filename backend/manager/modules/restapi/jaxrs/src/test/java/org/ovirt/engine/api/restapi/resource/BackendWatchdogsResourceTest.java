@@ -106,7 +106,7 @@ public class BackendWatchdogsResourceTest extends AbstractBackendWatchdogsResour
     private WatchDog getModel(int i) {
         WatchDog watchDog = new WatchDog();
         watchDog.setAction(WatchdogAction.RESET.name().toLowerCase());
-        watchDog.setModel(WatchdogModel.IB700.name().toLowerCase());
+        watchDog.setModel(WatchdogModel.I6300ESB.name().toLowerCase());
         watchDog.setId(PARENT_ID.toString());
         return watchDog;
     }
