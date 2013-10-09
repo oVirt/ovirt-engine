@@ -46,8 +46,6 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     @WithElementId("networkQoS")
     public ListModelListBoxEditor<Object> networkQoSEditor;
 
-    private VnicProfileModel vnicProfileModel;
-
     @UiField
     WidgetStyle style;
 
