@@ -10,7 +10,11 @@ import com.google.gwt.user.cellview.client.Column;
 public class VolumeActivityColumn<T extends GlusterTaskSupport> extends Column<T, GlusterTaskSupport> {
 
     public VolumeActivityColumn(List<HasCell<GlusterTaskSupport, ?>> list) {
-        super(new VolumeActivityCompositeCell<GlusterTaskSupport>(list));
+        this(new VolumeActivityCompositeCell<GlusterTaskSupport>(list));
+    }
+
+    public VolumeActivityColumn(VolumeActivityCompositeCell<GlusterTaskSupport> cell) {
+        super(cell);
     }
 
     @Override

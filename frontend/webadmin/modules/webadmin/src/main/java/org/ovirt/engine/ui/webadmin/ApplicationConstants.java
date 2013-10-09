@@ -2642,9 +2642,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remove")
     String removeBricksBrick();
 
-    @DefaultStringValue("Start")
-    String removeBricksStart();
-
     @DefaultStringValue("Stop")
     String removeBricksStop();
 
@@ -3272,6 +3269,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Cluster :")
     String rebalanceClusterVolume();
+
+    @DefaultStringValue("Brick removal in progress")
+    String removeBrickInProgress();
+
+    @DefaultStringValue("Brick removal stopped")
+    String removeBrickStopped();
+
+    @DefaultStringValue("Brick removal failed")
+    String removeBrickFailed();
+
+    @DefaultStringValue("Migration completed, pending commit")
+    String removeBrickCommitRequired();
 
     //Volume Rebalance Status Table Columns
     @DefaultStringValue("Host")

@@ -90,6 +90,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
 
 
         MenuCell<GlusterTaskSupport> rebalanceMenuCell = getRebalanceActivityMenu(constants);
+        MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu(constants);
         List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
         list.add(new VolumeActivityStatusColumn<GlusterTaskSupport>());
         list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeActivitySeperatorCell<GlusterTaskSupport>()) {
@@ -97,9 +98,14 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             public GlusterTaskSupport getValue(GlusterTaskSupport object) {
                 return object;
             }
-
         });
         list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(rebalanceMenuCell) {
+            @Override
+            public GlusterTaskSupport getValue(GlusterTaskSupport object) {
+                return object;
+            }
+        });
+        list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(removeBricksMenuCell) {
             @Override
             public GlusterTaskSupport getValue(GlusterTaskSupport object) {
                 return object;
@@ -158,6 +164,20 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         };
         menuCell.addMenuItem(constants.statusRebalance(), getMainModel().getStatusRebalanceCommand());
         menuCell.addMenuItem(constants.stopRebalance(), getMainModel().getStopRebalanceCommand());
+        return menuCell;
+    }
+
+    private MenuCell<GlusterTaskSupport> getRemoveBrickActivityMenu(ApplicationConstants constants) {
+        MenuCell<GlusterTaskSupport> menuCell = new MenuCell<GlusterTaskSupport>() {
+            @Override
+            protected boolean isVisible(GlusterTaskSupport value) {
+                return value.getAsyncTask() != null && value.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
+            }
+        };
+        menuCell.addMenuItem(constants.removeBricksStop(), getMainModel().getBrickListModel()
+                .getStopRemoveBricksCommand());
+        menuCell.addMenuItem(constants.removeBricksCommit(), getMainModel().getBrickListModel()
+                .getCommitRemoveBricksCommand());
         return menuCell;
     }
 }

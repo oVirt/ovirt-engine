@@ -393,4 +393,17 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/glusterAsyncTasks/rebalance_stopped.png")
     ImageResource rebalanceStoppped();
+
+    @Source("images/glusterAsyncTasks/remove_brick_running.png")
+    ImageResource removeBrickRunning();
+
+    @Source("images/glusterAsyncTasks/remove_brick_stopped.png")
+    ImageResource removeBrickStopped();
+
+    @Source("images/glusterAsyncTasks/remove_brick_failed.png")
+    ImageResource removeBrickFailed();
+
+    @Source("images/glusterAsyncTasks/remove_brick_commit_required.png")
+    ImageResource removeBrickCommitRequired();
+
 }

@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
@@ -17,10 +17,16 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.MenuCell;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeCell;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivitySeperatorCell;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.inject.Inject;
 
 public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolumeEntity, GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> implements SubTabVolumeBrickPresenter.ViewDef {
@@ -58,6 +64,9 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         };
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
 
+        getTable().addColumn(new VolumeActivityColumn<GlusterBrickEntity>(getActivityCell(constants)),
+                constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.addBricksBrick()) {
             @Override
             protected UICommand resolveCommand() {
@@ -65,31 +74,12 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
             }
         });
 
-        List<ActionButtonDefinition<GlusterBrickEntity>> removeSubActions = new LinkedList<ActionButtonDefinition<GlusterBrickEntity>>();
-        removeSubActions.add(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.removeBricksStart()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.removeBricksBrick()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveBricksCommand();
             }
         });
-
-        removeSubActions.add(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.removeBricksStop()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getStopRemoveBricksCommand();
-            }
-        });
-
-        removeSubActions.add(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.removeBricksCommit()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getCommitRemoveBricksCommand();
-            }
-        });
-
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterBrickEntity>(constants.removeBricksBrick(),
-                removeSubActions,
-                CommandLocation.ContextAndToolBar));
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.replaceBrickBrick()) {
             @Override
@@ -104,5 +94,44 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                 return getDetailModel().getBrickAdvancedDetailsCommand();
             }
         });
+    }
+
+    private VolumeActivityCompositeCell<GlusterTaskSupport> getActivityCell(ApplicationConstants constants) {
+        MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu(constants);
+        List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
+        list.add(new VolumeActivityStatusColumn<GlusterTaskSupport>());
+        list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeActivitySeperatorCell<GlusterTaskSupport>()) {
+            @Override
+            public GlusterTaskSupport getValue(GlusterTaskSupport object) {
+                return object;
+            }
+        });
+        list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(removeBricksMenuCell) {
+            @Override
+            public GlusterTaskSupport getValue(GlusterTaskSupport object) {
+                return object;
+            }
+        });
+
+        VolumeActivityCompositeCell<GlusterTaskSupport> activityCell =
+                new VolumeActivityCompositeCell<GlusterTaskSupport>(list) {
+                    @Override
+                    protected boolean isVisible(GlusterTaskSupport value) {
+                        return value.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
+                    }
+                };
+        return activityCell;
+    }
+
+    private MenuCell<GlusterTaskSupport> getRemoveBrickActivityMenu(ApplicationConstants constants) {
+        MenuCell<GlusterTaskSupport> menuCell = new MenuCell<GlusterTaskSupport>() {
+            @Override
+            protected boolean isVisible(GlusterTaskSupport value) {
+                return value.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
+            }
+        };
+        menuCell.addMenuItem(constants.removeBricksStop(), getDetailModel().getStopRemoveBricksCommand());
+        menuCell.addMenuItem(constants.removeBricksCommit(), getDetailModel().getCommitRemoveBricksCommand());
+        return menuCell;
     }
 }

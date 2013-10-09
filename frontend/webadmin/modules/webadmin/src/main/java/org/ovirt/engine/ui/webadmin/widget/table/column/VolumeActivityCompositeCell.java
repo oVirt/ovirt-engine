@@ -28,12 +28,20 @@ public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends C
             return;
         }
 
+        if (!isVisible(value)) {
+            return;
+        }
+
         sb.appendHtmlConstant("<table style=\"margin:0 auto\"><tr>"); //$NON-NLS-1$
         Iterator<HasCell<T, ?>> iterator = hasCells.iterator();
         while (iterator.hasNext()) {
             render(context, value, sb, iterator.next());
         }
         sb.appendHtmlConstant("</tr></table>"); //$NON-NLS-1$
+    }
+
+    protected boolean isVisible(T value) {
+        return true;
     }
 
     @Override

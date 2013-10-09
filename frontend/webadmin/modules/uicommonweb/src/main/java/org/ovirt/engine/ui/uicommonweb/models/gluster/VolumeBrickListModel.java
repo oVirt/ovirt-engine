@@ -154,12 +154,10 @@ public class VolumeBrickListModel extends SearchableListModel {
         boolean allowReplace = true;
         boolean allowAdvanced = true;
 
-        if (getSelectedItems() == null || getSelectedItems().size() == 0) {
+        if (volumeEntity == null || getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowRemove = false;
             allowReplace = false;
             allowAdvanced = false;
-            allowStopRemove = false;
-            allowCommitRemove = false;
         }
         else {
             GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
@@ -177,18 +175,6 @@ public class VolumeBrickListModel extends SearchableListModel {
                 allowRemove = false;
             }
 
-            List<GlusterBrickEntity> list = getSelectedItems();
-            for (GlusterBrickEntity brick : list) {
-                GlusterAsyncTask task = brick.getAsyncTask();
-                allowStopRemove =
-                        allowStopRemove && task != null && task.getTaskId() != null
-                                && volumeTask != null && volumeTask.getStatus() == JobExecutionStatus.STARTED;
-                allowCommitRemove =
-                        allowCommitRemove && task != null && task.getTaskId() != null
-                                && volumeTask != null && volumeTask.getType() == GlusterTaskType.REMOVE_BRICK
-                                && volumeTask.getStatus() == JobExecutionStatus.FINISHED;
-            }
-
             if(getSelectedItems().size() == 1) {
                 allowReplace = true;
                 allowAdvanced = volumeEntity.isOnline() && ((GlusterBrickEntity) getSelectedItems().get(0)).isOnline();
@@ -198,6 +184,19 @@ public class VolumeBrickListModel extends SearchableListModel {
                 allowAdvanced = false;
             }
         }
+
+        // Stop/Commit brick removal can be invoked from the Volume(tab) Activities menu as well
+        // So no need to check if there are any bricks selected or not, command availability
+        // will be decided based on the task on the volume
+        allowStopRemove =
+                volumeEntity != null && volumeEntity.getAsyncTask() != null
+                        && volumeEntity.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
+                        && volumeEntity.getAsyncTask().getStatus() == JobExecutionStatus.STARTED;
+
+        allowCommitRemove =
+                volumeEntity != null && volumeEntity.getAsyncTask() != null
+                        && volumeEntity.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
+                        && volumeEntity.getAsyncTask().getStatus() == JobExecutionStatus.FINISHED;
 
         getRemoveBricksCommand().setIsExecutionAllowed(allowRemove);
         getStopRemoveBricksCommand().setIsExecutionAllowed(allowStopRemove);
@@ -209,16 +208,16 @@ public class VolumeBrickListModel extends SearchableListModel {
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
+        getSearchCommand().execute();
+    }
+
+    @Override
+    protected void syncSearch() {
         if (getEntity() == null) {
             return;
         }
         GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
         setItems(glusterVolumeEntity.getBricks());
-    }
-
-    @Override
-    protected void syncSearch() {
-        onEntityChanged();
     }
 
     private void checkUpServerAndAddBricks() {
@@ -765,11 +764,6 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     private void stopRemoveBricks() {
-
-        if (getSelectedItems() == null || getSelectedItems().isEmpty()) {
-            return;
-        }
-
         if (getConfirmWindow() != null) {
             return;
         }
@@ -839,10 +833,6 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     private void commitRemoveBricks() {
-        if (getSelectedItems() == null || getSelectedItems().isEmpty()) {
-            return;
-        }
-
         if (getConfirmWindow() != null) {
             return;
         }

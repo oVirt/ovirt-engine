@@ -142,6 +142,16 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         this.optimizeForVirtStoreCommand = optimizeForVirtStoreCommand;
     }
 
+    private VolumeBrickListModel brickListModel;
+
+    public VolumeBrickListModel getBrickListModel() {
+        return this.brickListModel;
+    }
+
+    public void setBrickListModel(VolumeBrickListModel brickListModel) {
+        this.brickListModel = brickListModel;
+    }
+
     public VolumeListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
 
@@ -172,10 +182,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     @Override
     protected void initDetailModels() {
         super.initDetailModels();
+
+        setBrickListModel(new VolumeBrickListModel());
+
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new VolumeGeneralModel());
         list.add(new VolumeParameterListModel());
-        list.add(new VolumeBrickListModel());
+        list.add(getBrickListModel());
         list.add(new PermissionListModel());
         list.add(new VolumeEventListModel());
         setDetailModels(list);
@@ -348,6 +361,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
+        getBrickListModel().setEntity(provideDetailModelEntity(getSelectedItem()));
     }
 
     @Override

@@ -57,12 +57,35 @@ public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends Abst
                 tooltip = ""; //$NON-NLS-1$
             }
         }
+        else if (taskType == GlusterTaskType.REMOVE_BRICK) {
+            switch (value.getAsyncTask().getStatus()) {
+            case STARTED:
+                taskImage = resources.removeBrickRunning();
+                tooltip = constants.removeBrickInProgress();
+                break;
+            case ABORTED:
+                taskImage = resources.removeBrickStopped();
+                tooltip = constants.removeBrickStopped();
+                break;
+            case FAILED:
+                taskImage = resources.removeBrickFailed();
+                tooltip = constants.removeBrickFailed();
+                break;
+            case FINISHED:
+                taskImage = resources.removeBrickCommitRequired();
+                tooltip = constants.removeBrickCommitRequired();
+                break;
+            default:
+                taskImage = null;
+                tooltip = ""; //$NON-NLS-1$
+            }
+        }
 
         if (taskImage != null) {
             // Generate the HTML for the image:
             SafeHtml activityImageHtml =
                     SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(taskImage).getHTML());
-            sb.append(applicationTemplates.statusTemplate(activityImageHtml, tooltip));
+            sb.append(applicationTemplates.image(activityImageHtml, tooltip));
         }
     }
 
