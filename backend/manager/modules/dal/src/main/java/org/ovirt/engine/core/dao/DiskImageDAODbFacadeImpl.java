@@ -169,9 +169,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                     : null);
             entity.setFlushLatency(rs.getObject("flush_latency_seconds") != null ? rs.getDouble("flush_latency_seconds")
                     : null);
-            entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setActive(Boolean.TRUE.equals(rs.getObject("active")));
-            entity.setQuotaName(rs.getString("quota_name"));
+            entity.setQuotaIds(getGuidListFromStringPreserveAllTokens(rs.getString("quota_id")));
+            entity.setQuotaNames(splitPreserveAllTokens(rs.getString("quota_name")));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
         }
 
@@ -188,6 +188,41 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             }
 
             return new ArrayList<String>(Arrays.asList(str.split(SEPARATOR)));
+        }
+
+        /**
+         * since quota can be null, we need to preserve null in the list
+         *
+         * @param str
+         * @return
+         */
+        private ArrayList<String> splitPreserveAllTokens(String str) {
+            if (StringUtils.isEmpty(str)) {
+                return null;
+            }
+
+            return new ArrayList<String>(Arrays.asList(StringUtils.splitPreserveAllTokens(str, SEPARATOR)));
+        }
+
+        /**
+         * since some disk images can contain empty quota, we need to preserve null in the list.
+         *
+         * @param str
+         * @return
+         */
+        private ArrayList<Guid> getGuidListFromStringPreserveAllTokens(String str) {
+            ArrayList<Guid> guidList = new ArrayList<Guid>();
+            if (StringUtils.isEmpty(str)) {
+                return new ArrayList<Guid>();
+            }
+            for (String guidString : splitPreserveAllTokens(str)) {
+                Guid guidToAdd = null;
+                if (!StringUtils.isEmpty(guidString)) {
+                    guidToAdd = Guid.createGuidFromString(guidString);
+                }
+                guidList.add(guidToAdd);
+            }
+            return guidList;
         }
     }
 }

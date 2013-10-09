@@ -39,11 +39,6 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
     @NotNull(message = "VALIDATION.VOLUME_FORMAT.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeFormat volumeFormat;
 
-    /**
-     * The quota id the image consumes from.
-     */
-    private Guid quotaId;
-
     public Image() {
         id = Guid.Empty;
         creationDate = new Date();
@@ -152,14 +147,6 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     public void setVolumeFormat(VolumeFormat volumeFormat) {
         this.volumeFormat = volumeFormat;
-    }
-
-    public Guid getQuotaId() {
-        return quotaId;
-    }
-
-    public void setQuotaId(Guid quotaId) {
-        this.quotaId = quotaId;
     }
 
     @Override

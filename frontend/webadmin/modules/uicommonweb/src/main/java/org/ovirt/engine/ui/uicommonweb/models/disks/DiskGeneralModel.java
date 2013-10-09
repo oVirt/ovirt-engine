@@ -11,6 +11,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class DiskGeneralModel extends EntityModel
 {
@@ -202,7 +203,7 @@ public class DiskGeneralModel extends EntityModel
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
-            setQuotaName(diskImage.getQuotaName());
+            setQuotaName(StringUtils.join(diskImage.getQuotaNames(), ", ")); //$NON-NLS-1$
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         }
         else if (isLun()) {

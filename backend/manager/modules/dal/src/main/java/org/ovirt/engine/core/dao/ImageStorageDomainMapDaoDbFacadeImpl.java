@@ -5,10 +5,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implements ImageStorageDomainMapDao {
 
@@ -17,7 +18,8 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
         getCallsHandler().executeModification("Insertimage_storage_domain_map",
                 getCustomMapSqlParameterSource().addValue("image_id",
                         entity.getimage_id()).addValue("storage_domain_id",
-                        entity.getstorage_domain_id()));
+                        entity.getstorage_domain_id())
+                        .addValue("quota_id", entity.getQuotaId()));
     }
 
     @Override
@@ -66,6 +68,15 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void updateQuotaForImageAndSnapshots(Guid diskId, Guid storageDomainId, Guid quotaId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("disk_id", diskId)
+                .addValue("storage_domain_id", storageDomainId)
+                .addValue("quota_id", quotaId);
+        getCallsHandler().executeModification("updateQuotaForImageAndSnapshots", parameterSource);
+    }
+
     private static final RowMapper<image_storage_domain_map> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
             new RowMapper<image_storage_domain_map>() {
 
@@ -74,6 +85,7 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
                     image_storage_domain_map entity = new image_storage_domain_map();
                     entity.setimage_id(getGuidDefaultEmpty(rs, "image_id"));
                     entity.setstorage_domain_id(getGuidDefaultEmpty(rs, "storage_domain_id"));
+                    entity.setQuotaId(getGuid(rs, "quota_id"));
                     return entity;
                 }
             };

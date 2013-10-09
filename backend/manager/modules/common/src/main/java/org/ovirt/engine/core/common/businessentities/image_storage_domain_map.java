@@ -7,16 +7,17 @@ public class image_storage_domain_map implements BusinessEntity<ImageStorageDoma
     private static final long serialVersionUID = 8459502119344718863L;
 
     private ImageStorageDomainMapId id;
-
+    private Guid quotaId;
 
     public image_storage_domain_map() {
         id = new ImageStorageDomainMapId();
     }
 
-    public image_storage_domain_map(Guid image_id, Guid storage_domain_id) {
+    public image_storage_domain_map(Guid image_id, Guid storage_domain_id, Guid quotaId) {
         this();
         this.id.setImageId(image_id);
         this.id.setStorageDomainId(storage_domain_id);
+        this.quotaId = quotaId;
     }
 
     public Guid getstorage_domain_id() {
@@ -35,11 +36,20 @@ public class image_storage_domain_map implements BusinessEntity<ImageStorageDoma
         this.id.setImageId(value);
     }
 
+    public Guid getQuotaId() {
+        return quotaId;
+    }
+
+    public void setQuotaId(Guid quotaId) {
+        this.quotaId = quotaId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
         return result;
     }
 
@@ -55,7 +65,8 @@ public class image_storage_domain_map implements BusinessEntity<ImageStorageDoma
             return false;
         }
         image_storage_domain_map other = (image_storage_domain_map) obj;
-        return (ObjectUtils.objectsEqual(id, other.id));
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(quotaId, other.quotaId));
     }
 
     @Override

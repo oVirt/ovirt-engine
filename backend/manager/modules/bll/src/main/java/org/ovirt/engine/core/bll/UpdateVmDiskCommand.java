@@ -310,6 +310,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                         diskImage.setImageStatus(ImageStatus.OK);
                     }
                     getImageDao().update(diskImage.getImage());
+                    updateQuota(diskImage);
                 }
                 updateVmDisksAndDevice();
 
@@ -325,6 +326,17 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 }
             }
         });
+    }
+
+    protected void updateQuota(DiskImage diskImage) {
+        if (isQuotaValidationNeeded()) {
+            DiskImage oldDisk = (DiskImage) getOldDisk();
+            if (!ObjectUtils.objectsEqual(oldDisk.getQuotaId(), diskImage.getQuotaId())) {
+                getImageStorageDomainMapDao().updateQuotaForImageAndSnapshots(diskImage.getId(),
+                        diskImage.getStorageIds().get(0),
+                        diskImage.getQuotaId());
+            }
+        }
     }
 
     private void applyUserChanges(Disk diskToUpdate) {

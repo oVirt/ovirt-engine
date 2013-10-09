@@ -22,6 +22,7 @@
 
 	<g:HorizontalPanel width="100%">
 		<e:EntityModelLabelEditor ui:field="objectNameLabel" />
+		<e:EntityModelLabelEditor ui:field="storageDomainNameLabel" />
 		<e:EntityModelLabelEditor ui:field="currentQuotaLabel" />
 		<e:ListModelListBoxEditor ui:field="quotaListEditor" />
 	</g:HorizontalPanel>

@@ -58,6 +58,7 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
         listHeader = new EntityModelCellTable(false, (Resources) GWT.create(
                 PopupSimpleTableResources.class), true);
         listHeader.addColumn(new EmptyColumn(), constants.elementName(), width);
+        listHeader.addColumn(new EmptyColumn(), constants.storageDomainDisk(), width);
         listHeader.addColumn(new EmptyColumn(), constants.currentQuota(), width);
 
         listHeader.addColumn(new EmptyColumn(), constants.quotaDisk(), width);

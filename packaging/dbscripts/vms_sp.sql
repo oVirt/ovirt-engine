@@ -1004,7 +1004,8 @@ BEGIN
       FROM vms
       INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
       INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE
-      WHERE images.quota_id = v_quota_id;
+      INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
+      WHERE image_storage_domain_map.quota_id = v_quota_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

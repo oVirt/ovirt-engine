@@ -2933,7 +2933,6 @@
         <column>image_group_id</column>
         <column>_create_date</column>
         <column>_update_date</column>
-        <column>quota_id</column>
         <column>active</column>
         <!-- template images -->
         <row>
@@ -2950,7 +2949,6 @@
             <null />
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
         </row>
         <row>
@@ -2967,7 +2965,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
         </row>
         <row>
@@ -2984,7 +2981,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
             <value>2010-11-18 11:11:45</value>
             <value>2010-12-01 14:13:47</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
         </row>
         <row>
@@ -3001,7 +2997,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>0</value>
         </row>
         <!-- end of template images -->
@@ -3019,7 +3014,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <null/>
             <value>1</value>
         </row>
         <row>
@@ -3036,7 +3030,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
         </row>
         <row>
@@ -3053,7 +3046,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>0</value>
         </row>
         <row>
@@ -3070,7 +3062,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>1</value>
         </row>
         <row>
@@ -3087,7 +3078,6 @@
             <value>fb26a52b-b60f-44cb-9f46-3ef333b04a3f</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>0</value>
         </row>
         <row>
@@ -3104,7 +3094,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>0</value>
         </row>
         <row>
@@ -3121,7 +3110,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a38</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>1</value>
         </row>
         <row>
@@ -3138,7 +3126,6 @@
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
-            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>1</value>
         </row>
     </table>
@@ -3907,25 +3894,31 @@
     <table name="image_storage_domain_map">
         <column>image_id</column>
         <column>storage_domain_id</column>
+        <column>quota_id</column>
         <row>
             <value>52058975-3d5e-484a-80c1-01c31207f578</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
         </row>
         <row>
             <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
         </row>
         <row>
             <value>42058975-3d5e-484a-80c1-01c31207f578</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
         </row>
         <row>
             <value>42058975-3d5e-484a-80c1-01c31207f579</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <null/>
         </row>
         <row>
             <value>42058975-3d5e-484a-80c1-01c31207f577</value>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
         </row>
     </table>
 

@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 
@@ -229,6 +230,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected ImageDao getImageDao() {
         return getDbFacade().getImageDao();
+    }
+
+    protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {
+        return getDbFacade().getImageStorageDomainMapDao();
     }
 
     protected BaseDiskDao getBaseDiskDao() {

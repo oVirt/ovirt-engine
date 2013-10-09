@@ -3,19 +3,20 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.quota.ChangeQuotaCommand;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
 
-    private DiskImageBase disk;
+    private DiskImage disk;
 
     public ChangeQuotaForDiskCommand(ChangeQuotaParameters params) {
         super(params);
@@ -32,14 +33,15 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
             return false;
         }
-        this.disk = (DiskImageBase) disk;
+        this.disk = (DiskImage) disk;
 
         return super.canDoAction();
     }
 
     @Override
     protected void executeCommand() {
-        getDbFacade().getImageDao().updateQuotaForImageAndSnapshots(getParameters().getObjectId(),
+        getDbFacade().getImageStorageDomainMapDao().updateQuotaForImageAndSnapshots(getParameters().getObjectId(),
+                getParameters().getContainerId(),
                 getParameters().getQuotaId());
         setSucceeded(true);
     }
@@ -47,10 +49,10 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
-        if (!getQuotaId().equals(getDisk().getQuotaId())) {
-            if (getDisk().getQuotaId() != null && !Guid.Empty.equals(getDisk().getQuotaId())) {
+        if (!ObjectUtils.equals(getQuotaId(), disk.getQuotaId())) {
+            if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
                 list.add(new QuotaStorageConsumptionParameter(
-                        getDisk().getQuotaId(),
+                        disk.getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getParameters().getContainerId(),
@@ -69,10 +71,6 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
 
     private double getDiskSize() {
         return disk.getSizeInGigabytes();
-    }
-
-    private DiskImageBase getDisk() {
-        return disk;
     }
 
 }

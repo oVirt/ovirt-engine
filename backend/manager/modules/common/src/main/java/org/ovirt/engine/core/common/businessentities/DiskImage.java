@@ -31,6 +31,8 @@ public class DiskImage extends DiskImageBase implements IImage {
     private int writeRateKbPerSec;
     private ArrayList<DiskImage> snapshots;
     private double actualDiskWithSnapthotsSize;
+    private ArrayList<Guid> quotaIds;
+    private ArrayList<String> quotaNames;
 
     public DiskImage() {
         setParentId(Guid.Empty);
@@ -314,6 +316,41 @@ public class DiskImage extends DiskImageBase implements IImage {
         return snapshots;
     }
 
+    public ArrayList<Guid> getQuotaIds() {
+        return quotaIds;
+    }
+
+    public void setQuotaIds(ArrayList<Guid> quotaIds) {
+        this.quotaIds = quotaIds;
+    }
+
+    public Guid getQuotaId() {
+        if (quotaIds == null || quotaIds.isEmpty()) {
+            return null;
+        }
+        return quotaIds.get(0);
+    }
+
+    public void setQuotaId(Guid quotaId) {
+        quotaIds = new ArrayList<Guid>();
+        quotaIds.add(quotaId);
+    }
+
+    public ArrayList<String> getQuotaNames() {
+        return quotaNames;
+    }
+
+    public void setQuotaNames(ArrayList<String> quotaNames) {
+        this.quotaNames = quotaNames;
+    }
+
+    public String getQuotaName() {
+        if (quotaNames == null || quotaNames.isEmpty()) {
+            return null;
+        }
+        return quotaNames.get(0);
+    }
+
     public static DiskImage copyOf(DiskImage diskImage) {
         DiskImage di = new DiskImage();
 
@@ -322,10 +359,13 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setvolumeFormat(diskImage.getVolumeFormat());
         di.setSize(diskImage.getSize());
         di.setBoot(diskImage.isBoot());
-        di.setQuotaId(diskImage.getQuotaId());
-        di.setQuotaName(diskImage.getQuotaName());
+        if (diskImage.getQuotaIds() != null) {
+            di.setQuotaIds(new ArrayList<Guid>(diskImage.getQuotaIds()));
+        }
+        if (diskImage.getQuotaNames() != null) {
+            di.setQuotaNames(new ArrayList<String>(diskImage.getQuotaNames()));
+        }
         di.setQuotaEnforcementType(diskImage.getQuotaEnforcementType());
-        di.setIsQuotaDefault(diskImage.isQuotaDefault());
         di.setActive(diskImage.getActive());
         di.setCreationDate(new Date(diskImage.getCreationDate().getTime()));
         di.setLastModifiedDate(new Date(diskImage.getLastModifiedDate().getTime()));
@@ -366,7 +406,6 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setLastModified(new Date());
         di.setActive(true);
         di.setImageStatus(ImageStatus.LOCKED);
-
         return di;
     }
 

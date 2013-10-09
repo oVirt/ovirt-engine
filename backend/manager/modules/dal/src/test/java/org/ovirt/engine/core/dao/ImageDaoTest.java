@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -70,7 +69,6 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         newImage.setVolumeFormat(VolumeFormat.COW);
         newImage.setVolumeType(VolumeType.Sparse);
         newImage.setDiskId(Guid.newGuid());
-        newImage.setQuotaId(QUOTA_ID);
     }
 
     @Test
@@ -88,25 +86,6 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         Image imageFromDb = dao.get(EXISTING_IMAGE_ID);
         assertNotNull(imageFromDb);
         assertEquals("Image snapshot id wasn't updated properly", guid, imageFromDb.getSnapshotId());
-    }
-
-    @Test
-    public void testChangeQuotaForDisk() {
-        // fetch image
-        Image image = dao.get(FixturesTool.IMAGE_ID);
-        Guid diskId = image.getDiskId();
-        Guid quotaId = image.getQuotaId();
-        // test that the current quota doesn't equal with the new quota
-        if(quotaId.equals(FixturesTool.DEFAULT_QUOTA_GENERAL)){
-            fail("Same source and dest quota id, cannot perform test");
-        }
-        // change quota to the new quota
-        dao.updateQuotaForImageAndSnapshots(diskId, FixturesTool.DEFAULT_QUOTA_GENERAL);
-        // fetch the image again
-        image = dao.get(FixturesTool.IMAGE_ID);
-        quotaId = image.getQuotaId();
-        // check that the new quota is the inserted one
-        assertEquals("quota wasn't changed", quotaId, FixturesTool.DEFAULT_QUOTA_GENERAL);
     }
 
     @Test

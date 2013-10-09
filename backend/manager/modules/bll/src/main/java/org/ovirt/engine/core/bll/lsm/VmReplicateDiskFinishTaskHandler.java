@@ -86,9 +86,12 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                         for (DiskImage di : getDiskImageDao().getAllSnapshotsForImageGroup
                                 (getEnclosingCommand().getParameters().getImageGroupID())) {
                             getImageStorageDomainMapDao().remove
-                                    (new ImageStorageDomainMapId(di.getImageId(), sourceStorageDomainId));
+                                    (new ImageStorageDomainMapId(di.getImageId(),
+                                            sourceStorageDomainId));
                             getImageStorageDomainMapDao().save
-                                    (new image_storage_domain_map(di.getImageId(), targetStorageDomainId));
+                                    (new image_storage_domain_map(di.getImageId(),
+                                            targetStorageDomainId,
+                                            di.getQuotaId()));
                         }
                         return null;
                     }

@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -37,4 +38,12 @@ public interface ImageStorageDomainMapDao extends GenericDao<image_storage_domai
      */
     List<image_storage_domain_map> getAllByImageId(Guid imageId);
 
+    /**
+     * updates images quota of a specific disk on a specific storage domain
+     *
+     * @param diskId
+     * @param storageDomainId
+     * @param quotaId
+     */
+    void updateQuotaForImageAndSnapshots(Guid diskId, Guid storageDomainId, Guid quotaId);
 }
