@@ -226,7 +226,11 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         }
         Pair<List<Guid>, Guid> retValue = new Pair<List<Guid>, Guid>();
         retValue.setFirst(hostIDs);
-        retValue.setSecond(new Guid(castedResult[0].toString()));
+        if (castedResult[0].toString().isEmpty()) {
+            return null;
+        } else {
+            retValue.setSecond(new Guid(castedResult[0].toString()));
+        }
 
         return retValue;
     }
