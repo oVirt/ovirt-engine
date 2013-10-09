@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
@@ -212,13 +213,25 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDbFacade().getInterfaceDao().getAllInterfacesForVds(hostId);
 
         for (VdsNetworkInterface nic : nics) {
-            if (nic.getStatistics().getStatus() == InterfaceStatus.UP
-                    && migrationNetworkName.equals(nic.getNetworkName())) {
+            if (migrationNetworkName.equals(nic.getNetworkName()) && migrationInterfaceUp(nic, nics)) {
                 return nic.getAddress();
             }
         }
 
         return null;
+    }
+
+    protected boolean migrationInterfaceUp(VdsNetworkInterface nic, List<VdsNetworkInterface> nics) {
+        if (nic.getVlanId() != null) {
+            String physicalNic = NetworkUtils.stripVlan(nic.getName());
+            for (VdsNetworkInterface iface : nics) {
+                if (iface.getName().equals(physicalNic)) {
+                    return iface.getStatistics().getStatus() == InterfaceStatus.UP;
+                }
+            }
+        }
+
+        return nic.getStatistics().getStatus() == InterfaceStatus.UP;
     }
 
     /**
