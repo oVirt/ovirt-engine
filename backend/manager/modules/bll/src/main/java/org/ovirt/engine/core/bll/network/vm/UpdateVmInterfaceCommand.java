@@ -202,7 +202,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        Network network = null;
+        Network network = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
         if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
             Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
             if (!validate(nicValidator.hotUpdateDoneWithInternalNetwork(oldNetwork, network))) {
