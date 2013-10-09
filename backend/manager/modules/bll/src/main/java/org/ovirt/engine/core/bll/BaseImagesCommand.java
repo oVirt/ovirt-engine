@@ -247,7 +247,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         diskDynamic.setactual_size(image.getActualSizeInBytes());
         getDiskImageDynamicDAO().save(diskDynamic);
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(image.getImageId(),
-                image.getStorageIds().get(0));
+                image.getStorageIds().get(0), image.getQuotaId());
         getImageStorageDomainMapDao().save(image_storage_domain_map);
         boolean isDiskAdded = saveDiskIfNotExists(image);
         if (compensationContext != null) {
@@ -367,7 +367,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         DbFacade.getInstance().getImageDao().save(diskImage.getImage());
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(diskImage.getImageId(),
                 diskImage.getStorageIds()
-                        .get(0));
+                        .get(0), diskImage.getQuotaId());
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()
                 .save(image_storage_domain_map);

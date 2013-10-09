@@ -339,7 +339,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             VdcActionParametersBase parameters =
                     new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
                             disk.getId(),
-                            disk.getStorageIds().get(0),
+                            itemModel.getStorageDomainId(),
                             disk.getStoragePoolId());
             paramerterList.add(parameters);
         }

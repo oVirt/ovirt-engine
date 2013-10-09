@@ -10,8 +10,6 @@ import org.ovirt.engine.core.compat.Guid;
 public interface ImageDao extends GenericDao<Image, Guid>, StatusAwareDao<Guid, ImageStatus> {
     public void updateStatusOfImagesByImageGroupId(Guid imageGroupId, ImageStatus status);
 
-    public void updateQuotaForImageAndSnapshots(Guid imageGroupId, Guid quotaId);
-
     public void updateImageVmSnapshotId(Guid id, Guid vmSnapshotId);
 
     public void updateImageSize(Guid id, long size);

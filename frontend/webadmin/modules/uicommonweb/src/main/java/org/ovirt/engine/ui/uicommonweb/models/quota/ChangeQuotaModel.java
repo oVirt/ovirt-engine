@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -27,24 +29,24 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 public class ChangeQuotaModel extends ListModel {
 
     public void init(final ArrayList<DiskImage> disks) {
-        final Map<Guid, List<Quota>> storageDomainIdMap = new HashMap<Guid, List<Quota>>();
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
-
+        Set<Guid> storageDomainIdSet = new HashSet<Guid>();
         for (DiskImage diskImage : disks) {
-            if (storageDomainIdMap.containsKey(diskImage.getId())) {
-                continue;
+            for (Guid storageDomainId : diskImage.getStorageIds()) {
+                storageDomainIdSet.add(storageDomainId);
             }
-            storageDomainIdMap.put(diskImage.getId(), new ArrayList<Quota>());
+        }
+        for (Guid storageDomainId : storageDomainIdSet) {
+            queryParamsList.add(new IdQueryParameters(storageDomainId));
             queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
-            queryParamsList.add(new IdQueryParameters(diskImage.getStorageIds().get(0)));
         }
 
         Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
-                storageDomainIdMap.clear();
+                Map<Guid, List<Quota>> storageDomainIdMap = new HashMap<Guid, List<Quota>>();
                 for (int i = 0; i < result.getReturnValues().size(); i++) {
                     VdcQueryReturnValue retVal = result.getReturnValues().get(i);
                     Guid storageId =
@@ -52,19 +54,25 @@ public class ChangeQuotaModel extends ListModel {
                     storageDomainIdMap.put(storageId, (ArrayList<Quota>) retVal.getReturnValue());
                 }
                 ArrayList<ChangeQuotaItemModel> list = new ArrayList<ChangeQuotaItemModel>();
+                Guid storageDomainId;
                 for (DiskImage diskImage : disks) {
-                    ChangeQuotaItemModel itemModel = new ChangeQuotaItemModel();
-                    itemModel.setEntity(diskImage);
-                    itemModel.getObject().setEntity(diskImage.getDiskAlias());
-                    itemModel.getCurrentQuota().setEntity(diskImage.getQuotaName());
-                    itemModel.getQuota().setItems(storageDomainIdMap.get(diskImage.getStorageIds().get(0)));
-                    for (Quota quota : (ArrayList<Quota>) itemModel.getQuota().getItems()) {
-                        if (!quota.getId().equals(diskImage.getQuotaId())) {
-                            itemModel.getQuota().setSelectedItem(quota);
-                            break;
+                    for (int i = 0; i < diskImage.getStorageIds().size(); i++) {
+                        storageDomainId = diskImage.getStorageIds().get(i);
+                        ChangeQuotaItemModel itemModel = new ChangeQuotaItemModel();
+                        itemModel.setEntity(diskImage);
+                        itemModel.getObject().setEntity(diskImage.getDiskAlias());
+                        itemModel.getCurrentQuota().setEntity(diskImage.getQuotaNames() != null && diskImage.getQuotaNames().size() >= i+1 ? diskImage.getQuotaNames().get(i) : null);
+                        itemModel.setStorageDomainId(storageDomainId);
+                        itemModel.setStorageDomainName(diskImage.getStoragesNames().get(i));
+                        itemModel.getQuota().setItems(storageDomainIdMap.get(storageDomainId));
+                        for (Quota quota : (ArrayList<Quota>) itemModel.getQuota().getItems()) {
+                            if (!quota.getId().equals(diskImage.getQuotaId())) {
+                                itemModel.getQuota().setSelectedItem(quota);
+                                break;
+                            }
                         }
+                        list.add(itemModel);
                     }
-                    list.add(itemModel);
                 }
                 ChangeQuotaModel.this.setItems(list);
                 ChangeQuotaModel.this.stopProgress();

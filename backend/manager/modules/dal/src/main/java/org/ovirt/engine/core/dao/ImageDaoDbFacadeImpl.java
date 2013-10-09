@@ -57,8 +57,7 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
                 .addValue("volume_type", entity.getVolumeType())
                 .addValue("volume_format", entity.getVolumeFormat())
                 .addValue("image_group_id", entity.getDiskId())
-                .addValue("active", entity.isActive())
-                .addValue("quota_id", entity.getQuotaId());
+                .addValue("active", entity.isActive());
     }
 
     @Override
@@ -92,7 +91,6 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
             entity.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
             entity.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
             entity.setDiskId(getGuidDefaultEmpty(rs, "image_group_id"));
-            entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setActive((Boolean) rs.getObject("active"));
             return entity;
         }
@@ -104,13 +102,5 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
                 .addValue("image_group_id", imageGroupId)
                 .addValue("status", status);
         getCallsHandler().executeModification("UpdateStatusOfImagesByImageGroupId", parameterSource);
-    }
-
-    @Override
-    public void updateQuotaForImageAndSnapshots(Guid imageGroupId, Guid quotaId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("image_group_id", imageGroupId)
-                .addValue("quota_id", quotaId);
-        getCallsHandler().executeModification("updateQuotaForImageAndSnapshots", parameterSource);
     }
 }

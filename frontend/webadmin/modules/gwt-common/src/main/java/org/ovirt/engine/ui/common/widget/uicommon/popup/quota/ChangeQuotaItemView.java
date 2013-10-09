@@ -44,6 +44,10 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
 
     @UiField
     @Ignore
+    EntityModelLabelEditor storageDomainNameLabel;
+
+    @UiField
+    @Ignore
     EntityModelLabelEditor currentQuotaLabel;
 
     @UiField(provided = true)
@@ -76,6 +80,7 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
         String editorStyle = style.editorContent();
 
         updateEditorStyle(objectNameLabel, editorStyle);
+        updateEditorStyle(storageDomainNameLabel, editorStyle);
         updateEditorStyle(currentQuotaLabel, editorStyle);
         updateEditorStyle(quotaListEditor, editorStyle);
     }
@@ -91,6 +96,7 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
         driver.edit(object);
 
         objectNameLabel.asValueBox().setValue(object.getObject().getEntity());
+        storageDomainNameLabel.asValueBox().setValue(object.getStorageDomainName());
         currentQuotaLabel.asValueBox().setValue(object.getCurrentQuota().getEntity());
     }
 

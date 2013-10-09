@@ -656,8 +656,8 @@ BEGIN
         quota_limitation.storage_size_gb,
         cast(COALESCE(sum(size * cast(active as integer) + disk_image_dynamic.actual_size * cast((not active) as integer)) / 1073741824 ,0) as double precision)  as storage_usage -- 1073741824 is 1024^3 (for GB)
     FROM quota_limitation
-        LEFT JOIN images ON quota_limitation.quota_id = images.quota_id
-        LEFT JOIN image_storage_domain_map ON images.image_guid = image_storage_domain_map.image_id
+        LEFT JOIN image_storage_domain_map ON quota_limitation.quota_id = image_storage_domain_map.quota_id
+        LEFT JOIN images ON images.image_guid = image_storage_domain_map.image_id
         LEFT JOIN disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
         LEFT JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
     WHERE quota_limitation.storage_size_gb IS NOT NULL

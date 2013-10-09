@@ -268,7 +268,7 @@ public final class ImagesHandler {
     public static void addDiskImageWithNoVmDevice(DiskImage image) {
         addDiskImageWithNoVmDevice(image,
                 image.getActive(),
-                new image_storage_domain_map(image.getImageId(), image.getStorageIds().get(0)));
+                new image_storage_domain_map(image.getImageId(), image.getStorageIds().get(0), image.getQuotaId()));
     }
 
     /**
@@ -292,7 +292,7 @@ public final class ImagesHandler {
      */
     public static void addDiskImage(DiskImage image, Guid vmId) {
         addDiskImage(image, image.getActive(), new image_storage_domain_map(image.getImageId(), image.getStorageIds()
-                .get(0)), vmId);
+                .get(0), image.getQuotaId()), vmId);
     }
 
     /**

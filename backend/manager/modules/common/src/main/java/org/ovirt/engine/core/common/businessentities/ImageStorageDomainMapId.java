@@ -28,7 +28,7 @@ public class ImageStorageDomainMapId implements Serializable {
         }
         ImageStorageDomainMapId other = (ImageStorageDomainMapId) obj;
         return (ObjectUtils.objectsEqual(imageId, other.imageId)
-                && ObjectUtils.objectsEqual(storageDomainId, other.storageDomainId));
+        && ObjectUtils.objectsEqual(storageDomainId, other.storageDomainId));
     }
 
     private static final long serialVersionUID = -5870880575903017188L;

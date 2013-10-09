@@ -19,8 +19,7 @@ Create or replace FUNCTION InsertImage(
     v_volume_type INTEGER,
     v_volume_format INTEGER,
     v_image_group_id UUID ,
-    v_active BOOLEAN,
-    v_quota_id UUID)
+    v_active BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -36,8 +35,7 @@ BEGIN
         volume_type,
         image_group_id,
         volume_format,
-        active,
-        quota_id)
+        active)
     VALUES(
         v_creation_date,
         v_image_guid,
@@ -50,8 +48,7 @@ BEGIN
         v_volume_type,
         v_image_group_id,
         v_volume_format,
-        v_active,
-        v_quota_id);
+        v_active);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -131,8 +128,7 @@ Create or replace FUNCTION UpdateImage(
     v_volume_type INTEGER,
     v_volume_format INTEGER,
     v_image_group_id UUID ,
-    v_active BOOLEAN,
-    v_quota_id UUID)
+    v_active BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -148,7 +144,6 @@ BEGIN
            image_group_id = v_image_group_id,
            volume_format = v_volume_format,
            active = v_active,
-           quota_id = v_quota_id,
            _update_date = LOCALTIMESTAMP
     WHERE  image_guid = v_image_guid;
 END; $procedure$
@@ -198,13 +193,4 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION updateQuotaForImageAndSnapshots(v_image_group_id UUID, v_quota_id UUID)
-RETURNS VOID
-AS $procedure$
-BEGIN
-UPDATE images
-    SET quota_id = v_quota_id
-    WHERE image_group_id = v_image_group_id;
-END; $procedure$
-LANGUAGE plpgsql;
 

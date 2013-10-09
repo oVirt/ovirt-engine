@@ -265,7 +265,7 @@ DECLARE
     result boolean := FALSE;
 BEGIN
     if EXISTS (SELECT quota_id
-                    FROM images
+                    FROM image_storage_domain_map
                     WHERE quota_id = v_quota_id
     UNION SELECT quota_id
               FROM vm_static

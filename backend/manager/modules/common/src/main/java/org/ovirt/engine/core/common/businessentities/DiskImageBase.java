@@ -50,14 +50,6 @@ public class DiskImageBase extends Disk {
         getImage().setVolumeFormat(volumeFormat);
     }
 
-    public Guid getQuotaId() {
-        return getImage().getQuotaId();
-    }
-
-    public void setQuotaId(Guid quotaId) {
-        getImage().setQuotaId(quotaId);
-    }
-
     @Override
     public long getSize() {
         return getImage().getSize();
@@ -76,22 +68,6 @@ public class DiskImageBase extends Disk {
 
     public void setSizeInGigabytes(long value) {
         setSize(value * (1024 * 1024 * 1024));
-    }
-
-    public String getQuotaName() {
-        return quotaName;
-    }
-
-    public void setQuotaName(String quotaName) {
-        this.quotaName = quotaName;
-    }
-
-    public boolean isQuotaDefault() {
-        return isQuotaDefault;
-    }
-
-    public void setIsQuotaDefault(boolean isQuotaDefault) {
-        this.isQuotaDefault = isQuotaDefault;
     }
 
     public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
