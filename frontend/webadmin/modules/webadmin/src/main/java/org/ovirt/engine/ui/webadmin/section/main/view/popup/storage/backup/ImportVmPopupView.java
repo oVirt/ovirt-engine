@@ -355,6 +355,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     private void initNicsTable() {
         nicTable = new ListModelObjectCellTable<VmNetworkInterface, SearchableListModel>();
+        nicTable.enableColumnResizing();
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
