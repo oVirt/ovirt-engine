@@ -94,7 +94,10 @@ public class GlusterTasksSyncJobTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterAysncTasksSupport, Version.v3_2.toString(), false),
-            mockConfig(ConfigValues.GlusterAysncTasksSupport, Version.v3_3.toString(), true));
+            mockConfig(ConfigValues.GlusterAysncTasksSupport, Version.v3_3.toString(), true),
+            mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
+            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
+            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10));
 
     @Before
     public void init() {
@@ -171,7 +174,6 @@ public class GlusterTasksSyncJobTest {
         tasksSyncJob.updateGlusterAsyncTasks();
         Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
         Mockito.verify(taskUtils, times(0)).endStepJob(any(Step.class));
-        Mockito.verify(backend, times(6)).runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class));
     }
 
     @Test
@@ -184,7 +186,6 @@ public class GlusterTasksSyncJobTest {
         tasksSyncJob.updateGlusterAsyncTasks();
         Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
         Mockito.verify(taskUtils, times(0)).endStepJob(any(Step.class));
-        Mockito.verify(backend, times(2)).runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class));
     }
 
 

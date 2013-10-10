@@ -35,6 +35,7 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -97,7 +98,18 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             final GlusterAsyncTask task =  entry.getValue();
 
             List<Step> steps = getStepDao().getStepsByExternalId(taskId);
+
             if (steps.isEmpty()) {
+                createJobForTaskFromCLI(cluster, task);
+            }
+            getGlusterTaskUtils().updateSteps(cluster, task, steps);
+        }
+    }
+
+    private void createJobForTaskFromCLI(final VDSGroup cluster, final GlusterAsyncTask task) {
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
                 // the task may have been started from the CLI
                 // need to add job to monitor
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -113,10 +125,8 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                     }
                 });
             }
-            getGlusterTaskUtils().updateSteps(cluster, task, steps);
-        }
+        });
     }
-
 
     private void createJobToMonitor(VDSGroup cluster, GlusterAsyncTask task) {
         if (task.getStatus() != JobExecutionStatus.STARTED) {
@@ -193,36 +203,44 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         GlusterVolumeEntity vol = getVolumeDao().getByName(cluster.getId(), volumeName);
 
         if (vol != null) {
-            //update volume with task id
-            getVolumeDao().updateVolumeTask(vol.getId(), task.getTaskId());
-            //acquire lock on volume
-            acquireLock(vol.getId());
+            try {
+                //acquire lock on volume
+                acquireLock(vol.getId());
 
-            if (GlusterTaskType.REMOVE_BRICK == task.getType()) {
-                //update bricks associated with task id
-                String[] bricks = task.getTaskParameters().getBricks();
-                if (bricks == null)
-                {
-                    return;
-                }
-                List<GlusterBrickEntity> brickEntities = new ArrayList<>();
-                for (String brick: bricks) {
-                    String[] brickParts = brick.split(":", -1);
-                    String hostnameOrIp = brickParts[0];
-                    String brickDir = brickParts[1];
-                    GlusterBrickEntity brickEntity = new GlusterBrickEntity();
-                    VdsStatic server = GlusterDBUtils.getInstance().getServer(cluster.getId(), hostnameOrIp);
-                    if (server == null) {
-                        log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, cluster.getId());
-                    } else {
-                        brickEntity.setServerId(server.getId());
-                        brickEntity.setBrickDirectory(brickDir);
-                        brickEntity.setAsyncTask(new GlusterAsyncTask());
-                        brickEntity.getAsyncTask().setTaskId(task.getTaskId());
-                        brickEntities.add(brickEntity);
+                //update volume with task id
+                getVolumeDao().updateVolumeTask(vol.getId(), task.getTaskId());
+
+                if (GlusterTaskType.REMOVE_BRICK == task.getType()) {
+                    //update bricks associated with task id
+                    String[] bricks = task.getTaskParameters().getBricks();
+                    if (bricks == null)
+                    {
+                        return;
                     }
+                    List<GlusterBrickEntity> brickEntities = new ArrayList<>();
+                    for (String brick: bricks) {
+                        String[] brickParts = brick.split(":", -1);
+                        String hostnameOrIp = brickParts[0];
+                        String brickDir = brickParts[1];
+                        GlusterBrickEntity brickEntity = new GlusterBrickEntity();
+                        VdsStatic server = GlusterDBUtils.getInstance().getServer(cluster.getId(), hostnameOrIp);
+                        if (server == null) {
+                            log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, cluster.getId());
+                        } else {
+                            brickEntity.setServerId(server.getId());
+                            brickEntity.setBrickDirectory(brickDir);
+                            brickEntity.setAsyncTask(new GlusterAsyncTask());
+                            brickEntity.getAsyncTask().setTaskId(task.getTaskId());
+                            brickEntities.add(brickEntity);
+                        }
+                    }
+                    getBrickDao().updateAllBrickTasksByHostIdBrickDirInBatch(brickEntities);
                 }
-                getBrickDao().updateAllBrickTasksByHostIdBrickDirInBatch(brickEntities);
+            } catch (Exception e) {
+                log.error(e);
+                throw new VdcBLLException(VdcBllErrors.GeneralException, e.getMessage());
+            } finally {
+                releaseLock(vol.getId());
             }
 
         } else {
