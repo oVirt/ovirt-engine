@@ -90,7 +90,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             final GlusterAsyncTask task =  entry.getValue();
 
             List<Step> steps = getStepDao().getStepsByExternalId(taskId);
-            if (steps == null || steps.isEmpty()) {
+            if (steps.isEmpty()) {
                 // the task may have been started from the CLI
                 // need to add job to monitor
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -121,6 +121,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                     getJobRepository().updateStep(step);
                 }
             }
+
 
         }
 
