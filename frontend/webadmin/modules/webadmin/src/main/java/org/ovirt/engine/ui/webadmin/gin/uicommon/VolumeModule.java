@@ -96,6 +96,7 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<AddBrickPopupPresenterWidget> addBrickPopupProvider,
             final Provider<RemoveBrickPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<RemoveBrickPopupPresenterWidget> removeBrickPopupProvider,
+            final Provider<VolumeRebalanceStatusPopupPresenterWidget> removeBricksStatusPopupProvider,
             final Provider<ReplaceBrickPopupPresenterWidget> replaceBrickPopupProvider,
             final Provider<BrickAdvancedDetailsPopupPresenterWidget> brickDetailsPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(
@@ -110,6 +111,8 @@ public class VolumeModule extends AbstractGinModule {
                     return addBrickPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getRemoveBricksCommand()) {
                     return removeBrickPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getStatusRemoveBricksCommand()) {
+                    return removeBricksStatusPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getReplaceBrickCommand()) {
                     return replaceBrickPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getBrickAdvancedDetailsCommand()) {

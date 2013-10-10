@@ -10,12 +10,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -49,7 +51,10 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
@@ -62,8 +67,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -1354,6 +1357,21 @@ public final class AsyncDataProvider {
         };
         GlusterVolumeQueriesParameters parameters = new GlusterVolumeQueriesParameters(clusterId, volumeId);
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeRebalanceStatus, parameters, aQuery);
+    }
+
+    public static void getGlusterRemoveBricksStatus(AsyncQuery aQuery,
+            Guid clusterId,
+            Guid volumeId,
+            List<GlusterBrickEntity> bricks) {
+        aQuery.converterCallback = new IAsyncConverter<GlusterVolumeTaskStatusEntity>() {
+            @Override
+            public GlusterVolumeTaskStatusEntity Convert(Object source, AsyncQuery _asyncQuery) {
+                return (GlusterVolumeTaskStatusEntity) source;
+            }
+        };
+        GlusterVolumeRemoveBricksQueriesParameters parameters =
+                new GlusterVolumeRemoveBricksQueriesParameters(clusterId, volumeId, bricks);
+        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeRemoveBricksStatus, parameters, aQuery);
     }
 
     public static void getRpmVersionViaPublic(AsyncQuery aQuery) {

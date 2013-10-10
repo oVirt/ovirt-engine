@@ -1557,6 +1557,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Bricks")
     String removeBricksTitle();
 
+    @DefaultStringValue("Remove Bricks Status")
+    String removeBricksStatusTitle();
+
     @DefaultStringValue("Replace Brick")
     String replaceBrickTitle();
 
@@ -1580,6 +1583,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to stop the removal operation of the following bricks?")
     String stopRemoveBricksMessage();
+
+    @DefaultStringValue("Stop")
+    String stopRemoveBricksButton();
+
+    @DefaultStringValue("Commit")
+    String commitRemoveBricksButton();
 
     @DefaultStringValue("Commit Brick Removal")
     String commitRemoveBricksTitle();

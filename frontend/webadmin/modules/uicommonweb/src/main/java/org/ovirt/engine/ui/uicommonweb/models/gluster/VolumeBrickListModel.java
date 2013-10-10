@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskOperation;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -54,6 +55,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setRemoveBricksCommand(new UICommand("Remove Bricks", this)); //$NON-NLS-1$
         setStopRemoveBricksCommand(new UICommand("StopRemoveBricks", this)); //$NON-NLS-1$
         setCommitRemoveBricksCommand(new UICommand("CommitRemoveBricks", this)); //$NON-NLS-1$
+        setStatusRemoveBricksCommand(new UICommand("StatusRemoveBricks", this)); //$NON-NLS-1$
         setReplaceBrickCommand(new UICommand("Replace Brick", this)); //$NON-NLS-1$
         setBrickAdvancedDetailsCommand(new UICommand("Brick Advanced Details", this)); //$NON-NLS-1$
         getReplaceBrickCommand().setIsAvailable(false);
@@ -107,6 +109,18 @@ public class VolumeBrickListModel extends SearchableListModel {
         commitRemoveBricksCommand = value;
     }
 
+    private UICommand statusRemoveBricksCommand;
+
+    public UICommand getStatusRemoveBricksCommand()
+    {
+        return statusRemoveBricksCommand;
+    }
+
+    private void setStatusRemoveBricksCommand(UICommand value)
+    {
+        statusRemoveBricksCommand = value;
+    }
+
     private UICommand replaceBrickCommand;
 
     public UICommand getReplaceBrickCommand()
@@ -151,6 +165,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         boolean allowRemove = true;
         boolean allowStopRemove = true;
         boolean allowCommitRemove = true;
+        boolean allowStatusRemove = true;
         boolean allowReplace = true;
         boolean allowAdvanced = true;
 
@@ -198,9 +213,14 @@ public class VolumeBrickListModel extends SearchableListModel {
                         && volumeEntity.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
                         && volumeEntity.getAsyncTask().getStatus() == JobExecutionStatus.FINISHED;
 
+        allowStatusRemove =
+                volumeEntity != null && volumeEntity.getAsyncTask() != null
+                        && volumeEntity.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
+
         getRemoveBricksCommand().setIsExecutionAllowed(allowRemove);
         getStopRemoveBricksCommand().setIsExecutionAllowed(allowStopRemove);
         getCommitRemoveBricksCommand().setIsExecutionAllowed(allowCommitRemove);
+        getStatusRemoveBricksCommand().setIsExecutionAllowed(allowStatusRemove);
         getReplaceBrickCommand().setIsExecutionAllowed(allowReplace);
         getBrickAdvancedDetailsCommand().setIsExecutionAllowed(allowAdvanced);
     }
@@ -898,6 +918,68 @@ public class VolumeBrickListModel extends SearchableListModel {
                 model);
     }
 
+    private void showRemoveBricksStatus() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        ArrayList<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
+            if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null) {
+                bricks.add(brick);
+            }
+        }
+
+        final RemoveBrickStatusModel removeBrickStatusModel = new RemoveBrickStatusModel(volumeEntity, bricks);
+        removeBrickStatusModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksStatusTitle());
+
+        setWindow(removeBrickStatusModel);
+
+        removeBrickStatusModel.startProgress(null);
+
+        removeBrickStatusModel.getVolume().setEntity(volumeEntity.getName());
+        removeBrickStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
+
+
+        UICommand stopRemoveBrickFromStatus = new UICommand("StopRemoveBricksOnStatus", this);//$NON-NLS-1$
+        stopRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRemoveBricksButton());
+        stopRemoveBrickFromStatus.setIsExecutionAllowed(false);
+        removeBrickStatusModel.addStopRemoveBricksCommand(stopRemoveBrickFromStatus);
+
+        UICommand commitRemoveBrickFromStatus = new UICommand("CommitRemoveBricksOnStatus", this);//$NON-NLS-1$
+        commitRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().commitRemoveBricksButton());
+        commitRemoveBrickFromStatus.setIsExecutionAllowed(false);
+        removeBrickStatusModel.addCommitRemoveBricksCommand(commitRemoveBrickFromStatus);
+
+        AsyncDataProvider.getGlusterRemoveBricksStatus(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+
+                removeBrickStatusModel.stopProgress();
+
+                GlusterVolumeTaskStatusEntity removeBrickStatusEntity = (GlusterVolumeTaskStatusEntity) returnValue;
+                removeBrickStatusModel.showStatus(removeBrickStatusEntity);
+            }
+        }),
+                volumeEntity.getClusterId(),
+                volumeEntity.getId(),
+                bricks);
+
+        UICommand cancelCommand = new UICommand("CancelRemoveBricksStatus", this);//$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        cancelCommand.setIsCancel(true);
+        removeBrickStatusModel.getCommands().add(cancelCommand);
+    }
+
+    private void cancelRemoveBrickStatus() {
+        if (getWindow() == null) {
+            return;
+        }
+        ((RemoveBrickStatusModel) getWindow()).cancelRefresh();
+        cancel();
+    }
+
     private void replaceBrick()
     {
         if (getWindow() != null)
@@ -1116,6 +1198,14 @@ public class VolumeBrickListModel extends SearchableListModel {
             commitRemoveBricks();
         } else if (command.getName().equals("OnCommitRemoveBricks")) { //$NON-NLS-1$
             onCommitRemoveBricks();
+        } else if (command.equals(getStatusRemoveBricksCommand())) {
+            showRemoveBricksStatus();
+        } else if (command.getName().equals("StopRemoveBricksOnStatus")) { //$NON-NLS-1$
+            getStopRemoveBricksCommand().execute();
+        } else if (command.getName().equals("CommitRemoveBricksOnStatus")) { //$NON-NLS-1$
+            getCommitRemoveBricksCommand().execute();
+        } else if (command.getName().equals("CancelRemoveBricksStatus")) { //$NON-NLS-1$
+            cancelRemoveBrickStatus();
         } else if (command.equals(getReplaceBrickCommand())) {
             replaceBrick();
         } else if (command.getName().equals("OnReplace")) { //$NON-NLS-1$

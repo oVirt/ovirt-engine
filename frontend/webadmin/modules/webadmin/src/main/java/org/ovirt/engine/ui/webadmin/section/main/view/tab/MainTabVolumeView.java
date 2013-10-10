@@ -174,6 +174,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return value.getAsyncTask() != null && value.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
             }
         };
+        menuCell.addMenuItem(constants.removeBricksStatus(), getMainModel().getBrickListModel()
+                .getStatusRemoveBricksCommand());
         menuCell.addMenuItem(constants.removeBricksStop(), getMainModel().getBrickListModel()
                 .getStopRemoveBricksCommand());
         menuCell.addMenuItem(constants.removeBricksCommit(), getMainModel().getBrickListModel()

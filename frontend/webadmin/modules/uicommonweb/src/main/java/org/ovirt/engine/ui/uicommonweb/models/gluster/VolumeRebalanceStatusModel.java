@@ -54,7 +54,6 @@ public class VolumeRebalanceStatusModel extends Model {
 
         };
         refresh.scheduleRepeating(10000);
-        this.entity = volumeEntity;
     }
 
     public ListModel getRebalanceSessions() {
