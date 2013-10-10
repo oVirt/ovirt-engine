@@ -45,7 +45,8 @@ public class DocsServlet extends FileServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else if (!response.isCommitted()){ //If the response is committed, we have already redirected.
             boolean languagePageShown = isLangPageShown(request);
-            if (!file.equals(originalFile)) {
+            if (!file.equals(originalFile) &&
+                    !file.getAbsolutePath().equals(replaceLocaleWithOtherLocale(originalFile.getAbsolutePath(), locale, locale))) {
                 //We determined that we are going to redirect the user to the English version URI.
                 String redirect = request.getServletPath() + replaceLocaleWithUSLocale(request.getPathInfo(), locale);
                 if (!languagePageShown) {
@@ -110,16 +111,19 @@ public class DocsServlet extends FileServlet {
     }
 
     private String replaceLocaleWithUSLocale(String originalString, Locale locale) {
+        return replaceLocaleWithOtherLocale(originalString, locale, Locale.US);
+    }
+
+    private String replaceLocaleWithOtherLocale(String originalString, Locale searchLocale, Locale targetLocale) {
         //Create regex to match either the toString() or toLanguageTag() version of the locale
         //For US Locale this means: /en\-US|/en_US
         //For Brazil this means: /pt\-BR|/pt_BR
         //For Japan this means: /ja|/ja (yes I know its the same).
-        String regex = "/"+ locale.toLanguageTag().replaceAll("-", "\\\\-") + "|/" + locale.toString();
+        String regex = "/"+ searchLocale.toLanguageTag().replaceAll("-", "\\\\-") + "|/" + searchLocale.toString();
         //This will match for instance '/pt-BR/something' and turn it into '/en-US/something', but
-        //it will also match '/pt_BR/something' and turn it into /'en-US/something'
-        return originalString.replaceAll(regex, "/" + Locale.US.toLanguageTag());
+        //it will also match '/pt_BR/something' and turn it into '/en-US/something' if targetLocale is en_US.
+        return originalString.replaceAll(regex, "/" + targetLocale.toLanguageTag());
     }
-
     /**
      * Determines the locale based on the request passed in. It will first try to determine the locale
      * from the referer URI passed. If it can't determine the Locale, it will attempt to use the pathinfo
