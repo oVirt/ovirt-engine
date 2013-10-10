@@ -2902,6 +2902,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Allow all users to use this Network")
     String networkPublicUseLabel();
 
+    @DefaultStringValue("Allow all users to use this Profile")
+    String profilePublicUseLabel();
+
     @DefaultStringValue("Public")
     String profilePublicUseInstanceTypeLabel();
 
