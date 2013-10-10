@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.HashMap;
 
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
-public class GetAgentFenceOptionsQuery<P extends VdcQueryParametersBase> extends FenceQueryBase<P> {
+public class GetAgentFenceOptionsQuery<P extends GetAgentFenceOptionsQueryParameters> extends FenceQueryBase<P> {
 
     public GetAgentFenceOptionsQuery(P parameters) {
         super(parameters);
@@ -13,7 +13,8 @@ public class GetAgentFenceOptionsQuery<P extends VdcQueryParametersBase> extends
 
     @Override
     protected void executeQueryCommand() {
-        VdsFenceOptions options = new VdsFenceOptions();
+        String version = getParameters().getVersion();
+        VdsFenceOptions options = new VdsFenceOptions(version);
         HashMap<String, HashMap<String, String>> map = options.getFencingOptionMappingMap();
         getQueryReturnValue().setReturnValue(map);
         getQueryReturnValue().setSucceeded(map.size() > 0);

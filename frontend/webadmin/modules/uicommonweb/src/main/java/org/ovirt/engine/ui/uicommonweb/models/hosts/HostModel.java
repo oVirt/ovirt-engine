@@ -1334,7 +1334,11 @@ public abstract class HostModel extends Model
         getPmOptions().setIsChangable(isPm);
         getPmOptions().setIsValid(true);
         getPmSecure().setIsChangable(isPm);
-
+        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        String version = AsyncDataProvider.getDefaultConfigurationVersion();
+        if (cluster != null) {
+            version = cluster.getcompatibility_version().toString();
+        }
         String pmType = (String) getPmType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmType)) {
             AsyncDataProvider.getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1348,7 +1352,7 @@ public abstract class HostModel extends Model
                         getPmSecure().setIsAvailable(pmOptions.contains(PmSecureKey));
                     }
                 }
-            }), pmType);
+            }), pmType, version);
         } else {
             getPmPort().setIsAvailable(false);
             getPmSlot().setIsAvailable(false);
@@ -1386,7 +1390,7 @@ public abstract class HostModel extends Model
                         getPmSecondarySecure().setIsAvailable(pmOptions.contains(PmSecureKey));
                     }
                 }
-            }), pmSecondaryType);
+            }), pmSecondaryType, version);
         } else {
             getPmSecondaryPort().setIsAvailable(false);
             getPmSecondarySlot().setIsAvailable(false);
