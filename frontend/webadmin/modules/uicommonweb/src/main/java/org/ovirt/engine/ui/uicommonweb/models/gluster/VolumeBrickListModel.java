@@ -56,6 +56,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setStopRemoveBricksCommand(new UICommand("StopRemoveBricks", this)); //$NON-NLS-1$
         setCommitRemoveBricksCommand(new UICommand("CommitRemoveBricks", this)); //$NON-NLS-1$
         setStatusRemoveBricksCommand(new UICommand("StatusRemoveBricks", this)); //$NON-NLS-1$
+        setRetainBricksCommand(new UICommand("RetainBricks", this)); //$NON-NLS-1$
         setReplaceBrickCommand(new UICommand("Replace Brick", this)); //$NON-NLS-1$
         setBrickAdvancedDetailsCommand(new UICommand("Brick Advanced Details", this)); //$NON-NLS-1$
         getReplaceBrickCommand().setIsAvailable(false);
@@ -121,6 +122,17 @@ public class VolumeBrickListModel extends SearchableListModel {
         statusRemoveBricksCommand = value;
     }
 
+    private UICommand retainBricksCommand;
+
+    private void setRetainBricksCommand(UICommand value)
+    {
+        retainBricksCommand = value;
+    }
+
+    public UICommand getRetainBricksCommand() {
+        return retainBricksCommand;
+    }
+
     private UICommand replaceBrickCommand;
 
     public UICommand getReplaceBrickCommand()
@@ -166,6 +178,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         boolean allowStopRemove = true;
         boolean allowCommitRemove = true;
         boolean allowStatusRemove = true;
+        boolean allowRetain = true;
         boolean allowReplace = true;
         boolean allowAdvanced = true;
 
@@ -190,7 +203,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 allowRemove = false;
             }
 
-            if(getSelectedItems().size() == 1) {
+            if (getSelectedItems().size() == 1) {
                 allowReplace = true;
                 allowAdvanced = volumeEntity.isOnline() && ((GlusterBrickEntity) getSelectedItems().get(0)).isOnline();
             }
@@ -212,6 +225,10 @@ public class VolumeBrickListModel extends SearchableListModel {
                 volumeEntity != null && volumeEntity.getAsyncTask() != null
                         && volumeEntity.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
                         && volumeEntity.getAsyncTask().getStatus() == JobExecutionStatus.FINISHED;
+        allowRetain =
+                volumeEntity != null && volumeEntity.getAsyncTask() != null
+                        && volumeEntity.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
+                        && volumeEntity.getAsyncTask().getStatus() == JobExecutionStatus.FINISHED;
 
         allowStatusRemove =
                 volumeEntity != null && volumeEntity.getAsyncTask() != null
@@ -221,6 +238,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         getStopRemoveBricksCommand().setIsExecutionAllowed(allowStopRemove);
         getCommitRemoveBricksCommand().setIsExecutionAllowed(allowCommitRemove);
         getStatusRemoveBricksCommand().setIsExecutionAllowed(allowStatusRemove);
+        getRetainBricksCommand().setIsExecutionAllowed(allowRetain);
         getReplaceBrickCommand().setIsExecutionAllowed(allowReplace);
         getBrickAdvancedDetailsCommand().setIsExecutionAllowed(allowAdvanced);
     }
@@ -642,7 +660,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return false;
         }
 
-          return true;
+        return true;
     }
 
     public boolean validateDistributedStripedReplicateRemove(GlusterVolumeType volumeType,
@@ -798,8 +816,9 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
         ArrayList<String> list = new ArrayList<String>();
         for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
-            if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null
-                    && volumeTask != null && volumeTask.getStatus() == JobExecutionStatus.STARTED) {
+            if (brick.getAsyncTask() != null && volumeTask != null && brick.getAsyncTask().getTaskId() != null
+                    && brick.getAsyncTask().getTaskId().equals(volumeTask.getTaskId())
+                    && volumeTask.getStatus() == JobExecutionStatus.STARTED) {
                 list.add(brick.getQualifiedName());
             }
         }
@@ -830,10 +849,9 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
         ArrayList<GlusterBrickEntity> list = new ArrayList<GlusterBrickEntity>();
-        GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
-        for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
-            if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null
-                    && volumeTask != null && volumeTask.getStatus() == JobExecutionStatus.STARTED) {
+        for (Object brickName : model.getItems()) {
+            GlusterBrickEntity brick = volumeEntity.getBrickWithQualifiedName((String) brickName);
+            if (brick != null) {
                 list.add(brick);
             }
         }
@@ -867,8 +885,9 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
         ArrayList<String> list = new ArrayList<String>();
         for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
-            if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null
-                    && volumeTask != null && volumeTask.getStatus() == JobExecutionStatus.FINISHED) {
+            if (brick.getAsyncTask() != null && volumeTask != null && brick.getAsyncTask().getTaskId() != null
+                    && brick.getAsyncTask().getTaskId().equals(volumeTask.getTaskId())
+                    && volumeTask.getStatus() == JobExecutionStatus.FINISHED) {
                 list.add(brick.getQualifiedName());
             }
         }
@@ -941,7 +960,6 @@ public class VolumeBrickListModel extends SearchableListModel {
         removeBrickStatusModel.getVolume().setEntity(volumeEntity.getName());
         removeBrickStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
 
-
         UICommand stopRemoveBrickFromStatus = new UICommand("StopRemoveBricksOnStatus", this);//$NON-NLS-1$
         stopRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRemoveBricksButton());
         stopRemoveBrickFromStatus.setIsExecutionAllowed(false);
@@ -951,6 +969,11 @@ public class VolumeBrickListModel extends SearchableListModel {
         commitRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().commitRemoveBricksButton());
         commitRemoveBrickFromStatus.setIsExecutionAllowed(false);
         removeBrickStatusModel.addCommitRemoveBricksCommand(commitRemoveBrickFromStatus);
+
+        UICommand retainBricksFromStatus = new UICommand("RetainBricksOnStatus", this);//$NON-NLS-1$
+        retainBricksFromStatus.setTitle(ConstantsManager.getInstance().getConstants().retainBricksButton());
+        retainBricksFromStatus.setIsExecutionAllowed(false);
+        removeBrickStatusModel.addRetainBricksCommand(retainBricksFromStatus);
 
         AsyncDataProvider.getGlusterRemoveBricksStatus(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -978,6 +1001,74 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
         ((RemoveBrickStatusModel) getWindow()).cancelRefresh();
         cancel();
+
+    }
+
+    private void retainBricks() {
+        if (getConfirmWindow() != null) {
+            return;
+        }
+
+        ConfirmationModel model = new ConfirmationModel();
+        setConfirmWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().retainBricksTitle());
+        model.setMessage(ConstantsManager.getInstance().getConstants().retainBricksMessage());
+        model.setHashName("volume_retain_brick"); //$NON-NLS-1$
+
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
+        ArrayList<String> list = new ArrayList<String>();
+        for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
+            if (brick.getAsyncTask() != null && volumeTask != null && brick.getAsyncTask().getTaskId() != null
+                    && brick.getAsyncTask().getTaskId().equals(volumeTask.getTaskId())
+                    && volumeTask.getStatus() == JobExecutionStatus.FINISHED) {
+                list.add(brick.getQualifiedName());
+            }
+        }
+        model.setItems(list);
+
+        UICommand okCommand = new UICommand("OnRetainBricks", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+
+        UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    private void onRetainBricks() {
+        if (getConfirmWindow() == null) {
+            return;
+        }
+
+        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        ArrayList<GlusterBrickEntity> list = new ArrayList<GlusterBrickEntity>();
+        for (Object brickName : model.getItems()) {
+            GlusterBrickEntity brick = volumeEntity.getBrickWithQualifiedName((String) brickName);
+            if (brick != null) {
+                list.add(brick);
+            }
+        }
+
+        GlusterVolumeRemoveBricksParameters parameter =
+                new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
+        model.startProgress(null);
+
+        Frontend.RunAction(VdcActionType.StopRemoveGlusterVolumeBricks,
+                parameter,
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        setConfirmWindow(null);
+                    }
+                },
+                model);
     }
 
     private void replaceBrick()
@@ -1116,7 +1207,8 @@ public class VolumeBrickListModel extends SearchableListModel {
                     model.getCommands().add(command);
                 }
             }
-        }), volumeEntity.getClusterId());
+        }),
+                volumeEntity.getClusterId());
 
     }
 
@@ -1167,7 +1259,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                     brickModel.getMemoryPools().setItems(memoryPools);
                 }
             }
-        },true), volumeEntity.getClusterId(), volumeEntity.getId(), brickEntity.getId());
+        }, true), volumeEntity.getClusterId(), volumeEntity.getId(), brickEntity.getId());
 
         UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().close());
@@ -1206,6 +1298,12 @@ public class VolumeBrickListModel extends SearchableListModel {
             getCommitRemoveBricksCommand().execute();
         } else if (command.getName().equals("CancelRemoveBricksStatus")) { //$NON-NLS-1$
             cancelRemoveBrickStatus();
+        } else if (command.equals(getRetainBricksCommand())) {
+            retainBricks();
+        } else if (command.getName().equals("OnRetainBricks")) { //$NON-NLS-1$
+            onRetainBricks();
+        } else if (command.getName().equals("RetainBricksOnStatus")) { //$NON-NLS-1$
+            getRetainBricksCommand().execute();
         } else if (command.equals(getReplaceBrickCommand())) {
             replaceBrick();
         } else if (command.getName().equals("OnReplace")) { //$NON-NLS-1$
@@ -1219,5 +1317,4 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
 
     }
-
 }

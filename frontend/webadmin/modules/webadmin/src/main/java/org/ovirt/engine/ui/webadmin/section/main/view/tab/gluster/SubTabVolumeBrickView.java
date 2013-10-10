@@ -133,6 +133,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         menuCell.addMenuItem(constants.removeBricksStatus(), getDetailModel().getStatusRemoveBricksCommand());
         menuCell.addMenuItem(constants.removeBricksStop(), getDetailModel().getStopRemoveBricksCommand());
         menuCell.addMenuItem(constants.removeBricksCommit(), getDetailModel().getCommitRemoveBricksCommand());
+        menuCell.addMenuItem(constants.retainBricks(), getDetailModel().getRetainBricksCommand());
         return menuCell;
     }
 }

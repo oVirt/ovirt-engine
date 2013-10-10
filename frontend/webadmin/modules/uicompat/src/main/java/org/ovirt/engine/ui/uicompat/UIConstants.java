@@ -1599,11 +1599,20 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Commit")
     String commitRemoveBricksButton();
 
+    @DefaultStringValue("Retain")
+    String retainBricksButton();
+
     @DefaultStringValue("Commit Brick Removal")
     String commitRemoveBricksTitle();
 
     @DefaultStringValue("Are you sure you want to commit the removal of the following brick(s)?")
     String commitRemoveBricksMessage();
+
+    @DefaultStringValue("Retain Bricks")
+    String retainBricksTitle();
+
+    @DefaultStringValue("Are you sure you want to retain the following brick(s)?")
+    String retainBricksMessage();
 
     @DefaultStringValue("Brick with the same details already exist")
     String duplicateBrickMsg();

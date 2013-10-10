@@ -19,6 +19,8 @@ public class RemoveBrickStatusModel extends VolumeRebalanceStatusModel {
 
     private UICommand commitRemoveBricksCommand;
 
+    private UICommand retainBricksCommand;
+
     public RemoveBrickStatusModel(GlusterVolumeEntity volumeEntity, List<GlusterBrickEntity> bricks) {
         super(volumeEntity);
         setBricks(bricks);
@@ -41,6 +43,15 @@ public class RemoveBrickStatusModel extends VolumeRebalanceStatusModel {
         return this.stopRemoveBricksCommand;
     }
 
+    public void addRetainBricksCommand(UICommand command) {
+        getCommands().add(command);
+        this.retainBricksCommand = command;
+    }
+
+    public UICommand getRetainBricksCommand() {
+        return this.retainBricksCommand;
+    }
+
     public void addCommitRemoveBricksCommand(UICommand command) {
         getCommands().add(command);
         this.commitRemoveBricksCommand = command;
@@ -55,6 +66,8 @@ public class RemoveBrickStatusModel extends VolumeRebalanceStatusModel {
         super.showStatus(statusEntity);
         getStopRemoveBricksCommand().setIsExecutionAllowed(statusEntity.getStatusSummary().getStatus() == JobExecutionStatus.STARTED);
         getCommitRemoveBricksCommand().setIsExecutionAllowed(statusEntity.getStatusSummary()
+                .getStatus() == JobExecutionStatus.FINISHED);
+        getRetainBricksCommand().setIsExecutionAllowed(statusEntity.getStatusSummary()
                 .getStatus() == JobExecutionStatus.FINISHED);
     }
 

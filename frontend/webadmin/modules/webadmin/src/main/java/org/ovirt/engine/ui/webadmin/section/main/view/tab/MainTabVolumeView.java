@@ -180,6 +180,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 .getStopRemoveBricksCommand());
         menuCell.addMenuItem(constants.removeBricksCommit(), getMainModel().getBrickListModel()
                 .getCommitRemoveBricksCommand());
+        menuCell.addMenuItem(constants.retainBricks(), getMainModel().getBrickListModel()
+                .getRetainBricksCommand());
         return menuCell;
     }
 }
