@@ -556,7 +556,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 ConfirmationModel localModel = (ConfirmationModel) getConfirmWindow();
                 localModel.stopProgress();
                 setConfirmWindow(null);
-                showRebalanceStatus();
+                if (result.getReturnValue().getSucceeded()) {
+                    showRebalanceStatus();
+                }
             }
         });
     }
