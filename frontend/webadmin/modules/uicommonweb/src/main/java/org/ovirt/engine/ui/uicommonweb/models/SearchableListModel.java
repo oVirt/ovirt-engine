@@ -43,8 +43,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 /**
  * Represents a list model with ability to fetch items both sync and async.
  */
-@SuppressWarnings("unused")
-public abstract class SearchableListModel extends ListModel implements GridController
+// TODO once all the children of this class will be refactored to use generics, change from <T> to <T extends IVdcQueryable>
+public abstract class SearchableListModel<T> extends ListModel<T> implements GridController
 {
     private static final int UnknownInteger = -1;
     private static Logger logger = Logger.getLogger(SearchableListModel.class.getName());
@@ -109,7 +109,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
         if (openReportCommands.add(reportCommand))
         {
-            ArrayList<IVdcQueryable> items =
+            List<IVdcQueryable> items =
                     getSelectedItems() != null ? Linq.<IVdcQueryable> cast(getSelectedItems())
                             : new ArrayList<IVdcQueryable>();
             updateReportCommandAvailability(reportCommand, items);
@@ -257,7 +257,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         return getSearchPageNumber() == 1 ? 1 : getSearchPageNumber() - 1;
     }
 
-    private final PrivateAsyncCallback asyncCallback;
+    private final PrivateAsyncCallback<T> asyncCallback;
 
     protected SearchableListModel()
     {
@@ -266,7 +266,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         setSearchPreviousPageCommand(new UICommand("SearchPreviousPage", this)); //$NON-NLS-1$
         setForceRefreshCommand(new UICommand("ForceRefresh", this)); //$NON-NLS-1$
         setSearchPageSize(UnknownInteger);
-        asyncCallback = new PrivateAsyncCallback(this);
+        asyncCallback = new PrivateAsyncCallback<T>(this);
 
         updateActionAvailability();
 
@@ -323,29 +323,26 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     }
 
     @Override
-    public void setSelectedItem(Object value) {
+    public void setSelectedItem(T value) {
         setIsQueryFirstTime(true);
         super.setSelectedItem(value);
         setIsQueryFirstTime(false);
     }
 
     @Override
-    public void setEntity(Object value) {
+    public void setEntity(T value) {
         if (getEntity() == null) {
             super.setEntity(value);
             return;
         }
         // Equals doesn't always has the same outcome as checking the ids of the elements.
-        if (getEntity() instanceof IVdcQueryable) {
-            if (value != null) {
-                IVdcQueryable ivdcq_value = (IVdcQueryable) value;
-                IVdcQueryable ivdcq_entity = (IVdcQueryable) getEntity();
-                if (!ivdcq_value.getQueryableId().equals(ivdcq_entity.getQueryableId())) {
-                    super.setEntity(value);
-                    return;
-                }
+        if (value != null) {
+            if (!((IVdcQueryable) value).getQueryableId().equals(((IVdcQueryable) getEntity()).getQueryableId())) {
+                super.setEntity(value);
+                return;
             }
         }
+
         if (!getEntity().equals(value)) {
             super.setEntity(value);
             return;
@@ -419,7 +416,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         reportModel.setReportUnit(reportCommand.getUriValue());
 
         if (reportCommand.getIdParamName() != null) {
-            for (Object item : getSelectedItems()) {
+            for (T item : getSelectedItems()) {
                 if (((ReportCommand) getLastExecutedCommand()).isMultiple) {
                     reportModel.addResourceId(reportCommand.getIdParamName(), ((BusinessEntity<?>) item).getId()
                             .toString());
@@ -430,16 +427,14 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             }
         }
 
-        boolean isFromSameDc = true;
         boolean firstItem = true;
         String dcId = ""; //$NON-NLS-1$
-        for (Object item : getSelectedItems()) {
+        for (T item : getSelectedItems()) {
             if (item instanceof HasStoragePool) {
                 if (firstItem) {
                     dcId = ((HasStoragePool<?>) item).getStoragePoolId().toString();
                     firstItem = false;
                 } else if (!(((HasStoragePool<?>) item).getStoragePoolId().toString().equals(dcId))) {
-                    isFromSameDc = false;
                     reportModel.setDifferntDcError(true);
                     continue;
                 }
@@ -635,45 +630,39 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
     }
 
-    private Comparator comparator;
+    private Comparator<T> comparator;
 
-    protected void setComparator(Comparator comparator) {
+    protected void setComparator(Comparator<T> comparator) {
         if (comparator == this.comparator) {
             return;
         }
         this.comparator = comparator;
 
-        Iterable items = getItems();
+        Iterable<T> items = getItems();
         if (items == null) {
             return;
         }
 
-        Collection identicalItems = (comparator == null) ? new ArrayList() : new TreeSet(comparator);
-        for (Object item : items) {
+        Collection<T> identicalItems = (comparator == null) ? new ArrayList<T>() : new TreeSet<T>(comparator);
+        for (T item : items) {
             identicalItems.add(item);
         }
         setItems(identicalItems);
     }
 
     @Override
-    public Iterable getItems()
-    {
-        return items;
-    }
-
-    @Override
-    public void setItems(Iterable value)
+    public void setItems(Iterable<T> value)
     {
         if (items != value)
         {
-            IVdcQueryable lastSelectedItem = (IVdcQueryable) getSelectedItem();
-            ArrayList<IVdcQueryable> lastSelectedItems = new ArrayList<IVdcQueryable>();
+            T lastSelectedItem = getSelectedItem();
+            List<T> lastSelectedItems = new ArrayList<T>();
 
             if (getSelectedItems() != null)
             {
-                for (Object item : getSelectedItems())
+                for (T item : getSelectedItems())
                 {
-                    lastSelectedItems.add((IVdcQueryable) item);
+                    lastSelectedItems.add(item);
                 }
             }
 
@@ -682,10 +671,10 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 itemsChanging(value, items);
                 items = value;
             } else {
-                TreeSet sortedValue = null;
+                TreeSet<T> sortedValue = null;
                 if (value != null) {
-                    sortedValue = new TreeSet(comparator);
-                    for (Object item : value) {
+                    sortedValue = new TreeSet<T>(comparator);
+                    for (T item : value) {
                         sortedValue.add(item);
                     }
                 }
@@ -705,29 +694,29 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
             if (lastSelectedItem != null && items != null)
             {
-                IVdcQueryable newSelectedItem = null;
-                ArrayList<IVdcQueryable> newItems = new ArrayList<IVdcQueryable>();
+                T newSelectedItem = null;
+                List<T> newItems = new ArrayList<T>();
 
-                for (Object item : items)
+                for (T item : items)
                 {
-                    newItems.add((IVdcQueryable) item);
+                    newItems.add(item);
                 }
 
                 if (newItems != null)
                 {
-                    for (IVdcQueryable newItem : newItems)
+                    for (T newItem : newItems)
                     {
                         // Search for selected item
-                        if (newItem.getQueryableId().equals(lastSelectedItem.getQueryableId()))
+                        if (((IVdcQueryable) newItem).getQueryableId().equals(((IVdcQueryable) lastSelectedItem).getQueryableId()))
                         {
                             newSelectedItem = newItem;
                         }
                         else
                         {
                             // Search for selected items
-                            for (IVdcQueryable item : lastSelectedItems)
+                            for (T item : lastSelectedItems)
                             {
-                                if (newItem.getQueryableId().equals(item.getQueryableId()))
+                                if (((IVdcQueryable) newItem).getQueryableId().equals(((IVdcQueryable) item).getQueryableId()))
                                 {
                                     selectedItems.add(newItem);
                                 }
@@ -803,12 +792,12 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
-    public final static class PrivateAsyncCallback
+    public final static class PrivateAsyncCallback<T>
     {
-        private final SearchableListModel model;
+        private final SearchableListModel<T> model;
         private boolean searchRequested;
 
-        public PrivateAsyncCallback(SearchableListModel model)
+        public PrivateAsyncCallback(SearchableListModel<T> model)
         {
             this.model = model;
             AsyncQuery _asyncQuery1 = new AsyncQuery();
@@ -817,7 +806,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 @Override
                 public void onSuccess(Object model1, Object result1)
                 {
-                    PrivateAsyncCallback privateAsyncCallback1 = (PrivateAsyncCallback) model1;
+                    PrivateAsyncCallback<T> privateAsyncCallback1 = (PrivateAsyncCallback<T>) model1;
                     privateAsyncCallback1.ApplySearchPageSize((Integer) result1);
                 }
             };
@@ -827,7 +816,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         public void RequestSearch()
         {
             searchRequested = true;
-            model.setItems(new ArrayList());
+            model.setItems(new ArrayList<T>());
             model.getSelectedItemChangedEvent().raise(this, new EventArgs());
             model.getSelectedItemsChangedEvent().raise(this, new EventArgs());
         }

@@ -6,8 +6,9 @@ import com.google.gwt.editor.client.IsEditor;
 
 /**
  * Composite Editor that uses {@link ListModelSuggestBox}.
- *
+ * @deprecated use the org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor instead
  */
+@Deprecated
 public class ListModelSuggestBoxEditor extends AbstractValidatedWidgetWithLabel<Object, ListModelSuggestBox>
         implements IsEditor<WidgetWithLabelEditor<Object, ListModelSuggestBoxEditor>> {
 

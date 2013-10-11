@@ -7,6 +7,10 @@ import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.ValueBoxBase;
 import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
 
+/**
+ * @deprecated use the org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextArea instead
+ */
+@Deprecated
 public class EntityModelTextArea extends ValueBoxBase<Object> implements EditorWidget<Object, ValueBoxEditor<Object>> {
 
     private ObservableValueBoxEditor editor;

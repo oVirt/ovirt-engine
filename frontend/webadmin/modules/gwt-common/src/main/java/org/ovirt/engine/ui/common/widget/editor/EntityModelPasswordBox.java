@@ -6,6 +6,10 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.user.client.ui.ValueBoxBase;
 
+/**
+ * @deprecated use the org.ovirt.engine.ui.common.widget.editor.generic.EntityModelPasswordBox instead
+ */
+@Deprecated
 public class EntityModelPasswordBox extends ValueBoxBase<Object> implements EditorWidget<Object, ValueBoxEditor<Object>> {
 
     private ObservableValueBoxEditor editor;

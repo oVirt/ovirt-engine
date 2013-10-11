@@ -1,19 +1,15 @@
-package org.ovirt.engine.ui.common.widget.editor;
-
-import java.util.Collection;
-
-import org.ovirt.engine.ui.uicommonweb.Linq;
+package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import java.util.Collection;
+import org.ovirt.engine.ui.common.widget.editor.BaseListModelSuggestBox;
 
 /**
  * SuggestBox widget that adapts to UiCommon list model items. Expects all of it's items to be non null Strings
- * @deprecated use the org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBox instead
  */
-@Deprecated
-public class ListModelSuggestBox extends BaseListModelSuggestBox<Object> {
+public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
 
     public ListModelSuggestBox() {
         super(new MultiWordSuggestOracle());
@@ -29,21 +25,20 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<Object> {
     }
 
     @Override
-    public void setAcceptableValues(Collection<Object> values) {
-        Collection<String> stringValues = Linq.cast(values);
+    public void setAcceptableValues(Collection<String> values) {
         MultiWordSuggestOracle suggestOracle = (MultiWordSuggestOracle) asSuggestBox().getSuggestOracle();
         suggestOracle.clear();
-        suggestOracle.addAll(stringValues);
-        suggestOracle.setDefaultSuggestionsFromText(stringValues);
+        suggestOracle.addAll(values);
+        suggestOracle.setDefaultSuggestionsFromText(values);
     }
 
     @Override
-    protected void render(Object value, boolean fireEvents) {
-        asSuggestBox().setValue((String) value, fireEvents);
+    protected void render(String value, boolean fireEvents) {
+        asSuggestBox().setValue(value, fireEvents);
     }
 
     @Override
-    protected Object asEntity(String value) {
+    protected String asEntity(String value) {
         return value;
     }
 

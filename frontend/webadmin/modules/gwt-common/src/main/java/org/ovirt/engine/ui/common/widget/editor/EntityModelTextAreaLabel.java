@@ -12,7 +12,9 @@ import com.google.gwt.user.client.ui.ValueBoxBase;
 
 /**
  * An {@link EditorWidget} that only shows a Label (readonly)
+ * @deprecated use the org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextAreaLabel instead
  */
+@Deprecated
 public class EntityModelTextAreaLabel extends ValueBoxBase<Object> implements EditorWidget<Object, ValueBoxEditor<Object>> {
 
     public EntityModelTextAreaLabel() {
