@@ -32,6 +32,7 @@
         <filter-name>GwtCachingFilter</filter-name>
         <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
         <url-pattern>/theme/*</url-pattern>
+        <url-pattern>/theme-resource/*</url-pattern>
     </filter-mapping>
 
     <servlet-mapping>

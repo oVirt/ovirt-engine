@@ -15,7 +15,7 @@
         <!-- * external PNG/GIF image files -->
         <init-param>
             <param-name>cache</param-name>
-            <param-value>.*\.cache\.html|.*\.cache\.png|.*\.cache\.gif|.*\.cache\.js|.*\.css|.*\.gif|.*\.png</param-value>
+            <param-value>.*\.cache\.html|.*\.cache\.png|.*\.cache\.gif|.*\.cache\.js|.*\.css|.*\.gif|.*\.png|.*favicon</param-value>
         </init-param>
 
         <!-- Resources which always need to be checked for changes: -->
