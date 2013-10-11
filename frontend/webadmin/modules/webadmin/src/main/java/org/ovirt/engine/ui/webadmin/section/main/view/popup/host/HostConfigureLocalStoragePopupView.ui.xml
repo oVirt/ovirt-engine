@@ -100,7 +100,7 @@
                                             <ge:StringEntityModelTextBoxEditor ui:field="clusterNameEditor" />
                                             <g:VerticalPanel ui:field="clusterPanel" addStyleNames="{style.verticalPanelStyle}">
                                                 <ge:StringEntityModelTextBoxEditor ui:field="clusterDescriptionEditor" />
-                                                <e:ListModelListBoxEditor ui:field="clusterCpuNameEditor" />
+                                                <e:ListModelListBoxEditor ui:field="clusterCpuTypeEditor" />
                                             </g:VerticalPanel>
                                         </g:VerticalPanel>
                                         <g:Anchor ui:field="clusterButton" styleName="{style.toggleButtonStyle}" />

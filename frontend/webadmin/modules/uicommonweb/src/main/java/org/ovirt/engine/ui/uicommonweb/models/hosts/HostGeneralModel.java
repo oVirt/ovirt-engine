@@ -371,22 +371,6 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
-    private String cpuName;
-
-    public String getCpuName()
-    {
-        return cpuName;
-    }
-
-    public void setCpuName(String value)
-    {
-        if (!StringHelper.stringsEqual(cpuName, value))
-        {
-            cpuName = value;
-            onPropertyChanged(new PropertyChangedEventArgs("CpuName")); //$NON-NLS-1$
-        }
-    }
-
     private String cpuType;
 
     public String getCpuType()
@@ -400,6 +384,22 @@ public class HostGeneralModel extends EntityModel
         {
             cpuType = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
+        }
+    }
+
+    private String cpuModel;
+
+    public String getCpuModel()
+    {
+        return cpuModel;
+    }
+
+    public void setCpuModel(String value)
+    {
+        if (!StringHelper.stringsEqual(cpuModel, value))
+        {
+            cpuModel = value;
+            onPropertyChanged(new PropertyChangedEventArgs("CpuModel")); //$NON-NLS-1$
         }
     }
 
@@ -1062,8 +1062,8 @@ public class HostGeneralModel extends EntityModel
 
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setActiveVms(vds.getVmActive());
-        setCpuName(vds.getCpuName() != null ? vds.getCpuName().getCpuName() : null);
-        setCpuType(vds.getCpuModel());
+        setCpuType(vds.getCpuName() != null ? vds.getCpuName().getCpuName() : null);
+        setCpuModel(vds.getCpuModel());
         setNumberOfSockets(vds.getCpuSockets());
         setCoresPerSocket((vds.getCpuCores() != null && vds.getCpuSockets() != null)
                 ? vds.getCpuCores() / vds.getCpuSockets() : null);

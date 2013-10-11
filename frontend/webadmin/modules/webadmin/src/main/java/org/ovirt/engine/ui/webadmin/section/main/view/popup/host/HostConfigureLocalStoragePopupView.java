@@ -109,7 +109,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
     @UiField(provided = true)
     @Path(value = "cluster.CPU.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<ServerCpu> clusterCpuNameEditor;
+    ListModelListBoxEditor<ServerCpu> clusterCpuTypeEditor;
 
     @UiField
     Anchor storageButton;
@@ -236,7 +236,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
             }
         });
 
-        clusterCpuNameEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
+        clusterCpuTypeEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
             @Override
             public String renderNullSafe(ServerCpu object) {
                 return object.getCpuName();
@@ -280,7 +280,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         clusterButton.setText(getConstants().editText());
         clusterNameEditor.setLabel(getConstants().clusterPopupNameLabel());
         clusterDescriptionEditor.setLabel(getConstants().clusterPopupDescriptionLabel());
-        clusterCpuNameEditor.setLabel(getConstants().clusterPopupCPULabel());
+        clusterCpuTypeEditor.setLabel(getConstants().clusterPopupCPUTypeLabel());
 
         storageButton.setText(getConstants().editText());
         storageNameEditor.setLabel(getConstants().storagePopupNameLabel());

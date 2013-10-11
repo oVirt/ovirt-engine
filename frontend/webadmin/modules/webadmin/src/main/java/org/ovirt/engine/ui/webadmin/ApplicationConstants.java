@@ -698,8 +698,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String clusterPopupDescriptionLabel();
 
-    @DefaultStringValue("CPU Name")
-    String clusterPopupCPULabel();
+    @DefaultStringValue("CPU Type")
+    String clusterPopupCPUTypeLabel();
 
     @DefaultStringValue("CPU Architecture")
     String clusterPopupArchitectureLabel();
@@ -1229,7 +1229,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String descriptionCluster();
 
     @DefaultStringValue("Cluster CPU Type")
-    String cpuNameCluster();
+    String cpuTypeCluster();
 
     @DefaultStringValue("New")
     String newCluster();
@@ -1392,8 +1392,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Active VMs")
     String activeVmsHostGeneral();
 
-    @DefaultStringValue("CPU Name")
-    String cpuNameHostGeneral();
+    @DefaultStringValue("CPU Model")
+    String cpuModelHostGeneral();
 
     @DefaultStringValue("CPU Type")
     String cpuTypeHostGeneral();

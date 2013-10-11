@@ -99,7 +99,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @UiField(provided = true)
     @Path(value = "CPU.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<ServerCpu> cPUEditor;
+    ListModelListBoxEditor<ServerCpu> cpuEditor;
 
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
@@ -362,7 +362,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         nameEditor.setLabel(constants.clusterPopupNameLabel());
         descriptionEditor.setLabel(constants.clusterPopupDescriptionLabel());
         commentEditor.setLabel(constants.commentLabel());
-        cPUEditor.setLabel(constants.clusterPopupCPULabel());
+        cpuEditor.setLabel(constants.clusterPopupCPUTypeLabel());
         architectureEditor.setLabel(constants.clusterPopupArchitectureLabel());
         versionEditor.setLabel(constants.clusterPopupVersionLabel());
         enableOvirtServiceEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
@@ -440,7 +440,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             }
         });
 
-        cPUEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
+        cpuEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
             @Override
             public String renderNullSafe(ServerCpu object) {
                 return object.getCpuName();

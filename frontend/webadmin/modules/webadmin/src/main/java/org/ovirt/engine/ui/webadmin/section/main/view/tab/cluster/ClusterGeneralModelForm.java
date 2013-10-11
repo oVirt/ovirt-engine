@@ -25,7 +25,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     TextBoxLabel name = new TextBoxLabel();
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel dataCenterName = new TextBoxLabel();
-    TextBoxLabel cpuName = new TextBoxLabel();
+    TextBoxLabel cpuType = new TextBoxLabel();
     BooleanLabel cpuThreads;
     PercentLabel<Integer> memoryOverCommit;
     ResiliencePolicyLabel resiliencePolicy;
@@ -79,7 +79,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
                 && glusterSupported));
 
         // properties for virt support
-        formBuilder.addFormItem(new FormItem(constants.cpuNameCluster(), cpuName, 0, 1, virtSupported)
+        formBuilder.addFormItem(new FormItem(constants.cpuTypeCluster(), cpuType, 0, 1, virtSupported)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
         formBuilder.addFormItem(new FormItem(constants.cpuThreadsCluster(), cpuThreads, 1, 1, virtSupported)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));

@@ -152,7 +152,7 @@ public class ClusterGeneralModel extends EntityModel {
 
     private String name;
     private String description;
-    private String cpuName;
+    private String cpuType;
     private String dataCenterName;
     private String compatibilityVersion;
     private int memoryOverCommit;
@@ -221,7 +221,7 @@ public class ClusterGeneralModel extends EntityModel {
 
         setName(vdsGroup.getName());
         setDescription(vdsGroup.getdescription());
-        setCpuName(vdsGroup.getcpu_name());
+        setCpuType(vdsGroup.getcpu_name());
         setDataCenterName(vdsGroup.getStoragePoolName());
         setMemoryOverCommit(vdsGroup.getmax_vds_memory_over_commit());
         setCpuThreads(vdsGroup.getCountThreadsAsCores());
@@ -740,12 +740,12 @@ public class ClusterGeneralModel extends EntityModel {
         this.description = description;
     }
 
-    public String getCpuName() {
-        return cpuName;
+    public String getCpuType() {
+        return cpuType;
     }
 
-    public void setCpuName(String cpuName) {
-        this.cpuName = cpuName;
+    public void setCpuType(String cpuType) {
+        this.cpuType = cpuType;
     }
 
     public String getDataCenterName() {

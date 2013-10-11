@@ -57,8 +57,8 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     VersionTextBoxLabel glusterVersion = new VersionTextBoxLabel();
     @Path("IScsiInitiatorName")
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
-    TextBoxLabel cpuName = new TextBoxLabel();
     TextBoxLabel cpuType = new TextBoxLabel();
+    TextBoxLabel cpuModel = new TextBoxLabel();
     TextBoxLabel threadsPerCore = new TextBoxLabel();
     VersionTextBoxLabel vdsmVersion = new VersionTextBoxLabel();
     PercentTextBoxLabel<Integer> sharedMemory = new PercentTextBoxLabel<Integer>();
@@ -146,7 +146,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
         formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.cpuNameHostGeneral(), cpuName, 1, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.cpuModelHostGeneral(), cpuModel, 2, 1));
         formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 1).withAutoPlacement());
