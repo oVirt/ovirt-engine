@@ -7,6 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -97,6 +99,38 @@ public class GlusterDBUtils {
             }
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void removeBricksFromVolumeInDb(GlusterVolumeEntity volume,
+            List<GlusterBrickEntity> brickList,
+            int volumeReplicaCount) {
+        getGlusterBrickDao().removeAllInBatch(brickList);
+
+        // Update volume type and replica/stripe count
+        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE
+                && volume.getReplicaCount() == (volume.getBricks().size() - brickList.size())) {
+            volume.setVolumeType(GlusterVolumeType.REPLICATE);
+        }
+        if (volume.getVolumeType().isReplicatedType()) {
+            int replicaCount =
+                    (volumeReplicaCount == 0)
+                            ? volume.getReplicaCount()
+                            : volumeReplicaCount;
+            volume.setReplicaCount(replicaCount);
+            getGlusterVolumeDao().updateGlusterVolume(volume);
+        }
+
+        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE
+                && volume.getStripeCount() == (volume.getBricks().size() - brickList.size())) {
+            volume.setVolumeType(GlusterVolumeType.STRIPE);
+            getGlusterVolumeDao().updateGlusterVolume(volume);
+        }
+
+        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE
+                && (volume.getStripeCount() * volume.getReplicaCount()) == (volume.getBricks().size() - brickList.size())) {
+            volume.setVolumeType(GlusterVolumeType.STRIPED_REPLICATE);
+            getGlusterVolumeDao().updateGlusterVolume(volume);
         }
     }
 }

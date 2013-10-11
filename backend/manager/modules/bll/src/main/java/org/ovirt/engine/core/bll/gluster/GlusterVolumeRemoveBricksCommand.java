@@ -9,13 +9,13 @@ import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
  * BLL command to Remove Bricks from Gluster volume
@@ -49,7 +49,9 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         }
 
         GlusterBrickValidator brickValidator = new GlusterBrickValidator();
-        return validate(brickValidator.validateBricks(getParameters().getBricks(), getGlusterVolume(), getParameters().getReplicaCount()));
+        return validate(brickValidator.validateBricks(getParameters().getBricks(),
+                getGlusterVolume(),
+                getParameters().getReplicaCount()));
     }
 
     @Override
@@ -66,7 +68,9 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
                                 getGlusterVolumeName(), getParameters().getBricks(), replicaCount, true));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
-            removeBricksFromVolumeInDb(getParameters().getBricks());
+            GlusterDBUtils.getInstance().removeBricksFromVolumeInDb(getGlusterVolume(),
+                    getParameters().getBricks(),
+                    replicaCount);
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_FAILED, returnValue.getVdsError().getMessage());
             return;
@@ -82,35 +86,4 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         }
     }
 
-    private void removeBricksFromVolumeInDb(List<GlusterBrickEntity> brickList) {
-        GlusterVolumeEntity volume = getGlusterVolume();
-
-        getGlusterBrickDao().removeAllInBatch(brickList);
-
-        // Update volume type and replica/stripe count
-        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE
-                && volume.getReplicaCount() == (volume.getBricks().size() - brickList.size())) {
-            volume.setVolumeType(GlusterVolumeType.REPLICATE);
-        }
-        if (volume.getVolumeType().isReplicatedType()) {
-            int replicaCount =
-                    (getParameters().getReplicaCount() == 0)
-                            ? volume.getReplicaCount()
-                            : getParameters().getReplicaCount();
-            volume.setReplicaCount(replicaCount);
-            getGlusterVolumeDao().updateGlusterVolume(volume);
-        }
-
-        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE
-                && volume.getStripeCount() == (volume.getBricks().size() - brickList.size())) {
-            volume.setVolumeType(GlusterVolumeType.STRIPE);
-            getGlusterVolumeDao().updateGlusterVolume(volume);
-        }
-
-        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE
-                && (volume.getStripeCount() * volume.getReplicaCount()) == (volume.getBricks().size() - brickList.size())) {
-            volume.setVolumeType(GlusterVolumeType.STRIPED_REPLICATE);
-            getGlusterVolumeDao().updateGlusterVolume(volume);
-        }
-    }
 }

@@ -39,6 +39,10 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
             return false;
         }
 
+        if (getParameters().getBricks().isEmpty()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+        }
+
         if (!(GlusterTaskUtils.isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK))
                 || !(GlusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.STARTED) || GlusterTaskUtils.isTaskStatus(volume,
                         JobExecutionStatus.FINISHED))) {

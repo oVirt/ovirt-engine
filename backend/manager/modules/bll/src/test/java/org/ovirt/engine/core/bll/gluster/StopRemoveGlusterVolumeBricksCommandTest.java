@@ -249,4 +249,13 @@ public class StopRemoveGlusterVolumeBricksCommandTest {
         prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
+
+    @Test
+    public void canDoActionFailsWithEmptyBricksList() {
+        cmd =
+                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
+                        new ArrayList<GlusterBrickEntity>())));
+        prepareMocks(cmd);
+        assertFalse(cmd.canDoAction());
+    }
 }

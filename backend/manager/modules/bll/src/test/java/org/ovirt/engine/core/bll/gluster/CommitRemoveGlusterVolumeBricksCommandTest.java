@@ -43,17 +43,23 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommitRemoveGlusterVolumeBricksCommandTest {
 
     @Mock
-    GlusterVolumeDao volumeDao;
+    protected GlusterVolumeDao volumeDao;
+    @Mock
+    protected GlusterBrickDao brickDao;
     @Mock
     protected BackendInternal backend;
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
+    @Mock
+    protected GlusterDBUtils dbUtils;
 
     private final Guid volumeWithRemoveBricksTask = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private final Guid volumeWithRemoveBricksTaskNotFinished = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
@@ -69,6 +75,8 @@ public class CommitRemoveGlusterVolumeBricksCommandTest {
 
     private void prepareMocks(CommitRemoveGlusterVolumeBricksCommand command) {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
+        doReturn(brickDao).when(command).getGlusterBrickDao();
+        doReturn(dbUtils).when(command).getDbUtils();
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getVolumeWithRemoveBricksTask(volumeWithRemoveBricksTask)).when(volumeDao)
                 .getById(volumeWithRemoveBricksTask);
@@ -247,6 +255,15 @@ public class CommitRemoveGlusterVolumeBricksCommandTest {
         cmd =
                 spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskNull,
                         getBricks(volumeWithRemoveBricksTaskNull, 2))));
+        prepareMocks(cmd);
+        assertFalse(cmd.canDoAction());
+    }
+
+    @Test
+    public void canDoActionFailsWithEmptyBricksList() {
+        cmd =
+                spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithoutRemoveBricksTask,
+                        new ArrayList<GlusterBrickEntity>())));
         prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
