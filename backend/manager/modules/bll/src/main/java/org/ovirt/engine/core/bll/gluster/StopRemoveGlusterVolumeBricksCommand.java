@@ -40,7 +40,8 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
         }
 
         if (!(GlusterTaskUtils.isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK))
-                || !(GlusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.STARTED))) {
+                || !(GlusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.STARTED) || GlusterTaskUtils.isTaskStatus(volume,
+                        JobExecutionStatus.FINISHED))) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_STARTED);
         }
 

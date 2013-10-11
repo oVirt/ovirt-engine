@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,7 +85,8 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         GlusterAsyncTask asyncTask = getGlusterVolume().getAsyncTask();
         // Gluster Task will be associated with only one step ( REBALANCING_VOLUME or REMOVING_BRICK)
         Step step = getStepDao().getStepsByExternalId(asyncTask.getTaskId()).get(0);
-        step.markStepEnded(status);
+        step.setStatus(status);
+        step.setEndTime(new Date());
         step.setDescription(ExecutionMessageDirector.resolveStepMessage(getStepType(),
                 stepMessageMap));
         JobRepositoryFactory.getJobRepository().updateStep(step);

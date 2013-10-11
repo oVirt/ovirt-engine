@@ -213,6 +213,16 @@ public class StopRemoveGlusterVolumeBricksCommandTest {
         assertTrue(cmd.canDoAction());
     }
 
+    // This happens in retain bricks scenario, where user can call stop remove brick after migrating the data
+    @Test
+    public void canDoActionSucceedsOnVolumeWithRemoveBricksTaskCompleted() {
+        cmd =
+                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskCompleted,
+                        getBricks(volumeWithRemoveBricksTaskCompleted, 2))));
+        prepareMocks(cmd);
+        assertTrue(cmd.canDoAction());
+    }
+
     @Test
     public void canDoActionFailsOnVolumeWithoutAsyncTask() {
         cmd =
@@ -232,18 +242,9 @@ public class StopRemoveGlusterVolumeBricksCommandTest {
     }
 
     @Test
-    public void canDoActionFailesOnVolumeWithRemoveBricksTaskCompleted() {
-        cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskCompleted,
-                        getBricks(volumeWithRemoveBricksTaskCompleted, 2))));
-        prepareMocks(cmd);
-        assertFalse(cmd.canDoAction());
-    }
-
-    @Test
     public void canDoActionFailsOnNull() {
         cmd =
-                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTaskCompleted,
+                spy(new StopRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(null,
                         getBricks(volumeWithRemoveBricksTaskCompleted, 2))));
         prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
