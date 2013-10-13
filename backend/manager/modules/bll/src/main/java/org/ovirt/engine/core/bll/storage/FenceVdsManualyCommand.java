@@ -62,8 +62,6 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MANUAL_FENCE);
         // check problematic vds status
         if (IsLegalStatus(_problematicVds.getStatus())) {
             if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
@@ -236,4 +234,9 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         return Collections.singletonList(new PermissionSubject(getParameters().getVdsId(), VdcObjectType.VDS,
                 getActionType().getActionGroup()));
     }
+
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MANUAL_FENCE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+     }
 }
