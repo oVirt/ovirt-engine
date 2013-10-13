@@ -191,8 +191,14 @@ public class SchedulingManager {
             if (vdsList == null || vdsList.size() == 0) {
                 return null;
             }
-            if (vdsList != null && vdsList.contains(destHostId)) {
-                return destHostId;
+            // in case a default destination host was specified, and
+            // it passed filters return it
+            if (destHostId != null) {
+                for (VDS vds : vdsList) {
+                    if (destHostId.equals(vds.getId())) {
+                        return destHostId;
+                    }
+                }
             }
             if (policy.getFunctions() == null || policy.getFunctions().isEmpty()) {
                 return vdsList.get(0).getId();
@@ -237,32 +243,6 @@ public class SchedulingManager {
             return false;
         }
         return true;
-    }
-
-    protected boolean checkDestinationHost(VM vm,
-            List<VDS> vdsList,
-            Guid destVdsId,
-            List<String> messages,
-            ClusterPolicy policy,
-            Map<String, String> parameters,
-            VdsFreeMemoryChecker memoryChecker) {
-        List<VDS> destVdsList = new ArrayList<VDS>();
-        for (VDS vds : vdsList) {
-            if (vds.getId().equals(destVdsId)) {
-                destVdsList.add(vds);
-                break;
-            }
-        }
-        destVdsList =
-                runFilters(policy.getFilters(),
-                        destVdsList,
-                        vm,
-                        parameters,
-                        policy.getFilterPositionMap(),
-                        messages,
-                        memoryChecker);
-
-        return destVdsList != null && destVdsList.size() == 1;
     }
 
     static List<Guid> getEntityIds(List<? extends BusinessEntity<Guid>> entities) {
