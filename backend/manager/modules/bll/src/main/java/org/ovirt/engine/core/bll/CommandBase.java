@@ -181,10 +181,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (parameters.getParametersCurrentUser() != null) {
             setCurrentUser(parameters.getParametersCurrentUser());
         }
-        // correlation ID thread local variable is set for non multi-action
-        if (!parameters.getMultipleAction()) {
-            ThreadLocalParamsContainer.setCorrelationId(parameters.getCorrelationId());
-        }
         setCorrelationId(parameters.getCorrelationId());
 
         Guid commandIdFromParameters = parameters.getCommandId();
@@ -2118,5 +2114,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     public void setQuotaChanged(boolean quotaChanged) {
         this.quotaChanged = quotaChanged;
+    }
+
+    @Override
+    public void setCorrelationId(String correlationId) {
+        // correlation ID thread local variable is set for non multi-action
+        if (!_parameters.getMultipleAction()) {
+            ThreadLocalParamsContainer.setCorrelationId(correlationId);
+        }
+        super.setCorrelationId(correlationId);
     }
 }
