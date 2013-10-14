@@ -79,6 +79,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     public static enum DeployStatus {Complete, Incomplete, Failed, Reboot};
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000; // milliseconds
     private static final String IPTABLES_CUSTOM_RULES_PLACE_HOLDER = "@CUSTOM_RULES@";
+    private static final String IPTABLES_SSH_PORT_PLACE_HOLDER = "@SSH_PORT@";
     private static final String BOOTSTRAP_CUSTOM_ENVIRONMENT_PLACE_HOLDER = "@ENVIRONMENT@";
 
     private static final Log log = LogFactory.getLog(VdsDeploy.class);
@@ -209,6 +210,9 @@ public class VdsDeploy implements SSHDialog.Sink {
         ipTablesConfig = ipTablesConfig.replace(
             IPTABLES_CUSTOM_RULES_PLACE_HOLDER,
             serviceIPTablesConfig
+        ).replace(
+            IPTABLES_SSH_PORT_PLACE_HOLDER,
+            Integer.toString(_vds.getSshPort())
         );
 
         return ipTablesConfig;

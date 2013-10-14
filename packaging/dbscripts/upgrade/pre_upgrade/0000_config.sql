@@ -235,7 +235,7 @@ select fn_db_add_config_value('IPTablesConfig',
 # libvirt tls
 -A INPUT -p tcp --dport 16514 -j ACCEPT
 # SSH
--A INPUT -p tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp --dport @SSH_PORT@ -j ACCEPT
 # guest consoles
 -A INPUT -p tcp -m multiport --dports 5634:6166 -j ACCEPT
 # migration
@@ -658,7 +658,7 @@ select fn_db_update_config_value('IPTablesConfig','
 # vdsm
 -A INPUT -p tcp --dport 54321 -j ACCEPT
 # SSH
--A INPUT -p tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp --dport @SSH_PORT@ -j ACCEPT
 # snmp
 -A INPUT -p udp --dport 161 -j ACCEPT
 
