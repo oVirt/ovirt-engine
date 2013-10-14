@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -69,6 +71,9 @@ public class ResourceManager {
             }
         }
 
+        // Is there any VM that is not fully Up or fully Down?
+        boolean runningVmsInTransition = false;
+
         // Cleanup all vms dynamic data. This is defensive code on power crash
         List<VM> vms = DbFacade.getInstance().getVmDao().getAll();
         for (VM vm : vms) {
@@ -83,7 +88,38 @@ public class ResourceManager {
                     SetVmUnknown(vm);
                 }
             }
+
+            if (!runningVmsInTransition && vm.isRunning() && vm.getStatus() != VMStatus.Up) {
+                runningVmsInTransition = true;
+            }
         }
+
+        // Clean pending memory and CPUs if there is no VM in transition on a given Host
+        // (meaning we tried to start a VM and the engine crashed before telling VDSM about it)
+        List<VdsDynamic> updatedEntities = new ArrayList<>();
+        for (VDS _vds : allVdsList) {
+            boolean _saveVdsDynamic = false;
+
+            if (_vds.getPendingVcpusCount() != 0 && !runningVmsInTransition) {
+                _vds.setPendingVcpusCount(0);
+                _saveVdsDynamic = true;
+            }
+
+            if (_vds.getPendingVmemSize() != 0 && !runningVmsInTransition) {
+                _vds.setPendingVmemSize(0);
+                _saveVdsDynamic = true;
+            }
+
+            if (_saveVdsDynamic) {
+                updatedEntities.add(_vds.getDynamicData());
+            }
+        }
+
+        // TODO replace this with batch processing once it becomes available
+        for (VdsDynamic entity: updatedEntities) {
+            DbFacade.getInstance().getVdsDynamicDao().update(entity);
+        }
+
         // Populate the VDS dictionary
         for (VDS curVds : allVdsList) {
             AddVds(curVds, true);

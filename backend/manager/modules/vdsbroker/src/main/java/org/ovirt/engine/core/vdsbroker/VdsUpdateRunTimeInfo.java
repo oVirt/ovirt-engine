@@ -118,7 +118,6 @@ public class VdsUpdateRunTimeInfo {
     private boolean processHardwareCapsNeeded;
     private boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<Guid, Long>();
-    private boolean runningVmsInTransition;
 
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 
@@ -330,13 +329,6 @@ public class VdsUpdateRunTimeInfo {
         _firstStatus = _vds.getStatus();
         this.monitoringStrategy = monitoringStrategy;
         _vmDict = getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
-
-        for (VM vm : _vmDict.values()) {
-            if (vm.isRunning() && vm.getStatus() != VMStatus.Up) {
-                runningVmsInTransition = true;
-                break;
-            }
-        }
     }
 
     public void Refresh() {
@@ -1843,17 +1835,6 @@ public class VdsUpdateRunTimeInfo {
         }
         if (_vds.getVmsCoresCount() == null || !_vds.getVmsCoresCount().equals(vmsCoresCount)) {
             _vds.setVmsCoresCount(vmsCoresCount);
-            _saveVdsDynamic = true;
-        }
-
-        if (_vds.getPendingVcpusCount() != 0 && !runningVmsInTransition) {
-            _vds.setPendingVcpusCount(0);
-            _saveVdsDynamic = true;
-        }
-
-        if (_vds.getPendingVmemSize() != 0 && !runningVmsInTransition) {
-            // set also vmem size to 0
-            _vds.setPendingVmemSize(0);
             _saveVdsDynamic = true;
         }
     }
