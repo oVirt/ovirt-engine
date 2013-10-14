@@ -23,6 +23,7 @@ import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Domain;
+import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.GuestInfo;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
@@ -32,7 +33,7 @@ import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
-import org.ovirt.engine.api.model.PayloadFile;
+import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Usb;
@@ -867,11 +868,14 @@ public class VmMapper {
                 }
             }
             model.setVolumeId(entity.getVolumeId());
-            for (Map.Entry<String, String> entry : entity.getFiles().entrySet()) {
-                PayloadFile file = new PayloadFile();
-                file.setName(entry.getKey());
-                file.setContent(entry.getValue());
-                model.getFile().add(file);
+            if (entity.getFiles().size() > 0) {
+                model.setFiles(new Files());
+                for (Map.Entry<String, String> entry : entity.getFiles().entrySet()) {
+                    File file = new File();
+                    file.setName(entry.getKey());
+                    file.setContent(entry.getValue());
+                    model.getFiles().getFiles().add(file);
+                }
             }
             return model;
         }
@@ -890,8 +894,8 @@ public class VmMapper {
         if (model.isSetVolumeId()) {
             entity.setVolumeId(model.getVolumeId());
         }
-        if (model.getFile() != null) {
-            for (PayloadFile file : model.getFile()) {
+        if (model.isSetFiles()) {
+            for (File file : model.getFiles().getFiles()) {
                 entity.getFiles().put(file.getName(), file.getContent());
             }
         }
