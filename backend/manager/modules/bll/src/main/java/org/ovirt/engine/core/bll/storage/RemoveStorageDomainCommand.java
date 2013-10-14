@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -188,9 +190,19 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     }
 
     protected boolean formatStorage(StorageDomain dom, VDS vds) {
-        return getVdsBroker()
-                .RunVdsCommand(VDSCommandType.FormatStorageDomain,
-                        new FormatStorageDomainVDSCommandParameters(vds.getId(), dom.getId())).getSucceeded();
+        try {
+            return getVdsBroker()
+                    .RunVdsCommand(VDSCommandType.FormatStorageDomain,
+                            new FormatStorageDomainVDSCommandParameters(vds.getId(), dom.getId())).getSucceeded();
+        } catch (VdcBLLException e) {
+            if (e.getErrorCode() != VdcBllErrors.StorageDomainDoesNotExist) {
+                throw e;
+            }
+            log.warnFormat("Storage Domain {0} which was about to be formatted does not exist in VDS {1}",
+                    dom.getName(),
+                    vds.getName());
+            return true;
+        }
     }
 
     @Override
