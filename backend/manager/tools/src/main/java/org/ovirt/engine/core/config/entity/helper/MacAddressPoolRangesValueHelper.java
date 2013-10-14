@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.config.entity.ConfigKey;
+import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 
 /**
  * The class verifies the provided MAC address ranges to set the values of MAC addresses pool is defined properly. The
@@ -49,6 +50,12 @@ public class MacAddressPoolRangesValueHelper extends StringValueHelper {
                                     rangeEnd,
                                     rangeStart));
                 }
+
+                if (!MacAddressRangeUtils.isRangeValid(rangeStart, rangeEnd)) {
+                    return new ValidationResult(false,
+                            String.format("The entered range is invalid. %s contains no valid MAC addresses.", range));
+                }
+
             } else {
                 return new ValidationResult(false, "The entered value is in imporper format. " + value
                         + " should be in a format of AA:AA:AA:AA:AA:AA-BB:BB:BB:BB:BB:BB,...");
