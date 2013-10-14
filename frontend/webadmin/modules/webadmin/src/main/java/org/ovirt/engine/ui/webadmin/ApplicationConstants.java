@@ -3139,7 +3139,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Load Balancer")
     String clusterPolicyLoadBalancerLabel();
 
-    @DefaultStringValue("Attached Clusters")
+    @DefaultStringValue("Clusters on this policy")
     String clusterPolicyAttachedCluster();
 
     @DefaultStringValue("Properties")
