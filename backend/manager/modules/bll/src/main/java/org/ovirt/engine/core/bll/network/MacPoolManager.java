@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
@@ -19,13 +18,12 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MacPoolManager {
 
-    private static final String MAC_ADDRESS_MULTICAST_LSB = "13579bBdDfF";
-    private static final int HEX_RADIX = 16;
     private static final String INIT_ERROR_MSG = "{0}: Error in initializing MAC Addresses pool manager.";
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
@@ -119,72 +117,15 @@ public class MacPoolManager {
         }
     }
 
-    private String parseRangePart(String start) {
-        StringBuilder builder = new StringBuilder();
-        for (String part : start.split("[:]", -1)) {
-            String tempPart = part.trim();
-            if (tempPart.length() == 1) {
-                builder.append('0');
-            } else if (tempPart.length() > 2) {
-                return null;
-            }
-            builder.append(tempPart);
-        }
-        return builder.toString();
-    }
-
     private boolean initRange(String start, String end) {
-        String parsedRangeStart = parseRangePart(start);
-        String parsedRangeEnd = parseRangePart(end);
-        if (parsedRangeEnd == null || parsedRangeStart == null) {
-            return false;
-        }
-        long startNum = Long.parseLong(parseRangePart(start), HEX_RADIX);
-        long endNum = Long.parseLong(parseRangePart(end), HEX_RADIX);
-        if (startNum > endNum) {
-            return false;
-        }
-        for (long i = startNum; i <= endNum; i++) {
-            String value = String.format("%x", i);
-            if (value.length() > 12) {
-                return false;
-            } else if (value.length() < 12) {
-                value = StringUtils.leftPad(value, 12, '0');
-            }
+        List<String> macAddresses = MacAddressRangeUtils.initRange(start, end);
 
-            value = createMacAddress(value);
-            if (value == null) {
-                break;
-            }
-
-            if (!availableMacs.contains(value)) {
-                availableMacs.add(value);
-            }
-            if (availableMacs.size() > Config.<Integer> GetValue(ConfigValues.MaxMacsCountInPool)) {
-                throw new MacPoolExceededMaxException();
-            }
+        if (macAddresses.size() + availableMacs.size() > Config.<Integer> GetValue(ConfigValues.MaxMacsCountInPool)) {
+            throw new MacPoolExceededMaxException();
         }
+
+        availableMacs.addAll(macAddresses);
         return true;
-    }
-
-    private String createMacAddress(String value) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int j = 0; j < value.length(); j += 2) {
-            String group = value.substring(j, j + 2);
-
-            // skip multi-cast MAC Addresses
-            if (j == 0 && StringUtils.contains(MAC_ADDRESS_MULTICAST_LSB, group.charAt(1))) {
-                return null;
-            }
-
-            builder.append(group);
-            if (j + 2 < value.length()) {
-                builder.append(":");
-            }
-        }
-
-        return builder.toString();
     }
 
     public String allocateNewMac() {
