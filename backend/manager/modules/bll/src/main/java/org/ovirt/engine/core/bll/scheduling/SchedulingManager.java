@@ -270,8 +270,8 @@ public class SchedulingManager {
                         1,
                         vm.getNumOfCpus(),
                         vm.getMinAllocatedMem(),
-                        vm.getVmMemSizeMb(),
-                        vm.getNumOfCpus());
+                        0,
+                        0);
             }
             return bestHost;
         }
