@@ -1768,6 +1768,7 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
+          <xs:element name="content" type="xs:string" />
           <xs:element name="type" type="xs:string" minOccurs="0"/>
           <xs:element ref="storage_domain" minOccurs="0"/>
         </xs:sequence>
@@ -2322,25 +2323,10 @@
 
   <xs:complexType name="Payload">
     <xs:sequence>
-      <xs:element name="file" type="PayloadFile" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="files"/>
       <xs:element name="volume_id" type="xs:string" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="type" type="xs:string">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property generateIsSetMethod="false"/>
-          </xs:appinfo>
-        </xs:annotation>
-    </xs:attribute>
-  </xs:complexType>
-
-  <xs:element name="payload_file" type="PayloadFile"/>
-
-  <xs:complexType name="PayloadFile">
-    <xs:sequence>
-      <xs:element name="content" type="xs:string" />
-    </xs:sequence>
-    <xs:attribute name="name" type="xs:string">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property generateIsSetMethod="false"/>
