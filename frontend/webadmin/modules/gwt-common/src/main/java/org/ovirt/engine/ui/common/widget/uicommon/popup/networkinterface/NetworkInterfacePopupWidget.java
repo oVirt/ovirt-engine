@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -32,7 +31,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 
 public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<VmInterfaceModel> {
 
@@ -77,19 +75,20 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @WithElementId("nicType")
     ListModelListBoxEditor<Object> nicTypeEditor;
 
+    @UiField
+    protected HorizontalPanel linkStateSelectionPanel;
+
+    @UiField
+    @Path(value = "linked.entity")
+    public ListModelListBoxEditor<Object> linkStateEditor;
+
     @UiField(provided = true)
-    @Path("enableMac.entity")
-    @WithElementId("enableManualMac")
-    EntityModelCheckBoxEditor enableManualMacCheckbox;
+    @Path(value = "linked_IsSelected.entity")
+    public EntityModelRadioButtonEditor linkedEditor;
 
-    @UiField
-    @Path("MAC.entity")
-    @WithElementId("mac")
-    EntityModelTextBoxEditor MACEditor;
-
-    @UiField
-    @Ignore
-    Label macExample;
+    @UiField(provided = true)
+    @Path(value = "unlinked_IsSelected.entity")
+    public EntityModelRadioButtonEditor unlinkedEditor;
 
     @UiField
     protected HorizontalPanel cardStatusSelectionPanel;
@@ -106,39 +105,29 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Path(value = "unplugged_IsSelected.entity")
     public EntityModelRadioButtonEditor unpluggedEditor;
 
-    @UiField
-    protected HorizontalPanel linkStateSelectionPanel;
-
-    @UiField
-    @Path(value = "linked.entity")
-    public ListModelListBoxEditor<Object> linkStateEditor;
-
     @UiField(provided = true)
-    @Path(value = "linked_IsSelected.entity")
-    public EntityModelRadioButtonEditor linkedEditor;
+    @Path("enableMac.entity")
+    @WithElementId("enableManualMac")
+    EntityModelCheckBoxEditor enableManualMacCheckbox;
 
-    @UiField(provided = true)
-    @Path(value = "unlinked_IsSelected.entity")
-    public EntityModelRadioButtonEditor unlinkedEditor;
+    @UiField
+    @Path("MAC.entity")
+    @WithElementId("mac")
+    EntityModelTextBoxEditor MACEditor;
+
+    @UiField
+    @Ignore
+    Label macExample;
 
     public final static CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
     public final static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
     public final static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-
-    @UiField
-    @Ignore
-    public AdvancedParametersExpander expander;
-
-    @UiField
-    @Ignore
-    public Panel expanderContent;
 
     private final Driver driver = GWT.create(Driver.class);
 
     public NetworkInterfacePopupWidget(EventBus eventBus, CommonApplicationConstants constants) {
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        expander.initWithContent(expanderContent.getElement());
         localize(constants);
         applyStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
