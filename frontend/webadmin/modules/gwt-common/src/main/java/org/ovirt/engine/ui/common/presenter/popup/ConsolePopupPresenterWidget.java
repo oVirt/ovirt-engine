@@ -12,8 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
-import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
@@ -32,12 +31,9 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
 public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<ConsolePopupModel, ConsolePopupPresenterWidget.ViewDef> {
 
     @GenEvent
-    public class ConsoleModelChanged {
+    public class ConsoleModelChanged { }
 
-        HasConsoleModel newModel;
-
-    }
-
+    // long term todo - rewrite set***Visible to set***Enabled with descriptive tooltip if disabled
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ConsolePopupModel> {
 
         void setSpiceAvailable(boolean visible);
@@ -135,7 +131,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     @Override
     public void init(final ConsolePopupModel model) {
-        if (model.getModel().isPool()) {
+        if (model.getVmConsoles().getVm() == null) {
             throw new IllegalArgumentException("The console popup can not be used with pool, only with VM"); //$NON-NLS-1$
         }
 
@@ -144,18 +140,18 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         initView(model);
         initListeners(model);
 
-        String vmName = model.getModel().getVM().getName();
+        String vmName = model.getVmConsoles().getVm().getName();
         getView().setVmName(vmName);
 
         super.init(model);
     }
 
     private void initModel(ConsolePopupModel model) {
-        consoleOptionsPersister.loadFromLocalStorage(model.getModel());
+        consoleOptionsPersister.loadFromLocalStorage(model.getVmConsoles());
     }
 
     private void initListeners(final ConsolePopupModel model) {
-        ISpice spice = extractSpice(model);
+        ISpice spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getspice();
         if (spice == null) {
             return;
         }
@@ -178,7 +174,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             return;
         }
 
-        ISpice spice = extractSpice(model);
+        ISpice spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getspice();
         if (spice == null) {
             return;
         }
@@ -191,21 +187,13 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     private void initView(ConsolePopupModel model) {
 
         listenOnRadioButtons(model);
-        HasConsoleModel currentItem = model.getModel();
+        VmConsoles vmConsoles = model.getVmConsoles();
 
-        boolean spiceAvailable =
-                currentItem.getDefaultConsoleModel() instanceof SpiceConsoleModel;
+        getView().setSpiceAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.SPICE));
+        getView().setVncAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.VNC));
+        getView().setRdpAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.RDP));
 
-        boolean vncAvailable =
-                currentItem.getDefaultConsoleModel() instanceof VncConsoleModel;
-
-        boolean rdpAvailable = isAdditionalConsoleAvailable(currentItem) && consoleUtils.isRDPAvailable();
-
-        getView().setSpiceAvailable(spiceAvailable);
-        getView().setRdpAvailable(rdpAvailable);
-        getView().setVncAvailable(vncAvailable);
-
-        ConsoleProtocol selectedProtocol = currentItem.getUserSelectedProtocol();
+        ConsoleProtocol selectedProtocol = vmConsoles.getSelectedProcotol();
 
         boolean rdpPreselected = ConsoleProtocol.RDP.equals(selectedProtocol);
         boolean spicePreselected = ConsoleProtocol.SPICE.equals(selectedProtocol);
@@ -219,9 +207,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().showRdpPanel(rdpPreselected);
         getView().showVncPanel(vncPreselected);
 
-        getView().setDisableSmartcardVisible(consoleUtils.isSmartcardGloballyEnabled(currentItem));
+        getView().setDisableSmartcardVisible(model.getVmConsoles().getVm().isSmartcardEnabled());
 
-        ISpice spice = extractSpice(model);
+        ISpice spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getspice();
         if (spice != null) {
             if (!spice.isWanOptionsEnabled()) {
                 getView().selectWanOptionsEnabled(false);
@@ -240,26 +228,21 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             getView().setRdpPluginImplEnabled(false, constants.rdpPluginNotSupportedByBrowser());
         }
 
-        SpiceConsoleModel spiceModel = extractSpiceModel(model);
-        getView().selectSpiceImplementation(spiceModel == null ? SpiceConsoleModel.ClientConsoleMode.Auto : spiceModel.getClientConsoleMode());
+        getView().selectSpiceImplementation(vmConsoles.getConsoleModel(SpiceConsoleModel.class).getClientConsoleMode());
+        getView().selectVncImplementation(vmConsoles.getConsoleModel(VncConsoleModel.class).getClientConsoleMode());
+        getView().selectRdpImplementation(vmConsoles.getConsoleModel(RdpConsoleModel.class).getClientConsoleMode());
 
-        VncConsoleModel vncModel = extractVncModel(model);
-        getView().selectVncImplementation(vncModel == null ? VncConsoleModel.ClientConsoleMode.Native : vncModel.getClientConsoleMode());
-
-        RdpConsoleModel rdpModel = extractRdpModel(model);
-        getView().selectRdpImplementation(rdpModel == null ? RdpConsoleModel.ClientConsoleMode.Auto : rdpModel.getClientConsoleMode());
-
-        wanOptionsAvailable = consoleUtils.isWanOptionsAvailable(model.getModel());
+        wanOptionsAvailable = vmConsoles.getConsoleModel(SpiceConsoleModel.class).isWanOptionsAvailableForMyVm();
         if (wanOptionsAvailable) {
             getView().setWanOptionsVisible(true);
         } else {
             getView().setWanOptionsVisible(false);
         }
 
-        getView().setAdditionalConsoleAvailable(rdpAvailable);
-        getView().setSpiceConsoleAvailable(currentItem.getDefaultConsoleModel() instanceof SpiceConsoleModel);
+        getView().setAdditionalConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.RDP));
+        getView().setSpiceConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.SPICE));
 
-        boolean ctrlAltDelEnabled = consoleUtils.isCtrlAltDelEnabled();
+        boolean ctrlAltDelEnabled = true; // thiss will be removed anyway
         getView().setCtrlAltDelEnabled(ctrlAltDelEnabled, constants.ctrlAltDeletIsNotSupportedOnWindows());
 
         boolean spiceProxyEnabled = consoleUtils.isSpiceProxyDefined();
@@ -286,14 +269,10 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             getView().flushToPrivateModel();
 
             // store to local storage
-            consoleOptionsPersister.storeToLocalStorage(model.getModel());
+            consoleOptionsPersister.storeToLocalStorage(model.getVmConsoles());
 
-            ConsoleModelChangedEvent.fire(this, model.getModel());
+            ConsoleModelChangedEvent.fire(this);
         }
-    }
-
-    protected boolean isAdditionalConsoleAvailable(HasConsoleModel currentItem) {
-        return currentItem.getAdditionalConsoleModel() != null;
     }
 
     protected void listenOnRadioButtons(final ConsolePopupModel model) {
@@ -388,46 +367,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                         getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Plugin);
                     }
                 }));
-    }
-
-    protected ISpice extractSpice(ConsolePopupModel model) {
-        SpiceConsoleModel spiceModel = extractSpiceModel(model);
-
-        if (spiceModel != null) {
-            return spiceModel.getspice();
-        }
-
-        return null;
-    }
-
-    protected SpiceConsoleModel extractSpiceModel(ConsolePopupModel model) {
-        ConsoleModel consoleModel = model.getModel().getDefaultConsoleModel();
-
-        if (consoleModel instanceof SpiceConsoleModel) {
-            return (SpiceConsoleModel) consoleModel;
-        }
-
-        return null;
-    }
-
-    private VncConsoleModel extractVncModel(ConsolePopupModel model) {
-    ConsoleModel consoleModel = model.getModel().getDefaultConsoleModel();
-
-        if (consoleModel instanceof VncConsoleModel) {
-            return (VncConsoleModel) consoleModel;
-        }
-
-        return null;
-    }
-
-    protected RdpConsoleModel extractRdpModel(ConsolePopupModel model) {
-        ConsoleModel consoleModel = model.getModel().getAdditionalConsoleModel();
-
-        if (consoleModel instanceof RdpConsoleModel) {
-            return (RdpConsoleModel) consoleModel;
-        }
-
-        return null;
     }
 
 }

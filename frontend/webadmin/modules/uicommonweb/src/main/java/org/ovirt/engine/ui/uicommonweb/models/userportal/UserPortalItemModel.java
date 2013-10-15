@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -11,33 +10,18 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class UserPortalItemModel extends EntityModel implements HasConsoleModel
-{
-
-    @Override
-    public ConsoleProtocol getUserSelectedProtocol() {
-        return userSelectedDisplayProtocolManager.resolveSelectedProtocol(this);
-    }
-
-    @Override
-    public void setSelectedProtocol(ConsoleProtocol selectedProtocol) {
-        userSelectedDisplayProtocolManager.setSelectedProtocol(selectedProtocol, this);
-    }
-
+public class UserPortalItemModel extends EntityModel {
     private UICommand runCommand;
+    private final VmConsoles vmConsoles;
 
     public UICommand getRunCommand()
     {
@@ -121,18 +105,6 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         returnVmCommand = value;
     }
 
-    private IVmPoolResolutionService privateResolutionService;
-
-    public IVmPoolResolutionService getResolutionService()
-    {
-        return privateResolutionService;
-    }
-
-    private void setResolutionService(IVmPoolResolutionService value)
-    {
-        privateResolutionService = value;
-    }
-
     private String name;
 
     public String getName()
@@ -167,7 +139,6 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
 
     private boolean isPool;
 
-    @Override
     public boolean isPool()
     {
         return isPool;
@@ -246,40 +217,6 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         }
     }
 
-    private ConsoleModel defaultConsole;
-
-    @Override
-    public ConsoleModel getDefaultConsoleModel()
-    {
-        return defaultConsole;
-    }
-
-    public void setDefaultConsole(ConsoleModel value)
-    {
-        if (defaultConsole != value)
-        {
-            defaultConsole = value;
-            onPropertyChanged(new PropertyChangedEventArgs("DefaultConsole")); //$NON-NLS-1$
-        }
-    }
-
-    private ConsoleModel additionalConsole;
-
-    @Override
-    public ConsoleModel getAdditionalConsoleModel()
-    {
-        return additionalConsole;
-    }
-
-    public void setAdditionalConsole(ConsoleModel value)
-    {
-        if (additionalConsole != value)
-        {
-            additionalConsole = value;
-            onPropertyChanged(new PropertyChangedEventArgs("AdditionalConsole")); //$NON-NLS-1$
-        }
-    }
-
     private List<ChangeCDModel> cdImages;
 
     public List<ChangeCDModel> getCdImages()
@@ -309,30 +246,9 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         }
     }
 
-    private Version spiceDriverVersion;
-
-    public Version getSpiceDriverVersion() {
-        return spiceDriverVersion;
-    }
-
-    public void setSpiceDriverVersion(Version spiceDriverVersion) {
-        if (this.spiceDriverVersion != spiceDriverVersion) {
-            this.spiceDriverVersion = spiceDriverVersion;
-            onPropertyChanged(new PropertyChangedEventArgs("spiceDriverVersion")); //$NON-NLS-1$
-        }
-    }
-
     private ItemBehavior behavior;
-    private final UserSelectedDisplayProtocolManager userSelectedDisplayProtocolManager;
-    private final ConsoleContext consoleContext;
 
-    public UserPortalItemModel(IVmPoolResolutionService resolutionService,
-            UserSelectedDisplayProtocolManager userSelectedDisplayManager,
-            ConsoleContext consoleContext) {
-        this.userSelectedDisplayProtocolManager = userSelectedDisplayManager;
-        this.consoleContext = consoleContext;
-        setResolutionService(resolutionService);
-
+    public UserPortalItemModel(Object vmOrPool, VmConsoles consoles) {
         setRunCommand(new UICommand("Run", this)); //$NON-NLS-1$
         setPauseCommand(new UICommand("Pause", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
@@ -343,6 +259,10 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         ChangeCDModel tempVar = new ChangeCDModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
         setCdImages(new ArrayList<ChangeCDModel>(Arrays.asList(new ChangeCDModel[] { tempVar })));
+
+        this.vmConsoles = consoles;
+
+        setEntity(vmOrPool);
     }
 
     @Override
@@ -458,7 +378,6 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         return false;
     }
 
-    @Override
     public VM getVM() {
         if (getEntity() instanceof VM) {
             return (VM) getEntity();
@@ -467,8 +386,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         return null;
     }
 
-    @Override
-    public ConsoleContext getConsoleContext() {
-        return consoleContext;
+    public VmConsoles getVmConsoles() {
+        return vmConsoles;
     }
 }

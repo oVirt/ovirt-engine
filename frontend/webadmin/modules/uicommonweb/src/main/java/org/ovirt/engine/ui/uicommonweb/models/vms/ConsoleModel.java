@@ -29,35 +29,20 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class ConsoleModel extends EntityModel {
-    public static final String EjectLabel = "[" + ConstantsManager.getInstance().getConstants().eject() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
     public static final String GET_ATTACHMENT_SERVLET_URL = BaseContextPathData.getInstance().getPath()
             + "services/attachment/"; //$NON-NLS-1$
 
+    private static String EJECT_LABEL;
+
+    public static String getEjectLabel() {
+        if (EJECT_LABEL == null) {
+            EJECT_LABEL = "[" + ConstantsManager.getInstance().getConstants().eject() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return EJECT_LABEL;
+    }
+
     public static EventDefinition ErrorEventDefinition;
     private Event privateErrorEvent;
-
-    /**
-     * The user have selected this model in the edit console dialog
-     */
-    private boolean userSelected;
-
-    public boolean isUserSelected() {
-        return userSelected;
-    }
-
-    private ConsoleSelectionContext selectionContext;
-
-    public ConsoleSelectionContext getSelectionContext() {
-        return selectionContext;
-    }
-
-    public void setSelectionContext(ConsoleSelectionContext selectionContext) {
-        this.selectionContext = selectionContext;
-    }
-
-    public void setUserSelected(boolean userSelected) {
-        this.userSelected = userSelected;
-    }
 
     public Event getErrorEvent()
     {
@@ -119,19 +104,14 @@ public abstract class ConsoleModel extends EntityModel {
         return (VM) super.getEntity();
     }
 
-    public void setEntity(VM value)
-    {
-        super.setEntity(value);
-    }
-
     /**
      * This attribute is a workaround for displaying popup dialogs
      * in console models.
      */
-    protected Model parentModel;
+    private final Model parentModel;
 
-    public void setParentModel(Model parentModel) {
-        this.parentModel = parentModel;
+    protected Model getParentModel() {
+        return parentModel;
     }
 
     static
@@ -139,8 +119,10 @@ public abstract class ConsoleModel extends EntityModel {
         ErrorEventDefinition = new EventDefinition("Error", ConsoleModel.class); //$NON-NLS-1$
     }
 
-    protected ConsoleModel()
-    {
+    protected ConsoleModel(VM myVm, Model parentModel) {
+        this.parentModel = parentModel;
+        setEntity(myVm);
+
         setErrorEvent(new Event(ErrorEventDefinition));
 
         setConnectCommand(new UICommand("Connect", this)); //$NON-NLS-1$
@@ -148,63 +130,38 @@ public abstract class ConsoleModel extends EntityModel {
 
     protected abstract void connect();
 
-    @Override
-    protected void onEntityChanged()
-    {
-        super.onEntityChanged();
+    public abstract boolean canBeSelected();
 
-        updateActionAvailability();
+    public boolean canConnect() {
+        if (!canBeSelected()) { // cannot be even selected
+            return false;
+        }
+
+        return getForceVmStatusUp()
+                ? getEntity().getStatus() == VMStatus.Up
+                : isVmRunning();
     }
 
-    @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
-        super.entityPropertyChanged(sender, e);
+    private boolean isVmRunning() {
+        switch (getEntity().getStatus()) {
+            case PoweringUp:
+            case Up:
+            case RebootInProgress:
+            case PoweringDown:
+            case Paused:
+                return true;
 
-        if (e.PropertyName.equals("status")) //$NON-NLS-1$
-        {
-            updateActionAvailability();
+            default:
+                return false;
         }
     }
 
-    protected void updateActionAvailability()
-    {
-    }
-
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getConnectCommand())
-        {
+        if (command == getConnectCommand()) {
             connect();
-        }
-    }
-
-    public boolean isVmConnectReady()
-    {
-        if (getForceVmStatusUp())
-        {
-            return getEntity().getStatus() == VMStatus.Up;
-        }
-
-        return isVmUp();
-    }
-
-    public boolean isVmUp()
-    {
-        switch (getEntity().getStatus())
-        {
-        case PoweringUp:
-        case Up:
-        case RebootInProgress:
-        case PoweringDown:
-        case Paused:
-            return true;
-
-        default:
-            return false;
         }
     }
 

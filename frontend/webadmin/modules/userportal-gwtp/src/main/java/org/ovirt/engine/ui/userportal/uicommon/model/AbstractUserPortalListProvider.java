@@ -7,19 +7,19 @@ import java.util.Map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.AbstractUserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Provider;
 
 /**
- * Base class for {@link IUserPortalListModel} providers with {@linkplain #itemsChanged data update optimization}.
+ * Base class for {@link org.ovirt.engine.ui.uicommonweb.models.userportal.AbstractUserPortalListModel} providers with {@linkplain #itemsChanged data update optimization}.
  *
  * @param <M>
  *            List model type.
  */
-public abstract class AbstractUserPortalListProvider<M extends IUserPortalListModel> extends UserPortalDataBoundModelProvider<UserPortalItemModel, M> {
+public abstract class AbstractUserPortalListProvider<M extends AbstractUserPortalListModel> extends UserPortalDataBoundModelProvider<UserPortalItemModel, M> {
 
     private List<UserPortalItemModel> currentItems;
 

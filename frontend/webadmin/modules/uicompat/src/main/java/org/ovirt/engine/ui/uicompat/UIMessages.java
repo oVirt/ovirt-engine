@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import com.google.gwt.i18n.client.Constants;
-
 import java.util.Date;
 import java.util.List;
 
@@ -320,4 +318,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("The following disks cannot be copied: {0}")
     String cannotCopyDisks(String disks);
+
+    @DefaultMessage("Error connecting to {0} using {1} protocol")
+    String errorConnectingToConsole(String name, String s);
+
+    @DefaultMessage("Cannot connect to the console for {0}")
+    String cannotConnectToTheConsole(String vmName);
 }

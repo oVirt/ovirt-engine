@@ -42,9 +42,11 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
@@ -77,8 +79,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class UserPortalListModel extends IUserPortalListModel implements IVmPoolResolutionService
-{
+public class UserPortalListModel extends AbstractUserPortalListModel {
 
     public static EventDefinition SearchCompletedEventDefinition;
     private Event privateSearchCompletedEvent;
@@ -267,6 +268,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
 
         updateActionAvailability();
+
+        consoleModelsCache = new ConsoleModelsCache(ConsoleContext.UP_EXTENDED, this);
 
         if (getCustomPropertiesKeysList() == null) {
             AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
@@ -877,7 +880,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                 AttachCdModel _attachCdModel = (AttachCdModel) userPortalListModel.getWindow();
                 List<String> images = (List<String>) result;
-                images.add(0, ConsoleModel.EjectLabel);
+                images.add(0, ConsoleModel.getEjectLabel());
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable())
                 {
@@ -911,7 +914,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         AttachCdModel model = (AttachCdModel) getWindow();
         model.startProgress(null);
         String isoName =
-                (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.EjectLabel)) ? "" //$NON-NLS-1$
+                (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem().toString();
 
         Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
@@ -1343,32 +1346,26 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    public void onVmAndPoolLoad()
-    {
-        if (getvms() != null && getpools() != null)
-        {
+    public void onVmAndPoolLoad() {
+        if (getvms() != null && getpools() != null) {
             // Complete search.
 
             // Remove pools that has provided VMs.
             ArrayList<VmPool> filteredPools = new ArrayList<VmPool>();
             poolMap = new HashMap<Guid, VmPool>();
 
-            for (VmPool pool : getpools())
-            {
+            for (VmPool pool : getpools()) {
                 // Add pool to map.
                 poolMap.put(pool.getVmPoolId(), pool);
 
                 int attachedVmsCount = 0;
-                for (VM vm : getvms())
-                {
-                    if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getVmPoolId()))
-                    {
+                for (VM vm : getvms()) {
+                    if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getVmPoolId())) {
                         attachedVmsCount++;
                     }
                 }
 
-                if (attachedVmsCount < pool.getMaxAssignedVmsPerUser())
-                {
+                if (attachedVmsCount < pool.getMaxAssignedVmsPerUser()) {
                     filteredPools.add(pool);
                 }
             }
@@ -1376,35 +1373,28 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             // Merge VMs and Pools, and create item models.
             List all = Linq.concat(getvms(), filteredPools);
             Collections.sort(all, new NameableComparator());
+            consoleModelsCache.updateCache(filterVms(all));
 
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)
             {
-                UserPortalItemModel model = new UserPortalItemModel(this, this, ConsoleContext.UP_EXTENDED);
+                VmConsoles consoles = null;
+                if (item instanceof VM) {
+                    consoles = consoleModelsCache.getVmConsolesForVm((VM) item);
+                }
+                UserPortalItemModel model = new UserPortalItemModel(item, consoles);
                 model.setEntity(item);
                 items.add(model);
-
-                updateConsoleModel(model);
             }
 
-            // In userportal 'Extended View': Set 'CanConnectAutomatically' to true if there's one and only one up VM.
-            setCanConnectAutomatically(getUpVms(items).size() == 1);
-
             setItems(items);
+
+            setCanConnectAutomatically(getAutoConnectableConsoles().size() == 1);
 
             setvms(null);
             setpools(null);
 
             getSearchCompletedEvent().raise(this, EventArgs.Empty);
-        }
-    }
-
-    @Override
-    protected void updateConsoleModel(UserPortalItemModel item) {
-        super.updateConsoleModel(item);
-        if (item.getEntity() != null && item.getDefaultConsoleModel() != null) {
-            // Adjust item's default console for userportal 'Extended View'
-            item.getDefaultConsoleModel().setForceVmStatusUp(false);
         }
     }
 

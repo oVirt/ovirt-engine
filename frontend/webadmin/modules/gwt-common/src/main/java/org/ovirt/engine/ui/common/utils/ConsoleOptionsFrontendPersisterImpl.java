@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
-import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
@@ -45,33 +45,29 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     }
 
     @Override
-    public void storeToLocalStorage(HasConsoleModel model) {
-        if (model.isPool()) {
-            // this class works only for VMs, not for pools
-            return;
-        }
+    public void storeToLocalStorage(VmConsoles vmConsoles) {
+        ConsoleProtocol selectedProtocol = vmConsoles.getSelectedProcotol();
+        ConsoleContext context = vmConsoles.getConsoleContext();
 
-        ConsoleProtocol selectedProtocol = model.getUserSelectedProtocol();
-        ConsoleContext context = model.getConsoleContext();
-        String id = model.getVM().getId().toString();
+        String id = vmConsoles.getVm().getId().toString();
         KeyMaker keyMaker = new KeyMaker(id, context);
 
         clientStorage.setLocalItem(keyMaker.make(SELECTED_PROTOCOL), selectedProtocol.toString());
 
         if (selectedProtocol == ConsoleProtocol.SPICE) {
-            storeSpiceData(model, keyMaker);
+            storeSpiceData(vmConsoles, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.VNC) {
-            storeVncData(model, keyMaker);
+            storeVncData(vmConsoles, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.RDP) {
-            storeRdpData(model, keyMaker);
+            storeRdpData(vmConsoles, keyMaker);
         }
     }
 
     @Override
-    public void loadFromLocalStorage(HasConsoleModel model) {
+    public void loadFromLocalStorage(VmConsoles vmConsoles) {
 
-        String vmId = model.getVM().getId().toString();
-        ConsoleContext context = model.getConsoleContext();
+        String vmId = vmConsoles.getVm().getId().toString();
+        ConsoleContext context = vmConsoles.getConsoleContext();
 
         KeyMaker keyMaker = new KeyMaker(vmId, context);
 
@@ -83,36 +79,32 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
         ConsoleProtocol selectedProtocol = ConsoleProtocol.valueOf(selectedProtocolString);
 
-        if (selectedProtocol == ConsoleProtocol.SPICE) {
-            loadSpiceData(model, keyMaker);
-        } else if (selectedProtocol == ConsoleProtocol.VNC) {
-            loadVncData(model, keyMaker);
-        } else if (selectedProtocol == ConsoleProtocol.RDP) {
-            loadRdpData(model, keyMaker);
-        }
-    }
-
-    private void loadVncData(HasConsoleModel model, KeyMaker keyMaker) {
-        if (!(model.getDefaultConsoleModel() instanceof VncConsoleModel)) {
+        if (!vmConsoles.canSelectProtocol(selectedProtocol)) {
             return;
         }
 
-        model.setSelectedProtocol(ConsoleProtocol.VNC);
+        if (selectedProtocol == ConsoleProtocol.SPICE) {
+            loadSpiceData(vmConsoles, keyMaker);
+        } else if (selectedProtocol == ConsoleProtocol.VNC) {
+            loadVncData(vmConsoles, keyMaker);
+        } else if (selectedProtocol == ConsoleProtocol.RDP) {
+            loadRdpData(vmConsoles, keyMaker);
+        }
+    }
+
+    private void loadVncData(VmConsoles vmConsoles, KeyMaker keyMaker) {
+        vmConsoles.selectProtocol(ConsoleProtocol.VNC);
 
         try {
-            asVncConsoleModel(model).setVncImplementation(VncConsoleModel.ClientConsoleMode
+            vmConsoles.getConsoleModel(VncConsoleModel.class).setVncImplementation(VncConsoleModel.ClientConsoleMode
                     .valueOf(clientStorage.getLocalItem(keyMaker.make(VNC_CLIENT_MODE))));
         } catch (Exception e) {
         }
     }
 
-    protected RdpConsoleModel asRdpConsoleModel(HasConsoleModel model) {
-        return (RdpConsoleModel) model.getAdditionalConsoleModel();
-    }
-
-    protected void storeSpiceData(HasConsoleModel model, KeyMaker keyMaker) {
-        SpiceConsoleModel consoleModel = asSpiceConsoleModel(model);
-        ISpice spice = asSpice(model);
+    protected void storeSpiceData(VmConsoles vmConsoles, KeyMaker keyMaker) {
+        SpiceConsoleModel consoleModel = vmConsoles.getConsoleModel(SpiceConsoleModel.class);
+        ISpice spice = asSpice(vmConsoles);
 
         clientStorage.setLocalItem(keyMaker.make(SPICE_CLIENT_MODE),
                 consoleModel.getClientConsoleMode().toString());
@@ -125,54 +117,44 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         storeBool(keyMaker.make(SPICE_PROXY_ENABLED), spice.isSpiceProxyEnabled());
     }
 
-    private void storeVncData(HasConsoleModel model, KeyMaker keyMaker) {
-        VncConsoleModel consoleModel = asVncConsoleModel(model);
+    private void storeVncData(VmConsoles vmConsoles, KeyMaker keyMaker) {
+        VncConsoleModel consoleModel = vmConsoles.getConsoleModel(VncConsoleModel.class);
         if (consoleModel != null) {
             clientStorage.setLocalItem(keyMaker.make(VNC_CLIENT_MODE), consoleModel.getClientConsoleMode().toString());
         }
     }
 
-    protected void loadRdpData(HasConsoleModel model, KeyMaker keyMaker) {
-        if (!consoleUtils.isRDPAvailable() || model.getAdditionalConsoleModel() == null) {
-            // don't read rdp options if the rdp console is not available anymore
-            return;
-        }
-
-        model.setSelectedProtocol(ConsoleProtocol.RDP);
+    protected void loadRdpData(VmConsoles vmConsoles, KeyMaker keyMaker) {
+        vmConsoles.selectProtocol(ConsoleProtocol.RDP);
 
         try {
             RdpConsoleModel.ClientConsoleMode consoleMode =
                     RdpConsoleModel.ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(RDP_CLIENT_MODE)));
-            asRdpConsoleModel(model).setRdpImplementation(consoleMode);
+            vmConsoles.getConsoleModel(RdpConsoleModel.class).setRdpImplementation(consoleMode);
         } catch (Exception e) {
         }
 
-        IRdp rdp = asRdpConsoleModel(model).getrdp();
+        IRdp rdp = vmConsoles.getConsoleModel(RdpConsoleModel.class).getrdp();
 
         rdp.setUseLocalDrives(readBool(keyMaker.make(USE_LOCAL_DRIVES)));
     }
 
-    protected void loadSpiceData(HasConsoleModel model, KeyMaker keyMaker) {
-        if (!(model.getDefaultConsoleModel() instanceof SpiceConsoleModel)) {
-            // don't read spice options if the spice console is not available anymore
-            return;
-        }
-
-        model.setSelectedProtocol(ConsoleProtocol.SPICE);
+    protected void loadSpiceData(VmConsoles vmConsoles, KeyMaker keyMaker) {
+        vmConsoles.selectProtocol(ConsoleProtocol.SPICE);
 
         try {
             SpiceConsoleModel.ClientConsoleMode consoleMode = SpiceConsoleModel.ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(SPICE_CLIENT_MODE)));
-            asSpiceConsoleModel(model).setSpiceImplementation(consoleMode);
+            vmConsoles.getConsoleModel(SpiceConsoleModel.class).setConsoleClientMode(consoleMode);
         } catch (Exception e) {
         }
 
-        ISpice spice = asSpice(model);
+        ISpice spice = asSpice(vmConsoles);
 
         if (consoleUtils.isCtrlAltDelEnabled()) {
             spice.setSendCtrlAltDelete(readBool(keyMaker.make(CTRL_ALT_DEL)));
         }
 
-        if (consoleUtils.isWanOptionsAvailable(model)) {
+        if (vmConsoles.getConsoleModel(SpiceConsoleModel.class).isWanOptionsAvailableForMyVm()) {
             spice.setWanOptionsEnabled(readBool(keyMaker.make(WAN_OPTIONS)));
         }
 
@@ -185,20 +167,12 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         spice.setUsbAutoShare(readBool(keyMaker.make(USB_AUTOSHARE)));
     }
 
-    protected ISpice asSpice(HasConsoleModel model) {
-        return asSpiceConsoleModel(model).getspice();
+    protected ISpice asSpice(VmConsoles vmConsoles) {
+        return (vmConsoles.getConsoleModel(SpiceConsoleModel.class)).getspice();
     }
 
-    protected SpiceConsoleModel asSpiceConsoleModel(HasConsoleModel model) {
-        return ((SpiceConsoleModel) model.getDefaultConsoleModel());
-    }
-
-    private VncConsoleModel asVncConsoleModel(HasConsoleModel model) {
-        return (VncConsoleModel) model.getDefaultConsoleModel();
-    }
-
-    protected void storeRdpData(HasConsoleModel model, KeyMaker keyMaker) {
-        RdpConsoleModel consoleModel = asRdpConsoleModel(model);
+    protected void storeRdpData(VmConsoles vmConsoles, KeyMaker keyMaker) {
+        RdpConsoleModel consoleModel = vmConsoles.getConsoleModel(RdpConsoleModel.class);
         IRdp rdpImpl = consoleModel.getrdp();
 
         clientStorage.setLocalItem(keyMaker.make(RDP_CLIENT_MODE),

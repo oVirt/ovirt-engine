@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -80,15 +81,27 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         wanDisableEffectsChangeEventDefinition = new EventDefinition("DisableEffectsChange", SpiceConsoleModel.class); //$NON-NLS-1$
     }
 
-    public SpiceConsoleModel() {
-        setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
+    public SpiceConsoleModel(VM myVm, Model parentModel) {
+        super(myVm, parentModel);
 
-        setSpiceImplementation(
-                ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientModeSpiceDefault)));
+        setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
+        setConsoleClientMode(getDefaultConsoleMode());
+    }
+
+    protected ClientConsoleMode getDefaultConsoleMode() {
+        return ClientConsoleMode.valueOf((String) AsyncDataProvider
+                .getConfigValuePreConverted(ConfigurationValues.ClientModeSpiceDefault));
     }
 
     public ISpice getspice() {
         return privatespice;
+    }
+
+    public boolean isWanOptionsAvailableForMyVm() {
+        boolean isWindowsVm = AsyncDataProvider.isWindowsOsType(getEntity().getOs());
+        boolean spiceGuestAgentInstalled = getEntity().getSpiceDriverVersion() != null;
+
+        return isWindowsVm && spiceGuestAgentInstalled;
     }
 
     /**
@@ -98,9 +111,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
      *
      * Default mode is "Auto" (spice browser plugin is used only if it is
      * installed).
-     *
      */
-    public void setSpiceImplementation(ClientConsoleMode consoleMode) {
+    public void setConsoleClientMode(ClientConsoleMode consoleMode) {
         this.consoleMode = consoleMode;
 
         switch (consoleMode) {
@@ -126,6 +138,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             getspice().getConnectedEvent().addListener(this);
         }
     }
+
 
     @Override
     protected void connect() {
@@ -171,8 +184,17 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 }
             });
             executeCommandWithConsoleSafenessWarning(setVmTicketCommand);
-
         }
+    }
+
+    @Override
+    public boolean canBeSelected() {
+        DisplayType displayType = getEntity().getDisplayType() != null
+                ? getEntity().getDisplayType()
+                : getEntity().getDefaultDisplayType();
+        boolean hasVmSpiceSupport = Boolean.TRUE.equals(AsyncDataProvider.hasSpiceSupport(getEntity().getOs(), getEntity().getVdsGroupCompatibilityVersion()));
+
+        return displayType == DisplayType.qxl && hasVmSpiceSupport;
     }
 
     @Override
@@ -222,7 +244,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 } else if (StringHelper.stringsEqual(item.getCommandName(), CommandChangeCD))                 {
                     Frontend.RunMultipleAction(VdcActionType.ChangeDisk,
                             new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(getEntity().getId(),
-                                    StringHelper.stringsEqual(item.getText(), EjectLabel) ? "" : item.getText()) }))); //$NON-NLS-1$
+                                    StringHelper.stringsEqual(item.getText(), getEjectLabel()) ? "" : item.getText()) }))); //$NON-NLS-1$
                 }
             }
         }
@@ -233,7 +255,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().getMenuItemSelectedEvent().removeListener(this);
 
         setIsConnected(false);
-        updateActionAvailability();
 
         if (e.getErrorCode() > 100) {
             getErrorEvent().raise(this, e);
@@ -242,7 +263,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     private void spice_Connected(Object sender) {
         setIsConnected(true);
-        updateActionAvailability();
     }
 
     private void cancel() {
@@ -256,17 +276,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
             cancel();
         }
-    }
-
-
-
-    @Override
-    protected void updateActionAvailability() {
-        super.updateActionAvailability();
-
-        getConnectCommand().setIsExecutionAllowed(!getIsConnected() && getEntity() != null
-                && getEntity().getDisplayType() == DisplayType.qxl
-                && isVmConnectReady());
     }
 
     private void executeQuery(final VM vm) {
@@ -456,7 +465,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             changeCDItem.getItems().add(new SpiceMenuCommandItem(id, fileName, CommandChangeCD));
             id++;
         }
-        changeCDItem.getItems().add(new SpiceMenuCommandItem(id, EjectLabel, CommandChangeCD));
+        changeCDItem.getItems().add(new SpiceMenuCommandItem(id, getEjectLabel(), CommandChangeCD));
         id++;
 
         menu.getItems().add(changeCDItem);
@@ -566,14 +575,14 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                                                             logonCommandReturnValue.getDescription()
                                                                             : ""); //$NON-NLS-1$
                                                             spiceConsoleModel.executeQuery(getEntity());
-                                                            parentModel.setWindow(null);
+                                                            getParentModel().setWindow(null);
                                                         }
                                                     });
 
                                     UICommand cancelCommand = new UICommand("SpiceWithoutAgentCancel", new BaseCommandTarget() { //$NON-NLS-1$
                                         @Override
                                         public void executeCommand(UICommand uiCommand) {
-                                            parentModel.setWindow(null);
+                                            getParentModel().setWindow(null);
                                         }
                                     });
 
@@ -612,7 +621,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         cancelCommand.setIsCancel(true);
         spiceWithoutAgentModel.getCommands().add(cancelCommand);
 
-        parentModel.setWindow(spiceWithoutAgentModel);
+        getParentModel().setWindow(spiceWithoutAgentModel);
     }
 
     private void logSsoOnDesktopFailedAgentNonResp(ILogger logger, String vmName) {
@@ -639,11 +648,4 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     private static final String CommandSuspend = "Suspend"; //$NON-NLS-1$
     private static final String CommandChangeCD = "ChangeCD"; //$NON-NLS-1$
 
-    private static final int ID_SYS_MENU_DISCONNECT = 0x1200;
-    private static final int ID_SYS_MENU_SEND_CTRL_ALT_DEL = 0x1300;
-    private static final int ID_SYS_MENU_TOGGLE_FULL_SCREEN = 0x1400;
-    private static final int ID_SYS_MENU_SEND_SHIFT_F11 = 0x1500;
-    private static final int ID_SYS_MENU_SEND_SHIFT_F12 = 0x1600;
-    private static final int ID_SYS_MENU_SEND_CTRL_ALT_END = 0x1700;
-    private static final int ID_SYS_MENU_USB_DEVICES = 0x1800;
 }

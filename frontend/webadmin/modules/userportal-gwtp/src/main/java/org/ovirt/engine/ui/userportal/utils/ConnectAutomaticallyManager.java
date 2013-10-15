@@ -3,16 +3,14 @@ package org.ovirt.engine.ui.userportal.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.ui.uicommonweb.ConsoleManager;
-import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.AbstractUserPortalListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.section.login.presenter.ConnectAutomaticallyProvider;
 
-import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 /**
@@ -25,21 +23,20 @@ import com.google.inject.Inject;
  */
 public class ConnectAutomaticallyManager {
 
+    private final ErrorPopupManager errorPopupManager;
+
     private final ConnectAutomaticallyProvider connectAutomatically;
 
     private boolean alreadyOpened = false;
 
     private List<EventChangeListener> listeners;
 
-    private final ConsoleManager consoleManager;
-
     @Inject
     public ConnectAutomaticallyManager(ConnectAutomaticallyProvider connectAutomatically,
-            ConsoleUtils consoleUtils,
-            ConsoleManager consoleManager,
-            EventBus eventBus) {
+                                       ErrorPopupManager errorPopupManager)
+    {
         this.connectAutomatically = connectAutomatically;
-        this.consoleManager = consoleManager;
+        this.errorPopupManager = errorPopupManager;
     }
 
     public void resetAlreadyOpened() {
@@ -58,7 +55,7 @@ public class ConnectAutomaticallyManager {
         listeners.clear();
     }
 
-    public void registerModel(final IUserPortalListModel model) {
+    public void registerModel(final AbstractUserPortalListModel model) {
 
         if (alreadyOpened || !connectAutomatically.readConnectAutomatically()) {
             return;
@@ -74,9 +71,9 @@ public class ConnectAutomaticallyManager {
 
     class EventChangeListener implements IEventListener {
 
-        private final IUserPortalListModel model;
+        private final AbstractUserPortalListModel model;
 
-        public EventChangeListener(IUserPortalListModel model) {
+        public EventChangeListener(AbstractUserPortalListModel model) {
             this.model = model;
         }
 
@@ -90,18 +87,17 @@ public class ConnectAutomaticallyManager {
 
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-
+            //todo revisit this, connectAutomatically flag may not be needed
             if (connectAutomatically.readConnectAutomatically() && model.getCanConnectAutomatically() && !alreadyOpened) {
-                UserPortalItemModel userPortalItemModel = model.getUpVms(model.getItems()).get(0);
-                if (userPortalItemModel != null) {
-                    consoleManager.connectToConsole(userPortalItemModel);
-
+                try {
+                    model.getAutoConnectableConsoles().get(0).connect();
                     alreadyOpened = true;
+                } catch (VmConsoles.ConsoleConnectException e) {
+                    errorPopupManager.show(e.getLocalizedErrorMessage());
                 }
             }
 
             unregisterModels();
-
         }
     }
 }

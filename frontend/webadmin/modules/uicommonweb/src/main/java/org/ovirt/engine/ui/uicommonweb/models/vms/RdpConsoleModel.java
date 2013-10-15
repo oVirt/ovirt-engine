@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -7,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class RdpConsoleModel extends ConsoleModel {
@@ -60,7 +62,9 @@ public class RdpConsoleModel extends ConsoleModel {
         privaterdp = value;
     }
 
-    public RdpConsoleModel() {
+    public RdpConsoleModel(VM myVm, Model parentModel) {
+        super(myVm, parentModel);
+
         setTitle(ConstantsManager.getInstance().getConstants().RDPTitle());
         this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
         setRdpImplementation(
@@ -93,7 +97,6 @@ public class RdpConsoleModel extends ConsoleModel {
             // Try to connect.
             try {
                 getrdp().connect();
-                updateActionAvailability();
             } catch (RuntimeException ex) {
                 getLogger().error("Exception on RDP connect", ex); //$NON-NLS-1$
             }
@@ -101,12 +104,14 @@ public class RdpConsoleModel extends ConsoleModel {
     }
 
     @Override
-    protected void updateActionAvailability() {
-        super.updateActionAvailability();
+    public boolean canBeSelected() {
+        return AsyncDataProvider.isWindowsOsType(getEntity().getOs());
+    }
 
-        getConnectCommand().setIsExecutionAllowed(getEntity() != null
-                && (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
-                && AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId()));
+    @Override
+    public boolean canConnect() {
+        return (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
+                && AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId());
     }
 
     public void raiseErrorEvent(ErrorCodeEventArgs e) {

@@ -28,7 +28,6 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     public ExistingPoolModelBehavior(VM pool) {
         this.pool = pool;
-
     }
 
     @Override

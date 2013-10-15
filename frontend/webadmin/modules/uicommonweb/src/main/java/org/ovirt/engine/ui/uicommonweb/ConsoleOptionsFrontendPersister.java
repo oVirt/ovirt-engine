@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb;
 
-import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 
 public interface ConsoleOptionsFrontendPersister {
 
-    void storeToLocalStorage(HasConsoleModel model);
+    void storeToLocalStorage(VmConsoles vmConsoles);
 
-    void loadFromLocalStorage(HasConsoleModel model);
+    void loadFromLocalStorage(VmConsoles vmConsoles);
 
     /**
      * The stored/loaded entities can not interfere from one app/view to other even it is all in one browser.

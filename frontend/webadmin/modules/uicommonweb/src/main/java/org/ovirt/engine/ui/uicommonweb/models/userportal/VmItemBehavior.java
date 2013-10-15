@@ -22,30 +22,24 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmItemBehavior extends ItemBehavior
-{
-    public VmItemBehavior(UserPortalItemModel item)
-    {
+public class VmItemBehavior extends ItemBehavior {
+    public VmItemBehavior(UserPortalItemModel item) {
         super(item);
     }
 
     @Override
-    public void onEntityChanged()
-    {
+    public void onEntityChanged() {
         updateProperties();
         updateActionAvailability();
     }
 
     @Override
-    public void entityPropertyChanged(PropertyChangedEventArgs e)
-    {
+    public void entityPropertyChanged(PropertyChangedEventArgs e) {
         updateProperties();
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
@@ -54,8 +48,7 @@ public class VmItemBehavior extends ItemBehavior
     }
 
     @Override
-    public void executeCommand(UICommand command)
-    {
+    public void executeCommand(UICommand command) {
         if (command == getItem().getRunCommand())
         {
             run();
@@ -79,16 +72,14 @@ public class VmItemBehavior extends ItemBehavior
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
+    public void eventRaised(Event ev, Object sender, EventArgs args) {
         if (ev.matchesDefinition(ChangeCDModel.ExecutedEventDefinition))
         {
             changeCD(sender, args);
         }
     }
 
-    private void changeCD(Object sender, EventArgs args)
-    {
+    private void changeCD(Object sender, EventArgs args) {
         VM entity = (VM) getItem().getEntity();
         ChangeCDModel model = (ChangeCDModel) sender;
 
@@ -103,11 +94,10 @@ public class VmItemBehavior extends ItemBehavior
 
         Frontend.RunAction(VdcActionType.ChangeDisk,
                 new ChangeDiskCommandParameters(entity.getId(), StringHelper.stringsEqual(imageName,
-                        ConsoleModel.EjectLabel) ? "" : imageName)); //$NON-NLS-1$
+                        ConsoleModel.getEjectLabel()) ? "" : imageName)); //$NON-NLS-1$
     }
 
-    private void returnVm()
-    {
+    private void returnVm() {
         VM entity = (VM) getItem().getEntity();
 
         Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), false),
@@ -120,27 +110,23 @@ public class VmItemBehavior extends ItemBehavior
         Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
     }
 
-    private void stop()
-    {
+    private void stop() {
         VM entity = (VM) getItem().getEntity();
         Frontend.RunAction(VdcActionType.StopVm, new StopVmParameters(entity.getId(), StopVmTypeEnum.NORMAL));
     }
 
-    private void pause()
-    {
+    private void pause() {
         VM entity = (VM) getItem().getEntity();
         Frontend.RunAction(VdcActionType.HibernateVm, new VmOperationParameterBase(entity.getId()));
     }
 
-    private void run()
-    {
+    private void run() {
         VM entity = (VM) getItem().getEntity();
 
         Frontend.RunAction(VdcActionType.RunVm, new RunVmParams(entity.getId()));
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         VM entity = (VM) getItem().getEntity();
 
         getItem().setName(entity.getName());
@@ -150,31 +136,9 @@ public class VmItemBehavior extends ItemBehavior
         getItem().setIsServer(entity.getVmType() == VmType.Server);
         getItem().setOsId(entity.getVmOsId());
         getItem().setIsFromPool(entity.getVmPoolId() != null);
-        getItem().setSpiceDriverVersion(entity.getSpiceDriverVersion());
-
-        if (getItem().getDefaultConsoleModel() == null)
-        {
-            getItem().setDefaultConsole(new SpiceConsoleModel());
-        }
-        getItem().getDefaultConsoleModel().setEntity(entity);
-
-        // Support RDP console for windows VMs.
-        if (AsyncDataProvider.isWindowsOsType(entity.getVmOsId()))
-        {
-            if (getItem().getAdditionalConsoleModel() == null)
-            {
-                getItem().setAdditionalConsole(new RdpConsoleModel());
-            }
-            getItem().getAdditionalConsoleModel().setEntity(entity);
-        }
-        else
-        {
-            getItem().setAdditionalConsole(null);
-        }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         VM entity = (VM) getItem().getEntity();
 
         getItem().getTakeVmCommand().setIsAvailable(false);
@@ -217,8 +181,7 @@ public class VmItemBehavior extends ItemBehavior
         }
     }
 
-    public void updateCommandsAccordingToPoolType(boolean isManualPool)
-    {
+    public void updateCommandsAccordingToPoolType(boolean isManualPool) {
         getItem().getReturnVmCommand().setIsAvailable(!isManualPool);
         getItem().getRunCommand().setIsAvailable(isManualPool);
     }

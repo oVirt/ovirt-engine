@@ -328,9 +328,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     public void edit(ConsolePopupModel model) {
         this.model = model;
 
-        ConsoleModel defaultConsole =
-                model.getModel().getDefaultConsoleModel();
-        editCheckBoxes(defaultConsole,
+        editCheckBoxes(model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class),
                 ctrlAltDel,
                 enableUsbAutoshare,
                 openInFullScreen,
@@ -338,9 +336,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
                 wanEnabled,
                 disableSmartcard);
 
-        ConsoleModel additionalConsole =
-                model.getModel().getAdditionalConsoleModel();
-        editCheckBoxes(additionalConsole, useLocalDrives);
+        editCheckBoxes(model.getVmConsoles().getConsoleModel(RdpConsoleModel.class), useLocalDrives);
     }
 
     @Override
@@ -375,31 +371,25 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     private void setSelectedSpiceImpl() {
-        SpiceConsoleModel spiceModel = null;
-
-        if (model.getModel().getDefaultConsoleModel() instanceof SpiceConsoleModel) {
-            spiceModel = (SpiceConsoleModel) model.getModel().getDefaultConsoleModel();
-        }
+        SpiceConsoleModel spiceModel = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class);
 
         if (spiceModel == null) {
             return;
         }
 
         if (spiceAutoImplRadioButton.asRadioButton().getValue()) {
-            spiceModel.setSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Auto);
+            spiceModel.setConsoleClientMode(SpiceConsoleModel.ClientConsoleMode.Auto);
         } else if (spiceNativeImplRadioButton.asRadioButton().getValue()) {
-            spiceModel.setSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native);
+            spiceModel.setConsoleClientMode(SpiceConsoleModel.ClientConsoleMode.Native);
         } else if (spicePluginImplRadioButton.asRadioButton().getValue()) {
-            spiceModel.setSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Plugin);
+            spiceModel.setConsoleClientMode(SpiceConsoleModel.ClientConsoleMode.Plugin);
         } else if (spiceHtml5ImplRadioButton.asRadioButton().getValue()) {
-            spiceModel.setSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Html5);
+            spiceModel.setConsoleClientMode(SpiceConsoleModel.ClientConsoleMode.Html5);
         }
     }
 
     private void setSelectedVncImpl() {
-        Object defConsoleModel = model.getModel().getDefaultConsoleModel();
-        VncConsoleModel vncConsoleModel = defConsoleModel instanceof VncConsoleModel ?
-                (VncConsoleModel) defConsoleModel : null;
+        VncConsoleModel vncConsoleModel= model.getVmConsoles().getConsoleModel(VncConsoleModel.class);
 
         if (vncConsoleModel == null) {
             return;
@@ -413,11 +403,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     private void setSelectedRdpImpl() {
-        if (model.getModel().getAdditionalConsoleModel() == null) {
-            return;
-        }
-
-        RdpConsoleModel rdpModel = (RdpConsoleModel) model.getModel().getAdditionalConsoleModel();
+        RdpConsoleModel rdpModel = model.getVmConsoles().getConsoleModel(RdpConsoleModel.class);
 
         if (rdpAutoImplRadioButton.asRadioButton().getValue()) {
             rdpModel.setRdpImplementation(RdpConsoleModel.ClientConsoleMode.Auto);
@@ -429,7 +415,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     private void setSelectedProtocol(ConsoleProtocol selectedProtocol) {
-        model.getModel().setSelectedProtocol(selectedProtocol);
+        model.getVmConsoles().selectProtocol(selectedProtocol);
     }
 
     private void flushCheckBoxes(EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {

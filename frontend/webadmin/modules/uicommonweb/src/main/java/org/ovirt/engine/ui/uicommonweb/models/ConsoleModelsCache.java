@@ -1,177 +1,59 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModelErrorEventListener;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleSelectionContext;
-import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 
+/**
+ * Class that holds (caches) consoles for set of VM (typically contained in some ListModel).
+ *
+ * It provides a way to get consoles for given vm.
+ * The cache must be periodically updated (when the set of VM is updated, the updateCache
+ * method must be called to ensure the underlying models have fresh and correct instance
+ * of their VM).
+ *
+ */
 public class ConsoleModelsCache {
 
-    private static final int SPICE_INDEX = 0;
-    private static final int VNC_INDEX = 1;
-    private static final int RDP_INDEX = 2;
-
-    private final HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
+    private final Map<Guid, VmConsoles> vmConsoles;
     private final Model parentModel;
+    private final ConsoleContext consoleContext;
 
-    public ConsoleModelsCache(Model parentModel) {
+    public ConsoleModelsCache(ConsoleContext consoleContext, Model parentModel) {
+        vmConsoles = new HashMap<Guid, VmConsoles>();
+        this.consoleContext = consoleContext;
         this.parentModel = parentModel;
-        this.cachedConsoleModels = new HashMap<Guid, ArrayList<ConsoleModel>>();
     }
 
-    public void updateConsoleModelsForVm(VM vm) {
-        if (!cachedConsoleModels.containsKey(vm.getId())) {
-            SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
-            spiceConsoleModel.setParentModel(parentModel);
-            spiceConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(parentModel));
-
-            VncConsoleModel vncConsoleModel = new VncConsoleModel();
-            vncConsoleModel.setParentModel(parentModel);
-
-            RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
-            rdpConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(parentModel));
-
-            cachedConsoleModels.put(vm.getId(),
-                    new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
-                            spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
-
-            updateDefaultSelectedConsoleProtocol(vm);
-        } else if (selectionContextChanged(vm)) {
-            // if new data comes which has changed the selection context, (e.g. the OS type changed)
-            // recalculate the default selected protocol
-            updateDefaultSelectedConsoleProtocol(vm);
-        }
-
-        ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
-        for (ConsoleModel a : cachedModels) {
-            a.setEntity(null);
-            a.setEntity(vm);
-        }
+    /**
+     * Gets consoles for given VM
+     * @param vm
+     * @return vm's consoles
+     */
+    public VmConsoles getVmConsolesForVm(VM vm) {
+        return vmConsoles.get(vm.getId());
     }
 
-    private void updateDefaultSelectedConsoleProtocol(final VM vm) {
-        // for wind8+ guests the RDP is selected, for all other OS the spice
-        if (vm.getId() == null) {
-            return;
-        }
+    /**
+     * This must be called every update cycle.
+     * @param newItems
+     */
+    public void updateCache(Iterable<VM> newItems) {
+        Set<Guid> vmIds = new HashSet<Guid>();
 
-        final ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
-        if (cachedModels == null) {
-            return;
-        }
-
-        deselectUserSelectedProtocol(vm.getId());
-
-        final boolean isWindowsExplorer = parentModel.getConfigurator().isClientWindowsExplorer();
-
-        Boolean hasSpiceSupport = AsyncDataProvider.hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion());
-        if (isWindowsExplorer && hasSpiceSupport != null && !hasSpiceSupport) {
-            cachedModels.get(RDP_INDEX).setUserSelected(true);
-        } else {
-            determineConsoleModelFromVm(vm, cachedModels).setUserSelected(true);
-        }
-        setupSelectionContext(vm);
-    }
-
-    private void deselectUserSelectedProtocol(Guid vmId) {
-        for (ConsoleModel model : cachedConsoleModels.get(vmId)) {
-            model.setUserSelected(false);
-        }
-    }
-
-    public void setSelectedProtocol(ConsoleProtocol protocol, HasConsoleModel item) {
-        Guid vmId = item.getVM() != null ? item.getVM().getId() : null;
-        if (vmId == null) {
-            return;
-        }
-
-        deselectUserSelectedProtocol(vmId);
-
-        for (ConsoleModel model : cachedConsoleModels.get(vmId)) {
-            if (protocol.isBackedBy(model.getClass())) {
-                model.setUserSelected(true);
-                break;
+        for (VM vm : newItems) {
+            if (vmConsoles.containsKey(vm.getId())) {
+                vmConsoles.get(vm.getId()).setVm(vm); // only update vm
+            } else {
+                vmConsoles.put(vm.getId(), new VmConsolesImpl(vm, parentModel, consoleContext));
             }
-        }
-    }
-
-    private void setupSelectionContext(VM vm) {
-        for (ConsoleModel model : cachedConsoleModels.get(vm.getId())) {
-
-            DisplayType vmDisplay = vm.isRunningOrPaused() ? vm.getDisplayType() : vm.getDefaultDisplayType();
-            model.setSelectionContext(new ConsoleSelectionContext(vm.getVmOsId(), vmDisplay));
-        }
-    }
-
-    private boolean selectionContextChanged(VM vm) {
-        DisplayType vmDisplay = vm.isRunningOrPaused() ? vm.getDisplayType() : vm.getDefaultDisplayType();
-        ConsoleSelectionContext newContext = new ConsoleSelectionContext(vm.getVmOsId(), vmDisplay);
-        ConsoleModel selectedConsole = resolveUserSelectedConsoleModel(vm.getId());
-
-        if (selectedConsole == null) {
-            return true;
+            vmIds.add(vm.getId());
         }
 
-        return !newContext.equals(selectedConsole.getSelectionContext());
+        vmConsoles.keySet().retainAll(vmIds);
     }
-
-    public ConsoleProtocol resolveUserSelectedProtocol(HasConsoleModel item) {
-        if (item == null || item.getVM() == null || item.getVM().getId() == null) {
-            return null;
-        }
-        Guid vmId = item.getVM().getId();
-
-        ConsoleModel selectedConsoleModel = resolveUserSelectedConsoleModel(vmId);
-        return selectedConsoleModel == null ? null
-                : ConsoleProtocol.getProtocolByModel(selectedConsoleModel.getClass());
-    }
-
-    public ArrayList<ConsoleModel> getConsoleModelsByVmGuid(Guid vmGuid) {
-        if (cachedConsoleModels != null) {
-            return cachedConsoleModels.get(vmGuid);
-        }
-
-        return null;
-    }
-
-    private ConsoleModel resolveUserSelectedConsoleModel(Guid vmId) {
-        if (!cachedConsoleModels.containsKey(vmId)) {
-            return null;
-        }
-
-        for (ConsoleModel model : cachedConsoleModels.get(vmId)) {
-            if (model.isUserSelected()) {
-                return model;
-            }
-        }
-
-        return null;
-    }
-
-    private ConsoleModel determineConsoleModelFromVm(VM vm, ArrayList<ConsoleModel> cachedModels) {
-        DisplayType vmDisplayType = vm.isRunningOrPaused() ? vm.getDisplayType() : vm.getDefaultDisplayType();
-        return cachedModels.get(vmDisplayType == DisplayType.vnc ? VNC_INDEX : SPICE_INDEX);
-    }
-
-    public ConsoleModel determineConsoleModelForVm(VM vm) {
-        return determineConsoleModelFromVm(vm, cachedConsoleModels.get(vm.getId()));
-    }
-
-    public ConsoleModel determineAdditionalConsoleModelForVm(VM vm) {
-        if (AsyncDataProvider.isWindowsOsType(vm.getVmOsId())) {
-            return cachedConsoleModels.get(vm.getId()).get(RDP_INDEX);
-        }
-
-        return null;
-    }
-
 }

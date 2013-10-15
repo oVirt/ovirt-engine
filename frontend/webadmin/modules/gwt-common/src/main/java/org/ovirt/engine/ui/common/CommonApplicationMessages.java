@@ -87,12 +87,6 @@ public interface CommonApplicationMessages extends Messages {
 
     // Console
 
-    @DefaultMessage("Error Connecting to {0}. This browser does not support {1} protocol")
-    String errorConnectingToConsole(String name, String protocol);
-
-    @DefaultMessage("Connecting to VM pool is not supported")
-    String connectingToPoolIsNotSupported();
-
     @DefaultMessage("Select Console for ''{0}''")
     String selectConsoleFor(String name);
 
@@ -131,4 +125,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Role: {0} on User {1}")
     SafeHtml roleOnUser(String roleName, String userName);
+
+    @DefaultMessage("Connecting to VM pool is not supported")
+    String connectingToPoolIsNotSupported();
 }

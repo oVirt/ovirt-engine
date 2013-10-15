@@ -5,14 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.uicommonweb.ConsoleManager;
-import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
@@ -52,7 +50,6 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetailsView<UserPortalItemModel, UserPortalListModel>
 implements SideTabExtendedVirtualMachinePresenter.ViewDef {
@@ -64,30 +61,25 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
     private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
 
     private final ApplicationResources applicationResources;
-    private final ConsoleManager consoleManager;
-    private final ErrorPopupManager errorPopupManager;
     private final MainTabBasicListItemMessagesTranslator statusTranslator;
     private final ApplicationConstants constants;
+    private final ErrorPopupManager errorPopupManager;
 
     @Inject
     public SideTabExtendedVirtualMachineView(UserPortalListProvider modelProvider,
             ApplicationTemplates templates,
             ApplicationResources applicationResources,
-            ConsoleUtils consoleUtils,
-            ConsoleManager consoleManager,
             ErrorPopupManager errorPopupManager,
-            Provider<ConsolePopupPresenterWidget> consolePopup,
             MainTabBasicListItemMessagesTranslator translator,
             ApplicationConstants constants) {
         super(modelProvider, applicationResources);
         this.applicationResources = applicationResources;
-        this.consoleManager = consoleManager;
-        this.errorPopupManager = errorPopupManager;
         this.statusTranslator = translator;
         this.constants = constants;
+        this.errorPopupManager = errorPopupManager;
         applicationResources.sideTabExtendedVmStyle().ensureInjected();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(templates, consoleUtils);
+        initTable(templates);
     }
 
     @Override
@@ -111,7 +103,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         return SideTabExtendedVirtualMachinePresenter.TYPE_SetSubTabPanelContent;
     }
 
-    void initTable(final ApplicationTemplates templates, final ConsoleUtils consoleUtils) {
+    void initTable(final ApplicationTemplates templates) {
         final String elementIdPrefix = getTable().getContentTableElementId();
 
         VmImageColumn<UserPortalItemModel> vmImageColumn =
@@ -186,17 +178,18 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         }, constants.empty(), "130px"); //$NON-NLS-1$
 
         ConsoleButtonCell openConsoleCell = new ConsoleButtonCell(
-                consoleUtils,
                 applicationResources.sideTabExtendedVmStyle().enabledConsoleButton(),
                 applicationResources.sideTabExtendedVmStyle().disabledConsoleButton(),
                 constants.openConsoleLabel(),
                 new AbstractConsoleButtonCell.ConsoleButtonCommand() {
                     @Override
                     public void execute(UserPortalItemModel model) {
-                        String message =
-                                consoleManager.connectToConsole(model);
-                        if (message != null) {
-                            errorPopupManager.show(message);
+                        try {
+                            if (!model.isPool()) {
+                            model.getVmConsoles().connect();
+                            }
+                        } catch (VmConsoles.ConsoleConnectException e) {
+                            errorPopupManager.show(e.getLocalizedErrorMessage());
                         }
                     }
                 });

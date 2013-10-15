@@ -8,11 +8,11 @@ import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
-import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
-import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -51,7 +51,6 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         void displayVmOsImages(boolean dispaly);
     }
 
-    private final ConsoleUtils consoleUtils;
     private final ApplicationMessages messages;
     private final DynamicMessages dynamicMessages;
     private final Map<ConsoleProtocol, String> consoleTypeToName = new HashMap<ConsoleProtocol, String>();
@@ -60,12 +59,10 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     public MainTabBasicDetailsPresenterWidget(EventBus eventBus,
             ViewDef view,
             final UserPortalBasicListProvider modelProvider,
-            final ConsoleUtils consoleUtils,
             final ApplicationMessages messages,
             final DynamicMessages dynamicMessages,
             final CommonApplicationConstants constants) {
         super(eventBus, view);
-        this.consoleUtils = consoleUtils;
         this.messages = messages;
         this.dynamicMessages = dynamicMessages;
 
@@ -117,7 +114,6 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
                 setupConsole(modelProvider);
             }
-
         });
     }
 
@@ -175,27 +171,29 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
     private void setupConsole(final UserPortalBasicListProvider modelProvider) {
         UserPortalItemModel item = modelProvider.getModel().getSelectedItem();
+        if (item.isPool()) {
+            getView().setConsoleWarningMessage(messages.connectingToPoolIsNotSupported());
+            return;
+        }
 
         getView().setEditConsoleEnabled(isEditConsoleEnabled(item));
 
-        if (!item.isPool()) {
-            ConsoleProtocol protocol = consoleUtils.determineConnectionProtocol(item);
-            if (protocol == null) {
-                getView().setConsoleWarningMessage(consoleUtils.determineProtocolMessage(item));
-            } else {
-                getView().setConsoleProtocol(determineProtocolMessage(protocol, item));
-            }
+        if (!item.getVmConsoles().canConnectToConsole()) {
+            getView().setConsoleWarningMessage(item.getVmConsoles().cannotConnectReason());
         } else {
-            getView().setConsoleProtocol(""); //$NON-NLS-1$
+            getView().setConsoleProtocol(determineProtocolMessage(item.getVmConsoles()));
         }
     }
 
-    private String determineProtocolMessage(ConsoleProtocol protocol, HasConsoleModel item) {
-        if (consoleUtils.isSmartcardGloballyEnabled(item) && !consoleUtils.isSmartcardEnabledOverriden(item)) {
-            return messages.consoleWithSmartcard(consoleTypeToName.get(protocol));
+    private String determineProtocolMessage(VmConsoles vmConsoles) {
+        boolean smartcardEnabled = vmConsoles.getSelectedProcotol() == ConsoleProtocol.SPICE && vmConsoles.getVm().isSmartcardEnabled();
+        boolean smartcardOverriden = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().isSmartcardEnabledOverridden();
+
+        if (smartcardEnabled && !smartcardOverriden) {
+            return messages.consoleWithSmartcard(consoleTypeToName.get(vmConsoles.getSelectedProcotol()));
         }
 
-        return consoleTypeToName.get(protocol);
+        return consoleTypeToName.get(vmConsoles.getSelectedProcotol());
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {

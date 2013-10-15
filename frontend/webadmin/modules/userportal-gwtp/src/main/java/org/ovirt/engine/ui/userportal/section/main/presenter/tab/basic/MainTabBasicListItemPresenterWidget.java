@@ -4,9 +4,8 @@ import java.util.Arrays;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
-import org.ovirt.engine.ui.uicommonweb.ConsoleManager;
-import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -67,8 +66,6 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     }
 
-    private final ConsoleUtils consoleUtils;
-    private final ConsoleManager consoleManager;
     private final UserPortalBasicListProvider listModelProvider;
 
     private UserPortalItemModel model;
@@ -78,12 +75,8 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     private IEventListener selectedItemChangeListener;
 
     @Inject
-    public MainTabBasicListItemPresenterWidget(EventBus eventBus, ViewDef view,
-            ConsoleUtils consoleUtils, ConsoleManager consoleManager,
-            final UserPortalBasicListProvider listModelProvider) {
+    public MainTabBasicListItemPresenterWidget(EventBus eventBus, ViewDef view, final UserPortalBasicListProvider listModelProvider) {
         super(eventBus, view);
-        this.consoleUtils = consoleUtils;
-        this.consoleManager = consoleManager;
         this.listModelProvider = listModelProvider;
 
         registerHandler(getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
@@ -200,7 +193,6 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         }
     }
 
-
     protected boolean sameEntity(UserPortalItemModel prevModel, UserPortalItemModel newModel) {
         if (prevModel == null || newModel == null) {
             return false;
@@ -229,16 +221,19 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         if (!isSelected()) {
             getView().setMouseOverStyle();
         }
-        if (canShowConsole()) {
+        if (!model.isPool() && model.getVmConsoles().canConnectToConsole()) {
             getView().showDoubleClickBanner();
         }
     }
 
     @Override
     public void onDoubleClick(DoubleClickEvent event) {
-        String res = consoleManager.connectToConsole(model);
-        if (res != null) {
-            getView().showErrorDialog(res);
+        try {
+            if (!model.isPool()) {
+                model.getVmConsoles().connect();
+            }
+        } catch (VmConsoles.ConsoleConnectException e) {
+            getView().showErrorDialog(e.getLocalizedErrorMessage());
         }
     }
 
@@ -255,13 +250,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         getView().setSelected();
     }
 
-
-    private boolean canShowConsole() {
-        return consoleUtils.canShowConsole(consoleUtils.determineConnectionProtocol(model), model);
-    }
-
     boolean isSelected() {
         return sameEntity(listModel.getSelectedItem(), model);
     }
-
 }

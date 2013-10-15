@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -52,7 +53,9 @@ public class VncConsoleModel extends ConsoleModel {
         return otp64;
     }
 
-    public VncConsoleModel() {
+    public VncConsoleModel(VM myVm, Model parentModel) {
+        super(myVm, parentModel);
+
         setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
 
         boolean webSocketProxyDefined = ((ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class)).isWebSocketProxyDefined();
@@ -101,6 +104,15 @@ public class VncConsoleModel extends ConsoleModel {
         });
 
         executeCommandWithConsoleSafenessWarning(setVmTicketCommand);
+    }
+
+    @Override
+    public boolean canBeSelected() {
+        DisplayType vmDisplayType = getEntity().getDisplayType() != null
+                ? getEntity().getDisplayType()
+                : getEntity().getDefaultDisplayType();
+
+        return vmDisplayType == DisplayType.vnc;
     }
 
     private void setVmTicket() {
@@ -152,15 +164,4 @@ public class VncConsoleModel extends ConsoleModel {
         vncImpl.invokeClient();
     }
 
-    @Override
-    protected void updateActionAvailability()
-    {
-        super.updateActionAvailability();
-
-        getConnectCommand().setIsExecutionAllowed(getEntity() != null
-                && getEntity().getDisplayType() == DisplayType.vnc
-                && (getEntity().getStatus() == VMStatus.PoweringUp || getEntity().getStatus() == VMStatus.Up
-                        || getEntity().getStatus() == VMStatus.RebootInProgress
-                        || getEntity().getStatus() == VMStatus.PoweringDown || getEntity().getStatus() == VMStatus.Paused));
-    }
 }

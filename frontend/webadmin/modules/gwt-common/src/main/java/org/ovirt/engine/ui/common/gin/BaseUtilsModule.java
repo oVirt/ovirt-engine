@@ -1,9 +1,7 @@
 package org.ovirt.engine.ui.common.gin;
 
-import org.ovirt.engine.ui.common.utils.ConsoleManagerImpl;
 import org.ovirt.engine.ui.common.utils.ConsoleOptionsFrontendPersisterImpl;
 import org.ovirt.engine.ui.common.utils.ConsoleUtilsImpl;
-import org.ovirt.engine.ui.uicommonweb.ConsoleManager;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 
@@ -16,7 +14,6 @@ public class BaseUtilsModule extends AbstractGinModule {
     protected void configure() {
         bind(ConsoleOptionsFrontendPersister.class).to(ConsoleOptionsFrontendPersisterImpl.class).in(Singleton.class);
         bind(ConsoleUtils.class).to(ConsoleUtilsImpl.class).in(Singleton.class);
-        bind(ConsoleManager.class).to(ConsoleManagerImpl.class).in(Singleton.class);
     }
 
 }

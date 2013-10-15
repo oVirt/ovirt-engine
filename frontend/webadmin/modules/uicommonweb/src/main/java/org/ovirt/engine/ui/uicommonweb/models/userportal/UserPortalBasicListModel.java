@@ -19,10 +19,11 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -31,8 +32,7 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class UserPortalBasicListModel extends IUserPortalListModel implements IVmPoolResolutionService
-{
+public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
     public static EventDefinition SearchCompletedEventDefinition;
     private Event privateSearchCompletedEvent;
@@ -107,21 +107,17 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         privateSelectedItemNumOfCpuCores = value;
     }
 
-    private final HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
-
-    static
-    {
+    static {
         SearchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalBasicListModel.class); //$NON-NLS-1$
     }
 
-    public UserPortalBasicListModel()
-    {
+    public UserPortalBasicListModel() {
         setSearchCompletedEvent(new Event(SearchCompletedEventDefinition));
 
         setSelectedItemDefinedMemory(new EntityModel());
         setSelectedItemNumOfCpuCores(new EntityModel());
 
-        cachedConsoleModels = new HashMap<Guid, ArrayList<ConsoleModel>>();
+        consoleModelsCache = new ConsoleModelsCache(ConsoleContext.UP_BASIC, this);
     }
 
     @Override
@@ -282,8 +278,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    public void onVmAndPoolLoad()
-    {
+    public void onVmAndPoolLoad() {
         if (getvms() != null && getpools() != null)
         {
             // Complete search.
@@ -292,59 +287,47 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             ArrayList<VmPool> filteredPools = new ArrayList<VmPool>();
             poolMap = new HashMap<Guid, VmPool>();
 
-            for (VmPool pool : getpools())
-            {
+            for (VmPool pool : getpools()) {
                 // Add pool to map.
                 poolMap.put(pool.getVmPoolId(), pool);
 
                 int attachedVmsCount = 0;
-                for (VM vm : getvms())
-                {
-                    if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getVmPoolId()))
-                    {
+                for (VM vm : getvms()) {
+                    if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getVmPoolId())) {
                         attachedVmsCount++;
                     }
                 }
 
-                if (attachedVmsCount < pool.getMaxAssignedVmsPerUser())
-                {
+                if (attachedVmsCount < pool.getMaxAssignedVmsPerUser()) {
                     filteredPools.add(pool);
                 }
             }
 
             // Merge VMs and Pools, and create item models.
             List all = Linq.concat(getvms(), filteredPools);
+            consoleModelsCache.updateCache(filterVms(all));
             Collections.sort(all, new NameableComparator());
 
             ArrayList<Model> items = new ArrayList<Model>();
-            for (Object item : all)
-            {
-                UserPortalItemModel model = new UserPortalItemModel(this, this, ConsoleContext.UP_BASIC);
+            for (Object item : all) {
+                VmConsoles consoles = null;
+                if (item instanceof VM) {
+                    consoles = consoleModelsCache.getVmConsolesForVm((VM) item);
+                }
+
+                UserPortalItemModel model = new UserPortalItemModel(item, consoles);
                 model.setEntity(item);
                 items.add(model);
-
-                updateConsoleModel(model);
             }
 
-            // In userportal 'Basic View': Set 'CanConnectAutomatically' to true if there's one and only one VM in
-            // status 'UP' and the other VMs aren't up.
-            setCanConnectAutomatically(getStatusUpVms(items).size() == 1 && getUpVms(items).size() == 1);
-
             setItems(items);
+
+            setCanConnectAutomatically(getAutoConnectableConsoles().size() == 1);
 
             setvms(null);
             setpools(null);
 
             getSearchCompletedEvent().raise(this, EventArgs.Empty);
-        }
-    }
-
-    @Override
-    protected void updateConsoleModel(UserPortalItemModel item) {
-        super.updateConsoleModel(item);
-        if (item.getEntity() != null && item.getDefaultConsoleModel() != null) {
-            // Adjust item's default console for userportal 'Basic View'
-            item.getDefaultConsoleModel().setForceVmStatusUp(true);
         }
     }
 
