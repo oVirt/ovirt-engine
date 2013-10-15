@@ -73,16 +73,25 @@
 	<g:FlowPanel>
 		<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 		<p:ProfileEditor ui:field="profileEditor" />
-		<g:HorizontalPanel ui:field="linkStateSelectionPanel" width="100%">
-				<e:ListModelListBoxEditor ui:field="linkStateEditor" />
-				<g:SimplePanel addStyleNames="{style.contentWidget}">
-					<g:HorizontalPanel>
-						<e:EntityModelRadioButtonEditor ui:field="linkedEditor"/>
-						<e:EntityModelRadioButtonEditor ui:field="unlinkedEditor"/>
-					</g:HorizontalPanel>
-				</g:SimplePanel>
-			</g:HorizontalPanel>
 		<e:ListModelListBoxEditor ui:field="nicTypeEditor" />
+		<g:HorizontalPanel ui:field="linkStateSelectionPanel" width="100%">
+			<e:ListModelListBoxEditor ui:field="linkStateEditor" />
+			<g:SimplePanel addStyleNames="{style.contentWidget}">
+				<g:HorizontalPanel>
+					<e:EntityModelRadioButtonEditor ui:field="linkedEditor"/>
+					<e:EntityModelRadioButtonEditor ui:field="unlinkedEditor"/>
+				</g:HorizontalPanel>
+			</g:SimplePanel>
+		</g:HorizontalPanel>
+		<g:HorizontalPanel ui:field="cardStatusSelectionPanel" width="100%">
+			<e:ListModelListBoxEditor ui:field="cardStatusEditor" />
+			<g:SimplePanel addStyleNames="{style.contentWidget}">
+				<g:HorizontalPanel>
+					<e:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
+					<e:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
+				</g:HorizontalPanel>
+			</g:SimplePanel>
+		</g:HorizontalPanel>
 		<g:HorizontalPanel width="100%">
 			<e:EntityModelCheckBoxEditor ui:field="enableManualMacCheckbox" />
 			<e:EntityModelTextBoxEditor ui:field="MACEditor" />
@@ -90,17 +99,5 @@
 		<g:SimplePanel addStyleNames="{style.macExamplePanel}">
 			<g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
 		</g:SimplePanel>
-		<d:AdvancedParametersExpander ui:field="expander" addStyleNames="{style.expander}"/>
-		<g:FlowPanel ui:field="expanderContent" addStyleNames="{style.expandedPanel}">
-			<g:HorizontalPanel ui:field="cardStatusSelectionPanel" width="100%">
-				<e:ListModelListBoxEditor ui:field="cardStatusEditor" />
-				<g:SimplePanel addStyleNames="{style.contentWidget}">
-					<g:HorizontalPanel>
-						<e:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
-						<e:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
-					</g:HorizontalPanel>
-				</g:SimplePanel>
-			</g:HorizontalPanel>
-		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>
