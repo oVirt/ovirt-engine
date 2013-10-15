@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -183,7 +185,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !uniqueInterfaceName(interfaces)) {
-                return false;
+            return false;
         }
 
         // check that not exceeded PCI and IDE limit
@@ -214,7 +216,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         Network network = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
         if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
             Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
-            if (!validate(nicValidator.hotUpdateDoneWithInternalNetwork(oldNetwork, network))) {
+            if (!validate(nicValidator.hotUpdateDoneWithInternalNetwork(oldNetwork, network))
+                    || !validate(nicValidator.networkExistsOnHost(network))) {
                 return false;
             }
         }
@@ -305,6 +308,22 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             super(nic, version, osId);
         }
 
+        public ValidationResult networkExistsOnHost(Network network) {
+            if (network == null) {
+                return ValidationResult.VALID;
+            }
+
+            Guid vdsId = getVmDynamicDao().get(nic.getVmId()).getRunOnVds();
+            List<VdsNetworkInterface> hostNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(vdsId);
+            for (VdsNetworkInterface hostNic : hostNics) {
+                if (network.getName().equals(hostNic.getNetworkName())) {
+                    return ValidationResult.VALID;
+                }
+            }
+
+            return new ValidationResult(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
+        }
+
         /**
          * @return An error if hot updated is needed, and either network linking is not supported or the NIC has port
          *         mirroring set.
@@ -314,7 +333,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 if (!FeatureSupported.networkLinking(version)) {
                     return new ValidationResult(VdcBllMessages.HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED,
                             clusterVersion());
-                } else if (getVnicProfile().isPortMirroring()) {
+                } else if (getVnicProfile() != null && getVnicProfile().isPortMirroring()) {
                     return new ValidationResult(VdcBllMessages.CANNOT_PERFORM_HOT_UPDATE_WITH_PORT_MIRRORING);
                 }
             }
@@ -347,7 +366,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return (oldNetwork == null || !oldNetwork.isExternal())
                     && (newNetwork == null || !newNetwork.isExternal())
                     ? ValidationResult.VALID
-                    : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED);
+                            : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED);
         }
     }
 }
