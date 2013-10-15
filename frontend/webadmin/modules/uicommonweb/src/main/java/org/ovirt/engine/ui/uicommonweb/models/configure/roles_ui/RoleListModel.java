@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -217,7 +218,7 @@ public class RoleListModel extends ListWithDetailsModel
                         filteredList.add(item);
                     }
                 }
-
+                Collections.sort(filteredList, new Linq.RoleNameComparer());
                 roleListModel.setItems(filteredList);
             }
         };
