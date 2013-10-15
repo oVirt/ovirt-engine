@@ -46,7 +46,11 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 _multiTasksByCommandIds.put(getCommandId(), new CommandMultiAsyncTasks(getCommandId()));
                 isNewCommandAdded = true;
             }
+
+            CommandMultiAsyncTasks entityInfo = GetCommandMultiAsyncTasks();
+            entityInfo.AttachTask(this);
         }
+
         if (duringInit && isNewCommandAdded) {
             CommandBase<?> command =
                     CommandsFactory.CreateCommand(parameters.getDbAsyncTask().getaction_type(),
@@ -58,8 +62,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
             }
         }
 
-        CommandMultiAsyncTasks entityInfo = GetCommandMultiAsyncTasks();
-        entityInfo.AttachTask(this);
+
     }
 
     @Override
@@ -198,7 +201,9 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 log.infoFormat(
                         "CommandAsyncTask::HandleEndActionRuntimeException: Removing CommandMultiAsyncTasks object for entity '{0}'",
                         commandInfo.getCommandId());
-                _multiTasksByCommandIds.remove(commandInfo.getCommandId());
+                synchronized (_lockObject) {
+                    _multiTasksByCommandIds.remove(commandInfo.getCommandId());
+                }
             }
         }
 
