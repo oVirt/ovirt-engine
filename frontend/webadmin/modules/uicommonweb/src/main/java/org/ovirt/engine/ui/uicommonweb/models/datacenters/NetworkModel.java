@@ -383,8 +383,17 @@ public abstract class NetworkModel extends Model
 
         getExternalProviders().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
+        boolean profilesValid = true;
+        Iterable<VnicProfileModel> profiles = getProfiles().getItems();
+        for (VnicProfileModel profileModel : profiles) {
+            if (!profileModel.validate()) {
+                profilesValid = false;
+            }
+        }
+
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
-                && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid();
+                && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid()
+                && profilesValid;
     }
 
     protected boolean firstInit = true;
