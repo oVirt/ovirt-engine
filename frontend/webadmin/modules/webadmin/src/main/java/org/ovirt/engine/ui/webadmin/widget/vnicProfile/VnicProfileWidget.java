@@ -88,8 +88,9 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     }
 
     @Override
-    public void edit(VnicProfileModel object) {
-        driver.edit(object);
+    public void edit(VnicProfileModel model) {
+        driver.edit(model);
+        publicInfo.setVisible(model.getPublicUse().getIsAvailable());
     }
 
     @Override
