@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -33,7 +34,7 @@ public class GetGlusterVolumeRemoveBricksStatusQuery<P extends GlusterVolumeRemo
             }
         }
 
-        if(clusterId == null) {
+        if (clusterId == null) {
             clusterId = volume.getClusterId();
         }
 
@@ -50,9 +51,12 @@ public class GetGlusterVolumeRemoveBricksStatusQuery<P extends GlusterVolumeRemo
 
         // Set the volume re-balance start time
         GlusterVolumeTaskStatusEntity entity = (GlusterVolumeTaskStatusEntity) returnValue.getReturnValue();
-        List<Step> stepsList = getStepDao().getStepsByExternalId(volume.getAsyncTask().getStepId());
-        if (stepsList != null && !stepsList.isEmpty()) {
-            entity.setStartTime(stepsList.get(0).getStartTime());
+        GlusterAsyncTask asyncTask = volume.getAsyncTask();
+        if (asyncTask != null && asyncTask.getTaskId() != null) {
+            List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
+            if (stepsList != null && !stepsList.isEmpty()) {
+                entity.setStartTime(stepsList.get(0).getStartTime());
+            }
         }
 
         return entity;
