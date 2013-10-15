@@ -80,6 +80,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Override
     protected void executeVmCommand() {
         oldVm = getVm();
+        VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getcompatibility_version());
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
         VmStatic newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
@@ -249,12 +250,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!validationErrors.isEmpty()) {
             VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors,
                     getReturnValue().getCanDoActionMessages());
-            return false;
-        }
-
-        if (!VmHandler.isMemorySizeLegal(vmFromParams.getOs(),
-                vmFromParams.getMemSizeMb(), getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getcompatibility_version())) {
             return false;
         }
 

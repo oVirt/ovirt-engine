@@ -69,19 +69,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         } else {
             if (getVdsGroup() == null) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
-            } else if (VmHandler.isMemorySizeLegal(mOldTemplate.getOsId(),
-                    mOldTemplate.getMemSizeMb(),
-                    getReturnValue()
-                            .getCanDoActionMessages(),
-                    getVdsGroup().getcompatibility_version())) {
-                if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
-                        .getCanDoActionMessages())
-                        && isDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
-                        .getCanDoActionMessages())) {
-                    returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
-                    if (!returnValue) {
-                        addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
-                    }
+            } else if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
+                    .getCanDoActionMessages())
+                    && isDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
+                            .getCanDoActionMessages())) {
+                returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
+                if (!returnValue) {
+                    addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
                 }
             }
         }
@@ -110,6 +104,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected void executeCommand() {
+        VmHandler.warnMemorySizeLegal(getParameters().getVmTemplateData(),
+                getVdsGroup().getcompatibility_version());
+
         if (getVmTemplate() != null) {
             getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
             UpdateVmTemplate();

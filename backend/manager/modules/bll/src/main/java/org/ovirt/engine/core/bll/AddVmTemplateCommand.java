@@ -231,6 +231,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         });
 
+        VmHandler.warnMemorySizeLegal(getVmTemplate(), getVdsGroup().getcompatibility_version());
+
         // means that there are no asynchronous tasks to execute and that we can
         // end the command synchronously
         boolean pendingAsyncTasks = !getReturnValue().getVdsmTaskIdList().isEmpty();
@@ -243,11 +245,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected boolean canDoAction() {
         if (getVdsGroup() == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-            return false;
-        }
-        if (!VmHandler.isMemorySizeLegal(getParameters().getMasterVm().getOsId(),
-                getParameters().getMasterVm().getMemSizeMb(),
-                getReturnValue().getCanDoActionMessages(), getVdsGroup().getcompatibility_version())) {
             return false;
         }
         if (!isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()

@@ -147,15 +147,6 @@ public class UpdateVmCommandTest {
     }
 
     @Test
-    public void testInvalidMemory() {
-        prepareVmToPassCanDoAction();
-        vmStatic.setMemSizeMb(99999);
-
-        assertFalse("canDoAction should have failed with invalid memory.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_MEMORY_SIZE);
-    }
-
-    @Test
     public void testDedicatedHostNotExist() {
         prepareVmToPassCanDoAction();
 

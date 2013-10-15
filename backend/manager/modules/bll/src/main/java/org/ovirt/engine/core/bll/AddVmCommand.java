@@ -537,6 +537,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     @Override
     protected void executeVmCommand() {
+        VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getcompatibility_version());
+
         ArrayList<String> errorMessages = new ArrayList<String>();
         if (canAddVm(errorMessages, destStorages.values())) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -638,10 +640,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             if (!validatePinningAndMigration(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
                 returnValue = false;
             }
-
-            returnValue = returnValue
-                    && VmHandler.isMemorySizeLegal(vmStaticData.getOsId(), vmStaticData.getMemSizeMb(),
-                            reasons, getVdsGroup().getcompatibility_version());
 
         }
         return returnValue;
