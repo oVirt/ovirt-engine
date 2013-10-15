@@ -1573,9 +1573,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Host with the same UUID already exists.")
     String ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Illegal memory size is provided, size needs to be between ${minMemorySize} MB and ${maxMemorySize} MB.")
-    String ACTION_TYPE_FAILED_ILLEGAL_MEMORY_SIZE();
-
     @DefaultStringValue("Cannot ${action} ${type}. Illegal number of monitors is provided, max allowed number of monitors is 1 for VNC and the max number in the ValidNumOfMonitors configuration variable for SPICE.")
     String ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS();
 

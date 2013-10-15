@@ -126,7 +126,6 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     protected void setUpCommand() {
         command = createCommand();
         doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
-        doReturn(true).when(command).isMemorySizeLegal(any(Version.class));
         doReturn(true).when(command).verifyAddVM();
     }
 

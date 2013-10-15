@@ -324,26 +324,21 @@ public class VmHandler {
     /**
      * Checks the validity of the given memory size according to OS type.
      *
-     * @param osId
-     *            Type of the os.
-     * @param memSizeInMB
-     *            The mem size in MB.
-     * @param reasons
-     *            The reasons.VdsGroups
+     * @param vm
+     *            a vm|template.
+     * @param clusterVersion
+     *            the vm's cluster version.
      * @return
      */
-    public static boolean isMemorySizeLegal(int osId,
-                                            int memSizeInMB,
-                                            List<String> reasons,
-                                            Version clusterVersion) {
-        boolean result = VmValidationUtils.isMemorySizeLegal(osId, memSizeInMB, clusterVersion);
-        if (!result) {
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_MEMORY_SIZE.toString());
-            reasons.add(String.format("$minMemorySize %s", VmValidationUtils.getMinMemorySizeInMb(osId, clusterVersion)));
-            reasons.add(String.format("$maxMemorySize %s",
-                    VmValidationUtils.getMaxMemorySizeInMb(osId, clusterVersion)));
+    public static void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
+        if (! VmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
+            log.warnFormat("RAM value {0}mb for {1} is exceeding the recommended values {2}mb - {3}mb for {4}",
+                    vm.getMemSizeMb(),
+                    vm.getName(),
+                    VmValidationUtils.getMinMemorySizeInMb(vm.getOsId(), clusterVersion),
+                    VmValidationUtils.getMaxMemorySizeInMb(vm.getOsId(), clusterVersion),
+                    osRepository.getOsName(vm.getOsId()));
         }
-        return result;
     }
 
     /**

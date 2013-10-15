@@ -46,6 +46,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -95,11 +97,15 @@ public class AddVmCommandTest {
     @Mock
     SnapshotDao snapshotDao;
 
+    @Mock
+    OsRepository osRepository;
+
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
         VM vm = createVm();
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
 
+        mockOsRepository();
         mockStorageDomainDAOGetForStoragePool();
         mockVmTemplateDAOReturnVmTemplate();
         mockDiskImageDAOGetSnapshotById();
@@ -114,6 +120,10 @@ public class AddVmCommandTest {
                 cmd.getReturnValue()
                         .getCanDoActionMessages()
                         .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
+    }
+
+    private void mockOsRepository() {
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     @Test

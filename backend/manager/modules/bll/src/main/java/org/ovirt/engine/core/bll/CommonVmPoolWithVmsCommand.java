@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -35,7 +34,6 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -76,6 +74,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
         }
+        setVdsGroupId(parameters.getVmPool().getVdsGroupId());
     }
 
     protected void initTemplate() {
@@ -92,6 +91,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
      */
     @Override
     protected void executeCommand() {
+        VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getVdsGroup().getcompatibility_version());
+
         Guid poolId = getPoolId();
         boolean isAtLeastOneVMCreationFailed = false;
         setActionReturnValue(poolId);
@@ -187,13 +188,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     @Override
     protected boolean canDoAction() {
 
-        VDSGroup grp = getVdsGroupDAO().get(getParameters().getVmPool().getVdsGroupId());
-        if (grp == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-            return false;
-        }
 
-        if (!isMemorySizeLegal(grp.getcompatibility_version())) {
+        if (getVdsGroup() == null) {
+            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
 
@@ -204,7 +201,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }
-        setStoragePoolId(grp.getStoragePoolId());
+        setStoragePoolId(getVdsGroup().getStoragePoolId());
 
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
@@ -244,20 +241,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(grp.getcompatibility_version())) {
+                !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
             return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
         return checkFreeSpaceAndTypeOnDestDomains();
-    }
-
-    protected boolean isMemorySizeLegal(Version version) {
-        VmStatic vmStaticData = getParameters().getVmStaticData();
-        return VmHandler.isMemorySizeLegal
-                (vmStaticData.getOsId(),
-                        vmStaticData.getMemSizeMb(),
-                        getReturnValue().getCanDoActionMessages(),
-                        version);
     }
 
     protected boolean verifyAddVM() {
