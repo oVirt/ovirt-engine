@@ -420,6 +420,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Console User")
     String consoleConnectedUserVm();
 
+    @DefaultStringValue("Console Client IP")
+    String consoleConnectedClientIp();
+
     @DefaultStringValue("Logged-in User")
     String loggedInUserVm();
 

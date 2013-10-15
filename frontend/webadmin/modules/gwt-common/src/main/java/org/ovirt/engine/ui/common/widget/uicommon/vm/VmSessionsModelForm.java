@@ -19,13 +19,15 @@ public class VmSessionsModelForm extends AbstractModelBoundFormWidget<VmSessions
 
     TextBoxLabel guestUserName = new TextBoxLabel();
     TextBoxLabel consoleUserName = new TextBoxLabel();
+    TextBoxLabel clientIp = new TextBoxLabel();
 
     public VmSessionsModelForm(ModelProvider<VmSessionsModel> modelProvider, CommonApplicationConstants constants) {
-        super(modelProvider, 2, 1);
+        super(modelProvider, 3, 1);
         driver.initialize(this);
 
         formBuilder.addFormItem(new FormItem(constants.loggedInUserVm(), guestUserName, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.consoleConnectedUserVm(), consoleUserName, 0, 1));
+        formBuilder.addFormItem(new FormItem(constants.consoleConnectedClientIp(), clientIp, 0, 2));
     }
 
     @Override

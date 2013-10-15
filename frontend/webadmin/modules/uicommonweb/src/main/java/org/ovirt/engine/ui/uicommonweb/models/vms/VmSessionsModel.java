@@ -9,6 +9,7 @@ public class VmSessionsModel extends EntityModel {
 
     String guestUserName;
     String consoleUserName;
+    String clientIp;
 
     public VmSessionsModel() {
         super();
@@ -39,6 +40,7 @@ public class VmSessionsModel extends EntityModel {
 
         this.consoleUserName = vm.getConsoleCurentUserName();
         this.guestUserName = vm.getGuestCurentUserName();
+        this.clientIp = vm.getClientIp();
     }
 
     public String getGuestUserName() {
@@ -57,4 +59,11 @@ public class VmSessionsModel extends EntityModel {
         this.consoleUserName = consoleUserName;
     }
 
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
 }
