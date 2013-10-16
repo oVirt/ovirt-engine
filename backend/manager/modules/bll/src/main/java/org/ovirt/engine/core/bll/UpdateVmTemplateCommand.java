@@ -85,6 +85,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getUsbPolicy(), getParameters().getVmTemplateData().getOsId(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
         }
 
+        // Check if the OS type is supported
+        if (returnValue) {
+            returnValue =
+                    VmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
+                            getVdsGroup().getArchitecture(),
+                            getReturnValue().getCanDoActionMessages());
+        }
+
         if (returnValue) {
             returnValue = AddVmCommand.checkCpuSockets(getParameters().getVmTemplateData().getNumOfSockets(),
                     getParameters().getVmTemplateData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()

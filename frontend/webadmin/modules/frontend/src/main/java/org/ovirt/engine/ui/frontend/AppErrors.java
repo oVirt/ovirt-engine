@@ -1609,6 +1609,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cannot set single display device via VNC display.")
     String ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Selected operating system is not supported by the architecture.")
+    String ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_IS_NOT_SUPPORTED_BY_ARCHITECTURE_TYPE();
+
     @DefaultStringValue("Cannot ${action} ${type}. Cannot set single display device to non Linux operating system.")
     String ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE();
 

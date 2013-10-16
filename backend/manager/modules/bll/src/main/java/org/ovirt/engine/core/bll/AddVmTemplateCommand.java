@@ -253,6 +253,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
+        if (!VmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
+                getVdsGroup().getArchitecture(), getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
+
         if (!isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
                 .getCanDoActionMessages())) {
             return false;

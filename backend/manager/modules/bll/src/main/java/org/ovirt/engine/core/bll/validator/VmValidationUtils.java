@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Version;
@@ -17,6 +18,18 @@ public class VmValidationUtils {
      */
     public static boolean isMemorySizeLegal(int osId, int memSizeInMB, Version clusterVersion) {
         return memSizeInMB >= getMinMemorySizeInMb(osId, clusterVersion) && memSizeInMB <= getMaxMemorySizeInMb(osId, clusterVersion);
+    }
+
+    /**
+     * Check if the OS type is supported by the architecture type (as per the configuration).
+     *
+     * @param osId The OS identifier.
+     * @param architectureType The architecture type to validate.
+     *
+     * @return If the OS type is supported.
+     */
+    public static boolean isOsTypeSupported(int osId, ArchitectureType architectureType) {
+        return architectureType == (SimpleDependecyInjector.getInstance().get(OsRepository.class).getArchitectureFromOS(osId));
     }
 
     /**

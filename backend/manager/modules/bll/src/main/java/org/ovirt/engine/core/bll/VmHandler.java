@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -366,6 +367,28 @@ public class VmHandler {
 
             AuditLogDirector.log(logable, AuditLogType.VM_MEMORY_NOT_IN_RECOMMENDED_RANGE);
         }
+    }
+
+    /**
+     * Check if the OS type is supported.
+     *
+     * @param osId
+     *            Type of the OS.
+     * @param architectureType
+     *            The architecture type.
+     * @param reasons
+     *            The reasons.VdsGroups
+     * @return
+     */
+    public static boolean isOsTypeSupported(int osId,
+                                            ArchitectureType architectureType,
+                                            List<String> reasons) {
+        boolean result = VmValidationUtils.isOsTypeSupported(osId, architectureType);
+        if (!result) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_IS_NOT_SUPPORTED_BY_ARCHITECTURE_TYPE
+                    .toString());
+        }
+        return result;
     }
 
     /**

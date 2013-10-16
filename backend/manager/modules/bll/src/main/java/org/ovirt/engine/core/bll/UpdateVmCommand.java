@@ -253,6 +253,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(),
+                getVdsGroup().getArchitecture(), getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
+
         if (vmFromParams.getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(vmFromParams.getDefaultDisplayType(),
                         vmFromParams.getOs(),

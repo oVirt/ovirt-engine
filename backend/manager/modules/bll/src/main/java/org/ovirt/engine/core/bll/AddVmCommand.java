@@ -414,6 +414,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
+        // check if the OS type is supported
+        if (!VmHandler.isOsTypeSupported(vmFromParams.getOs(), getVdsGroup().getArchitecture(),
+                getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
+
         // check cpuPinning if the check haven't failed yet
         if (!isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData())) {
             return false;
