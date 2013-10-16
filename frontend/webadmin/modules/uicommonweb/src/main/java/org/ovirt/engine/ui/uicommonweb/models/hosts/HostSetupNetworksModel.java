@@ -276,6 +276,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 mgmntDialogModel.getAddress().setEntity(entity.getAddress());
                 mgmntDialogModel.getSubnet().setEntity(entity.getSubnet());
                 mgmntDialogModel.getGateway().setEntity(entity.getGateway());
+                mgmntDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
                 mgmntDialogModel.setNoneBootProtocolAvailable(false);
                 mgmntDialogModel.getBondingOptions().setIsAvailable(false);
                 mgmntDialogModel.getInterface().setIsAvailable(false);
@@ -322,6 +323,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 networkDialogModel.getAddress().setEntity(entity.getAddress());
                 networkDialogModel.getSubnet().setEntity(entity.getSubnet());
                 networkDialogModel.getGateway().setEntity(entity.getGateway());
+                networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
                 networkDialogModel.getGateway()
                         .setIsAvailable((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
                                 getEntity().getVdsGroupCompatibilityVersion().getValue()));
