@@ -341,7 +341,7 @@ public enum ConfigValues {
     SpiceUsbAutoShare(121),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    UseSecureConnectionWithServers(123),
+    EncryptHostCommunication(123),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("oVirt")

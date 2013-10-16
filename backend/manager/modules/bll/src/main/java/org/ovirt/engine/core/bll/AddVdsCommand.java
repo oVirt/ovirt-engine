@@ -260,7 +260,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     private void AddVdsStaticToDb() {
         getParameters().getVdsStaticData().setServerSslEnabled(
-                Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
+                Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication));
         DbFacade.getInstance().getVdsStaticDao().save(getParameters().getVdsStaticData());
         getCompensationContext().snapshotNewEntity(getParameters().getVdsStaticData());
         setVdsIdRef(getParameters().getVdsStaticData().getId());
@@ -327,7 +327,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } else {
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
-                if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
+                if (Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication)
                         && !EngineEncryptionUtils.haveKey()) {
                     returnValue = failCanDoAction(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                 } else if (!getParameters().getAddPending()

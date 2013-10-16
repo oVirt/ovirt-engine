@@ -354,7 +354,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                     "%svars/ssl",
                     VdsmEnv.CONFIG_PREFIX
                 ),
-                Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers).toString()
+                Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication).toString()
             );
             return null;
         }},

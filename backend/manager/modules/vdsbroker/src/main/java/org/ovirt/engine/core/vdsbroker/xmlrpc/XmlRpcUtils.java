@@ -45,7 +45,7 @@ public class XmlRpcUtils {
     private static final String HTTPS = "https://";
     private static Log log = LogFactory.getLog(XmlRpcUtils.class);
     static {
-        if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)) {
+        if (Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication)) {
             URL keystoreUrl;
             try {
                 // registering the https protocol with a socket factory that

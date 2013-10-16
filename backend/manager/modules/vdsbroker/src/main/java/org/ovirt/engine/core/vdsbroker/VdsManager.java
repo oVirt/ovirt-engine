@@ -148,7 +148,7 @@ public class VdsManager {
             _vds.setPreviousStatus(VDSStatus.Up);
         }
         // if ssl is on and no certificate file
-        if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
+        if (Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication)
                 && !EngineEncryptionUtils.haveKey()) {
             if (_vds.getStatus() != VDSStatus.Maintenance && _vds.getStatus() != VDSStatus.InstallFailed) {
                 setStatus(VDSStatus.NonResponsive, _vds);
@@ -196,7 +196,7 @@ public class VdsManager {
                         connectionTimeOut,
                         clientRetries,
                         VdsServerConnector.class,
-                        Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
+                        Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication));
         _vdsProxy = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
     }
 
