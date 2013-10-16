@@ -401,28 +401,6 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<TagsVmMap> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("groupId", adGroupId)
-                .addValue("vm_pool_id", vmPoolId);
-
-        RowMapper<TagsVmMap> mapper = new RowMapper<TagsVmMap>() {
-            @Override
-            public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                TagsVmMap entity = new TagsVmMap();
-                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
-                entity.setvm_id(getGuidDefaultEmpty(rs, "vm_id"));
-                entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler()
-                        .executeReadList(
-                                "GetTimeLeasedUsersVmsByGroupIdAndPoolId", mapper, parameterSource);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(Guid vmPoolId, Guid adElementId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("ad_id", adElementId)
                 .addValue("vm_pool_id", vmPoolId);

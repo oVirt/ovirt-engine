@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.TimeSpan;
 
 public class VmPool extends IVdcQueryable implements Serializable, Nameable, Commented {
@@ -114,50 +113,12 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable, Com
                 && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser);
     }
 
-    private void initializeTimeLeasedDefaultData(String parameter) {
-        String[] values = parameter.split("[,]", -1);
-        if (values.length == 3) {
-            try {
-                defaultTimeInDays = Integer.parseInt(values[0]);
-                String[] startTime = values[1].split("[:]", -1);
-                if (startTime.length > 1) {
-
-                    defaultStartTime = new TimeSpan(Integer.parseInt(startTime[0]), Integer.parseInt(startTime[1]), 0);
-                }
-                String[] endTime = values[2].split("[:]", -1);
-                if (endTime.length > 1) {
-                    defaultEndTime = new TimeSpan(Integer.parseInt(endTime[0]), Integer.parseInt(endTime[1]), 0);
-                }
-            } catch (java.lang.Exception e) {
-            }
-        }
-    }
-
     public String getParameters() {
-        switch (getVmPoolType()) {
-        case TimeLease: {
-            return StringFormat.format("%1$s,%2$s:%3$s,%4$s:%5$s", defaultTimeInDays, defaultStartTime.Hours,
-                    defaultStartTime.Minutes, defaultEndTime.Hours, defaultEndTime.Minutes);
-        }
-        default: {
-            return parameters;
-        }
-        }
-
+        return parameters;
     }
 
     public void setParameters(String value) {
-        switch (getVmPoolType()) {
-        case TimeLease: {
-            initializeTimeLeasedDefaultData(value);
-            break;
-        }
-        default: {
-            parameters = value;
-            break;
-        }
-        }
-
+        parameters = value;
     }
 
     public int getDefaultTimeInDays() {

@@ -238,8 +238,6 @@ public interface Enums extends LocalizedEnums {
 
     String VmPoolType___Manual();
 
-    String VmPoolType___TimeLease();
-
     String AdRefStatus___Inactive();
 
     String AdRefStatus___Active();

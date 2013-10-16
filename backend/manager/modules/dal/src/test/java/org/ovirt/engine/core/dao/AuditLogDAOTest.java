@@ -23,9 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * <code>AuditLogDAOTest</code> performs tests against the {@link AuditLogDAO} type.
  *
- * NOTE: Time-lease pools feature is currently not active and may be re-designed in future will need to add a test case
- * for time-lease pools.
- *
  */
 public class AuditLogDAOTest extends BaseDAOTestCase {
     private static final String VM_NAME = "rhel5-pool-50";

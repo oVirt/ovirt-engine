@@ -183,7 +183,5 @@ public interface TagDAO extends DAO {
 
     List<TagsVmMap> getTagVmMapByVmIdAndDefaultTag(Guid vmid);
 
-    List<TagsVmMap> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId);
-
     List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(Guid vmPoolId, Guid adElementId);
 }

@@ -209,21 +209,6 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FAILED, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_ATTACH_USER_TO_TIME_LEASED_POOL, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_ATTACH_USER_TO_TIME_LEASED_POOL_FAILED, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_DETACH_USER_FROM_TIME_LEASED_POOL, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_DETACH_USER_FROM_TIME_LEASED_POOL_FAILED, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_ATTACH_AD_GROUP_TO_TIME_LEASED_POOL, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_ATTACH_AD_GROUP_TO_TIME_LEASED_POOL_FAILED, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_DETACH_AD_GROUP_FROM_TIME_LEASED_POOL, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_DETACH_AD_GROUP_FROM_TIME_LEASED_POOL_FAILED, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_DETACH_USER_FROM_TIME_LEASED_POOL_INTERNAL, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_DETACH_USER_FROM_TIME_LEASED_POOL_FAILED_INTERNAL, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_DETACH_AD_GROUP_FROM_TIME_LEASED_POOL_INTERNAL, AuditLogSeverity.NORMAL);
-        severities
-                .put(AuditLogType.USER_DETACH_AD_GROUP_FROM_TIME_LEASED_POOL_FAILED_INTERNAL, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_UPDATE_USER_TO_TIME_LEASED_POOL, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_UPDATE_USER_TO_TIME_LEASED_POOL_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED, AuditLogSeverity.WARNING);
     }
@@ -233,8 +218,6 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_VDC_LOGIN_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_VDC_LOGOUT, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_VDC_LOGOUT_FAILED, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_UPDATE_AD_GROUP_TO_TIME_LEASED_POOL, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_UPDATE_AD_GROUP_TO_TIME_LEASED_POOL_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.AD_COMPUTER_ACCOUNT_SUCCEEDED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.AD_COMPUTER_ACCOUNT_FAILED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_PERMISSION, AuditLogSeverity.NORMAL);

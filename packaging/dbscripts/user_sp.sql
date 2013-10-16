@@ -4,23 +4,6 @@
 
 
 
-Create or replace FUNCTION GetTimeLeasedUsersVmsByGroupIdAndPoolId(v_groupId UUID,
- v_vm_pool_id UUID) RETURNS SETOF tags_vm_map STABLE
-   AS $procedure$
-BEGIN
-      RETURN QUERY select tags_vm_map.* from tags_vm_map
-      inner join vm_pool_map on vm_pool_map.vm_guid = tags_vm_map.vm_id
-      inner join tags_permissions_map on tags_permissions_map.tag_id = tags_vm_map.tag_id
-      inner join permissions on permissions.id = tags_permissions_map.permission_id
-      where permissions.ad_element_id
-      in(select users.user_id from users
-         where (users.groups LIKE '%' ||(select ad_groups.name from ad_groups where ad_groups.id = v_groupId)
-         || '%'))
-      and
-      vm_pool_map.vm_pool_id = v_vm_pool_id;
-END; $procedure$
-LANGUAGE plpgsql;
-
 ----------------------------------------------------------------
 -- [users] Table
 --

@@ -410,13 +410,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___AttachActionToRole();
 
-	String VdcActionType___AttachAdGroupTimeLeasedPool();
-
 	String VdcActionType___AttachNetworkToVdsGroup();
 
 	String VdcActionType___AttachNetworkToVdsInterface();
-
-	String VdcActionType___AttachUserToTimeLeasedPool();
 
 	String VdcActionType___AttachVmPoolToAdGroup();
 
@@ -434,13 +430,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___DetachActionFromRole();
 
-	String VdcActionType___DetachAdGroupFromTimeLeasedPool();
-
 	String VdcActionType___DetachNetworkFromVdsInterface();
 
 	String VdcActionType___DetachNetworkToVdsGroup();
-
-	String VdcActionType___DetachUserFromTimeLeasedPool();
 
 	String VdcActionType___DetachUserFromVmFromPool();
 
@@ -510,15 +502,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___TryBackToAllSnapshotsOfVm();
 
-	String VdcActionType___UpdateAdGroupTimeLeasedPool();
-
 	String VdcActionType___UpdateNetworkToVdsInterface();
 
 	String VdcActionType___UpdateNetwork();
 
 	String VdcActionType___UpdateRole();
-
-	String VdcActionType___UpdateUserToTimeLeasedPool();
 
 	String VdcActionType___UpdateVds();
 
