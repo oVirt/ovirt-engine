@@ -1353,6 +1353,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("Auto")
     ClientModeSpiceDefault,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("Native")
+    ClientModeVncDefault,
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     MigrationNetworkEnabled,

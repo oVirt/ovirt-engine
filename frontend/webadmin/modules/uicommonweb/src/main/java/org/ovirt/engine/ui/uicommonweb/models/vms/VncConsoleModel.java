@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -13,8 +14,10 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -51,7 +54,25 @@ public class VncConsoleModel extends ConsoleModel {
 
     public VncConsoleModel() {
         setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
-        setVncImplementation(ClientConsoleMode.Native); //Native (MIME) way is the default
+
+        boolean webSocketProxyDefined = ((ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class)).isWebSocketProxyDefined();
+        ClientConsoleMode desiredMode = readDefaultConsoleClientMode();
+        if (desiredMode == ClientConsoleMode.NoVnc && !webSocketProxyDefined) {
+            desiredMode = ClientConsoleMode.Native; // fallback
+        }
+        setVncImplementation(desiredMode);
+    }
+
+    /**
+     * Safely determine the default client mode for VNC.
+     * @return default VNC client mode read from engine config or 'Native' if there is a problem when retrieving the value.
+     */
+    private ClientConsoleMode readDefaultConsoleClientMode() {
+        try {
+            return ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientModeVncDefault));
+        } catch (Exception e) {
+            return ClientConsoleMode.Native;
+        }
     }
 
     public void setVncImplementation(ClientConsoleMode consoleMode) {
