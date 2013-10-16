@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.table.column.HumanReadableTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RebalanceFileSizeColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -165,10 +166,11 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             }
         }, constants.rebalanceScannedFileCount());
 
-        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+        rebalanceHostsTable.addEntityModelColumn(new HumanReadableTimeColumn<EntityModel>() {
+
             @Override
-            protected String getText(GlusterVolumeTaskStatusForHost entity) {
-                return String.valueOf(entity.getRunTime());
+            protected Double getRawValue(EntityModel object) {
+                return ((GlusterVolumeTaskStatusForHost)(object.getEntity())).getRunTime();
             }
         }, constants.rebalanceRunTime());
 
