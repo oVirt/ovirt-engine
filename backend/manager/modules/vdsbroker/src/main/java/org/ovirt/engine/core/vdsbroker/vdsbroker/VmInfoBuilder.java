@@ -682,7 +682,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static HashMap<String, Object> getNewMonitorSpecParams(DisplayType displayType, int numOfMonitors, boolean singleQxlPci) {
         HashMap<String, Object> specParams = new HashMap<String, Object>();
         specParams.put("vram", String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM));
-        specParams.put("heads", numOfMonitors);
+        specParams.put("heads", String.valueOf(numOfMonitors));
         specParams.put("vram", VmDeviceCommonUtils.singlePciVRamByHeads(numOfMonitors));
         if (displayType == DisplayType.qxl && singleQxlPci) {
             specParams.put("ram", VmDeviceCommonUtils.singlePciRamByHeads(numOfMonitors));
