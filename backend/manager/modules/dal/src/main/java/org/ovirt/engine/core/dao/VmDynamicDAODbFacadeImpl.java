@@ -200,6 +200,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .addValue("vm_ip", entity.getVmIp())
                         .addValue("last_start_time", entity.getLastStartTime())
                         .addValue("vm_pid", entity.getVmPid())
+                        .addValue("vm_fqdn", entity.getVmFQDN())
+                        .addValue("app_list", entity.getAppList())
                         .addValue("display", entity.getDisplay())
                         .addValue("acpi_enable", entity.getAcpiEnable())
                         .addValue("session", entity.getSession())
