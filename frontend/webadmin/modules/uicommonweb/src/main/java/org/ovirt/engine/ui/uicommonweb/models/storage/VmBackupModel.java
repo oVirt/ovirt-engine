@@ -186,8 +186,7 @@ public class VmBackupModel extends ManageBackupModel {
         tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar3.setIsCancel(true);
         model.getCommands().add(tempVar3);
-        model.setItems(getSelectedItems());
-        model.init(getEntity().getId());
+        model.init(getSelectedItems(), getEntity().getId());
 
         // Add 'Close' command
         UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
