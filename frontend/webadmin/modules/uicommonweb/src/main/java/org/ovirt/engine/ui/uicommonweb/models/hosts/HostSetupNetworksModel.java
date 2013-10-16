@@ -293,9 +293,11 @@ public class HostSetupNetworksModel extends EntityModel {
                             return;
                         }
                         entity.setBootProtocol(mgmntDialogModel.getBootProtocol());
-                        entity.setAddress((String) mgmntDialogModel.getAddress().getEntity());
-                        entity.setSubnet((String) mgmntDialogModel.getSubnet().getEntity());
-                        entity.setGateway((String) mgmntDialogModel.getGateway().getEntity());
+                        if (mgmntDialogModel.getIsStaticAddress()) {
+                            entity.setAddress((String) mgmntDialogModel.getAddress().getEntity());
+                            entity.setSubnet((String) mgmntDialogModel.getSubnet().getEntity());
+                            entity.setGateway((String) mgmntDialogModel.getGateway().getEntity());
+                        }
 
                         if ((Boolean) mgmntDialogModel.getIsToSync().getEntity()) {
                             HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());
@@ -344,9 +346,11 @@ public class HostSetupNetworksModel extends EntityModel {
                             return;
                         }
                         entity.setBootProtocol(networkDialogModel.getBootProtocol());
-                        entity.setAddress((String) networkDialogModel.getAddress().getEntity());
-                        entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
-                        entity.setGateway((String) networkDialogModel.getGateway().getEntity());
+                        if (networkDialogModel.getIsStaticAddress()) {
+                            entity.setAddress((String) networkDialogModel.getAddress().getEntity());
+                            entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
+                            entity.setGateway((String) networkDialogModel.getGateway().getEntity());
+                        }
 
                         if ((Boolean) networkDialogModel.getIsToSync().getEntity()) {
                             HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());
