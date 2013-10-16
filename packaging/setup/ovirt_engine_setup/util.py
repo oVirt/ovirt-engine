@@ -127,7 +127,7 @@ def editConfigContent(
         ):
             if (
                 not f.group('comment') and
-                f.group('value') == params[f.group('param')]
+                str(f.group('value')) == str(params[f.group('param')])
             ):
                 # value is not changed, do nothing
                 processed.add(f.group('param'))
