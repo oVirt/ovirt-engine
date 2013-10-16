@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -50,7 +51,7 @@ public class ImportTemplateModel extends ImportVmModel
     }
 
     @Override
-    public void setItems(final Iterable value)
+    public void setItems(final Iterable value, final Guid storageDomainId)
     {
         String vmt_guidKey = "_VMT_ID ="; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$
@@ -92,6 +93,7 @@ public class ImportTemplateModel extends ImportVmModel
                             templateDataList.add(templateData);
                         }
                         ImportTemplateModel.super.setSuperItems(templateDataList);
+                        doInit(storageDomainId);
                     }
                 }));
 
