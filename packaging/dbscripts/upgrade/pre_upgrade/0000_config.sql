@@ -33,6 +33,7 @@ select fn_db_rename_config_key('UseSecureConnectionWithServers', 'EncryptHostCom
 select fn_db_add_config_value('AbortMigrationOnError','false','3.0');
 select fn_db_add_config_value('AbortMigrationOnError','false','3.1');
 select fn_db_add_config_value('AbortMigrationOnError','false','3.2');
+select fn_db_add_config_value('AbortMigrationOnError','false','3.3');
 select fn_db_add_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_add_config_value('CpuPinMigrationEnabled','true','general');
 select fn_db_add_config_value('CpuPinningEnabled','false','3.0');
