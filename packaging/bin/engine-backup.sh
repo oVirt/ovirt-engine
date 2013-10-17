@@ -56,12 +56,32 @@ USAGE:
     db                      database only
  --file=FILE                file to use during backup or restore
  --log=FILE                 log file to use
+ --change-db-credentials    activate the following options, to restore
+                            the database to a different location etc.
+                            If used, existing credentials are ignored.
+ --db-host=host             set database host
+ --db-port=port             set database port
+ --db-user=user             set database user
+ --db-passfile=file         set database password - read from file
+ --db-password=pass         set database password
+ --db-name=name             set database name
+ --db-secured               set a secured connection
+ --db-secured-validation    validate host
 __EOF__
 	return 0
 }
 
 MODE=
 SCOPE=all
+CHANGE_DB_CREDENTIALS=
+MY_DB_HOST=
+MY_DB_PORT=5432
+MY_DB_USER=
+MY_DB_PASSWORD=
+MY_DB_DATABASE=
+MY_DB_SECURED=False
+MY_DB_SECURED_VALIDATION=False
+MY_DB_CREDS=
 
 parseArgs() {
 	while [ -n "$1" ]; do
@@ -89,6 +109,36 @@ parseArgs() {
 			--log=*)
 				LOG="${v}"
 			;;
+			--change-db-credentials)
+				CHANGE_DB_CREDENTIALS=1
+			;;
+			--db-host=*)
+				MY_DB_HOST="${v}"
+			;;
+			--db-port=*)
+				MY_DB_PORT="${v}"
+			;;
+			--db-user=*)
+				MY_DB_USER="${v}"
+			;;
+			--db-passfile=*)
+				DB_PASSFILE="${v}"
+				[ -r "${DB_PASSFILE}" ] || \
+					die "Can not read password file ${DB_PASSFILE}"
+				read MY_DB_PASSWORD < "${DB_PASSFILE}"
+			;;
+			--db-password=*)
+				MY_DB_PASSWORD="${v}"
+			;;
+			--db-name=*)
+				MY_DB_DATABASE="${v}"
+			;;
+			--db-secured)
+				MY_DB_SECURED="True"
+			;;
+			--db-sec-validation)
+				MY_DB_SECURED_VALIDATION="True"
+			;;
 			--help)
 				usage
 				exit 0
@@ -107,6 +157,13 @@ verifyArgs() {
 	[ -n "${LOG}" ] || die "--log is missing"
 	if [ "${MODE}" == "restore" ] ; then
 		[ -e "${FILE}" ] || die "${FILE} does not exist"
+	fi
+	if [ -n "${CHANGE_DB_CREDENTIALS}" ]; then
+		[ -n "${MY_DB_HOST}" ] || die "--db-host is missing"
+		[ -n "${MY_DB_USER}" ] || die "--db-user is missing"
+		[ -n "${MY_DB_PASSWORD}" ] || \
+			die "--db-passfile or --db-password is missing"
+		[ -n "${MY_DB_DATABASE}" ] || die "--db-name is missing"
 	fi
 }
 
@@ -188,6 +245,11 @@ dorestore() {
 		ps "$(cat ${ENGINE_UP_MARK})" | grep -q 'ovirt-engine.py' &&
 			logdie "Engine service is active - can not restore backup"
 	fi
+	if [ -n "${CHANGE_DB_CREDENTIALS}" ]; then
+		setMyDBCredentials
+		generatePgPass
+		verifyConnection
+	fi
 	output "Restoring..."
 	log "Opening tarball ${FILE} to ${TEMP_FOLDER}"
 	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" || logdie "cannot open ${TEMP_FOLDER}"
@@ -201,14 +263,18 @@ dorestore() {
 		restoreFiles "${BACKUP_PATHS}"
 	fi
 
-	log "Reloading configuration"
-	load_config
+	if [ -z "${CHANGE_DB_CREDENTIALS}" ]; then
+		log "Reloading configuration"
+		load_config
+	fi
+
 	log "Generating pgpass"
 	generatePgPass # Must run after configuration reload
 	log "Verifying connection"
 	verifyConnection
 	log "Restoring database backup at ${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
 	restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
+	changeDBConf
 	output "Note: you might need to manually fix:"
 	output "- iptables/firewalld configuration"
 	output "- autostart of ovirt-engine service"
@@ -258,6 +324,43 @@ restoreFiles() {
 			restorecon -R "${path}" || logdie "Failed setting selinux context for ${path}"
 		fi
 	done || logdie "Cannot read ${paths}"
+}
+
+setMyDBCredentials() {
+	local options
+
+	[ "${MY_DB_SECURED}" = "True" ] && \
+		options="${options}&ssl=true"
+	[ "${MY_DB_SECURED_VALIDATION}" != "True" ] && \
+		options="${options}&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+
+	[ -n "${options}" ] && options="${options#&}"
+
+	MY_DB_CREDS="$(cat << __EOF__
+ENGINE_DB_HOST="${MY_DB_HOST}"
+ENGINE_DB_PORT="${MY_DB_PORT}"
+ENGINE_DB_USER="${MY_DB_USER}"
+ENGINE_DB_PASSWORD="$(echo ${MY_DB_PASSWORD} | sed 's;\(["\$]\);\\\1;g')"
+ENGINE_DB_DATABASE="${MY_DB_DATABASE}"
+ENGINE_DB_SECURED="${MY_DB_SECURED}"
+ENGINE_DB_SECURED_VALIDATION="${MY_DB_SECURED_VALIDATION}"
+ENGINE_DB_DRIVER="org.postgresql.Driver"
+ENGINE_DB_URL="jdbc:postgresql://\${ENGINE_DB_HOST}:\${ENGINE_DB_PORT}/\${ENGINE_DB_DATABASE}?${options}"
+__EOF__
+)"
+	eval "${MY_DB_CREDS}"
+}
+
+changeDBConf() {
+	local conf="${ENGINE_ETC}/engine.conf.d/10-setup-database.conf"
+	[ -f "${conf}" ] || logdie "Can not find ${conf}"
+
+	local options
+	local backup="${conf}.$(date +"%Y%m%d%H%M%S")"
+	log "Backing up ${conf} to ${backup}"
+	cp -a "${conf}" "${backup}" || die "Failed to backup ${conf}"
+	output "Rewriting ${conf}"
+	echo "${MY_DB_CREDS}" > "${conf}"
 }
 
 generatePgPass() {
