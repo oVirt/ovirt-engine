@@ -2212,6 +2212,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} without active ISO domain.")
     String VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The ISO Storage Domain is being used by the following VMs: ${VmNames}.")
+    String ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED();
+
     @DefaultStringValue("MAC Address is in use.")
     String MAC_ADDRESS_IS_IN_USE();
 
