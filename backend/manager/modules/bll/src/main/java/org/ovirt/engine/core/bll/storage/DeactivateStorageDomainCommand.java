@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -18,6 +20,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -112,6 +117,9 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
             }
         }
+        if (!isRunningVmsWithIsoAttached()) {
+            return false;
+        }
         if (!getParameters().getIsInternal()
                 && !getVmDAO()
                         .getAllActiveForStorageDomain(getStorageDomain().getId())
@@ -130,6 +138,31 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             }
         }
         return true;
+    }
+
+    protected boolean isRunningVmsWithIsoAttached() {
+        if (!getParameters().getIsInternal() && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
+            List<String> vmNames = getVmsWithAttachedISO();
+            if (!vmNames.isEmpty()) {
+                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED,
+                        String.format("$VmNames %1$s", StringUtils.join(vmNames, ",")));
+            }
+        }
+        return true;
+    }
+
+    protected List<String> getVmsWithAttachedISO() {
+        List<VmStatic> vms = getVmStaticDAO().getAllByStoragePoolId(getStorageDomain().getStoragePoolId());
+        List<String> vmNames = new LinkedList<>();
+        for (VmStatic vmStatic : vms) {
+            VmDynamic vmDynamic = getVmDynamicDAO().get(vmStatic.getId());
+            if (getVmDynamicDAO().get(vmStatic.getId()).getStatus() != VMStatus.Down
+                    && !StringUtils.isEmpty(vmDynamic.getCurrentCd() != null ? vmDynamic.getCurrentCd()
+                            : vmStatic.getIsoPath())) {
+                vmNames.add(vmStatic.getName());
+            }
+        }
+        return vmNames;
     }
 
     /**
