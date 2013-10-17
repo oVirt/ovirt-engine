@@ -16,6 +16,9 @@ public class GlusterServicesListVDSParameters extends VdsIdVDSCommandParametersB
         this.serviceNames = serviceNames;
     }
 
+    public GlusterServicesListVDSParameters() {
+    }
+
     public Set<String> getServiceNames() {
         return serviceNames;
     }

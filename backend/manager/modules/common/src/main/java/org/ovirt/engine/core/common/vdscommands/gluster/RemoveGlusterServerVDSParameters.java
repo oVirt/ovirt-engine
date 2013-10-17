@@ -17,6 +17,9 @@ public class RemoveGlusterServerVDSParameters extends VdsIdVDSCommandParametersB
         setForceAction(forceAction);
     }
 
+    public RemoveGlusterServerVDSParameters() {
+    }
+
     public String getHostnameOrIp() {
         return hostnameOrIp;
     }

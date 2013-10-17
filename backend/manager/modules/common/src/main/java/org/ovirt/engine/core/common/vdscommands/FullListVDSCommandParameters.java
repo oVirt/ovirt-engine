@@ -16,6 +16,9 @@ public class FullListVDSCommandParameters extends VdsIdAndVdsVDSCommandParameter
         this.vmIds = vmIds;
     }
 
+    public FullListVDSCommandParameters() {
+    }
+
     public List<String> getVmIds() {
         return vmIds;
     }

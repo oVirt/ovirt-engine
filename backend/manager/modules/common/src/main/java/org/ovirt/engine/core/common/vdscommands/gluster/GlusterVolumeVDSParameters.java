@@ -16,6 +16,9 @@ public class GlusterVolumeVDSParameters extends VdsIdVDSCommandParametersBase {
         this.volumeName = volumeName;
     }
 
+    public GlusterVolumeVDSParameters() {
+    }
+
     public String getVolumeName() {
         return volumeName;
     }

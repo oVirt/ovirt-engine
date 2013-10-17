@@ -13,6 +13,9 @@ public class GetDiskLunAlignmentVDSCommandParameters extends GetDiskAlignmentVDS
         super(vdsId, vmId);
     }
 
+    public GetDiskLunAlignmentVDSCommandParameters() {
+    }
+
     public void setLunId(String lunId) {
         this.lunId = lunId;
     }

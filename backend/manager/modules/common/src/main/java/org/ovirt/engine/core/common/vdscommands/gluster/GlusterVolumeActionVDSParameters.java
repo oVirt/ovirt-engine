@@ -14,6 +14,9 @@ public class GlusterVolumeActionVDSParameters extends GlusterVolumeVDSParameters
         setForceAction(forceAction);
     }
 
+    public GlusterVolumeActionVDSParameters() {
+    }
+
     public void setForceAction(boolean forceAction) {
         this.forceAction = forceAction;
     }

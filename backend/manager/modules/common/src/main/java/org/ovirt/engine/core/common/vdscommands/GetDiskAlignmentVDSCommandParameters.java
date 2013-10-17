@@ -10,5 +10,8 @@ public abstract class GetDiskAlignmentVDSCommandParameters extends VdsAndVmIDVDS
         super(vdsId, vmId);
     }
 
+    public GetDiskAlignmentVDSCommandParameters() {
+    }
+
     public abstract Map<String, String> getDriveSpecs();
 }

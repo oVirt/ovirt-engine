@@ -12,6 +12,9 @@ public class GetVmStatsVDSCommandParameters extends VdsAndVmIDVDSParametersBase 
         this.vds = vds;
     }
 
+    public GetVmStatsVDSCommandParameters() {
+    }
+
     /**
      * @return the vds
      */

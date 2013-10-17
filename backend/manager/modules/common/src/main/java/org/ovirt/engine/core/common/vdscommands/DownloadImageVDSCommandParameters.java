@@ -15,6 +15,9 @@ public class DownloadImageVDSCommandParameters extends AllStorageAndImageIdVDSCo
         this.downloadInfo = downloadInfo;
     }
 
+    public DownloadImageVDSCommandParameters() {
+    }
+
     public LocationInfo getDownloadInfo() {
         return downloadInfo;
     }

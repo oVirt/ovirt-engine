@@ -18,6 +18,9 @@ public class VmNicDeviceVDSParameters extends VdsIdVDSCommandParametersBase {
         this.vmDevice = vmDevice;
     }
 
+    public VmNicDeviceVDSParameters() {
+    }
+
     public VM getVm() {
         return vm;
     }

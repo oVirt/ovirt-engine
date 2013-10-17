@@ -15,6 +15,9 @@ public class GlusterServiceVDSParameters extends VdsIdVDSCommandParametersBase {
         this.actionType = actionType;
     }
 
+    public GlusterServiceVDSParameters() {
+    }
+
     public List<String> getServiceList() {
         return serviceList;
     }

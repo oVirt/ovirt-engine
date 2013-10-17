@@ -68,6 +68,7 @@
         <configuration>
           <propertyExpansion>disallowFinals=true</propertyExpansion>
           <propertyExpansion>disallowMemberInit=true</propertyExpansion>
+          <propertyExpansion>checkNoArgConstructor=true</propertyExpansion>
         </configuration>
       </plugin>
       <plugin>

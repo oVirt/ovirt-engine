@@ -26,6 +26,9 @@ public class GlusterVolumeRemoveBricksVDSParameters extends GlusterVolumeVDSPara
         this.replicaCount = replicaCount;
     }
 
+    public GlusterVolumeRemoveBricksVDSParameters() {
+    }
+
     public List<GlusterBrickEntity> getBricks() {
         return bricks;
     }

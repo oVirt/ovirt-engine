@@ -15,6 +15,9 @@ public class GlusterVolumesListVDSParameters extends VdsIdVDSCommandParametersBa
         this.clusterId = clusterId;
     }
 
+    public GlusterVolumesListVDSParameters() {
+    }
+
     public Guid getClusterId() {
         return clusterId;
     }

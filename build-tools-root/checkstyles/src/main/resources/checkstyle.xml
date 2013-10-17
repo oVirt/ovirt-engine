@@ -28,5 +28,8 @@
     <module name="checks.NoMemberInitializationCheck">
       <property name="run" value="${disallowMemberInit}" default="false"/>
     </module>
+    <module name="checks.NoArgConstructorCheck">
+      <property name="run" value="${checkNoArgConstructor}" default="false"/>
+    </module>
   </module>
 </module>

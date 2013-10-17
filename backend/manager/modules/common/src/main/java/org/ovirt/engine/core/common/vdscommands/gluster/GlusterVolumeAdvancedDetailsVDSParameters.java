@@ -22,6 +22,9 @@ public class GlusterVolumeAdvancedDetailsVDSParameters extends GlusterVolumeVDSP
         this.detailRequired = detailRequired;
     }
 
+    public GlusterVolumeAdvancedDetailsVDSParameters() {
+    }
+
     public Guid getClusterId() {
         return clusterId;
     }

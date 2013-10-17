@@ -423,6 +423,7 @@
             <consoleOutput>true</consoleOutput>
             <includeTestSourceDirectory>true</includeTestSourceDirectory>
             <configLocation>checkstyle.xml</configLocation>
+            <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
             <propertyExpansion>runNlsCheck=false</propertyExpansion>
           </configuration>
           <executions>

@@ -28,6 +28,9 @@ public class ExtendVmDiskSizeVDSCommandParameters extends VdsAndVmIDVDSParameter
         this.newSize = newSize;
     }
 
+    public ExtendVmDiskSizeVDSCommandParameters() {
+    }
+
     public long getNewSize() {
         return newSize;
     }

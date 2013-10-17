@@ -15,6 +15,9 @@ public class GlusterVolumeOptionVDSParameters extends GlusterVolumeVDSParameters
         this.volumeOption = volumeOption;
     }
 
+    public GlusterVolumeOptionVDSParameters() {
+    }
+
     public GlusterVolumeOptionEntity getVolumeOption() {
         return volumeOption;
     }
