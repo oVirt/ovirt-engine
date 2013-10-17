@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusDetail;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
@@ -48,9 +50,11 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     private static final Guid VOLUME_ID = Guid.newGuid();
     private static final Guid SERVER_ID = Guid.newGuid();
     private static final Guid STEP_ID = Guid.newGuid();
+    private static final Guid SERVER_UUID_1 = Guid.newGuid();
     private GlusterVolumeTaskStatusEntity expectedVolumeStatusDetails;
     private VdsDAO vdsDao;
     private GlusterVolumeDao volumeDao;
+    private GlusterServerDao glusterServerDao;
     private StepDao stepDao;
     private ClusterUtils clusterUtils;
 
@@ -75,6 +79,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
 
         GlusterVolumeTaskStatusForHost status1 = new GlusterVolumeTaskStatusForHost();
         status1.setHostName(SERVER_1);
+        status1.setHostUuid(Guid.newGuid());
         status1.setFilesScanned(100);
         status1.setFilesMoved(100);
         status1.setFilesFailed(0);
@@ -83,10 +88,12 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         status1.setRunTime(20);
         status1.setStatus(JobExecutionStatus.FINISHED);
         status1.setTotalSizeMoved(1024);
+        status1.setHostUuid(SERVER_UUID_1);
         statusList.add(status1);
 
         GlusterVolumeTaskStatusForHost status2 = new GlusterVolumeTaskStatusForHost();
         status2.setHostName(SERVER_2);
+        status2.setHostUuid(Guid.newGuid());
         status2.setFilesScanned(100);
         status2.setFilesMoved(100);
         status2.setFilesFailed(0);
@@ -95,6 +102,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         status2.setRunTime(20);
         status2.setStatus(JobExecutionStatus.FINISHED);
         status2.setTotalSizeMoved(1024);
+        status2.setHostUuid(SERVER_UUID_1);
         statusList.add(status2);
 
         return statusList;
@@ -172,19 +180,31 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         return asyncTask;
     }
 
+    private GlusterServer getGlusterServer() {
+        GlusterServer glusterServer = new GlusterServer();
+        glusterServer.setId(SERVER_ID);
+        glusterServer.setGlusterServerUuid(SERVER_UUID_1);
+
+        return glusterServer;
+    }
+
     private void setupMock() {
         clusterUtils = mock(ClusterUtils.class);
         vdsDao = mock(VdsDAO.class);
         volumeDao = mock(GlusterVolumeDao.class);
+        glusterServerDao = mock(GlusterServerDao.class);
         stepDao = mock(StepDao.class);
 
         doReturn(vdsDao).when(getQuery()).getVdsDao();
         doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
         doReturn(stepDao).when(getQuery()).getStepDao();
+        doReturn(glusterServerDao).when(getQuery()).getGlusterServerDao();
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
         when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());
         when(stepDao.getStepsByExternalId(any(Guid.class))).thenReturn(getStepsList());
+        when(glusterServerDao.getByGlusterServerUuid(any(Guid.class))).thenReturn(getGlusterServer());
+        when(vdsDao.get(any(Guid.class))).thenReturn(getVds(VDSStatus.Up));
 
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
