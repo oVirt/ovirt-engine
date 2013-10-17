@@ -34,5 +34,8 @@
     <module name="WhitespaceAfter">
           <property name="tokens" value="COMMA"/>
     </module>
+    <module name="checks.NoArgConstructorCheck">
+      <property name="run" value="${checkNoArgConstructor}" default="false"/>
+    </module>
   </module>
 </module>

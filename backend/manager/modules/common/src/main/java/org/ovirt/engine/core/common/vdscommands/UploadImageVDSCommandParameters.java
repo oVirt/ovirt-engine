@@ -15,6 +15,9 @@ public class UploadImageVDSCommandParameters extends AllStorageAndImageIdVDSComm
         this.uploadInfo = uploadInfo;
     }
 
+    public UploadImageVDSCommandParameters() {
+    }
+
     public LocationInfo getUploadInfo() {
         return uploadInfo;
     }

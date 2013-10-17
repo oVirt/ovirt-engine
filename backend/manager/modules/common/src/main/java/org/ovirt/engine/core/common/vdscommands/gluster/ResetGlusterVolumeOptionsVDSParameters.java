@@ -19,6 +19,9 @@ public class ResetGlusterVolumeOptionsVDSParameters extends GlusterVolumeVDSPara
         this.forceAction = forceAction;
     }
 
+    public ResetGlusterVolumeOptionsVDSParameters() {
+    }
+
     public GlusterVolumeOptionEntity getVolumeOption() {
         return volumeOption;
     }

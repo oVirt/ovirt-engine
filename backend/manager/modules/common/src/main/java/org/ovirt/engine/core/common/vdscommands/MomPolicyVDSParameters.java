@@ -13,6 +13,9 @@ public class MomPolicyVDSParameters extends VdsIdVDSCommandParametersBase {
         this.enableBalloon = enableBalloon;
     }
 
+    public MomPolicyVDSParameters() {
+    }
+
     public boolean isEnableBalloon() {
         return enableBalloon;
     }

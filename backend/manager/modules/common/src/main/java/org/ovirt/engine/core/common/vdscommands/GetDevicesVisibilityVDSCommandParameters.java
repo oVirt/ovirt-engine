@@ -13,6 +13,9 @@ public class GetDevicesVisibilityVDSCommandParameters extends VdsIdVDSCommandPar
         this.devicesIds = devicesIds;
     }
 
+    public GetDevicesVisibilityVDSCommandParameters() {
+    }
+
     public String[] getDevicesIds() {
         return devicesIds;
     }

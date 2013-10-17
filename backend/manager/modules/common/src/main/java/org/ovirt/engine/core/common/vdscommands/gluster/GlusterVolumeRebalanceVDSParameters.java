@@ -20,6 +20,9 @@ public class GlusterVolumeRebalanceVDSParameters extends GlusterVolumeVDSParamet
         this.forceAction = forceAction;
     }
 
+    public GlusterVolumeRebalanceVDSParameters() {
+    }
+
     public boolean isFixLayoutOnly() {
         return fixLayoutOnly;
     }

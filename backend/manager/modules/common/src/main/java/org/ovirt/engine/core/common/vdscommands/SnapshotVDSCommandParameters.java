@@ -21,6 +21,9 @@ public class SnapshotVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.memoryVolume = memoryVolume;
     }
 
+    public SnapshotVDSCommandParameters() {
+    }
+
     public List<DiskImage> getImages() {
         return images;
     }

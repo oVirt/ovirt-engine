@@ -28,6 +28,9 @@ public class ReplaceGlusterVolumeBrickActionVDSParameters extends GlusterVolumeA
         setNewBrickDir(newBrickDirectory);
     }
 
+    public ReplaceGlusterVolumeBrickActionVDSParameters() {
+    }
+
     public GlusterTaskOperation getAction() {
         return action;
     }

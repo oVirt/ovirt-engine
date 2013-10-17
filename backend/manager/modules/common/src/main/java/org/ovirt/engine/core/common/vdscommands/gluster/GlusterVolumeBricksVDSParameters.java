@@ -15,6 +15,9 @@ public class GlusterVolumeBricksVDSParameters extends GlusterVolumeVDSParameters
         this.bricks = bricks;
     }
 
+    public GlusterVolumeBricksVDSParameters() {
+    }
+
     public List<GlusterBrickEntity> getBricks() {
         return bricks;
     }

@@ -47,6 +47,9 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
         this.interfaces = (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
     }
 
+    public SetupNetworksVdsCommandParameters() {
+    }
+
     public List<Network> getNetworks() {
         return networks;
     }

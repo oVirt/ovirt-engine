@@ -40,6 +40,9 @@ public class GlusterVolumeRemoveBricksVDSParameters extends GlusterVolumeVDSPara
         this.forceRemove = forceRemove;
     }
 
+    public GlusterVolumeRemoveBricksVDSParameters() {
+    }
+
     public List<GlusterBrickEntity> getBricks() {
         return bricks;
     }

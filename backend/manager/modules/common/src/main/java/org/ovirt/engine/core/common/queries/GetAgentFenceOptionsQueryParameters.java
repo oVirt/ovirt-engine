@@ -16,4 +16,7 @@ public class GetAgentFenceOptionsQueryParameters extends VdcQueryParametersBase 
         super();
         this.version = version;
     }
+
+    public GetAgentFenceOptionsQueryParameters() {
+    }
 }

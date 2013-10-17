@@ -19,6 +19,8 @@ public class GlusterVolumeBricksActionVDSParameters extends GlusterVolumeBricksV
         this.stripeCount = stripeCount;
     }
 
+    public GlusterVolumeBricksActionVDSParameters() {
+    }
 
     public int getReplicaCount() {
         return replicaCount;

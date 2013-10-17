@@ -16,6 +16,9 @@ public class AddGlusterServerVDSParameters extends VdsIdVDSCommandParametersBase
         setHostnameOrIp(hostnameOrIp);
     }
 
+    public AddGlusterServerVDSParameters() {
+    }
+
     public String getHostnameOrIp() {
         return hostnameOrIp;
     }

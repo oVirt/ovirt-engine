@@ -60,6 +60,9 @@ public class GlusterHookVDSParameters extends VdsIdVDSCommandParametersBase {
         setEnabled(enabled);
     }
 
+    public GlusterHookVDSParameters() {
+    }
+
     public String getHookContent() {
         return content;
     }

@@ -13,6 +13,9 @@ public class GetDiskImageAlignmentVDSCommandParameters extends GetDiskAlignmentV
         super(vdsId, vmId);
     }
 
+    public GetDiskImageAlignmentVDSCommandParameters() {
+    }
+
     public void setPoolId(Guid poolId) {
         this.poolId = poolId;
     }

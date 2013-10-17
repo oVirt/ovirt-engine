@@ -18,6 +18,9 @@ public class CreateGlusterVolumeVDSParameters extends VdsIdVDSCommandParametersB
         setVolume(volume);
     }
 
+    public CreateGlusterVolumeVDSParameters() {
+    }
+
     public GlusterVolumeEntity getVolume() {
         return volume;
     }
