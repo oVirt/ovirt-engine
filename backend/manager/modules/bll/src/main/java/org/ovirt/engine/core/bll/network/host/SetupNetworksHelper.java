@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -304,9 +303,8 @@ public class SetupNetworksHelper {
                         addViolation(VdcBllMessages.NETWORKS_NOT_IN_SYNC, networkName);
                     }
                 } else if (networkWasModified(iface)) {
-                    if (NetworkUtils.isManagementNetwork(iface.getNetworkName())
-                            && !managementNetworkModifiedCorrectly(iface)) {
-                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_ADDRESS_CANNOT_BE_CHANGED, networkName);
+                    if (networkIpAddressWasSameAsHostnameAndChanged(iface)) {
+                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED, networkName);
                     }
                     modifiedNetworks.add(network);
                 }
@@ -324,23 +322,27 @@ public class SetupNetworksHelper {
     }
 
     /**
-     * Checks that the management network is configured correctly:
+     * Checks if a network is configured incorrectly:
      * <ul>
      * <li>If the host was added to the system using its IP address as the computer name for the certification creation,
      * it is forbidden to modify the IP address without reinstalling the host.</li>
      * </ul>
      *
      * @param iface
-     *            The network interface which carries the management network
-     * @return <code>true</code> if the management network was reconfigured properly
+     *            The network interface which carries the network
+     * @return <code>true</code> if the network was reconfigured improperly
      */
-    private boolean managementNetworkModifiedCorrectly(VdsNetworkInterface iface) {
-        if (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
-                && vds.getHostName().matches(ValidationUtils.IP_PATTERN)) {
-            return StringUtils.equals(vds.getHostName(), iface.getAddress());
+    private boolean networkIpAddressWasSameAsHostnameAndChanged(VdsNetworkInterface iface) {
+        if (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
+            VdsNetworkInterface existingIface = getExistingIfaceByNetwork(iface.getNetworkName());
+            if (existingIface != null) {
+                String oldAddress = existingIface.getAddress();
+                String hostName = vds.getHostName();
+                return StringUtils.equals(oldAddress, hostName) && !StringUtils.equals(oldAddress, iface.getAddress());
+            }
         }
 
-        return true;
+        return false;
     }
 
     private NetworkType determineNetworkType(Integer vlanId, boolean vmNetwork) {
