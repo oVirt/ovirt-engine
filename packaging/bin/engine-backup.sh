@@ -20,10 +20,17 @@
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
 # Globals
-BACKUP_FOLDERS="/etc/ovirt-engine
+BACKUP_PATHS="/etc/ovirt-engine
 /etc/pki/ovirt-engine
 /etc/ovirt-engine-setup.conf.d
-/var/lib/ovirt-engine"
+/var/lib/ovirt-engine
+/etc/httpd/conf.d/ovirt-engine-root-redirect.conf
+/etc/httpd/conf.d/ssl.conf
+/etc/httpd/conf.d/z-ovirt-engine-proxy.conf
+/etc/yum/pluginconf.d/versionlock.list
+/etc/firewalld/services/ovirt-https.xml
+/etc/firewalld/services/ovirt-http.xml
+/etc/firewalld/services/ovirt-postgres.xml"
 MYPGPASS=""
 TEMP_FOLDER=""
 FILE=""
@@ -42,19 +49,19 @@ engine-backup: backup and restore ovirt-engine environment
 USAGE:
     $0 [--mode=MODE] [--scope=SCOPE] [--file=FILE] [--log=FILE]
  MODE is one of the following:
-    backup        backup system into FILE
-    restore       restore system from FILE
+    backup                  backup system into FILE
+    restore                 restore system from FILE
  SCOPE is one of the following:
-    all           complete backup/restore
-    db            database only
- --file=FILE      file to use during backup or restore
- --log=FILE       log file to use
+    all                     complete backup/restore (default)
+    db                      database only
+ --file=FILE                file to use during backup or restore
+ --log=FILE                 log file to use
 __EOF__
 	return 0
 }
 
 MODE=
-SCOPE=
+SCOPE=all
 
 parseArgs() {
 	while [ -n "$1" ]; do
@@ -72,7 +79,7 @@ parseArgs() {
 			--scope=*)
 				SCOPE="${v}"
 				case "${SCOPE}" in
-					all|dbonly) ;;
+					all|db) ;;
 					*) die "invalid scope '${SCOPE}'"
 				esac
 			;;
@@ -115,9 +122,9 @@ dobackup() {
 	mkdir "${tardir}/${FILES}" || logdie "Cannot create '${tardir}/files'"
 	mkdir "${tardir}/db" || logdie "Cannot create '${tardir}/db'"
 
-	if [ "${SCOPE}" != "dbonly" ] ; then
+	if [ "${SCOPE}" != "db" ] ; then
 		log "Backing up files to ${tardir}/files"
-		backupFiles "${BACKUP_FOLDERS}" "${tardir}/files"
+		backupFiles "${BACKUP_PATHS}" "${tardir}/files"
 	fi
 
 	log "Backing up database to ${tardir}/db/${DB_BACKUP_FILE_NAME}"
@@ -150,13 +157,14 @@ verifymd5() {
 }
 
 backupFiles() {
-	local folders="$1"
+	local paths="$1"
 	local target="$2"
-	echo "${folders}" | while read folder; do
-		local dirname="$(dirname ${folder})"
+	echo "${paths}" | while read path; do
+		[ -e "${path}" ] || continue
+		local dirname="$(dirname ${path})"
 		mkdir -p "${tardir}/files/${dirname}" || logdie "Cannot create '${tardir}/files/${dirname}"
-		cp -a "${folder}" "${target}/${dirname}" || logdie "Cannot copy ${folder} to ${target}/${dirname}"
-	done || logdie "Cannot read ${folders}"
+		cp -a "${path}" "${target}/${dirname}" || logdie "Cannot copy ${path} to ${target}/${dirname}"
+	done || logdie "Cannot read ${paths}"
 }
 
 backupDB() {
@@ -176,6 +184,10 @@ backupDB() {
 }
 
 dorestore() {
+	if [ -r "${ENGINE_UP_MARK}" ]; then
+		ps "$(cat ${ENGINE_UP_MARK})" | grep -q 'ovirt-engine.py' &&
+			logdie "Engine service is active - can not restore backup"
+	fi
 	output "Restoring..."
 	log "Opening tarball ${FILE} to ${TEMP_FOLDER}"
 	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" || logdie "cannot open ${TEMP_FOLDER}"
@@ -184,9 +196,9 @@ dorestore() {
 	log "Verifying version"
 	verifyVersion
 
-	if [ "${SCOPE}" != "dbonly" ] ; then
+	if [ "${SCOPE}" != "db" ] ; then
 		log "Restoring files"
-		restoreFiles "${BACKUP_FOLDERS}"
+		restoreFiles "${BACKUP_PATHS}"
 	fi
 
 	log "Reloading configuration"
@@ -197,6 +209,10 @@ dorestore() {
 	verifyConnection
 	log "Restoring database backup at ${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
 	restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
+	output "Note: you might need to manually fix:"
+	output "- iptables/firewalld configuration"
+	output "- autostart of ovirt-engine service"
+	output "You can now start the engine service and then restart httpd"
 }
 
 verifyConnection() {
@@ -232,12 +248,16 @@ restoreDB() {
 }
 
 restoreFiles() {
-	local folders="$1"
-	echo "${folders}" | while read folder; do
-		local dirname="$(dirname ${folder})"
-		local backup="${TEMP_FOLDER}/files/${folder}"
+	local paths="$1"
+	echo "${paths}" | while read path; do
+		local dirname="$(dirname ${path})"
+		local backup="${TEMP_FOLDER}/files/${path}"
+		[ -e "${backup}" ] || continue
 		cp -a "${backup}" "${dirname}" || logdie "Cannot copy '${backup}' to '${dirname}'"
-	done || logdie "Cannot read ${folders}"
+		if selinuxenabled; then
+			restorecon -R "${path}" || logdie "Failed setting selinux context for ${path}"
+		fi
+	done || logdie "Cannot read ${paths}"
 }
 
 generatePgPass() {
