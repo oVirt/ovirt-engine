@@ -5,6 +5,9 @@ public class AddInternalJobParameters extends AddJobParameters {
     private static final long serialVersionUID = -7824725232199970355L;
     private VdcActionType actionType;
 
+    public AddInternalJobParameters() {
+    }
+
     public AddInternalJobParameters(VdcActionType actionType, boolean isAutoCleared) {
         super();
         this.actionType = actionType;
