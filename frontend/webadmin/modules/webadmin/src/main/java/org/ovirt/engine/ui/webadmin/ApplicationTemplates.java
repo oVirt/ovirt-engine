@@ -127,6 +127,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml image(SafeHtml statusImage);
 
+    @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle; border: solid 1px transparent; '>{0}</div>")
+    SafeHtml volumeActivityMenu(SafeHtml statusImage);
+
     @Template("<div title=\'{1}'style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml image(SafeHtml statusImage, String title);
 

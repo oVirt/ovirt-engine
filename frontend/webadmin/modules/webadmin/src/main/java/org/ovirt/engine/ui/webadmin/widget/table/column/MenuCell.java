@@ -30,7 +30,7 @@ public class MenuCell<T> extends AbstractCell<T> {
     private MenuPanelPopup menuPanelPopup;
 
     public MenuCell() {
-        super("click"); //$NON-NLS-1$
+        super("click" , "mouseover" , "mouseout"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
         this.menuPanelPopup = new MenuPanelPopup(true);
     }
 
@@ -42,7 +42,7 @@ public class MenuCell<T> extends AbstractCell<T> {
 
         ImageResource image = resources.expanderDownImage();
         SafeHtml imageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(image).getHTML());
-        sb.append(templates.image(imageHtml));
+        sb.append(templates.volumeActivityMenu(imageHtml));
     }
 
     protected boolean isVisible(T value) {
@@ -57,6 +57,7 @@ public class MenuCell<T> extends AbstractCell<T> {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
         int eventX = event.getClientX();
         int eventY = event.getClientY();
+
         // Handle the click event.
         if ("click".equals(event.getType())) { //$NON-NLS-1$
             // Ignore clicks that occur outside of the outermost element.
@@ -64,6 +65,14 @@ public class MenuCell<T> extends AbstractCell<T> {
             if (parent.getFirstChildElement().isOrHasChild(Element.as(eventTarget))) {
                 menuPanelPopup.asPopupPanel().showAndFitToScreen(eventX, eventY);
             }
+        }
+        else if("mouseover".equals(event.getType())) {//$NON-NLS-1$
+            if (isVisible(value)) {
+                parent.getFirstChildElement().getStyle().setBorderColor("#96B7D6"); //$NON-NLS-1$
+            }
+        }
+        else {
+            parent.getFirstChildElement().getStyle().setBorderColor("transparent"); //$NON-NLS-1$
         }
     }
 
