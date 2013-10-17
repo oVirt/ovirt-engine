@@ -66,7 +66,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     @Override
     public int setTabIndexes(int nextTabIndex) {
         int nbWidgetsInDiskListPanel = diskListPanel.getWidgetCount();
-        for (int i=0; i<nbWidgetsInDiskListPanel; ++i) {
+        for (int i = 0; i < nbWidgetsInDiskListPanel; ++i) {
             Widget widget = diskListPanel.getWidget(i);
             if (widget instanceof FocusableComponentsContainer)
                 nextTabIndex = ((FocusableComponentsContainer) widget).setTabIndexes(nextTabIndex);

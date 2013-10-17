@@ -21,6 +21,9 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Base class for popup views bound to a UiCommon Window model.
  *
@@ -28,7 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
  *            Window model type.
  */
 public abstract class AbstractModelBoundPopupView<T extends Model> extends AbstractPopupView<AbstractDialogPanel>
-        implements AbstractModelBoundPopupPresenterWidget.ViewDef<T>, HasElementId {
+        implements AbstractModelBoundPopupPresenterWidget.ViewDef<T>, HasElementId, FocusableComponentsContainer {
 
     /**
      * Popup progress indicator widget
@@ -46,6 +49,8 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     private String hashName;
 
     private String elementId = DOM.createUniqueId();
+
+    private final List<FocusableComponentsContainer> focusableButtons = new ArrayList<FocusableComponentsContainer>();
 
     public AbstractModelBoundPopupView(EventBus eventBus, CommonApplicationResources resources) {
         super(eventBus, resources);
@@ -95,6 +100,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     public HasUiCommandClickHandlers addFooterButton(String label, String uniqueId) {
         AbstractUiCommandButton button = createCommandButton(label, uniqueId);
         asWidget().addFooterButton(button);
+        focusableButtons.add(0, button);
 
         // Set button element ID for better accessibility
         button.asWidget().getElement().setId(
@@ -110,6 +116,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     @Override
     public void removeButtons() {
         asWidget().removeFooterButtons();
+        focusableButtons.clear();
     }
 
     @Override
@@ -129,6 +136,9 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
         // Show dialog buttons when stopping progress
         asWidget().setFooterPanelVisible(true);
+
+        // Update tab index values
+        updateTabIndexes();
 
         // Now that the panel is visible we can try to focus
         focusInput();
@@ -161,6 +171,23 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
     protected String getHashName() {
         return hashName;
+    }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        // No-op, override as necessary
+        return nextTabIndex;
+    }
+
+    @Override
+    public void updateTabIndexes() {
+        // Update tab indexes for popup view's content
+        int nextTabIndex = setTabIndexes(0);
+
+        // Update tab indexes for popup view's footer buttons
+        for (FocusableComponentsContainer button : focusableButtons) {
+            nextTabIndex = button.setTabIndexes(nextTabIndex);
+        }
     }
 
 }

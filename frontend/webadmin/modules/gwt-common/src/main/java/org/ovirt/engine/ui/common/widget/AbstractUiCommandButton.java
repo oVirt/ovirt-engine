@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
+import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -9,11 +10,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Focusable;
 
 /**
  * Abstract button widget bound to UiCommon {@linkplain UICommand command}.
  */
-public abstract class AbstractUiCommandButton extends Composite implements HasUiCommandClickHandlers, HasLabel {
+public abstract class AbstractUiCommandButton extends Composite
+        implements HasUiCommandClickHandlers, HasLabel, Focusable, FocusableComponentsContainer {
 
     private UICommand command;
 
@@ -82,5 +85,31 @@ public abstract class AbstractUiCommandButton extends Composite implements HasUi
     }
 
     protected abstract ButtonBase getButtonWidget();
+
+    @Override
+    public int getTabIndex() {
+        return getButtonWidget().getTabIndex();
+    }
+
+    @Override
+    public void setAccessKey(char key) {
+        getButtonWidget().setAccessKey(key);
+    }
+
+    @Override
+    public void setFocus(boolean focused) {
+        getButtonWidget().setFocus(focused);
+    }
+
+    @Override
+    public void setTabIndex(int index) {
+        getButtonWidget().setTabIndex(index);
+    }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        setTabIndex(nextTabIndex++);
+        return nextTabIndex;
+    }
 
 }

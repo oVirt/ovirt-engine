@@ -58,6 +58,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         void focusInput();
 
+        void updateTabIndexes();
+
     }
 
     private final ModelBoundPopupHandler<T> popupHandler;
@@ -180,6 +182,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                 public void eventRaised(Event ev, Object sender, EventArgs args) {
                     getView().removeButtons();
                     addFooterButtons(model);
+                    getView().updateTabIndexes();
                 }
             });
         }
@@ -189,6 +192,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         // Initialize popup contents from the model
         getView().edit(model);
+        getView().updateTabIndexes();
     }
 
     @Override

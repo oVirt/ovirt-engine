@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget;
 
-import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 
 import com.google.gwt.core.client.GWT;
@@ -10,7 +9,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UiCommandButton extends AbstractUiCommandButton implements FocusableComponentsContainer {
+public class UiCommandButton extends AbstractUiCommandButton {
 
     interface WidgetUiBinder extends UiBinder<Widget, UiCommandButton> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -48,12 +47,6 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
 
     public void setCustomContentStyle(String customStyle) {
         button.setCustomContentStyle(customStyle);
-    }
-
-    @Override
-    public int setTabIndexes(int nextTabIndex) {
-        button.setTabIndex(nextTabIndex++);
-        return nextTabIndex;
     }
 
 }

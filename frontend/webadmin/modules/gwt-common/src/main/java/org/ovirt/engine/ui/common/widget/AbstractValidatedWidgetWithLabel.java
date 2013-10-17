@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -26,7 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
  *            Content widget type.
  */
 public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?>> extends AbstractValidatedWidget
-        implements HasLabel, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, Focusable, HasElementId {
+        implements HasLabel, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, HasElementId, Focusable, FocusableComponentsContainer {
 
     interface WidgetUiBinder extends UiBinder<Widget, AbstractValidatedWidgetWithLabel<?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -177,6 +178,12 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     @Override
     public void setTabIndex(int index) {
         contentWidget.setTabIndex(index);
+    }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        setTabIndex(nextTabIndex++);
+        return nextTabIndex;
     }
 
     @Override

@@ -19,7 +19,8 @@ public abstract class AbstractModelBoundPopupWidget<T extends Model> extends Com
     }
 
     public int setTabIndexes(int nextTabIndex) {
-     // default behavior, should be overridden by subclasses
+        // No-op, override as necessary
         return nextTabIndex;
     }
+
 }

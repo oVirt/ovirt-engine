@@ -1,20 +1,40 @@
 package org.ovirt.engine.ui.common.view.popup;
 
+/**
+ * Interface implemented by widgets acting as containers holding focusable child components.
+ */
 public interface FocusableComponentsContainer {
 
     /**
-     * This method should be implemented in each component that is presented
-     * in dialog and contains sub components that can gain focus. it sets
-     * the 'tab index' for the sub components in order to ensure the
-     * right order of focus traversal in dialogs.
+     * Updates tab index for each child component that can gain focus, returning next available tab index.
+     * <p>
+     * {@code nextTabIndex} represents the currently available tab index value. Implementations should therefore assign
+     * {@code nextTabIndex} to the first child component, {@code nextTabIndex+1} to the second one, etc. Method should
+     * return should the next available tab index value.
+     * <p>
+     * For example:
      *
-     * This method is called is a recursive manner: it gets the next index
-     * to be set (in accordance with the previous settings in the dialog),
-     * and it should return the next index to be set for other components in
-     * the dialog.
+     * <pre>
+     * public class ContainerImpl extends Composite implements FocusableComponentsContainer {
      *
-     * @param nextTabIndex the next tab index to be set for components contained in this container
-     * @return the next tab index to be set for other components in the dialog
+     *     &#064;Override
+     *     public int setTabIndexes(int nextTabIndex) {
+     *         // childOne implements FocusableComponentsContainer
+     *         nextTabIndex = childOne.setTabIndexes(nextTabIndex);
+     *
+     *         // childTwo implements Focusable
+     *         childTwo.setTabIndex(nextTabIndex++);
+     *
+     *         return nextTabIndex;
+     *     }
+     *
+     * }
+     * </pre>
+     *
+     * @param nextTabIndex
+     *            Currently available tab index value.
+     * @return Next available tab index value.
      */
     public int setTabIndexes(int nextTabIndex);
+
 }

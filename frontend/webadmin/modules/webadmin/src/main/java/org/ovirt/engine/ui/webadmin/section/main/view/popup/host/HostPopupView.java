@@ -923,6 +923,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         passwordSection.setVisible(visible);
     }
 
+    @Override
     public int setTabIndexes(int nextTabIndex) {
         // ==General Tab==
         dataCenterEditor.setTabIndex(nextTabIndex++);
@@ -936,7 +937,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         userNameEditor.setTabIndex(nextTabIndex++);
         rbPassword.setTabIndex(nextTabIndex++);
         passwordEditor.setTabIndex(nextTabIndex++);
-        fetchSshFingerprint.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }
 

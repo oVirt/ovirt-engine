@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
-import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.core.client.GWT;
@@ -16,7 +15,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableComponentsContainer {
+public class SimpleDialogPanel extends AbstractDialogPanel {
 
     interface WidgetUiBinder extends UiBinder<Widget, SimpleDialogPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -137,17 +136,6 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     @Override
     public void setCloseIconButtonVisible(boolean visible) {
         closeIconButton.setVisible(visible);
-    }
-
-    @Override
-    public int setTabIndexes(int nextTabIndex) {
-        int nbWidgets = footerButtonPanel.getWidgetCount();
-        for (int i = nbWidgets - 1; i >= 0; --i) {
-            Widget iWidget = footerButtonPanel.getWidget(i);
-            if (iWidget instanceof FocusableComponentsContainer)
-                nextTabIndex = ((FocusableComponentsContainer) iWidget).setTabIndexes(nextTabIndex);
-        }
-        return nextTabIndex;
     }
 
 }
