@@ -185,7 +185,8 @@ class Statement(base.Base):
         self,
         name,
         version='general',
-        type=str
+        type=str,
+        ownConnection=False,
     ):
         result = self.execute(
             statement="""
@@ -199,6 +200,7 @@ class Statement(base.Base):
                 name=name,
                 version=version,
             ),
+            ownConnection=ownConnection,
         )
         if len(result) != 1:
             raise RuntimeError(

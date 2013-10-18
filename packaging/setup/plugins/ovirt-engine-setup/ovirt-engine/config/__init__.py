@@ -26,15 +26,14 @@ from . import java
 from . import jboss
 from . import database
 from . import protocols
-from . import hostname
 from . import appmode
 from . import domain_type
+from . import firewall
 from . import ca
 from . import options
 from . import tools
 from . import iso_domain
 from . import macrange
-from . import websocket_proxy
 from . import productkey_upgrade
 
 
@@ -44,15 +43,14 @@ def createPlugins(context):
     jboss.Plugin(context=context)
     database.Plugin(context=context)
     protocols.Plugin(context=context)
-    hostname.Plugin(context=context)
     appmode.Plugin(context=context)
     domain_type.Plugin(context=context)
+    firewall.Plugin(context=context)
     ca.Plugin(context=context)
     options.Plugin(context=context)
     tools.Plugin(context=context)
     iso_domain.Plugin(context=context)
     macrange.Plugin(context=context)
-    websocket_proxy.Plugin(context=context)
     productkey_upgrade.Plugin(context=context)
 
 

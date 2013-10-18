@@ -25,7 +25,6 @@ from otopi import util
 from . import offlinepackager
 from . import misc
 from . import engine
-from . import websocket_proxy
 from . import answerfile
 from . import uninstall
 from . import protocols
@@ -37,7 +36,6 @@ def createPlugins(context):
     offlinepackager.Plugin(context=context)
     misc.Plugin(context=context)
     engine.Plugin(context=context)
-    websocket_proxy.Plugin(context=context)
     answerfile.Plugin(context=context)
     uninstall.Plugin(context=context)
     protocols.Plugin(context=context)

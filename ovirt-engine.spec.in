@@ -212,9 +212,9 @@ Requires:	xmlrpc-client
 %endif
 
 # We can't require exactly the same version and release of the
-# setup package because it needs to be updated independely as part
+# setup package because it needs to be updated independently as part
 # of the update process implemented in the engine-upgrade script:
-Requires:	%{name}-setup >= %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine >= %{version}-%{release}
 
 # rhbz#1028966
 Conflicts:	java-1.7.0-openjdk = 1:1.7.0.45-2.4.3.3.el6
@@ -331,7 +331,6 @@ The RESTful API for %{ovirt_product_name_short}
 %package setup
 Summary:	Setup and upgrade scripts for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
-Requires:	%{name}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	bind-utils
 Requires:	cracklib-python
@@ -341,7 +340,7 @@ Requires:	libxml2-python
 Requires:	logrotate
 Requires:	m2crypto
 Requires:	nfs-utils
-Requires:	otopi >= 1.1.2-1
+Requires:	otopi >= 1.2.0
 Requires:	policycoreutils-python
 Requires:	python-psycopg2
 Requires:	yum
@@ -360,6 +359,23 @@ Setup and upgrade scripts for %{ovirt_product_name_short}
 %pre setup
 %ovirt_create_user_vdsm
 %ovirt_create_user_engine
+
+%package setup-plugin-ovirt-engine
+Summary:	Setup and upgrade specific plugins for %{ovirt_product_name_short}
+Group:		%{ovirt_product_group}
+Requires:	%{name}-setup-plugin-ovirt-engine-common
+Requires:	%{name}
+
+%description setup-plugin-ovirt-engine
+Setup and upgrade specific plugins for %{ovirt_product_name_short}
+
+%package setup-plugin-ovirt-engine-common
+Summary:	Setup and upgrade common plugins for %{ovirt_product_name_short}
+Group:		%{ovirt_product_group}
+Requires:	%{name}-setup
+
+%description setup-plugin-ovirt-engine-common
+Setup and upgrade common plugins for %{ovirt_product_name_short}
 
 %package dbscripts
 Summary:	Database scripts for %{ovirt_product_name_short}
@@ -448,6 +464,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	m2crypto
 Requires:	python-websockify
+Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}
 
 %if %{ovirt_install_systemd}
 Requires(post):		systemd
@@ -482,11 +499,18 @@ if [ $1 -eq 0 ]; then
 fi
 %endif
 
+%package setup-plugin-websocket-proxy
+Summary:	Setup and upgrade specific plugins for websocket-proxy
+Requires:	%{name}-setup
+
+%description setup-plugin-websocket-proxy
+Setup and upgrade specific plugins for websocket-proxy
+
 %package setup-plugin-allinone
 Summary:	All-in-one plugin for %{ovirt_product_name_short}'s setup
 Group:		%{ovirt_product_group}
 Requires:	%{name}-sdk >= 3.3.0.5
-Requires:	%{name}-setup >= %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine >= %{version}-%{release}
 Requires:	openssh-server
 Requires:	ovirt-host-deploy >= 1.1.2-1
 Requires:	ovirt-host-deploy-offline >= 1.1.2-1
@@ -834,8 +858,6 @@ fi
 %files setup
 
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
-%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
-%dir %{engine_data}/firewalld
 %dir %{engine_log}/setup
 %{_bindir}/engine-cleanup
 %{_bindir}/engine-setup
@@ -844,16 +866,15 @@ fi
 %{_mandir}/man8/engine-setup.*
 %{engine_data}/bin/ovirt-engine-log-setup-event.sh
 %{engine_data}/conf/iptables.default.in
-%{engine_data}/conf/nfs.sysconfig.in
-%{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
-%{engine_data}/conf/ovirt-engine-root-redirect.conf.in
-%{engine_data}/firewalld/base/
-%{engine_data}/setup/
+%{engine_data}/setup/bin/ovirt-engine-remove
+%{engine_data}/setup/bin/ovirt-engine-setup
+%{engine_data}/setup/bin/ovirt-engine-setup.env
+%{engine_data}/setup/ovirt_engine_setup/
+%{engine_data}/setup/plugins/ovirt-engine-common/base/
+%{engine_data}/setup/plugins/ovirt-engine-remove/base/
+%{engine_data}/setup/plugins/ovirt-engine-setup/base/
 %{engine_state}/backups/
 %{engine_state}/setup/
-
-# backward compatibility
-%ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
 
 # Legacy
 # TODO: remove in 3.4
@@ -862,11 +883,40 @@ fi
 %{engine_data}/bin/engine-check-update.sh
 %{engine_data}/bin/engine-upgrade.sh
 
+%files setup-plugin-ovirt-engine
+
+%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
+%{_bindir}/engine-upgrade-check
+%{engine_data}/conf/nfs.sysconfig.in
+%{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
+%{engine_data}/conf/ovirt-engine-root-redirect.conf.in
+%{engine_data}/firewalld/ovirt-engine/
+%{engine_data}/setup/bin/ovirt-engine-rename
+%{engine_data}/setup/bin/ovirt-engine-upgrade-check
+%{engine_data}/setup/dbutils/
+%{engine_data}/setup/plugins/ovirt-engine-remove/ovirt-engine/
+%{engine_data}/setup/plugins/ovirt-engine-rename/
+%{engine_data}/setup/plugins/ovirt-engine-setup/ovirt-engine/
+
+# backward compatibility
+%ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
+
+%files setup-plugin-ovirt-engine-common
+
+%{engine_data}/setup/plugins/ovirt-engine-setup/ovirt-engine-common/
+
+%files setup-plugin-websocket-proxy
+
+%{engine_data}/firewalld/websocket-proxy/
+%{engine_data}/setup/plugins/ovirt-engine-common/websocket_proxy/
+%{engine_data}/setup/plugins/ovirt-engine-remove/websocket_proxy/
+%{engine_data}/setup/plugins/ovirt-engine-setup/websocket_proxy/
+
 %files setup-plugin-allinone
 
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf
 %config %{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf
-%{engine_data}/firewalld/aio
+%{engine_data}/firewalld/aio/
 
 %files dbscripts
 

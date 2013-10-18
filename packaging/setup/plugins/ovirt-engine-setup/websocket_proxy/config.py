@@ -128,7 +128,7 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
             {
                 'name': 'ovirt-websocket-proxy',
-                'directory': 'base'
+                'directory': 'websocket-proxy'
             },
         ])
         self.environment[

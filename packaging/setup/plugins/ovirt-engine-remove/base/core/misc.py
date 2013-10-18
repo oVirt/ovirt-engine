@@ -152,22 +152,6 @@ class Plugin(plugin.PluginBase):
             )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ],
-    )
-    def _misc(self):
-        self.services.startup(
-            name=osetupcons.Const.ENGINE_SERVICE_NAME,
-            state=False,
-        )
-        self.services.startup(
-            name=osetupcons.Const.WEBSOCKET_PROXY_SERVICE_NAME,
-            state=False,
-        )
-
-    @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,

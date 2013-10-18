@@ -70,11 +70,11 @@ class Plugin(plugin.PluginBase):
             self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
                 {
                     'name': 'ovirt-http',
-                    'directory': 'base'
+                    'directory': 'ovirt-engine'
                 },
                 {
                     'name': 'ovirt-https',
-                    'directory': 'base'
+                    'directory': 'ovirt-engine'
                 },
             ])
         if self.environment[
@@ -83,11 +83,11 @@ class Plugin(plugin.PluginBase):
             self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
                 {
                     'name': 'ovirt-jboss-http',
-                    'directory': 'base'
+                    'directory': 'ovirt-engine'
                 },
                 {
                     'name': 'ovirt-jboss-https',
-                    'directory': 'base'
+                    'directory': 'ovirt-engine'
                 },
             ])
 

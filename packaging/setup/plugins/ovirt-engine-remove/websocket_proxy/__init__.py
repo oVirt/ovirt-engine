@@ -16,18 +16,18 @@
 #
 
 
-"""ovirt-host-setup system plugin."""
+"""ovirt-host-remove websocket_proxy plugin."""
 
 
 from otopi import util
 
 
-from . import sysctl
+from . import misc
 
 
 @util.export
 def createPlugins(context):
-    sysctl.Plugin(context=context)
+    misc.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

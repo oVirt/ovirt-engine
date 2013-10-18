@@ -16,28 +16,18 @@
 #
 
 
-"""ovirt-host-setup system plugin."""
+"""ovirt-host-setup datebase plugin."""
 
 
 from otopi import util
 
 
-from . import sysctl
-from . import memcheck
-from . import nfs
-from . import exportfs
-from . import selinux
-from . import localstate
+from . import schema
 
 
 @util.export
 def createPlugins(context):
-    sysctl.Plugin(context=context)
-    memcheck.Plugin(context=context)
-    nfs.Plugin(context=context)
-    exportfs.Plugin(context=context)
-    selinux.Plugin(context=context)
-    localstate.Plugin(context=context)
+    schema.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

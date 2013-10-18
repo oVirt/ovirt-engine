@@ -16,20 +16,38 @@
 #
 
 
-"""ovirt-host-setup datebase plugin."""
+"""Engine plugin."""
+
+
+import gettext
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 from otopi import util
+from otopi import plugin
 
 
-from . import schema
-from . import connection
+from ovirt_engine_setup import constants as osetupcons
 
 
 @util.export
-def createPlugins(context):
-    schema.Plugin(context=context)
-    connection.Plugin(context=context)
+class Plugin(plugin.PluginBase):
+    """Engine plugin."""
+
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: not self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ],
+    )
+    def _misc(self):
+        self.services.startup(
+            name=osetupcons.Const.ENGINE_SERVICE_NAME,
+            state=False,
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -16,17 +16,20 @@
 #
 
 
-"""ovirt-host-setup network plugin."""
+"""ovirt-host-remove core plugin."""
+
 
 from otopi import util
-from . import firewall_manager
-from . import firewall
+
+
+from . import engine
+from . import sysctl
 
 
 @util.export
 def createPlugins(context):
-    firewall_manager.Plugin(context=context)
-    firewall.Plugin(context=context)
+    engine.Plugin(context=context)
+    sysctl.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

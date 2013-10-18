@@ -155,7 +155,7 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].append(
             {
                 'name': 'ovirt-nfs',
-                'directory': 'base'
+                'directory': 'ovirt-engine'
             }
         )
 
