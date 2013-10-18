@@ -122,7 +122,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private boolean smartcardEnabled;
 
-    @EditableOnVmStatusField
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath;
 
