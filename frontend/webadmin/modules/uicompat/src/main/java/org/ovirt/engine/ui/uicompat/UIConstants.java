@@ -1449,6 +1449,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to create Gluster Volumes")
     String allowToCreateGlusterVolumesRoleTree();
 
+    @DefaultStringValue("Allow to delete Gluster Volumes")
+    String allowToDeleteGlusterVolumesRoleTree();
+
     @DefaultStringValue("Allow to manipulate Gluster Volumes")
     String allowToManipulateGlusterVolumesRoleTree();
 

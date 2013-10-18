@@ -208,6 +208,8 @@ public class RoleTreeView
                 new RoleNode[] {
                         new RoleNode(ActionGroup.CREATE_GLUSTER_VOLUME,
                                 getConstants().allowToCreateGlusterVolumesRoleTree()),
+                        new RoleNode(ActionGroup.DELETE_GLUSTER_VOLUME,
+                                getConstants().allowToDeleteGlusterVolumesRoleTree()),
                         new RoleNode(ActionGroup.MANIPULATE_GLUSTER_VOLUME,
                                 getConstants().allowToManipulateGlusterVolumesRoleTree()) }));
     }
