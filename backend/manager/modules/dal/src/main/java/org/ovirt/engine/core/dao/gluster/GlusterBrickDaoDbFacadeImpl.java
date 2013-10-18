@@ -23,6 +23,7 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     public GlusterBrickDaoDbFacadeImpl() {
         super("GlusterBrick");
         setProcedureNameForGet("GetGlusterBrickById");
+        setProcedureNameForRemove("DeleteGlusterVolumeBrick");
     }
 
     @Override

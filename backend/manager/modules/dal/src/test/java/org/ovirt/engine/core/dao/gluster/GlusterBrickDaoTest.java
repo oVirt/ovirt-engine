@@ -182,6 +182,23 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testRemoveBricksInBatch() {
+        GlusterBrickEntity existingBrick1 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity existingBrick2 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID2);
+
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
+        bricks.add(existingBrick1);
+        bricks.add(existingBrick2);
+
+        dao.removeAllInBatch(bricks);
+
+        GlusterBrickEntity newEnity1 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity newEnity2 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID2);
+        assertNull(newEnity1);
+        assertNull(newEnity2);
+    }
+
+    @Test
     public void testUpdateBrickTaskByHostIdBrickDir() {
         GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
         GlusterAsyncTask asyncTask = new GlusterAsyncTask();
