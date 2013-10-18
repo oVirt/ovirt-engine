@@ -4417,3 +4417,48 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
+- name: /ovirt-engine/api/permissions|rel=get
+  description: get the list of permissions on the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /ovirt-engine/api/permissions/{permission:id}|rel=get
+  description: get the details of the permission on the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /ovirt-engine/api/permissions/{permission:id}|rel=delete
+  description: delete the permission on the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /ovirt-engine/api/permissions|rel=add
+  description: add a new permission on the system
+  request:
+    body:
+      parameterType: Permission
+      signatures:
+      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+        description: add a new user level permission on the system
+      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
+        optionalArguments: {}
+        description: add a new group level permission on the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+

@@ -120,6 +120,7 @@ public class BackendApiResource
         links.add(createLink("jobs"));
         links.add(createLink("storageconnections"));
         links.add(createLink("vnicprofiles"));
+        links.add(createLink("permissions"));
         return links;
     }
 

@@ -5,6 +5,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
@@ -15,17 +16,36 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendEntityAssignedPermissionsResourceTest
         extends AbstractBackendAssignedPermissionsResourceTest {
 
+    private Guid targetId;
+
+    /**
+     * This constructor is intended for tests that check permissions assigned to a generic type of entity, thus it
+     * needs the type and identifier of one of those entities. For example, a test intended to check permissions on
+     * the {@code System} entity will pass {@code Guid.SYSTEM} as identifier and {@code BaseResource.class} as type.
+     *
+     * @param targetId the identifier of the entity
+     * @param targetType the type of the entity
+     */
+    protected BackendEntityAssignedPermissionsResourceTest(Guid targetId, Class<? extends BaseResource> targetType) {
+        super(
+            targetId,
+            VdcQueryType.GetPermissionsForObject,
+            new GetPermissionsForObjectParameters(GUIDS[1]),
+            targetType,
+            "User.Id",
+            "ObjectId"
+        );
+        this.targetId = targetId;
+    }
+
     public BackendEntityAssignedPermissionsResourceTest() {
-        super(GUIDS[2],
-              VdcQueryType.GetPermissionsForObject,
-              new GetPermissionsForObjectParameters(GUIDS[1]),
-              DataCenter.class,
-              "User.Id",
-              "ObjectId");
+        // The concrete tests in this class always use a fixed data center as the entity:
+        this(GUIDS[2], DataCenter.class);
     }
 
     @Test
@@ -54,7 +74,7 @@ public class BackendEntityAssignedPermissionsResourceTest
                                                  "Permission.ad_element_id",
                                                  "Permission.ObjectId",
                                                  "Permission.role_id" },
-                                  new Object[] { GUIDS[1], GUIDS[1], GUIDS[2], GUIDS[3] },
+                                  new Object[] { GUIDS[1], GUIDS[1], targetId, GUIDS[3] },
                                   true,
                                   true,
                                   GUIDS[0],

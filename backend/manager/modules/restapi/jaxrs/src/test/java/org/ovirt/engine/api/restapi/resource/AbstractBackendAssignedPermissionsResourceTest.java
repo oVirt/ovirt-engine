@@ -9,7 +9,9 @@ import javax.ws.rs.core.Response;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.BaseResource;
+import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
+import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,6 +27,8 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class AbstractBackendAssignedPermissionsResourceTest
         extends AbstractBackendCollectionResourceTest<Permission, permissions, BackendAssignedPermissionsResource> {
 
+    private Guid targetId;
+    private Class<? extends BaseResource> targetType;
     private VdcQueryType queryType;
     private VdcQueryParametersBase queryParams;
     private String principalParameterName;
@@ -42,6 +46,8 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
                                                      suggestedParentType),
               null,
               "");
+        this.targetId = targetId;
+        this.targetType = suggestedParentType;
         this.queryType = queryType;
         this.queryParams = queryParams;
         this.principalParameterName = principalParameterName;
@@ -129,7 +135,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
                                                  "Permission.ad_element_id",
                                                  "Permission.ObjectId",
                                                  "Permission.role_id" },
-                                  new Object[] { GUIDS[1], GUIDS[1], GUIDS[2], GUIDS[3] },
+                                  new Object[] { GUIDS[1], chooseElementId(), chooseObjectId(), GUIDS[3] },
                                   true,
                                   true,
                                   GUIDS[0],
@@ -144,6 +150,30 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Permission);
         verifyModel((Permission) response.getEntity(), 0);
+    }
+
+    /**
+     * When adding a permission this method decides what should be the identifier of the user or group.
+     */
+    private Guid chooseElementId() {
+        // If the resource being tested is the collection of permissions associated to a user or group then the
+        // identifier is that of the user or group of that resource, otherwise we use a fixed identifier:
+        if (targetType == User.class || targetType == Group.class) {
+            return targetId;
+        }
+        return GUIDS[1];
+    }
+
+    /**
+     * When adding a permission this method decides what should be the identifier of the object.
+     */
+    private Guid chooseObjectId() {
+        // If the resource being tested is the collection of permissions associated to a user or group then we use a
+        // fixed identifier, otherwise we have to use the identifier of the object corresponding to the resource:
+        if (targetType != User.class && targetType != Group.class) {
+            return targetId;
+        }
+        return GUIDS[2];
     }
 
     protected ArrayList<DbUser> getUsers() {

@@ -107,8 +107,9 @@ public class PermissionMapper {
     private static void setObjectId(Permission model, permissions entity) {
         String id = entity.getObjectId().toString();
         switch (entity.getObjectType()) {
+        case System:
+            break;
         case StoragePool :
-        case System :
             model.setDataCenter(new DataCenter());
             model.getDataCenter().setId(id);
             break;

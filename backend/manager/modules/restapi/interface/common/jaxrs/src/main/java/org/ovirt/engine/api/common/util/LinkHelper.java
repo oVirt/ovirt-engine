@@ -139,6 +139,7 @@ import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
+import org.ovirt.engine.api.resource.SystemPermissionsResource;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.api.resource.TagsResource;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
@@ -259,6 +260,7 @@ public class LinkHelper {
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Role.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, VM.class);
         map.add(PermissionResource.class, AssignedPermissionsResource.class, Disk.class);
+        map.add(PermissionResource.class, SystemPermissionsResource.class, NO_PARENT);
         TYPES.put(Permission.class, map);
 
         map = new ParentToCollectionMap(NetworkResource.class, NetworksResource.class);
@@ -679,7 +681,6 @@ public class LinkHelper {
      *
      * @param uriInfo  the URI info
      * @param model    the object
-     * @param suggestedParentType  the suggested parent type
      * @return         the object, with href attributes and action links
      */
     public static <R extends BaseResource> R addLinks(UriInfo uriInfo, R model) {
@@ -755,7 +756,6 @@ public class LinkHelper {
     /**
      * Appends searchable links to resource's Href
      *
-     * @param url to append to and combine search dialect
      * @param resource to add links to
      * @param rel link ro add
      */
