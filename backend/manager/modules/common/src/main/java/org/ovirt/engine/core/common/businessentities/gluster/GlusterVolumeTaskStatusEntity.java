@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -48,5 +49,10 @@ public class GlusterVolumeTaskStatusEntity implements Serializable {
 
     public void setStatusSummary(GlusterVolumeTaskStatusDetail summary) {
         this.statusSummary = summary;
+    }
+
+    public GlusterVolumeTaskStatusEntity sort() {
+        Collections.sort(this.getHostwiseStatusDetails(), new GlusterVolumeTaskStatusForHost());
+        return this;
     }
 }

@@ -33,7 +33,6 @@ public class GlusterVolumeTaskReturnForXmlRpc extends GlusterTaskInfoReturnForXm
                 statusDetails.getHostwiseStatusDetails().add(getStatusForNode((Map<String, Object>) nodeStatus));
             }
         }
-
         if (innerMap.containsKey(SUMMARY)) {
             populateGlusterVolumeTaskStatusDetail(statusDetails.getStatusSummary(),
                     (Map<String, Object>) innerMap.get(SUMMARY));
@@ -64,6 +63,6 @@ public class GlusterVolumeTaskReturnForXmlRpc extends GlusterTaskInfoReturnForXm
     }
 
     public GlusterVolumeTaskStatusEntity getStatusDetails() {
-        return statusDetails;
+        return statusDetails.sort();
     }
 }
