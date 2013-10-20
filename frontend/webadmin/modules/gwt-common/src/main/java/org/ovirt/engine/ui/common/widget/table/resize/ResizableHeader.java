@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.table.resize;
 
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlCellWithTooltip;
 
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -28,7 +29,11 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
     private final HasResizableColumns<T> table;
 
     public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table) {
-        super(new SafeHtmlCellWithTooltip("click", "mousedown", "mousemove", "mouseover")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        this(text, column, table, new SafeHtmlCellWithTooltip("click", "mousedown", "mousemove", "mouseover")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    }
+
+    public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table, Cell<SafeHtml> cell) {
+        super(cell);
         this.text = text;
         this.column = column;
         this.table = table;

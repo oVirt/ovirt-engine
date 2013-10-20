@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table.column;
+package org.ovirt.engine.ui.common.widget.table.header;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
@@ -17,6 +17,10 @@ public abstract class CheckboxHeader extends Header<Boolean> {
             "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\"/>"); //$NON-NLS-1$
 
     private final SafeHtml title;
+
+    public SafeHtml getTitle() {
+        return title;
+    }
 
     public CheckboxHeader(final SafeHtml title) {
         super(new CheckboxCell(true, false) {

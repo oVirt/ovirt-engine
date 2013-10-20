@@ -7,6 +7,8 @@ import java.util.List;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.ResizeableCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 
 import com.google.gwt.dom.client.Element;
@@ -95,7 +97,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      */
     @Override
     public void addColumn(Column<T, ?> column, Header<?> header) {
-        super.addColumn(column, header);
+        super.addColumn(column, wrapHeader(header, column));
 
         if (columnResizingEnabled) {
             if (emptyNoWidthColumn != null) {
@@ -190,6 +192,11 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
                 return text;
             }
         };
+    }
+
+    Header<?> wrapHeader(Header<?> header, Column<T, ?> column) {
+        return (columnResizingEnabled && header instanceof CheckboxHeader)
+                ? new ResizeableCheckboxHeader<T>((CheckboxHeader) header, column, this) : header;
     }
 
     /**
