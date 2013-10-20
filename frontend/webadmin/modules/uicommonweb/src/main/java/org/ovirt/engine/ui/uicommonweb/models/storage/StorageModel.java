@@ -568,7 +568,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         // On Edit of active storage - only SPM is available. In edit of storage in maintenance,
         //any host can perform the operation, thus no need to filter to use just the SPM
         if (getStorage() != null && getStorage().getStatus() != StorageDomainStatus.Maintenance) {
-            hosts = Collections.singletonList(getSPM(hosts));
+            VDS spm = getSPM(hosts);
+            hosts = spm != null ? Collections.singletonList(spm) : Collections.<VDS> emptyList();
         }
 
         // Try to select previously selected host.
