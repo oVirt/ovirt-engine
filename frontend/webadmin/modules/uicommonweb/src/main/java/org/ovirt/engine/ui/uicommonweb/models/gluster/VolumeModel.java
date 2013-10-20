@@ -301,7 +301,7 @@ public class VolumeModel extends Model {
         volumeBrickModel.getStripeCount().setIsAvailable(getStripeCount().getIsAvailable());
 
         setWindow(volumeBrickModel);
-        volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
+        volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery = new AsyncQuery();

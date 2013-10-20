@@ -261,7 +261,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 else {
                     ConfirmationModel model = new ConfirmationModel();
                     setWindow(model);
-                    model.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
+                    model.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
                     model.setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .cannotAddBricksNoUpServerFound());
@@ -289,7 +289,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         volumeBrickModel.getStripeCount().setIsChangable(true);
         volumeBrickModel.getStripeCount().setIsAvailable(volumeEntity.getVolumeType().isStripedType());
 
-        volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
+        volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
         volumeBrickModel.getVolumeType().setEntity(volumeEntity.getVolumeType());
 

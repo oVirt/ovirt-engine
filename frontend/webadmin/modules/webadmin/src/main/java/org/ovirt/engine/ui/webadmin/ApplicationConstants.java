@@ -2636,7 +2636,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Status")
     String statusBrick();
 
-    @DefaultStringValue("Add Bricks")
+    @DefaultStringValue("Add")
     String addBricksBrick();
 
     @DefaultStringValue("Remove")
