@@ -514,7 +514,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
                     if (value.getStatus().equalsIgnoreCase("unknown")) {
                         // No need to retry , agent definitions are corrupted
-                        log.warnFormat("Host {0} {1} PM Agent definitions are corrupted, Waiting for Host to {2) aborted.", vdsName, order.name(), actionType.name());
+                        log.warnFormat("Host {0} {1} PM Agent definitions are corrupted, Waiting for Host to {2} aborted.", vdsName, order.name(), actionType.name());
                         break;
                     }
                     else {
