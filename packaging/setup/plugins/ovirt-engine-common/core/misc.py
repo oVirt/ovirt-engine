@@ -98,6 +98,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.Const.DISPLAY_VERSION,
         )
 
+        self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ] = [osetupcons]
+
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] is None:
             self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] = False
             if os.geteuid() != 0:
