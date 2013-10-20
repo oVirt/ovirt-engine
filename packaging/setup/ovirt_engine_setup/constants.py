@@ -666,6 +666,8 @@ class CoreEnv(object):
 
     LEGACY_PG_CREDS_FOUND = 'OVESETUP_CORE/legacyPGCredsFound'
 
+    SETUP_ATTRS_MODULES = 'OVESETUP_CORE/setupAttributesModules'
+
 
 @util.export
 @util.codegen

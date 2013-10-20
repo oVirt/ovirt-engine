@@ -60,7 +60,12 @@ class Plugin(plugin.PluginBase):
             )
         )
         content = ['[environment:default]']
-        for c in osetupcons.__dict__['__osetup_attrs__']:
+        consts = []
+        for constobj in self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ]:
+            consts.extend(constobj.__dict__['__osetup_attrs__'])
+        for c in consts:
             for k in c.__dict__.values():
                 if hasattr(k, '__osetup_attrs__'):
                     if k.__osetup_attrs__['postinstallfile']:
