@@ -10,8 +10,7 @@ public enum GlusterServiceStatus {
     STOPPED(4 /* 0100 */, "Down"),
     NOT_AVAILABLE(2 /* 0010 */, "Not Installed"), // service is not installed in the host
     UNKNOWN(1 /* 0001 */, "Unknown"), // Couldn't fetch status
-    MIXED(12 /* 1100 */, "Partially Up"), // cluster-wide status, few up, few down
-    ;
+    MIXED(12 /* 1100 */, "Partially Up"); // cluster-wide status, few up, few down
 
     private int statusCode;
     private String statusMsg;

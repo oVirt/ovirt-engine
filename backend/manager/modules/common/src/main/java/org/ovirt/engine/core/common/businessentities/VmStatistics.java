@@ -153,7 +153,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         disksUsage = value;
     }
 
-    private Integer usage_network_percentField ;
+    private Integer usage_network_percentField;
 
     public Integer getusage_network_percent() {
         return this.usage_network_percentField;

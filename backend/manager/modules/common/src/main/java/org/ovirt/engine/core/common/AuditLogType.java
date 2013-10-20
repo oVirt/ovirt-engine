@@ -833,8 +833,7 @@ public enum AuditLogType {
 
     //mom policies
     USER_UPDATED_MOM_POLICIES(10200),
-    USER_FAILED_TO_UPDATE_MOM_POLICIES(10201),
-    ;
+    USER_FAILED_TO_UPDATE_MOM_POLICIES(10201);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are supressed.

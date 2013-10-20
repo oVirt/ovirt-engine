@@ -106,7 +106,7 @@ public class DetailHelperTest extends Assert {
 
         replay(httpheaders);
 
-        for (int i = 0 ; i < rels.length ; i++) {
+        for (int i = 0; i < rels.length; i++) {
             assertEquals(expected[i], DetailHelper.include(httpheaders, rels[i]));
         }
 

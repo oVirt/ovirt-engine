@@ -897,7 +897,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 parameters.setPassword((String) model.getUserPassword().getEntity());
             }
             parameters.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
-            parameters.setRebootAfterInstallation(isVirt) ;
+            parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
 
             Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
@@ -926,7 +926,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setVdsId(host.getId());
             parameters.setPassword(""); //$NON-NLS-1$
             parameters.setInstallVds(false);
-            parameters.setRebootAfterInstallation(isVirt) ;
+            parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
 
             if (!oldClusterId.equals(newClusterId))

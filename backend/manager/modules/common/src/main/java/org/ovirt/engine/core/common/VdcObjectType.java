@@ -34,8 +34,7 @@ public enum VdcObjectType {
     PROVIDER(24, "Provider"),
     GlusterService(25, "GlusterService"),
     ExternalTask(26, "ExternalTask"),
-    VnicProfile(27, "Vnic Profile")
-    ;
+    VnicProfile(27, "Vnic Profile");
 
     private int value;
     private String vdcObjectTranslationVal;

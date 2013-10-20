@@ -77,7 +77,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
 
     private List<BrickDetails> getBrickDetails(int size, int clientListSize, int memPoolSize) {
        ArrayList<BrickDetails> list = new ArrayList<BrickDetails>();
-       for(int i=0; i < size ; i++) {
+       for(int i=0; i < size; i++) {
            BrickDetails details = new BrickDetails();
            BrickProperties props = new BrickProperties();
            props.setBlockSize(14556);
@@ -98,7 +98,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
         memStatus.getMallInfo().setArena(RandomUtils.instance().nextInt());
         memStatus.getMallInfo().setUordblks(RandomUtils.instance().nextInt());
         ArrayList<Mempool> memPoolsList = new ArrayList<Mempool>();
-        for(int i=0; i < listSize ; i++) {
+        for(int i=0; i < listSize; i++) {
             Mempool pool = new Mempool();
             pool.setAllocCount(RandomUtils.instance().nextInt());
             pool.setHotCount(0);
@@ -111,7 +111,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
 
     private List<GlusterClientInfo> getClientList(int listSize) {
         ArrayList<GlusterClientInfo> list = new ArrayList<GlusterClientInfo>();
-        for(int i=0; i < listSize ; i++) {
+        for(int i=0; i < listSize; i++) {
             GlusterClientInfo clientInfo = new GlusterClientInfo();
             clientInfo.setBytesRead(RandomUtils.instance().nextInt());
             clientInfo.setBytesWritten(RandomUtils.instance().nextInt());

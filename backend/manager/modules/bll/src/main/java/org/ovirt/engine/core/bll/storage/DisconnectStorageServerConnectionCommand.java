@@ -31,7 +31,7 @@ public class DisconnectStorageServerConnectionCommand<T extends StorageServerCon
                         new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,
                                 getParameters().getStorageServerConnection().getstorage_type(),
                                 new ArrayList<>(Arrays
-                                        .asList(new StorageServerConnections[] { getConnection() })))).getSucceeded() ;
+                                        .asList(new StorageServerConnections[] { getConnection() })))).getSucceeded();
     }
 
 }

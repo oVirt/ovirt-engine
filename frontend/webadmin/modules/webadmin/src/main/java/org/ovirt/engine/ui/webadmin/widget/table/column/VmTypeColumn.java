@@ -86,8 +86,7 @@ enum VmTypeConfig {
         public String getTooltip(CommonApplicationConstants constants) {
             return ""; //$NON-NLS-1$
         }
-    },
-    ;
+    };
 
     private final VmType vmType;
     private final boolean stateless;

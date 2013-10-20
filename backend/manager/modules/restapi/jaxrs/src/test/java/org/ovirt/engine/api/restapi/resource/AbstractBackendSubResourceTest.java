@@ -114,7 +114,7 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
         for (Statistic statistic : statistics) {
             assertTrue(statistic.isSetValues());
             boolean found = false;
-            for (int i = 0 ; i < names.length ; i++) {
+            for (int i = 0; i < names.length; i++) {
                 if (names[i].equals(statistic.getName())) {
                     assertEquals("unexpected value for: " + names[i], values[i], getDatum(statistic));
                     found = true;

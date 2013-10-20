@@ -31,8 +31,7 @@ public class BackendUsersResourceTest
     static final String GROUPS =
         "Schema Admins@Maghreb/Users," +
         "Group Policy Creator Owners@Maghreb/Users," +
-        "Enterprise Admins@Maghreb/Users"
-    ;
+        "Enterprise Admins@Maghreb/Users";
 
     static final String[] PARSED_GROUPS = {
         "Schema Admins@Maghreb/Users",
@@ -230,7 +229,7 @@ public class BackendUsersResourceTest
         assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());
         assertTrue(model.isSetGroups());
         assertEquals(PARSED_GROUPS.length, model.getGroups().getGroups().size());
-        for (int i = 0 ; i < PARSED_GROUPS.length ; i++) {
+        for (int i = 0; i < PARSED_GROUPS.length; i++) {
             Group group = model.getGroups().getGroups().get(i);
             assertEquals(PARSED_GROUPS[i], group.getName());
         }

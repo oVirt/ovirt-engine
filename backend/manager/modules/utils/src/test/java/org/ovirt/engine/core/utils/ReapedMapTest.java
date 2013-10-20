@@ -84,7 +84,7 @@ public class ReapedMapTest extends Assert {
         map.reapable("one");
         map.reapable("three");
         assertSizes(1, 2);
-        for (int i = 0 ; i < 6 ; i++) {
+        for (int i = 0; i < 6; i++) {
             Thread.sleep(250);
             assertExpected(i == 0 ? 1 : 3);
         }

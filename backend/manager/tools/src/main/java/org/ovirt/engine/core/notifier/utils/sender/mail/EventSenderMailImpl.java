@@ -83,7 +83,7 @@ public class EventSenderMailImpl implements EventSender {
         }
 
         // Attempt additional 3 retries in case of failure
-        for (int i=0 ; i < 3 && shouldRetry ; ++i){
+        for (int i=0; i < 3 && shouldRetry; ++i){
             shouldRetry = false;
             try {
                 // hold the next send attempt for 30 seconds in case of a busy mail server

@@ -77,7 +77,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                     // Build domain names list to display in the error
                     domainNamesForMessage = prepareEntityNamesForMessage(domainNames);
                     if (diskNames.isEmpty()) {
-                        return prepareFailureMessageForDomains(domainNamesForMessage)  ;
+                        return prepareFailureMessageForDomains(domainNamesForMessage);
                      }
                      else {
                         String diskNamesForMessage = prepareEntityNamesForMessage(diskNames);

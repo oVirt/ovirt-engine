@@ -86,7 +86,7 @@ public class BackendUserResourceTest
         assertNotNull(model.getDomain());
         assertTrue(model.isSetGroups());
         assertEquals(PARSED_GROUPS.length, model.getGroups().getGroups().size());
-        for (int i = 0 ; i < PARSED_GROUPS.length ; i++) {
+        for (int i = 0; i < PARSED_GROUPS.length; i++) {
             Group group = model.getGroups().getGroups().get(i);
             assertEquals(PARSED_GROUPS[i], group.getName());
         }

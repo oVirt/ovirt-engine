@@ -44,7 +44,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private Integer vm_migrating;
 
-    private Integer reserved_mem ;
+    private Integer reserved_mem;
 
     private Integer guest_overhead;
 

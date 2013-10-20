@@ -11,6 +11,5 @@ public enum ServiceType {
     SHD,
     GLUSTER,
     GLUSTER_SWIFT,
-    SMB,
-    ;
+    SMB;
 }

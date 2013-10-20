@@ -397,7 +397,7 @@ public class DnsSRVLocator {
         if (result == null) {
             return null;
         }
-        for (int counter = 0 ; counter <result.getNumOfValidAddresses(); counter++) {
+        for (int counter = 0; counter <result.getNumOfValidAddresses(); counter++) {
             results.add(result.getAddresses()[counter]);
         }
         return results;

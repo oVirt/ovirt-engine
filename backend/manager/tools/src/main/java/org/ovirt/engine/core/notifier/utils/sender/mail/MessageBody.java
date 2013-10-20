@@ -5,7 +5,7 @@ package org.ovirt.engine.core.notifier.utils.sender.mail;
  */
 public class MessageBody{
     private String userInfo;
-    private String vmInfo ;
+    private String vmInfo;
     private String hostInfo;
     private String templateInfo;
     private String datacenterInfo;

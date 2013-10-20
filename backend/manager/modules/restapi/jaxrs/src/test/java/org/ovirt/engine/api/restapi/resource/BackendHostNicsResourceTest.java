@@ -460,7 +460,7 @@ public class BackendHostNicsResourceTest
         return nicSpeed == 0 ?
                              null
                              :
-                             nicSpeed * 1000L * 1000 ;
+                             nicSpeed * 1000L * 1000;
     }
 
     protected NicStatus map(InterfaceStatus interfaceStatus, NicStatus params) {

@@ -101,7 +101,7 @@ public class BackendStorageDomainResource extends
     }
 
     public static synchronized boolean isIsoDomain(org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain) {
-        org.ovirt.engine.core.common.businessentities.StorageDomainType type =  storageDomain.getStorageDomainType() ;
+        org.ovirt.engine.core.common.businessentities.StorageDomainType type =  storageDomain.getStorageDomainType();
         return type != null && type == org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO ? true : false;
     }
 

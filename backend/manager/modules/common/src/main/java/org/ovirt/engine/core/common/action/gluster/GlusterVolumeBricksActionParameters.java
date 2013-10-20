@@ -9,7 +9,7 @@ public class GlusterVolumeBricksActionParameters extends GlusterVolumeBricksPara
 
     private static final long serialVersionUID = -2254020786236387303L;
     private int replicaCount;
-    private int stripeCount ;
+    private int stripeCount;
 
     public GlusterVolumeBricksActionParameters() {
     }

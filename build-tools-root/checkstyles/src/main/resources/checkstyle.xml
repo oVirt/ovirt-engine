@@ -28,5 +28,8 @@
     <module name="checks.NoMemberInitializationCheck">
       <property name="run" value="${disallowMemberInit}" default="false"/>
     </module>
+    <module name="NoWhitespaceBefore">
+      <property name="tokens" value="SEMI"/>
+    </module>
   </module>
 </module>

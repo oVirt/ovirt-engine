@@ -12,8 +12,7 @@ public enum GlusterAsyncTaskStatus {
     FAILED("FAILED"),
     UNKNOWN("UNKNOWN"),
     NOT_STARTED("NOT_STARTED"),
-    IN_PROGRESS("IN_PROGRESS"),
-    ;
+    IN_PROGRESS("IN_PROGRESS");
 
     private String statusMsg;
 

@@ -7,8 +7,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 
 public enum GlusterTaskType {
     REBALANCE(StepEnum.REBALANCING_VOLUME),
-    REMOVE_BRICK(StepEnum.REMOVING_BRICKS),
-    ;
+    REMOVE_BRICK(StepEnum.REMOVING_BRICKS);
 
     private StepEnum step;
     private static Map<StepEnum, GlusterTaskType> mappings;
