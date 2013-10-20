@@ -176,6 +176,7 @@ class Plugin(plugin.PluginBase):
                     content=content,
                     params=config.values,
                     changed_lines=changed_lines,
+                    new_line_tpl='{spaces}{param}={value}',
                 )
             )
         )
