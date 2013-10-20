@@ -37,13 +37,13 @@ public class VdsFenceOptions implements Serializable {
     private String fencingOptions;
     private static HashMap<String, String> fencingAgentInstanceOptions;
     private static HashSet<String> fencingSpecialParams;
+    private String version;
 
     /**
      * Initializes a new instance of the <see cref="VdsFencingOptions"/> class.
      */
-    public VdsFenceOptions() {
-        InitCache();
-        Init();
+    public VdsFenceOptions(String version) {
+        this(null, null, version);
     }
 
     /**
@@ -54,11 +54,12 @@ public class VdsFenceOptions implements Serializable {
      * @param fencingOptions
      *            The fencing options.
      */
-    public VdsFenceOptions(String agent, String fencingOptions) {
+    public VdsFenceOptions(String agent, String fencingOptions, String version) {
         if (StringUtils.isNotEmpty(agent)) {
             this.fenceAgent = agent;
             this.fencingOptions = fencingOptions;
         }
+        this.version = version;
         InitCache();
         Init();
     }
@@ -74,7 +75,7 @@ public class VdsFenceOptions implements Serializable {
      * alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port
      */
     private void CacheFencingAgentsOptionMapping() {
-        String localfencingOptionMapping = Config.<String> GetValue(ConfigValues.VdsFenceOptionMapping);
+        String localfencingOptionMapping = Config.<String> GetValue(ConfigValues.VdsFenceOptionMapping, version);
         String[] agentsOptionsStr = localfencingOptionMapping.split(Pattern.quote(SEMICOLON), -1);
         for (String agentOptionsStr : agentsOptionsStr) {
             String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);

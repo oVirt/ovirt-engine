@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -45,8 +46,10 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
 
     @Override
     protected void executeVdsBrokerCommand() {
+        // We have to pass here the proxy host cluster compatibility version
+        VDS vds = getDbFacade().getVdsDao().get(getParameters().getVdsId());
         VdsFenceOptions vdsFencingOptions = new VdsFenceOptions(getParameters().getType(),
-                getParameters().getOptions());
+                getParameters().getOptions(), vds.getVdsGroupCompatibilityVersion().toString());
         String options = vdsFencingOptions.ToInternalString();
         // ignore starting already started host or stopping already stopped host.
         if (!isAlreadyInRequestedStatus(options)) {

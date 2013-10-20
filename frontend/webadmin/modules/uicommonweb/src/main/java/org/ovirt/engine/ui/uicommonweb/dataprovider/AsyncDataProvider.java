@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
@@ -1692,7 +1693,7 @@ public final class AsyncDataProvider {
         getConfigFromCache(tempVar, aQuery);
     }
 
-    public static void getPmOptions(AsyncQuery aQuery, String pmType) {
+    public static void getPmOptions(AsyncQuery aQuery, String pmType, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1716,7 +1717,7 @@ public final class AsyncDataProvider {
             }
         };
         aQuery.setData(new Object[] { pmType });
-        Frontend.RunQuery(VdcQueryType.GetAgentFenceOptions, new VdcQueryParametersBase(), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetAgentFenceOptions, new GetAgentFenceOptionsQueryParameters(version), aQuery);
     }
 
     public static void getNetworkList(AsyncQuery aQuery, Guid dataCenterId) {
