@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTML;
@@ -28,12 +27,6 @@ public class SafeHtmlCellWithTooltip extends AbstractCellWithTooltip<SafeHtml> {
             sb.append(value);
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
         }
-    }
-
-    @Override
-    protected boolean contentOverflows(Element parent) {
-        // Perform content overflow detection on child DIV element
-        return super.contentOverflows(parent.getFirstChildElement());
     }
 
     @Override
