@@ -4,6 +4,12 @@
 #
 
 #
+# Comma separated list of keys
+# not to be logged.
+#
+SENSITIVE_KEYS=""
+
+#
 # The location of the application server used by the engine:
 #
 JBOSS_HOME="@JBOSS_HOME@"
@@ -39,6 +45,7 @@ MAIL_PORT_SSL=465
 MAIL_USER=
 
 # Required to authenticate the user if mail server requires authentication or if SSL is enabled
+SENSITIVE_KEYS="${SENSITIVE_KEYS},MAIL_PASSWORD"
 MAIL_PASSWORD=
 
 # Indicates whether SSL should be used to communicate with mail server.
