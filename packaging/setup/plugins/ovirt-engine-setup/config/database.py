@@ -59,19 +59,21 @@ class Plugin(plugin.PluginBase):
                 owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
                 enforcePermissions=True,
                 content=(
-                    'ENGINE_DB_HOST={host}\n'
-                    'ENGINE_DB_PORT={port}\n'
-                    'ENGINE_DB_USER={user}\n'
+                    'ENGINE_DB_HOST="{host}"\n'
+                    'ENGINE_DB_PORT="{port}"\n'
+                    'ENGINE_DB_USER="{user}"\n'
                     'ENGINE_DB_PASSWORD="{password}"\n'
-                    'ENGINE_DB_DATABASE={db}\n'
-                    'ENGINE_DB_SECURED={secured}\n'
-                    'ENGINE_DB_SECURED_VALIDATION={securedValidation}\n'
-                    'ENGINE_DB_DRIVER=org.postgresql.Driver\n'
+                    'ENGINE_DB_DATABASE="{db}"\n'
+                    'ENGINE_DB_SECURED="{secured}"\n'
+                    'ENGINE_DB_SECURED_VALIDATION="{securedValidation}"\n'
+                    'ENGINE_DB_DRIVER="org.postgresql.Driver"\n'
                     'ENGINE_DB_URL=' + (
+                        '"'
                         'jdbc:postgresql://'
                         '${{ENGINE_DB_HOST}}:${{ENGINE_DB_PORT}}'
                         '/${{ENGINE_DB_DATABASE}}'
-                        '?{jdbcTlsOptions}\n'
+                        '?{jdbcTlsOptions}'
+                        '"\n'
                     ) +
                     ''
                 ).format(
