@@ -2147,28 +2147,6 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /ovirt-engine/api/groups/{group:id}/roles/{role:id}|rel=delete
-  description: delete the specified role assigned to a group
-  request:
-    body:
-      parameterType: null
-      signatures: []
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Correlation-Id: {value: 'any string', required: false}
-- name: /ovirt-engine/api/groups/{group:id}/roles|rel=add
-  description: add a new role to the specified group
-  request:
-    body:
-      parameterType: Role
-      signatures:
-      - mandatoryArguments: {role.id: 'xs:string'}
-    urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
-      Expect: {value: 201-created, required: false}
-      Correlation-Id: {value: 'any string', required: false}
 - name: /ovirt-engine/api/groups/{group:id}/roles/{role:id}/permits|rel=get
   description: get the permits for the specified role in a group
   request:
@@ -3532,29 +3510,6 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /ovirt-engine/api/users/{user:id}/roles/{role:id}|rel=delete
-  description: delete the specified role assigned to the user
-  request:
-    body:
-      parameterType: null
-      signatures: []
-    urlparams:
-      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers:
-      Correlation-Id: {value: 'any string', required: false}
-- name: /ovirt-engine/api/users/{user:id}/roles|rel=add
-  description: add a new role to the user
-  request:
-    body:
-      parameterType: Role
-      signatures:
-      - mandatoryArguments: {role.id: 'xs:string'}
-        description: add a new role to the user
-    urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
-      Expect: {value: 201-created, required: false}
-      Correlation-Id: {value: 'any string', required: false}
 - name: /ovirt-engine/api/users/{user:id}/roles/{role:id}/permits|rel=get
   description: get the list of permits for the role assigned to the user
   request:
