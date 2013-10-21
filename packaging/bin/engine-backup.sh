@@ -227,6 +227,7 @@ backupFiles() {
 backupDB() {
 	local file="$1"
 	PGPASSFILE="${MYPGPASS}" pg_dump \
+		-c \
 		-E "UTF8" \
 		--disable-dollar-quoting \
 		--disable-triggers \
