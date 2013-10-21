@@ -66,6 +66,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private boolean runOnce;
     @UnchangeableByVdsm
     private String cpuName;
+    private String currentCd;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
@@ -114,6 +115,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + (lastWatchdogAction == null ? 0 : lastWatchdogAction.hashCode());
         result = prime * result + (runOnce ? 1231 : 1237);
         result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
+        result = prime * result + (currentCd == null ? 0 : currentCd.hashCode());
         return result;
     }
 
@@ -168,7 +170,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(lastWatchdogEvent, other.lastWatchdogEvent)
                 && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction)
                 && runOnce == other.runOnce
-                && ObjectUtils.objectsEqual(cpuName, other.cpuName));
+                && ObjectUtils.objectsEqual(cpuName, other.cpuName)
+                && ObjectUtils.objectsEqual(currentCd, other.currentCd));
     }
 
     public String getExitMessage() {
@@ -529,4 +532,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         this.cpuName = cpuName;
     }
 
+    public String getCurrentCd() {
+        return currentCd;
+    }
+
+    public void setCurrentCd(String currentCd) {
+        this.currentCd = currentCd;
+    }
 }

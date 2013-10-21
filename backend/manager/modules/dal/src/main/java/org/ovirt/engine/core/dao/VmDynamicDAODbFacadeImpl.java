@@ -114,7 +114,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("last_watchdog_event", vm.getLastWatchdogEvent())
                 .addValue("last_watchdog_action", vm.getLastWatchdogAction())
                 .addValue("is_run_once", vm.isRunOnce())
-                .addValue("cpu_name", vm.getCpuName());
+                .addValue("cpu_name", vm.getCpuName())
+                .addValue("current_cd", vm.getCurrentCd());
     }
 
     @Override
@@ -178,6 +179,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setLastWatchdogAction(rs.getString("last_watchdog_action"));
                 entity.setRunOnce(rs.getBoolean("is_run_once"));
                 entity.setCpuName(rs.getString("cpu_name"));
+                entity.setCurrentCd(rs.getString("current_cd"));
                 return entity;
             }
         };
@@ -227,7 +229,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .addValue("last_watchdog_event", entity.getLastWatchdogEvent())
                         .addValue("last_watchdog_action", entity.getLastWatchdogAction())
                         .addValue("is_run_once", entity.isRunOnce())
-                        .addValue("cpu_name", entity.getCpuName());
+                        .addValue("cpu_name", entity.getCpuName())
+                        .addValue("current_cd", entity.getCurrentCd());
 
                 return paramValue;
             }

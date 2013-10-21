@@ -52,6 +52,7 @@ public class BackendCdRomsResourceTest
                 new Object[] { PARENT_ID },
                 new VM(),
                 1);
+        setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
             collection.remove(NON_EXISTANT_GUID.toString());

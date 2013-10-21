@@ -40,4 +40,25 @@ public class BackendCdRomResource extends BackendDeviceResource<CdRom, CdRoms, V
             return super.update(resource);
         }
     }
+
+    @Override
+    public CdRom get() {
+        final boolean getCurrent = QueryHelper.hasMatrixParam(getUriInfo(), CURRENT_CONSTRAINT_PARAMETER) &&
+                !"false".equalsIgnoreCase(QueryHelper.getMatrixConstraint(getUriInfo(), CURRENT_CONSTRAINT_PARAMETER));
+        if (getCurrent) {
+            VM vm = collection.lookupEntity(guid);
+            if (vm == null) {
+                return notFound();
+            }
+            // if the CD has changed during the run of VM
+            if (vm.getCurrentCd() != null) {
+                // change the iso path so the result of 'map' will contain current cd instead of the
+                // persistent configuration
+                vm.setIsoPath(vm.getCurrentCd());
+            }
+            return addLinks(populate(map(vm), vm));
+        } else {
+            return super.get();
+        }
+    }
 }
