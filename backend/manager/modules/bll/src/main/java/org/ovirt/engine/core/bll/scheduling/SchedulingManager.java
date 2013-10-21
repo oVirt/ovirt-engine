@@ -205,6 +205,9 @@ public class SchedulingManager {
                 return vdsList.get(0).getId();
             }
             Guid bestHost = runFunctions(policy.getFunctions(), vdsList, vm, parameters);
+            if (bestHost == null && vdsList.size() > 0) {
+                bestHost = vdsList.get(0).getId();
+            }
             if (bestHost != null) {
                 getVdsDynamicDao().updatePartialVdsDynamicCalc(
                         bestHost,
