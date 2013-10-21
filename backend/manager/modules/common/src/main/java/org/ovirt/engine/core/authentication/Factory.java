@@ -24,6 +24,7 @@ public interface Factory<O> {
      * about concurrent access or caching crated objects.
      *
      * @param config the configuration for the object, already loaded by the manager
+     * @throws ConfigurationException if something fails while creating the directory
      */
-    O create(Configuration config);
+    O create(Configuration config) throws ConfigurationException;
 }
