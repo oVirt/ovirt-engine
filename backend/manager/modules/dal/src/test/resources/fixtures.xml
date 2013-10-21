@@ -2880,6 +2880,7 @@
         <column>exit_message</column>
         <column>guest_agent_nics_hash</column>
         <column>cpu_name</column>
+        <column>current_cd</column>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>5</value>
@@ -2914,6 +2915,7 @@
             <value>0</value>
             <value>0</value>
             <null />
+            <null/>
             <null/>
             <null/>
         </row>
@@ -2953,6 +2955,7 @@
             <null />
             <value>0</value>
             <null />
+            <value>current_cd.iso</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
@@ -2990,6 +2993,7 @@
             <null />
             <value>3452354</value>
             <null />
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -3027,6 +3031,7 @@
             <value>0</value>
             <null />
             <null />
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -3064,6 +3069,7 @@
             <null />
             <null />
             <null />
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>

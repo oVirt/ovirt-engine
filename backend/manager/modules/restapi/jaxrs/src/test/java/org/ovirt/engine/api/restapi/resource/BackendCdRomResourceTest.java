@@ -1,11 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.ISO_PATH;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.CURRENT_ISO_PATH;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.PARENT_ID;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.verifyModelSpecific;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.verifyModelWithIso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -22,15 +25,12 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCdRomResourceTest
         extends AbstractBackendSubResourceTest<CdRom, VM, BackendDeviceResource<CdRom, CdRoms, VM>> {
-
-    protected final static String ISO_PATH = "Fedora-13-x86_64-Live.iso";
 
     protected static BackendCdRomsResource collection = getCollection();
 
@@ -88,8 +88,47 @@ public class BackendCdRomResourceTest
         control.replay();
 
         CdRom cdrom = resource.get();
-        verifyModelSpecific(cdrom, 1);
-        verifyLinks(cdrom);
+        verifyModel(cdrom);
+    }
+
+    @Test
+    public void testGetCurrent() throws Exception {
+        setUriInfo(setUpUriMatrixExpectations(null));
+        setUpEntityQueryExpectations(1);
+        control.replay();
+
+        CdRom cdrom = resource.get();
+        verifyModelWithCurrentCd(cdrom);
+    }
+
+    @Test
+    public void testGetCurrentWithMatrixTrue() throws Exception {
+        setUriInfo(setUpUriMatrixExpectations("true"));
+        setUpEntityQueryExpectations(1);
+        control.replay();
+
+        CdRom cdrom = resource.get();
+        verifyModelWithCurrentCd(cdrom);
+    }
+
+    @Test
+    public void testGetCurrentWithMatrixFalse() throws Exception {
+        setUriInfo(setUpUriMatrixExpectations("false"));
+        setUpEntityQueryExpectations(1);
+        control.replay();
+
+        CdRom cdrom = resource.get();
+        verifyModel(cdrom);
+    }
+
+    @Test
+    public void testGetCurrentWithGarbledMatrixReturnsCurrent() throws Exception {
+        setUriInfo(setUpUriMatrixExpectations("faSLe"));
+        setUpEntityQueryExpectations(1);
+        control.replay();
+
+        CdRom cdrom = resource.get();
+        verifyModelWithCurrentCd(cdrom);
     }
 
     @Test
@@ -127,11 +166,11 @@ public class BackendCdRomResourceTest
         resource.setUriInfo(setUpChangeCdUriQueryExpectations());
         setUpGetEntityExpectations(1, VMStatus.Up);
         setUpActionExpectations(VdcActionType.ChangeDisk,
-                ChangeDiskCommandParameters.class,
-                new String[] { "CdImagePath" },
-                new Object[] { ISO_PATH },
-                true,
-                true);
+                                ChangeDiskCommandParameters.class,
+                                new String[] {"CdImagePath"},
+                                new Object[] {ISO_PATH},
+                                true,
+                                true);
         CdRom cdrom = resource.update(getUpdate());
         assertTrue(cdrom.isSetFile());
     }
@@ -141,11 +180,11 @@ public class BackendCdRomResourceTest
         resource.setUriInfo(setUpChangeCdUriMatrixExpectations());
         setUpGetEntityExpectations(1, VMStatus.Up);
         setUpActionExpectations(VdcActionType.ChangeDisk,
-                ChangeDiskCommandParameters.class,
-                new String[] { "CdImagePath" },
-                new Object[] { ISO_PATH },
-                true,
-                true);
+                                ChangeDiskCommandParameters.class,
+                                new String[] {"CdImagePath"},
+                                new Object[] {ISO_PATH},
+                                true,
+                                true);
         CdRom cdrom = resource.update(getUpdate());
         assertTrue(cdrom.isSetFile());
     }
@@ -159,15 +198,20 @@ public class BackendCdRomResourceTest
     }
 
     protected UriInfo setUpChangeCdUriMatrixExpectations() {
-        UriInfo uriInfo = control.createMock(UriInfo.class);
+        return setUpUriMatrixExpectations(null);
+    }
 
-        List<PathSegment> psl = new ArrayList<PathSegment>();
+    protected UriInfo setUpUriMatrixExpectations(String matrixValue) {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+
+        List<PathSegment> psl = new ArrayList<>();
 
         PathSegment ps = control.createMock(PathSegment.class);
         MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
-        expect(matrixParams.isEmpty()).andReturn(false);
-        expect(matrixParams.containsKey("current")).andReturn(true);
-        expect(ps.getMatrixParameters()).andReturn(matrixParams);
+        expect(matrixParams.isEmpty()).andReturn(false).anyTimes();
+        expect(matrixParams.containsKey("current")).andReturn(true).anyTimes();
+        expect(matrixParams.get("current")).andReturn(Collections.singletonList(matrixValue)).anyTimes();
+        expect(ps.getMatrixParameters()).andReturn(matrixParams).anyTimes();
 
         psl.add(ps);
 
@@ -227,16 +271,11 @@ public class BackendCdRomResourceTest
 
     @Override
     protected VM getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VM.class),
-                                       control.createMock(VmStatic.class),
-                                       index);
+        return setUpEntityExpectations();
     }
 
     protected VM getEntity(int index, VMStatus status) {
-        return setUpEntityExpectations(control.createMock(VM.class),
-                control.createMock(VmStatic.class),
-                status,
-                index);
+        return setUpEntityExpectations(status);
     }
 
     protected List<VM> getEntityList(VMStatus status) {
@@ -275,12 +314,22 @@ public class BackendCdRomResourceTest
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                        IdQueryParameters.class,
-                                       new String[] { "Id" },
-                                       new Object[] { PARENT_ID },
-                                       status !=null ? getEntity(0, status)
-                                                       :
-                                                       getEntity(0));
+                                       new String[] {"Id"},
+                                       new Object[] {PARENT_ID},
+                                       status != null ? getEntity(0, status)
+                                               :
+                                               getEntity(0));
         }
+    }
+
+    protected void verifyModel(CdRom model) {
+        verifyModelWithIso(model, ISO_PATH);
+        verifyLinks(model);
+    }
+
+    protected void verifyModelWithCurrentCd(CdRom model) {
+        verifyModelWithIso(model, CURRENT_ISO_PATH);
+        verifyLinks(model);
     }
 
 }

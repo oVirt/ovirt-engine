@@ -428,7 +428,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      current: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /vms/{vm:id}/cdroms/{cdrom:id}|rel=delete
   description: delete the cdrom for a virtual machine identified by the given id

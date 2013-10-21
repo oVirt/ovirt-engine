@@ -974,6 +974,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmDynamic.setCpuName(value);
     }
 
+    public String getCurrentCd() {
+        return this.vmDynamic.getCurrentCd();
+    }
+
+    public void setCurrentCd(String value) {
+        this.vmDynamic.setCurrentCd(value);
+    }
+
     public void setExportDate(Date value) {
         this.vmStatic.setExportDate(value);
     }
@@ -1232,6 +1240,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setVmHost(vm.getVmHost());
         setVmIp(vm.getVmIp());
         setVmFQDN(vm.getVmFQDN());
+        setCurrentCd(vm.getCurrentCd());
 
         // if (!string.IsNullOrEmpty(vm.app_list))
         // {

@@ -10,14 +10,13 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.verifyModelSpecific;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.PARENT_ID;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.verifyModelSpecific;
 
 public class BackendReadOnlyCdRomResourceTest
         extends AbstractBackendSubResourceTest<CdRom, VM, BackendReadOnlyDeviceResource<CdRom, CdRoms, VM>> {
@@ -75,9 +74,7 @@ public class BackendReadOnlyCdRomResourceTest
 
     @Override
     protected VM getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VM.class),
-                                       control.createMock(VmStatic.class),
-                                       index);
+        return setUpEntityExpectations();
     }
 
     protected List<VM> getEntityList() {

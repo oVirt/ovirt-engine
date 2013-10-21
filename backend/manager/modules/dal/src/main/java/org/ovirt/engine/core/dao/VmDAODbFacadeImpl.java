@@ -418,6 +418,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             // if template_version_number is null it means use latest version
             entity.setUseLatestVersion(rs.getObject("template_version_number") ==
                     VmStaticDAODbFacadeImpl.USE_LATEST_VERSION_NUMBER_INDICATOR);
+            entity.setCurrentCd(rs.getString("current_cd"));
             return entity;
         }
     }

@@ -12,12 +12,9 @@ import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.classextension.EasyMock.expect;
 
 @Ignore
 public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnlyDevicesResource<CdRom, CdRoms, VM>>
@@ -25,6 +22,7 @@ public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnly
 
     protected final static Guid PARENT_ID = GUIDS[1];
     protected final static String ISO_PATH = "Fedora-13-x86_64-Live.iso";
+    protected final static String CURRENT_ISO_PATH = "Fedora-20-x86_64-Live.iso";
 
     protected VdcQueryType queryType;
     protected VdcQueryParametersBase queryParams;
@@ -81,23 +79,21 @@ public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnly
     }
 
     protected VM getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VM.class),
-                                       control.createMock(VmStatic.class),
-                                       index);
+        return setUpEntityExpectations();
     }
 
-    static VM setUpEntityExpectations(VM entity, VmStatic staticVm, int index) {
-        return setUpEntityExpectations(entity, staticVm, null, index);
+    static VM setUpEntityExpectations() {
+        return setUpEntityExpectations(null);
     }
 
-    static VM setUpEntityExpectations(VM entity, VmStatic staticVm, VMStatus status, int index) {
-        expect(entity.getQueryableId()).andReturn(PARENT_ID).anyTimes();
-        expect(entity.getStaticData()).andReturn(staticVm).anyTimes();
-        expect(staticVm.getIsoPath()).andReturn(ISO_PATH).anyTimes();
-        if (status != null) {
-            expect(entity.getStatus()).andReturn(status).anyTimes();
-        }
-        return entity;
+    static VM setUpEntityExpectations(VMStatus status) {
+        VM vm = new VM();
+        vm.setId(PARENT_ID);
+        vm.setIsoPath(ISO_PATH);
+        vm.setCurrentCd(CURRENT_ISO_PATH);
+        vm.setStatus(status);
+
+        return vm;
     }
 
     protected List<CdRom> getCollection() {
@@ -111,16 +107,27 @@ public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnly
         return model;
     }
 
+    static CdRom getModelWithCurrentCd() {
+        CdRom model = new CdRom();
+        model.setFile(new File());
+        model.getFile().setId(CURRENT_ISO_PATH);
+        return model;
+    }
+
     protected void verifyModel(CdRom model, int index) {
-        verifyModelSpecific(model, index);
+        verifyModelWithIso(model, ISO_PATH);
         verifyLinks(model);
     }
 
     static void verifyModelSpecific(CdRom model, int index) {
+        verifyModelWithIso(model, ISO_PATH);
+    }
+
+    static void verifyModelWithIso(CdRom model, String isoPath) {
         assertEquals(Guid.Empty.toString(), model.getId());
         assertTrue(model.isSetVm());
         assertEquals(PARENT_ID.toString(), model.getVm().getId());
         assertTrue(model.isSetFile());
-        assertEquals(ISO_PATH, model.getFile().getId());
+        assertEquals(isoPath, model.getFile().getId());
     }
 }
