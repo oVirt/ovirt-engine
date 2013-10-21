@@ -63,6 +63,7 @@
 
       <!-- All the application server messages go here: -->
       <file-handler name="SERVER">
+        <level name="INFO"/>
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
