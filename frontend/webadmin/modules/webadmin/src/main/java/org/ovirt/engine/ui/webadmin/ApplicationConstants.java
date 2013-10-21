@@ -926,8 +926,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster:")
     String moveHostPopupClusterLabel();
 
-    @DefaultStringValue("Please select Hosts from the same data center")
-    String hostsFromDifferentDCsError();
+    @DefaultStringValue("Please select entities from the same data center")
+    String entitiesFromDifferentDCsError();
 
     @DefaultStringValue("Resides on a different storage domain")
     String differentStorageDomainWarning();
