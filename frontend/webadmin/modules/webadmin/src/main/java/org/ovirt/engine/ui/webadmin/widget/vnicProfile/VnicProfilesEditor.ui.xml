@@ -4,13 +4,12 @@
 
 	<ui:style  type="org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor.WidgetStyle">
 		.mainPanel {
-			float: left;
-			padding-left: 5px;
-			margin-left: 5px;
+			height: 450px;
+			width: 100%;
 		}
 
 		.profilePanel {
-			width: 100%;
+			margin-left: 10px;
 			padding-bottom: 3px;
 		}
 
@@ -35,8 +34,8 @@
 
 	</ui:style>
 
-	<g:FlowPanel addStyleNames="{style.mainPanel}" >
+	<g:ScrollPanel addStyleNames="{style.mainPanel}" >
 		<g:FlowPanel ui:field="contentPanel" />
-	</g:FlowPanel>
+	</g:ScrollPanel>
 
 </ui:UiBinder>
