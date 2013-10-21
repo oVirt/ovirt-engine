@@ -87,19 +87,22 @@ class Plugin(plugin.PluginBase):
                     securedValidation=self.environment[
                         osetupcons.DBEnv.SECURED_HOST_VALIDATION
                     ],
-                    jdbcTlsOptions='%s%s' % (
+                    jdbcTlsOptions='&'.join(
+                        s for s in (
+                            'ssl=true'
+                            if self.environment[
+                                osetupcons.DBEnv.SECURED
+                            ] else '',
 
-                        'ssl=true'
-                        if self.environment[
-                            osetupcons.DBEnv.SECURED
-                        ] else '',
-
-                        '&sslfactory=org.postgresql.ssl.NonValidatingFactory'
-                        if not self.environment[
-                            osetupcons.DBEnv.SECURED_HOST_VALIDATION
-                        ] else ''
-
-                    )
+                            (
+                                'sslfactory='
+                                'org.postgresql.ssl.NonValidatingFactory'
+                            )
+                            if not self.environment[
+                                osetupcons.DBEnv.SECURED_HOST_VALIDATION
+                            ] else ''
+                        ) if s
+                    ),
                 ),
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
