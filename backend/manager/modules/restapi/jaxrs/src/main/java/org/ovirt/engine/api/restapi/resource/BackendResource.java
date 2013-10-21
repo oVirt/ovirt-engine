@@ -10,11 +10,15 @@ import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.invocation.MetaData;
+import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.restapi.resource.exception.UrlParamException;
+import org.ovirt.engine.api.restapi.resource.validation.Validator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
@@ -33,8 +37,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.api.restapi.resource.exception.UrlParamException;
-import org.ovirt.engine.api.restapi.resource.validation.Validator;
 
 public class BackendResource extends BaseBackendResource {
     private static final String FALSE = "false";
@@ -155,7 +157,10 @@ public class BackendResource extends BaseBackendResource {
                 getCurrent().get(MetaData.class).set("async", true);
                 return performNonBlockingAction(task, params, action);
             } else {
-                doAction(task, params);
+                VdcReturnValueBase actionResult = doAction(task, params);
+                if (actionResult.getJobId() != null) {
+                    setJobLink(action, actionResult);
+                }
                 if (action==null) {
                     action = new Action();
                 }
@@ -168,6 +173,13 @@ public class BackendResource extends BaseBackendResource {
         } catch (Exception e) {
             return handleError(Response.class, e, false);
         }
+    }
+
+    protected void setJobLink(final Action action, VdcReturnValueBase actionResult) {
+        Job job = new Job();
+        job.setId(actionResult.getJobId().toString());
+        LinkHelper.addLinks(getUriInfo(), job, null, false);
+        action.setJob(job);
     }
 
     private boolean getBooleanMatrixConstraint(String marixConsraint) {
@@ -311,7 +323,7 @@ public class BackendResource extends BaseBackendResource {
     }
 
     protected <E> Validator<E> getValidator(Class<E> validatedClass) {
-        return (Validator<E>) getValidatorLocator().getValidator(validatedClass);
+        return getValidatorLocator().getValidator(validatedClass);
     }
 
     protected <E> void validateEnums(Class<E> validatedClass, E instance) {

@@ -59,7 +59,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
 
     protected Object resolveCreated(VdcReturnValueBase result, EntityResolver entityResolver, Class<? extends BaseResource> suggestedParentType) {
         try {
-            return entityResolver.resolve((Guid)result.getActionReturnValue());
+            return entityResolver.resolve(result.getActionReturnValue());
         } catch (Exception e) {
             // we tolerate a failure in the entity resolution
             // as the substantive action (entity creation) has
@@ -72,6 +72,9 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         awaitGrace(action);
         try {
             VdcReturnValueBase actionResult = doAction(task, params);
+            if (actionResult.getJobId() != null) {
+                setJobLink(action, actionResult);
+            }
             if (actionResult.getHasAsyncTasks()) {
                 if (expectBlocking(action)) {
                     CreationStatus status = awaitCompletion(actionResult, pollingType);

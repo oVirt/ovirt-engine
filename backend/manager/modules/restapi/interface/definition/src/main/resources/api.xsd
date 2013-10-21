@@ -190,6 +190,7 @@
       <!-- resolve GlusterHook using one of the resolution -->
       <xs:element name="resolution_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <!-- ... etc., explicitly enumerate all the parameter types -->
+      <xs:element name="job" type="Job" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
