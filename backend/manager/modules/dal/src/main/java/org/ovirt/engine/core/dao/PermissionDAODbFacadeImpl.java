@@ -71,13 +71,13 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered) {
-        Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        int appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id).
                 addValue("user_id", userID).
                 addValue("is_filtered", isFiltered).
-                addValue("app_mode", appMode.intValue());
+                addValue("app_mode", appMode);
 
         return getCallsHandler().executeReadList("GetPermissionsByAdElementId",
                 PermissionRowMapper.instance,
