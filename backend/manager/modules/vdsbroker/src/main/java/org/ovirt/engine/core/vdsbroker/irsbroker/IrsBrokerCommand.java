@@ -88,11 +88,19 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     public static final long BYTES_TO_GB = 1024 * 1024 * 1024;
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
 
-    public static void UpdateVdsDomainsData(Guid vdsId, String vdsName, Guid storagePoolId,
-            java.util.ArrayList<VDSDomainsData> vdsDomainData) {
-        IrsProxyData proxy = _irsProxyData.get(storagePoolId);
-        if (proxy != null) {
-            proxy.UpdateVdsDomainsData(vdsId, vdsName, vdsDomainData);
+    /**
+     * process received domain monitoring information from a given vds if necessary (according to it's status).
+     * @param vds
+     * @param storagePoolId
+     * @param vdsDomainData
+     */
+    public static void UpdateVdsDomainsData(VDS vds, Guid storagePoolId,
+            ArrayList<VDSDomainsData> vdsDomainData) {
+        if (vds.getStatus() == VDSStatus.Up) {
+            IrsProxyData proxy = _irsProxyData.get(storagePoolId);
+            if (proxy != null) {
+                proxy.UpdateVdsDomainsData(vds.getId(), vds.getName(), vdsDomainData);
+            }
         }
     }
 
@@ -1262,24 +1270,30 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     // Moving all the hosts which reported on
                     // this domain as in problem to non
                     // operational.
-                    for (Guid vdsId : _domainsInProblem.get(domainId)) {
+                    for (final Guid vdsId : _domainsInProblem.get(domainId)) {
                         VDS vds = vdsMap.get(vdsId);
                         if (vds == null) {
                             log.warnFormat(
                                     "vds {0} reported domain {1} - as in problem but cannot find vds in db!!",
                                     vdsId,
                                     domainIdTuple);
-                        } else if (vds.getStatus() != VDSStatus.Maintenance
-                                && vds.getStatus() != VDSStatus.NonOperational) {
+                        } else if (vds.getStatus() == VDSStatus.Up) {
                             log.warnFormat(
-                                    "vds {0} reported domain {1} as in problem, moving the vds to status NonOperational",
+                                    "vds {0} reported domain {1} as in problem, attempting to move the vds to status NonOperational",
                                     vds.getName(),
                                     domainIdTuple);
-                            ResourceManager
-                                    .getInstance()
-                                    .getEventListener()
-                                    .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
-                                            true, true, domainId);
+
+                            ThreadPoolUtil.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ResourceManager
+                                            .getInstance()
+                                            .getEventListener()
+                                            .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
+                                                    true, true, domainId);
+                                }
+                            });
+
                             nonOpVdss.add(vdsId);
                         } else {
                             log.warnFormat(

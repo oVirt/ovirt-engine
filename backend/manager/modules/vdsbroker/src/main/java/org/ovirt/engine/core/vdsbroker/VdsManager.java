@@ -212,13 +212,11 @@ public class VdsManager {
         if (LockManagerFactory.getLockManager().acquireLock(monitoringLock).getFirst()) {
             try {
                 setIsSetNonOperationalExecuted(false);
-                Guid vdsId = null;
                 Guid storagePoolId = null;
-                String vdsName = null;
                 ArrayList<VDSDomainsData> domainsList = null;
-
+                VDS tmpVds;
                 synchronized (getLockObj()) {
-                    _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+                    tmpVds = _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
                     if (_vds == null) {
                         log.errorFormat("VdsManager::refreshVdsRunTimeInfo - OnTimer is NULL for {0}",
                                 getVdsId());
@@ -261,8 +259,6 @@ public class VdsManager {
                             // to
                             // the storage anymore (so there is no sense in updating the domains list in that case).
                             if (_vds != null && _vds.getStatus() != VDSStatus.Maintenance) {
-                                vdsId = _vds.getId();
-                                vdsName = _vds.getName();
                                 storagePoolId = _vds.getStoragePoolId();
                                 domainsList = _vds.getDomains();
                             }
@@ -285,7 +281,7 @@ public class VdsManager {
                 // Now update the status of domains, this code should not be in
                 // synchronized part of code
                 if (domainsList != null) {
-                    IrsBrokerCommand.UpdateVdsDomainsData(vdsId, vdsName, storagePoolId, domainsList);
+                    IrsBrokerCommand.UpdateVdsDomainsData(tmpVds, storagePoolId, domainsList);
                 }
             } catch (Exception e) {
                 log.error("Timer update runtimeinfo failed. Exception:", e);
