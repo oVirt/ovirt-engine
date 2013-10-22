@@ -32,6 +32,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
 
     protected static final String ATTR_APPLICATION_MODE = "applicationMode"; //$NON-NLS-1$
     protected static final String ATTR_PLUGIN_DEFS = "pluginDefinitions"; //$NON-NLS-1$
+    protected static final String ATTR_ENGINE_SESSION_TIMEOUT = "engineSessionTimeout"; //$NON-NLS-1$
 
     @Override
     protected String getSelectorScriptName() {
@@ -54,6 +55,10 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
         List<PluginData> pluginData = getPluginData();
         request.setAttribute(ATTR_PLUGIN_DEFS, getPluginDefinitionsArray(pluginData));
 
+        // Set attribute for engineSessionTimeout object
+        Integer engineSessionTimeout = getEngineSessionTimeout(request.getSession().getId());
+        request.setAttribute(ATTR_ENGINE_SESSION_TIMEOUT, getEngineSessionTimeoutObject(engineSessionTimeout));
+
         super.doGet(request, response);
     }
 
@@ -66,6 +71,9 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
 
         // Update based on pluginDefinitions array
         digest.update(request.getAttribute(ATTR_PLUGIN_DEFS).toString().getBytes());
+
+        // Update based on engineSessionTimeout object
+        digest.update(request.getAttribute(ATTR_ENGINE_SESSION_TIMEOUT).toString().getBytes());
 
         return digest;
     }
@@ -100,6 +108,18 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
             arr.add(dataObj);
         }
         return arr;
+    }
+
+    protected Integer getEngineSessionTimeout(String sessionId) {
+        return (Integer) runPublicQuery(VdcQueryType.GetConfigurationValue,
+                new GetConfigurationValueParameters(ConfigurationValues.UserSessionTimeOutInterval,
+                        ConfigCommon.defaultConfigurationVersion), sessionId);
+    }
+
+    protected ObjectNode getEngineSessionTimeoutObject(Integer engineSessionTimeout) {
+        ObjectNode obj = createObjectNode();
+        obj.put("value", String.valueOf(engineSessionTimeout)); //$NON-NLS-1$
+        return obj;
     }
 
 }

@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
+import org.ovirt.engine.ui.webadmin.plugin.restapi.EngineSessionTimeoutData;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
@@ -51,6 +52,12 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         UiModeData uiModeData = UiModeData.instance();
         if (uiModeData != null) {
             handleUiMode(uiModeData);
+        }
+
+        // Check for Engine user session timeout configuration
+        EngineSessionTimeoutData engineSessionTimeoutData = EngineSessionTimeoutData.instance();
+        if (engineSessionTimeoutData != null) {
+            restApiSessionManager.setSessionTimeout(engineSessionTimeoutData.getValue());
         }
     }
 

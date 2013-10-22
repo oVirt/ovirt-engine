@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -21,6 +23,7 @@ import com.google.inject.Inject;
  * <ul>
  * <li>acquire new session upon successful user authentication (classic login)
  * <li>reuse existing session if the user is already authenticated (auto login)
+ * <li>keep the current session alive while the user stays authenticated
  * </ul>
  * <p>
  * Note that the REST API session is not closed upon user logout, as there might be other systems still working with it.
@@ -56,13 +59,18 @@ public class RestApiSessionManager {
 
     private static final Logger logger = Logger.getLogger(RestApiSessionManager.class.getName());
 
-    private static final String SESSION_TIMEOUT = "360"; //$NON-NLS-1$
     private static final String SESSION_ID_HEADER = "JSESSIONID"; //$NON-NLS-1$
     private static final String SESSION_ID_KEY = "RestApiSessionId"; //$NON-NLS-1$
+    private static final String DEFAULT_SESSION_TIMEOUT = "30"; //$NON-NLS-1$
+
+    // Heartbeat (delay) between REST API keep-alive requests
+    private static final int SESSION_HEARTBEAT_MS = 1000 * 60; // 1 minute
 
     private final EventBus eventBus;
     private final ClientStorage clientStorage;
     private final String restApiBaseUrl;
+
+    private String sessionTimeout;
 
     @Inject
     public RestApiSessionManager(EventBus eventBus, ClientStorage clientStorage) {
@@ -74,6 +82,14 @@ public class RestApiSessionManager {
         this.restApiBaseUrl = BaseContextPathData.getInstance().getPath() + "api/"; //$NON-NLS-1$
     }
 
+    public void setSessionTimeout(String sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
+
+    String getSessionTimeout() {
+        return sessionTimeout != null ? sessionTimeout : DEFAULT_SESSION_TIMEOUT;
+    }
+
     void sendRequest(RequestBuilder requestBuilder, RestApiCallback callback) {
         try {
             requestBuilder.sendRequest(null, callback);
@@ -82,22 +98,52 @@ public class RestApiSessionManager {
         }
     }
 
+    RequestBuilder createRequest() {
+        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, restApiBaseUrl);
+        requestBuilder.setHeader("Prefer", "persistent-auth"); //$NON-NLS-1$ //$NON-NLS-2$
+        requestBuilder.setHeader("Session-TTL", getSessionTimeout()); //$NON-NLS-1$
+        return requestBuilder;
+    }
+
+    void scheduleKeepAliveHeartbeat() {
+        Scheduler.get().scheduleFixedDelay(new RepeatingCommand() {
+            @Override
+            public boolean execute() {
+                String sessionId = getSessionId();
+
+                if (sessionId != null) {
+                    // The session is still in use
+                    RequestBuilder requestBuilder = createRequest();
+
+                    // Note: the browser takes care of sending JSESSIONID cookie for this request automatically
+                    sendRequest(requestBuilder, new RestApiCallback() {
+                        // No response post-processing, as we expect existing REST API (and associated Engine)
+                        // session to stay alive by means of keep-alive requests
+                    });
+
+                    // Proceed with the heartbeat
+                    return true;
+                } else {
+                    // The session has been released, cancel the heartbeat
+                    return false;
+                }
+            }
+        }, SESSION_HEARTBEAT_MS);
+    }
+
     /**
      * Acquires new REST API session using the given credentials.
      */
     public void acquireSession(String userNameWithDomain, String password) {
-        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, restApiBaseUrl);
-        requestBuilder.setHeader("Prefer", "persistent-auth"); //$NON-NLS-1$ //$NON-NLS-2$
-        requestBuilder.setHeader("Session-TTL", SESSION_TIMEOUT); //$NON-NLS-1$
+        RequestBuilder requestBuilder = createRequest();
         requestBuilder.setUser(userNameWithDomain);
         requestBuilder.setPassword(password);
 
         sendRequest(requestBuilder, new RestApiCallback() {
             @Override
             protected void processResponse(Response response) {
-                // Obtain the session ID from response header, as we're unable
-                // to access Engine REST API JSESSIONID cookie value directly
-                // (cookie is set for different path than WebAdmin host page)
+                // Obtain session ID from response header, as we're unable to access REST API
+                // JSESSIONID cookie directly (cookie set for different path than WebAdmin page)
                 String sessionIdFromHeader = response.getHeader(SESSION_ID_HEADER);
 
                 if (sessionIdFromHeader != null) {
@@ -117,6 +163,7 @@ public class RestApiSessionManager {
 
         if (sessionId != null) {
             RestApiSessionAcquiredEvent.fire(eventBus, sessionId);
+            scheduleKeepAliveHeartbeat();
         } else {
             RestApiSessionManager.logger.severe("Engine REST API session ID is not available"); //$NON-NLS-1$
         }

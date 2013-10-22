@@ -19,6 +19,9 @@
         <c:if test="${requestScope['pluginDefinitions'] != null}">
             var pluginDefinitions = <c:out value="${requestScope['pluginDefinitions']}" escapeXml="false"/>;
         </c:if>
+        <c:if test="${requestScope['engineSessionTimeout'] != null}">
+            var engineSessionTimeout = <c:out value="${requestScope['engineSessionTimeout']}" escapeXml="false"/>;
+        </c:if>
         <c:if test="${requestScope['messages'] != null}">
             var messages = <c:out value="${requestScope['messages']}" escapeXml="false"/>;
         </c:if>

@@ -605,7 +605,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             if (configParameters.getConfigValue() == ConfigurationValues.VdcVersion ||
                     configParameters.getConfigValue() == ConfigurationValues.ProductRPMVersion ||
                     configParameters.getConfigValue() == ConfigurationValues.ApplicationMode ||
-                    configParameters.getConfigValue() == ConfigurationValues.UserMessageOfTheDay) {
+                    configParameters.getConfigValue() == ConfigurationValues.UserMessageOfTheDay ||
+                    configParameters.getConfigValue() == ConfigurationValues.UserSessionTimeOutInterval) {
                 return runQueryImpl(actionType, parameters, false);
             }
 

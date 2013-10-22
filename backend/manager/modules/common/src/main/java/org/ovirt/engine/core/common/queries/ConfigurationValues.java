@@ -111,7 +111,8 @@ public enum ConfigurationValues {
     DefaultWindowsTimeZone,
     SpeedOptimizationSchedulingThreshold,
     SchedulerAllowOverBooking,
-    SchedulerOverBookingThreshold;
+    SchedulerOverBookingThreshold,
+    UserSessionTimeOutInterval(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,

@@ -43,6 +43,9 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     // Cannot use @Mock since ArrayNode is final
     private ArrayNode mockPluginDefinitionsArray;
 
+    @Mock
+    private ObjectNode mockEngineSessionTimeoutObject;
+
     @Before
     public void setUpMockRequest() {
         ObjectMapper mapper = new ObjectMapper();
@@ -53,6 +56,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
         when(mockApplicationModeObject.toString()).thenReturn(APPLICATION_MODE);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE)).thenReturn(mockApplicationModeObject);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS)).thenReturn(mockPluginDefinitionsArray);
+        when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_ENGINE_SESSION_TIMEOUT)).thenReturn(mockEngineSessionTimeoutObject);
     }
 
     @Override
@@ -81,9 +85,11 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     public void testDoGet_ExtraAttributes_WithoutUserInfoObject() throws IOException, ServletException {
         doReturn(mockApplicationModeObject).when(testServlet).getApplicationModeObject(any(Integer.class));
         doReturn(mockPluginDefinitionsArray).when(testServlet).getPluginDefinitionsArray(anyListOf(PluginData.class));
+        doReturn(mockEngineSessionTimeoutObject).when(testServlet).getEngineSessionTimeoutObject(any(Integer.class));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE, mockApplicationModeObject);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS, mockPluginDefinitionsArray);
+        verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_ENGINE_SESSION_TIMEOUT, mockEngineSessionTimeoutObject);
     }
 
     @Test
@@ -123,6 +129,12 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
             assertTrue(item.get("config") instanceof ObjectNode); //$NON-NLS-1$
             assertEquals(item.get("enabled").asBoolean(), true); //$NON-NLS-1$
         }
+    }
+
+    @Test
+    public void testGetEngineSessionTimeoutObject() {
+        ObjectNode result = testServlet.getEngineSessionTimeoutObject(Integer.valueOf(30));
+        assertEquals(result.get("value").asText(), "30"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }
