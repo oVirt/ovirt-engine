@@ -38,7 +38,6 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-@SuppressWarnings("deprecation")
 public class ProviderModel extends Model {
 
     private static final String CMD_SAVE = "OnSave"; //$NON-NLS-1$
@@ -292,10 +291,13 @@ public class ProviderModel extends Model {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {
+                if (result.getReturnValue() == null || !result.getReturnValue().getSucceeded()) {
+                    return;
+                }
                 sourceListModel.getSearchCommand().execute();
+                cancel();
             }
         });
-        cancel();
     }
 
     private void onSave() {
