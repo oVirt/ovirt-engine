@@ -108,7 +108,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     public void testPopulate() throws Exception {
         setupParentExpectations();
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectationsAllContent(1,false);
+        setUpGetEntityExpectationsAllContent(1, false);
 
         resource.setParent(bricksResourceMock);
         control.replay();
@@ -119,7 +119,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     @Test
     public void testPopulateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectationsAllContent(1,true);
+        setUpGetEntityExpectationsAllContent(1, true);
 
         resource.setParent(bricksResourceMock);
         control.replay();
@@ -199,7 +199,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     private void setUpGetEntityExpectationsAllContent(int times, boolean notFound) throws Exception {
-        setUpGetEntityExpectations(times,notFound);
+        setUpGetEntityExpectations(times, notFound);
         List<String> populateValue = new ArrayList<String>();
         populateValue.add("true");
         expect(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).andReturn(populateValue).anyTimes();

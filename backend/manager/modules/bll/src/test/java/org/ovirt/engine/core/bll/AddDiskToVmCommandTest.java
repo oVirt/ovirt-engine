@@ -514,7 +514,7 @@ public class AddDiskToVmCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
         when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
-        assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun",command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun", command.checkIfLunDiskCanBeAdded());
     }
 
     @Test
@@ -536,13 +536,13 @@ public class AddDiskToVmCommandTest {
         initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setiqn(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null iqn", command.checkIfLunDiskCanBeAdded());
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
 
         clearCanDoActionMessages();
 
         disk.getLun().getLunConnections().get(0).setiqn("");
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with an empty iqn",command.checkIfLunDiskCanBeAdded());
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with an empty iqn", command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
     }
 
     @Test
@@ -552,14 +552,14 @@ public class AddDiskToVmCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setconnection(null);
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null address",command.checkIfLunDiskCanBeAdded());
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null address", command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
 
         clearCanDoActionMessages();
 
         disk.getLun().getLunConnections().get(0).setconnection("");
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty address",command.checkIfLunDiskCanBeAdded());
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty address", command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
     }
 
     @Test
@@ -569,14 +569,14 @@ public class AddDiskToVmCommandTest {
         parameters.setDiskInfo(disk);
         initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setport(null);
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null port",command.checkIfLunDiskCanBeAdded());
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null port", command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
 
         clearCanDoActionMessages();
 
         disk.getLun().getLunConnections().get(0).setport("");
-        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port",command.checkIfLunDiskCanBeAdded());
-        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+        assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port", command.checkIfLunDiskCanBeAdded());
+        assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
     }
 
     @Test

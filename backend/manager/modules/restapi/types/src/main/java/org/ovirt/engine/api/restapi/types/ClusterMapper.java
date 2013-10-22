@@ -25,7 +25,7 @@ public class ClusterMapper {
     private static final String CPU_OVER_COMMIT_DURATION_MINUTES = "CpuOverCommitDurationMinutes";
     private static final String HIGH_UTILIZATION = "HighUtilization";
     private static final String LOW_UTILIZATION = "LowUtilization";
-    static final org.ovirt.engine.core.compat.Version min_thp_version = new org.ovirt.engine.core.compat.Version(3,0);
+    static final org.ovirt.engine.core.compat.Version min_thp_version = new org.ovirt.engine.core.compat.Version(3, 0);
 
     @Mapping(from = Cluster.class, to = VDSGroup.class)
     public static VDSGroup map(Cluster model, VDSGroup template) {

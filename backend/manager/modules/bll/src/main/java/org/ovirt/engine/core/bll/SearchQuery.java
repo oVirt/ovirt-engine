@@ -290,7 +290,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             isSafe = SearchObjects.isSafeExpression(searchText);
             if (useCache) {
                 // first lets check the cache of queries.
-                searchKey = String.format("%1$s,%2$s,%3$s", searchText, getParameters().getMaxCount(),getParameters().getCaseSensitive());
+                searchKey = String.format("%1$s,%2$s,%3$s", searchText, getParameters().getMaxCount(), getParameters().getCaseSensitive());
                 data = mQueriesCache.get(searchKey);
                 isExistsValue = (data != null);
 

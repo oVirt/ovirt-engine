@@ -344,14 +344,14 @@ public class TagDAOTest extends BaseDAOTestCase {
                         existingUserGroupTag.getgroup_id());
 
         assertNotNull(result);
-        assertEqualsTagUserGroupMap(existingUserGroupTag,result);
+        assertEqualsTagUserGroupMap(existingUserGroupTag, result);
 
     }
 
     private void assertEqualsTagUserGroupMap(TagsUserGroupMap existing, TagsUserGroupMap result) {
-        assertEquals("Group IDs not equal",existing.getgroup_id(), result.getgroup_id());
-        assertEquals("Tag IDs not equal",existing.gettag_id(), result.gettag_id());
-        assertEquals("Object equation",existing,result);
+        assertEquals("Group IDs not equal", existing.getgroup_id(), result.getgroup_id());
+        assertEquals("Tag IDs not equal", existing.gettag_id(), result.gettag_id());
+        assertEquals("Object equation", existing, result);
 
     }
 
@@ -371,13 +371,13 @@ public class TagDAOTest extends BaseDAOTestCase {
                 dao.getTagUserByTagIdAndByuserId(existingUserTag.gettag_id(), existingUserTag.getuser_id());
 
         assertNotNull(result);
-        assertEqualsTagUserMap(existingUserTag,result);
+        assertEqualsTagUserMap(existingUserTag, result);
     }
 
     private void assertEqualsTagUserMap(TagsUserMap existing, TagsUserMap result) {
-        assertEquals("Tag ID is not equal",existing.gettag_id(), result.gettag_id());
-        assertEquals("USER ID is not equal",existing.getuser_id(), result.getuser_id());
-        assertEquals("Object equation",existing,result);
+        assertEquals("Tag ID is not equal", existing.gettag_id(), result.gettag_id());
+        assertEquals("USER ID is not equal", existing.getuser_id(), result.getuser_id());
+        assertEquals("Object equation", existing, result);
     }
 
     @Test
@@ -385,13 +385,13 @@ public class TagDAOTest extends BaseDAOTestCase {
         TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
 
         assertNotNull(result);
-        assertEqualsTagsVdsMap(existingVdsTag,result);
+        assertEqualsTagsVdsMap(existingVdsTag, result);
     }
 
     private void assertEqualsTagsVdsMap(TagsVdsMap existing, TagsVdsMap result) {
-        assertEquals("Tag ID is not equal",existing.gettag_id(), result.gettag_id());
-        assertEquals("VDS ID is not equal",existing.getvds_id(), result.getvds_id());
-        assertEquals("Object equation",existing,result);
+        assertEquals("Tag ID is not equal", existing.gettag_id(), result.gettag_id());
+        assertEquals("VDS ID is not equal", existing.getvds_id(), result.getvds_id());
+        assertEquals("Object equation", existing, result);
     }
 
     @Test
@@ -401,7 +401,7 @@ public class TagDAOTest extends BaseDAOTestCase {
         TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(newVdsTag.gettag_id(), newVdsTag.getvds_id());
 
         assertNotNull(result);
-        assertEqualsTagsVdsMap(newVdsTag,result);
+        assertEqualsTagsVdsMap(newVdsTag, result);
     }
 
     @Test
@@ -422,9 +422,9 @@ public class TagDAOTest extends BaseDAOTestCase {
     }
 
     private void assertEqualsTagsVmMap(TagsVmMap existing, TagsVmMap result) {
-        assertEquals("TG is not equal",existing.gettag_id(),result.gettag_id());
-        assertEquals("VM id not equal ",existing.getvm_id(),result.getvm_id());
-        assertEquals("Object equation",existing,result);
+        assertEquals("TG is not equal", existing.gettag_id(), result.gettag_id());
+        assertEquals("VM id not equal ", existing.getvm_id(), result.getvm_id());
+        assertEquals("Object equation", existing, result);
     }
 
     @Test

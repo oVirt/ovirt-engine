@@ -49,7 +49,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
             // Keep server details in the map only for the servers which are reachable
             Iterator<Map.Entry<String, String>> iterator = serverFingerPrintMap.entrySet().iterator();
             while (iterator.hasNext()) {
-                Map.Entry<String,String> entry = iterator.next();
+                Map.Entry<String, String> entry = iterator.next();
                 if (entry.getValue() == null) {
                     iterator.remove();
                 }

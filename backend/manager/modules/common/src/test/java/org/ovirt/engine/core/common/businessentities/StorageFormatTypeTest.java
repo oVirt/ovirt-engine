@@ -7,7 +7,7 @@ import org.junit.Test;
 public class StorageFormatTypeTest {
     @Test
     public void forValue() {
-        for(String val : new String[]{"0","2", "3"}) {
+        for(String val : new String[]{"0", "2", "3"}) {
             Assert.assertNotNull(StorageFormatType.forValue(val));
         }
         Assert.assertNull(StorageFormatType.forValue(null));

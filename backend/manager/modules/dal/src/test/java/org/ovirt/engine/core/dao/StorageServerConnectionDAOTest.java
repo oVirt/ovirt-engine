@@ -173,10 +173,10 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
 
         //get it again after the update
         StorageServerConnections updatedNFSServerConnectionFromDB = dao.get("0cb136e8-e5ed-472b-8914-260bc48c2987");
-        assertEquals(updatedNFSServerConnectionFromDB.getconnection(),newNFSServerConnectionFromDB.getconnection());
-        assertEquals(updatedNFSServerConnectionFromDB.getid(),newNFSServerConnectionFromDB.getid());
-        assertEquals(updatedNFSServerConnectionFromDB.getNfsRetrans(),newNFSServerConnectionFromDB.getNfsRetrans());
-        assertEquals(updatedNFSServerConnectionFromDB.getNfsTimeo(),newNFSServerConnectionFromDB.getNfsTimeo());
+        assertEquals(updatedNFSServerConnectionFromDB.getconnection(), newNFSServerConnectionFromDB.getconnection());
+        assertEquals(updatedNFSServerConnectionFromDB.getid(), newNFSServerConnectionFromDB.getid());
+        assertEquals(updatedNFSServerConnectionFromDB.getNfsRetrans(), newNFSServerConnectionFromDB.getNfsRetrans());
+        assertEquals(updatedNFSServerConnectionFromDB.getNfsTimeo(), newNFSServerConnectionFromDB.getNfsTimeo());
         assertNotSame(newNFSServerConnection.getconnection(), updatedNFSServerConnectionFromDB.getconnection());
         //cleanup...
         dao.remove("0cb136e8-e5ed-472b-8914-260bc48c2987");
@@ -222,14 +222,14 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllConnectionsOfNfsDomain() {
       List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("d9ede37f-e6c3-4bf9-a984-19174070aa31"));
-      assertEquals(connections.size(),1);
-      assertEquals(connections.get(0).getid(),"0cc146e8-e5ed-482c-8814-270bc48c2981");
+      assertEquals(connections.size(), 1);
+      assertEquals(connections.get(0).getid(), "0cc146e8-e5ed-482c-8814-270bc48c2981");
     }
 
     @Test
     public void testGetAllConnectionsOfIscsiDomain() {
       List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
-      assertEquals(connections.size(),2);
+      assertEquals(connections.size(), 2);
       assertTrue((connections.get(0).getid().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk")) || (connections.get(0).getid().equals("0cc146e8-e5ed-482c-8814-270bc48c297e")));
     }
 }

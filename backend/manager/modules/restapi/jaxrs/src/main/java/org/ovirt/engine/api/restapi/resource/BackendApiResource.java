@@ -342,7 +342,7 @@ public class BackendApiResource
             }
             baos.flush();
             return Response.ok(baos.toByteArray(), MediaType.APPLICATION_OCTET_STREAM)
-                           .header("content-disposition","attachment; filename = " + SCHEMA_NAME)
+                           .header("content-disposition", "attachment; filename = " + SCHEMA_NAME)
                            .build();
         } catch (IOException e) {
             LOG.error("Loading api.xsd file failed.", e);

@@ -108,7 +108,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                     @Override
                     public Void runInTransaction() {
                         try {
-                            createJobToMonitor(cluster,task);
+                            createJobToMonitor(cluster, task);
                         } catch (VdcBLLException e) {
                             log.error("Error creating job for task from CLI", e);
                         }
@@ -122,7 +122,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                     //we have already processed the task
                     continue;
                 }
-                step.setDescription(getTaskMessage(cluster,step.getStepType(),task));
+                step.setDescription(getTaskMessage(cluster, step.getStepType(), task));
                 step.setStatus(task.getStatus());
                 if (hasTaskCompleted(task)) {
                     step.markStepEnded(task.getStatus());
@@ -166,7 +166,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         ExecutionHandler.updateStepExternalId(asyncStep,
                 task.getTaskId(),
                 ExternalSystemType.GLUSTER);
-        updateVolumeBricksAndLock(cluster,task);
+        updateVolumeBricksAndLock(cluster, task);
 
     }
 
@@ -222,7 +222,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }
     }
 
-    private void updateVolumeBricksAndLock(VDSGroup cluster,GlusterAsyncTask task) {
+    private void updateVolumeBricksAndLock(VDSGroup cluster, GlusterAsyncTask task) {
         //get volume associated with task
         String volumeName = task.getTaskParameters().getVolumeName();
         GlusterVolumeEntity vol = getVolumeDao().getByName(cluster.getId(), volumeName);

@@ -360,7 +360,7 @@ public class VdsBrokerObjectsBuilder {
             List<Map<String, String>> devicesList = new ArrayList<Map<String, String>>();
 
             for (Object device: el.getValue()) {
-                devicesList.add((Map<String,String>)device);
+                devicesList.add((Map<String, String>)device);
             }
 
             hbas.put(el.getKey(), devicesList);
@@ -424,7 +424,7 @@ public class VdsBrokerObjectsBuilder {
 
             if (packages.containsKey(VdsProperties.vdsmPackageName)) {
                 Map<String, Object> vdsm = (Map<String, Object>) packages.get(VdsProperties.vdsmPackageName);
-                vds.setVersion(getPackageRpmVersion("vdsm",vdsm));
+                vds.setVersion(getPackageRpmVersion("vdsm", vdsm));
             }
             if (packages.containsKey(VdsProperties.qemuKvmPackageName)) {
                 Map<String, Object> kvm = (Map<String, Object>) packages.get(VdsProperties.qemuKvmPackageName);

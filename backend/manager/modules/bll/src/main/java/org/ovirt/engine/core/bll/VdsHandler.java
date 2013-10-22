@@ -39,12 +39,12 @@ public class VdsHandler extends BaseHandler {
                 new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses), VDSStatus.class);
 
 
-        for (Pair<EditableField,String> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
+        for (Pair<EditableField, String> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
             mUpdateVdsStatic.AddPermittedFields(pair.getSecond());
         }
 
-        for (Pair<EditableOnVdsStatus,String> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {
-            mUpdateVdsStatic.AddField(Arrays.asList(pair.getFirst().statuses()),pair.getSecond());
+        for (Pair<EditableOnVdsStatus, String> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {
+            mUpdateVdsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond());
         }
     }
 

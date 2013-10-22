@@ -235,14 +235,14 @@ public class GlusterHookEntity extends IVdcQueryable implements BusinessEntity<G
         }
         GlusterHookEntity hook = (GlusterHookEntity) obj;
 
-        if (!(ObjectUtils.objectsEqual(getId(),hook.getId())
-                && ObjectUtils.objectsEqual(clusterId,hook.getClusterId())
-                && ObjectUtils.objectsEqual(glusterCommand,hook.getGlusterCommand())
+        if (!(ObjectUtils.objectsEqual(getId(), hook.getId())
+                && ObjectUtils.objectsEqual(clusterId, hook.getClusterId())
+                && ObjectUtils.objectsEqual(glusterCommand, hook.getGlusterCommand())
                 && stage == hook.getStage()
-                && ObjectUtils.objectsEqual(name,hook.getName())
+                && ObjectUtils.objectsEqual(name, hook.getName())
                 && contentType == hook.getContentType()
-                && ObjectUtils.objectsEqual(conflictStatus,hook.getConflictStatus())
-                && ObjectUtils.objectsEqual(checksum,hook.getChecksum())
+                && ObjectUtils.objectsEqual(conflictStatus, hook.getConflictStatus())
+                && ObjectUtils.objectsEqual(checksum, hook.getChecksum())
                 && status == hook.getStatus())) {
             return false;
         }

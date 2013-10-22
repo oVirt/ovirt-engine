@@ -118,15 +118,15 @@ public class StorageDomainMapperTest extends
         RESTConnection.setAddress("1.2.135.255");
         RESTConnection.setUsername("myuser1");
 
-        StorageConnection mappedResult = StorageDomainMapper.map(connection,null);
-        assertEquals(RESTConnection.getId(),mappedResult.getId());
+        StorageConnection mappedResult = StorageDomainMapper.map(connection, null);
+        assertEquals(RESTConnection.getId(), mappedResult.getId());
         // Although password was set on StorageServerConnections object, it should not be returned via REST
         // thus testing here that it remains empty.
-        assertEquals(RESTConnection.getPassword(),mappedResult.getPassword());
-        assertEquals(RESTConnection.getType(),mappedResult.getType());
-        assertEquals(RESTConnection.getAddress(),mappedResult.getAddress());
-        assertEquals(RESTConnection.getUsername(),mappedResult.getUsername());
-        assertEquals(RESTConnection.getTarget(),mappedResult.getTarget());
+        assertEquals(RESTConnection.getPassword(), mappedResult.getPassword());
+        assertEquals(RESTConnection.getType(), mappedResult.getType());
+        assertEquals(RESTConnection.getAddress(), mappedResult.getAddress());
+        assertEquals(RESTConnection.getUsername(), mappedResult.getUsername());
+        assertEquals(RESTConnection.getTarget(), mappedResult.getTarget());
     }
 
     @Test
@@ -149,14 +149,14 @@ public class StorageDomainMapperTest extends
         RESTConnection.setNfsTimeo(400);
         RESTConnection.setNfsVersion(NfsVersion.V3.toString());
 
-        StorageConnection mappedResult = StorageDomainMapper.map(connection,null);
-        assertEquals(RESTConnection.getId(),mappedResult.getId());
-        assertEquals(RESTConnection.getType(),mappedResult.getType());
-        assertEquals(RESTConnection.getAddress(),mappedResult.getAddress());
-        assertEquals(RESTConnection.getPath(),mappedResult.getPath());
-        assertEquals(RESTConnection.getNfsRetrans(),mappedResult.getNfsRetrans());
-        assertEquals(RESTConnection.getNfsTimeo(),mappedResult.getNfsTimeo());
-        assertEquals(RESTConnection.getNfsVersion(),mappedResult.getNfsVersion());
+        StorageConnection mappedResult = StorageDomainMapper.map(connection, null);
+        assertEquals(RESTConnection.getId(), mappedResult.getId());
+        assertEquals(RESTConnection.getType(), mappedResult.getType());
+        assertEquals(RESTConnection.getAddress(), mappedResult.getAddress());
+        assertEquals(RESTConnection.getPath(), mappedResult.getPath());
+        assertEquals(RESTConnection.getNfsRetrans(), mappedResult.getNfsRetrans());
+        assertEquals(RESTConnection.getNfsTimeo(), mappedResult.getNfsTimeo());
+        assertEquals(RESTConnection.getNfsVersion(), mappedResult.getNfsVersion());
     }
 
     @Test
@@ -177,13 +177,13 @@ public class StorageDomainMapperTest extends
         RESTConnection.setVfsType("nfs");
         RESTConnection.setMountOptions("timeo=30");
 
-        StorageConnection mappedResult = StorageDomainMapper.map(connection,null);
-        assertEquals(RESTConnection.getId(),mappedResult.getId());
-        assertEquals(RESTConnection.getType(),mappedResult.getType());
-        assertEquals(RESTConnection.getAddress(),mappedResult.getAddress());
-        assertEquals(RESTConnection.getVfsType(),mappedResult.getVfsType());
-        assertEquals(RESTConnection.getPath(),mappedResult.getPath());
-        assertEquals(RESTConnection.getMountOptions(),mappedResult.getMountOptions());
+        StorageConnection mappedResult = StorageDomainMapper.map(connection, null);
+        assertEquals(RESTConnection.getId(), mappedResult.getId());
+        assertEquals(RESTConnection.getType(), mappedResult.getType());
+        assertEquals(RESTConnection.getAddress(), mappedResult.getAddress());
+        assertEquals(RESTConnection.getVfsType(), mappedResult.getVfsType());
+        assertEquals(RESTConnection.getPath(), mappedResult.getPath());
+        assertEquals(RESTConnection.getMountOptions(), mappedResult.getMountOptions());
     }
 
     @Test
@@ -204,12 +204,12 @@ public class StorageDomainMapperTest extends
         RESTConnection.setVfsType("nfs");
         RESTConnection.setMountOptions("timeo=30");
 
-        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection,null);
-        assertEquals(connection.getid(),mappedResult.getid());
-        assertEquals(connection.getstorage_type(),mappedResult.getstorage_type());
-        assertEquals(connection.getconnection(),mappedResult.getconnection());
-        assertEquals(connection.getVfsType(),mappedResult.getVfsType());
-        assertEquals(connection.getMountOptions(),mappedResult.getMountOptions());
+        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection, null);
+        assertEquals(connection.getid(), mappedResult.getid());
+        assertEquals(connection.getstorage_type(), mappedResult.getstorage_type());
+        assertEquals(connection.getconnection(), mappedResult.getconnection());
+        assertEquals(connection.getVfsType(), mappedResult.getVfsType());
+        assertEquals(connection.getMountOptions(), mappedResult.getMountOptions());
     }
 
     @Test
@@ -232,13 +232,13 @@ public class StorageDomainMapperTest extends
         RESTConnection.setNfsTimeo(400);
         RESTConnection.setNfsVersion(NfsVersion.V3.toString());
 
-        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection,null);
-        assertEquals(connection.getid(),mappedResult.getid());
-        assertEquals(connection.getstorage_type(),mappedResult.getstorage_type());
-        assertEquals(connection.getconnection(),mappedResult.getconnection());
-        assertEquals(connection.getNfsRetrans(),mappedResult.getNfsRetrans());
-        assertEquals(connection.getNfsTimeo(),mappedResult.getNfsTimeo());
-        assertEquals(connection.getNfsVersion(),mappedResult.getNfsVersion());
+        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection, null);
+        assertEquals(connection.getid(), mappedResult.getid());
+        assertEquals(connection.getstorage_type(), mappedResult.getstorage_type());
+        assertEquals(connection.getconnection(), mappedResult.getconnection());
+        assertEquals(connection.getNfsRetrans(), mappedResult.getNfsRetrans());
+        assertEquals(connection.getNfsTimeo(), mappedResult.getNfsTimeo());
+        assertEquals(connection.getNfsVersion(), mappedResult.getNfsVersion());
     }
 
     @Test
@@ -262,14 +262,14 @@ public class StorageDomainMapperTest extends
         RESTConnection.setUsername("myuser1");
         RESTConnection.setPassword("123");
 
-        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection,null);
-        assertEquals(mappedResult.getid(),mappedResult.getid());
-        assertEquals(mappedResult.getstorage_type(),mappedResult.getstorage_type());
-        assertEquals(mappedResult.getconnection(),mappedResult.getconnection());
-        assertEquals(mappedResult.getiqn(),mappedResult.getiqn());
-        assertEquals(mappedResult.getuser_name(),mappedResult.getuser_name());
-        assertEquals(mappedResult.getpassword(),mappedResult.getpassword());
-        assertEquals(mappedResult.getport(),mappedResult.getport());
+        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection, null);
+        assertEquals(mappedResult.getid(), mappedResult.getid());
+        assertEquals(mappedResult.getstorage_type(), mappedResult.getstorage_type());
+        assertEquals(mappedResult.getconnection(), mappedResult.getconnection());
+        assertEquals(mappedResult.getiqn(), mappedResult.getiqn());
+        assertEquals(mappedResult.getuser_name(), mappedResult.getuser_name());
+        assertEquals(mappedResult.getpassword(), mappedResult.getpassword());
+        assertEquals(mappedResult.getport(), mappedResult.getport());
 
     }
 

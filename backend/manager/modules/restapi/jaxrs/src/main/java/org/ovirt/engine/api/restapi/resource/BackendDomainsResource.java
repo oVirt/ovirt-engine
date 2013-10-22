@@ -24,7 +24,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
     String id;
 
     public BackendDomainsResource() {
-        super(Domain.class, Directory.class,SUB_COLLECTIONS);
+        super(Domain.class, Directory.class, SUB_COLLECTIONS);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
     private Domains mapCollection(List<Directory> entities) {
         Domains collection = new Domains();
         for (Directory entity : entities) {
-            collection.getDomains().add(injectSearchLinks(addLinks(map(entity)),SUB_COLLECTIONS));
+            collection.getDomains().add(injectSearchLinks(addLinks(map(entity)), SUB_COLLECTIONS));
         }
         return collection;
     }

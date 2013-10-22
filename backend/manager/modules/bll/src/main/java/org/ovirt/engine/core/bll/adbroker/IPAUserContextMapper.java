@@ -100,7 +100,7 @@ public class IPAUserContextMapper implements ContextMapper {
                 user.setMemberof(new ArrayList<String>());
             }
         } catch (NamingException e) {
-            log.error("Failed populating user",e);
+            log.error("Failed populating user", e);
             return null;
         }
 

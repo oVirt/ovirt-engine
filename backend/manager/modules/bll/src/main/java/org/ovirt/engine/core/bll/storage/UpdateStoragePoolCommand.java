@@ -120,7 +120,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     new UpgradeStoragePoolVDSCommandParameters(spId, targetFormat));
             } catch (VdcBLLException e) {
                 log.warnFormat("Upgrade procees of Storage Pool {0} has encountered a problem due to following reason: {1}", spId, e.getMessage());
-                AuditLogDirector.log(this,AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
+                AuditLogDirector.log(this, AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
             }
         }
     }

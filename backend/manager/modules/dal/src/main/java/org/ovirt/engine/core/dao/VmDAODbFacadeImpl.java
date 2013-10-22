@@ -63,7 +63,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     @Override
     public Map<Boolean, List<VM>> getForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
         Map<Boolean, List<VM>> result = new HashMap<Boolean, List<VM>>();
-        List<Pair<VM,VmDevice>> vms = getVmsWithPlugInfo(id);
+        List<Pair<VM, VmDevice>> vms = getVmsWithPlugInfo(id);
         for (Pair<VM, VmDevice> pair : vms) {
             VmDevice device = pair.getSecond();
             if (includeVmsSnapshotAttachedTo || device.getSnapshotId() == null) {
@@ -76,8 +76,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     @Override
     public List<VM> getVmsListForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
         List<VM> result = new ArrayList<>();
-        List<Pair<VM,VmDevice>> vms = getVmsWithPlugInfo(id);
-        for (Pair<VM,VmDevice> pair : vms) {
+        List<Pair<VM, VmDevice>> vms = getVmsWithPlugInfo(id);
+        for (Pair<VM, VmDevice> pair : vms) {
             if (includeVmsSnapshotAttachedTo || pair.getSecond().getSnapshotId() == null) {
                 result.add(pair.getFirst());
             }
@@ -85,7 +85,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         return result;
     }
 
-    public List<Pair<VM,VmDevice>> getVmsWithPlugInfo(Guid id) {
+    public List<Pair<VM, VmDevice>> getVmsWithPlugInfo(Guid id) {
         return getCallsHandler().executeReadList
                 ("GetVmsByDiskId",
                         VMWithPlugInfoRowMapper.instance,
@@ -371,7 +371,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
             entity.setRunOnce(rs.getBoolean("is_run_once"));
-            entity.setCreatedByUserId(getGuid(rs,"created_by_user_id"));
+            entity.setCreatedByUserId(getGuid(rs, "created_by_user_id"));
             entity.setCpuName(rs.getString("cpu_name"));
             entity.setInstanceTypeId(Guid.createGuidFromString(rs.getString("instance_type_id")));
             entity.setImageTypeId(Guid.createGuidFromString(rs.getString("image_type_id")));
@@ -379,13 +379,13 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         }
     }
 
-    private static final class VMWithPlugInfoRowMapper implements RowMapper<Pair<VM,VmDevice>> {
+    private static final class VMWithPlugInfoRowMapper implements RowMapper<Pair<VM, VmDevice>> {
         public static final VMWithPlugInfoRowMapper instance = new VMWithPlugInfoRowMapper();
 
         @Override
-        public Pair<VM,VmDevice> mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public Pair<VM, VmDevice> mapRow(ResultSet rs, int rowNum) throws SQLException {
             @SuppressWarnings("synthetic-access")
-            Pair<VM,VmDevice> entity = new Pair<>();
+            Pair<VM, VmDevice> entity = new Pair<>();
             entity.setFirst(VMRowMapper.instance.mapRow(rs, rowNum));
             entity.setSecond(VmDeviceDAODbFacadeImpl.VmDeviceRowMapper.instance.mapRow(rs, rowNum));
             return entity;

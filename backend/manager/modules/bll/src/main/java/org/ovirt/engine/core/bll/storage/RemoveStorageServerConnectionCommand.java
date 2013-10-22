@@ -81,7 +81,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                      }
                      else {
                         String diskNamesForMessage = prepareEntityNamesForMessage(diskNames);
-                        return prepareFailureMessageForDomainsAndDisks(domainNamesForMessage,diskNamesForMessage);
+                        return prepareFailureMessageForDomainsAndDisks(domainNamesForMessage, diskNamesForMessage);
                     }
                 }
                 else if (!diskNames.isEmpty()) {

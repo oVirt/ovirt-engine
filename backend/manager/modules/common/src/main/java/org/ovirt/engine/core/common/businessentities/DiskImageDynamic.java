@@ -119,6 +119,6 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
 
     @Override
     public int compareTo(DiskImageDynamic o) {
-        return BusinessEntityGuidComparator.<DiskImageDynamic>newInstance().compare(this,o);
+        return BusinessEntityGuidComparator.<DiskImageDynamic>newInstance().compare(this, o);
     }
 }

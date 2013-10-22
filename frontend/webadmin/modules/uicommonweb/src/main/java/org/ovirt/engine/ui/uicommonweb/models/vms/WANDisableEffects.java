@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 public enum WANDisableEffects {
-    animation("animation"),//$NON-NLS-1$
-    wallpaper("wallpaper"),//$NON-NLS-1$
-    fontSmooth("font-smooth"),//$NON-NLS-1$
-    all("all");//$NON-NLS-1$
+    animation("animation"), //$NON-NLS-1$
+    wallpaper("wallpaper"), //$NON-NLS-1$
+    fontSmooth("font-smooth"), //$NON-NLS-1$
+    all("all"); //$NON-NLS-1$
 
     private final String stringValue;
 

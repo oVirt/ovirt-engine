@@ -106,8 +106,8 @@ public class OvfManagerTest {
         assertNotNull(xml);
         final VmTemplate newtemplate = new VmTemplate();
         manager.ImportTemplate(xml, newtemplate, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
-        assertEquals("imported template is different than expected",template, newtemplate);
-        assertEquals("imported db generation is different than expected",template.getDbGeneration(), newtemplate.getDbGeneration());
+        assertEquals("imported template is different than expected", template, newtemplate);
+        assertEquals("imported db generation is different than expected", template.getDbGeneration(), newtemplate.getDbGeneration());
     }
 
     @Test
@@ -117,8 +117,8 @@ public class OvfManagerTest {
         assertNotNull(xml);
         final VmTemplate newtemplate = new VmTemplate();
         manager.ImportTemplate(xml, newtemplate, new ArrayList<DiskImage>(), new ArrayList<VmNetworkInterface>());
-        assertEquals("imported template is different than expected",template, newtemplate);
-        assertEquals("imported db generation is different than expected",template.getDbGeneration(), newtemplate.getDbGeneration());
+        assertEquals("imported template is different than expected", template, newtemplate);
+        assertEquals("imported db generation is different than expected", template.getDbGeneration(), newtemplate.getDbGeneration());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class OvfManagerTest {
                 new ArrayList<DiskImage>(),
                 new ArrayList<VmNetworkInterface>());
         assertEquals("imported template is different than expected", template, newtemplate);
-        assertTrue("imported db generation is different than expected",newtemplate.getDbGeneration() == 1);
+        assertTrue("imported db generation is different than expected", newtemplate.getDbGeneration() == 1);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class OvfManagerTest {
                 new ArrayList<DiskImage>(),
                 new ArrayList<VmNetworkInterface>());
         assertEquals("imported template is different than expected", template, newtemplate);
-        assertTrue("imported db generation is different than expected",newtemplate.getDbGeneration() == 1);
+        assertTrue("imported db generation is different than expected", newtemplate.getDbGeneration() == 1);
     }
 
     private static VM createVM() {

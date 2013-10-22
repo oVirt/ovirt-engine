@@ -94,13 +94,13 @@ public class GlusterHookSyncJob extends GlusterJob {
 
         try {
             List<GlusterHookEntity> existingHooks = getHooksDao().getByClusterId(clusterId);
-            List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList = new ArrayList<Callable<Pair<GlusterHookEntity,VDSReturnValue>>>();
+            List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList = new ArrayList<Callable<Pair<GlusterHookEntity, VDSReturnValue>>>();
 
-            Map<String, GlusterHookEntity> existingHookMap = new HashMap<String,GlusterHookEntity>();
-            Map<Guid, Set<VDS>> existingHookServersMap = new HashMap<Guid,Set<VDS>>();
+            Map<String, GlusterHookEntity> existingHookMap = new HashMap<String, GlusterHookEntity>();
+            Map<Guid, Set<VDS>> existingHookServersMap = new HashMap<Guid, Set<VDS>>();
             Map<String, Integer> existingHookConflictMap = new HashMap<String, Integer>();
             for (final GlusterHookEntity hook: existingHooks) {
-                existingHookServersMap.put(hook.getId(),new HashSet<VDS>());
+                existingHookServersMap.put(hook.getId(), new HashSet<VDS>());
                 existingHookConflictMap.put(hook.getHookKey(), hook.getConflictStatus());
                 //initialize hook conflict status as this is to be computed again
                 hook.setConflictStatus(0);
@@ -108,7 +108,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             }
 
             Set<String> fetchedHookKeyList = new HashSet<String>();
-            Map<String, GlusterHookEntity> newHookMap = new HashMap<String,GlusterHookEntity>();
+            Map<String, GlusterHookEntity> newHookMap = new HashMap<String, GlusterHookEntity>();
             List<GlusterServerHook> newServerHooks = new ArrayList<GlusterServerHook>();
             List<GlusterServerHook> updatedServerHooks = new ArrayList<GlusterServerHook>();
             List<GlusterServerHook> deletedServerHooks = new ArrayList<GlusterServerHook>();
@@ -175,12 +175,12 @@ public class GlusterHookSyncJob extends GlusterJob {
                             newHook = fetchedHook;
                             newHook.setClusterId(clusterId);
                             newHook.setId(Guid.newGuid());
-                            log.infoFormat("Detected new hook {0} in server {1}, adding to engine hooks", key,server);
+                            log.infoFormat("Detected new hook {0} in server {1}, adding to engine hooks", key, server);
                             logMessage(clusterId, key, AuditLogType.GLUSTER_HOOK_DETECTED_NEW);
 
                             updateContentTasksList(contentTasksList, newHook, server);
 
-                            existingHookServersMap.put(newHook.getId(),new HashSet<VDS>());
+                            existingHookServersMap.put(newHook.getId(), new HashSet<VDS>());
                         }
                         Integer conflictStatus = getConflictStatus(newHook, fetchedHook);
                         if (conflictStatus > 0) {
@@ -215,7 +215,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             for (String key: hooksOnlyInDB) {
                 GlusterHookEntity hook = existingHookMap.get(key);
                 hook.addMissingConflict();
-                logMessage(hook.getClusterId(),hook.getHookKey(),AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
+                logMessage(hook.getClusterId(), hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
                 getHooksDao().updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
             }
         } catch (Exception e) {
@@ -292,8 +292,8 @@ public class GlusterHookSyncJob extends GlusterJob {
             // Check if aggregated conflict status is different from existing hook
             Integer oldConflictStatus = existingHookConflictMap.get(hook.getHookKey());
             if (!(hook.getConflictStatus().equals(oldConflictStatus))) {
-                log.debugFormat("Conflict change detected for hook {0} in cluster {1} ", hook.getHookKey(),hook.getClusterId());
-                logMessage(hook.getClusterId(),hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
+                log.debugFormat("Conflict change detected for hook {0} in cluster {1} ", hook.getHookKey(), hook.getClusterId());
+                logMessage(hook.getClusterId(), hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
                 getHooksDao().updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
             }
         }
@@ -321,9 +321,9 @@ public class GlusterHookSyncJob extends GlusterJob {
     }
 
     @SuppressWarnings("serial")
-    private void logMessage(Guid clusterId, final String hookName,AuditLogType logType) {
-        logUtil.logAuditMessage(clusterId,null,null,logType,new HashMap<String,String>(){
-            {put("hookName",hookName);}});
+    private void logMessage(Guid clusterId, final String hookName, AuditLogType logType) {
+        logUtil.logAuditMessage(clusterId, null, null, logType, new HashMap<String, String>(){
+            {put("hookName", hookName);}});
     }
 
     private int getConflictStatus(GlusterHookEntity hook, GlusterHookEntity fetchedHook) {

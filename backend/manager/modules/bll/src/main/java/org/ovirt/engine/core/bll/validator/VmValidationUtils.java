@@ -16,7 +16,7 @@ public class VmValidationUtils {
      * @return Is the memory within the configured limits or not.
      */
     public static boolean isMemorySizeLegal(int osId, int memSizeInMB, Version clusterVersion) {
-        return memSizeInMB >= getMinMemorySizeInMb(osId,clusterVersion) && memSizeInMB <= getMaxMemorySizeInMb(osId, clusterVersion);
+        return memSizeInMB >= getMinMemorySizeInMb(osId, clusterVersion) && memSizeInMB <= getMaxMemorySizeInMb(osId, clusterVersion);
     }
 
     /**

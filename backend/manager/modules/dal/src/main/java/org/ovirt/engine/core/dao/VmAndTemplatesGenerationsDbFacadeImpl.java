@@ -10,7 +10,7 @@ public class VmAndTemplatesGenerationsDbFacadeImpl extends BaseDAODbFacade imple
     public void updateOvfGenerations(List<Guid> ids, List<Long> values) {
         getCallsHandler().executeModification("UpdateOvfGenerations", getCustomMapSqlParameterSource()
                 .addValue("vms_ids", StringUtils.join(ids, ','))
-                .addValue("vms_db_generations", StringUtils.join(values,',')));
+                .addValue("vms_db_generations", StringUtils.join(values, ',')));
     }
 
     @Override

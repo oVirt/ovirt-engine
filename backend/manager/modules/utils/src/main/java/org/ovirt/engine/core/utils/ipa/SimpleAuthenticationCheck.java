@@ -35,12 +35,12 @@ public class SimpleAuthenticationCheck {
     }
 
 
-    public Pair<ReturnStatus,String> printUserGuid(String domain,
+    public Pair<ReturnStatus, String> printUserGuid(String domain,
             String username,
             String password,
             StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers) {
 
-        Pair<ReturnStatus,String> status = null;
+        Pair<ReturnStatus, String> status = null;
         for (String ldapServerUrl : ldapServers) {
             status = checkSimpleLdapServer(domain, username, password, userGuid, ldapProviderType, ldapServerUrl);
             if (status.getFirst().getExitCode() == ReturnStatus.OK.getExitCode()) {
@@ -50,7 +50,7 @@ public class SimpleAuthenticationCheck {
         return status;
     }
 
-    private Pair<ReturnStatus,String> checkSimpleLdapServer(String domain,
+    private Pair<ReturnStatus, String> checkSimpleLdapServer(String domain,
             String username,
             String password,
             StringBuffer userGuid,
@@ -60,7 +60,7 @@ public class SimpleAuthenticationCheck {
         try {
             contextSource.afterPropertiesSet();
         } catch (Exception e) {
-            return new Pair(ReturnStatus.LDAP_CONTEXT_FAILURE,ERROR_PREFIX + "Failed setting LDAP context for domain " + domain);
+            return new Pair(ReturnStatus.LDAP_CONTEXT_FAILURE, ERROR_PREFIX + "Failed setting LDAP context for domain " + domain);
         }
 
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
@@ -98,7 +98,7 @@ public class SimpleAuthenticationCheck {
                     + ", details: " + ex.getMessage());
         }
 
-        return new Pair(ReturnStatus.OK,"");
+        return new Pair(ReturnStatus.OK, "");
     }
 
     /***
@@ -107,7 +107,7 @@ public class SimpleAuthenticationCheck {
      *
      * @param authEx
      */
-    private Pair<ReturnStatus,String> authenticationReturnStatus(AuthenticationException authEx, String userName, String domain) {
+    private Pair<ReturnStatus, String> authenticationReturnStatus(AuthenticationException authEx, String userName, String domain) {
         ReturnStatus returnStatus = ReturnStatus.CANNOT_AUTHENTICATE_USER;
         String authExMessage = authEx.getMessage();
 

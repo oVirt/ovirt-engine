@@ -78,14 +78,14 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             log.info("Init VM custom properties utilities");
             VmPropertiesUtils.getInstance().init();
         } catch (InitializationException e) {
-            log.error("Initialization of vm custom properties failed.",e);
+            log.error("Initialization of vm custom properties failed.", e);
         }
 
         try {
             log.info("Init device custom properties utilities");
             DevicePropertiesUtils.getInstance().init();
         } catch (InitializationException e) {
-            log.error("Initialization of device custom properties failed.",e);
+            log.error("Initialization of device custom properties failed.", e);
         }
 
         SchedulingManager.getInstance().init();

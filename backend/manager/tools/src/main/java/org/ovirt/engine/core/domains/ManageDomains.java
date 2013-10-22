@@ -278,7 +278,7 @@ public class ManageDomains {
         {
             result = locator.getKdc(DnsSRVLocator.TCP, domainName);
             if (!foundSrvRecords(result)) {
-                result = locator.getKdc(DnsSRVLocator.UDP,domainName);
+                result = locator.getKdc(DnsSRVLocator.UDP, domainName);
                 if (!foundSrvRecords(result)) {
                     foundServers =false;
                 }
@@ -495,7 +495,7 @@ public class ManageDomains {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_ALREADY_EXISTS_IN_CONFIGURATION, domainName);
         }
         List<String> ldapServers = getLdapServers(parser, domainName);
-        validateKdcServers(authMode,domainName);
+        validateKdcServers(authMode, domainName);
         domainNameEntry.setValueForDomain(domainName, null);
 
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
@@ -529,7 +529,7 @@ public class ManageDomains {
         if (!StringUtils.isEmpty(ldapServersStr)) {
             //Replacing "," with ";" - from user perspective of the utility, passing comma delimited string makes more sense and more natural
             //But "," is used as domain separate character when storing to DB.
-            ldapServersStr = ldapServersStr.replace(',',';');
+            ldapServersStr = ldapServersStr.replace(',', ';');
             ldapServersEntry.setValueForDomain(domainName, ldapServersStr);
         }
 
@@ -557,7 +557,7 @@ public class ManageDomains {
                 ldapServersEntry,
                 adUserIdEntry,
                 ldapProviderTypesEntry);
-        printSuccessMessage(domainName,"added");
+        printSuccessMessage(domainName, "added");
     }
 
     private void printSuccessMessage(String domainName, String action) {
@@ -567,7 +567,7 @@ public class ManageDomains {
         System.out.println(SERVICE_RESTART_MESSAGE);
     }
 
-    private void handleAddPermissions(String domainName,DomainsConfigurationEntry adUserNameEntry, DomainsConfigurationEntry adUserIdEntry) {
+    private void handleAddPermissions(String domainName, DomainsConfigurationEntry adUserNameEntry, DomainsConfigurationEntry adUserIdEntry) {
         if (addPermissions) {
             updatePermissionsTable(adUserNameEntry, adUserIdEntry);
         } else
@@ -617,7 +617,7 @@ public class ManageDomains {
         String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
         authMode = getDomainAuthMode(domainName);
         List<String> ldapServers = getLdapServers(parser, domainName);
-        validateKdcServers(authMode,domainName);
+        validateKdcServers(authMode, domainName);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         String userName  = parser.getArg(Arguments.user.toString());
         DomainsConfigurationEntry domainNameEntry =
@@ -681,7 +681,7 @@ public class ManageDomains {
                 false,
                 ldapServers);
 
-        handleAddPermissions(domainName,adUserNameEntry, adUserIdEntry);
+        handleAddPermissions(domainName, adUserNameEntry, adUserIdEntry);
 
         setConfigurationEntries(domainNameEntry,
                 adUserNameEntry,
@@ -691,7 +691,7 @@ public class ManageDomains {
                 adUserIdEntry,
                 ldapProviderTypeEntry);
 
-        printSuccessMessage(domainName,"edited");
+        printSuccessMessage(domainName, "edited");
     }
 
     private void createKerberosConfiguration(DomainsConfigurationEntry gssapiDomains, Map<String, List<String>> ldapServersPerGSSAPIDomains) throws ManageDomainsResult {
@@ -723,7 +723,7 @@ public class ManageDomains {
             DomainsConfigurationEntry gssapiDomains,
             DomainsConfigurationEntry userIds,
             DomainsConfigurationEntry ldapProviderTypes,
-            Map<String,List<String>> ldapServersPerDomainMap,
+            Map<String, List<String>> ldapServersPerDomainMap,
             String kerberosConfigFile,
             String ldapServerPort,
             boolean isValidate,
@@ -794,7 +794,7 @@ public class ManageDomains {
             StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers) {
         log.info("Testing domain " + domain);
         SimpleAuthenticationCheck simpleAuthenticationCheck = new SimpleAuthenticationCheck();
-        Pair<ReturnStatus,String> simpleCheckResult =
+        Pair<ReturnStatus, String> simpleCheckResult =
                 simpleAuthenticationCheck.printUserGuid(domain, userName, password, userGuid, ldapProviderType, ldapServers);
         if (!simpleCheckResult.getFirst().equals(ReturnStatus.OK)) {
             System.err.println(simpleCheckResult.getSecond());
@@ -811,7 +811,7 @@ public class ManageDomains {
             DomainsConfigurationEntry simpleDomains,
             DomainsConfigurationEntry userIds,
             DomainsConfigurationEntry ldapProviderType,
-            Map<String,List<String>>  ldapServersMapPerDomainMap,
+            Map<String, List<String>>  ldapServersMapPerDomainMap,
             boolean isValidate) throws ManageDomainsResult {
 
         Set<Entry<String, String>> simpleDomainValues = simpleDomains.getValues();
@@ -877,11 +877,11 @@ public class ManageDomains {
             }
         }
 
-        Map<String,List<String>> ldapServersPerSimpleDomains = new HashMap<String, List<String>>();
-        Map<String,List<String>> ldapServersPerGSSAPIDomains = new HashMap<String, List<String>>();
+        Map<String, List<String>> ldapServersPerSimpleDomains = new HashMap<String, List<String>>();
+        Map<String, List<String>> ldapServersPerGSSAPIDomains = new HashMap<String, List<String>>();
 
 
-        for (Entry<String,String> currLdapServerEntry: ldapServersEntry.getValues()) {
+        for (Entry<String, String> currLdapServerEntry: ldapServersEntry.getValues()) {
             if (gssapiDomains.contains(currLdapServerEntry.getKey())) {
                 ldapServersPerGSSAPIDomains.put(currLdapServerEntry.getKey(),
                         new ArrayList<String>(Arrays.asList(currLdapServerEntry.getValue().split(";"))));
@@ -1129,7 +1129,7 @@ public class ManageDomains {
         }
         if (arguments.size() > 0){
             throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
-                    arguments.toString().replaceAll("\\[", "").replaceAll("\\]",""));
+                    arguments.toString().replaceAll("\\[", "").replaceAll("\\]", ""));
         }
     }
 

@@ -382,7 +382,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testUpdateVdsGroupsProps() {
-        assertNotSame("pc-1.2.3",existingVdsGroup.getEmulatedMachine());
+        assertNotSame("pc-1.2.3", existingVdsGroup.getEmulatedMachine());
         existingVdsGroup.setEmulatedMachine("pc-1.2.3");
         dao.update(existingVdsGroup);
         assertEquals("pc-1.2.3", existingVdsGroup.getEmulatedMachine());

@@ -72,7 +72,7 @@ public class ConfigKeyFactory {
         return configKey;
     }
 
-    public ConfigKey generateBlankConfigKey(String keyName,String keyType) {
+    public ConfigKey generateBlankConfigKey(String keyName, String keyType) {
         return new ConfigKey(keyType, "", "", keyName, "", null, "", getHelperByType(keyType), false);
     }
 

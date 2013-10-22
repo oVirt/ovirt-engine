@@ -28,7 +28,7 @@ public class SimpleLdapTemplateWrapper extends LDAPTemplateWrapper {
     public void search(String baseDN, String filter, String displayFilter, SearchControls searchControls, NameClassPairCallbackHandler handler) {
         searchControls.setCountLimit(1000); //SIMPLE mode will limit have a limitation of 1000 results - as this is used
         //only by development, this is a reasonable limitation
-        pagedSearch(baseDN,filter, displayFilter, searchControls, handler);
+        pagedSearch(baseDN, filter, displayFilter, searchControls, handler);
 
     }
 

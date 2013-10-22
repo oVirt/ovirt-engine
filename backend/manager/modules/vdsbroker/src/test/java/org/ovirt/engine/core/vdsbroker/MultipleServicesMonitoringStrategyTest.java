@@ -29,7 +29,7 @@ public class MultipleServicesMonitoringStrategyTest {
     public MultipleServicesMonitoringStrategyTest() {
         virtStrategy = spy(new VirtMonitoringStrategy(mock(VdsGroupDAO.class)));
         glusterStrategy = spy(new GlusterMonitoringStrategy());
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class),any(NonOperationalReason.class),any(Map.class));
+        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
         strategy = spy(new MultipleServicesMonitoringStrategy());
         strategy.addMonitoringStrategy(virtStrategy);
         strategy.addMonitoringStrategy(glusterStrategy);

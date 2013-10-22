@@ -263,7 +263,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType) {
-        proceedLUNInDb(lun,storageType,"");
+        proceedLUNInDb(lun, storageType, "");
     }
 
     protected LunDAO getLunDao() {
@@ -429,7 +429,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
         @Override
         public int compare(StorageDomain o1, StorageDomain o2) {
-            return Long.compare(o1.getLastTimeUsedAsMaster(),o2.getLastTimeUsedAsMaster());
+            return Long.compare(o1.getLastTimeUsedAsMaster(), o2.getLastTimeUsedAsMaster());
         }
     }
 }

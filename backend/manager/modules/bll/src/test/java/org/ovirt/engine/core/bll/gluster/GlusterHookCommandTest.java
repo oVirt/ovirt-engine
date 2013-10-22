@@ -44,7 +44,7 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-                 mockConfig(ConfigValues.DefaultMinThreadPoolSize,10),
+                 mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
                   mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20));
 
     @Mock
@@ -66,17 +66,17 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
         setupMocks(cmd, true);
     }
 
-    public void setupMocks(T cmd,boolean hookFound) {
+    public void setupMocks(T cmd, boolean hookFound) {
         setupMocks(cmd, hookFound, getHookEntity());
     }
 
-    public void setupMocks(T cmd,boolean hookFound, GlusterHookEntity hookEntity) {
+    public void setupMocks(T cmd, boolean hookFound, GlusterHookEntity hookEntity) {
 
         when(clusterUtils.getAllUpServers(CLUSTER_ID)).thenReturn(getGlusterServers());
         doReturn(clusterUtils).when(cmd).getClusterUtils();
         if (hookFound) {
             when(hooksDao.getById(HOOK_ID)).thenReturn(hookEntity);
-            when(hooksDao.getById(HOOK_ID,true)).thenReturn(hookEntity);
+            when(hooksDao.getById(HOOK_ID, true)).thenReturn(hookEntity);
         }
         doReturn(hooksDao).when(cmd).getGlusterHooksDao();
         when(vdsGroupDao.get(CLUSTER_ID)).thenReturn(getVdsGroup());
@@ -85,7 +85,7 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     }
 
     protected void mockBackendStatusChange(T cmd, boolean succeeded) {
-        mockBackendStatusChange(cmd, succeeded,VdcBllErrors.GlusterHookEnableFailed);
+        mockBackendStatusChange(cmd, succeeded, VdcBllErrors.GlusterHookEnableFailed);
     }
 
     protected void mockBackendStatusChange(T cmd, boolean succeeded, VdcBllErrors errorCode) {

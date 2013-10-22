@@ -25,7 +25,7 @@ public class UserAuthenticationResult {
         errorMessages.addAll(Arrays.asList(messages));
     }
 
-    public UserAuthenticationResult(LdapUser user,VdcBllMessages... messages) {
+    public UserAuthenticationResult(LdapUser user, VdcBllMessages... messages) {
         this(messages);
         this.user = user;
     }

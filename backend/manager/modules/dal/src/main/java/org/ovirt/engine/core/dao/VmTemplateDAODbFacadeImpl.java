@@ -81,7 +81,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     public List<VmTemplate> getVmTemplatesByIds(List<Guid> templatesIds) {
         return getCallsHandler().executeReadList("GetVmTemplatesByIds",
                 VMTemplateRowMapper.instance,
-                getCustomMapSqlParameterSource().addValue("vm_templates_ids", StringUtils.join(templatesIds,',')));
+                getCustomMapSqlParameterSource().addValue("vm_templates_ids", StringUtils.join(templatesIds, ',')));
     }
 
     @Override

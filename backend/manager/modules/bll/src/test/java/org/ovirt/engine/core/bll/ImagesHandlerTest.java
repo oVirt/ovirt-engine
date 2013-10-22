@@ -85,6 +85,6 @@ public class ImagesHandlerTest {
         List<DiskImage> result = ImagesHandler.filterImageDisks(Arrays.asList(disk1, disk2), false, false, true);
 
         assertEquals("Wrong number of Guids returned", 1, result.size());
-        assertTrue("The result should contain the active image disk" ,result.contains(disk1));
+        assertTrue("The result should contain the active image disk", result.contains(disk1));
     }
 }

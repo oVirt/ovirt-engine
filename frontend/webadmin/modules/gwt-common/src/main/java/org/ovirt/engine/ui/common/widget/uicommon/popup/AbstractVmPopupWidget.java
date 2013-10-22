@@ -637,7 +637,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo =
-                new InfoIcon(SafeHtmlUtils.fromTrustedString(applicationTemplates.italicFixedWidth("400px",//$NON-NLS-1$
+                new InfoIcon(SafeHtmlUtils.fromTrustedString(applicationTemplates.italicFixedWidth("400px", //$NON-NLS-1$
                         constants.cpuPinningLabelExplanation())
                         .asString()
                         .replaceAll("(\r\n|\n)", "<br />")), resources);//$NON-NLS-1$ //$NON-NLS-2$

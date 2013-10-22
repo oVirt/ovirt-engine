@@ -65,7 +65,7 @@ public class BackendClusterResource extends AbstractBackendSubResource<Cluster, 
 
     @Override
     public GlusterVolumesResource getGlusterVolumesResource() {
-        return inject(new BackendGlusterVolumesResource(this,id));
+        return inject(new BackendGlusterVolumesResource(this, id));
     }
 
     @Override

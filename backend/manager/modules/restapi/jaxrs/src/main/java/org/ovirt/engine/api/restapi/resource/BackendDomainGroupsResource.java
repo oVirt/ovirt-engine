@@ -12,7 +12,7 @@ implements DomainGroupsResource {
     private String directoryId;
 
     public BackendDomainGroupsResource(String id, BackendDomainResource parent) {
-        super(id,parent);
+        super(id, parent);
         this.directoryId = id;
     }
 

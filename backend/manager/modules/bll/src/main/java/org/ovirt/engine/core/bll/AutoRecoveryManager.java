@@ -129,7 +129,7 @@ public class AutoRecoveryManager {
                 backend.runInternalAction(actionType, actionParams);
             }
         }
-        log.debugFormat("Checking autorecoverable {0} done",logMsg);
+        log.debugFormat("Checking autorecoverable {0} done", logMsg);
     }
 
     private <T extends BusinessEntity<Guid>>  String getHostName(T entity) {

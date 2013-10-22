@@ -33,7 +33,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
     @Override
     public Steps list() {
         GetStepsByJobIdQueryParameters params = new GetStepsByJobIdQueryParameters(jobId);
-        List<org.ovirt.engine.core.common.job.Step> steps = getBackendCollection(VdcQueryType.GetStepsByJobId,params);
+        List<org.ovirt.engine.core.common.job.Step> steps = getBackendCollection(VdcQueryType.GetStepsByJobId, params);
         return mapCollection(steps);
     }
 
@@ -50,7 +50,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
         }
 
         return performCreate(VdcActionType.AddExternalStep,
-                new AddExternalStepParameters(asGuid(id), step.getDescription(),StepMapper.map(StepEnum.fromValue(step.getType()))),
+                new AddExternalStepParameters(asGuid(id), step.getDescription(), StepMapper.map(StepEnum.fromValue(step.getType()))),
                 new QueryIdResolver<Guid>(VdcQueryType.GetStepByStepId, IdQueryParameters.class));
     }
 

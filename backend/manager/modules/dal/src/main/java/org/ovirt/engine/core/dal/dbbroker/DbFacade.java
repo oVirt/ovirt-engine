@@ -978,12 +978,12 @@ public class DbFacade {
      *
      * @param osIdToName OS id to OS Name map
      */
-    public void populateDwhOsInfo(Map<Integer,String> osIdToName) {
+    public void populateDwhOsInfo(Map<Integer, String> osIdToName) {
         // first clear the table
         new SimpleJdbcCall(jdbcTemplate).withProcedureName("clear_osinfo").execute();
         // batch populate
         List<MapSqlParameterSource> executions = new ArrayList<MapSqlParameterSource>();
-        for (Map.Entry<Integer,String> e : osIdToName.entrySet()) {
+        for (Map.Entry<Integer, String> e : osIdToName.entrySet()) {
             executions.add(getCustomMapSqlParameterSource()
                     .addValue("os_id", e.getKey())
                     .addValue("os_name", e.getValue()));

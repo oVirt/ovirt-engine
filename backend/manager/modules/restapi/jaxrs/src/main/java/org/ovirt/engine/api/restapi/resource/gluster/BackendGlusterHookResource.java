@@ -43,7 +43,7 @@ public class BackendGlusterHookResource
 
     @Override
     public GlusterHook get() {
-        GlusterHook hook = performGet(VdcQueryType.GetGlusterHookById, new GlusterHookQueryParameters(guid,true));
+        GlusterHook hook = performGet(VdcQueryType.GetGlusterHookById, new GlusterHookQueryParameters(guid, true));
         VdcQueryReturnValue result = runQuery(VdcQueryType.GetGlusterHookContent, new GlusterHookContentQueryParameters(guid));
         if (result != null
                 && result.getSucceeded()
@@ -67,7 +67,7 @@ public class BackendGlusterHookResource
     public Response resolve(Action action) {
         validateParameters(action, "resolutionType");
 
-        ResolutionType resolutionType = EnumValidator.validateEnum(ResolutionType.class, action.getResolutionType(),true);
+        ResolutionType resolutionType = EnumValidator.validateEnum(ResolutionType.class, action.getResolutionType(), true);
 
         switch (resolutionType) {
         case ADD:
@@ -86,7 +86,7 @@ public class BackendGlusterHookResource
     private Response copy(Action action) {
         GlusterHookManageParameters params = new GlusterHookManageParameters(guid);
         if (action.isSetHost()) {
-            validateParameters(action.getHost(),"host.id|name");
+            validateParameters(action.getHost(), "host.id|name");
             Guid hostId = getHostId(action);
             params.setSourceServerId(hostId);
         }

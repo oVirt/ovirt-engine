@@ -249,8 +249,8 @@ public class BackendStorageDomainsResourceTest
                                   getEntity(POSIX_IDX));
 
         StorageDomain model = new StorageDomain();
-        model.setName(getSafeEntry(POSIX_IDX,NAMES));
-        model.setDescription(getSafeEntry(POSIX_IDX,DESCRIPTIONS));
+        model.setName(getSafeEntry(POSIX_IDX, NAMES));
+        model.setDescription(getSafeEntry(POSIX_IDX, DESCRIPTIONS));
         model.setType(getSafeEntry(POSIX_IDX, TYPES).value());
         model.setStorage(new Storage());
         model.setHost(new Host());
@@ -270,8 +270,8 @@ public class BackendStorageDomainsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         StorageDomain model = new StorageDomain();
-        model.setName(getSafeEntry(POSIX_IDX,NAMES));
-        model.setDescription(getSafeEntry(POSIX_IDX,DESCRIPTIONS));
+        model.setName(getSafeEntry(POSIX_IDX, NAMES));
+        model.setDescription(getSafeEntry(POSIX_IDX, DESCRIPTIONS));
         model.setType(getSafeEntry(POSIX_IDX, TYPES).value());
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
@@ -714,7 +714,7 @@ public class BackendStorageDomainsResourceTest
         // expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getStorageDomainType()).andReturn(getSafeEntry(index, TYPES_MAPPED)).anyTimes();
         expect(entity.getStorageType()).andReturn(getSafeEntry(index, STORAGE_TYPES_MAPPED)).anyTimes();
-        expect(entity.getStorage()).andReturn(getSafeEntry(index,GUIDS).toString()).anyTimes();
+        expect(entity.getStorage()).andReturn(getSafeEntry(index, GUIDS).toString()).anyTimes();
         return entity;
     }
 
@@ -750,8 +750,8 @@ public class BackendStorageDomainsResourceTest
 
     static StorageDomain getModel(int index) {
         StorageDomain model = new StorageDomain();
-        model.setName(getSafeEntry(index,NAMES));
-        model.setDescription(getSafeEntry(index,DESCRIPTIONS));
+        model.setName(getSafeEntry(index, NAMES));
+        model.setDescription(getSafeEntry(index, DESCRIPTIONS));
         model.setType(getSafeEntry(index, TYPES).value());
         model.setStorage(new Storage());
         model.getStorage().setType(getSafeEntry(index, STORAGE_TYPES).value());

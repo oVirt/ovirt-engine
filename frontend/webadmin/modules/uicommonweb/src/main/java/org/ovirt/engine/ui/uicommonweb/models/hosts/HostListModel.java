@@ -1244,7 +1244,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             VDS vds = (VDS) item;
             int runningVms = vds.getVmCount();
             if (runningVms > 0) {
-                items.add(messages.hostNumberOfRunningVms(vds.getName(),runningVms));
+                items.add(messages.hostNumberOfRunningVms(vds.getName(), runningVms));
             } else {
                 items.add(vds.getName());
             }

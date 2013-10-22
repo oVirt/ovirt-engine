@@ -115,7 +115,7 @@ public class DevicePropertiesUtilsTest {
     @Test
     public void invalidPropertiesFormat() {
         DevicePropertiesUtils utils = mockDevicePropertiesUtils();
-        Map<String,String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("bootable", null);
 
         List<ValidationError> errors = utils.validateProperties(Version.v3_3, VmDeviceGeneralType.DISK, map);

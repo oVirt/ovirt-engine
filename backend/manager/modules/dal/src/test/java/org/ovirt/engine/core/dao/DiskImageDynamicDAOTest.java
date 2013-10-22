@@ -125,7 +125,7 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
         dao.save(dynamic);
         DiskImageDynamic result = dao.get(dynamic.getId());
         assertNotNull(result);
-        assertEquals(dynamic,result);
+        assertEquals(dynamic, result);
     }
     /**
      * Ensures that removing a dynamic image works as expected.

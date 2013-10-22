@@ -56,7 +56,7 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
                 (Map<VdcActionType, CommandVersionsInfo>) returnValue.getReturnValue();
         assertEquals(2, resultMap.size());
         verifyEntry(resultMap, VdcActionType.RunVm, RUN_VM_VERSION);
-        verifyEntry(resultMap, VdcActionType.AddVmFromSnapshot,ADD_VM_FROM_SNAPSHOT_VERSION);
+        verifyEntry(resultMap, VdcActionType.AddVmFromSnapshot, ADD_VM_FROM_SNAPSHOT_VERSION);
 
 
     }

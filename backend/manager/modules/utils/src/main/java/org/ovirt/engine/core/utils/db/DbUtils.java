@@ -45,7 +45,7 @@ public class DbUtils {
     }
 
     public static void closeQuietly(Statement statement, Connection connection) {
-        closeQuietly(null,statement, connection);
+        closeQuietly(null, statement, connection);
     }
 
     public static void closeQuietly(ResultSet resultSet, Statement statement, Connection connection) {

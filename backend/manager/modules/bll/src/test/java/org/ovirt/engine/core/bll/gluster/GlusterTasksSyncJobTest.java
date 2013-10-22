@@ -122,8 +122,8 @@ public class GlusterTasksSyncJobTest {
     public void testUpdateWhenNoTasks() {
         doReturn(null).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         tasksSyncJob.updateGlusterAsyncTasks();
-        Mockito.verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[0],null);
-        Mockito.verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[1],null);
+        Mockito.verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[0], null);
+        Mockito.verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[1], null);
         Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
         Mockito.verify(tasksSyncJob, times(0)).endStepJob(any(Step.class));
     }

@@ -21,7 +21,7 @@ public class VirtMonitoringStrategyTest {
 
     public VirtMonitoringStrategyTest() {
         virtStrategy = spy(new VirtMonitoringStrategy(mockVdsGroup()));
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class),any(Map.class));
+        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
     }
 
     private VirtMonitoringStrategy virtStrategy;

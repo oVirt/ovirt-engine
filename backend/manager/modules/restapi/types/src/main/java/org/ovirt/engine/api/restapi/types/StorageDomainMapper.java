@@ -158,7 +158,7 @@ public class StorageDomainMapper {
         }
         org.ovirt.engine.core.common.businessentities.StorageType storageType = null;
         if (model.getType() != null) {
-           storageType = map(StorageType.fromValue(model.getType()),null);
+           storageType = map(StorageType.fromValue(model.getType()), null);
         }
         else if (template != null) {
            storageType = template.getstorage_type();

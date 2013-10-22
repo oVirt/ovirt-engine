@@ -366,7 +366,7 @@ public class UpdateVmDiskCommandTest {
     }
 
     private void mockGetVmsListForDisk(List<VM> vms) {
-        List<Pair<VM,VmDevice>> vmsWithVmDevice = new ArrayList<>();
+        List<Pair<VM, VmDevice>> vmsWithVmDevice = new ArrayList<>();
         if (vms != null) {
             for (VM vm : vms) {
             VmDevice device = new VmDevice(new VmDeviceId(diskImageGuid, vm.getId()),

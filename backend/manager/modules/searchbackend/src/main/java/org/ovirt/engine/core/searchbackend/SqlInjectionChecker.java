@@ -69,7 +69,7 @@ public abstract class SqlInjectionChecker {
         boolean doubleQuoteFound=false;
         StringBuffer sb = new StringBuffer();
         // replace all occurrences of a quote/s inside a value with an empty string.
-        final String[] QUOTES_INSIDE_VALUE_INDICATORES = {BACKSLASH_QUOTE,QUOTE_QUOTE,BACKSLASH_DOUBLE_QUOTE};
+        final String[] QUOTES_INSIDE_VALUE_INDICATORES = {BACKSLASH_QUOTE, QUOTE_QUOTE, BACKSLASH_DOUBLE_QUOTE};
         for (String s : QUOTES_INSIDE_VALUE_INDICATORES) {
             sql = sql.replaceAll(s, "");
         }
@@ -149,7 +149,7 @@ public abstract class SqlInjectionChecker {
         } else {
             sb.append(value);
         }
-        return StringFormat.format("'%1$s'",sb.toString());
+        return StringFormat.format("'%1$s'", sb.toString());
     }
     /**
      * gets the database vendor specific sql command separator

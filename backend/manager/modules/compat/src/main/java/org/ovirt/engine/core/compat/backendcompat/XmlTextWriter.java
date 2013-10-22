@@ -68,9 +68,9 @@ public class XmlTextWriter {
         }
     }
 
-    public void WriteMap(Map<String,Object> map) {
+    public void WriteMap(Map<String, Object> map) {
         if (map != null) {
-            for (Entry<String,Object> param : map.entrySet()) {
+            for (Entry<String, Object> param : map.entrySet()) {
                 WriteStartElement(param.getKey());
 
                 Object value = param.getValue();
@@ -78,7 +78,7 @@ public class XmlTextWriter {
                 if (value instanceof String) {
                     WriteRaw((String) value);
                 } else if (value instanceof Map) {
-                    WriteMap((Map<String,Object>) value);
+                    WriteMap((Map<String, Object>) value);
                 }
 
                 WriteEndElement();

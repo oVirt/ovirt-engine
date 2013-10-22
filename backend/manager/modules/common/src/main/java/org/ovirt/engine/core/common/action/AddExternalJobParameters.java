@@ -11,11 +11,11 @@ public class AddExternalJobParameters extends AddJobParameters {
     }
 
     public AddExternalJobParameters(String description, boolean isAutoCleared) {
-        super(description,isAutoCleared);
+        super(description, isAutoCleared);
     }
 
     public AddExternalJobParameters(String description) {
-        super(description,true);
+        super(description, true);
     }
 
 }

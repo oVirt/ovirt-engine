@@ -119,7 +119,7 @@ public class DirectorySearcher {
             }
             return new DirectorySearchTask(ldapTemplate, queryExecution, resultCount).call();
         } catch (Exception exception) {
-            LdapSearchExceptionHandlingResponse handlingResponse = handler.handle(exception,ldapCredentials);
+            LdapSearchExceptionHandlingResponse handlingResponse = handler.handle(exception, ldapCredentials);
             Exception translatedException = handlingResponse.getTranslatedException();
             setException(translatedException);
             LdapServersOrderingAlgorithmFactory.getInstance().getOrderingAlgorithm(handlingResponse.getOrderingAlgorithm()).reorder(ldapURI, modifiedLdapServersURIs);

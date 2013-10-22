@@ -49,7 +49,7 @@ public class BackendVmApplicationsResource extends AbstractBackendResource<Appli
     @Override
     @SingleEntityResource
     public VmApplicationResource getVmApplicationSubResource(String id) {
-        return inject(new BackendVmApplicationResource(id,this));
+        return inject(new BackendVmApplicationResource(id, this));
     }
 
     @Override

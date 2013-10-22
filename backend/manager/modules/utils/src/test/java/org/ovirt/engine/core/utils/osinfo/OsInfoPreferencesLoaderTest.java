@@ -19,8 +19,8 @@ public class OsInfoPreferencesLoaderTest {
     public void testLoad() throws Exception {
         Assert.assertTrue(OsInfoPreferencesLoader.INSTANCE.getPreferences()
                 .nodeExists("/os/default/resources/maximum/ram"));
-        Assert.assertEquals(32000,OsInfoPreferencesLoader.INSTANCE.getPreferences()
-                .node("/os/default/resources/maximum/ram").getInt("value.3.1",-1));
+        Assert.assertEquals(32000, OsInfoPreferencesLoader.INSTANCE.getPreferences()
+                .node("/os/default/resources/maximum/ram").getInt("value.3.1", -1));
     }
 
     @Test

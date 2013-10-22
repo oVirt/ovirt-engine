@@ -72,7 +72,7 @@ public class MappingTestHelper {
                     shuffle(method, model);
                 }
                 else if(takesBigDecimal(method)) {
-                    populateBigDecimal(method,model);
+                    populateBigDecimal(method, model);
                 } else if (takesXmlGregorianCalendar(method)) {
                     populateXmlGregorianCalendar(method, model);
                 }

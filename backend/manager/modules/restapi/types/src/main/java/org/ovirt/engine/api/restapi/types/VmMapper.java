@@ -432,7 +432,7 @@ public class VmMapper {
             model.getPlacementPolicy().setHost(new Host());
             model.getPlacementPolicy().getHost().setId(entity.getDedicatedVmForVds().toString());
         }
-        VmAffinity vmAffinity = map(entity.getMigrationSupport(),null);
+        VmAffinity vmAffinity = map(entity.getMigrationSupport(), null);
         if(vmAffinity !=null){
             model.getPlacementPolicy().setAffinity(vmAffinity.value());
         }

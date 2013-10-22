@@ -210,7 +210,7 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setSpecParams(getMapNode(specParamsNode));
         } else {
             // Empty map
-            vmDevice.setSpecParams(Collections.<String,Object>emptyMap());
+            vmDevice.setSpecParams(Collections.<String, Object>emptyMap());
         }
         if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
                 && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
@@ -608,8 +608,8 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
-    private static Map<String,Object> getMapNode(XmlNode node) {
-        Map<String,Object> returnValue = new HashMap<String,Object>();
+    private static Map<String, Object> getMapNode(XmlNode node) {
+        Map<String, Object> returnValue = new HashMap<String, Object>();
 
         NodeList list = node.GetChildNodes();
         for (int index = 0; index < list.getLength(); ++index) {

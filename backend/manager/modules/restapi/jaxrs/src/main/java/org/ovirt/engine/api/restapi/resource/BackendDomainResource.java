@@ -22,12 +22,12 @@ implements DomainResource {
 
     @Override
     public Domain get() {
-        Domain domain = parent.lookupDirectoryById(id,true);
-        return injectSearchLinks(addLinks(domain),SUB_COLLECTIONS);
+        Domain domain = parent.lookupDirectoryById(id, true);
+        return injectSearchLinks(addLinks(domain), SUB_COLLECTIONS);
     }
 
     public Domain getDirectory() {
-        return parent.lookupDirectoryById(id,false);
+        return parent.lookupDirectoryById(id, false);
     }
 
     @Override

@@ -325,7 +325,7 @@ public final class AsyncTaskManager {
                     (task.getaction_type()));
             return;
         }
-        log.infoFormat("Calling updateTask for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2} Parameters class {3}",task.getTaskType(),
+        log.infoFormat("Calling updateTask for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2} Parameters class {3}", task.getTaskType(),
                     task.getTaskId(),
                     (task.getaction_type()));
         AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo(Guid.Empty, task.getTaskType(), task.getStoragePoolId());

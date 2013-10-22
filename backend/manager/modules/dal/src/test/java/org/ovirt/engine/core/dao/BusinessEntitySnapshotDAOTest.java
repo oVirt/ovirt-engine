@@ -32,10 +32,10 @@ public class BusinessEntitySnapshotDAOTest extends BaseDAOTestCase {
     public void testGetByCommandId() {
         List<BusinessEntitySnapshot> snapshots = dao.getAllForCommandId(commandWithTwoSnapshotsId);
         assertTrue(snapshots != null);
-        assertEquals(2,snapshots.size());
+        assertEquals(2, snapshots.size());
         snapshots = dao.getAllForCommandId(commandWithOneSnapshotId);
         assertTrue(snapshots != null);
-        assertEquals(1,snapshots.size());
+        assertEquals(1, snapshots.size());
     }
 
     @Test
@@ -51,8 +51,8 @@ public class BusinessEntitySnapshotDAOTest extends BaseDAOTestCase {
         dao.save(snapshot);
         List<BusinessEntitySnapshot> snapshotsFromDb = dao.getAllForCommandId(commandId);
         assertNotNull(snapshotsFromDb);
-        assertEquals(1,snapshotsFromDb.size());
-        assertEquals(snapshot,snapshotsFromDb.get(0));
+        assertEquals(1, snapshotsFromDb.size());
+        assertEquals(snapshot, snapshotsFromDb.get(0));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class BusinessEntitySnapshotDAOTest extends BaseDAOTestCase {
     public void testGetAllCommands() {
         List<KeyValue> snapshots = dao.getAllCommands();
         assertNotNull(snapshots);
-        assertEquals(2,snapshots.size());
+        assertEquals(2, snapshots.size());
         Set<Guid> expectedSet = new HashSet<Guid>();
         expectedSet.add(commandWithOneSnapshotId);
         expectedSet.add(commandWithTwoSnapshotsId);
@@ -77,16 +77,16 @@ public class BusinessEntitySnapshotDAOTest extends BaseDAOTestCase {
         for (KeyValue snapshot : snapshots) {
             resultSet.add((Guid)snapshot.getKey());
         }
-        assertEquals(expectedSet,resultSet);
+        assertEquals(expectedSet, resultSet);
     }
 
     private void testDeleteByCommandId(int numberOfResultsBeforeDeletion, Guid commandId) {
         List<BusinessEntitySnapshot> snapshots = dao.getAllForCommandId(commandId);
         assertTrue(snapshots != null);
-        assertEquals(numberOfResultsBeforeDeletion,snapshots.size());
+        assertEquals(numberOfResultsBeforeDeletion, snapshots.size());
         dao.removeAllForCommandId(commandId);
         snapshots = dao.getAllForCommandId(commandId);
         assertTrue(snapshots != null);
-        assertEquals(0,snapshots.size());
+        assertEquals(0, snapshots.size());
     }
 }

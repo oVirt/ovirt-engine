@@ -113,7 +113,7 @@ public class HostNicMapper {
             model.getMac().setAddress(entity.getMacAddress());
         }
         if(entity.getStatistics().getStatus()!=InterfaceStatus.NONE){
-            NicStatus nicStatus = map(entity.getStatistics().getStatus(),null);
+            NicStatus nicStatus = map(entity.getStatistics().getStatus(), null);
             if(nicStatus!=null){
                 model.setStatus(StatusUtils.create(nicStatus));
             }

@@ -190,7 +190,8 @@ public class BackendTemplatesResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
-        setUpGetConsoleExpectations(new int[]{0,0});
+
+        setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
@@ -326,8 +327,9 @@ public class BackendTemplatesResourceTest
                                    setUpVm(GUIDS[1]));
 
         setUpGetEntityExpectations();
-        setUpGetConsoleExpectations(new int[] {0,0,0});
-        setUpGetVirtioScsiExpectations(new int[] {0,0});
+        setUpGetConsoleExpectations(new int[] {0, 0, 0});
+        setUpGetVirtioScsiExpectations(new int[] {0, 0});
+
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,

@@ -38,7 +38,7 @@ public class BackendGlusterBricksResource
     }
 
     public BackendGlusterBricksResource(BackendGlusterVolumeResource parent) {
-        super(GlusterBrick.class, GlusterBrickEntity.class,SUB_COLLECTIONS);
+        super(GlusterBrick.class, GlusterBrickEntity.class, SUB_COLLECTIONS);
         setParent(parent);
     }
 
@@ -53,7 +53,7 @@ public class BackendGlusterBricksResource
     private GlusterBricks mapCollection(List<GlusterBrickEntity> entities) {
         GlusterBricks collection = new GlusterBricks();
         for (GlusterBrickEntity entity : entities) {
-            collection.getGlusterBricks().add(addLinks(populate(map(entity), entity),Cluster.class));
+            collection.getGlusterBricks().add(addLinks(populate(map(entity), entity), Cluster.class));
         }
         return collection;
     }
@@ -188,7 +188,7 @@ public class BackendGlusterBricksResource
                                                 VdcQueryType.GetGlusterVolumeAdvancedDetails,
                                                 new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
                                                                                            volumeEntity.getId(),
-                                                                                           entity.getId(),true),
+                                                                                           entity.getId(), true),
                                                 null,
                                                 true);
 

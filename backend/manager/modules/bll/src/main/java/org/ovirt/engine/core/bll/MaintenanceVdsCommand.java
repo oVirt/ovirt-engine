@@ -119,7 +119,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return succeeded;
     }
 
-    protected CommandContext createMigrateVmContext(ExecutionContext parentContext,VM vm) {
+    protected CommandContext createMigrateVmContext(ExecutionContext parentContext, VM vm) {
         ExecutionContext ctx = new ExecutionContext();
         try {
             Map<String, String> values = new HashMap<String, String>();

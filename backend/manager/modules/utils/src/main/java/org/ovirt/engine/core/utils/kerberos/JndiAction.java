@@ -94,7 +94,7 @@ public class JndiAction implements PrivilegedAction {
                     SearchControls controls = new SearchControls();
                     controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                     // Adding all the three attributes possible, as RHDS doesn't return the nsUniqueId by default
-                    controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId","objectGuid","uniqueIdentifier","entryuuid"});
+                    controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId", "objectGuid", "uniqueIdentifier", "entryuuid"});
                     // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
                     controls.setReturningObjFlag(true);
                     currentLdapServer = ldapQueryPath.toString();
@@ -163,7 +163,7 @@ public class JndiAction implements PrivilegedAction {
             krbLoginModuleErrorMsg = saslException.getMessage();
         }
         log.error("Error during login to kerberos. Detailed information is: " + krbLoginModuleErrorMsg);
-        log.debug("Error during login to kerberos. Detailed information is: ",ex);
+        log.debug("Error during login to kerberos. Detailed information is: ", ex);
     }
 
     protected void handleCommunicationException(String currentLdapServer, String address) {

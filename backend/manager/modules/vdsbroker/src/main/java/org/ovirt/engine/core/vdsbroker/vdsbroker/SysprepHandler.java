@@ -134,7 +134,7 @@ public final class SysprepHandler {
             vm.setTimeZone(Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone));
         }
 
-        if (osRepository.isTimezoneValueInteger(vm.getStaticData().getOsId(),null)) {
+        if (osRepository.isTimezoneValueInteger(vm.getStaticData(). getOsId(), null)) {
             // send correct time zone as sysprep expect to get it (a wierd number)
             timeZone = getTimezoneIndexByKey(vm.getTimeZone());
         } else {

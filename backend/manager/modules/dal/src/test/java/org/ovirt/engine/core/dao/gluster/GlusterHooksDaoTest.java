@@ -81,7 +81,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGetByIdAll() {
-        GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID,true);
+        GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID, true);
         assertNotNull(hook);
         assertTrue(hook.getServerHooks().size() == 2);
         assertEquals(FixturesTool.HOOK_ID, hook.getId());
@@ -158,7 +158,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
     @Test
     public void testRemoveAllServerHooks() {
         dao.removeGlusterServerHooks(FixturesTool.HOOK_ID);
-        GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID,true);
+        GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID, true);
         assertTrue(hook.getServerHooks().isEmpty());
     }
 
@@ -209,7 +209,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
         String updateContent = "Updated script content to test";
         String updateChecksum = "ddffeef712fc008f857e77a2f3f179c710";
         dao.updateGlusterHookContent(FixturesTool.HOOK_ID, updateChecksum, updateContent);
-        GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID,true);
+        GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID, true);
         assertNotNull(hook);
         assertEquals(updateContent, hook.getContent());
         assertEquals(updateChecksum, hook.getChecksum());

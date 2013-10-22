@@ -68,8 +68,8 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setstatus(AsyncTaskStatusEnum.forValue(rs.getInt("status")));
             entity.setTaskId(getGuidDefaultEmpty(rs, "task_id"));
             entity.setVdsmTaskId(getGuid(rs, "vdsm_task_id"));
-            entity.setActionParameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
-            entity.setTaskParameters(deserializeParameters(rs.getString("task_parameters"),rs.getString("task_params_class")));
+            entity.setActionParameters(deserializeParameters(rs.getString("action_parameters"), rs.getString("action_params_class")));
+            entity.setTaskParameters(deserializeParameters(rs.getString("task_parameters"), rs.getString("task_params_class")));
             entity.setStepId(getGuid(rs, "step_id"));
             entity.setCommandId(getGuidDefaultEmpty(rs, "command_id"));
             entity.setRootCommandId(getGuidDefaultEmpty(rs, "root_command_id"));
@@ -92,7 +92,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
 
     private static class AsyncTaskParameterSource extends CustomMapSqlParameterSource {
 
-        public AsyncTaskParameterSource(DbEngineDialect dialect,AsyncTasks task) {
+        public AsyncTaskParameterSource(DbEngineDialect dialect, AsyncTasks task) {
             super(dialect);
             addValue("action_type", task.getaction_type());
             addValue("result", task.getresult());
@@ -100,9 +100,9 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("vdsm_task_id", task.getVdsmTaskId());
             addValue("task_id", task.getTaskId());
             addValue("action_parameters", serializeParameters(task.getActionParameters()));
-            addValue("action_params_class",task.getActionParameters().getClass().getName());
+            addValue("action_params_class", task.getActionParameters().getClass().getName());
             addValue("task_parameters", serializeParameters(task.getTaskParameters()));
-            addValue("task_params_class",task.getTaskParameters().getClass().getName());
+            addValue("task_params_class", task.getTaskParameters().getClass().getName());
             addValue("step_id", task.getStepId());
             addValue("command_id", task.getCommandId());
             addValue("root_command_id", task.getRootCommandId());

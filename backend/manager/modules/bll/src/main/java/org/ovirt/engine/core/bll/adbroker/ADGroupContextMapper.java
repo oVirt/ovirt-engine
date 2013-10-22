@@ -51,11 +51,11 @@ public class ADGroupContextMapper implements ContextMapper {
 
             Object adObjectGuid = attributes.get(objectGuid.name()).get(0);
             byte[] guidBytes = (byte[]) adObjectGuid;
-            Guid guid = new Guid(guidBytes,false);
+            Guid guid = new Guid(guidBytes, false);
 
             String distinguishedName = searchResult.getNameInNamespace();
             distinguishedName = LdapBrokerUtils.hadleNameEscaping(distinguishedName);
-            GroupSearchResult groupSearchResult = new GroupSearchResult(guid,memberOf, distinguishedName);
+            GroupSearchResult groupSearchResult = new GroupSearchResult(guid, memberOf, distinguishedName);
             return groupSearchResult;
         } catch (Exception ex) {
             log.error("Failed populating group", ex);

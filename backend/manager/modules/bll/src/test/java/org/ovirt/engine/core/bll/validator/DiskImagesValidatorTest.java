@@ -194,7 +194,7 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesSnapshotsNotAttachedToOtherVmsNoDiskSnapshotsAttached() {
         List<VmDevice> createdDevices = prepareForCheckingIfDisksSnapshotsAttachedToOtherVms();
-        assertThat(validator.diskImagesSnapshotsNotAttachedToOtherVms(false),isValid());
+        assertThat(validator.diskImagesSnapshotsNotAttachedToOtherVms(false), isValid());
         verify(snapshotDao, never()).get(createdDevices.get(1).getSnapshotId());
         verify(snapshotDao, never()).get(createdDevices.get(0).getSnapshotId());
     }

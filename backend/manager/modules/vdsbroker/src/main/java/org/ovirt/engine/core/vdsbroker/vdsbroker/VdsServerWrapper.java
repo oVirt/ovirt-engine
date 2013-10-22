@@ -843,7 +843,7 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public FutureTask<Map<String,Object>> poll() {
+    public FutureTask<Map<String, Object>> poll() {
         return vdsServer.futurePing();
     }
 

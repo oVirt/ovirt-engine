@@ -24,7 +24,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     @Override
     public List<StorageServerConnections> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        return getCallsHandler().executeReadList("GetAllstorage_server_connections", mapper,parameterSource);
+        return getCallsHandler().executeReadList("GetAllstorage_server_connections", mapper, parameterSource);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
 
     @Override
     public List<StorageServerConnections> getAllForDomain(Guid domainId) {
-        return getCallsHandler().executeReadList("GetStorageServerConnectionsForDomain",mapper,
+        return getCallsHandler().executeReadList("GetStorageServerConnectionsForDomain", mapper,
                         getCustomMapSqlParameterSource().addValue("storage_domain_id", domainId));
     }
 

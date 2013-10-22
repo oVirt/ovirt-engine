@@ -337,7 +337,7 @@ public class HostMapper {
         }
         model.setPowerManagement(map(entity, (PowerManagement)null));
         model.setHardwareInformation(map(entity, (HardwareInformation)null));
-        model.setSsh(map(entity.getStaticData(),(SSH) null));
+        model.setSsh(map(entity.getStaticData(), (SSH) null));
         CPU cpu = new CPU();
         CpuTopology cpuTopology = new CpuTopology();
         if (entity.getCpuSockets() != null) {

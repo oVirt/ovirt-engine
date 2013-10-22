@@ -141,7 +141,7 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                 .addValue("hook_status", EnumUtils.nameOrNull(hook.getStatus()))
                 .addValue("content_type", EnumUtils.nameOrNull(hook.getContentType()))
                 .addValue("checksum", hook.getChecksum())
-                .addValue("content",hook.getContent())
+                .addValue("content", hook.getContent())
                 .addValue("conflict_status", hook.getConflictStatus()));
     }
 

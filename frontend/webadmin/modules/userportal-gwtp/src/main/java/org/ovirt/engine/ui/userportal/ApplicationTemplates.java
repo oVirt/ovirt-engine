@@ -42,7 +42,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "        </table>\n")
     SafeHtml quotaForUserBarToolTip(String quotaLabel, String quota,
             String totalUsageLabel, int totalUsagePercentage, String totalUsage,
-            String usedByYouLabel, int usedByYouPercentage,String usedByYou,
+            String usedByYouLabel, int usedByYouPercentage, String usedByYou,
             String usedByOthersLabel, int usedByOthersPercentage, String usedByOthers,
             String freeLabel, int freePercentage, String free);
 

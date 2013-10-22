@@ -120,11 +120,11 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
        connection.setconnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDAO.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUN_storage_server_connection_map_id map_id = new LUN_storage_server_connection_map_id(dummyLun.getLUN_id(),connection.getid());
+       LUN_storage_server_connection_map_id map_id = new LUN_storage_server_connection_map_id(dummyLun.getLUN_id(), connection.getid());
        when(lunMapDAO.get(map_id)).thenReturn(null);
        //dummy lun already exists, thus no need to save
        verify(lunDao, never()).save(dummyLun);
-       verify(lunMapDAO,never()).save(new LUN_storage_server_connection_map());
+       verify(lunMapDAO, never()).save(new LUN_storage_server_connection_map());
        command.executeCommand();
        CommandAssertUtils.checkSucceeded(command, true);
     }
@@ -143,7 +143,7 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
        connection.setconnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDAO.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUN_storage_server_connection_map_id map_id = new LUN_storage_server_connection_map_id(dummyLun.getLUN_id(),connection.getid());
+       LUN_storage_server_connection_map_id map_id = new LUN_storage_server_connection_map_id(dummyLun.getLUN_id(), connection.getid());
        when(lunMapDAO.get(map_id)).thenReturn(null);
        LUN_storage_server_connection_map map = new LUN_storage_server_connection_map();
        doNothing().when(lunMapDAO).save(map);

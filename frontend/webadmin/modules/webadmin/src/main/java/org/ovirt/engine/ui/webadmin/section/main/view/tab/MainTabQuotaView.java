@@ -126,7 +126,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 }
                 return returnVal;
             }
-        },constants.freeMemory(), "80px"); //$NON-NLS-1$
+        }, constants.freeMemory(), "80px"); //$NON-NLS-1$
 
         getTable().addColumn(new QuotaPercentColumn<Quota>() {
             @Override
@@ -194,7 +194,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 }
                 return returnVal;
             }
-        },constants.freeVcpu(), "80px"); //$NON-NLS-1$
+        }, constants.freeVcpu(), "80px"); //$NON-NLS-1$
 
         getTable().addColumn(new QuotaPercentColumn<Quota>() {
             @Override
@@ -262,7 +262,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 }
                 return returnVal;
             }
-        },constants.freeStorage(),"80px"); //$NON-NLS-1$
+        }, constants.freeStorage(), "80px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
             @Override

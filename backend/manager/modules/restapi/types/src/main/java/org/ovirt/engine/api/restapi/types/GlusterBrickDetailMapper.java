@@ -34,7 +34,7 @@ public class GlusterBrickDetailMapper {
 
         if (detail == null) return model;
 
-        model = mapBrickProperties(detail,model);
+        model = mapBrickProperties(detail, model);
 
         if (detail.getClients()!= null) {
             model.setGlusterClients(new GlusterClients());

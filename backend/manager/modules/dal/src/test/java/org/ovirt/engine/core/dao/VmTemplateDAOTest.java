@@ -105,7 +105,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetVmTemplatesByIds() {
-        List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(EXISTING_TEMPLATE_ID,DELETABLE_TEMPLATE_ID));
+        List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(EXISTING_TEMPLATE_ID, DELETABLE_TEMPLATE_ID));
         assertEquals("loaded templates list isn't in the expected size", 2, result.size());
         Collection<Guid> recieved = CollectionUtils.collect(result, new Transformer() {
             @Override

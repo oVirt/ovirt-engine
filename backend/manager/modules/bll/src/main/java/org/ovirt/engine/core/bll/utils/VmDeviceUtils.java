@@ -291,7 +291,7 @@ public class VmDeviceUtils {
                 //add CD if not exists
                 if (addCD) {
                     setCdPath(specParams, "", isoPath);
-                    addManagedDevice(new VmDeviceId(Guid.newGuid(),dstId) , VmDeviceGeneralType.DISK, VmDeviceType.CDROM, specParams, true, true, null);
+                    addManagedDevice(new VmDeviceId(Guid.newGuid(), dstId) , VmDeviceGeneralType.DISK, VmDeviceType.CDROM, specParams, true, true, null);
                 }
                 // updating USB slots
                 updateUSBSlots(null, vmBase);
@@ -454,7 +454,7 @@ public class VmDeviceUtils {
 
     private static void addVideoDevice(VmBase vm) {
         addManagedDevice(
-                new VmDeviceId(Guid.newGuid(),vm.getId()),
+                new VmDeviceId(Guid.newGuid(), vm.getId()),
                 VmDeviceGeneralType.VIDEO,
                 vm.getDefaultDisplayType().getVmDeviceType(),
                 getMemExpr(vm.getNumOfMonitors(), vm.getSingleQxlPci()),
@@ -512,7 +512,7 @@ public class VmDeviceUtils {
             boolean readOnly,
             String address,
             Map<String, String> customProp) {
-        VmDevice managedDevice = addManagedDevice(id, type, device, specParams,plugged,readOnly, customProp);
+        VmDevice managedDevice = addManagedDevice(id, type, device, specParams, plugged, readOnly, customProp);
         if (StringUtils.isNotBlank(address)){
             managedDevice.setAddress(address);
         }
@@ -917,7 +917,7 @@ public class VmDeviceUtils {
     }
 
     private static List<VmDevice> getUsbRedirectDevices(VmBase vm) {
-        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceGeneralType.REDIR, VmDeviceType.SPICEVMC.getName());
+        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(), VmDeviceGeneralType.REDIR, VmDeviceType.SPICEVMC.getName());
 
         return list;
     }
@@ -969,9 +969,9 @@ public class VmDeviceUtils {
         if (hasBalloon != shouldHaveBalloon) {
             if (!hasBalloon && shouldHaveBalloon) {
                 // add a balloon device
-                Map<String,Object> specParams = new HashMap<String, Object>();
+                Map<String, Object> specParams = new HashMap<String, Object>();
                 specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-                addManagedDevice(new VmDeviceId(Guid.newGuid(),newVm.getId()) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null);
+                addManagedDevice(new VmDeviceId(Guid.newGuid(), newVm.getId()) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null);
             }
             else {
                 // remove the balloon device
@@ -980,7 +980,7 @@ public class VmDeviceUtils {
                 .getVmDeviceDao()
                 .getVmDeviceByVmIdAndType(newVm.getId(),
                         VmDeviceGeneralType.BALLOON);
-                removeNumberOfDevices(list,1);
+                removeNumberOfDevices(list, 1);
             }
         }
     }

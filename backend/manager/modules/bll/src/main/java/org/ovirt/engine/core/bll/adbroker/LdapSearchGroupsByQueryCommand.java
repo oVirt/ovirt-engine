@@ -25,7 +25,7 @@ public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredential
                 List<String> memberOf = searchResult.getMemberOf();
                 if (distinguishedName != null) {
                     String groupName = LdapBrokerUtils.generateGroupDisplayValue(searchResult.getDistinguishedName());
-                    LdapGroup group = new LdapGroup(searchResult.getGuid(), groupName, getDomain(),distinguishedName,memberOf);
+                    LdapGroup group = new LdapGroup(searchResult.getGuid(), groupName, getDomain(), distinguishedName, memberOf);
                     groupList.add(group);
                 }
             }

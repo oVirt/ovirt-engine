@@ -26,7 +26,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
     public void testGetOvfGenerations() {
         Long value = vmAndTemplatesGenerationsDAO.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_50);
         assertNotNull("ovf generation wasn't retrieved succesfully", value);
-        assertEquals("ovf generation was retrieved but it's value isn't as expected",1, value.longValue());
+        assertEquals("ovf generation was retrieved but it's value isn't as expected", 1, value.longValue());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
     @Test
     public void testGetVmTemplatesIdsForOvfUpdateNoForUpdate() {
         List<Guid> guids = vmAndTemplatesGenerationsDAO.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-        assertTrue("there shouldn't be any templates that needs ovf update",guids.isEmpty());
+        assertTrue("there shouldn't be any templates that needs ovf update", guids.isEmpty());
     }
 
     @Test
@@ -75,8 +75,8 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
         vmAndTemplatesGenerationsDAO.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_TEMPLATE_RHEL5), Collections.singletonList(Long.valueOf(0)));
 
         List<Guid> guids = vmAndTemplatesGenerationsDAO.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-        assertEquals("one template should need ovf update",1, guids.size());
-        assertEquals("wrong template returned as in need for ovf update",guids.get(0),FixturesTool.VM_TEMPLATE_RHEL5);
+        assertEquals("one template should need ovf update", 1, guids.size());
+        assertEquals("wrong template returned as in need for ovf update", guids.get(0), FixturesTool.VM_TEMPLATE_RHEL5);
     }
 
     @Test
@@ -92,9 +92,9 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
         vmAndTemplatesGenerationsDAO.updateOvfGenerations(templates, values);
 
         List<Guid> guids = vmAndTemplatesGenerationsDAO.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-        assertEquals("two templates should need ovf update",2, guids.size());
-        assertEquals("templates ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_TEMPLATE_RHEL5),true);
-        assertEquals("templates ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_TEMPLATE_RHEL5_2),true);
+        assertEquals("two templates should need ovf update", 2, guids.size());
+        assertEquals("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL5) , true);
+        assertEquals("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL5_2) , true);
     }
 
     @Test
@@ -115,21 +115,21 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
         vmAndTemplatesGenerationsDAO.updateOvfGenerations(templates, values);
 
         List<Guid> guids = vmAndTemplatesGenerationsDAO.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-        assertEquals("two templates should need ovf update",2, guids.size());
-        assertEquals("templates ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_TEMPLATE_RHEL5),true);
-        assertEquals("templates ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_TEMPLATE_RHEL5_2),true);
+        assertEquals("two templates should need ovf update", 2, guids.size());
+        assertEquals("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL5), true);
+        assertEquals("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL5_2), true);
 
 
         guids = vmAndTemplatesGenerationsDAO.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_NFS_2);
-        assertEquals("two templates should need ovf update",2, guids.size());
-        assertEquals("templates ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_TEMPLATE_RHEL6_1),true);
-        assertEquals("templates ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_TEMPLATE_RHEL6_2),true);
+        assertEquals("two templates should need ovf update", 2, guids.size());
+        assertEquals("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL6_1), true);
+        assertEquals("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL6_2), true);
     }
 
     @Test
     public void testGetVmsIdsForOvfUpdateNoneForUpdate() {
         List<Guid> guids = vmAndTemplatesGenerationsDAO.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-        assertTrue("there shouldn't be any vms that needs ovf update",guids.isEmpty());
+        assertTrue("there shouldn't be any vms that needs ovf update", guids.isEmpty());
     }
 
     @Test
@@ -137,8 +137,8 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
         vmAndTemplatesGenerationsDAO.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_RHEL5_POOL_50), Collections.singletonList(Long.valueOf(0)));
 
         List<Guid> guids = vmAndTemplatesGenerationsDAO.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-        assertEquals("one vm should need ovf update",1, guids.size());
-        assertEquals("wrong vm returned as in need for ovf update",guids.get(0),FixturesTool.VM_RHEL5_POOL_50);
+        assertEquals("one vm should need ovf update", 1, guids.size());
+        assertEquals("wrong vm returned as in need for ovf update", guids.get(0), FixturesTool.VM_RHEL5_POOL_50);
     }
 
     @Test
@@ -154,9 +154,9 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
         vmAndTemplatesGenerationsDAO.updateOvfGenerations(vms, values);
 
         List<Guid> guids = vmAndTemplatesGenerationsDAO.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-        assertEquals("two vms should need ovf update",2, guids.size());
-        assertEquals("templates ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_RHEL5_POOL_50),true);
-        assertEquals("templates ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_RHEL5_POOL_51),true);
+        assertEquals("two vms should need ovf update", 2, guids.size());
+        assertEquals("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_50), true);
+        assertEquals("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_51), true);
     }
 
     @Test
@@ -177,15 +177,15 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
         vmAndTemplatesGenerationsDAO.updateOvfGenerations(vms, values);
 
         List<Guid> guids = vmAndTemplatesGenerationsDAO.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
-        assertEquals("two vms should need ovf update in pool:" +FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER ,2, guids.size());
-        assertEquals("vms ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_RHEL5_POOL_50),true);
-        assertEquals("vms ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_RHEL5_POOL_51),true);
+        assertEquals("two vms should need ovf update in pool:" +FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER , 2, guids.size());
+        assertEquals("vms ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_50), true);
+        assertEquals("vms ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_51), true);
 
 
         guids = vmAndTemplatesGenerationsDAO.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_NFS_2);
-        assertEquals("two vms should need ovf update in pool" + FixturesTool.STORAGE_POOL_NFS_2,2, guids.size());
-        assertEquals("vm ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_RHEL5_POOL_59),true);
-        assertEquals("vm ids for ovf update didn't contain expected id",guids.contains(FixturesTool.VM_RHEL5_POOL_60),true);
+        assertEquals("two vms should need ovf update in pool" + FixturesTool.STORAGE_POOL_NFS_2, 2, guids.size());
+        assertEquals("vm ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_59), true);
+        assertEquals("vm ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_60), true);
     }
 
     @Test

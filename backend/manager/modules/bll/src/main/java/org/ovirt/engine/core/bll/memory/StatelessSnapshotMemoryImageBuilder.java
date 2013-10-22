@@ -14,7 +14,7 @@ public class StatelessSnapshotMemoryImageBuilder implements MemoryImageBuilder {
 
     public StatelessSnapshotMemoryImageBuilder(VM vm) {
         memoryVolumesFromActiveSnapshot =
-                DbFacade.getInstance().getSnapshotDao().get(vm.getId(),SnapshotType.ACTIVE)
+                DbFacade.getInstance().getSnapshotDao().get(vm.getId(), SnapshotType.ACTIVE)
                 .getMemoryVolume();
     }
 

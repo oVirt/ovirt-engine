@@ -34,9 +34,9 @@ public enum ManageDomainsResultEnum {
             20),
     FAILURE_READING_PASSWORD_FILE("failed reading password from password file", 21),
     EMPTY_PASSWORD_FILE("password file is empty", 22),
-    NO_LDAP_SERVERS_FOR_DOMAIN("No LDAP servers can be obtained for domain %1$s",23),
-    NO_KDC_SERVERS_FOR_DOMAIN("No KDC can be obtained for domain %1$s",24),
-    ARGUMENT_VALUE_REQUIRED("Value is required for argument %1$s",25);
+    NO_LDAP_SERVERS_FOR_DOMAIN("No LDAP servers can be obtained for domain %1$s", 23),
+    NO_KDC_SERVERS_FOR_DOMAIN("No KDC can be obtained for domain %1$s", 24),
+    ARGUMENT_VALUE_REQUIRED("Value is required for argument %1$s", 25);
     private String detailedMessage;
     private final int exitCode;
 

@@ -52,7 +52,7 @@ public class AttestationValue {
             return false;
         AttestationValue other = (AttestationValue) obj;
         return (ObjectUtils.objectsEqual(hostName, other.hostName)
-                && ObjectUtils.objectsEqual(trustLevel,other.trustLevel));
+                && ObjectUtils.objectsEqual(trustLevel, other.trustLevel));
     }
 
 }

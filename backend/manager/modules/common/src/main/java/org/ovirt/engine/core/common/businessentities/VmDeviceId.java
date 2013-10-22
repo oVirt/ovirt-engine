@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmDeviceId implements Serializable,Comparable<VmDeviceId> {
+public class VmDeviceId implements Serializable, Comparable<VmDeviceId> {
 
     private static final long serialVersionUID = 7807607542617897504L;
     private Guid deviceId;

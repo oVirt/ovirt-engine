@@ -77,9 +77,9 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     }
 
     private void setUpMocksForAdd(boolean hookFound, GlusterHookEntity hook, VDSStatus status) {
-        setupMocks(cmd,hookFound, hook);
+        setupMocks(cmd, hookFound, hook);
         doReturn(vdsDao).when(cmd).getVdsDAO();
-        when(vdsDao.get(any(Guid.class))).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID,status));
+        when(vdsDao.get(any(Guid.class))).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID, status));
     }
 
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
@@ -123,7 +123,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     public void executeCommandWhenFailed() {
         cmd = spy(new AddGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForAdd();
-        mockBackend(false,VdcBllErrors.GlusterHookAddFailed);
+        mockBackend(false, VdcBllErrors.GlusterHookAddFailed);
         cmd.executeCommand();
         verify(hooksDao, never()).updateGlusterHook(any(GlusterHookEntity.class));
         verify(hooksDao, never()).removeGlusterServerHook(any(Guid.class), any(Guid.class));
@@ -157,7 +157,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     public void canDoActionFailsOnNoConflictServers() {
         cmd = spy(new AddGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         GlusterHookEntity hook = getHookEntity();
-        setUpMocksForAdd(true,hook);
+        setUpMocksForAdd(true, hook);
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS.toString()));
     }

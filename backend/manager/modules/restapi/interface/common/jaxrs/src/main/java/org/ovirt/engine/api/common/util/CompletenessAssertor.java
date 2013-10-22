@@ -172,7 +172,7 @@ public class CompletenessAssertor {
             } else if(!isLeaf(r)){
                 Object superType = get(model, superField(r));
                 if(superType != null)
-                    missing.addAll(joinSuperType(doAssertRequired(reason, detail, superType ,frameOffset, subField(r)), superType));
+                    missing.addAll(joinSuperType(doAssertRequired(reason, detail, superType , frameOffset, subField(r)), superType));
                 else
                     missing.add(r);
             }

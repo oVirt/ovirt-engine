@@ -46,7 +46,7 @@ import org.ovirt.engine.core.utils.kerberos.KerberosUtils;
 // The @DependsOn annotation is in order to make sure it is started after the stated beans are initialized
 @Singleton
 @Startup
-@DependsOn({"Backend","Scheduler","KerberosManager"})
+@DependsOn({"Backend", "Scheduler", "KerberosManager"})
 @Local(UsersDomainsCacheManager.class)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
@@ -86,7 +86,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
                     List<URI> uris = ldapServerPerDomain.get(domain);
                     if (uris == null) {
                         uris = new ArrayList<URI>();
-                        ldapServerPerDomain.put(domain,uris);
+                        ldapServerPerDomain.put(domain, uris);
                     }
                     for (String ldapServer : ldapServers) {
                         ldapURI = new URI("ldap://" + ldapServer.trim() + ":" + ldapPort);

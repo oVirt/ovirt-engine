@@ -53,7 +53,7 @@ public class ADUserContextMapper implements ContextMapper {
         try {
             Object adObjectGuid = attributes.get(objectguid.name()).get(0);
             byte[] guidBytes = (byte[]) adObjectGuid;
-            Guid guid = new Guid(guidBytes,false);
+            Guid guid = new Guid(guidBytes, false);
             user.setUserId(guid);
 
             // Getting other string properties

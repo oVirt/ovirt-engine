@@ -104,7 +104,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
-        alert.addCustomValue("Operation",op);
+        alert.addCustomValue("Operation", op);
         AlertDirector.Alert(alert, logType);
     }
 
@@ -122,7 +122,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
-        alert.addCustomValue("Operation",op);
+        alert.addCustomValue("Operation", op);
         alert.updateCallStackFromThrowable(throwable);
         AlertDirector.Alert(alert, logType);
     }
@@ -174,7 +174,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @param operation The operation name.
      */
     protected void AlertIfPowerManagementOperationSkipped(String operation, Throwable throwable) {
-        Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED,operation, throwable);
+        Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED, operation, throwable);
     }
 
     protected void LogSettingVmToDown(Guid vdsId, Guid vmId) {

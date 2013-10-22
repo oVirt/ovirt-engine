@@ -52,7 +52,7 @@ public enum VdcObjectType {
     }
 
     private VdcObjectType(int val) {
-        this(val,null);
+        this(val, null);
     }
 
     public String getVdcObjectTranslation() {

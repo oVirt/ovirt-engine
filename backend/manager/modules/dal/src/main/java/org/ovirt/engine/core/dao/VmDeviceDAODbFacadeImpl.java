@@ -187,7 +187,7 @@ public class VmDeviceDAODbFacadeImpl extends
     public void updateRuntimeInfo(VmDevice vmDevice) {
         MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
                 .addValue("address", vmDevice.getAddress())
-                .addValue("alias",vmDevice.getAlias());
+                .addValue("alias", vmDevice.getAlias());
 
         getCallsHandler().executeModification("UpdateVmDeviceRuntimeInfo", paramsForUpdate);
     }
@@ -195,21 +195,21 @@ public class VmDeviceDAODbFacadeImpl extends
     private MapSqlParameterSource createParameterSourceForUpdate(VmDevice vmDevice) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmDevice.getVmId())
-                .addValue("device_id",vmDevice.getDeviceId());
+                .addValue("device_id", vmDevice.getDeviceId());
         return parameterSource;
     }
 
     @Override
     public void updateHotPlugDisk(VmDevice vmDevice) {
         MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
-            .addValue("is_plugged",vmDevice.getIsPlugged());
+            .addValue("is_plugged", vmDevice.getIsPlugged());
         getCallsHandler().executeModification("UpdateVmDeviceForHotPlugDisk" , paramsForUpdate);
     }
 
     @Override
     public void updateBootOrder(VmDevice vmDevice) {
         MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
-                .addValue("boot_order",vmDevice.getBootOrder());
+                .addValue("boot_order", vmDevice.getBootOrder());
         getCallsHandler().executeModification("UpdateVmDeviceBootOrder" , paramsForUpdate);
     }
 

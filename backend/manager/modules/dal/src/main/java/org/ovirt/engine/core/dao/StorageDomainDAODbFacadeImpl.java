@@ -126,7 +126,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     @Override
     public List<StorageDomain> getAllStorageDomainsByImageId(Guid imageId) {
         return getCallsHandler().executeReadList("Getstorage_domains_List_By_ImageId",
-                StorageDomainRowMapper.instance,getCustomMapSqlParameterSource()
+                StorageDomainRowMapper.instance, getCustomMapSqlParameterSource()
                 .addValue("image_id", imageId));
     }
 

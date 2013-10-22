@@ -90,7 +90,7 @@ public class EnumValidator {
         }
     }
 
-    public static <E extends Enum<E>> String validateEnum(String reason, String detail, Class<E> clz,Set<String> externalValues, String name, boolean toUppercase) {
+    public static <E extends Enum<E>> String validateEnum(String reason, String detail, Class<E> clz, Set<String> externalValues, String name, boolean toUppercase) {
         for (String externalValue : externalValues) {
             if (externalValue.equalsIgnoreCase(name)) {
                 return name;

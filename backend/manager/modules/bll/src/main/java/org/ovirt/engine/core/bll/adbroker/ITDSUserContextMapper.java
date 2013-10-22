@@ -81,7 +81,7 @@ public class ITDSUserContextMapper implements ContextMapper {
             }
 
         } catch (NamingException e) {
-            log.error("Failed populating user",e);
+            log.error("Failed populating user", e);
             return null;
         }
 

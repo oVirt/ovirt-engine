@@ -604,7 +604,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
-        setUpGetConsoleExpectations(new int[]{1,2});
+        setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetVirtioScsiExpectations(new int[]{2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,

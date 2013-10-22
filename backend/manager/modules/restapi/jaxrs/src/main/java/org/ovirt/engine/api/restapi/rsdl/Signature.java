@@ -32,10 +32,10 @@ public class Signature implements Cloneable {
         return mandatoryArguments.isEmpty() && optionalArguments.isEmpty();
     }
     public void addMandatoryArgument(Object name, Object type) {
-        mandatoryArguments.put(name,type);
+        mandatoryArguments.put(name, type);
     }
     public void addOptionalArgument(Object name, Object type) {
-        optionalArguments.put(name,type);
+        optionalArguments.put(name, type);
     }
     public Signature clone()  throws CloneNotSupportedException {
         super.clone();

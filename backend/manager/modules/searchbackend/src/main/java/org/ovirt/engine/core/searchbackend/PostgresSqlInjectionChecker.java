@@ -5,7 +5,7 @@ import java.util.HashSet;
 public class PostgresSqlInjectionChecker extends SqlInjectionChecker {
 
     private static final String[] POSTGRES_SQL_COMMENT_INDICATORS = {"--", "/*", "*/"};
-    private static final String[] POSTGRES_SQL_FUNCTIONS = {"ascii(","chr(","convert(","cast(","pg_sleep(","length(","substr(","pg_read_file(", "replace(", " copy "};
+    private static final String[] POSTGRES_SQL_FUNCTIONS = {"ascii(", "chr(", "convert(", "cast(", "pg_sleep(", "length(", "substr(", "pg_read_file(", "replace(", " copy "};
 
     @Override
     protected String getSqlCommandSeperator() {

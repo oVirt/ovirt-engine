@@ -31,5 +31,8 @@
     <module name="NoWhitespaceBefore">
       <property name="tokens" value="SEMI"/>
     </module>
+    <module name="WhitespaceAfter">
+          <property name="tokens" value="COMMA"/>
+    </module>
   </module>
 </module>

@@ -192,7 +192,7 @@ public class DbUserCacheManager {
                     if (adUsers == null) {
                         log.warn("No users returned from directory server during refresh users");
                     } else {
-                        LdapBrokerUtils.performGroupPopulationForUsers(adUsers,domain,updatedGroups);
+                        LdapBrokerUtils.performGroupPopulationForUsers(adUsers, domain, updatedGroups);
                         for (LdapUser adUser : adUsers) {
                             updateDBUserFromADUser(userByDomains.get(domain).get(adUser.getUserId()), adUser, updatedUsers);
                             userByDomains.get(domain).remove(adUser.getUserId());
@@ -200,7 +200,7 @@ public class DbUserCacheManager {
                     }
                     Collection<DbUser> usersForDomain = entry.getValue().values();
                     if (usersForDomain == null) {
-                        log.warnFormat("No users for domain {0}",domain);
+                        log.warnFormat("No users for domain {0}", domain);
                     } else {
                         for (DbUser dbUser : usersForDomain) {
                             if (dbUser.getStatus() != 0) {

@@ -168,7 +168,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForStoragePool() {
-        StorageDomain result = dao.getForStoragePool(existingDomain.getId(),new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
+        StorageDomain result = dao.getForStoragePool(existingDomain.getId(), new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
 
         assertGetResult(result);
     }

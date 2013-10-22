@@ -22,7 +22,7 @@ public class BackendSnapshotDisksResource extends BackendSnapshotElementsResourc
             VM vm = parent.collection.getVmPreview(parent.get());
             for (DiskImage disk : vm.getDiskList()) {
                 Disk d = DiskMapper.map(disk, null);
-                map(d,parent.id);
+                map(d, parent.id);
                 disks.getDisks().add(d);
             }
         }

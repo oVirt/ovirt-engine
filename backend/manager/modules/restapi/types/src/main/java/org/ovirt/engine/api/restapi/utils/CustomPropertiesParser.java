@@ -38,7 +38,7 @@ public class CustomPropertiesParser {
         List<String> keyValue = new ArrayList<String>();
         int index = str.indexOf("=");
         if (index != -1) {
-            String key = str.substring(0,index);
+            String key = str.substring(0, index);
             String value = str.substring(index+1);
             keyValue.add(key);
             keyValue.add(value);

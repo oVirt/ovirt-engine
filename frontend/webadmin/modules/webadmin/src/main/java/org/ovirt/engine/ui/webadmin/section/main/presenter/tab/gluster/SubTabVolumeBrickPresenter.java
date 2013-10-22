@@ -32,7 +32,7 @@ public class SubTabVolumeBrickPresenter extends AbstractSubTabPresenter<GlusterV
     }
 
     @Inject
-    public SubTabVolumeBrickPresenter(EventBus eventBus,ViewDef view, ProxyDef proxy,
+    public SubTabVolumeBrickPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,

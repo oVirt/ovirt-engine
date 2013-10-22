@@ -83,7 +83,7 @@ public interface VmDAO extends DAO {
      *            the disk id
      * @return A {@link List} of the VMs associated with the disk.
      */
-    List<Pair<VM,VmDevice>> getVmsWithPlugInfo(Guid id);
+    List<Pair<VM, VmDevice>> getVmsWithPlugInfo(Guid id);
 
     /**
      * Finds all VMs for the specified user.

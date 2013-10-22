@@ -7,7 +7,7 @@ public class ValidationResult {
 
 
     public ValidationResult(boolean ok) {
-        this(ok,"");
+        this(ok, "");
     }
 
     public ValidationResult(boolean ok, String details) {

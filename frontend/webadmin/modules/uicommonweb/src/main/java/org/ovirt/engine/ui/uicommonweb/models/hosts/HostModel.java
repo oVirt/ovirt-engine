@@ -1243,7 +1243,7 @@ public abstract class HostModel extends Model
         }
     }
 
-    private void setPmOptionsMapInternal(Map<String,String> value, EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
+    private void setPmOptionsMapInternal(Map<String, String> value, EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
 
         StringBuilder pmOptions = new StringBuilder();
 
@@ -1275,7 +1275,7 @@ public abstract class HostModel extends Model
         }
     }
 
-    private HashMap<String,String> getPmOptionsMapInternal(EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
+    private HashMap<String, String> getPmOptionsMapInternal(EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
 
         HashMap<String, String> dict = new HashMap<String, String>();
 

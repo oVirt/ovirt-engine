@@ -236,7 +236,7 @@ public class BackendStorageDomainsResource
     }
 
     protected String mapType(StorageType type) {
-        return getMapper(StorageType.class,String.class).map(type,null);
+        return getMapper(StorageType.class, String.class).map(type, null);
     }
 
     @Override

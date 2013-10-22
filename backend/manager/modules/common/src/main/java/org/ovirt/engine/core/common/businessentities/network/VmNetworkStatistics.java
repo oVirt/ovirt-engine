@@ -34,7 +34,7 @@ public class VmNetworkStatistics extends NetworkStatistics implements Comparable
 
     @Override
     public int compareTo(VmNetworkStatistics o) {
-        return BusinessEntityGuidComparator.<VmNetworkStatistics>newInstance().compare(this,o);
+        return BusinessEntityGuidComparator.<VmNetworkStatistics>newInstance().compare(this, o);
     }
 
     @Override

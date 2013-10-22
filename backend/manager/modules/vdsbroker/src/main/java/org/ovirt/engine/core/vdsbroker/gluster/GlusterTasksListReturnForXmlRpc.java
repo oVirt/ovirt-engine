@@ -38,7 +38,7 @@ public class GlusterTasksListReturnForXmlRpc extends StatusReturnForXmlRpc {
         Map<String, Object> tasksMap = (Map<String, Object>) innerMap.get(TASKS_LIST);
         if (tasksMap != null) {
             for (Entry<String, Object> entry: tasksMap.entrySet()) {
-                tasks.add(getTask(entry.getKey(),(Map<String, Object>)entry.getValue()));
+                tasks.add(getTask(entry.getKey(), (Map<String, Object>)entry.getValue()));
             }
         }
 

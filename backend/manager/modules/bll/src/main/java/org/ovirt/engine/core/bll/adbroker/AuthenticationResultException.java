@@ -19,17 +19,17 @@ public class AuthenticationResultException extends DirectoryServiceException {
         return result;
     }
 
-    public AuthenticationResultException(AuthenticationResult result,String message) {
+    public AuthenticationResultException(AuthenticationResult result, String message) {
         super(message);
         this.result = result;
     }
 
-    public AuthenticationResultException(AuthenticationResult result,Throwable cause) {
-        super(result.getDetailedMessage(),cause);
+    public AuthenticationResultException(AuthenticationResult result, Throwable cause) {
+        super(result.getDetailedMessage(), cause);
         this.result = result;
     }
 
-    public AuthenticationResultException(AuthenticationResult result,String message, Throwable cause) {
+    public AuthenticationResultException(AuthenticationResult result, String message, Throwable cause) {
         super(message, cause);
         this.result = result;
     }

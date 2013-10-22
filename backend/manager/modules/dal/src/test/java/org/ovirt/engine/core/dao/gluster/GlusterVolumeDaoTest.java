@@ -172,9 +172,9 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         GlusterVolumeEntity volume = dao.getAllWithQuery("select * from gluster_volumes_view where id = '"
                         + existingDistVol.getId() + "'").get(0);
 
-        assertNotNull("Volume : "+ existingDistVol.getId() +" doesn't exists",volume);
-        assertTrue("Task ID is not getting updated",volume.getAsyncTask().getTaskId().equals(REBALANCING_VOLUME_TASKID));
-        assertTrue("Invalid Task status",JobExecutionStatus.STARTED ==volume.getAsyncTask().getStatus());
+        assertNotNull("Volume : "+ existingDistVol.getId() +" doesn't exists", volume);
+        assertTrue("Task ID is not getting updated", volume.getAsyncTask().getTaskId().equals(REBALANCING_VOLUME_TASKID));
+        assertTrue("Invalid Task status", JobExecutionStatus.STARTED ==volume.getAsyncTask().getStatus());
         assertTrue("Invalid Task type", GlusterTaskType.REBALANCE ==volume.getAsyncTask().getType());
     }
 

@@ -79,7 +79,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     /**
      * Map of custom properties
      */
-    private Map<String,String> customProperties;
+    private Map<String, String> customProperties;
 
     public VmDevice() {
         isPlugged = Boolean.FALSE;
@@ -308,6 +308,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
 
     @Override
     public int compareTo(VmDevice other) {
-        return BusinessEntityComparator.<VmDevice,VmDeviceId>newInstance().compare(this, other);
+        return BusinessEntityComparator.<VmDevice, VmDeviceId>newInstance().compare(this, other);
     }
 }

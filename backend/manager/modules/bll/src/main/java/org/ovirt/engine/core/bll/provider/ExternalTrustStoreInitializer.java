@@ -31,7 +31,7 @@ public class ExternalTrustStoreInitializer {
                 trustStore.load(null, password.toCharArray());
                 trustStore.store(out, password.toCharArray());
             } catch (Exception e) {
-                log.error("Creation of the external trust store failed.",e);
+                log.error("Creation of the external trust store failed.", e);
             }
         }
     }

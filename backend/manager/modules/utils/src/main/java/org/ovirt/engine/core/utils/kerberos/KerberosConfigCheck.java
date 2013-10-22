@@ -174,7 +174,7 @@ public class KerberosConfigCheck {
             authResult =
                     (AuthenticationResult) Subject.doAs(lc.getSubject(), new JndiAction(username,
                             realm.toLowerCase(),
-                            userGuid, ldapProviderType,ldapServers,defaultLdapServerPort));
+                            userGuid, ldapProviderType, ldapServers, defaultLdapServerPort));
 
         } finally {
             if (lc != null) {

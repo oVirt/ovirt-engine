@@ -366,11 +366,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 Guid diskId = lun.getDiskId();
                 Guid storageDomainId = lun.getStorageDomainId();
                 if(diskId != null) {
-                       locks.put(diskId.toString(),LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                       locks.put(diskId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
                 }
                 if(storageDomainId != null) {
-                       locks.put(storageDomainId.toString(),LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                       locks.put(storageDomainId.toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
                 }
 

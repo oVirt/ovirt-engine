@@ -125,10 +125,10 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
         if (!ObjectUtils.objectsEqual(getCustomProperties(), other.getCustomProperties())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getId(),other.getId())) {
+        if (!ObjectUtils.objectsEqual(getId(), other.getId())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(getName(),other.getName())) {
+        if (!ObjectUtils.objectsEqual(getName(), other.getName())) {
             return false;
         }
         if (!ObjectUtils.objectsEqual(getNetworkId(), other.getNetworkId())) {

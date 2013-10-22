@@ -239,7 +239,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         setFenceSucceeded(vdsReturnValue.getSucceeded());
         if (getFenceSucceeded()) {
             executor = new FenceExecutor(getVds(), FenceActionType.Status);
-            if (waitForStatus(getVds().getName(), getParameters().getAction(),FenceAgentOrder.Secondary)) {
+            if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Secondary)) {
                 // raise an alert that secondary agent was used
                 AuditLogableBase logable = new AuditLogableBase();
                 logable.setVdsId(getVds().getId());
@@ -380,7 +380,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
                 executor = new FenceExecutor(getVds(), FenceActionType.Status);
-                if (waitForStatus(getVds().getName(), FenceActionType.Start,order)) {
+                if (waitForStatus(getVds().getName(), FenceActionType.Start, order)) {
                     handleSpecificCommandActions();
                 } else {
                     setFenceSucceeded(false);

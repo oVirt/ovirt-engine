@@ -318,7 +318,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     public String generateId(Version v) {
-        Guid guid = new Guid((v.getMajor()+"."+v.getMinor()).getBytes(),true);
+        Guid guid = new Guid((v.getMajor()+"."+v.getMinor()).getBytes(), true);
         return guid.toString();
     }
 
@@ -354,8 +354,8 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         }
         if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
             addGlusterHookContentTypes(version, HookContentType.values());
-            addStages(version,HookStage.values());
-            addGlusterHookStates(version,HookStatus.values());
+            addStages(version, HookStage.values());
+            addGlusterHookStates(version, HookStatus.values());
          }
     }
 

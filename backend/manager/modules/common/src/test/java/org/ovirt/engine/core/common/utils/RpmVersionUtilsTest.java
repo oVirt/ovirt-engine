@@ -38,10 +38,10 @@ public class RpmVersionUtilsTest {
     @Test
     public void testFillCompsArray() {
         StringBuilder[] result = RpmVersionUtils.fillCompsArray("20130820.1.3.fc18.x86_64");
-        String[] expected = {"20130820","1","3","fc","18","x","86","64"};
+        String[] expected = {"20130820", "1", "3", "fc", "18", "x", "86", "64"};
         int counter = 0;
         while (true) {
-            assertEquals(expected[counter],result[counter].toString());
+            assertEquals(expected[counter], result[counter].toString());
             counter++;
             if (counter == result.length || result[counter] == null) {
                 break;

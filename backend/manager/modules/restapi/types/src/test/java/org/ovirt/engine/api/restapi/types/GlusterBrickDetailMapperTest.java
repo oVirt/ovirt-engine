@@ -30,7 +30,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
     @Test
     public void testWithAllDetails() {
         GlusterVolumeAdvancedDetails volDetailsEntity = new GlusterVolumeAdvancedDetails();
-        volDetailsEntity.setBrickDetails(getBrickDetails(1,2,4));
+        volDetailsEntity.setBrickDetails(getBrickDetails(1, 2, 4));
         GlusterBrickAdvancedDetails model = GlusterBrickDetailMapper.map(volDetailsEntity, null);
         assertNotNull(model);
         assertEquals(model.getGlusterClients().getGlusterClients().size(), 2);
@@ -42,7 +42,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
     @Test
     public void testWithNoLists() {
         GlusterVolumeAdvancedDetails volDetailsEntity = new GlusterVolumeAdvancedDetails();
-        volDetailsEntity.setBrickDetails(getBrickDetails(0,0,0));
+        volDetailsEntity.setBrickDetails(getBrickDetails(0, 0, 0));
         GlusterBrickAdvancedDetails model = GlusterBrickDetailMapper.map(volDetailsEntity, null);
         assertNotNull(model);
         assertNull(model.getGlusterClients());
@@ -52,7 +52,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
     @Test
     public void testWithMultipleClientLists() {
         GlusterVolumeAdvancedDetails volDetailsEntity = new GlusterVolumeAdvancedDetails();
-        volDetailsEntity.setBrickDetails(getBrickDetails(2,2,2));
+        volDetailsEntity.setBrickDetails(getBrickDetails(2, 2, 2));
 
         GlusterBrickAdvancedDetails model = GlusterBrickDetailMapper.map(volDetailsEntity, null);
         assertEquals(model.getGlusterClients().getGlusterClients().size(), 2);
@@ -64,7 +64,7 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
     @Test
     public void testWithNullChildObjects() {
         GlusterVolumeAdvancedDetails volDetailsEntity = new GlusterVolumeAdvancedDetails();
-        volDetailsEntity.setBrickDetails(getBrickDetails(1,0,0));
+        volDetailsEntity.setBrickDetails(getBrickDetails(1, 0, 0));
         volDetailsEntity.getBrickDetails().get(0).setClients(null);
         volDetailsEntity.getBrickDetails().get(0).setMemoryStatus(null);
 

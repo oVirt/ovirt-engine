@@ -59,7 +59,7 @@ public class MapBackedPreferences extends AbstractPreferences implements Seriali
     @Override
     protected AbstractPreferences childSpi(String name) {
         childNodes.add(name);
-        return new MapBackedPreferences(this,name);
+        return new MapBackedPreferences(this, name);
     }
 
     @Override

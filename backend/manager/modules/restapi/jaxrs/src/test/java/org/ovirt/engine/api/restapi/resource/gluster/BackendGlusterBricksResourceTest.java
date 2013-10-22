@@ -155,7 +155,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         expect(uriInfo.getPath()).andReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks")
                 .anyTimes();
         setUriInfo(uriInfo);
-        setupEntityExpectationAdvancedDetails(1,false);
+        setupEntityExpectationAdvancedDetails(1, false);
         setUpCreationExpectations(VdcActionType.AddBricksToGlusterVolume,
                                   GlusterVolumeBricksActionParameters.class,
                                   new String[] { "VolumeId", "Bricks" },

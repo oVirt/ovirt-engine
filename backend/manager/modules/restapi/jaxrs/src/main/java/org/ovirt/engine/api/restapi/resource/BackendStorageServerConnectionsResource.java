@@ -43,7 +43,7 @@ public class BackendStorageServerConnectionsResource extends AbstractBackendColl
         for (org.ovirt.engine.core.common.businessentities.StorageServerConnections entity : entities) {
             StorageConnection connection = map(entity);
             if (connection != null) {
-                collection.getStorageConnections().add(addLinks(populate(connection,entity)));
+                collection.getStorageConnections().add(addLinks(populate(connection, entity)));
             }
         }
         return collection;

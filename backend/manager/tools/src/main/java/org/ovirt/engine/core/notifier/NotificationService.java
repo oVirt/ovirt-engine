@@ -308,7 +308,7 @@ public class NotificationService implements Runnable {
                         + eventSubscriber.getaudit_log_id());
             }
         } finally {
-            DbUtils.closeQuietly(ps,connection);
+            DbUtils.closeQuietly(ps, connection);
         }
     }
 
@@ -329,7 +329,7 @@ public class NotificationService implements Runnable {
             cs.setString(7, eventHistory.getsubscriber_id().toString());
             cs.executeUpdate();
         } finally {
-            DbUtils.closeQuietly(cs,connection);
+            DbUtils.closeQuietly(cs, connection);
         }
     }
 
@@ -366,7 +366,7 @@ public class NotificationService implements Runnable {
                 dbUser.setEmail(rs.getString("email"));
             }
         } finally {
-            DbUtils.closeQuietly(rs,ps,connection);
+            DbUtils.closeQuietly(rs, ps, connection);
         }
         return dbUser;
     }

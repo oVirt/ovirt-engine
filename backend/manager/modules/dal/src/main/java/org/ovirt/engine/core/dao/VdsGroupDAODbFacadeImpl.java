@@ -141,7 +141,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
     public List<VDSGroup> getTrustedClusters() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("trusted_service", true);
-        return getCallsHandler().executeReadList("GetTrustedVdsGroups",VdsGroupRowMapper.instance,parameterSource);
+        return getCallsHandler().executeReadList("GetTrustedVdsGroups", VdsGroupRowMapper.instance, parameterSource);
     }
 
     private MapSqlParameterSource getVdsGroupParamSource(VDSGroup group) {

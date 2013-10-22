@@ -63,7 +63,7 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("network_id", network);
 
-        return getCallsHandler().executeReadList("GetAllFromnetwork_clusterByNetworkId",mapper,
+        return getCallsHandler().executeReadList("GetAllFromnetwork_clusterByNetworkId", mapper,
                 parameterSource);
     }
 

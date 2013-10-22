@@ -47,7 +47,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
 
         // check that vdc support vds OR vds support vdc
         RpmVersion vdsVersion = vds.getVersion();
-        Version vdsmVersion = new Version(vdsVersion.getMajor(),vdsVersion.getMinor());
+        Version vdsmVersion = new Version(vdsVersion.getMajor(), vdsVersion.getMinor());
 
         // move to non operational if vds-vdc version not supported OR cluster
         // version is not supported

@@ -94,7 +94,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public VolumeRebalanceStatusPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,ApplicationMessages messages) {
+    public VolumeRebalanceStatusPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages) {
         super(eventBus, resources);
         this.messages = messages;
         this.constants = constants;

@@ -28,7 +28,7 @@ public class BackendJobsResource extends AbstractBackendCollectionResource<Job, 
 
     @Override
     public Jobs list() {
-        List<org.ovirt.engine.core.common.job.Job> jobs = getBackendCollection(VdcQueryType.GetAllJobs,new VdcQueryParametersBase());
+        List<org.ovirt.engine.core.common.job.Job> jobs = getBackendCollection(VdcQueryType.GetAllJobs, new VdcQueryParametersBase());
         return mapCollection(jobs);
     }
 

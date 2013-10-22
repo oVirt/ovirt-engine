@@ -234,7 +234,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         return doNotLinkSubCollections?
                 LinkHelper.addLinks(getUriInfo(), addParents(model), suggestedParent)
                 :
-                addLinks(model,suggestedParent);
+                addLinks(model, suggestedParent);
     }
 
     protected List<Q> asCollection(Object o) {
@@ -287,7 +287,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
                     addOrUpdateLink(model, relation, LinkHelper.getUriBuilder(getUriInfo(), model, suggestedParent).path(relation).build().toString());
                 }
                 else{
-                    removeIfExist(model,relation);
+                    removeIfExist(model, relation);
                 }
             }
         }

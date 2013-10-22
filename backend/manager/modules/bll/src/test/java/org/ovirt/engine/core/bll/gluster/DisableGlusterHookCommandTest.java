@@ -41,7 +41,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
     @Test
     public void canDoActionFailsOnNullHook() {
         cmd = spy(new DisableGlusterHookCommand<GlusterHookParameters>(new GlusterHookParameters(HOOK_ID)));
-        setupMocks(cmd,false);
+        setupMocks(cmd, false);
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST.toString()));
     }
@@ -50,7 +50,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
     public void executeCommand() {
         cmd = spy(new DisableGlusterHookCommand<GlusterHookParameters>(new GlusterHookParameters(HOOK_ID)));
         setupMocks(cmd);
-        mockBackendStatusChange(cmd,true);
+        mockBackendStatusChange(cmd, true);
         cmd.executeCommand();
         assertTrue(cmd.getReturnValue().getSucceeded());
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_DISABLE);
@@ -60,7 +60,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
     public void executeCommandWhenFailed() {
         cmd = spy(new DisableGlusterHookCommand<GlusterHookParameters>(new GlusterHookParameters(HOOK_ID)));
         setupMocks(cmd);
-        mockBackendStatusChange(cmd,false);
+        mockBackendStatusChange(cmd, false);
         cmd.executeCommand();
         assertFalse(cmd.getReturnValue().getSucceeded());
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_DISABLE_FAILED);

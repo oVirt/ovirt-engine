@@ -112,8 +112,8 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         List<Step> steps = dao.getStepsByExternalId(IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID);
         assertEquals("Verify Rebalancing Gluster Volume Job has steps", TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME, steps.size());
         Step step = steps.get(0);
-        assertTrue("Verify the Step Type status",StepEnum.REBALANCING_VOLUME == step.getStepType());
-        assertTrue("Verify the Step status",JobExecutionStatus.STARTED == step.getStatus());
+        assertTrue("Verify the Step Type status", StepEnum.REBALANCING_VOLUME == step.getStepType());
+        assertTrue("Verify the Step status", JobExecutionStatus.STARTED == step.getStatus());
         assertEquals("Invalid Step", REBALANCING_GLUSTER_VOLUME_STEP_ID, step.getId());
     }
 }

@@ -31,7 +31,7 @@ public class GlusterTasksService {
             List<GlusterAsyncTask> tasks = (List<GlusterAsyncTask>)returnValue.getReturnValue();
             Map<Guid, GlusterAsyncTask> tasksMap = new HashMap<>();
             for (GlusterAsyncTask task: tasks) {
-                tasksMap.put(task.getTaskId(),task);
+                tasksMap.put(task.getTaskId(), task);
             }
             return tasksMap;
         } else {

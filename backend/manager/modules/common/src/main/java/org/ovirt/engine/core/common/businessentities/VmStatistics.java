@@ -187,7 +187,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     @Override
     public int compareTo(VmStatistics o) {
-        return BusinessEntityGuidComparator.<VmStatistics>newInstance().compare(this,o);
+        return BusinessEntityGuidComparator.<VmStatistics>newInstance().compare(this, o);
     }
 
     public VmBalloonInfo getVmBalloonInfo() {

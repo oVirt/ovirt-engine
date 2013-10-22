@@ -22,7 +22,7 @@ public class BackendAssignedRolesResourceTest
         extends AbstractBackendCollectionResourceTest<Role, permissions, BackendAssignedRolesResource> {
 
     public BackendAssignedRolesResourceTest() {
-        super(new BackendAssignedRolesResource(GUIDS[0]),null, "");
+        super(new BackendAssignedRolesResource(GUIDS[0]), null, "");
     }
 
     @Test

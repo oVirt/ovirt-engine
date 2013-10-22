@@ -37,7 +37,7 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
     public Response clear(Action action) {
         VdcActionParametersBase params = new VdcActionParametersBase();
         params.setJobId(guid);
-        return doAction(VdcActionType.ClearExternalJob,params, action);
+        return doAction(VdcActionType.ClearExternalJob, params, action);
     }
 
     @Override

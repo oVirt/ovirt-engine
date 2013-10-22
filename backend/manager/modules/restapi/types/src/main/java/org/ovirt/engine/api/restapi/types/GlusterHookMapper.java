@@ -64,11 +64,11 @@ public class GlusterHookMapper {
         }
 
         if (entity.getStage() != null) {
-            model.setStage(map(entity.getStage(),null));
+            model.setStage(map(entity.getStage(), null));
         }
 
         if (entity.getStatus() != null) {
-            model.setStatus(StatusUtils.create(map(entity.getStatus(),null)));
+            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
         }
 
         if (entity.getContentType() != null) {

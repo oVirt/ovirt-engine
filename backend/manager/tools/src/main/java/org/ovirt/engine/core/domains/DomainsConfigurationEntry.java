@@ -32,7 +32,7 @@ public class DomainsConfigurationEntry {
         StringBuilder configurationEntry = new StringBuilder();
         boolean firstEntry = true;
 
-        for ( Entry<String,String> currEntry: valuePerDomain.entrySet() ) {
+        for ( Entry<String, String> currEntry: valuePerDomain.entrySet() ) {
             if (!firstEntry) {
                 configurationEntry.append(domainSeperator);
             } else {

@@ -17,7 +17,7 @@ public class BackendDomainGroupResourceTest
 
     public BackendDomainGroupResourceTest() {
       super(new BackendDomainGroupResource(GROUP_ID.toString(),
-                                           new BackendDomainGroupsResource(DOMAIN_ID.toString(),null)));
+                                           new BackendDomainGroupsResource(DOMAIN_ID.toString(), null)));
     }
 
     @Test

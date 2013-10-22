@@ -676,7 +676,7 @@ public class UpdateStorageServerConnectionCommandTest {
         command.executeCommand();
         CommandAssertUtils.checkSucceeded(command, true);
         verify(storageDomainDynamicDao, never()).update(domainDynamic);
-        verify(command,never()).disconnectFromStorage();
+        verify(command, never()).disconnectFromStorage();
     }
 
     @Test
@@ -745,10 +745,10 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void isConnWithSameDetailsExistBlockDomains() {
-       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
 
        List<StorageServerConnections> connections = new ArrayList<>();
-       StorageServerConnections connection1 = createISCSIConnection("1.2.3.4", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+       StorageServerConnections connection1 = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
        connections.add(connection1);
 
        when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
@@ -758,7 +758,7 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void isConnWithSameDetailsExistCheckSameConn() {
-       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
 
        List<StorageServerConnections> connections = new ArrayList<>();
        connections.add(newISCSIConnection);

@@ -79,7 +79,7 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDAO<Disk> {
      * @param isFiltered
      * @return
      */
-    List<Disk> getAllAttachableDisksByPoolId(Guid poolId, Guid vmId ,Guid userId, boolean isFiltered);
+    List<Disk> getAllAttachableDisksByPoolId(Guid poolId, Guid vmId , Guid userId, boolean isFiltered);
 
     /**
      * Retrieves the boot active disk of the VM with the specified id, null if no boot active disk is attached to this VM.

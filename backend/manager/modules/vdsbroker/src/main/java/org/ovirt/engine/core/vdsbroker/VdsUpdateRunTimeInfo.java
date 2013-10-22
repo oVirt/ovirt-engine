@@ -105,8 +105,8 @@ public class VdsUpdateRunTimeInfo {
     private final List<Guid> _vmsMovedToDown = new ArrayList<Guid>();
     private final List<Guid> _vmsToRemoveFromAsync = new ArrayList<Guid>();
     private final List<Guid> _succededToRunVms = new ArrayList<Guid>();
-    private static final Map<Guid,Integer> vmsWithBalloonDriverProblem = new HashMap<>();
-    private static final Map<Guid,Integer> vmsWithUncontrolledBalloon = new HashMap<>();
+    private static final Map<Guid, Integer> vmsWithBalloonDriverProblem = new HashMap<>();
+    private static final Map<Guid, Integer> vmsWithUncontrolledBalloon = new HashMap<>();
     private final List<VmStatic> _externalVmsToAdd = new ArrayList();
     private boolean _saveVdsDynamic;
     private VDSStatus _firstStatus = VDSStatus.forValue(0);

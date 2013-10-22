@@ -110,7 +110,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
     public void executeCommandWhenFailed() {
         cmd = spy(new RemoveGlusterHookCommand(new GlusterHookManageParameters(HOOK_ID)));
         setUpMocksForRemove();
-        mockBackend(false,VdcBllErrors.GlusterHookRemoveFailed);
+        mockBackend(false, VdcBllErrors.GlusterHookRemoveFailed);
         cmd.executeCommand();
         verify(hooksDao, never()).remove(any(Guid.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REMOVE_FAILED);

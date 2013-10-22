@@ -251,7 +251,7 @@ public class QuotaManager {
                             -storageConsumptionParameter.getRequestedStorageGB();
             double currentValue = quotaStorageMap.get(storageConsumptionParameter.getStorageDomainId());
 
-            quotaStorageMap.put(storageConsumptionParameter.getStorageDomainId(),currentValue + requestedStorage);
+            quotaStorageMap.put(storageConsumptionParameter.getStorageDomainId(), currentValue + requestedStorage);
         }
     }
 
@@ -813,7 +813,7 @@ public class QuotaManager {
                     quotaMap.put(quotaId, quota);
                 } else {
                     throw new InvalidQuotaParametersException(
-                            String.format("Quota %s does not match storage pool %s",quotaId.toString()
+                            String.format("Quota %s does not match storage pool %s", quotaId.toString()
                                     , storagePoolId.toString()));
                 }
             }
@@ -1061,7 +1061,7 @@ public class QuotaManager {
         HashMap<Guid, Map<Guid, Quota>> newStoragePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
         for (Quota quota : allQuotaIncludingConsumption) {
             if (!newStoragePoolQuotaMap.containsKey(quota.getStoragePoolId())) {
-                newStoragePoolQuotaMap.put(quota.getStoragePoolId(), new HashMap<Guid,Quota>());
+                newStoragePoolQuotaMap.put(quota.getStoragePoolId(), new HashMap<Guid, Quota>());
             }
             newStoragePoolQuotaMap.get(quota.getStoragePoolId()).put(quota.getId(), quota);
         }

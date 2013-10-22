@@ -456,7 +456,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     @Override
     public int compareTo(VmDynamic o) {
-        return BusinessEntityGuidComparator.<VmDynamic>newInstance().compare(this,o);
+        return BusinessEntityGuidComparator.<VmDynamic>newInstance().compare(this, o);
     }
 
     public Long getLastWatchdogEvent() {

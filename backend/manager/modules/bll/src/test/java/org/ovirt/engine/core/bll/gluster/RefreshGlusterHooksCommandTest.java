@@ -67,7 +67,7 @@ public class RefreshGlusterHooksCommandTest {
     public void executeCommand() {
         cmd = spy(new RefreshGlusterHooksCommand<GlusterClusterParameters>(new GlusterClusterParameters(CLUSTER_ID)));
         setupMocks();
-        doNothing().when(hookSyncJob).refreshHooksInCluster(getVdsGroup(),true);
+        doNothing().when(hookSyncJob).refreshHooksInCluster(getVdsGroup(), true);
         cmd.executeCommand();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_REFRESH);
     }

@@ -81,7 +81,7 @@ public class BackendGlusterBrickResource
 
     @Override
     protected GlusterBrick doPopulate(GlusterBrick model, GlusterBrickEntity entity) {
-        return parent.populateAdvancedDetails(model,entity);
+        return parent.populateAdvancedDetails(model, entity);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class BackendGlusterBrickResource
                         VdcQueryType.GetGlusterVolumeAdvancedDetails,
                         new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
                                                                    volumeEntity.getId(),
-                                                                   brickEntity.getId(),true),
+                                                                   brickEntity.getId(), true),
                         null,
                         true);
                 brickEntity.setBrickDetails(detailsEntity.getBrickDetails().get(0));
@@ -113,8 +113,8 @@ public class BackendGlusterBrickResource
             }
 
         };
-        BrickStatisticalQuery query = new BrickStatisticalQuery(resolver ,newModel(id));
-        return inject(new BackendStatisticsResource<GlusterBrick, GlusterBrickEntity>(GlusterBrickEntity.class,guid,query));
+        BrickStatisticalQuery query = new BrickStatisticalQuery(resolver , newModel(id));
+        return inject(new BackendStatisticsResource<GlusterBrick, GlusterBrickEntity>(GlusterBrickEntity.class, guid, query));
     }
 
 

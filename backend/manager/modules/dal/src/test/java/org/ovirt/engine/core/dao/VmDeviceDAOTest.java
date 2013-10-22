@@ -198,6 +198,6 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
         vmDevice.setBootOrder(newBootOrderValue);
         dao.updateHotPlugDisk(vmDevice);
         dao.get(getExistingEntityId());
-        assertEquals(vmDevice.getBootOrder(),newBootOrderValue);
+        assertEquals(vmDevice.getBootOrder(), newBootOrderValue);
     }
 }

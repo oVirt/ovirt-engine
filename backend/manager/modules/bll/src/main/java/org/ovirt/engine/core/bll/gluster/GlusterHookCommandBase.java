@@ -31,7 +31,7 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
 
     protected GlusterHookEntity getGlusterHook() {
         if (entity == null) {
-            entity = getGlusterHooksDao().getById(getParameters().getHookId(),true);
+            entity = getGlusterHooksDao().getById(getParameters().getHookId(), true);
         }
         return entity;
     }

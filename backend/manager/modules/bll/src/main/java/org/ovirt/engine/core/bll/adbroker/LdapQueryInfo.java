@@ -5,7 +5,7 @@ public class LdapQueryInfo {
     private String baseDN;
     private String filter;
 
-    public LdapQueryInfo(String baseDN,String filter) {
+    public LdapQueryInfo(String baseDN, String filter) {
         this.baseDN = baseDN;
         this.filter = filter;
     }
