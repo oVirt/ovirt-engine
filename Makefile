@@ -158,7 +158,10 @@ GENERATED = \
 	packaging/etc/engine-config/log4j.xml \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
 	packaging/etc/engine-manage-domains/log4j.xml \
+	packaging/etc/engine.conf.d/README \
 	packaging/etc/notifier/log4j.xml \
+	packaging/etc/notifier/notifier.conf.d/README \
+	packaging/etc/ovirt-websocket-proxy.conf.d/README \
 	packaging/pythonlib/ovirt_engine/config.py \
 	packaging/services/ovirt-engine-notifier/config.py \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.conf \
@@ -361,9 +364,6 @@ install-layout: \
 	ln -sf "$(DATA_DIR)/bin/engine-manage-domains.sh" "$(DESTDIR)$(BIN_DIR)/engine-manage-domains"
 	ln -sf "$(DATA_DIR)/bin/engine-backup.sh" "$(DESTDIR)$(BIN_DIR)/engine-backup"
 
-	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf.d"
-	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d"
-	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf.d"
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/certs"
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/keys"
 	install -d -m 750 "$(DESTDIR)$(PKG_PKI_DIR)/private"

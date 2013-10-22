@@ -1,0 +1,9 @@
+ovirt-engine service configuration directory
+
+Only *.conf are considered.
+
+Files are sorted by name, last wins.
+
+Variables available at:
+
+  @ENGINE_USR@/services/ovirt-engine/ovirt-engine.conf

@@ -49,7 +49,10 @@ packaging/bin/pki-common.sh
 packaging/etc/engine-config/log4j.xml
 packaging/etc/engine-manage-domains/engine-manage-domains.conf
 packaging/etc/engine-manage-domains/log4j.xml
+packaging/etc/engine.conf.d/README
 packaging/etc/notifier/log4j.xml
+packaging/etc/notifier/notifier.conf.d/README
+packaging/etc/ovirt-websocket-proxy.conf.d/README
 packaging/pythonlib/ovirt_engine/config.py
 packaging/services/*/*.conf
 packaging/services/*/*.systemd

@@ -710,12 +710,12 @@ fi
 %dir %{engine_data}/services
 %dir %{engine_etc}
 %dir %{engine_etc}/branding
-%dir %{engine_etc}/engine.conf.d
 %dir %{engine_java}
 %doc LICENSE
 %ghost %config(noreplace) %{engine_etc}/engine.conf
 %{engine_data}/branding/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
+%{engine_etc}/engine.conf.d/
 %{engine_java}/common.jar
 %{engine_java}/compat.jar
 %{engine_java}/utils.jar
@@ -886,8 +886,8 @@ fi
 
 %files websocket-proxy
 
-%dir %{engine_etc}/ovirt-websocket-proxy.conf.d
 %{engine_data}/services/ovirt-websocket-proxy
+%{engine_etc}/ovirt-websocket-proxy.conf.d/
 
 %if %{ovirt_install_systemd}
 %{_unitdir}/ovirt-websocket-proxy.service
@@ -907,7 +907,6 @@ fi
 %dir %{engine_etc}/engine-config
 %dir %{engine_etc}/engine-manage-domains
 %dir %{engine_etc}/notifier
-%dir %{engine_etc}/notifier/notifier.conf.d
 %ghost %config(noreplace) %{engine_etc}/notifier/notifier.conf
 %{_bindir}/engine-config
 %{_bindir}/engine-manage-domains
@@ -921,6 +920,7 @@ fi
 %{engine_etc}/engine-config/engine-config.*properties
 %{engine_etc}/engine-config/log4j.xml
 %{engine_etc}/engine-manage-domains/log4j.xml
+%{engine_etc}/notifier/notifier.conf.d/
 %{engine_java}/tools.jar
 
 %if %{ovirt_install_poms}
