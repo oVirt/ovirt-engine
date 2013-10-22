@@ -99,7 +99,7 @@ class Plugin(plugin.PluginBase):
         )
 
         self.environment[
-            osetupcons.CoreEnv.SETUP_ATTRS_MODULES,
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
         ] = [osetupcons]
 
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] is None:
