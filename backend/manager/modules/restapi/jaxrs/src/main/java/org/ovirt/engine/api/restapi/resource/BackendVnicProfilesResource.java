@@ -14,12 +14,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVnicProfilesResource extends AbstractBackendVnicProfilesResource implements VnicProfilesResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions" };
-
-    public BackendVnicProfilesResource() {
-        super(SUB_COLLECTIONS);
-    }
-
     @Override
     public VnicProfiles list() {
         return performList();

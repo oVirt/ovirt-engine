@@ -1,14 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.VnicProfileResource;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
-import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendVnicProfileResource extends AbstractBackendVnicProfileResource implements VnicProfileResource {
 
     protected BackendVnicProfileResource(String id) {
-        super(id, BackendVnicProfilesResource.SUB_COLLECTIONS);
+        super(id);
     }
 
     @Override
@@ -34,11 +31,7 @@ public class BackendVnicProfileResource extends AbstractBackendVnicProfileResour
 
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
-        return inject(new BackendAssignedPermissionsResource(guid,
-                VdcQueryType.GetPermissionsForObject,
-                new GetPermissionsForObjectParameters(guid),
-                VnicProfile.class,
-                VdcObjectType.VnicProfile));
+        return super.getPermissionsResource();
     }
 
     protected class UpdateParametersProvider
