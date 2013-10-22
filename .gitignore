@@ -42,24 +42,24 @@ __pycache__
 
 # Files generated from templates
 ###########################
+ovirt-engine.spec
 packaging/bin/engine-prolog.sh
+packaging/bin/ovirt-engine-log-setup-event.sh
 packaging/bin/pki-common.sh
 packaging/etc/engine-config/log4j.xml
-packaging/etc/engine-manage-domains/log4j.xml
 packaging/etc/engine-manage-domains/engine-manage-domains.conf
+packaging/etc/engine-manage-domains/log4j.xml
 packaging/etc/notifier/log4j.xml
 packaging/pythonlib/ovirt_engine/config.py
+packaging/services/*/*.conf
+packaging/services/*/*.systemd
+packaging/services/*/*.sysv
+packaging/services/*/config.py
+packaging/setup/bin/ovirt-engine-setup.env
+packaging/setup/ovirt_engine_setup/config.py
 packaging/sys-etc/logrotate.d/ovirt-engine
 packaging/sys-etc/logrotate.d/ovirt-engine-notifier
 packaging/sys-etc/logrotate.d/ovirt-engine-setup
-packaging/services/*/config.py
-packaging/services/*/*.systemd
-packaging/services/*/*.sysv
-packaging/services/*/*.conf
-packaging/setup/bin/ovirt-engine-setup.env
-packaging/setup/ovirt_engine_setup/config.py
-packaging/bin/ovirt-engine-log-setup-event.sh
-ovirt-engine.spec
 
 # dbscripts
 ###########################

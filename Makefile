@@ -151,15 +151,14 @@ BUILD_TARGET=install
 
 # List of files that will be generated from templates:
 GENERATED = \
+	ovirt-engine.spec \
 	packaging/bin/engine-prolog.sh \
+	packaging/bin/ovirt-engine-log-setup-event.sh \
 	packaging/bin/pki-common.sh \
 	packaging/etc/engine-config/log4j.xml \
-	packaging/etc/engine-manage-domains/log4j.xml \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
+	packaging/etc/engine-manage-domains/log4j.xml \
 	packaging/etc/notifier/log4j.xml \
-	packaging/sys-etc/logrotate.d/ovirt-engine \
-	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
-	packaging/sys-etc/logrotate.d/ovirt-engine-setup \
 	packaging/pythonlib/ovirt_engine/config.py \
 	packaging/services/ovirt-engine-notifier/config.py \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.conf \
@@ -175,8 +174,9 @@ GENERATED = \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv \
 	packaging/setup/bin/ovirt-engine-setup.env \
 	packaging/setup/ovirt_engine_setup/config.py \
-	packaging/bin/ovirt-engine-log-setup-event.sh \
-	ovirt-engine.spec \
+	packaging/sys-etc/logrotate.d/ovirt-engine \
+	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
+	packaging/sys-etc/logrotate.d/ovirt-engine-setup \
 	$(NULL)
 
 all: \
