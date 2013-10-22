@@ -118,6 +118,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterServiceQueryParameter
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -125,6 +126,7 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.IAsyncConverter;
@@ -3134,6 +3136,8 @@ public final class AsyncDataProvider {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 uniqueOsNames = (HashMap<Integer, String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                // Initialize specific UI dependencies for search
+                SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(uniqueOsNames));
             }
         };
         Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetUniqueOsNames), callback);
