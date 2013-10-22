@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.VnicProfile;
+import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedVnicProfileResource;
 
 public class BackendAssignedVnicProfileResource extends AbstractBackendVnicProfileResource implements AssignedVnicProfileResource {
@@ -30,5 +31,10 @@ public class BackendAssignedVnicProfileResource extends AbstractBackendVnicProfi
     protected VnicProfile doPopulate(VnicProfile model,
             org.ovirt.engine.core.common.businessentities.network.VnicProfile entity) {
         return model;
+    }
+
+    @Override
+    public AssignedPermissionsResource getPermissionsResource() {
+        return super.getPermissionsResource();
     }
 }

@@ -18,6 +18,7 @@ public class BackendAssignedVnicProfilesResource extends AbstractBackendVnicProf
     private String networkId;
 
     public BackendAssignedVnicProfilesResource(String networkId) {
+        super();
         this.networkId = networkId;
     }
 
