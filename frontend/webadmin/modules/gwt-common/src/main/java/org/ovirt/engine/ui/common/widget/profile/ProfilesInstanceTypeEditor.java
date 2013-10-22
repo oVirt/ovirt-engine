@@ -18,6 +18,9 @@ import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, VnicInstanceType, ProfileInstanceTypeEditor> implements HasElementId {
 
@@ -38,6 +41,9 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
 
     private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
+    private ListModel vnicsModel;
+    private ListModel profilesModel;
+    private IEventListener vnicsChangedListener;
     private Iterable<VnicProfileView> vnicProfiles;
     private List<VmNetworkInterface> vnics;
     private int realEntryCount;
@@ -53,13 +59,32 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
         this.elementId = elementId;
     }
 
-    public void edit(ListModel model, Iterable<VnicProfileView> vnicProfiles) {
-        driver.edit(model);
+    public void edit(ListModel vnicsModel, ListModel profilesModel) {
+        this.vnicsModel = vnicsModel;
+        this.profilesModel = profilesModel;
 
-        this.vnicProfiles = (vnicProfiles == null) ? new ArrayList<VnicProfileView>() : vnicProfiles;
+        vnicsChangedListener = new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                init();
+            }
+        };
+        vnicsModel.getItemsChangedEvent().addListener(vnicsChangedListener);
+
+        driver.edit(vnicsModel);
+        init();
+    }
+
+    private void init() {
+        vnicProfiles = profilesModel.getItems();
+        if (vnicProfiles == null) {
+            vnicProfiles = new ArrayList<VnicProfileView>();
+        }
+
         vnics.clear();
         realEntryCount = 0;
-        Iterable<VnicInstanceType> values = model.getItems();
+        Iterable<VnicInstanceType> values = vnicsModel.getItems();
         if (values != null) {
             for (VnicInstanceType value : values) {
                 vnics.add(value.getNetworkInterface());
@@ -67,9 +92,13 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
         }
         updateHeaderLabel();
 
-        init(model);
+        super.init(vnicsModel);
     }
 
+    /**
+     * @deprecated Please use {@link #edit(ListModel, ListModel)} instead.
+     **/
+    @Deprecated
     @Override
     public void edit(ListModel model) {
         edit(model, null);
@@ -78,9 +107,9 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
 
     @Override
     public ListModel flush() {
-        ListModel model = driver.flush();
-        flush(model);
-        return model;
+        vnicsModel.getItemsChangedEvent().removeListener(vnicsChangedListener);
+        flush(vnicsModel);
+        return driver.flush();
     }
 
     private void updateHeaderLabel() {
