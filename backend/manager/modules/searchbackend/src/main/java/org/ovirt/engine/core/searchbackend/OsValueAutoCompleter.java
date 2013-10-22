@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class OsValueAutoCompleter implements IConditionValueAutoCompleter {
 
-    private static String[] EMPTY_COMPLETION_LIST = new String[]{};
     private Map<Integer, String> map;
 
     public OsValueAutoCompleter(Map<Integer, String> vmCompletionMap) {
@@ -16,7 +15,7 @@ public class OsValueAutoCompleter implements IConditionValueAutoCompleter {
     @Override
     public String convertFieldEnumValueToActualValue(String fieldValue) {
         for (Map.Entry<Integer, String> e : map.entrySet()) {
-            if (fieldValue.startsWith(e.getValue())) {
+            if (fieldValue.toLowerCase().startsWith(e.getValue())) {
                 return e.getKey().toString();
             }
         }
@@ -26,11 +25,11 @@ public class OsValueAutoCompleter implements IConditionValueAutoCompleter {
     @Override
     public String[] getCompletion(String wordPart) {
         if (wordPart == null || wordPart.isEmpty()) {
-            return EMPTY_COMPLETION_LIST;
+            return map.values().toArray(new String[]{});
         }
         List<String> list = new ArrayList<String>();
         for (String osName : map.values()) {
-            if (osName.startsWith(wordPart)) {
+            if (osName.contains(wordPart)) {
                 list.add(osName);
             }
         }
@@ -39,7 +38,13 @@ public class OsValueAutoCompleter implements IConditionValueAutoCompleter {
 
     @Override
     public boolean validate(String text) {
-        return true;
+        text = text.trim().toLowerCase();
+        for (String os : map.values()) {
+            if (os.equals(text)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
