@@ -655,6 +655,7 @@ __EOF__
 # these files are created empty in order to mark
 # them as %ghost
 #
+touch "%{buildroot}%{engine_etc}/engine.conf"
 touch "%{buildroot}%{engine_etc}/notifier/notifier.conf"
 touch "%{buildroot}%{engine_pki}/cacert.template"
 touch "%{buildroot}%{engine_pki}/cert.template"
@@ -698,7 +699,6 @@ fi
 
 %files
 
-%config(noreplace) %{engine_etc}/engine.conf
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/dump
@@ -713,6 +713,7 @@ fi
 %dir %{engine_etc}/engine.conf.d
 %dir %{engine_java}
 %doc LICENSE
+%ghost %config(noreplace) %{engine_etc}/engine.conf
 %{engine_data}/branding/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_java}/common.jar
