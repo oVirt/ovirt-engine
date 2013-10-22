@@ -314,17 +314,22 @@ public class SSHDialog {
                     poutStdout,
                     stderr
                 );
-                if (stderr.size() > 0) {
-                    throw new IOException("Error messages during execution");
+            }
+            catch (Exception e) {
+                if (stderr.size() == 0) {
+                    throw e;
                 }
+
+                log.error(
+                    "Swallowing exception as preferring stderr",
+                    e
+                );
             }
             finally {
                 if (stderr.size() > 0) {
-                    log.error(
+                    throw new RuntimeException(
                         String.format(
-                            "SSH stderr during command %1$s:'%2$s': stderr: %3$s",
-                            _client.getDisplayHost(),
-                            command,
+                            "Unexpected error during execution: %1$s",
                             new String(stderr.toByteArray(), Charset.forName("UTF-8"))
                         )
                     );

@@ -1083,11 +1083,15 @@ public class VdsDeploy implements SSHDialog.Sink {
                 _vds.getHostName(),
                 e
             );
-
             if (_failException == null) {
                 throw e;
             }
             else {
+                _messages.post(
+                    InstallerMessages.Severity.ERROR,
+                    e.getMessage()
+                );
+
                 log.errorFormat(
                     "Error during host {0} install, prefering first exception",
                     _vds.getHostName(),
