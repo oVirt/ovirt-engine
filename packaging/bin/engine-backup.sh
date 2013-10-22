@@ -67,6 +67,29 @@ USAGE:
  --db-name=name             set database name
  --db-secured               set a secured connection
  --db-secured-validation    validate host
+
+ To create a new user/database:
+
+ create user <user> password '<password>';
+ create database <database> owner <user> template template0
+ encoding 'UTF8' lc_collate 'en_US.UTF-8 lc_ctype 'en_US.UTF-8';
+
+ Open access in the firewall/iptables/etc. to the postgresql port,
+ 5432/tcp by default.
+
+ Locate pg_hba.conf within your distribution,
+ common locations are:
+  - /var/lib/pgsql/data/pg_hba.conf
+  - /etc/postgresql-*/pg_hba.conf
+  - /etc/postgresql/*/main/pg_hba.conf
+
+ and open access there by adding the following lines:
+
+ host    <database>      <user>          0.0.0.0/0               md5
+ host    <database>      <user>          ::0/0                   md5
+
+ Replace <user>, <password>, <database> with appropriate values.
+
 __EOF__
 	return 0
 }
