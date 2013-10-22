@@ -76,6 +76,7 @@ public class GetGlusterVolumeRemoveBricksStatusQuery<P extends GlusterVolumeRemo
                 VDS host = getVdsDao().get(glusterServer.getId());
                 if (host != null) {
                     hostStatus.setHostName(host.getName());
+                    hostStatus.setHostId(host.getId());
                 }
             }
         }

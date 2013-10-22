@@ -76,6 +76,7 @@ public class GetGlusterVolumeRebalanceStatusQuery<P extends GlusterVolumeQueries
                 VDS host = getVdsDao().get(glusterServer.getId());
                 if (host != null) {
                     hostStatus.setHostName(host.getName());
+                    hostStatus.setHostId(host.getId());
                 }
             }
         }

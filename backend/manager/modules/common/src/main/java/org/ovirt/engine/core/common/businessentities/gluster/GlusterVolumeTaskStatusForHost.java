@@ -8,6 +8,7 @@ public class GlusterVolumeTaskStatusForHost extends GlusterVolumeTaskStatusDetai
 
     private String hostName;
     private Guid hostUuid;
+    private Guid hostId;
 
     public GlusterVolumeTaskStatusForHost() {
     }
@@ -18,10 +19,20 @@ public class GlusterVolumeTaskStatusForHost extends GlusterVolumeTaskStatusDetai
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }
+
     public Guid getHostUuid() {
         return this.hostUuid;
     }
     public void setHostUuid(Guid id) {
         this.hostUuid = id;
     }
+
+    public Guid getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(Guid hostId) {
+        this.hostId = hostId;
+    }
+
 }
