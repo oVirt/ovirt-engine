@@ -21,6 +21,7 @@ NFS and RPCbind services configuration plugin.
 """
 
 
+import os
 import platform
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -167,8 +168,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.FileLocations.OVIRT_NFS_RHEL_CONFIG
         ])
         changed_lines = []
-        with open(osetupcons.FileLocations.NFS_RHEL_CONFIG, 'r') as f:
-            content = f.read().splitlines()
+        content = []
+        if os.path.exists(osetupcons.FileLocations.NFS_RHEL_CONFIG):
+            with open(osetupcons.FileLocations.NFS_RHEL_CONFIG, 'r') as f:
+                content = f.read().splitlines()
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.NFS_RHEL_CONFIG,
