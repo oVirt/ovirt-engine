@@ -99,6 +99,14 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
     }
 
     @Override
+    public void updateStatusOfImagesByImageGroupId(Guid imageGroupId, ImageStatus status) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("image_group_id", imageGroupId)
+                .addValue("status", status);
+        getCallsHandler().executeModification("UpdateStatusOfImagesByImageGroupId", parameterSource);
+    }
+
+    @Override
     public void updateQuotaForImageAndSnapshots(Guid imageGroupId, Guid quotaId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_group_id", imageGroupId)

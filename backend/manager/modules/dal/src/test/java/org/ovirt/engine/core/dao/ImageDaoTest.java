@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.List;
+
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -103,5 +107,21 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         quotaId = image.getQuotaId();
         // check that the new quota is the inserted one
         assertEquals("quota wasn't changed", quotaId, FixturesTool.DEFAULT_QUOTA_GENERAL);
+    }
+
+    @Test
+    public void updateStatusOfImagesByImageGroupId() {
+        Image image = dao.get(EXISTING_IMAGE_ID);
+        List<DiskImage> snapshots = dbFacade.getDiskImageDao().getAllSnapshotsForImageGroup(image.getDiskId());
+        assertFalse(snapshots.size() == 1);
+        for (DiskImage diskImage : snapshots) {
+            assertFalse(ImageStatus.LOCKED == diskImage.getImageStatus());
+        }
+        dao.updateStatusOfImagesByImageGroupId(image.getDiskId(), ImageStatus.LOCKED);
+        snapshots = dbFacade.getDiskImageDao().getAllSnapshotsForImageGroup(image.getDiskId());
+
+        for (DiskImage diskImage : snapshots) {
+            assertEquals(ImageStatus.LOCKED, diskImage.getImageStatus());
+        }
     }
 }

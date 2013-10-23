@@ -290,7 +290,8 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 getImageStorageDomainMapDao().remove(
                         new ImageStorageDomainMapId(getParameters().getImageId(),
                                 getParameters().getStorageDomainId()));
-                unLockImage();
+                ImagesHandler.updateAllDiskImageSnapshotsStatus(getRelevantDiskImage().getId(),
+                        getRelevantDiskImage().getImageStatus());
                 return null;
             }});
     }
@@ -313,8 +314,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         if (getParameters().isShouldLockImage()) {
             // the image status should be set to ILLEGAL, so that in case compensation runs the image status will
             // be revert to be ILLEGAL, as we can't tell whether the task started on vdsm side or not.
-            getDiskImage().setImageStatus(ImageStatus.ILLEGAL);
-            lockImageWithCompensation();
+            ImagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getRelevantDiskImage().getId(),
+                    ImageStatus.LOCKED,
+                    ImageStatus.ILLEGAL,
+                    getCompensationContext());
         }
         return runVdsCommand(VDSCommandType.DeleteImageGroup,
                 new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),

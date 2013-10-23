@@ -64,14 +64,21 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         }
 
         boolean isImageDisk = disk.getDiskStorageType() == DiskStorageType.IMAGE;
-        if (isImageDisk && ((DiskImage) disk).getImageStatus() == ImageStatus.ILLEGAL) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
-        }
 
-        if (isImageDisk && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
-            addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", disk.getDiskAlias()));
-            return false;
+        if (isImageDisk) {
+            //TODO : this load and check of the active disk will be removed
+            //after inspecting upgrade
+            Disk activeDisk = loadActiveDisk(disk.getId());
+
+            if (((DiskImage) activeDisk).getImageStatus() == ImageStatus.ILLEGAL) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
+            }
+
+            if (((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+                addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", disk.getDiskAlias()));
+                return false;
+            }
         }
 
         if (!isVmExist() || !isVmInUpPausedDownStatus()) {
