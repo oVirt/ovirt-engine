@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskSt
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -36,6 +37,8 @@ public class VolumeRebalanceStatusModel extends Model {
     private boolean isStatusAvailable;
 
     private Timer refresh;
+
+    private UICommand stopReblanceFromStatus;
 
     public VolumeRebalanceStatusModel(final GlusterVolumeEntity volumeEntity) {
         setStatus(new EntityModel());
@@ -116,6 +119,7 @@ public class VolumeRebalanceStatusModel extends Model {
                 refresh.cancel();
             }
         }
+        getStopReblanceFromStatus().setIsExecutionAllowed(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.STARTED);
     }
 
     public void cancelRefresh() {
@@ -159,5 +163,13 @@ public class VolumeRebalanceStatusModel extends Model {
         if(isStatusAvailable == true) {
             onPropertyChanged(new PropertyChangedEventArgs("IS_STATUS_APPLICABLE"));//$NON-NLS-1$
         }
+    }
+
+    public UICommand getStopReblanceFromStatus() {
+        return stopReblanceFromStatus;
+    }
+
+    public void setStopReblanceFromStatus(UICommand stopReblanceFromStatus) {
+        this.stopReblanceFromStatus = stopReblanceFromStatus;
     }
 }

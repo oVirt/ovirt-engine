@@ -598,20 +598,17 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                         rebalanceStatusModel.getVolume().setEntity(volumeEntity.getName());
                         rebalanceStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
 
-                        rebalanceStatusModel.showStatus(rebalanceStatusEntity);
-
-                        UICommand stopRebalanceFromStatus =
-                                new UICommand("stop_rebalance_from_status", VolumeListModel.this);//$NON-NLS-1$
-
+                        UICommand stopRebalanceFromStatus = new UICommand("stop_rebalance_from_status", VolumeListModel.this);//$NON-NLS-1$
                         stopRebalanceFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRebalance());
                         rebalanceStatusModel.getCommands().add(stopRebalanceFromStatus);
-
-                        stopRebalanceFromStatus.setIsExecutionAllowed(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.STARTED);
+                        rebalanceStatusModel.setStopReblanceFromStatus(stopRebalanceFromStatus);
 
                         UICommand cancelRebalance = new UICommand("CancelRebalanceStatus", VolumeListModel.this);//$NON-NLS-1$
                         cancelRebalance.setTitle(ConstantsManager.getInstance().getConstants().close());
                         cancelRebalance.setIsCancel(true);
                         rebalanceStatusModel.getCommands().add(cancelRebalance);
+
+                        rebalanceStatusModel.showStatus(rebalanceStatusEntity);
                     }else {
                         VolumeRebalanceStatusModel statusModel = (VolumeRebalanceStatusModel) getWindow();
                         statusModel.getCommands().get(0).setIsExecutionAllowed(false);
