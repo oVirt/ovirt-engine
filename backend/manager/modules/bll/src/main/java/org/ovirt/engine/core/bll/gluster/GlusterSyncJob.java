@@ -802,6 +802,7 @@ public class GlusterSyncJob extends GlusterJob {
             // if fetchedStatus is null, it means this is a new brick added from gluster cli and doesn't exist in engine
             // DB yet. Don't do anything, wait for it to be added by the 'lightweight' refresh job
             if (fetchedStatus != null && fetchedStatus != brick.getStatus()) {
+                logBrickStatusChange(volume, brick, fetchedStatus);
                 brick.setStatus(fetchedStatus);
                 bricksToUpdate.add(brick);
             }
@@ -810,6 +811,20 @@ public class GlusterSyncJob extends GlusterJob {
         if (!bricksToUpdate.isEmpty()) {
             getBrickDao().updateBrickStatuses(bricksToUpdate);
         }
+    }
+
+    private void logBrickStatusChange(GlusterVolumeEntity volume, final GlusterBrickEntity brick, final GlusterStatus fetchedStatus) {
+        log.debugFormat("Detected that status of brick {0} in volume {1} changed from {2} to {3}",
+                brick.getQualifiedName(), volume.getName(), brick.getStatus(), fetchedStatus);
+        logUtil.logAuditMessage(volume.getClusterId(), volume, null,
+                AuditLogType.GLUSTER_BRICK_STATUS_CHANGED,
+                new HashMap<String, String>() {
+                    {
+                        put(GlusterConstants.BRICK_PATH, brick.getQualifiedName());
+                        put(GlusterConstants.OPTION_OLD_VALUE, brick.getStatus().toString());
+                        put(GlusterConstants.OPTION_NEW_VALUE, fetchedStatus.toString());
+                    }
+                });
     }
 
     private Map<Guid, GlusterStatus> getBrickStatusMap(GlusterVolumeAdvancedDetails volumeDetails) {

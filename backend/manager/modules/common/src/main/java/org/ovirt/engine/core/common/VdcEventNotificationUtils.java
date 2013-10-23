@@ -100,6 +100,7 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_STOP_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_RESTARTED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_RESTART_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_BRICK_STATUS_CHANGED);
 
         // DWH
         AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_STOPPED);

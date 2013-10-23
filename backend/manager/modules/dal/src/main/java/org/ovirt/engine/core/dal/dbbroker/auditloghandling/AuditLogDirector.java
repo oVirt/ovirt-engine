@@ -157,6 +157,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_SERVICE_RESTARTED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_SERVICE_RESTART_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_HOST_UUID_NOT_FOUND, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.GLUSTER_BRICK_STATUS_CHANGED, AuditLogSeverity.WARNING);
     }
 
     private static void initDefaultSeverities() {
