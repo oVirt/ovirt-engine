@@ -304,11 +304,15 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
                 Guid id = entry.getKey();
                 List<DiskImage> diskList = entry.getValue();
-                getVm().getDiskMap().put(id, ImagesHandler.getActiveVolumeDisk(diskList));
+                getVm().getDiskMap().put(id, getActiveVolumeDisk(diskList));
             }
         }
 
         return true;
+    }
+
+    protected DiskImage getActiveVolumeDisk(List<DiskImage> diskList) {
+        return diskList.get(diskList.size() - 1);
     }
 
     /**
@@ -780,7 +784,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             Guid snapshotId = Guid.newGuid();
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
-                DiskImage disk = ImagesHandler.getActiveVolumeDisk(diskList);
+                DiskImage disk = getActiveVolumeDisk(diskList);
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setImageTemplateId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setVmSnapshotId(snapshotId);
@@ -823,7 +827,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
-                DiskImage disk = ImagesHandler.getActiveVolumeDisk(diskList);
+                DiskImage disk = getActiveVolumeDisk(diskList);
                 newDiskIdForDisk.put(disk.getId(), disk);
                 snapshotId = disk.getVmSnapshotId();
                 disk.setActive(true);
