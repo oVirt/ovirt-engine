@@ -64,9 +64,15 @@ USAGE:
  --db-user=user             set database user
  --db-passfile=file         set database password - read from file
  --db-password=pass         set database password
+ --db-password              set database password - interactively
  --db-name=name             set database name
  --db-secured               set a secured connection
  --db-secured-validation    validate host
+
+ ENVIRONMENT VARIABLES
+
+ OVIRT_ENGINE_DATABASE_PASSWORD
+     Database password as if provided by --db-password=pass option.
 
  To create a new user/database:
 
@@ -100,7 +106,7 @@ CHANGE_DB_CREDENTIALS=
 MY_DB_HOST=
 MY_DB_PORT=5432
 MY_DB_USER=
-MY_DB_PASSWORD=
+MY_DB_PASSWORD="${OVIRT_ENGINE_DATABASE_PASSWORD}"
 MY_DB_DATABASE=
 MY_DB_SECURED=False
 MY_DB_SECURED_VALIDATION=False
@@ -152,6 +158,9 @@ parseArgs() {
 			;;
 			--db-password=*)
 				MY_DB_PASSWORD="${v}"
+			;;
+			--db-password)
+				MY_DB_PASSWORD="$(readdbpassword)" || exit 1
 			;;
 			--db-name=*)
 				MY_DB_DATABASE="${v}"
@@ -368,11 +377,16 @@ setMyDBCredentials() {
 
 	[ -n "${options}" ] && options="${options#&}"
 
+	local encpass="$(sed 's;\(["\$]\);\\\1;g' << __EOF__
+${MY_DB_PASSWORD}
+__EOF__
+)"
+
 	MY_DB_CREDS="$(cat << __EOF__
 ENGINE_DB_HOST="${MY_DB_HOST}"
 ENGINE_DB_PORT="${MY_DB_PORT}"
 ENGINE_DB_USER="${MY_DB_USER}"
-ENGINE_DB_PASSWORD="$(echo ${MY_DB_PASSWORD} | sed 's;\(["\$]\);\\\1;g')"
+ENGINE_DB_PASSWORD="${encpass}"
 ENGINE_DB_DATABASE="${MY_DB_DATABASE}"
 ENGINE_DB_SECURED="${MY_DB_SECURED}"
 ENGINE_DB_SECURED_VALIDATION="${MY_DB_SECURED_VALIDATION}"
@@ -421,6 +435,26 @@ output() {
 	local m="$1"
 	log "${m}"
 	echo "${m}"
+}
+
+readdbpassword() {
+	(
+		cleanup() {
+			[ -n "${STTY_ORIG}" ] && stty "${STTY_ORIG}"
+		}
+
+		STTY_ORIG=
+		trap cleanup 0
+		[ -t 0 ] || die "Standard input is not a terminal"
+		STTY_ORIG="$(stty -g)"
+		stty -echo || die "Failed to disable terminal input echo"
+		echo -n "Enter database password: " >&2
+		read dbpass
+		echo >&2
+		cat << __EOF__
+${dbpass}
+__EOF__
+	)
 }
 
 ## Main
