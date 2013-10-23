@@ -46,8 +46,8 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -520,7 +520,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private Guid getQuotaId() {
         if (getParameters().getDiskInfo() != null
                 && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-            return ((DiskImage) getParameters().getDiskInfo()).getQuotaId();
+            Guid quotaId = ((DiskImage) getParameters().getDiskInfo()).getQuotaId();
+            if (!Guid.Empty.equals(quotaId)) {
+                return quotaId;
+            }
         }
         return null;
     }
