@@ -46,9 +46,7 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
 
     @Override
     public NewNetworkModel flush() {
-        NewNetworkModel model = driver.flush();
-        model.getProfiles().setItems(profilesEditor.flush().getItems());
-        return model;
+        return driver.flush();
     }
 
     @Override

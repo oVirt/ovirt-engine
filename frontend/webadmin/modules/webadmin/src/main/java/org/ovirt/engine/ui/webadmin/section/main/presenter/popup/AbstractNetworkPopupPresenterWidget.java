@@ -1,7 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -19,6 +24,8 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         void updateVisibility();
 
         void toggleProfilesVisibility(boolean visible);
+
+        void editProfiles(ListModel profiles, Version dcCompatibilityVersion, Guid dcId, VnicProfileModel defaultProfile);
     }
 
     public AbstractNetworkPopupPresenterWidget(EventBus eventBus, V view) {
@@ -50,6 +57,19 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
                 getView().toggleProfilesVisibility((Boolean) model.getIsVmNetwork().getEntity());
             }
         });
+
+        IEventListener updateProfilesListener = new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                StoragePool dc = model.getSelectedDc();
+                getView().editProfiles(model.getProfiles(),
+                        dc.getcompatibility_version(),
+                        dc.getId(),
+                        model.getDefaultProfile());
+            }
+        };
+        model.getDataCenters().getSelectedItemChangedEvent().addListener(updateProfilesListener);
+        model.getProfiles().getItemsChangedEvent().addListener(updateProfilesListener);
     }
 
     @Override

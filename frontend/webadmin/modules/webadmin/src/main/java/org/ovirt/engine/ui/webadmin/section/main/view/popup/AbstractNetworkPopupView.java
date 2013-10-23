@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -23,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -131,7 +134,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public EntityModelTextBoxEditor networkLabel;
 
     @UiField
-    @Path(value = "profiles.selectedItem")
+    @Ignore
     public VnicProfilesEditor profilesEditor;
 
     @UiField
@@ -369,6 +372,15 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public void toggleProfilesVisibility(boolean visible) {
         profilesTab.setVisible(visible);
+    }
+
+    @Override
+    public void editProfiles(ListModel profiles,
+            Version dcCompatibilityVersion,
+            Guid dcId,
+            VnicProfileModel defaultProfile) {
+
+        profilesEditor.edit(profiles, dcCompatibilityVersion, dcId, defaultProfile);
     }
 
     interface WidgetStyle extends CssResource {

@@ -24,6 +24,10 @@ public class NewVnicProfileModel extends VnicProfileModel {
         this(sourceModel, dcCompatibilityVersion, true, dcId);
     }
 
+    public NewVnicProfileModel(Version dcCompatibilityVersion, Guid dcId) {
+        this(null, dcCompatibilityVersion, dcId);
+    }
+
     @Override
     protected void initCustomProperties() {
         // Do nothing

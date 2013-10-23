@@ -112,7 +112,7 @@ public class NewNetworkModel extends NetworkModel {
         if (existingProfiles == null) {
             // first run (dialog has just been opened and default DC chosen), create default entry
             List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
-            profiles.add(createDefaultProfile());
+            profiles.add(getDefaultProfile());
             getProfiles().setItems(profiles);
         } else {
             // not first run (user picked different DC), want to keep existing entries and update DC-related properties
