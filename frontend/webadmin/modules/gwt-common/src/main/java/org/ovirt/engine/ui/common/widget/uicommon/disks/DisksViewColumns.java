@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.disks;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -16,6 +14,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
@@ -24,9 +23,13 @@ import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class DisksViewColumns {
     private static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
@@ -235,5 +238,25 @@ public class DisksViewColumns {
             return object.getDiskStorageType() == DiskStorageType.LUN ?
                     ((LunDisk) object).getLun().getSerial() : null;
         }
+    };
+
+    public static final CheckboxColumn<EntityModel> readOnlyCheckboxColumn = new CheckboxColumn<EntityModel>(
+        new FieldUpdater<EntityModel, Boolean>() {
+            @Override
+            public void update(int idx, EntityModel object, Boolean value) {
+                DiskModel diskModel = (DiskModel) object.getEntity();
+                diskModel.getDisk().setReadOnly(value);
+            }
+        }) {
+            @Override
+            protected boolean canEdit(EntityModel object) {
+                    return true;
+                }
+
+            @Override
+            public Boolean getValue(EntityModel object) {
+                DiskModel diskModel = (DiskModel) object.getEntity();
+                return diskModel.getDisk().getReadOnly();
+            }
     };
 }

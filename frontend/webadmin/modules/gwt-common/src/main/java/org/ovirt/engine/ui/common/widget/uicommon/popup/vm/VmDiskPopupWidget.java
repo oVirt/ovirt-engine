@@ -5,9 +5,12 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -26,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -42,6 +46,7 @@ import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.FcpStorageView;
@@ -224,8 +229,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     FcpStorageModel fcpStorageModel;
     SanStorageModel sanStorageModel;
 
-    public VmDiskPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources,
-            boolean isLunDiskEnabled) {
+    public VmDiskPopupWidget(CommonApplicationConstants constants,
+                             CommonApplicationResources resources,
+                             CommonApplicationTemplates templates,
+                             boolean isLunDiskEnabled) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
         this.progressContent = createProgressContentWidget();
         initManualWidgets();
@@ -233,8 +240,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initAttachPanelWidget();
-        initInternalDiskTable(constants, resources);
-        initExternalDiskTable(constants, resources);
+        initInternalDiskTable(constants, resources, templates);
+        initExternalDiskTable(constants, resources, templates);
         driver.initialize(this);
     }
 
@@ -312,7 +319,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     }
 
     private void initInternalDiskTable(final CommonApplicationConstants constants,
-            final CommonApplicationResources resources) {
+            final CommonApplicationResources resources,
+            final CommonApplicationTemplates templates) {
         internalDiskTable.enableColumnResizing();
 
         TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
@@ -378,6 +386,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         };
         internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "95px"); //$NON-NLS-1$
 
+        SafeHtml readOnlyColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
+                AbstractImagePrototype.create(resources.readOnlyDiskIcon()).getHTML()), constants.readOnly()
+        );
+        internalDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn, readOnlyColumnHeader, "30px"); //$NON-NLS-1$
+
         internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -401,7 +414,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     }
 
     private void initExternalDiskTable(final CommonApplicationConstants constants,
-            final CommonApplicationResources resources) {
+            final CommonApplicationResources resources,
+            final CommonApplicationTemplates templates) {
         externalDiskTable.enableColumnResizing();
 
         TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
@@ -493,6 +507,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         };
         externalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
+
+        SafeHtml readOnlyColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
+                AbstractImagePrototype.create(resources.readOnlyDiskIcon()).getHTML()), constants.readOnly()
+        );
+        externalDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn, readOnlyColumnHeader, "30px"); //$NON-NLS-1$
 
         externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
