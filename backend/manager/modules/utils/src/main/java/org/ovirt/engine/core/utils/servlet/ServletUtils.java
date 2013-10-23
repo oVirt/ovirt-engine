@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,8 @@ public class ServletUtils {
     // The max size of path names (this is less than supported in Linux, but we
     // don't use paths larger than this, and this way we are a bit safer):
     private static final long PATH_MAX = 512;
+
+    public static final String CONTEXT_TO_ROOT_MODIFIER = "contextToRootModifier";
 
     private ServletUtils() {
         // No instances allowed.
@@ -207,5 +210,28 @@ public class ServletUtils {
         return file;
     }
 
+    public static String getBaseContextPath(final HttpServletRequest request) {
+        return getAsAbsoluteContext(request.getContextPath(),
+                request.getSession().getServletContext().getInitParameter(CONTEXT_TO_ROOT_MODIFIER));
+    }
+
+
+    /**
+     * Calculate the absolute path based on context path combined with the relative path passed in.
+     * The relative path is allowed to contain . and ..
+     * @param servletContextPath The context path of the context containing this servlet.
+     * @param relativePath The path relative to the context path, is allowed to start with / at which point it is
+     * an absolute path and the result of this method.
+     * @return The calculated absolute path.
+     */
+    public static String getAsAbsoluteContext(String servletContextPath, String relativePath) {
+        String result = null;
+        if (relativePath != null && relativePath.startsWith("/")) { //$NON-NLS-1$
+            result = relativePath;
+        } else if (relativePath != null) {
+            result = URI.create(servletContextPath + "/" + relativePath).normalize().toString(); //$NON-NLS-1$
+        }
+        return result;
+    }
 
 }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  version="3.0">
+
+  <context-param>
+    <param-name>obrandThemePath</param-name>
+    <param-value>/theme</param-value>
+  </context-param>
+  <context-param>
+    <param-name>obrandResourcePath</param-name>
+    <param-value>/theme-resource</param-value>
+  </context-param>
+  <context-param>
+    <param-name>obrandApplicationName</param-name>
+    <param-value>welcome</param-value>
+  </context-param>
+
+  <!-- Branding Servlet -->
+  <servlet>
+    <servlet-name>BrandingServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BrandingServlet</servlet-name>
+    <url-pattern>/theme/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- Branding Cascading Resource Servlet -->
+  <servlet>
+    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+    <url-pattern>/theme-resource/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- PageNotFound Servlet -->
+  <servlet>
+    <servlet-name>PageNotFoundServlet</servlet-name>
+    <jsp-file>/WEB-INF/404.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>PageNotFoundServlet</servlet-name>
+    <url-pattern>/404.html</url-pattern>
+  </servlet-mapping>
+
+  <!-- Welcome page -->
+  <servlet>
+    <servlet-name>WelcomeServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.WelcomeServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>WelcomeServlet</servlet-name>
+    <url-pattern>/index.html</url-pattern>
+  </servlet-mapping>
+
+  <!-- Filters -->
+  <!-- Locale Filter, determines the user locale -->
+  <filter>
+    <filter-name>LocaleFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
+  </filter>
+  <!-- Branding Filter, passes branding information to jsps -->
+  <filter>
+    <filter-name>BrandingFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>LocaleFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>ERROR</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>BrandingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>ERROR</dispatcher>
+  </filter-mapping>
+
+  <!-- Go to the index when a page is not found (preserving the 404 status code): -->
+  <error-page>
+    <error-code>404</error-code>
+    <location>/404.html</location>
+  </error-page>
+
+  <!-- This is handled by the welcome servlet -->
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+</web-app>

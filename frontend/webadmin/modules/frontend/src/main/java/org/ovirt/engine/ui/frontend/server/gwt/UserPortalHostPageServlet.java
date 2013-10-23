@@ -10,7 +10,7 @@ public class UserPortalHostPageServlet extends GwtDynamicHostPageServlet {
 
     @Override
     protected String getSelectorScriptName() {
-        return "org.ovirt.engine.ui.userportal.UserPortal.nocache.js"; //$NON-NLS-1$
+        return "userportal.nocache.js"; //$NON-NLS-1$
     }
 
     @Override

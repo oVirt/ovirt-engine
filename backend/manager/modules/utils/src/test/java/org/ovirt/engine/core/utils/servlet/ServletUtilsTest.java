@@ -18,9 +18,11 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -300,6 +302,44 @@ public class ServletUtilsTest {
        ServletUtils.sendFile(mockRequest, mockResponse, file, null);
        verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));
        verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+    }
+
+    @Test
+    public void testGetAsAbsoluteContext() {
+        String result = ServletUtils.getAsAbsoluteContext("/ovirt-engine/testpath", "..");
+        assertEquals("The result should be '/ovirt-engine/'", "/ovirt-engine/", result);
+        result = ServletUtils.getAsAbsoluteContext("/ovirt-engine/testpath", "/something");
+        assertEquals("The result should be '/something'", "/something", result);
+        result = ServletUtils.getAsAbsoluteContext("/ovirt-engine/testpath", "../somethingelse");
+        assertEquals("The result should be '/ovirt-engine/somethingelse'", "/ovirt-engine/somethingelse", result);
+        result = ServletUtils.getAsAbsoluteContext("/ovirt-engine/testpath", ".");
+        assertEquals("The result should be '/ovirt-engine/testpath/'", "/ovirt-engine/testpath/", result);
+    }
+
+    @Test
+    public void testGetBaseContextPath() {
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        ServletContext mockServletContext = mock(ServletContext.class);
+        HttpSession mockSession = mock(HttpSession.class);
+        when(mockRequest.getSession()).thenReturn(mockSession);
+        when(mockSession.getServletContext()).thenReturn(mockServletContext);
+        when(mockRequest.getContextPath()).thenReturn("/ovirt-engine/test");
+        when(mockServletContext.getInitParameter(ServletUtils.CONTEXT_TO_ROOT_MODIFIER)).thenReturn("..");
+        String result = ServletUtils.getBaseContextPath(mockRequest);
+        assertEquals("Result should be '/ovirt-engine/'", "/ovirt-engine/", result);
+    }
+
+    @Test
+    public void testGetBaseContextPath2() {
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        ServletContext mockServletContext = mock(ServletContext.class);
+        HttpSession mockSession = mock(HttpSession.class);
+        when(mockRequest.getSession()).thenReturn(mockSession);
+        when(mockSession.getServletContext()).thenReturn(mockServletContext);
+        when(mockRequest.getContextPath()).thenReturn("/ovirt-engine/test");
+        when(mockServletContext.getInitParameter(ServletUtils.CONTEXT_TO_ROOT_MODIFIER)).thenReturn("../..");
+        String result = ServletUtils.getBaseContextPath(mockRequest);
+        assertEquals("Result should be '/'", "/", result);
     }
 
 }

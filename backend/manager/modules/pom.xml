@@ -25,6 +25,9 @@
     <module>restapi</module>
     <module>root</module>
     <module>branding</module>
+    <module>services</module>
+    <module>docs</module>
+    <module>welcome</module>
   </modules>
 
   <dependencies>

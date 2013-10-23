@@ -3,13 +3,13 @@
     <span class="obrand_section_header">{portal_title}</span>
   </h2>
   <div>
-    <a href="/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html?locale={userLocale}">{portal_user_portal}</a>
+    <a href="userportal/?locale={userLocale}">{portal_user_portal}</a>
   </div>
   <div>
-    <a href="/webadmin/webadmin/WebAdmin.html?locale={userLocale}">{portal_admin}</a>
+    <a href="webadmin/?locale={userLocale}">{portal_admin}</a>
   </div>
   <div>
-    <a href="/OvirtEngineWeb/ReportsRedirectServlet">{portal_reports}</a>
+    <a href="services/reports-redirect">{portal_reports}</a>
   </div>
 
   <h2>

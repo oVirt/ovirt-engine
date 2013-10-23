@@ -6,30 +6,25 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
-  <context-param>
-    <param-name>obrandThemePath</param-name>
-    <param-value>/ovirt-engine-theme</param-value>
-  </context-param>
-  <context-param>
-    <param-name>obrandResourcePath</param-name>
-    <param-value>/ovirt-engine-theme-resource</param-value>
-  </context-param>
-  <context-param>
-    <param-name>obrandApplicationName</param-name>
-    <param-value>welcome</param-value>
-  </context-param>
-
   <!-- File servlet instance to serve the CA certificate: -->
   <servlet>
     <servlet-name>PKIResourceServlet.ca</servlet-name>
-    <servlet-class>org.ovirt.engine.core.pki.PKIResourceServlet</servlet-class>
+    <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
     <init-param>
-      <param-name>resource-location</param-name>
-      <param-value>%{ENGINE_PKI_CA}</param-value>
+        <param-name>targetContext</param-name>
+        <param-value>%{ENGINE_URI}/services/</param-value>
     </init-param>
     <init-param>
-      <param-name>output-format</param-name>
-      <param-value>X509-PEM</param-value>
+        <param-name>uri</param-name>
+        <param-value>/pki-resource</param-value>
+    </init-param>
+    <init-param>
+    	<param-name>attr-resource</param-name>
+	<param-value>ca-certificate</param-value>
+    </init-param>
+    <init-param>
+    	<param-name>attr-format</param-name>
+	<param-value>X509-PEM-CA</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -40,18 +35,22 @@
   <!-- Servlet to serve the engine SSH public key: -->
   <servlet>
     <servlet-name>PKIResourceServlet.engine.ssh</servlet-name>
-    <servlet-class>org.ovirt.engine.core.pki.PKIResourceServlet</servlet-class>
+    <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
     <init-param>
-      <param-name>resource-location</param-name>
-      <param-value>%{ENGINE_PKI_ENGINE_CERT}</param-value>
+        <param-name>targetContext</param-name>
+        <param-value>%{ENGINE_URI}/services/</param-value>
     </init-param>
     <init-param>
-      <param-name>output-alias</param-name>
-      <param-value>ovirt-engine</param-value>
+        <param-name>uri</param-name>
+        <param-value>/pki-resource</param-value>
     </init-param>
     <init-param>
-      <param-name>output-format</param-name>
-      <param-value>SSH</param-value>
+    	<param-name>attr-resource</param-name>
+	<param-value>engine-certificate</param-value>
+    </init-param>
+    <init-param>
+    	<param-name>attr-format</param-name>
+	<param-value>RFC4716</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -60,61 +59,18 @@
     <url-pattern>/rhevm.ssh.key.txt</url-pattern>
   </servlet-mapping>
 
-  <!-- Servlet to serve config files for console client -->
-  <servlet>
-    <servlet-name>GetAttachmentServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.GetAttachmentServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>GetAttachmentServlet</servlet-name>
-    <url-pattern>/ovirt-engine-attachment/*</url-pattern>
-  </servlet-mapping>
-
-  <!-- Documentation: -->
-  <servlet>
-    <servlet-name>docs</servlet-name>
-    <servlet-class>org.ovirt.engine.core.DocsServlet</servlet-class>
-    <init-param>
-      <param-name>file</param-name>
-      <param-value>%{ENGINE_MANUAL}</param-value>
-    </init-param>
-    <init-param>
-        <param-name>localeDocsMissingURI</param-name>
-        <param-value>/ovirt-engine/docsmissing</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>docs</servlet-name>
-    <url-pattern>/docs/*</url-pattern>
-  </servlet-mapping>
-
-  <!-- Servlet to forward to when the documentation in a particular locale is missing -->
-  <servlet>
-    <servlet-name>docsmissing</servlet-name>
-    <jsp-file>/WEB-INF/no_lang.jsp</jsp-file>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>docsmissing</servlet-name>
-    <url-pattern>/ovirt-engine/docsmissing</url-pattern>
-  </servlet-mapping>
-  <!-- Files: -->
-  <servlet>
-    <servlet-name>files</servlet-name>
-    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
-    <init-param>
-      <param-name>file</param-name>
-      <param-value>%{ENGINE_USR}/files</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>files</servlet-name>
-    <url-pattern>/ovirt-engine-files/*</url-pattern>
-  </servlet-mapping>
-
   <!-- Servlet for automatic registration of hypervisors: -->
   <servlet>
     <servlet-name>RegisterServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.register.RegisterServlet</servlet-class>
+    <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
+    <init-param>
+        <param-name>targetContext</param-name>
+        <param-value>%{ENGINE_URI}/services/</param-value>
+    </init-param>
+    <init-param>
+        <param-name>uri</param-name>
+        <param-value>/host-register</param-value>
+    </init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>RegisterServlet</servlet-name>
@@ -128,7 +84,15 @@
        the engine: -->
   <servlet>
     <servlet-name>HealthStatus</servlet-name>
-    <servlet-class>org.ovirt.engine.core.status.HealthStatus</servlet-class>
+    <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
+    <init-param>
+      <param-name>targetContext</param-name>
+      <param-value>%{ENGINE_URI}/services/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>uri</param-name>
+      <param-value>/health</param-value>
+    </init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>HealthStatus</servlet-name>
@@ -136,115 +100,20 @@
     <url-pattern>/OvirtEngineWeb/HealthStatus.aspx</url-pattern>
   </servlet-mapping>
 
-  <!-- Redirect servlet (used by the reports integration): -->
   <servlet>
-    <servlet-name>ReportsRedirectServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.redirect.ReportsRedirectServlet</servlet-class>
+    <servlet-name>index</servlet-name>
+    <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>
+    <init-param>
+      <param-name>url</param-name>
+      <param-value>%{ENGINE_URI}</param-value>
+    </init-param>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ReportsRedirectServlet</servlet-name>
-    <url-pattern>/OvirtEngineWeb/ReportsRedirectServlet</url-pattern>
+    <servlet-name>index</servlet-name>
+    <url-pattern>/index.html</url-pattern>
   </servlet-mapping>
 
-  <!-- Servlet used to validate sessions (used by the reports
-       integration): -->
-  <servlet>
-    <servlet-name>ValidateSession</servlet-name>
-    <servlet-class>org.ovirt.engine.core.validate.ValidateSession</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ValidateSession</servlet-name>
-    <url-pattern>/OvirtEngineWeb/ValidateSession</url-pattern>
-  </servlet-mapping>
-
-  <!-- Branding Servlet -->
-  <servlet>
-    <servlet-name>BrandingServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BrandingServlet</servlet-name>
-    <url-pattern>/ovirt-engine-theme/*</url-pattern>
-  </servlet-mapping>
-
-  <!-- Branding Cascading Resource Servlet -->
-  <servlet>
-    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
-    <url-pattern>/ovirt-engine-theme-resource/*</url-pattern>
-  </servlet-mapping>
-
-  <!-- PageNotFound Servlet -->
-  <servlet>
-    <servlet-name>PageNotFoundServlet</servlet-name>
-    <jsp-file>/WEB-INF/404.jsp</jsp-file>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>PageNotFoundServlet</servlet-name>
-    <url-pattern>/404.html</url-pattern>
-  </servlet-mapping>
-
-  <!-- Welcome page -->
-  <servlet>
-    <servlet-name>WelcomeServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.WelcomeServlet</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>WelcomeServlet</servlet-name>
-    <url-pattern>/ovirt-engine</url-pattern>
-  </servlet-mapping>
-
-  <!-- Filters -->
-  <!-- Locale Filter, determines the user locale -->
-  <filter>
-    <filter-name>LocaleFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
-  </filter>
-  <!-- Branding Filter, passes branding information to jsps -->
-  <filter>
-    <filter-name>BrandingFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>LocaleFilter</filter-name>
-    <url-pattern>/ovirt-engine/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>LocaleFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>BrandingFilter</filter-name>
-    <url-pattern>/ovirt-engine/*</url-pattern>
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>REQUEST</dispatcher>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>BrandingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
-
-  <!-- Go to the index when a page is not found (preserving the
-       404 status code): -->
-  <error-page>
-    <error-code>404</error-code>
-    <location>/404.html</location>
-  </error-page>
-
-  <!-- This is handled by the welcome servlet -->
   <welcome-file-list>
-    <welcome-file>ovirt-engine</welcome-file>
+    <welcome-file>index.html</welcome-file>
   </welcome-file-list>
 </web-app>

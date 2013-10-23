@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 
 public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
 
-    private static final String CLIENT_PAGE = "/ovirt-engine-spicehtml5-main.html"; //$NON-NLS-1$
+    private static final String CLIENT_PAGE = BaseContextPathData.getInstance().getPath()
+            + "services/spicehtml5-main.html"; //$NON-NLS-1$
     private final WebsocketProxyConfig config;
 
     public SpiceHtml5Impl() {

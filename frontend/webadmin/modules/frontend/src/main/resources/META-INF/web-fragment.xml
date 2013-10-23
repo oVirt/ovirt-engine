@@ -84,13 +84,13 @@
     <!-- PageNotFound Servlet -->
     <servlet>
         <servlet-name>PageNotFoundForwardServlet</servlet-name>
-        <servlet-class>org.ovirt.engine.core.utils.servlet.PageNotFoundForwardServlet</servlet-class>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
         <init-param>
             <param-name>targetContext</param-name>
-            <param-value>/</param-value>
+            <param-value>..</param-value>
         </init-param>
         <init-param>
-            <param-name>pageNotFoundURI</param-name>
+            <param-name>uri</param-name>
             <param-value>/404.html</param-value>
         </init-param>
     </servlet>

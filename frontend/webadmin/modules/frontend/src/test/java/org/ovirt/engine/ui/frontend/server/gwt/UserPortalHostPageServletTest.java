@@ -19,7 +19,7 @@ public class UserPortalHostPageServletTest extends AbstractGwtDynamicHostPageSer
     @Test
     public void testGetSelectorScriptName() {
         assertEquals(testServlet.getSelectorScriptName(),
-                "org.ovirt.engine.ui.userportal.UserPortal.nocache.js"); //$NON-NLS-1$
+                "userportal.nocache.js"); //$NON-NLS-1$
     }
 
     @Test

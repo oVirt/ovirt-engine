@@ -5,6 +5,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
+import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -24,7 +25,8 @@ import com.google.gwt.i18n.client.LocaleInfo;
 public abstract class Configurator {
 
     private static final String DOCUMENTATION_LIB_PATH = "html/"; //$NON-NLS-1$
-    private static final String DOCUMENTATION_ROOT = "docs"; //$NON-NLS-1$
+    private static final String DOCUMENTATION_ROOT = BaseContextPathData.getInstance().getPath()
+            + "docs/manual"; //$NON-NLS-1$
 
     private static String documentationLangPath;
 
@@ -195,7 +197,8 @@ public abstract class Configurator {
      * Returns the base URL for retrieving Spice-related resources.
      */
     public static String getSpiceBaseURL() {
-        return FrontendUrlUtils.getRootURL() + "ovirt-engine-files/spice/"; //$NON-NLS-1$
+        return FrontendUrlUtils.getRootURL() + BaseContextPathData.getInstance().getPath()
+                + "services/files/spice/"; //$NON-NLS-1$
     }
 
     protected void setUsbFilter(String usbFilter) {

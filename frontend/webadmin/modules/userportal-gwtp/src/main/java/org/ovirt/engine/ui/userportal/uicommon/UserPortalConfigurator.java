@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
@@ -66,7 +67,8 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     public void updateUsbFilter() {
-        fetchFile("/ovirt-engine-files/usbfilter.txt", usbFilterFileFetchedEvent); //$NON-NLS-1$
+        fetchFile(BaseContextPathData.getInstance().getPath()
+                + "services/files/usbfilter.txt", usbFilterFileFetchedEvent); //$NON-NLS-1$
     }
 
     @Override

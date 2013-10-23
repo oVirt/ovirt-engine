@@ -35,13 +35,14 @@
         ProxySet timeout=3600
     </Proxy>
 
-    Redirect /ovirt-engine /ovirt-engine/
-
-    <Location /ovirt-engine/>
-        ProxyPass ajp://127.0.0.1:@JBOSS_AJP_PORT@/
+    <Location /ovirt-engine>
+        ProxyPass ajp://127.0.0.1:@JBOSS_AJP_PORT@/ovirt-engine
+        <IfModule deflate_module>
+            AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
+        </IfModule>
     </Location>
 
-    <LocationMatch ^/(UserPortal($|/)|RHEVManagerWeb($|/)|OvirtEngineWeb($|/)|webadmin($|/)|docs($|/)|ovirt-engine-theme/|ovirt-engine-theme-resource/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$|ovirt-engine-files/|ovirt-engine-attachment/|ovirt-engine-novnc-main.html$|ovirt-engine-spicehtml5-main.html$)>
+    <LocationMatch ^RHEVManagerWeb/|OvirtEngineWeb/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$>
         ProxyPassMatch ajp://127.0.0.1:@JBOSS_AJP_PORT@
         <IfModule deflate_module>
             AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml

@@ -127,6 +127,7 @@ ENGINE_JAVA_MODULEPATH="${ENGINE_USR}/modules"
 # /usr/share/ovirt-engine:
 #
 ENGINE_APPS=engine.ear
+ENGINE_URI=/ovirt-engine
 
 #
 # Flags to enable or disable the web server (the proxy) and the

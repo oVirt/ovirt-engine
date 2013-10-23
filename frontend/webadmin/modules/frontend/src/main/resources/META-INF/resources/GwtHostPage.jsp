@@ -22,6 +22,9 @@
         <c:if test="${requestScope['messages'] != null}">
             var messages = <c:out value="${requestScope['messages']}" escapeXml="false"/>;
         </c:if>
+        <c:if test="${requestScope['baseContextPath'] != null}">
+            var baseContextPath = <c:out value="${requestScope['baseContextPath']}" escapeXml="false"/>;
+        </c:if>
     </script>
 </head>
 <body>

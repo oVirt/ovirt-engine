@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.core</groupId>
+    <artifactId>manager-modules</artifactId>
+    <version>3.4.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>docs</artifactId>
+  <packaging>war</packaging>
+  <name>oVirt Engine Web Docs</name>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
+      <artifactId>jboss-jstl-api_1.2_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>common</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>branding</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+        <id>findbugs</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs.version}</version>
+                    <configuration>
+                        <xmlOutput>true</xmlOutput>
+                        <!-- Optional directory to put findbugs xdoc xml report -->
+                        <excludeFilterFile> ${basedir}/exclude-filters.xml</excludeFilterFile>
+                        <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+
+    <profile>
+        <id>findbugs-general</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs.version}</version>
+                    <configuration>
+                        <xmlOutput>true</xmlOutput>
+                        <!-- Optional directory to put findbugs xdoc xml report -->
+                        <excludeFilterFile> ${basedir}/exclude-filters.xml, ${basedir}/../../../../exclude-filters-general.xml</excludeFilterFile>
+                        <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+  </profiles>
+
+</project>

@@ -20,6 +20,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +63,9 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     private BrandingManager mockBrandingManager;
 
     @Mock
+    private ServletContext mockServletContext;
+
+    @Mock
     private DbUser mockUser;
 
     @Mock
@@ -87,6 +91,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
                 MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey())).
                 thenReturn(SELECTOR_SCRIPT);
         when(mockRequest.getSession()).thenReturn(mockSession);
+        when(mockRequest.getSession().getServletContext()).thenReturn(mockServletContext);
         when(mockSession.getId()).thenReturn("sessionId"); //$NON-NLS-1$
         when(mockUser.getId()).thenReturn(Guid.newGuid());
         when(mockUser.getLoginName()).thenReturn("admin"); //$NON-NLS-1$

@@ -56,6 +56,27 @@
       <type>war</type>
     </dependency>
 
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>services</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>docs</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>welcome</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
     <!-- ** EJB-JARs -->
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
@@ -186,14 +207,35 @@
               <groupId>org.ovirt.engine.ui</groupId>
               <artifactId>userportal</artifactId>
               <bundleFileName>userportal.war</bundleFileName>
-              <contextRoot>/UserPortal</contextRoot>
+              <contextRoot>/ovirt-engine/userportal</contextRoot>
             </webModule>
 
             <webModule>
               <groupId>org.ovirt.engine.ui</groupId>
               <artifactId>webadmin</artifactId>
               <bundleFileName>webadmin.war</bundleFileName>
-              <contextRoot>/webadmin</contextRoot>
+              <contextRoot>/ovirt-engine/webadmin</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>services</artifactId>
+              <bundleFileName>services.war</bundleFileName>
+              <contextRoot>/ovirt-engine/services</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>docs</artifactId>
+              <bundleFileName>docs.war</bundleFileName>
+              <contextRoot>/ovirt-engine/docs</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>welcome</artifactId>
+              <bundleFileName>welcome.war</bundleFileName>
+              <contextRoot>/ovirt-engine</contextRoot>
             </webModule>
 
             <!-- ** EJB-JARs -->

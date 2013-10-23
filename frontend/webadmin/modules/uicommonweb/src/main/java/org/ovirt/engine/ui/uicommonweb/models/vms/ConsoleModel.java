@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -29,7 +30,8 @@ import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class ConsoleModel extends EntityModel {
     public static final String EjectLabel = "[" + ConstantsManager.getInstance().getConstants().eject() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String GET_ATTACHMENT_SERVLET_URL = "/ovirt-engine-attachment/"; //$NON-NLS-1$
+    public static final String GET_ATTACHMENT_SERVLET_URL = BaseContextPathData.getInstance().getPath()
+            + "services/attachment/"; //$NON-NLS-1$
 
     public static EventDefinition ErrorEventDefinition;
     private Event privateErrorEvent;

@@ -216,6 +216,7 @@
             <configuration>
               <runTarget>/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</runTarget>
               <module>org.ovirt.engine.ui.userportal.UserPortal</module>
+              <webappDirectory>${project.build.directory}/generated-gwt</webappDirectory>
             </configuration>
             <executions>
               <execution>
@@ -226,6 +227,18 @@
                 </goals>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+                <packagingExcludes>WEB-INF/deploy/**,WEB-INF/classes/**</packagingExcludes>
+                <webResources>
+                    <resource>
+                        <directory>${project.build.directory}/generated-gwt/userportal</directory>
+                    </resource>
+                </webResources>
+            </configuration>
           </plugin>
         </plugins>
       </build>
