@@ -1114,7 +1114,7 @@ public class AuditLogableBaseTest {
         }
 
         @Override
-        protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
+        public VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
             return mock(VmNetworkInterfaceDao.class);
         }
 

@@ -615,7 +615,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getAdGroupDao();
     }
 
-    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
+    public VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return getDbFacade().getVmNetworkInterfaceDao();
     }
 

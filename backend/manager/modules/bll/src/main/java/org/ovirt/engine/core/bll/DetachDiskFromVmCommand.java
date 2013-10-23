@@ -52,8 +52,7 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
         }
         if (retValue && Boolean.TRUE.equals(getParameters().isPlugUnPlug())
                 && getVm().getStatus() != VMStatus.Down) {
-            retValue = isHotPlugSupported() && isOsSupportingHotPlug()
-                            && isInterfaceSupportedForPlugUnPlug(disk);
+            retValue = isInterfaceSupportedForPlugUnPlug(disk);
         }
 
         if (retValue && Boolean.FALSE.equals(getParameters().isPlugUnPlug())

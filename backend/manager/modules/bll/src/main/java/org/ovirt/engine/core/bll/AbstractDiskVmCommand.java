@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.VmValidator;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -213,23 +212,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             }
         }
         return false;
-    }
-
-    @Override
-    protected boolean isHotPlugSupported() {
-        if (getParameters().getSnapshotId() == null) {
-            return super.isHotPlugSupported();
-        }
-
-        return isHotPlugDiskSnapshotSupported();
-    }
-
-    protected boolean isHotPlugDiskSnapshotSupported() {
-        if (!FeatureSupported.hotPlugDiskSnapshot(getVds().getVdsGroupCompatibilityVersion())) {
-            return failCanDoAction(VdcBllMessages.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
-        }
-
-        return true;
     }
 
     protected ImageDao getImageDao() {

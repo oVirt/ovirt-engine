@@ -901,15 +901,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("OVIRT")
     OriginType,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    HotPlugEnabled,
-
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    HotPlugUnsupportedOsList,
-
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")

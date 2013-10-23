@@ -387,41 +387,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
-    protected boolean canPerformDiskHotPlug() {
-        return isHotPlugSupported() && isOsSupportingHotPlug();
-    }
-
     protected boolean canPerformNicHotPlug() {
         return osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getVdsGroupCompatibilityVersion());
-    }
-
-    /**
-     * check that hotplug is enabled via the 3.1 config paramter {@literal ConfigValues.HotPlugEnabled,
-     * @return
-     */
-    protected boolean isHotPlugSupported() {
-        if (Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled, getVds().getVdsGroupCompatibilityVersion()
-                .getValue())) {
-            return true;
-        }
-        addCanDoActionMessage(VdcBllMessages.HOT_PLUG_IS_NOT_SUPPORTED);
-        return false;
-    }
-
-    /**
-     * The following method should check if os of guest is supported for hot plug/unplug operation
-     * @return
-     */
-    protected boolean isOsSupportingHotPlug() {
-        int vmOs = getVm().getOs();
-        String[] unsupportedOSs = Config.<String> GetValue(ConfigValues.HotPlugUnsupportedOsList).split(",");
-        for (String os : unsupportedOSs) {
-            if (os.equalsIgnoreCase(osRepository.getOsName(vmOs))) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
-                return false;
-            }
-        }
-        return true;
     }
 
     protected VmDeviceDAO getVmDeviceDao() {
