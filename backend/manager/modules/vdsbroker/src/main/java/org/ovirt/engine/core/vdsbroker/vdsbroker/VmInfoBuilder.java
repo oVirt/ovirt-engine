@@ -363,7 +363,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     addNetworkInterfaceProperties(struct,
                             vmInterface,
                             vmDevice,
-                            ifaceType.toString(),
+                            ifaceType.getInternalName(),
                             vm.getVdsGroupCompatibilityVersion());
                 }
                 devices.add(struct);
