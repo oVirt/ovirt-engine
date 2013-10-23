@@ -250,7 +250,6 @@ backupFiles() {
 backupDB() {
 	local file="$1"
 	PGPASSFILE="${MYPGPASS}" pg_dump \
-		-c \
 		-E "UTF8" \
 		--disable-dollar-quoting \
 		--disable-triggers \
@@ -315,6 +314,15 @@ verifyConnection() {
 		-c "select 1" \
 		>> "${LOG}" 2>&1 \
 		|| logdie "Can't connect to the database"
+
+	PGPASSFILE="${MYPGPASS}" pg_dump \
+		-U "${ENGINE_DB_USER}" \
+		-h "${ENGINE_DB_HOST}" \
+		-p "${ENGINE_DB_PORT}" \
+		"${ENGINE_DB_DATABASE}" | \
+		grep -vi '^create extension' | \
+		grep -iq '^create' && \
+		logdie "Database is not empty"
 }
 
 verifyVersion() {
