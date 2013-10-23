@@ -41,11 +41,13 @@ public class OsQueryParameters extends VdcQueryParametersBase {
         GetSpiceSupportMatrix,
         HasNicHotplugSupport,
         GetNicHotplugSupportMap,
+        GetDiskHotpluggableInterfacesMap,
         GetLinuxOss,
         GetOsIds,
         GetMinimumOsRam,
         GetMaxOsRam,
         GetNetworkDevices,
+        GetDiskHotpluggableInterfaces,
         GetWindowsOss,
         GetUniqueOsNames,
         GetOsNames

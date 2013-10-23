@@ -33,6 +33,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetNicHotplugSupportMap:
                 setReturnValue(osRepository.getNicHotplugSupportMap());
                 break;
+            case GetDiskHotpluggableInterfacesMap:
+                setReturnValue(osRepository.getDiskHotpluggableInterfacesMap());
+                break;
             case GetMaxOsRam:
                 setReturnValue(osRepository.getMaximumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;
@@ -47,6 +50,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
                 break;
             case GetNetworkDevices:
                 setReturnValue(osRepository.getNetworkDevices(getParameters().getOsId(), getParameters().getVersion()));
+                break;
+            case GetDiskHotpluggableInterfaces:
+                setReturnValue(osRepository.getDiskHotpluggableInterfaces(getParameters().getOsId(), getParameters().getVersion()));
                 break;
         }
     }

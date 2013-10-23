@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.osinfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import java.util.Map;
 
@@ -87,6 +88,11 @@ public interface OsRepository {
     public Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap();
 
     /**
+     * @return a map that contain an pair (OS id and version) with the disk hotpluggable interfaces.
+     */
+    public Map<Pair<Integer, Version>, Set<String>> getDiskHotpluggableInterfacesMap();
+
+    /**
      * this is Windows OSs specific path to the sysprep file
      * @param osId
      * @param version
@@ -125,6 +131,13 @@ public interface OsRepository {
     /**
      * @param osId
      * @param version
+     * @return set of disk hotpluggable interfaces
+     */
+    Set<String> getDiskHotpluggableInterfaces(int osId, Version version);
+
+    /**
+     * @param osId
+     * @param version
      * @return a specific sound device for the given os.
      */
     String getSoundDevice(int osId, Version version);
@@ -149,4 +162,5 @@ public interface OsRepository {
      * @return
      */
     boolean isSingleQxlDeviceEnabled(int osId);
+
 }

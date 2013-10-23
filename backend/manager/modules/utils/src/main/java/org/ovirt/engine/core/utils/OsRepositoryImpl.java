@@ -139,6 +139,24 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public Map<Pair<Integer, Version>, Set<String>> getDiskHotpluggableInterfacesMap() {
+        Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
+        versionsWithNull.add(null);
+
+        Map<Pair<Integer, Version>, Set<String>> diskHotpluggableInterfacesMap =
+                new HashMap<Pair<Integer, Version>, Set<String>>();
+
+        for (Integer osId : getOsIds()) {
+            for (Version version : versionsWithNull) {
+                diskHotpluggableInterfacesMap.put(
+                        new Pair<Integer, Version>(osId, version), getDiskHotpluggableInterfaces(osId, version));
+            }
+        }
+
+        return diskHotpluggableInterfacesMap;
+    }
+
+    @Override
     public String getOsName(int osId) {
         return getOsNames().get(osId);
     }
@@ -192,6 +210,14 @@ public enum OsRepositoryImpl implements OsRepository {
         String devices =
                 getValueByVersion(idToUnameLookup.get(osId), "devices.network", version);
         return trimElements(devices.split(","));
+    }
+
+    @Override
+    public Set<String> getDiskHotpluggableInterfaces(int osId, Version version) {
+        String devices = getValueByVersion(idToUnameLookup.get(osId),
+                "devices.disk.hotpluggableInterfaces",
+                version);
+        return new HashSet<String>(trimElements(devices.split(",")));
     }
 
     @Override

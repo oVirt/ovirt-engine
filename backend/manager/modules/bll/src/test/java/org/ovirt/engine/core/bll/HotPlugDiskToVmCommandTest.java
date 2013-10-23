@@ -14,7 +14,9 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.junit.Before;
@@ -59,6 +61,7 @@ public class HotPlugDiskToVmCommandTest {
     protected Guid vmId = Guid.newGuid();
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid storageDomainId = Guid.newGuid();
+    protected static final List<String> DISK_HOTPLUGGABLE_INTERFACES = Arrays.asList("VirtIO_SCSI", "VirtIO");
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
@@ -144,7 +147,7 @@ public class HotPlugDiskToVmCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_VIRTIO.toString()));
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED.toString()));
     }
 
     private void mockSpiceSupportMatrix() {
@@ -289,6 +292,8 @@ public class HotPlugDiskToVmCommandTest {
         disk.setDiskInterface(DiskInterface.IDE);
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
+        when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
+                any(Version.class))).thenReturn(new HashSet<String>(DISK_HOTPLUGGABLE_INTERFACES));
         return disk;
     }
 
@@ -302,6 +307,8 @@ public class HotPlugDiskToVmCommandTest {
         disk.setActive(true);
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
+        when(osRepository.getDiskHotpluggableInterfaces(any(Integer.class),
+                any(Version.class))).thenReturn(new HashSet<String>(DISK_HOTPLUGGABLE_INTERFACES));
         mockVmDevice(false);
     }
 

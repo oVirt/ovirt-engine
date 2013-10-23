@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,6 +17,7 @@ public class OsRepositoryImplTest {
     private static MapBackedPreferences preferences;
 
     public static final String NETWORK_DEVICES = "e100,pv";
+    public static final String DISK_HOTPLUGGABLE_INTERFACES = "VirtIO_SCSI, VirtIO";
     public static final String PATH_TO_SYSPREP = "/path/to/sysprep";
     public static final String SOME_PRODUCT_KEY = "some-product-key";
     public static final String SOUND_DEVICE = "ac97";
@@ -28,6 +30,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/family").put("value", "linux");
         preferences.node("/os/rhel7/bus").put("value", "64");
         preferences.node("/os/rhel7/devices/network").put("value", NETWORK_DEVICES);
+        preferences.node("/os/rhel7/devices/disk/hotpluggableInterfaces").put("value", DISK_HOTPLUGGABLE_INTERFACES);
         preferences.node("/os/rhel7/resources/minimum/ram").put("value", "1024");
         preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.1", "512");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
@@ -96,6 +99,15 @@ public class OsRepositoryImplTest {
         assertTrue(networkDevices.size() == 2);
         for (String device : NETWORK_DEVICES.split(",")) {
             assertTrue(networkDevices.contains(device));
+        }
+    }
+
+    @Test
+    public void testGetDiskHotpluggableInterfaces() throws Exception {
+        Set<String> diskHotpluggableInterfaces = OsRepositoryImpl.INSTANCE.getDiskHotpluggableInterfaces(777, null);
+        assertTrue(diskHotpluggableInterfaces.size() == 2);
+        for (String diskHotpluggableInterface : DISK_HOTPLUGGABLE_INTERFACES.split(",")) {
+            assertTrue(diskHotpluggableInterfaces.contains(diskHotpluggableInterface.trim()));
         }
     }
 

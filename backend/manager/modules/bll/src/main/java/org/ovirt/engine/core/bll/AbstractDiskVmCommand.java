@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.IStorageHelper;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -38,6 +38,7 @@ import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.springframework.util.CollectionUtils;
 
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBase> extends VmCommand<T> {
 
@@ -193,10 +194,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isInterfaceSupportedForPlugUnPlug(Disk disk) {
-        if (!(DiskInterface.VirtIO.equals(disk.getDiskInterface()) || DiskInterface.VirtIO_SCSI.equals(disk.getDiskInterface()))) {
-            addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_VIRTIO);
-            return false;
+        Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
+                getVm().getVdsGroupCompatibilityVersion());
+
+        if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
+                || !diskHotpluggableInterfaces.contains(disk.getDiskInterface().toString())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
         }
+
         return true;
     }
 
