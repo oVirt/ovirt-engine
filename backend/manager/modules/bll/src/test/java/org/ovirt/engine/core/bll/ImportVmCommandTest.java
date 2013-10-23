@@ -214,7 +214,7 @@ public class ImportVmCommandTest {
         diskImage2.setStorageIds(new ArrayList<Guid>());
         diskList.add(diskImage);
         diskList.add(diskImage2);
-        DiskImage disk = ImagesHandler.getActiveVolumeDisk(diskList);
+        DiskImage disk = command.getActiveVolumeDisk(diskList);
         Map<Guid, VmDevice> managedDevices = new HashMap<>();
         managedDevices.put(disk.getId(), new VmDevice());
         Guid beforeOldDiskId = disk.getId();
