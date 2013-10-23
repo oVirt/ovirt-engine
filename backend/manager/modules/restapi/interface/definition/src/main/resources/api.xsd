@@ -3309,8 +3309,8 @@
     <xs:sequence>
       <xs:element name="host_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="client_port" type="xs:int" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="bytes_read" type="xs:int" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="bytes_written" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="bytes_read" type="xs:long" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="bytes_written" type="xs:long" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 

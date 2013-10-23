@@ -14,9 +14,9 @@ public class GlusterClientInfo implements Serializable {
 
     private int clientPort;
 
-    private int bytesRead;
+    private long bytesRead;
 
-    private int bytesWritten;
+    private long bytesWritten;
 
     public String getHostname() {
         return hostname;
@@ -34,19 +34,19 @@ public class GlusterClientInfo implements Serializable {
         this.clientPort = clientPort;
     }
 
-    public int getBytesRead() {
+    public long getBytesRead() {
         return bytesRead;
     }
 
-    public void setBytesRead(int bytesRead) {
+    public void setBytesRead(long bytesRead) {
         this.bytesRead = bytesRead;
     }
 
-    public int getBytesWritten() {
+    public long getBytesWritten() {
         return bytesWritten;
     }
 
-    public void setBytesWritten(int bytesWritten) {
+    public void setBytesWritten(long bytesWritten) {
         this.bytesWritten = bytesWritten;
     }
 }

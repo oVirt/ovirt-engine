@@ -255,8 +255,8 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
 
             clientInfo.setHostname(hostNameArr[0]);
             clientInfo.setClientPort(Integer.valueOf(hostNameArr[1]));
-            clientInfo.setBytesRead(Integer.valueOf((String) client.get(CLIENTS_BYTES_READ)));
-            clientInfo.setBytesWritten(Integer.valueOf((String) client.get(CLIENTS_BYTES_WRITE)));
+            clientInfo.setBytesRead(Long.valueOf((String) client.get(CLIENTS_BYTES_READ)));
+            clientInfo.setBytesWritten(Long.valueOf((String) client.get(CLIENTS_BYTES_WRITE)));
             clientInfoList.add(clientInfo);
         }
         return clientInfoList;

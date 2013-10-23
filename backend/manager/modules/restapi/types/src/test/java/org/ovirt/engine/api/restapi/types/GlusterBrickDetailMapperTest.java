@@ -113,8 +113,8 @@ public class GlusterBrickDetailMapperTest extends AbstractInvertibleMappingTest<
         ArrayList<GlusterClientInfo> list = new ArrayList<GlusterClientInfo>();
         for(int i=0; i < listSize; i++) {
             GlusterClientInfo clientInfo = new GlusterClientInfo();
-            clientInfo.setBytesRead(RandomUtils.instance().nextInt());
-            clientInfo.setBytesWritten(RandomUtils.instance().nextInt());
+            clientInfo.setBytesRead(RandomUtils.instance().nextLong());
+            clientInfo.setBytesWritten(RandomUtils.instance().nextLong());
             clientInfo.setClientPort(RandomUtils.instance().nextInt());
             clientInfo.setHostname(RandomUtils.instance().nextString(7));
             list.add(clientInfo);
