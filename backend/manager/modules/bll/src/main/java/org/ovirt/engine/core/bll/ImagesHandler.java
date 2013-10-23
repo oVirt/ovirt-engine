@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -42,10 +43,13 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public final class ImagesHandler {
     public static final String DISK = "_Disk";
@@ -640,4 +644,33 @@ public final class ImagesHandler {
         DbFacade.getInstance().getImageDao().updateStatus(imageId, imageStatus);
     }
 
+    protected static void updateAllDiskImageSnapshotsStatusWithCompensation(final Guid diskId,
+            final ImageStatus status,
+            ImageStatus statusForCompensation,
+            final CompensationContext compensationContext) {
+
+        if (compensationContext != null) {
+            List<DiskImage> diskSnapshots =
+                    DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
+            for (DiskImage diskSnapshot : diskSnapshots) {
+                diskSnapshot.setImageStatus(statusForCompensation);
+                compensationContext.snapshotEntityStatus(diskSnapshot.getImage());
+            }
+
+            TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
+                    compensationContext.stateChanged();
+                    return null;
+                }
+            });
+        } else {
+            updateAllDiskImageSnapshotsStatus(diskId, status);
+        }
+    }
+
+    protected static void updateAllDiskImageSnapshotsStatus(Guid diskId, ImageStatus status) {
+        DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
+    }
 }

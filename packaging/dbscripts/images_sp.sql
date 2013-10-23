@@ -73,6 +73,20 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION UpdateStatusOfImagesByImageGroupId(
+    v_image_group_id UUID,
+    v_status INTEGER)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE images
+    SET    imageStatus = v_status
+    WHERE  image_group_id = v_image_group_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION UpdateImageVmSnapshotId(
     v_image_id UUID,
     v_vm_snapshot_id UUID)
