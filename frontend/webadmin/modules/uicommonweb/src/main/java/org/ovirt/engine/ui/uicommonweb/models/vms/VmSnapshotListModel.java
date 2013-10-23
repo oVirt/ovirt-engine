@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -694,6 +693,7 @@ public class VmSnapshotListModel extends SearchableListModel
     {
         VM vm = (VM) getEntity();
         Snapshot snapshot = (Snapshot) getSelectedItem();
+        List<VM> vmList = vm != null ? Collections.singletonList(vm) : Collections.<VM> emptyList();
 
         boolean isVmDown = vm != null && vm.getStatus() == VMStatus.Down;
         boolean isVmImageLocked = vm != null && vm.getStatus() == VMStatus.ImageLocked;
@@ -704,7 +704,7 @@ public class VmSnapshotListModel extends SearchableListModel
         boolean isCloneVmSupported = getIsCloneVmSupported();
 
         getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
-                && VdcActionUtils.canExecute(Arrays.asList(vm), VM.class, VdcActionType.CreateAllSnapshotsFromVm));
+                && VdcActionUtils.canExecute(vmList, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
