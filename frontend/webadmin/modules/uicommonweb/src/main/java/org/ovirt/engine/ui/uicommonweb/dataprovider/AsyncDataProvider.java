@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.dataprovider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -171,6 +172,9 @@ public final class AsyncDataProvider {
     // cached NIC hotplug support map
     private static Map<Pair<Integer, Version>, Boolean> nicHotplugSupportMap;
 
+    // cached disk hotpluggable interfaces map
+    private static Map<Pair<Integer, Version>, Set<String>> diskHotpluggableInterfacesMap;
+
     // cached windows OS
     private static List<Integer> windowsOsIds;
 
@@ -215,6 +219,7 @@ public final class AsyncDataProvider {
         initWindowsOsTypes();
         initHasSpiceSupport();
         initNicHotplugSupportMap();
+        initDiskHotpluggableInterfacesMap();
     }
 
     public static void initNicHotplugSupportMap() {
@@ -242,6 +247,39 @@ public final class AsyncDataProvider {
         }
 
         return false;
+    }
+
+    public static void initDiskHotpluggableInterfacesMap() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                diskHotpluggableInterfacesMap = (Map<Pair<Integer, Version>, Set<String>>) ((VdcQueryReturnValue) returnValue)
+                        .getReturnValue();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(
+                OsRepositoryVerb.GetDiskHotpluggableInterfacesMap), callback);
+    }
+
+    public static Map<Pair<Integer, Version>, Set<String>> getDiskHotpluggableInterfacesMap() {
+        return diskHotpluggableInterfacesMap;
+    }
+
+    public static Collection<DiskInterface> getDiskHotpluggableInterfaces(Integer osId, Version version) {
+
+        Set<String> diskHotpluggableInterfaces = getDiskHotpluggableInterfacesMap()
+                .get(new Pair<Integer, Version>(osId, version));
+        if (diskHotpluggableInterfaces == null) {
+            return Collections.emptySet();
+        }
+
+        Collection<DiskInterface> diskInterfaces = new HashSet<DiskInterface>();
+        for (String diskHotpluggableInterface : diskHotpluggableInterfaces) {
+            diskInterfaces.add(DiskInterface.valueOf(diskHotpluggableInterface));
+        }
+
+        return diskInterfaces;
     }
 
     public static void getDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {

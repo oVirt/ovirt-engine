@@ -16,13 +16,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -626,8 +624,15 @@ public class VmDiskListModel extends VmDiskListModelBase
                     disk.getDiskStorageType() == DiskStorageType.IMAGE
                             && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
 
-            if (disk.getPlugged() == plug || isLocked || (disk.getDiskInterface() == DiskInterface.IDE && !isVmDown()))
-            {
+            boolean isDiskHotpluggableInterface = false;
+            if (getEntity() != null) {
+                isDiskHotpluggableInterface = AsyncDataProvider.getDiskHotpluggableInterfaces(getEntity().getOs(),
+                        getEntity().getVdsGroupCompatibilityVersion()).contains(disk.getDiskInterface());
+            }
+
+            if (disk.getPlugged() == plug
+                    || isLocked
+                    || (!isDiskHotpluggableInterface && !isVmDown())) {
                 return false;
             }
         }
@@ -774,8 +779,8 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (clusterCompatibilityVersion == null) {
             setIsDiskHotPlugSupported(false);
         } else {
-            setIsDiskHotPlugSupported((Boolean) AsyncDataProvider.getConfigValuePreConverted(
-                    ConfigurationValues.HotPlugEnabled, clusterCompatibilityVersion.toString()));
+            setIsDiskHotPlugSupported((Boolean) !AsyncDataProvider.getDiskHotpluggableInterfaces(
+                    getEntity().getOs(), clusterCompatibilityVersion).isEmpty());
         }
     }
 
