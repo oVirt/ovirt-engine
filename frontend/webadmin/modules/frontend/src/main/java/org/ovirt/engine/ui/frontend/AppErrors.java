@@ -1249,7 +1249,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM network interface profile's network cannot be changed.")
     String ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK();
 
-    @DefaultStringValue("Cannot ${action} ${type}. VM network interface profiles can be added to a VM network only.")
+    @DefaultStringValue("Cannot ${action} ${type}. VM network interface profiles cannot be added to a non-VM network. Please make sure the network is a VM network.")
     String ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK();
 
     @DefaultStringValue("Cannot ${action} ${type}. There is no VM network interface profile for the network the user can use.\n- Please use a VM network interface profile instead of a network name.")
