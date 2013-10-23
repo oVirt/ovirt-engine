@@ -81,10 +81,17 @@ public class StyledImageResourceCell extends ImageResourceCell {
     @Override
     public void onBrowserEvent(Context context, Element parent, ImageResource value,
             NativeEvent event, ValueUpdater<ImageResource> valueUpdater) {
+        String eventType = event.getType();
+        handleTitlePanel(eventType, parent);
+    }
+
+    private void handleTitlePanel(String eventType, Element parent) {
+        if (title.isEmpty()) {
+            // no need to show/hide title
+            return;
+        }
 
         titlePanel.setWidget(new Label(title));
-        String eventType = event.getType();
-
         if (BrowserEvents.MOUSEOVER.equals(eventType)) {
             titlePanel.showRelativeTo(parent);
         }
