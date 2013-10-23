@@ -40,6 +40,7 @@ public class EditDiskModel extends AbstractDiskModel
         getIsShareable().setEntity(getDisk().isShareable());
         getIsWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
         getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
+        getIsReadOnly().setEntity(getDisk().getReadOnly());
 
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
@@ -151,6 +152,7 @@ public class EditDiskModel extends AbstractDiskModel
             getIsBootable().setIsChangable(false);
             getIsWipeAfterDelete().setIsChangable(false);
             getDiskInterface().setIsChangable(false);
+            getIsReadOnly().setIsChangable(false);
         }
     }
 }

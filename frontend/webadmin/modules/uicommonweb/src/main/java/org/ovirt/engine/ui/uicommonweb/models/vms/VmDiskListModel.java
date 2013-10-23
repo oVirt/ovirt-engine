@@ -434,8 +434,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             Disk disk = (Disk) item;
             VdcActionParametersBase parameters = removeDisk ?
                     new RemoveDiskParameters(disk.getId()) :
-                    new AttachDettachVmDiskParameters(vm.getId(), disk.getId(), true);
-
+                    new AttachDettachVmDiskParameters(vm.getId(), disk.getId(), true, false);
             paramerterList.add(parameters);
         }
 

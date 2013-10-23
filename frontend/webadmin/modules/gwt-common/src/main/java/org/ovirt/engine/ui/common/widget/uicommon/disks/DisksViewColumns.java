@@ -83,6 +83,24 @@ public class DisksViewColumns {
         }
     };
 
+    public static final ImageResourceColumn<Disk> readOnlyDiskColumn = new ImageResourceColumn<Disk>() {
+        @Override
+        public ImageResource getValue(Disk object) {
+            setTitle(object.getReadOnly() ? getDefaultTitle() : null);
+            return object.getReadOnly() ? getDefaultImage() : null;
+        }
+
+        @Override
+        public String getDefaultTitle() {
+            return constants.readOnly();
+        }
+
+        @Override
+        public ImageResource getDefaultImage() {
+            return resources.readOnlyDiskIcon();
+        }
+    };
+
     public static final ImageResourceColumn<Disk> lunDiskColumn = new ImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {

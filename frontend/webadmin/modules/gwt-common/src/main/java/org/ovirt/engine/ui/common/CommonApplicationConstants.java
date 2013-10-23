@@ -1013,6 +1013,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Is Shareable")
     String isShareableVmDiskPopup();
 
+    @DefaultStringValue("Is Read Only")
+    String isReadOnlyVmDiskPopup();
+
     @DefaultStringValue("Allow Privileged SCSI I/O")
     String isSgIoUnfilteredEditor();
 
@@ -1130,6 +1133,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Shareable")
     String shareable();
+
+    @DefaultStringValue("Read Only")
+    String readOnly();
 
     @DefaultStringValue("Bootable")
     String bootable();

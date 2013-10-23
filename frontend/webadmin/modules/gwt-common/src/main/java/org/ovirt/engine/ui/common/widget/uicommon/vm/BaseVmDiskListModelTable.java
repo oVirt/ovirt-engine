@@ -89,6 +89,10 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
                 DisksViewColumns.shareableDiskColumn.getHeaderHtml(), all || images || luns, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
+                DisksViewColumns.readOnlyDiskColumn,
+                DisksViewColumns.readOnlyDiskColumn.getHeaderHtml(), all || images || luns, "30px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
                 DisksViewColumns.lunDiskColumn,
                 DisksViewColumns.lunDiskColumn.getHeaderHtml(), all, "30px"); //$NON-NLS-1$
 

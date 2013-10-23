@@ -45,6 +45,9 @@ public class NewDiskModel extends AbstractDiskModel
 
         if (getVm() != null) {
             updateSuggestedDiskAlias();
+        } else {
+            // Read only disk can be created only in the scope of VM.
+            getIsReadOnly().setIsAvailable(false);
         }
 
         getSizeExtend().setIsAvailable(false);
@@ -82,8 +85,11 @@ public class NewDiskModel extends AbstractDiskModel
 
         for (int i = 0; i < disksToAttach.size(); i++) {
             DiskModel disk = (DiskModel) disksToAttach.get(i).getEntity();
+            // Disk is attached to VM as read only or not, null is applicable only for floating disks
+            // but this is not a case here.
             AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
-                    getVm().getId(), disk.getDisk().getId(), (Boolean) getIsPlugged().getEntity());
+                    getVm().getId(), disk.getDisk().getId(), (Boolean) getIsPlugged().getEntity(),
+                    Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
 
             actionTypes.add(VdcActionType.AttachDiskToVm);
             paramerterList.add(parameters);

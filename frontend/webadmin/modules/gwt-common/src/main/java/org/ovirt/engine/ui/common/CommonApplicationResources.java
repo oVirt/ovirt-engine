@@ -205,6 +205,9 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/disk_shareable.png")
     ImageResource shareableDiskIcon();
 
+    @Source("images/disk_readonly.png")
+    ImageResource readOnlyDiskIcon();
+
     @Source("images/disk_lun.png")
     ImageResource externalDiskIcon();
 

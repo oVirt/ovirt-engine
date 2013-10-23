@@ -60,6 +60,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private EntityModel isBootable;
     private EntityModel isShareable;
     private EntityModel isPlugged;
+    private EntityModel isReadOnly;
     private EntityModel isAttachDisk;
     private EntityModel isInternal;
     private EntityModel isDirectLunDiskAvaialable;
@@ -112,6 +113,14 @@ public abstract class AbstractDiskModel extends DiskModel
 
     public void setIsPlugged(EntityModel isPlugged) {
         this.isPlugged = isPlugged;
+    }
+
+    public EntityModel getIsReadOnly() {
+        return isReadOnly;
+    }
+
+    public void setIsReadOnly(EntityModel isReadOnly) {
+        this.isReadOnly = isReadOnly;
     }
 
     public EntityModel getIsAttachDisk() {
@@ -259,6 +268,9 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setIsPlugged(new EntityModel());
         getIsPlugged().setEntity(true);
+
+        setIsReadOnly(new EntityModel());
+        getIsReadOnly().setEntity(false);
 
         setIsSgIoUnfiltered(new EntityModel());
         getIsSgIoUnfiltered().setIsAvailable(false);
@@ -795,6 +807,7 @@ public abstract class AbstractDiskModel extends DiskModel
         getDisk().setShareable((Boolean) getIsShareable().getEntity());
         getDisk().setPlugged((Boolean) getIsPlugged().getEntity());
         getDisk().setPropagateErrors(PropagateErrors.Off);
+        getDisk().setReadOnly(getIsReadOnly().getIsAvailable() ? (Boolean) getIsReadOnly().getEntity() : null);
     }
 
     @Override
