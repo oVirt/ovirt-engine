@@ -111,6 +111,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         }
 
         if (getVm() == null) {
+            addCanDoActionMessage(String.format("$diskAliases %1$s", getDiskAlias()));
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
         }
 

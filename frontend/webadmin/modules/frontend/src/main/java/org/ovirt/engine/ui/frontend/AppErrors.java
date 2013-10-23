@@ -2788,4 +2788,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot get list of images from Storage Domain '${sdName}'. Please try again later.")
     String ERROR_GET_IMAGE_LIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following disk(s) are not attached to any VM: ${diskAliases}.")
+    String ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK();
 }
