@@ -91,11 +91,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         // The snapshot being restored to
-        Snapshot targetSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+        Snapshot targetSnapshot = getSnapshotDao().get(getSnapshotId());
 
         if (targetSnapshot == null) {
             throw new VdcBLLException(VdcBllErrors.ENGINE, "Can't find target snapshot by id: "
-                    + getParameters().getDstSnapshotId());
+                    + getSnapshotId());
         }
 
         restoreSnapshotAndRemoveObsoleteSnapshots(targetSnapshot);
@@ -121,11 +121,15 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             deleteOrphanedImages();
         } else {
             getVmStaticDAO().incrementDbGeneration(getVm().getId());
-            getSnapshotDao().updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.OK);
+            getSnapshotDao().updateStatus(getSnapshotId(), SnapshotStatus.OK);
             unlockVm();
         }
 
         setSucceeded(succeeded);
+    }
+
+    private Guid getSnapshotId() {
+        return getParameters().getDstSnapshotId();
     }
 
     protected void removeSnapshotsFromDB() {
@@ -341,9 +345,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     private List<DiskImage> getImagesList() {
-        if (getParameters().getImages() == null && !getParameters().getDstSnapshotId().equals(Guid.Empty)) {
-            getParameters().setImages(
-                    getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId()));
+        if (getParameters().getImages() == null && !getSnapshotId().equals(Guid.Empty)) {
+            getParameters().setImages(getDiskImageDao().getAllSnapshotsForVmSnapshot(getSnapshotId()));
         }
         return getParameters().getImages();
     }
@@ -363,7 +366,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+            Snapshot snapshot = getSnapshotDao().get(getSnapshotId());
             if (snapshot != null) {
                 jobProperties.put(VdcObjectType.Snapshot.name().toLowerCase(), snapshot.getDescription());
             }
@@ -381,13 +384,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             return false;
         }
 
-        if (Guid.Empty.equals(getParameters().getDstSnapshotId())) {
+        if (Guid.Empty.equals(getSnapshotId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
         }
 
         SnapshotsValidator snapshotValidator = createSnapshotValidator();
         VmValidator vmValidator = createVmValidator(getVm());
-        if (!validate(snapshotValidator.snapshotExists(getVmId(), getParameters().getDstSnapshotId())) ||
+        if (!validate(snapshotValidator.snapshotExists(getVmId(), getSnapshotId())) ||
                 !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
@@ -404,7 +407,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             return false;
         }
 
-        Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+        Snapshot snapshot = getSnapshotDao().get(getSnapshotId());
         if (snapshot.getType() == SnapshotType.REGULAR
                 && snapshot.getStatus() != SnapshotStatus.IN_PREVIEW) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
@@ -476,7 +479,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     @Override
     protected void endVmCommand() {
         // if we got here, the target snapshot exists for sure
-        getSnapshotDao().updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.OK);
+        getSnapshotDao().updateStatus(getSnapshotId(), SnapshotStatus.OK);
 
         super.endVmCommand();
     }
