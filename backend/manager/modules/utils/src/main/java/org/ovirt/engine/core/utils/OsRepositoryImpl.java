@@ -349,13 +349,17 @@ public enum OsRepositoryImpl implements OsRepository {
      *
      * @param elements
      *            vararg of string elements.
-     * @return new list where each value its whitespaces trimmed.
+     * @return new list where each value its whitespaces trimmed, and
+     * is not added empty values.
      */
 
     private ArrayList<String> trimElements(String... elements) {
         ArrayList<String> list = new ArrayList<String>(elements.length);
         for (String e : elements) {
-            list.add(e.trim());
+            e = e.trim();
+            if (e.length() > 0) {
+                list.add(e);
+            }
         }
         return list;
     }
