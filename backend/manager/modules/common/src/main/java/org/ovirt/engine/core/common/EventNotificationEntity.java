@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 public enum EventNotificationEntity {
     UNKNOWN(ApplicationMode.AllModes),
     Host(ApplicationMode.AllModes),
+    VirtHost(ApplicationMode.VirtOnly),
     Vm(ApplicationMode.VirtOnly),
     Storage(ApplicationMode.VirtOnly),
     Engine(ApplicationMode.AllModes),

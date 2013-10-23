@@ -185,6 +185,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String EventNotificationEntity___Host();
 
+	String EventNotificationEntity___VirtHost();
+
 	String EventNotificationEntity___Vm();
 
 	String EventNotificationEntity___Storage();
