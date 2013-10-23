@@ -133,7 +133,7 @@
 
       <datasources>
 
-        <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true">
+        <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true" use-ccm="false">
           <connection-url><![CDATA[$getstring('ENGINE_DB_URL')]]></connection-url>
           <driver>postgresql</driver>
           <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
@@ -148,6 +148,7 @@
           </security>
           <statement>
             <prepared-statement-cache-size>100</prepared-statement-cache-size>
+            <share-prepared-statements/>
           </statement>
           <validation>
             <check-valid-connection-sql>select 1</check-valid-connection-sql>
