@@ -16,13 +16,21 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.Align;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfileModel> {
+public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfileModel> implements HasValueChangeHandlers<VnicProfileModel> {
 
     interface Driver extends SimpleBeanEditorDriver<VnicProfileModel, VnicProfileWidget> {
     }
@@ -86,14 +94,36 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     }
 
     @Override
-    public void edit(VnicProfileModel model) {
+    public void edit(final VnicProfileModel model) {
         driver.edit(model);
         publicInfo.setVisible(model.getPublicUse().getIsAvailable());
+        nameEditor.addKeyPressHandler(new KeyPressHandler() {
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        ValueChangeEvent.fire(nameEditor.asValueBox(), nameEditor.asValueBox().getValue());
+                    }
+                });
+            }
+        });
+        nameEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<Object>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Object> event) {
+                ValueChangeEvent.fire(VnicProfileWidget.this, model);
+            }
+        });
     }
 
     @Override
     public VnicProfileModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<VnicProfileModel> handler) {
+        return addHandler(handler, ValueChangeEvent.getType());
     }
 
     interface WidgetStyle extends CssResource {

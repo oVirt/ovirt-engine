@@ -1,156 +1,105 @@
 package org.ovirt.engine.ui.webadmin.widget.vnicProfile;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.IsEditor;
-import com.google.gwt.editor.client.adapters.TakesValueEditor;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.TakesValue;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasConstrainedValue;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VnicProfilesEditor extends Composite implements IsEditor<TakesValueEditor<Object>>, TakesValue<Object>, HasConstrainedValue<Object> {
+public class VnicProfilesEditor extends AddRemoveRowWidget<ListModel, VnicProfileModel, VnicProfileWidget> {
 
-    @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Object> handler) {
-        // not needed - there is no selected item because all are edited
-        return null;
+    interface Driver extends SimpleBeanEditorDriver<ListModel, VnicProfilesEditor> {
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     interface WidgetUiBinder extends UiBinder<Widget, VnicProfilesEditor> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    @UiField
-    FlowPanel contentPanel;
-
-    @UiField
-    WidgetStyle style;
-
-    protected static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
-    protected static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-
-    private List<VnicProfileWidget> editors;
+    private Collection<VnicProfileModel> profiles;
+    private Version dcCompatibilityVersion;
+    private Guid dcId;
+    private VnicProfileModel defaultProfile;
 
     public VnicProfilesEditor() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        editors = new ArrayList<VnicProfileWidget>();
+        driver.initialize(this);
+    }
+
+    public void edit(ListModel model, Version dcCompatibilityVersion, Guid dcId, VnicProfileModel defaultProfile) {
+        driver.edit(model);
+        profiles = (Collection<VnicProfileModel>) model.getItems();
+        this.dcCompatibilityVersion = dcCompatibilityVersion;
+        this.dcId = dcId;
+        this.defaultProfile = defaultProfile;
+        init(model);
     }
 
     @Override
-    public void setValue(Object listModelValues) {
-        // not needed - there is no selected item because all are edited
-    }
-
-    @Override
-    public void setValue(Object value, boolean fireEvents) {
-        // not needed - there is no selected item because all are edited
-    }
-
-    @Override
-    public void setAcceptableValues(Collection<Object> values) {
-        if (values == null) {
-            return;
-        }
-
-        editors.clear();
-        contentPanel.clear();
-
-        for (final Object value : values) {
-            final Guid dcId = ((VnicProfileModel) value).getDcId();
-            VnicProfileWidget vnicProfileWidget = new VnicProfileWidget();
-            editors.add(vnicProfileWidget);
-            vnicProfileWidget.edit((VnicProfileModel) value);
-
-            final HorizontalPanel profilePanel = new HorizontalPanel();
-
-            PushButton addButton = new PushButton(new Image(resources.increaseIcon()));
-            final PushButton remvoeButton = new PushButton(new Image(resources.decreaseIcon()));
-            addButton.addStyleName(style.addButtonStyle());
-            remvoeButton.addStyleName(style.removeButtonStyle());
-            profilePanel.add(vnicProfileWidget);
-            profilePanel.add(addButton);
-            profilePanel.add(remvoeButton);
-
-            addButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    List models = (List<VnicProfileModel>) getValue().getItems();
-                    VnicProfileModel existingProfileModel = (VnicProfileModel) value;
-                    VnicProfileModel newVnicProfileModel = new NewVnicProfileModel(existingProfileModel.getSourceModel(),
-                            existingProfileModel.getDcCompatibilityVersion(), dcId);
-                    models.add(models.indexOf(existingProfileModel) + 1, newVnicProfileModel);
-
-                    setAcceptableValues(models);
-                }
-            });
-
-            remvoeButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    List models = (List<VnicProfileModel>) getValue().getItems();
-                    models.remove(value);
-                    setAcceptableValues(models);
-                }
-            });
-
-            profilePanel.addStyleName(style.profilePanel());
-
-            contentPanel.add(profilePanel);
-        }
+    public void edit(ListModel model) {
+        edit(model, dcCompatibilityVersion, dcId, defaultProfile);
     }
 
     public ListModel flush() {
-        // this flushes it
-        return getValue();
-    }
-
-    @Override
-    public ListModel getValue() {
-        List<VnicProfileModel> values = new LinkedList<VnicProfileModel>();
-        for (VnicProfileWidget editor : editors) {
-            values.add(editor.flush());
-        }
-
-        ListModel model = new ListModel();
-        model.setItems(values);
+        ListModel model = driver.flush();
+        flush(model);
         return model;
     }
 
     @Override
-    public TakesValueEditor<Object> asEditor() {
-        return TakesConstrainedValueEditor.of(this, this, this);
+    protected VnicProfileWidget createWidget(VnicProfileModel value) {
+        VnicProfileWidget vnicProfileWidget = new VnicProfileWidget();
+        vnicProfileWidget.edit(value);
+        return vnicProfileWidget;
     }
 
-    interface WidgetStyle extends CssResource {
-        String addButtonStyle();
+    @Override
+    protected VnicProfileModel createGhostValue() {
+        return new NewVnicProfileModel(dcCompatibilityVersion, dcId);
+    }
 
-        String removeButtonStyle();
+    @Override
+    protected boolean isGhost(VnicProfileModel value) {
+        if (value != defaultProfile) {
+            String name = (String) value.getName().getEntity();
+            return (name == null || name.isEmpty());
+        }
+        return false;
+    }
 
-        String profilePanel();
+    @Override
+    protected void toggleGhost(VnicProfileModel value, VnicProfileWidget widget, boolean becomingGhost) {
+        widget.publicUseEditor.setEnabled(!becomingGhost && value.getPublicUse().getIsChangable());
+        widget.networkQoSEditor.setEnabled(!becomingGhost && value.getNetworkQoS().getIsChangable());
+
+        // commit change to model without triggering items changed event
+        if (profiles != null) {
+            if (becomingGhost) {
+                profiles.remove(value);
+            } else if (!Linq.containsByIdentity(profiles, value)) {
+                profiles.add(value);
+            }
+        }
+    }
+
+    @Override
+    protected void onRemove(VnicProfileModel value, VnicProfileWidget widget) {
+        super.onRemove(value, widget);
+
+        // commit change to model without triggering items changed event
+        if (profiles != null) {
+            profiles.remove(value);
+        }
     }
 
 }
