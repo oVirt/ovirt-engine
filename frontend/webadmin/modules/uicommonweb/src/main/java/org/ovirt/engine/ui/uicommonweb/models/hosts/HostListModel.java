@@ -1036,7 +1036,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeHostsTitle());
         model.setHashName("remove_host"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().hostsMsg());
 
         Set<Guid> clusters = new HashSet<Guid>();
         ArrayList<String> list = new ArrayList<String>();

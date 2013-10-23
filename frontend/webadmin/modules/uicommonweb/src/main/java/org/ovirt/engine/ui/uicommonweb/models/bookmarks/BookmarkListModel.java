@@ -189,7 +189,6 @@ public class BookmarkListModel extends SearchableListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBookmarksTitle());
         model.setHashName("remove_bookmark"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().bookmarsMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (Object item : getSelectedItems())

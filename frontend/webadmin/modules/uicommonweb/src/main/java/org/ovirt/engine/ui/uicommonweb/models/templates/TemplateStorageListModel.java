@@ -151,7 +151,6 @@ public class TemplateStorageListModel extends SearchableListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeTemplateDisksTitle());
         model.setHashName("remove_template_disks"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().templateDisksMsg());
 
         ArrayList<DiskModel> disks =
                 getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();

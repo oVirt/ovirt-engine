@@ -621,7 +621,6 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeQuotasTitle());
         model.setHashName("remove_quota"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().quotasMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (Quota a : Linq.<Quota> cast(getSelectedItems()))

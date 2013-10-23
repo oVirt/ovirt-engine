@@ -428,7 +428,6 @@ public class TagListModel extends SearchableListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeTagsTitle());
         model.setHashName("remove_tag"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().tagsMsg());
 
         ArrayList<Object> items = new ArrayList<Object>();
         items.add(getSelectedItem().getName().getEntity());

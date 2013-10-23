@@ -458,7 +458,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeClusterTitle());
         model.setHashName("remove_cluster"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().clustersMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (VDSGroup a : Linq.<VDSGroup> cast(getSelectedItems()))

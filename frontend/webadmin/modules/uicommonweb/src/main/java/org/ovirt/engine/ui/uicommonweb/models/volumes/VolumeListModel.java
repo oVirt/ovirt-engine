@@ -287,7 +287,6 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeVolumesTitle());
         model.setHashName("remove_volume"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().removeVolumesMessage());
         model.setNote(ConstantsManager.getInstance().getConstants().removeVolumesWarning());
 
         if (getSelectedItems() == null) {

@@ -650,12 +650,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String cloneVmFromSnapshotTitle();
 
     // Messages
-    @DefaultStringValue("Bookmark(s):")
-    String bookmarsMsg();
-
-    @DefaultStringValue("Cluster(s)")
-    String clustersMsg();
-
     @DefaultStringValue("You are about to change the Cluster Compatibility Version. Are you sure you want to continue?")
     String youAreAboutChangeClusterCompatibilityVersionMsg();
 
@@ -708,9 +702,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Network name shouldn't start with 'bond'.")
     String networkNameStartMsg();
 
-    @DefaultStringValue("Data Center(s)")
-    String dataCentersMsg();
-
     @DefaultStringValue("There are no compatible Storage Domains to attach to this Data Center. Please add new Storage from the Storage tab.")
     String thereAreNoCompatibleStorageDomainsAttachThisDcMsg();
 
@@ -719,9 +710,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("You are about to change the Data Center Compatibility Version. This will upgrade all the Storage Domains belonging to the Data Center. Are you sure you want to continue?")
     String youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg();
-
-    @DefaultStringValue("Logical Network(s)")
-    String logicalNetworksMsg();
 
     @DefaultStringValue("You are about to attach the network to all the selected clusters and to detach the network from all the unselected clusters.\n\nAre you sure you want to continue?")
     String youAreAboutToAttachDetachNetworkToFromTheClustersMsg();
@@ -732,14 +720,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to Detach the following storage(s)?")
     String areYouSureYouWantDetachFollowingStoragesMsg();
 
-    @DefaultStringValue("User(s)")
-    String usersMsg();
-
     @DefaultStringValue("Are you sure you want to Detach from the user the following Virtual Machine(s)")
     String areYouSureYouWantDetachFromUserFollowingVmsMsg();
-
-    @DefaultStringValue("Permission")
-    String permissionMsg();
 
     @DefaultStringValue("Disks already exist on all available Storage Domains.")
     String disksAlreadyExistMsg();
@@ -749,9 +731,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("There is no Export Domain to export the Template into. Please attach an Export Domain to the Template's Data Center.")
     String thereIsNoExportDomainToExportTheTemplateIntoMsg();
-
-    @DefaultStringValue("Template(s)")
-    String templatesMsg();
 
     @DefaultStringValue("There are No Data Centers to which the Storage Domain can be attached")
     String thereAreNoDataCenterStorageDomainAttachedMsg();
@@ -768,9 +747,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Export Domain is not attached to any Data Center. Data can be retrieved only when the Domain is attached to a Data Center and is active")
     String ExportDomainIsNotAttachedToAnyDcMsg();
 
-    @DefaultStringValue("Are you sure you want to Remove the Storage Domain?")
-    String areYouSureYouWantToRemoveTheStorageDomainMsg();
-
     @DefaultStringValue("The provider has the following certificates:\n")
     String theProviderHasTheFollowingCertificates();
 
@@ -780,23 +756,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Import provider certificates")
     String importProviderCertificatesTitle();
 
-    @DefaultStringValue("VM(s)")
-    String vmsMsg();
-
-    @DefaultStringValue("Quota")
-    String quotasMsg();
-
-    @DefaultStringValue("Assignment(s)")
-    String assignmentsMsg();
-
     @DefaultStringValue("There are no networks available. Please add additional networks.")
     String thereAreNoNetworksAvailablePleaseAddAdditionalNetworksMsg();
 
     @DefaultStringValue("There are no ISO versions that are compatible with the Host's current version.")
     String thereAreNoISOversionsVompatibleWithHostCurrentVerMsg();
-
-    @DefaultStringValue("Host(s)")
-    String hostsMsg();
 
     @DefaultStringValue("Are you sure you want to place the following host(s) into maintenance mode?")
     String areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg();
@@ -813,9 +777,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Testing in progress. It will take a few seconds. Please wait...")
     String testingInProgressItWillTakeFewSecondsPleaseWaitMsg();
 
-    @DefaultStringValue("Virtual Machine")
-    String virtualMachineMsg();
-
     @DefaultStringValue("Name must be up to 126 characters and start with any word character.")
     String nameMustBeUpToAndStartWithMsg();
 
@@ -824,12 +785,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to detach selected Virtual Machine(s)?")
     String areYouSurYouWantToDetachSelectedVirtualMachinesMsg();
-
-    @DefaultStringValue("Pool(s)")
-    String poolsMsg();
-
-    @DefaultStringValue("Disk(s)")
-    String disksMsg();
 
     @DefaultStringValue("Snapshot cannot be created since the VM is performing an operation on a Snapshot.")
     String snapshotCannotBeCreatedLockedSnapshotMsg();
@@ -842,15 +797,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("At least one disk must be marked.")
     String atLeastOneDiskMustBeMarkedMsg();
-
-    @DefaultStringValue("Network Interface(s)")
-    String networkInterfacesMsg();
-
-    @DefaultStringValue("VM Interface Profile(s)")
-    String vnicProfilesMsg();
-
-    @DefaultStringValue("Virtual Machine(s)")
-    String virtualMachinesMsg();
 
     @DefaultStringValue("Virtual Machines reside on several Data Centers. Make sure the exported Virtual Machines reside on the same Data Center.")
     String vmsResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg();
@@ -876,12 +822,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Invalid MAC address")
     String invalidMacAddressMsg();
 
-    @DefaultStringValue("Role(s):")
-    String rolesMsg();
-
-    @DefaultStringValue("System Permission(s):")
-    String systemPermissionsMsg();
-
     @DefaultStringValue("Note: Local Storage is already configured for this Host. The Host belongs to")
     String noteLocalStorageAlreadyConfiguredForThisHostMsg();
 
@@ -896,9 +836,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("No new devices were found. This may be due to either: incorrect multipath configuration on the Host or wrong address of the iscsi target or a failure to authenticate on the target device. Please consult your Storage Administrator.")
     String noNewDevicesWereFoundMsg();
-
-    @DefaultStringValue("Tag(s)")
-    String tagsMsg();
 
     @DefaultStringValue("No active Storage Domain is available - check Storage Domains and Hosts status.")
     String noStorageDomainAvailableMsg();
@@ -935,9 +872,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Import of a VM with the clone option must be with collapse snapshot")
     String importCloneVMMustCollapseSnapshots();
-
-    @DefaultStringValue("Template Disk(s)")
-    String templateDisksMsg();
 
     @DefaultStringValue("OS Version -")
     String osVersionAbout();
@@ -1560,9 +1494,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Volume")
     String removeVolumesTitle();
 
-    @DefaultStringValue("Volume(s)?")
-    String removeVolumesMessage();
-
     @DefaultStringValue("NOTE:\n -Removing volume will erase all information about the volume.")
     String removeVolumesWarning();
 
@@ -2008,9 +1939,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Provider(s)")
     String removeProviderTitle();
 
-    @DefaultStringValue("Provider(s)")
-    String providersMsg();
-
     @DefaultStringValue("Change Provider URL")
     String providerUrlWarningTitle();
 
@@ -2083,9 +2011,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Remove Cluster Policy")
     String removeClusterPolicyTitle();
-
-    @DefaultStringValue("Cluster Policy(ies):")
-    String removeClusterPolicyMessage();
 
     @DefaultStringValue("Ballooning is only available for Cluster compatibility version 3.3 and higher")
     String ballooningNotAvailable();

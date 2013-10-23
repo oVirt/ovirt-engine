@@ -123,7 +123,6 @@ public class UserPermissionListModel extends SearchableListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removePermissionTitle());
         model.setHashName("remove_permission"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().permissionMsg());
         model.setItems(Linq.<permissions> cast(getSelectedItems()));
 
         UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$

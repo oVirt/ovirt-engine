@@ -782,7 +782,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeStoragesTitle());
         model.setHashName("remove_storage"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToRemoveTheStorageDomainMsg());
         model.getFormat().setIsAvailable(false);
 
         StorageDomain storage = (StorageDomain) getSelectedItem();

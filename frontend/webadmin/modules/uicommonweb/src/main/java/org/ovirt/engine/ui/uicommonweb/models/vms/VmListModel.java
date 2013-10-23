@@ -789,7 +789,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setWindow(window);
         window.setTitle(ConstantsManager.getInstance().getConstants().removeVirtualMachinesTitle());
         window.setHashName("remove_virtual_machine"); //$NON-NLS-1$
-        window.setMessage(ConstantsManager.getInstance().getConstants().virtualMachinesMsg());
 
         vmsRemoveMap = new HashMap<Guid, EntityModel>();
 

@@ -33,7 +33,6 @@ public class RemoveProvidersModel extends ConfirmationModel {
 
         setTitle(ConstantsManager.getInstance().getConstants().removeProviderTitle());
         setHashName("remove_provider"); //$NON-NLS-1$
-        setMessage(ConstantsManager.getInstance().getConstants().providersMsg());
 
         List<String> providerNames = new ArrayList<String>();
         for (Provider provider : providers) {

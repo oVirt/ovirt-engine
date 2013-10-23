@@ -25,7 +25,6 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
     public RemoveVmInterfaceModel(ListModel sourceListModel, List<VmNetworkInterface> vnics, boolean isFullMsg) {
         setTitle(ConstantsManager.getInstance().getConstants().removeNetworkInterfacesTitle());
         setHashName("remove_network_interface_vms"); //$NON-NLS-1$
-        setMessage(ConstantsManager.getInstance().getConstants().networkInterfacesMsg());
 
         this.sourceListModel = sourceListModel;
         this.vnics = vnics;

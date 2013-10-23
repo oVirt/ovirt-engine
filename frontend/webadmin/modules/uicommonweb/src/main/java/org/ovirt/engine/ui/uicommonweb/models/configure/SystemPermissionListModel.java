@@ -216,7 +216,6 @@ public class SystemPermissionListModel extends SearchableListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeSystemPermissionsTitle());
         model.setHashName("remove_system_permission"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().systemPermissionsMsg());
         model.setItems(getSelectedItems());
 
         UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$

@@ -54,12 +54,12 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
             public void executed(FrontendMultipleQueryAsyncResult result) {
                 ArrayList<VnicProfileView> vnicProfiles = new ArrayList<VnicProfileView>();
 
+                setHashName("remove_network_qos"); //$NON-NLS-1$
+
                 for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
                     vnicProfiles.addAll((ArrayList<VnicProfileView>) returnValue.getReturnValue());
                 }
                 if (vnicProfiles.isEmpty()) {
-                    setHashName("remove_network_qos"); //$NON-NLS-1$
-
                     ArrayList<String> list = new ArrayList<String>();
                     for (Object item : sourceListModel.getSelectedItems()) {
                         NetworkQoS i = (NetworkQoS) item;
@@ -67,8 +67,6 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
                     }
                     setItems(list);
                 } else {
-                    // name start with underscore to prevent default message
-                    setHashName("_remove_network_qos"); //$NON-NLS-1$
                     setMessage(ConstantsManager.getInstance().getMessages().removeNetworkQoSMessage(vnicProfiles.size()));
 
                     ArrayList<String> list = new ArrayList<String>();

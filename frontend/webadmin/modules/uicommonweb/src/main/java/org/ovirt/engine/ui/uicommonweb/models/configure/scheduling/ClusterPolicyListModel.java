@@ -221,7 +221,6 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeClusterPolicyTitle());
         model.setHashName("remove_cluster_policy"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().removeClusterPolicyMessage());
         if (getSelectedItems() == null) {
             return;
         }

@@ -356,7 +356,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDataCenterTitle());
         model.setHashName("remove_data_center"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().dataCentersMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
@@ -381,7 +380,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().forceRemoveDataCenterTitle());
         model.setHashName("force_remove_data_center"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().dataCentersMsg());
         model.getLatch().setIsAvailable(true);
         model.getLatch().setIsChangable(true);
 

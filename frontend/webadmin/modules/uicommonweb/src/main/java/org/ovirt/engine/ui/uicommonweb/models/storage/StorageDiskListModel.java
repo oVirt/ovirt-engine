@@ -138,7 +138,6 @@ public class StorageDiskListModel extends SearchableListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
         model.setHashName("remove_disk"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().disksMsg());
 
         model.getLatch().setIsAvailable(false);
 

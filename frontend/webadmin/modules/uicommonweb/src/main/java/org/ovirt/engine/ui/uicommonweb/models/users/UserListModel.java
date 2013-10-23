@@ -353,7 +353,6 @@ public class UserListModel extends ListWithDetailsModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeUsersTitle());
         model.setHashName("remove_user"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().usersMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (DbUser item : Linq.<DbUser> cast(getSelectedItems()))

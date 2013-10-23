@@ -189,7 +189,6 @@ public class QuotaUserListModel extends SearchableListModel {
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeQuotaAssignmentFromUsersTitle());
         model.setHashName("remove_quota_assignment_from_user"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().assignmentsMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (permissions item : Linq.<permissions> cast(getSelectedItems()))

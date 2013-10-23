@@ -67,7 +67,6 @@ public class TemplateBackupModel extends VmBackupModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpTemplatesTitle());
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().templatesMsg());
         ArrayList<String> items = new ArrayList<String>();
         for (Object a : getSelectedItems())
         {

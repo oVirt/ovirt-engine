@@ -96,7 +96,6 @@ public class VmBackupModel extends ManageBackupModel {
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpVMsTitle());
         model.setHashName("remove_backed_up_vm"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().vmsMsg());
 
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems()) {

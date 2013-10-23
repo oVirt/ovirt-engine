@@ -793,7 +793,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         confirmModel.setTitle(ConstantsManager.getInstance().getConstants().removeVirtualMachineTitle());
         confirmModel.setHashName("remove_virtual_machine"); //$NON-NLS-1$
-        confirmModel.setMessage(ConstantsManager.getInstance().getConstants().virtualMachineMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (VM vm : getSelectedVms()) {

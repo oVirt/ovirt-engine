@@ -24,7 +24,6 @@ public class RemoveNetworksModel extends ConfirmationModel {
 
         setTitle(ConstantsManager.getInstance().getConstants().removeLogicalNetworkTitle());
         setHashName("remove_logical_network"); //$NON-NLS-1$
-        setMessage(ConstantsManager.getInstance().getConstants().logicalNetworksMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         boolean hasNetworkWithProvider = false;

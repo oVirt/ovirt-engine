@@ -258,7 +258,6 @@ public class RoleListModel extends ListWithDetailsModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeRolesTitle());
         model.setHashName("remove_role"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().rolesMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (Role role : Linq.<Role> cast(getSelectedItems()))

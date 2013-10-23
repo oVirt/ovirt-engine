@@ -25,7 +25,6 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
     public RemoveVnicProfileModel(ListModel sourceListModel, List<VnicProfileView> profiles, boolean isFullMsg) {
         setTitle(ConstantsManager.getInstance().getConstants().removeVnicProfileTitle());
         setHashName("remove_vnic_prfoile"); //$NON-NLS-1$
-        setMessage(ConstantsManager.getInstance().getConstants().vnicProfilesMsg());
 
         this.sourceListModel = sourceListModel;
         this.profiles = profiles;

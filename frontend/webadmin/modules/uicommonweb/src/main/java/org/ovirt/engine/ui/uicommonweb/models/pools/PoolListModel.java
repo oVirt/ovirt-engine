@@ -356,7 +356,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removePoolsTitle());
         model.setHashName("remove_pool"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().poolsMsg());
 
         ArrayList<String> list = new ArrayList<String>();
         for (VmPool item : Linq.<VmPool> cast(getSelectedItems()))
