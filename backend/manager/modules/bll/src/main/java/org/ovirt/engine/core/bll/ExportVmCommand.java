@@ -212,7 +212,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // Means that there are no asynchronous tasks to execute - so we can end the command
         // immediately after the execution of the previous steps
-        if (!hasSnappableDisks()) {
+        if (!hasSnappableDisks() && snapshotsWithMemory.isEmpty()) {
             endSuccessfullySynchronous();
         } else {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
