@@ -341,7 +341,7 @@ class OvirtUtils(base.Base):
             statement="""
                 create or replace
                 function
-                    generate_drop_all_functions_syntax()
+                    oesetup_generate_drop_all_syntax()
                     returns setof text
                 AS $procedure$ begin
                     return query
@@ -358,9 +358,17 @@ class OvirtUtils(base.Base):
                                 pg_proc.pronamespace=ns.oid
                             )
                         where
-                            ns.nspname = 'public' and
-                            proname not ilike 'uuid%%'
-                        order by proname;
+                            ns.nspname = 'public'
+                        union
+                        select
+                            'drop type if exists ' ||
+                            c.relname::information_schema.sql_identifier || ' ' ||
+                            'cascade;'
+                        from
+                            pg_namespace n, pg_class c, pg_type t
+                        where
+                            n.oid = c.relnamespace and t.typrelid = c.oid and
+                            c.relkind = 'c'::"char" and n.nspname = 'public';
                 end; $procedure$
                 language plpgsql;
             """,
@@ -371,8 +379,8 @@ class OvirtUtils(base.Base):
 
         spdrops = statement.execute(
             statement="""
-                select generate_drop_all_functions_syntax as drop
-                from generate_drop_all_functions_syntax()
+                select oesetup_generate_drop_all_syntax as drop
+                from oesetup_generate_drop_all_syntax()
             """,
             ownConnection=True,
             transaction=False,
