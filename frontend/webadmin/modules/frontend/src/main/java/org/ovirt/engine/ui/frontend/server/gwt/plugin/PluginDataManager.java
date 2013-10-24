@@ -6,13 +6,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
@@ -32,6 +35,8 @@ public class PluginDataManager {
     private static final String UI_PLUGIN_DIR = "ui-plugins"; //$NON-NLS-1$
     private static final String JSON_FILE_SUFFIX = ".json"; //$NON-NLS-1$
     private static final String CONFIG_FILE_SUFFIX = "-config" + JSON_FILE_SUFFIX; //$NON-NLS-1$
+
+    private static final long MISSING_FILE_LAST_MODIFIED = -1L;
 
     private static final Logger logger = Logger.getLogger(PluginDataManager.class);
 
@@ -133,20 +138,34 @@ public class PluginDataManager {
     }
 
     void reloadData(File[] descriptorFiles, Map<String, PluginData> currentDataMapCopy) {
+        Map<String, PluginData> entriesToUpdate = new HashMap<String, PluginData>();
+        Set<String> keysToRemove = new HashSet<String>();
+
+        // Optimization: make sure we don't check data that we already processed
+        Set<String> keysToCheckForRemoval = new HashSet<String>(currentDataMapCopy.keySet());
+
+        // Compare (possibly added or modified) files against cached data
         for (final File df : descriptorFiles) {
             final File cf = new File(pluginConfigDir, getConfigurationFileName(df));
 
-            String descriptorFileName = df.getName();
+            String descriptorFilePath = df.getAbsolutePath();
+            PluginData currentData = currentDataMapCopy.get(descriptorFilePath);
+
             long descriptorLastModified = df.lastModified();
-            long configurationLastModified = isJsonFile(cf) ? cf.lastModified() : -1L;
+            long configurationLastModified = isJsonFile(cf) ? cf.lastModified() : MISSING_FILE_LAST_MODIFIED;
 
             // Check if data needs to be reloaded
-            PluginData currentData = currentDataMapCopy.get(descriptorFileName);
             boolean reloadDescriptor, reloadConfiguration;
-            if (currentDataMapCopy.containsKey(descriptorFileName)) {
+            if (currentDataMapCopy.containsKey(descriptorFilePath)) {
                 reloadDescriptor = descriptorLastModified > currentData.getDescriptorLastModified();
-                reloadConfiguration = configurationLastModified > currentData.getConfigurationLastModified()
-                        || reloadDescriptor;
+                reloadConfiguration = configurationLastModified > currentData.getConfigurationLastModified();
+
+                // Change in descriptor causes reload of configuration
+                reloadConfiguration |= reloadDescriptor;
+
+                // Refresh configuration if the corresponding file has gone missing
+                reloadConfiguration |= (configurationLastModified == MISSING_FILE_LAST_MODIFIED
+                        && currentData.getConfigurationLastModified() != MISSING_FILE_LAST_MODIFIED);
             } else {
                 reloadDescriptor = true;
                 reloadConfiguration = true;
@@ -173,7 +192,7 @@ public class PluginDataManager {
                 configurationNode = readConfigurationNode(cf);
                 if (configurationNode == null) {
                     // Failed to read configuration data, use empty object
-                    configurationNode = mapper.getNodeFactory().objectNode();
+                    configurationNode = createEmptyObjectNode();
                 }
             } else if (configurationNode == null) {
                 logger.warn("UI plugin configuration node is null for [" + cf.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -202,10 +221,25 @@ public class PluginDataManager {
                     continue;
                 }
 
-                // Update local data mapping
-                currentDataMapCopy.put(descriptorFileName, newData);
+                entriesToUpdate.put(descriptorFilePath, newData);
+            }
+
+            keysToCheckForRemoval.remove(descriptorFilePath);
+        }
+
+        // Compare cached data against (possibly missing) files
+        for (String descriptorFilePath : keysToCheckForRemoval) {
+            File df = new File(descriptorFilePath);
+
+            if (!df.exists()) {
+                // Descriptor data file has gone missing
+                keysToRemove.add(descriptorFilePath);
             }
         }
+
+        // Perform data updates
+        currentDataMapCopy.putAll(entriesToUpdate);
+        currentDataMapCopy.keySet().removeAll(keysToRemove);
     }
 
     boolean isJsonFile(File pathname) {
@@ -228,6 +262,10 @@ public class PluginDataManager {
 
     String getConfigurationFileName(File descriptorFile) {
         return descriptorFile.getName().replace(JSON_FILE_SUFFIX, CONFIG_FILE_SUFFIX);
+    }
+
+    ObjectNode createEmptyObjectNode() {
+        return mapper.getNodeFactory().objectNode();
     }
 
 }
