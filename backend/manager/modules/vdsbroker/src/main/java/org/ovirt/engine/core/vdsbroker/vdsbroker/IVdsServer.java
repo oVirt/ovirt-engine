@@ -226,7 +226,7 @@ public interface IVdsServer {
 
     GlusterTaskInfoReturnForXmlRpc glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
 
-    StatusOnlyReturnForXmlRpc glusterVolumeRebalanceStop(String volumeName);
+    GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStop(String volumeName);
 
     StatusOnlyReturnForXmlRpc glusterVolumeReplaceBrickStart(String volumeName,
             String existingBrickDir,

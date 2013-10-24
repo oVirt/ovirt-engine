@@ -3,7 +3,11 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.booleanThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -14,7 +18,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -31,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -133,18 +140,59 @@ public class StopRebalanceGlusterVolumeCommandTest {
         return bricks;
     }
 
-    private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
+    private void mockBackend(boolean succeeded,
+            JobExecutionStatus rebalanceStatus,
+            JobExecutionStatus rebalanceStopStatus,
+            boolean isRebalancegTaskCompleted,
+            VdcBllErrors errorCode) {
         when(cmd.getBackend()).thenReturn(backend);
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
-        doNothing().when(cmd).endStepJobAborted();
-        doNothing().when(cmd).releaseVolumeLock();
+        doReturn("TestVDS").when(cmd).getVdsGroupName();
+        doReturn("TestVolume").when(cmd).getGlusterVolumeName();
+        doNothing().when(cmd).endStepJob(argThat(jobExecutionStatus(rebalanceStopStatus)),
+                argThat(anyMap()),
+                booleanThat(booleanMatcher(isRebalancegTaskCompleted)));
 
+        doNothing().when(cmd).releaseVolumeLock();
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
+        GlusterVolumeTaskStatusEntity rebalanceStatusEntity = new GlusterVolumeTaskStatusEntity();
+        rebalanceStatusEntity.getStatusSummary().setStatus(rebalanceStatus);
+        vdsReturnValue.setReturnValue(rebalanceStatusEntity);
         vdsReturnValue.setSucceeded(succeeded);
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
         when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.StopRebalanceGlusterVolume), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
+    }
+
+    private Matcher<Boolean> booleanMatcher(final boolean value) {
+        return new ArgumentMatcher<Boolean>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                return argument.equals(value);
+            }
+        };
+    }
+
+    private Matcher<Map<String, String>> anyMap() {
+        return new ArgumentMatcher<Map<String, String>>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                return argument instanceof Map;
+            }
+        };
+    }
+
+    private ArgumentMatcher<JobExecutionStatus> jobExecutionStatus(final JobExecutionStatus status) {
+        return new ArgumentMatcher<JobExecutionStatus>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                return argument.equals(status);
+            }
+        };
     }
 
     private ArgumentMatcher<VDSParametersBase> anyHookVDS() {
@@ -170,11 +218,28 @@ public class StopRebalanceGlusterVolumeCommandTest {
     public void executeCommand() {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
-        mockBackend(true, null);
+        mockBackend(true, JobExecutionStatus.STARTED, JobExecutionStatus.ABORTED, false, null);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd).endStepJobAborted();
+        verify(cmd).endStepJob(argThat(jobExecutionStatus(JobExecutionStatus.ABORTED)),
+                 argThat(anyMap()),
+                booleanThat(booleanMatcher(false)));
+        verify(cmd).releaseVolumeLock();
+        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP);
+    }
+
+    @Test
+    public void executeCommandWithRebalanceCompleteInNode() {
+        cmd = spy(createTestCommand(volumeWithRebalanceTask));
+        prepareMocks(cmd);
+        mockBackend(true, JobExecutionStatus.FINISHED, JobExecutionStatus.FINISHED, true, null);
+        assertTrue(cmd.canDoAction());
+        cmd.executeCommand();
+
+        verify(cmd).endStepJob(argThat(jobExecutionStatus(JobExecutionStatus.FINISHED)),
+                argThat(anyMap()),
+                booleanThat(booleanMatcher(true)));
         verify(cmd).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP);
     }
@@ -183,11 +248,13 @@ public class StopRebalanceGlusterVolumeCommandTest {
     public void executeCommandWhenFailed() {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
-        mockBackend(false, VdcBllErrors.GlusterVolumeRebalanceStopFailed);
+        mockBackend(false, JobExecutionStatus.FAILED,JobExecutionStatus.FINISHED,false,VdcBllErrors.GlusterVolumeRebalanceStopFailed);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
-        verify(cmd, never()).endStepJobAborted();
+        verify(cmd, never()).endStepJob(any(JobExecutionStatus.class),
+                anyMapOf(String.class, String.class),
+                anyBoolean());
         verify(cmd, never()).releaseVolumeLock();
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP_FAILED);
     }

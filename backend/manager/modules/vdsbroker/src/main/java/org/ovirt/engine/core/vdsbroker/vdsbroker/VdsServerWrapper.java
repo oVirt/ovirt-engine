@@ -1033,9 +1033,11 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeRebalanceStop(String volumeName) {
+    public GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStop(String volumeName) {
         try {
-            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeRebalanceStop(volumeName));
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeRebalanceStop(volumeName);
+            GlusterVolumeTaskReturnForXmlRpc wrapper = new GlusterVolumeTaskReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

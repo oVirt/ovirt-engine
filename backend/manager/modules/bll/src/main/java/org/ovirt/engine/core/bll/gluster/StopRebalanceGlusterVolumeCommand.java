@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -62,9 +63,18 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
             return;
         }
 
-        endStepJobAborted();
+        GlusterVolumeTaskStatusEntity rebalanceStatusEntity =
+                (GlusterVolumeTaskStatusEntity) vdsReturnaValue.getReturnValue();
+        JobExecutionStatus stepStatus = rebalanceStatusEntity.getStatusSummary().getStatus();
+        if (stepStatus != null && JobExecutionStatus.FINISHED.equals(stepStatus)) {
+            endStepJob(stepStatus, getStepMessageMap(stepStatus), true);
+        } else {
+            endStepJob(JobExecutionStatus.ABORTED, getStepMessageMap(JobExecutionStatus.ABORTED), false);
+        }
         releaseVolumeLock();
         setSucceeded(vdsReturnaValue.getSucceeded());
+        getReturnValue().setActionReturnValue(rebalanceStatusEntity);
+
     }
 
     @Override
