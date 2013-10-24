@@ -145,7 +145,9 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
             NetworkImplementationDetails networkImplementationDetails =
                     NetworkUtils.calculateNetworkImplementationDetails(networks, iface);
 
-            if (networkImplementationDetails != null && !networkImplementationDetails.isInSync()) {
+            if (networkImplementationDetails != null
+                    && !networkImplementationDetails.isInSync()
+                    && networkImplementationDetails.isManaged()) {
                 networkNames.add(iface.getNetworkName());
             }
         }
