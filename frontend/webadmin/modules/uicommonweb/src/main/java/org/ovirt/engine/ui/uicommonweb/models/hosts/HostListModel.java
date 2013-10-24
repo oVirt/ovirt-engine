@@ -359,6 +359,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setRefreshCapabilitiesCommand(new UICommand("GetCapabilities", this)); //$NON-NLS-1$
 
         getConfigureLocalStorageCommand().setAvailableInModes(ApplicationMode.VirtOnly);
+        getSelectAsSpmCommand().setAvailableInModes(ApplicationMode.VirtOnly);
         updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);

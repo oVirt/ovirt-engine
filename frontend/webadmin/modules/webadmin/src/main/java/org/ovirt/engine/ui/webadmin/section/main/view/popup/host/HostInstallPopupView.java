@@ -1,10 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
@@ -12,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -99,6 +102,10 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @WithElementId("networkProviderWidget")
     HostNetworkProviderWidget networkProviderWidget;
 
+    @UiField
+    @Ignore
+    DialogTab networkProviderTab;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
@@ -109,6 +116,14 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         localize(constants);
         addStyles();
         driver.initialize(this);
+        applyModeCustomizations();
+    }
+
+    private void applyModeCustomizations() {
+        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
+        {
+            networkProviderTab.setVisible(false);
+        }
     }
 
     void initListBoxEditors() {

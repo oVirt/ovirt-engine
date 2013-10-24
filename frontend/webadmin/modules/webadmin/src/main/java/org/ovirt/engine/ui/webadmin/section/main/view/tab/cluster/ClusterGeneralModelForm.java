@@ -87,7 +87,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
         formBuilder.addFormItem(new FormItem(constants.resiliencePolicyCluster(), resiliencePolicy, 3, 1, virtSupported)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
-        formBuilder.addFormItem(new FormItem(constants.emulatedMachine(), emulatedMachine, 4, 1)
+        formBuilder.addFormItem(new FormItem(constants.emulatedMachine(), emulatedMachine, 4, 1, virtSupported)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
 
         // properties for gluster support
