@@ -57,19 +57,6 @@ public class GlusterVolumeTaskStatusEntity implements Serializable {
         return this;
     }
 
-    public String getSummaryMessage() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Files [scanned: ")
-                .append(statusSummary.getFilesScanned())
-                .append(", moved: ")
-                .append(statusSummary.getFilesMoved())
-                .append(", failed: ")
-                .append(statusSummary.getFilesFailed())
-                .append(", Total size moved: ")
-                .append(statusSummary.getTotalSizeMoved());
-        return builder.toString();
-    }
-
     public Date getStopTime() {
         return stopTime;
     }

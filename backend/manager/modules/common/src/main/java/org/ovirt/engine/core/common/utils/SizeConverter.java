@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 public class SizeConverter {
 
     public static final long CONVERT_FACTOR = 1024L;
@@ -7,6 +12,10 @@ public class SizeConverter {
     public static final long BYTES_IN_KB = 1024L;
     public static final long BYTES_IN_MB = 1024L * 1024L;
     public static final long BYTES_IN_GB = 1024L * 1024L * 1024L;
+
+    public SizeConverter() {
+
+    }
 
     public static enum SizeUnit {
         BYTES(1),
@@ -16,12 +25,25 @@ public class SizeConverter {
 
         private long unitWeight;
 
+        private static List<Pair<Long, SizeUnit>> weightToUnit = new ArrayList<Pair<Long, SizeUnit>>();
+
         private SizeUnit(long unitWeight) {
             this.unitWeight = unitWeight;
         }
 
-        public long getUnitWeight(){
+        static {
+            for (SizeUnit unit : SizeUnit.values()) {
+                weightToUnit.add(new Pair<Long, SizeConverter.SizeUnit>(unit.getUnitWeight(), unit));
+            }
+            Collections.sort(weightToUnit, Collections.reverseOrder(new CompareUnits()));
+        }
+
+        public long getUnitWeight() {
             return unitWeight;
+        }
+
+        public SizeUnit getUnit(long weight) {
+            return (SizeUnit) weightToUnit.get((int) weight).getSecond();
         }
     };
 
@@ -29,5 +51,23 @@ public class SizeConverter {
         long fromType = fromUnit.getUnitWeight();
         long toType = toUnit.getUnitWeight();
         return (size) * ((Math.pow(CONVERT_FACTOR, fromType)) / (Math.pow(CONVERT_FACTOR, toType)));
+    }
+
+    public static Pair<SizeUnit, Double> autoConvert(long size, SizeUnit inUnit) {
+        for (Pair<Long, SizeUnit> currentUnitPair : SizeUnit.weightToUnit) {
+            if (size / Math.pow(CONVERT_FACTOR, currentUnitPair.getFirst() - inUnit.getUnitWeight()) >= 1) {
+                return new Pair<SizeConverter.SizeUnit, Double>(currentUnitPair.getSecond(),
+                        Double.valueOf(SizeConverter.convert(size, inUnit, currentUnitPair.getSecond()).doubleValue()));
+            }
+        }
+        return new Pair<SizeConverter.SizeUnit, Double>(SizeUnit.BYTES, new Double(new Long(size)));
+    }
+
+    private static class CompareUnits implements Comparator<Pair<Long, SizeUnit>> {
+
+        @Override
+        public int compare(Pair<Long, SizeUnit> unit1, Pair<Long, SizeUnit> unit2) {
+            return unit1.getFirst().compareTo(unit2.getFirst());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,9 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTaskStatus;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
@@ -62,8 +66,16 @@ public class GlusterTasksListReturnForXmlRpc extends StatusReturnForXmlRpc {
                             map.get(FILES_SCANNED),
                             map.get(FILES_MOVED),
                             map.get(FILES_FAILED),
-                            map.get(TOTAL_SIZE_MOVED));
+                            formatTotalSizeMoved(Long.parseLong(map.get(TOTAL_SIZE_MOVED).toString())));
 
+    }
+
+    private String formatTotalSizeMoved(long size) {
+        NumberFormat formatSize = NumberFormat.getInstance();
+        formatSize.setMaximumFractionDigits(2);
+        formatSize.setMinimumFractionDigits(2);
+        Pair<SizeConverter.SizeUnit, Double> sizeMoved= SizeConverter.autoConvert(size, SizeUnit.BYTES);
+        return formatSize.format(sizeMoved.getSecond().doubleValue()).toString().concat(" ").concat(sizeMoved.getFirst().toString());
     }
 
     private String[] getBrickNames(Object bricksObj){

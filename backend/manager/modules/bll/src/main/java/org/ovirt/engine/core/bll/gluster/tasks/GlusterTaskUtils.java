@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster.tasks;
 
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +14,14 @@ import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusDetail;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
@@ -25,6 +29,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
@@ -249,5 +254,25 @@ public class GlusterTaskUtils {
                 put("action", action);
                 put("status", status);
             }});
+    }
+
+    public String getSummaryMessage(GlusterVolumeTaskStatusDetail statusSummary) {
+        NumberFormat formatSize = NumberFormat.getInstance();
+        formatSize.setMaximumFractionDigits(2);
+        formatSize.setMinimumFractionDigits(2);
+        Pair<SizeConverter.SizeUnit, Double> sizeMoved =
+                SizeConverter.autoConvert(statusSummary.getTotalSizeMoved(), SizeUnit.BYTES);
+        StringBuilder builder = new StringBuilder();
+        builder.append("Files [scanned: ")
+                .append(statusSummary.getFilesScanned())
+                .append(", moved: ")
+                .append(statusSummary.getFilesMoved())
+                .append(", failed: ")
+                .append(statusSummary.getFilesFailed())
+                .append(", Total size moved: ")
+                .append(new StringBuilder(formatSize.format(sizeMoved.getSecond().doubleValue()))
+                        .append(" ")
+                        .append(sizeMoved.getFirst().toString()));
+        return builder.toString();
     }
 }
