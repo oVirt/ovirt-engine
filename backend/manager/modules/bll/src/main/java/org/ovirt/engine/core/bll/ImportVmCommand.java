@@ -182,6 +182,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         if (getParameters().isImportAsNewEntity()) {
             initImportClonedVm();
+
+            if (getVm().getInterfaces().size() > MacPoolManager.getInstance().getAvailableMacsCount()) {
+                addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+                return false;
+            }
         }
 
         return canDoActionAfterCloneVm(domainsMap);
