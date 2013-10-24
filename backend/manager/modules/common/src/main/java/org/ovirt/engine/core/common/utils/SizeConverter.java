@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.uicommonweb.models;
+package org.ovirt.engine.core.common.utils;
 
 public class SizeConverter {
 

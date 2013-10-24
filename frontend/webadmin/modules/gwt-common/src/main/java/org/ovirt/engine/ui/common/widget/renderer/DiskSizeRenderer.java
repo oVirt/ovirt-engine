@@ -2,10 +2,11 @@ package org.ovirt.engine.ui.common.widget.renderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.text.shared.AbstractRenderer;
+
 import org.ovirt.engine.core.common.constants.StorageConstants;
+import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
-import org.ovirt.engine.ui.uicommonweb.models.SizeConverter.SizeUnit;
 
 public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 

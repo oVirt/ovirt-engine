@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.renderer;
 
-import org.ovirt.engine.ui.uicommonweb.models.SizeConverter;
-import org.ovirt.engine.ui.uicommonweb.models.SizeConverter.SizeUnit;
+import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 
 import com.google.gwt.i18n.client.NumberFormat;
