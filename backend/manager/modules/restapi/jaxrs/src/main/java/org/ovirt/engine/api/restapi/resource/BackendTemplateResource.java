@@ -2,7 +2,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 
 import java.util.List;
+
 import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
@@ -142,7 +144,7 @@ public class BackendTemplateResource
     @Override
     @SingleEntityResource
     public WatchdogsResource getWatchdogsResource() {
-        return inject(new BackendWatchdogsResource(guid,
+        return inject(new BackendTemplateWatchdogsResource(guid,
                 VdcQueryType.GetWatchdog,
                 new IdQueryParameters(guid)));
     }
