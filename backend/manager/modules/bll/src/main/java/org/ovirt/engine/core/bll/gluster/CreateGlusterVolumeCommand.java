@@ -296,12 +296,13 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPED_REPLICATE);
                 return false;
             }
+            break;
         case DISTRIBUTED_STRIPED_REPLICATE:
             if ( brickCount <= stripeCount * replicaCount || Math.IEEEremainder(brickCount, stripeCount * replicaCount) != 0) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPED_REPLICATE);
                 return false;
             }
-
+            break;
         default:
             break;
         }
