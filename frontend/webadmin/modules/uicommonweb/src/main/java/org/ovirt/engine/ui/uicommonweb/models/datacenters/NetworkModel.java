@@ -139,11 +139,24 @@ public abstract class NetworkModel extends Model
 
         // make sure default profile's name is in sync with network's name
         newModel.getName().setEntity(getName().getEntity());
-        getName().getEntityChangedEvent().addListener(new IEventListener() {
+        final IEventListener networkNameListener = new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 newModel.getName().setEntity(getName().getEntity());
+            }
+        };
+        getName().getEntityChangedEvent().addListener(networkNameListener);
+
+        // if user overrides default name, stop tracking network's name
+        newModel.getName().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!newModel.getName().getEntity().equals(getName().getEntity())) {
+                    getName().getEntityChangedEvent().removeListener(networkNameListener);
+                    newModel.getName().getEntityChangedEvent().removeListener(this);
+                }
             }
         });
 
