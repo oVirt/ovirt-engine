@@ -81,6 +81,8 @@ cleandb() {
     execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} >> $file
     CMD="select * from generate_drop_all_functions_syntax();"
     execute_command "$CMD"  ${DATABASE} ${SERVERNAME} ${PORT} >> $file
+    CMD="select * from generate_drop_all_user_types_syntax();"
+    execute_command "$CMD"  ${DATABASE} ${SERVERNAME} ${PORT} >> $file
     execute_file "${file}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
