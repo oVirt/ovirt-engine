@@ -581,6 +581,15 @@ public final class Linq
         return list;
     }
 
+    public static <TSource> boolean containsByIdentity(Iterable<TSource> source, Object item) {
+        for (TSource sourceItem : source) {
+            if (sourceItem == item) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Version selectHighestVersion(ArrayList<Version> versions)
     {
         Version retVersion = firstOrDefault(versions);
