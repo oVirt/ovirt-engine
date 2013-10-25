@@ -319,7 +319,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 VdcQueryType.GetStoragePoolById, VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
                 VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetAllVdsByStoragePool,
                 VdcQueryType.GetAllAttachableDisks, VdcQueryType.GetAllDisksByVmId,
-                VdcQueryType.GetAllRelevantQuotasForStorage });
+                VdcQueryType.GetAllRelevantQuotasForStorage, VdcQueryType.OsRepository });
 
         // Create and set commands
         UICommand onSaveCommand = new UICommand("OnSave", this); //$NON-NLS-1$
@@ -508,21 +508,32 @@ public abstract class AbstractDiskModel extends DiskModel
         volumeType_SelectedItemChanged();
     }
 
-    public void updateInterface(Version clusterVersion) {
-        final ArrayList<DiskInterface> diskInterfaces = AsyncDataProvider.getDiskInterfaceList(clusterVersion);
+    public void updateInterface(final Version clusterVersion) {
         if (getVm() != null) {
             AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    if (Boolean.FALSE.equals(returnValue)) {
-                        diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
-                    }
-                    setInterfaces(diskInterfaces);
+                public void onSuccess(Object model, Object returnValue1) {
+                    final boolean isVirtioScsiDisabled = Boolean.FALSE.equals(returnValue1);
+
+                    AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue2) {
+                            ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) returnValue2;
+
+                            if (isVirtioScsiDisabled) {
+                                diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
+                            }
+
+                            setInterfaces(diskInterfaces);
+                        }
+                    });
+
+                    AsyncDataProvider.getDiskInterfaceList(getVm().getOs(), clusterVersion, asyncQuery);
+
                 }
             }), getVm().getId());
-        }
-        else {
-            setInterfaces(diskInterfaces);
+        } else {
+            setInterfaces(AsyncDataProvider.getDiskInterfaceList());
         }
     }
 

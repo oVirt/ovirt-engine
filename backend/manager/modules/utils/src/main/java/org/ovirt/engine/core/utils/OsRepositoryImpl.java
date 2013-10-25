@@ -206,6 +206,13 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public ArrayList<String> getDiskInterfaces(int osId, Version version) {
+        String devices =
+                getValueByVersion(idToUnameLookup.get(osId), "devices.diskInterfaces", version);
+        return trimElements(devices.split(","));
+    }
+
+    @Override
     public ArrayList<String> getNetworkDevices(int osId, Version version) {
         String devices =
                 getValueByVersion(idToUnameLookup.get(osId), "devices.network", version);

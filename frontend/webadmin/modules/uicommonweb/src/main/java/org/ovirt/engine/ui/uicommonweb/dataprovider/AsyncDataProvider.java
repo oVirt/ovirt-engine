@@ -2938,20 +2938,37 @@ public final class AsyncDataProvider {
         }));
     }
 
-    public static ArrayList<DiskInterface> getDiskInterfaceList(Version clusterVersion)
+    public static void getDiskInterfaceList(int osId, Version clusterVersion, AsyncQuery asyncQuery)
+    {
+        final INewAsyncCallback chainedCallback = asyncQuery.asyncCallback;
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                ArrayList<String> interfaces = (ArrayList<String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                List<DiskInterface> interfaceTypes = new ArrayList<DiskInterface>();
+                for (String diskIfs : interfaces) {
+                    try {
+                        interfaceTypes.add(DiskInterface.valueOf(diskIfs));
+                    } catch (IllegalArgumentException e) {
+                        // ignore if we can't find the enum value.
+                    }
+                }
+                chainedCallback.onSuccess(model, interfaceTypes);
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetDiskInterfaces, osId, clusterVersion),
+                asyncQuery);
+    }
+
+    public static ArrayList<DiskInterface> getDiskInterfaceList()
     {
         ArrayList<DiskInterface> diskInterfaces = new ArrayList<DiskInterface>(
                 Arrays.asList(new DiskInterface[] {
                         DiskInterface.IDE,
-                        DiskInterface.VirtIO
+                        DiskInterface.VirtIO,
+                        DiskInterface.VirtIO_SCSI
                 }));
-
-        boolean isVirtIOScsiEnabled = clusterVersion != null ? (Boolean) AsyncDataProvider.getConfigValuePreConverted(
-                ConfigurationValues.VirtIoScsiEnabled, clusterVersion.getValue()) : true;
-
-        if (isVirtIOScsiEnabled) {
-            diskInterfaces.add(DiskInterface.VirtIO_SCSI);
-        }
 
         return diskInterfaces;
     }

@@ -124,6 +124,13 @@ public interface OsRepository {
 
     /**
      * @param osId
+     * @param version
+     * @return list of supported disk interface devices
+     */
+    ArrayList<String> getDiskInterfaces(int osId, Version version);
+
+    /**
+     * @param osId
      * @return list of supported network devices
      */
     ArrayList<String> getNetworkDevices(int osId, Version version);
