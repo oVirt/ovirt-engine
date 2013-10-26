@@ -556,7 +556,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 VM vm = pair.getFirst();
                 vmsDiskOrSnapshotAttachedTo.add(vm);
-                if (pair.getSecond().getIsPlugged() == Boolean.TRUE) {
+                if (Boolean.TRUE.equals(pair.getSecond().getIsPlugged())) {
                     if (pair.getSecond().getSnapshotId() != null) {
                         vmsDiskSnapshotPluggedTo.add(vm);
                     } else {
