@@ -14,12 +14,12 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
 
     public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, boolean isInactive) {
         super(storageDomainId, storagePoolId);
+        privateNewMasterDomainId = Guid.Empty;
         setInactive(isInactive);
     }
 
     public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, boolean isInactive, boolean canChooseInactiveDomainAsMaster) {
-        super(storageDomainId, storagePoolId);
-        setInactive(isInactive);
+        this(storagePoolId, storageDomainId, isInactive);
         setCanChooseInactiveDomainAsMaster(canChooseInactiveDomainAsMaster);
     }
 
