@@ -62,6 +62,10 @@
 			padding: 0 5px;
 			line-height: 26px;
 		}
+		.radioButtonPositioning {
+			padding: 0 5px;
+			margin-top: 5px;
+		}
 		.panelTitle {
 			font-size: 14px;
 			padding-left: 3px;
@@ -178,10 +182,10 @@
 								<g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
 									<g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
 									<d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo}" />
-									<e:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" />
-									<e:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" />
-									<e:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" />
-									<e:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" />
+									<e:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" addStyleNames="{style.radioButtonPositioning}"/>
+									<e:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" addStyleNames="{style.radioButtonPositioning}"/>
+									<e:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" addStyleNames="{style.radioButtonPositioning}"/>
+									<e:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" addStyleNames="{style.radioButtonPositioning}"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="cpuThreadsPanel" addStyleNames="{style.nestedSubsequentPanel}">
 									<g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.panelTitle}" />

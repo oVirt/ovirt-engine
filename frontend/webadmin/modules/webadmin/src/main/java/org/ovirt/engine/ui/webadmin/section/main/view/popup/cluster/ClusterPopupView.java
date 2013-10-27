@@ -251,10 +251,13 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     private final ApplicationMessages messages;
 
+    private final ApplicationTemplates templates;
+
     @Inject
     public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages, ApplicationTemplates templates) {
         super(eventBus, resources);
         this.messages = messages;
+        this.templates = templates;
         initListBoxEditors();
         initRadioButtonEditors();
         initCheckBoxEditors();
@@ -274,11 +277,6 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         migrateOnErrorOption_NOEditor.addContentWidgetStyleName(style.label());
         migrateOnErrorOption_YESEditor.addContentWidgetStyleName(style.label());
         migrateOnErrorOption_HA_ONLYEditor.addContentWidgetStyleName(style.label());
-
-        optimizationNoneEditor.setContentWidgetStyleName(style.fullWidth());
-        optimizationForServerEditor.setContentWidgetStyleName(style.fullWidth());
-        optimizationForDesktopEditor.setContentWidgetStyleName(style.fullWidth());
-        optimizationCustomEditor.setContentWidgetStyleName(style.fullWidth());
 
         countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
         enableTrustedServiceEditor.setContentWidgetStyleName(style.fullWidth());
@@ -308,7 +306,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         optimizationTab.setLabel(constants.clusterPopupOptimizationTabLabel());
 
         memoryOptimizationPanelTitle.setText(constants.clusterPopupMemoryOptimizationPanelTitle());
-        optimizationNoneEditor.setLabel(constants.clusterPopupOptimizationNoneLabel());
+        optimizationNoneEditor.asRadioButton()
+                .setHTML(templates.radioButtonLabel(constants.clusterPopupOptimizationNoneLabel()));
 
         cpuThreadsPanelTitle.setText(constants.clusterPopupCpuThreadsPanelTitle());
         countThreadsAsCoresEditor.setLabel(constants.clusterPopupCountThreadsAsCoresLabel());
@@ -479,16 +478,18 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     private void optimizationForServerFormatter(ClusterModel object) {
         if (object.getOptimizationForServer() != null
                 && object.getOptimizationForServer().getEntity() != null) {
-            optimizationForServerEditor.setLabel(messages.clusterPopupMemoryOptimizationForServerLabel(
-                    object.getOptimizationForServer().getEntity().toString()));
+            optimizationForServerEditor.asRadioButton()
+                    .setHTML(templates.radioButtonLabel(messages.clusterPopupMemoryOptimizationForServerLabel(
+                            object.getOptimizationForServer().getEntity().toString())));
         }
     }
 
     private void optimizationForDesktopFormatter(ClusterModel object) {
         if (object.getOptimizationForDesktop() != null
                 && object.getOptimizationForDesktop().getEntity() != null) {
-            optimizationForDesktopEditor.setLabel(messages.clusterPopupMemoryOptimizationForDesktopLabel(
-                    object.getOptimizationForDesktop().getEntity().toString()));
+            optimizationForDesktopEditor.asRadioButton()
+                    .setHTML(templates.radioButtonLabel(messages.clusterPopupMemoryOptimizationForDesktopLabel(
+                            object.getOptimizationForDesktop().getEntity().toString())));
         }
     }
 
@@ -496,8 +497,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         if (object.getOptimizationCustom() != null
                 && object.getOptimizationCustom().getEntity() != null) {
             // Use current value because object.getOptimizationCustom.getEntity() can be null
-            optimizationCustomEditor.setLabel(messages.clusterPopupMemoryOptimizationCustomLabel(
-                    String.valueOf(object.getMemoryOverCommit())));
+            optimizationCustomEditor.asRadioButton()
+                    .setHTML(templates.radioButtonLabel(messages.clusterPopupMemoryOptimizationCustomLabel(
+                            String.valueOf(object.getMemoryOverCommit()))));
         }
     }
 
