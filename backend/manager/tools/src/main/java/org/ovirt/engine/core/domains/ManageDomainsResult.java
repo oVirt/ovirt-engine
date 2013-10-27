@@ -44,7 +44,7 @@ public class ManageDomainsResult extends Exception {
         // setting detailed message
         // check params validation
         if (params.length == 0) {
-            log.debug("Wrong exception's params recevied.");
+            log.debug("Wrong exception's params received.");
             validParams = false;
         }
         else {
