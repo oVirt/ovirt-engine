@@ -78,10 +78,32 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsType = value;
     }
 
-    public RegisterVdsParameters(Guid vdsId, String vds_host_name, String vds_name, String vds_unique_id, int vds_port,
+    private int privateSSHPort;
+
+    public int getSSHPort() {
+        return privateSSHPort;
+    }
+
+    public void setSSHPort(int value) {
+        privateSSHPort = value;
+    }
+
+    private String privateSSHUser;
+
+    public String getSSHUser() {
+        return privateSSHUser;
+    }
+
+    public void setSSHUser(String value) {
+        privateSSHUser = value;
+    }
+
+    public RegisterVdsParameters(Guid vdsId, String vds_host_name, int ssh_port, String ssh_user, String vds_name, String vds_unique_id, int vds_port,
             Guid vds_group_id, VDSType vds_type) {
         setVdsId(vdsId);
         setVdsHostName(vds_host_name);
+        setSSHPort(ssh_port);
+        setSSHUser(ssh_user);
         setVdsName(vds_name);
         setVdsUniqueId(vds_unique_id);
         setVdsPort(vds_port);

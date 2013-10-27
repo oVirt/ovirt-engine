@@ -279,14 +279,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private boolean registerNewHost(Guid vdsGroupId, boolean IsPending) {
         boolean returnValue = true;
 
-        // For new registration use default ssh port and user 'root'
-        final int SSH_PORT = 22;
-        final String SSH_USER_NAME = "root";
-
         VdsStatic vds = new VdsStatic(getParameters().getVdsHostName(), "",
                     getStrippedVdsUniqueId(), getParameters().getVdsPort(),
-                    SSH_PORT,
-                    SSH_USER_NAME,
+                    getParameters().getSSHPort(),
+                    getParameters().getSSHUser(),
                     vdsGroupId, Guid.Empty,
                     getParameters().getVdsName(), Config.<Boolean> GetValue(ConfigValues.SSLEnabled),
                     getParameters().getVdsType()); // management

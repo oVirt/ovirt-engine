@@ -27,6 +27,8 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
 public class RegisterServlet extends HttpServlet {
 
     private static final long serialVersionUID = 2156012277778558480L;
+    private static final int SSH_PORT = 22;
+    private static final String SSH_USER = "root";
     public static final String VDS_IP = "vds_ip";
     public static final String VDS_NAME = "vds_name";
     public static final String VDS_ID = "vds_unique_id";
@@ -68,7 +70,7 @@ public class RegisterServlet extends HttpServlet {
              * Ignore MAC if exists (old format)
              */
             String strIDNoMAC = strID.split("_")[0];
-            params = new RegisterVdsParameters(Guid.Empty, strIP, strName, strIDNoMAC, nPort,
+            params = new RegisterVdsParameters(Guid.Empty, strIP, SSH_PORT, SSH_USER, strName, strIDNoMAC, nPort,
                     Guid.Empty, VDSType.oVirtNode);
 
             fReturn = backend.runInternalQuery(VdcQueryType.RegisterVds, params);
