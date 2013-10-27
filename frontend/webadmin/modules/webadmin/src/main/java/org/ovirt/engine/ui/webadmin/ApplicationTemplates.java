@@ -145,4 +145,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<div style='max-width: 500px; word-wrap:break-word; font-style: italic;'>{0}</div>")
     SafeHtml italicWordWrapMaxWidth(String text);
+
+    @Template("<div style='width:90%; display:inline-block; vertical-align: top;'>{0}</div>")
+    SafeHtml radioButtonLabel(String text);
 }
