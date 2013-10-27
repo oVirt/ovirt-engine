@@ -19,7 +19,7 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
     }
 
     public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, boolean isInactive, boolean canChooseInactiveDomainAsMaster) {
-        this(storageDomainId, storagePoolId, isInactive);
+        this(storagePoolId, storageDomainId, isInactive);
         setCanChooseInactiveDomainAsMaster(canChooseInactiveDomainAsMaster);
     }
 
