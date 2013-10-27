@@ -240,13 +240,13 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private boolean updateExistingHost(VDS vdsByUniqueId, boolean IsPending) {
         boolean returnValue = true;
         vdsByUniqueId.setHostName(getParameters().getVdsHostName());
-        vdsByUniqueId.setPort(getParameters().getPort());
+        vdsByUniqueId.setPort(getParameters().getVdsPort());
         log.debugFormat(
-                "RegisterVdsQuery::Register - Will try now to update VDS with existing unique id; Name: {0}, Hostname: {1}, Unique: {2}, Port: {3}, IsPending: {4} with force synchronize",
+                "RegisterVdsQuery::Register - Will try now to update VDS with existing unique id; Name: {0}, Hostname: {1}, Unique: {2}, VdsPort: {3}, IsPending: {4} with force synchronize",
                 getParameters().getVdsHostName(),
                 getStrippedVdsUniqueId(),
                 getStrippedVdsUniqueId(),
-                getParameters().getPort(),
+                getParameters().getVdsPort(),
                 IsPending);
 
         UpdateVdsActionParameters p = new UpdateVdsActionParameters(vdsByUniqueId.getStaticData(), "", false);
@@ -256,11 +256,11 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         if (rc == null || !rc.getSucceeded()) {
             error = AuditLogType.VDS_REGISTER_EXISTING_VDS_UPDATE_FAILED;
             log.debugFormat(
-                    "RegisterVdsQuery::Register - Failed to update existing VDS Name: {0}, Hostname: {1}, Unique: {2}, Port: {3}, IsPending: {4}",
+                    "RegisterVdsQuery::Register - Failed to update existing VDS Name: {0}, Hostname: {1}, Unique: {2}, VdsPort: {3}, IsPending: {4}",
                     getParameters().getVdsHostName(),
                     getStrippedVdsUniqueId(),
                     getStrippedVdsUniqueId(),
-                    getParameters().getPort(),
+                    getParameters().getVdsPort(),
                     IsPending);
 
             CaptureCommandErrorsToLogger(rc, "RegisterVdsQuery::Register");
@@ -284,7 +284,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         final String SSH_USER_NAME = "root";
 
         VdsStatic vds = new VdsStatic(getParameters().getVdsHostName(), "",
-                    getStrippedVdsUniqueId(), getParameters().getPort(),
+                    getStrippedVdsUniqueId(), getParameters().getVdsPort(),
                     SSH_PORT,
                     SSH_USER_NAME,
                     vdsGroupId, Guid.Empty,
@@ -298,11 +298,11 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                                                                                  // registration
 
                 log.debugFormat(
-                        "RegisterVdsQuery::Register - Will try now to add VDS from scratch; Name: {0}, Hostname: {1}, Unique: {2}, Port: {3},Subnet mask: {4}, IsPending: {5} with force synchronize",
+                        "RegisterVdsQuery::Register - Will try now to add VDS from scratch; Name: {0}, Hostname: {1}, Unique: {2}, VdsPort: {3},Subnet mask: {4}, IsPending: {5} with force synchronize",
                         getParameters().getVdsName(),
                         getParameters().getVdsHostName(),
                         getStrippedVdsUniqueId(),
-                        getParameters().getPort(),
+                        getParameters().getVdsPort(),
                         IsPending);
 
             AddVdsActionParameters p = new AddVdsActionParameters(vds, "");

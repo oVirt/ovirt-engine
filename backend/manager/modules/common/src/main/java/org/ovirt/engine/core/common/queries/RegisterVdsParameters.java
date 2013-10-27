@@ -48,14 +48,14 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsUniqueId = value;
     }
 
-    private int privatePort;
+    private int privateVdsPort;
 
-    public int getPort() {
-        return privatePort;
+    public int getVdsPort() {
+        return privateVdsPort;
     }
 
-    private void setPort(int value) {
-        privatePort = value;
+    private void setVdsPort(int value) {
+        privateVdsPort = value;
     }
 
     private Guid privateVdsGroupId;
@@ -78,13 +78,13 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsType = value;
     }
 
-    public RegisterVdsParameters(Guid vdsId, String vds_host_name, String vds_name, String vds_unique_id, int port,
+    public RegisterVdsParameters(Guid vdsId, String vds_host_name, String vds_name, String vds_unique_id, int vds_port,
             Guid vds_group_id, VDSType vds_type) {
         setVdsId(vdsId);
         setVdsHostName(vds_host_name);
         setVdsName(vds_name);
         setVdsUniqueId(vds_unique_id);
-        setPort(port);
+        setVdsPort(vds_port);
         setVdsGroupId(vds_group_id);
         setVdsType(vds_type);
     }
