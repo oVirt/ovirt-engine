@@ -345,6 +345,9 @@ public class VdsUpdateRunTimeInfo {
         } finally {
             try {
                 if (_firstStatus != _vds.getStatus() && _vds.getStatus() == VDSStatus.Up) {
+                    // If status changed, reload the entire vds
+                    reloadVds(_vds);
+
                     // use this lock in order to allow only one host updating DB and
                     // calling UpEvent in a time
                     VdsManager.cancelRecoveryJob(_vds.getId());
@@ -509,6 +512,10 @@ public class VdsUpdateRunTimeInfo {
             }
         }
         moveVDSToMaintenanceIfNeeded();
+    }
+
+    private void reloadVds(VDS vds) {
+        DbFacade.getInstance().getVdsDao().reloadPartial(vds);
     }
 
     private void refreshVdsStats() {

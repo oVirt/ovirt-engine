@@ -89,7 +89,7 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      */
     List<VDS> getAllOfTypes(VDSType[] types);
 
-    /**
+    /**Next patch (still in the making)
      * Retrieves all instances by group id.
      *
      * @param vdsGroup
@@ -125,7 +125,7 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
     List<VDS> getAllForVdsGroup(Guid vdsGroup);
 
     /**
-     * Retrieves all VDS instances by vds group id (cluster ID) with optional filtering
+     * Retrieves all VDS instances by vdNext patch (still in the making)s group id (cluster ID) with optional filtering
      *
      * @param vdsGroup
      * @param userID
@@ -209,4 +209,20 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      * @return the list of VDS instances
      */
     List<VDS> getHostsForStorageOperation(Guid storagePoolId, boolean localFsOnly);
+
+    /**
+     * Retrieve the partial instance (static, dynamic) with the given id.
+     * @param id
+     *            the id
+     * @return the VDS instance
+     */
+    VDS getPartial(Guid vdsId);
+
+    /**
+     * Completes the retrieval of the partial instance
+     * @param id
+     *            the id
+     * @return the PartialVDS instance
+     */
+    void reloadPartial(VDS vds);
 }
