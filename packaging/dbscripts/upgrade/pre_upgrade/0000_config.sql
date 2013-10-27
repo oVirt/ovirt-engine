@@ -234,7 +234,7 @@ select fn_db_add_config_value('IPTablesConfig',
 -A INPUT -p icmp -j ACCEPT
 -A INPUT -i lo -j ACCEPT
 # vdsm
--A INPUT -p tcp --dport 54321 -j ACCEPT
+-A INPUT -p tcp --dport @VDSM_PORT@ -j ACCEPT
 # libvirt tls
 -A INPUT -p tcp --dport 16514 -j ACCEPT
 # SSH
@@ -659,7 +659,7 @@ select fn_db_update_config_value('IPTablesConfig','
 
 -A INPUT -i lo -j ACCEPT
 # vdsm
--A INPUT -p tcp --dport 54321 -j ACCEPT
+-A INPUT -p tcp --dport @VDSM_PORT@ -j ACCEPT
 # SSH
 -A INPUT -p tcp --dport @SSH_PORT@ -j ACCEPT
 # snmp
