@@ -690,19 +690,28 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (getModel().getSelectedCluster() != null) {
             VDSGroup cluster = getModel().getSelectedCluster();
             String compatibilityVersion = cluster.getcompatibility_version().toString();
-            boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity());
+            boolean isLocalSD = getModel().getSelectedDataCenter() != null
+                    && StorageType.LOCALFS.equals(getModel().getSelectedDataCenter().getStorageType());
+
+            // cpu pinning is available on Local SD with no consideration for auto assign value
+            boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity()) || isLocalSD;
 
             if (Boolean.FALSE.equals(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
                     compatibilityVersion))) {
                 hasCpuPinning = false;
             } else if (Boolean.FALSE.equals(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
                     AsyncDataProvider.getDefaultConfigurationVersion()))
-                    && isVmMigratable()) {
+                    && isVmMigratable()
+                    && !isLocalSD) {
                 hasCpuPinning = false;
             }
 
             if (!hasCpuPinning) {
-                getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
+                if(isLocalSD) {
+                    getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailableLocalStorage());
+                } else {
+                    getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
+                }
                 getModel().getCpuPinning().setEntity("");
             }
             getModel().getCpuPinning().setIsChangable(hasCpuPinning);

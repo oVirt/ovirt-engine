@@ -1920,6 +1920,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("'CPU Pinning topology' is only available for cluster compatible with ver 3.1 or higher, when 'Do not allow migration' is selected and host is specified")
     String cpuPinningUnavailable();
 
+    @DefaultStringValue("'CPU Pinning topology' is only available for cluster compatible with ver 3.1 or higher")
+    String cpuPinningUnavailableLocalStorage();
+
     @DefaultStringValue("Low")
     String vmLowPriority();
 
