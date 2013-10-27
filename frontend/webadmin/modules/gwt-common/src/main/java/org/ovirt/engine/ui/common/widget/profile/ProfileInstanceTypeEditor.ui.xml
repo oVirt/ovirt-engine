@@ -6,7 +6,7 @@
 	xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile">
 
 	<g:FlowPanel>
-		<p:ProfileEditor ui:field="profileEditor" />
+		<p:ProfileEditor ui:field="profileEditor" width="285px" />
 	</g:FlowPanel>
 
 </ui:UiBinder>
