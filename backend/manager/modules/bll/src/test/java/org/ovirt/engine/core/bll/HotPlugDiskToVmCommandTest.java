@@ -202,7 +202,6 @@ public class HotPlugDiskToVmCommandTest {
         command = spy(createCommand());
         mockVds();
         mockVmDevice(false);
-        //doReturn(true).when(command).isHotPlugOperationSupported();
         when(command.getActionType()).thenReturn(getCommandActionType());
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
