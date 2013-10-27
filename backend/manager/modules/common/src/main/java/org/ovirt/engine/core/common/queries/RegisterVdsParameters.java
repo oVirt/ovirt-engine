@@ -78,16 +78,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsType = value;
     }
 
-    private Long otp;
-
-    public Long getOtp() {
-        return otp;
-    }
-
-    public void setOtp(Long otp) {
-        this.otp = otp;
-    }
-
     public RegisterVdsParameters(Guid vdsId, String vds_host_name, String vds_name, String vds_unique_id, int port,
             Guid vds_group_id, VDSType vds_type) {
         setVdsId(vdsId);

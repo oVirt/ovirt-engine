@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
@@ -32,7 +31,6 @@ public class RegisterServlet extends HttpServlet {
     public static final String VDS_NAME = "vds_name";
     public static final String VDS_ID = "vds_unique_id";
     public static final String PORT = "port";
-    public static final String OTP = "ticket";
 
     private SimpleDateFormat m_sdfFormatter;
     private static Log log = LogFactory.getLog(RegisterServlet.class);
@@ -55,7 +53,6 @@ public class RegisterServlet extends HttpServlet {
         String strName = "";
         String strID = "";
         int nPort = -1;
-        String otpMessage = "";
 
         try {
             backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
@@ -63,18 +60,9 @@ public class RegisterServlet extends HttpServlet {
             strName = request.getParameterValues(VDS_NAME)[0];
             strID = request.getParameterValues(VDS_ID)[0];
             nPort = Integer.parseInt(request.getParameterValues(PORT)[0]);
-            String[] otpValues = request.getParameterValues(OTP);
-            String otpString = (otpValues != null && otpValues.length > 0) ? otpValues[0] : null;
-            Long otp = null;
-
-            // if OTP was provided, assume registering oVirt host
-            if (StringUtils.isNotBlank(otpString)) {
-                otp = Long.parseLong(otpString);
-                otpMessage = ", OTP is set.";
-            }
 
             log.debug("Using the following parameters to call query:\nIP: " + strIP + ", Name: "
-                    + strName + ", UUID: " + strID + ", Port: " + nPort + otpMessage);
+                    + strName + ", UUID: " + strID + ", Port: " + nPort);
 
             /*
              * Ignore MAC if exists (old format)
@@ -83,8 +71,6 @@ public class RegisterServlet extends HttpServlet {
             params = new RegisterVdsParameters(Guid.Empty, strIP, strName, strIDNoMAC, nPort,
                     Guid.Empty, VDSType.oVirtNode);
 
-            params.setOtp(otp);
-
             fReturn = backend.runInternalQuery(VdcQueryType.RegisterVds, params);
             if (fReturn == null) {
                 log.error("Got NULL from backend.RunQuery!");
@@ -92,7 +78,7 @@ public class RegisterServlet extends HttpServlet {
         } catch (Throwable t) {
             log.error("Caught exception while trying to run query: ", t);
             log.error("Parameters used to call query:\nIP: " + strIP + ", Name: " + strName
-                    + ", UUID: " + strID + ", Port: " + nPort + otpMessage);
+                    + ", UUID: " + strID + ", Port: " + nPort);
             fReturn = null;
         }
 

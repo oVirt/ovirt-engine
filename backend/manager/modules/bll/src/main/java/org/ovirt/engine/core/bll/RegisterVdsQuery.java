@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
@@ -126,12 +125,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     returnValue.setExceptionString(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.name());
                     return false;
                 }
-                Long otp = getParameters().getOtp();
-                if (!isValidOtp(vds, otp)) {
-                    returnValue.setExceptionString(String.format("Invalid OTP for host %s", hostName));
-                    return false;
-                }
-
             }
 
         } catch (RuntimeException ex) {
@@ -142,24 +135,6 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         }
 
         return true;
-    }
-
-    /**
-     * the method checks if the given otp is valid, will return false for null as well
-     * @param vds
-     * @param otp
-     * @return boolean indicating whether the given otp is valid or not
-     */
-    private boolean isValidOtp(VDS vds, Long otp) {
-        if (otp != null && otp.longValue() == vds.getOtpValidity()) {
-            Integer otpExpiration = Config.<Integer> GetValue(ConfigValues.OtpExpirationInSeconds);
-            DateTime otpValidity = new DateTime(otp);
-            otpValidity.AddSeconds(otpExpiration);
-            if (otpValidity.before(DateTime.getUtcNow())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -182,8 +157,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
             // in case oVirt host was added for the second time - perform approval
             if (vdsByUniqueId != null && vdsByUniqueId.getStatus() == VDSStatus.PendingApproval
-                    && getParameters().getVdsType() == VDSType.oVirtNode
-                    && getParameters().getOtp() != null) {
+                    && getParameters().getVdsType() == VDSType.oVirtNode) {
 
                 getQueryReturnValue().setSucceeded(dispatchOvirtApprovalCommand(vdsByUniqueId.getId()));
                 return;
