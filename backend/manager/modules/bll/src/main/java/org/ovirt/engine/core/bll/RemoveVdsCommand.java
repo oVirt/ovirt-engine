@@ -46,6 +46,9 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
          */
         if (isGlusterEnabled() && upServer != null) {
             glusterHostRemove();
+            if (!getSucceeded()) {
+                return;
+            }
         }
 
         /**
@@ -85,18 +88,18 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         if (returnValue && isGlusterEnabled()) {
             upServer = getClusterUtils().getUpServer(getVdsGroupId());
             if (!getParameters().isForceAction()) {
-                //  fail if host has bricks on a volume
+                // fail if host has bricks on a volume
                 if (hasVolumeBricksOnServer()) {
                     returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 } else if (upServer == null && clusterHasMultipleHosts()) {
-                    //  fail if there is no up server in cluster, and if host being removed is not
-                    //  the last server in cluster
+                    // fail if there is no up server in cluster, and if host being removed is not
+                    // the last server in cluster
                     addCanDoActionMessage(String.format("$clusterName %1$s", getVdsGroup().getName()));
                     returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
-                 }
+                }
             } else {
                 // if force, cannot remove only if there are bricks on server and there is an up server.
-                if (hasVolumeBricksOnServer() && upServer != null ) {
+                if (hasVolumeBricksOnServer() && upServer != null) {
                     returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 }
             }
@@ -222,13 +225,15 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         VDSGroup cluster = getVdsGroup();
         if (cluster == null || cluster.supportsVirtService()) {
             locks.put(getParameters().getVdsId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
+                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         // Need to acquire lock on cluster if the host belongs to a gluster cluster
         if (cluster != null && cluster.supportsGlusterService()) {
             locks.put(cluster.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
+                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         return locks;
