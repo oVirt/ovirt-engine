@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -85,7 +87,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             if (!hasUpServer(getSourceCluster())) {
                 return false;
             }
-
         }
 
         if (getTargetCluster().supportsGlusterService() && !hasUpServerInTarget(getTargetCluster())) {
@@ -200,53 +201,62 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private boolean glusterHostRemove(Guid sourceClusterId) {
-        String hostName =
-                (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
-                        : getVds().getHostName();
-        VDS runningHostInSourceCluster = getClusterUtils().getUpServer(sourceClusterId);
-        if (runningHostInSourceCluster == null) {
-            log.error("Cannot remove host from source cluster, no host in Up status found in source cluster");
-            handleError(-1, "No host in Up status found in source cluster");
-            errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
-            return false;
+        // If "gluster peer detach" and "gluster peer status" are executed simultaneously, the results
+        // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
+        // condition.
+        try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(sourceClusterId)) {
+            String hostName =
+                    (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
+                            : getVds().getHostName();
+            VDS runningHostInSourceCluster = getClusterUtils().getUpServer(sourceClusterId);
+            if (runningHostInSourceCluster == null) {
+                log.error("Cannot remove host from source cluster, no host in Up status found in source cluster");
+                handleError(-1, "No host in Up status found in source cluster");
+                errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
+                return false;
+            }
+            VDSReturnValue returnValue =
+                    runVdsCommand(
+                            VDSCommandType.RemoveGlusterServer,
+                            new RemoveGlusterServerVDSParameters(runningHostInSourceCluster.getId(),
+                                    hostName,
+                                    false));
+            if (!returnValue.getSucceeded()) {
+                handleVdsError(returnValue);
+                errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
+                return false;
+            }
+            return true;
         }
-        VDSReturnValue returnValue =
-                runVdsCommand(
-                        VDSCommandType.RemoveGlusterServer,
-                        new RemoveGlusterServerVDSParameters(runningHostInSourceCluster.getId(),
-                                hostName,
-                                false));
-
-        if (!returnValue.getSucceeded()) {
-            handleVdsError(returnValue);
-            errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
-            return false;
-        }
-        return true;
     }
 
     private boolean glusterHostAdd(Guid targetClusterId) {
-        String hostName =
-                (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
-                        : getVds().getHostName();
-        VDS runningHostInTargetCluster = getClusterUtils().getUpServer(targetClusterId);
-        if (runningHostInTargetCluster == null) {
-            log.error("Cannot add host to target cluster, no host in Up status found in target cluster");
-            handleError(-1, "No host in Up status found in target cluster");
-            errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
-            return false;
+        // If "gluster peer probe" and "gluster peer status" are executed simultaneously, the results
+        // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
+        // condition.
+        try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(targetClusterId)) {
+            String hostName =
+                    (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
+                            : getVds().getHostName();
+            VDS runningHostInTargetCluster = getClusterUtils().getUpServer(targetClusterId);
+            if (runningHostInTargetCluster == null) {
+                log.error("Cannot add host to target cluster, no host in Up status found in target cluster");
+                handleError(-1, "No host in Up status found in target cluster");
+                errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
+                return false;
+            }
+            VDSReturnValue returnValue =
+                    runVdsCommand(
+                            VDSCommandType.AddGlusterServer,
+                            new AddGlusterServerVDSParameters(runningHostInTargetCluster.getId(),
+                                    hostName));
+            if (!returnValue.getSucceeded()) {
+                handleVdsError(returnValue);
+                errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
+                return false;
+            }
+            return true;
         }
-        VDSReturnValue returnValue =
-                runVdsCommand(
-                        VDSCommandType.AddGlusterServer,
-                        new AddGlusterServerVDSParameters(runningHostInTargetCluster.getId(),
-                                hostName));
-        if (!returnValue.getSucceeded()) {
-            handleVdsError(returnValue);
-            errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
-            return false;
-        }
-        return true;
     }
 
     private void handleError(int errorCode, String errorMsg) {
@@ -273,5 +283,4 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
         return targetCluster;
     }
-
 }

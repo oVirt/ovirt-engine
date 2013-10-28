@@ -142,6 +142,8 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void removeDetachedServers(List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
+        log.debugFormat("Existing servers list returned {0} comparing with fetched servers {1)", existingServers, fetchedServers);
+
         boolean serverRemoved = false;
         for (VDS server : existingServers) {
             if (isRemovableStatus(server.getStatus()) && serverDetached(server, fetchedServers)) {
@@ -159,8 +161,9 @@ public class GlusterSyncJob extends GlusterJob {
             }
         }
         if (serverRemoved) {
-            log.infoFormat("Servers detached using gluster CLI  is removed from engine after inspecting the Gluster servers list {0}",
-                    fetchedServers);
+            log.infoFormat("Servers detached using gluster CLI  is removed from engine after inspecting the Gluster servers list returned {0} "
+                    + "- comparing with db servers {1}",
+                    fetchedServers, existingServers);
         }
     }
 

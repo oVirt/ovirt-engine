@@ -2660,6 +2660,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("One or more servers in the cluster is down.")
     String CLUSTER_ALL_SERVERS_NOT_UP();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster operation is in progress in cluster. Please try again.")
+    String ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS();
+
     @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();
 

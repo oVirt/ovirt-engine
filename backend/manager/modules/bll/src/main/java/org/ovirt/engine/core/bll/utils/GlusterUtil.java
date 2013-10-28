@@ -11,13 +11,20 @@ import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.XmlUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
@@ -194,5 +201,14 @@ public class GlusterUtil {
 
     protected SSHClient getSSHClient() {
         return new EngineSSHClient();
+    }
+
+    public EngineLock acquireGlusterLockWait(Guid clusterId) {
+        Map<String, Pair<String, String>> exclusiveLocks = new HashMap<String, Pair<String, String>>();
+        exclusiveLocks.put(clusterId.toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
+        EngineLock lock = new EngineLock(exclusiveLocks, null);
+        LockManagerFactory.getLockManager().acquireLockWait(lock);
+        return lock;
     }
 }
