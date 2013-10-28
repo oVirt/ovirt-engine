@@ -253,7 +253,15 @@ public class BackendGlusterBricksResource
     }
 
     @Override
-    public ActionResource getActionSubresource(String action) {
-        return inject(new BackendActionResource(action, ""));
+    public Response stopMigrate(Action action) {
+        validateParameters(action, "bricks");
+        validateBrickNames(action);
+        GlusterVolumeRemoveBricksParameters params = toParameters(action);
+        return performAction(VdcActionType.StopRemoveGlusterVolumeBricks, params, action, false);
+    }
+
+    @Override
+    public ActionResource getActionSubresource(String action, String id) {
+        return inject(new BackendActionResource(action, id));
     }
 }

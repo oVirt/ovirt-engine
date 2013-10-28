@@ -71,6 +71,9 @@ public class FeaturesHelper {
             addFeatureReportVmFQDN(features);
             addFeatureAttachDiskSnapshot(features);
         }
+        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_4)) {
+            addGlusterBricksFeature(features);
+        }
         return features;
     }
 
@@ -372,6 +375,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("VM FQDN");
         feature.setDescription("Ability to report the fully qualified domain name (FQDN) of a Virtual Machine");
+        features.getFeature().add(feature);
+    }
+
+    private void addGlusterBricksFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Gluster Bricks management");
+        feature.setDescription("Ability to delete gluster bricks with data migration using the actions migrate and DELETE. Action migrate in combination with stopmigrate, migrates the data and brick can be reused further.");
         features.getFeature().add(feature);
     }
 }

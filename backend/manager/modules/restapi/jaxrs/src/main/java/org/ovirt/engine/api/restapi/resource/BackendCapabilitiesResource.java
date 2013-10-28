@@ -157,6 +157,12 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             minor = 3;
         }
     };
+    public static final Version VERSION_3_4 = new Version() {
+        {
+            major = 3;
+            minor = 4;
+        }
+    };
     private static Version currentVersion = null;
 
     @Override

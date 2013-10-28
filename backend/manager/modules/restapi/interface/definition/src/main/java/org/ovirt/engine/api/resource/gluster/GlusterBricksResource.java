@@ -25,12 +25,12 @@ import org.ovirt.engine.api.resource.RsdlIgnore;
  */
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterBricksResource {
-    @Path("{action: (migrate)}")
-    public ActionResource getActionSubresource(@PathParam("action") String action);
-
     @GET
     @Formatted
     public GlusterBricks list();
+
+    @Path("{action: (migrate|stopmigrate)}/{oid}")
+    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     /**
      * Adds given list of bricks to the volume, and updates the database accordingly. The properties
@@ -68,6 +68,20 @@ public interface GlusterBricksResource {
     @Path("{brick_id}")
     public Response remove(@PathParam("brick_id") String id);
 
+    @POST
+    @Formatted
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("migrate")
+    public Response migrate(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("stopmigrate")
+    public Response stopMigrate(Action action);
+
     /**
      * Sub-resource locator method, returns individual GlusterBrickResource on which the remainder of the URI is
      * dispatched.
@@ -78,12 +92,5 @@ public interface GlusterBricksResource {
      */
     @Path("{brick_id}")
     public GlusterBrickResource getGlusterBrickSubResource(@PathParam("brick_id") String id);
-
-    @POST
-    @Formatted
-    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    @Actionable
-    @Path("migrate")
-    public Response migrate(Action action);
 
 }

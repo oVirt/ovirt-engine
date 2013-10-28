@@ -3897,6 +3897,20 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=stopmigrate
+  description: stops the bricks migration task started on on volume
+  request:
+    body:
+      parameterType: GlusterBricks
+      signatures:
+      - mandatoryArguments:
+          bricks--COLLECTION: {brick.name: 'xs:string'}
+        optionalArguments: {}
+        description: stops the bricks migration task started on on volume
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace
   description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
   request:
