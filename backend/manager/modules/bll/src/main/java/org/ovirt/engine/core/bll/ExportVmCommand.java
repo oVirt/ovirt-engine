@@ -317,7 +317,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
 
             // copy the memory configuration (of the VM) image
             vdcRetValue = Backend.getInstance().runInternalAction(
@@ -328,7 +328,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
     }
 
