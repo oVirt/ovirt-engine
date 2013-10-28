@@ -60,7 +60,6 @@ public enum ConfigurationValues {
     UserDefinedVMProperties(ConfigAuthType.User),
     PredefinedVMProperties(ConfigAuthType.User),
     VdsFenceOptionTypes,
-    ServerCPUList,
     SupportedClusterLevels(ConfigAuthType.User),
     OvfUpdateIntervalInMinutes,
     OvfItemsCountPerUpdate,

@@ -72,6 +72,8 @@ import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.ScsiGenericIoOptions;
+import org.ovirt.engine.api.model.SnapshotStatus;
+import org.ovirt.engine.api.model.SnapshotStatuses;
 import org.ovirt.engine.api.model.Stages;
 import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.StepTypes;
@@ -98,8 +100,6 @@ import org.ovirt.engine.api.model.VmStates;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.VmTypes;
-import org.ovirt.engine.api.model.SnapshotStatus;
-import org.ovirt.engine.api.model.SnapshotStatuses;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogActions;
 import org.ovirt.engine.api.model.WatchdogModel;
@@ -113,7 +113,6 @@ import org.ovirt.engine.api.restapi.types.IpVersion;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.api.restapi.util.FenceOptionsParser;
-import org.ovirt.engine.api.restapi.util.ServerCpuParser;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.VersionUtils;
@@ -121,6 +120,8 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCapabilitiesResource extends BackendResource implements CapabilitiesResource {
@@ -528,7 +529,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private List<ServerCpu> getServerCpuList(Version version) {
-        return ServerCpuParser.parseCpus(getConfigurationValue(String.class, ConfigurationValues.ServerCPUList, version));
+        return getEntity(List.class, VdcQueryType.GetAllServerCpuList,
+                new GetAllServerCpuListParameters(new org.ovirt.engine.core.compat.Version(asString(version))),
+                "List<ServerCpu>");
     }
 
     public List<Version> getSupportedClusterLevels() {

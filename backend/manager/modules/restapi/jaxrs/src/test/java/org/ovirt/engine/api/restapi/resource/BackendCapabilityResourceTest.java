@@ -88,18 +88,6 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
-                new Object[] { "1.5", ConfigurationValues.ServerCPUList },
-                "0:bar:0:foo");
-
-        setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
-                GetConfigurationValueParameters.class,
-                new String[] { "Version", "ConfigValue" },
-                new Object[] { "10.3", ConfigurationValues.ServerCPUList },
-                "15:foo:1,2,3:bar");
-
-        setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
-                GetConfigurationValueParameters.class,
-                new String[] { "Version", "ConfigValue" },
                 new Object[] { "1.5", ConfigurationValues.VdsFenceOptionMapping },
                 "foo:one=1,two=2");
 

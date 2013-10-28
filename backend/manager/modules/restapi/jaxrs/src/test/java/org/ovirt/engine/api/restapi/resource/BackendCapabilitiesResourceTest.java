@@ -43,6 +43,7 @@ import org.ovirt.engine.api.restapi.utils.VersionUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -81,18 +82,6 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
                 new String[] { "ConfigValue" },
                 new Object[] { ConfigurationValues.SupportedClusterLevels },
                 supportedVersions);
-
-        setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
-                GetConfigurationValueParameters.class,
-                new String[] { "Version", "ConfigValue" },
-                new Object[] { "1.5", ConfigurationValues.ServerCPUList },
-                "0:bar:0:foo");
-
-        setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
-                GetConfigurationValueParameters.class,
-                new String[] { "Version", "ConfigValue" },
-                new Object[] { "10.3", ConfigurationValues.ServerCPUList },
-                "15:foo:1,2,3:bar");
 
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
@@ -140,6 +129,12 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "10.3", ConfigurationValues.UserDefinedVMProperties },
+                "bar=[a-z]");
+
+        setUpGetEntityExpectations(VdcQueryType.GetAllServerCpuList,
+                GetAllServerCpuListParameters.class,
+                new String[] { "Version"},
+                new Object[] { "3.3"},
                 "bar=[a-z]");
 
         verifyCapabilities(resource.list());
