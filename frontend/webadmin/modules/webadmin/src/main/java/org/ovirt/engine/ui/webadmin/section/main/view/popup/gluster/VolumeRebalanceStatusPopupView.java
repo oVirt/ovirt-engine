@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
-import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.GlusterRebalanceDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -204,7 +204,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
                 if(entity == null) {
                     return constants.unAvailablePropertyLabel();
                 }
-                return FullDateTimeRenderer.getLocalizedDateTimeFormat().format((Date) entity);
+                return GlusterRebalanceDateTimeRenderer.getLocalizedDateTimeFormat().format((Date) entity);
             }
         }, new EntityModelParser());
     }
