@@ -478,6 +478,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             onStopRebalance();
         } else if (command.equals(getStatusRebalanceCommand())) {
             showRebalanceStatus();
+        } else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
+            setConfirmWindow(null);
         } else if (command.getName().equals("CancelRebalanceStatus")) {//$NON-NLS-1$
             cancelRebalanceStatus();
         }else if (command.equals(getOptimizeForVirtStoreCommand())) {
@@ -523,11 +525,18 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         model.setTitle(ConstantsManager.getInstance().getConstants().confirmStopVolumeRebalanceTitle());
         model.setHashName("volume_rebalance_stop"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().confirmStopVolumeRebalanceMsg());
+
+        ArrayList<String> list = new ArrayList<String>();
+        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
+        {
+            list.add(item.getName());
+        }
+        model.setItems(list);
         UICommand okCommand = new UICommand("onStopRebalance", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
         model.getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
         model.getCommands().add(cancelCommand);
