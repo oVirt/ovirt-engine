@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -71,7 +70,7 @@ public class RegisterServlet extends HttpServlet {
              */
             String strIDNoMAC = strID.split("_")[0];
             params = new RegisterVdsParameters(Guid.Empty, strIP, SSH_PORT, SSH_USER, strName, strIDNoMAC, nPort,
-                    Guid.Empty, VDSType.oVirtNode);
+                    Guid.Empty);
 
             fReturn = backend.runInternalQuery(VdcQueryType.RegisterVds, params);
             if (fReturn == null) {

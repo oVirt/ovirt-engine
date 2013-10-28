@@ -1069,9 +1069,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} Role. Changing Role type is not allowed.")
     String ERROR_CANNOT_UPDATE_ROLE_TYPE();
 
-    @DefaultStringValue("Cannot approve Host. Approve operation is applicable only on RHEV Hypervisor hosts.\n-Please use New operation in order to install RHEL hosts.")
-    String VDS_APPROVE_WRONG_VDS_TYPE();
-
     @DefaultStringValue("Cannot approve RHEV Hypervisor Host.\n-Host must be in \"Pending Approval\" or \"Install Failed\" status in order to be approved.")
     String VDS_APPROVE_VDS_IN_WRONG_STATUS();
 

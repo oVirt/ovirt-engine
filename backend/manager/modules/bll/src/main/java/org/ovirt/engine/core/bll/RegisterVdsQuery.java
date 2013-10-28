@@ -156,9 +156,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             VDS vdsByUniqueId = getVdssByUniqueId().size() != 0 ? getVdssByUniqueId().get(0) : null;
 
             // in case oVirt host was added for the second time - perform approval
-            if (vdsByUniqueId != null && vdsByUniqueId.getStatus() == VDSStatus.PendingApproval
-                    && getParameters().getVdsType() == VDSType.oVirtNode) {
-
+            if (vdsByUniqueId != null && vdsByUniqueId.getStatus() == VDSStatus.PendingApproval) {
                 getQueryReturnValue().setSucceeded(dispatchOvirtApprovalCommand(vdsByUniqueId.getId()));
                 return;
             }
@@ -285,13 +283,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     getParameters().getSSHUser(),
                     vdsGroupId, Guid.Empty,
                     getParameters().getVdsName(), Config.<Boolean> GetValue(ConfigValues.SSLEnabled),
-                    getParameters().getVdsType()); // management
-                                                                                 // ip
-                                                                                 // not
-                                                                                 // currently
-                                                                                 // passed
-                                                                                 // by
-                                                                                 // registration
+                    VDSType.VDS);
 
                 log.debugFormat(
                         "RegisterVdsQuery::Register - Will try now to add VDS from scratch; Name: {0}, Hostname: {1}, Unique: {2}, VdsPort: {3},Subnet mask: {4}, IsPending: {5} with force synchronize",

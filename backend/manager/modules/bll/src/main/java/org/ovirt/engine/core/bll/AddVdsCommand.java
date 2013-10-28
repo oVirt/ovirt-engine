@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.config.Config;
@@ -271,11 +270,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         VdsDynamic vdsDynamic = new VdsDynamic();
         vdsDynamic.setId(getParameters().getVdsStaticData().getId());
         // TODO: oVirt type - here oVirt behaves like power client?
-        if (Config.<Boolean> GetValue(ConfigValues.InstallVds)
-                && getParameters().getVdsStaticData().getVdsType() == VDSType.VDS) {
-            vdsDynamic.setStatus(VDSStatus.Installing);
-        } else if (getParameters().getAddPending()) {
+        if (getParameters().getAddPending()) {
             vdsDynamic.setStatus(VDSStatus.PendingApproval);
+        }
+        else if (Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
+            vdsDynamic.setStatus(VDSStatus.Installing);
         }
         DbFacade.getInstance().getVdsDynamicDao().save(vdsDynamic);
         getCompensationContext().snapshotNewEntity(vdsDynamic);
@@ -416,7 +415,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     protected boolean canConnect(VDS vds) {
         // execute the connectivity and id uniqueness validation for VDS type hosts
-        if (vds.getVdsType() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
+        if (
+            !getParameters().getAddPending() &&
+            Config.<Boolean> GetValue(ConfigValues.InstallVds)
+        ) {
             EngineSSHClient sshclient = null;
             try {
                 sshclient = getSSHClient();

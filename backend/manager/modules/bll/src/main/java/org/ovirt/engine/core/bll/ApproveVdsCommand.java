@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -22,9 +21,6 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
         boolean returnValue = true;
         if (getVds() == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_NOT_FOUND);
-            returnValue = false;
-        } else if (getVds().getVdsType() != VDSType.oVirtNode) {
-            addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_WRONG_VDS_TYPE);
             returnValue = false;
         } else if (getVds().getStatus() != VDSStatus.PendingApproval
                 && getVds().getStatus() != VDSStatus.InstallFailed) {

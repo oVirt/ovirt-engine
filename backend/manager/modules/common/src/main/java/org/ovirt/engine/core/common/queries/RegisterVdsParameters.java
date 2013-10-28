@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RegisterVdsParameters extends VdcQueryParametersBase implements Serializable {
@@ -68,16 +67,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsGroupId = value;
     }
 
-    private VDSType privateVdsType;
-
-    public VDSType getVdsType() {
-        return privateVdsType;
-    }
-
-    private void setVdsType(VDSType value) {
-        privateVdsType = value;
-    }
-
     private int privateSSHPort;
 
     public int getSSHPort() {
@@ -99,7 +88,7 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
     }
 
     public RegisterVdsParameters(Guid vdsId, String vds_host_name, int ssh_port, String ssh_user, String vds_name, String vds_unique_id, int vds_port,
-            Guid vds_group_id, VDSType vds_type) {
+            Guid vds_group_id) {
         setVdsId(vdsId);
         setVdsHostName(vds_host_name);
         setSSHPort(ssh_port);
@@ -108,10 +97,8 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         setVdsUniqueId(vds_unique_id);
         setVdsPort(vds_port);
         setVdsGroupId(vds_group_id);
-        setVdsType(vds_type);
     }
 
     public RegisterVdsParameters() {
-        privateVdsType = VDSType.VDS;
     }
 }
