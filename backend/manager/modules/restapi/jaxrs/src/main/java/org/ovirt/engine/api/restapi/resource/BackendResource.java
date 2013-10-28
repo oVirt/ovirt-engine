@@ -158,11 +158,11 @@ public class BackendResource extends BaseBackendResource {
                 return performNonBlockingAction(task, params, action);
             } else {
                 VdcReturnValueBase actionResult = doAction(task, params);
+                if (action == null) {
+                    action = new Action();
+                }
                 if (actionResult.getJobId() != null) {
                     setJobLink(action, actionResult);
-                }
-                if (action==null) {
-                    action = new Action();
                 }
                 action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
                 if (getEntityWhenDone) {
