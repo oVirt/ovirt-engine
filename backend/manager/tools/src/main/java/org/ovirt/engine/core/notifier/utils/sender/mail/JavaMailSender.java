@@ -29,7 +29,6 @@ public class JavaMailSender {
     private InternetAddress from = null;
     private InternetAddress replyTo = null;
     private boolean isBodyHtml = false;
-    private boolean isSSL = false;
     private EmailAuthenticator auth;
 
     /**
@@ -40,19 +39,15 @@ public class JavaMailSender {
     public JavaMailSender(NotificationProperties aMailProps) {
         Properties mailSessionProps = setCommonProperties(aMailProps);
 
-        mailSessionProps.put("mail.host", aMailProps.getProperty(NotificationProperties.MAIL_SERVER));
+        mailSessionProps.put("mail.smtp.host", aMailProps.getProperty(NotificationProperties.MAIL_SERVER));
         // enable SSL
         if (aMailProps.getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false)) {
-            mailSessionProps.put("mail.transport.protocol", "smtps");
             mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT_SSL));
-            mailSessionProps.put("mail.smtps.socketFactory.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT_SSL));
-            mailSessionProps.put("mail.smtps.auth", "true");
-            mailSessionProps.put("mail.smtps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-            mailSessionProps.put("mail.smtps.socketFactory.fallback", false);
-
-            this.isSSL = true;
+            mailSessionProps.put("mail.smtp.auth", "true");
+            mailSessionProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            mailSessionProps.put("mail.smtp.socketFactory.fallback", false);
+            mailSessionProps.put("mail.smtp.socketFactory.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT_SSL));
         } else {
-            mailSessionProps.put("mail.transport.protocol", "smtp");
             mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT));
         }
 
@@ -64,7 +59,6 @@ public class JavaMailSender {
         } else {
             this.session = Session.getInstance(mailSessionProps);
         }
-
     }
 
     /**
@@ -155,13 +149,7 @@ public class JavaMailSender {
                 msg.setText(messageBody);
             }
             msg.setSentDate(new Date());
-            if (isSSL) {
-                Transport transport = session.getTransport("smtps");
-                transport.connect();
-                transport.sendMessage(msg, new Address[] { address });
-            } else {
-                Transport.send(msg);
-            }
+            Transport.send(msg);
         } catch (MessagingException mex) {
             StringBuilder errorMsg = new StringBuilder("Failed to send message ");
             if (from != null) {
@@ -190,6 +178,7 @@ public class JavaMailSender {
             this.password = password;
         }
 
+        @Override
         protected PasswordAuthentication getPasswordAuthentication() {
             return new PasswordAuthentication(userName, password);
         }
