@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -311,18 +312,24 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             Guid newStorageDomainID = getDestinationDiskImage().getStorageIds().get(0);
 
             // complete IRS data to DB disk image:
-            DiskImage newImageIRS = (DiskImage) runVdsCommand(
-                    VDSCommandType.GetImageInfo,
-                    new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
-                            newImageId)).getReturnValue();
+            try {
+                DiskImage newImageIRS = (DiskImage) runVdsCommand(
+                        VDSCommandType.GetImageInfo,
+                        new GetImageInfoVDSCommandParameters(storagePoolId, newStorageDomainID, newImageGroupId,
+                                newImageId)).getReturnValue();
 
-            if (newImageIRS != null) {
-                completeImageData(newImageIRS);
+                if (newImageIRS != null) {
+                    completeImageData(newImageIRS);
+                }
+            } catch (VdcBLLException e) {
+                // Logging only
+                log.errorFormat("Unable to update the image info for image {0} (image group: {1}) on domain {2}",
+                        newImageId, newImageGroupId, newStorageDomainID);
+            } finally {
+                // Unlock destination image:
+                getDestinationDiskImage().setImageStatus(ImageStatus.OK);
+                getImageDao().update(getDestinationDiskImage().getImage());
             }
-
-            // Unlock destination image:
-            getDestinationDiskImage().setImageStatus(ImageStatus.OK);
-            getImageDao().update(getDestinationDiskImage().getImage());
         }
 
         unLockImage();
