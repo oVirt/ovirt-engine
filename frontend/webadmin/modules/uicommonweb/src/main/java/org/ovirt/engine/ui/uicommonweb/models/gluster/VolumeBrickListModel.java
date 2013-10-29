@@ -866,6 +866,9 @@ public class VolumeBrickListModel extends SearchableListModel {
                 ConfirmationModel localModel = (ConfirmationModel) result.getState();
                 localModel.stopProgress();
                 setConfirmWindow(null);
+                if (result.getReturnValue().getSucceeded()) {
+                    showRemoveBricksStatus();
+                }
             }
         }, model);
     }

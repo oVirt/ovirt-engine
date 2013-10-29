@@ -113,6 +113,8 @@ public class VolumeModule extends AbstractGinModule {
                     return removeBrickPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getStatusRemoveBricksCommand()) {
                     return removeBricksStatusPopupProvider.get();
+                }else if (lastExecutedCommand.getName().equals("OnStopRemoveBricks")) {  //$NON-NLS-1$
+                    return removeBricksStatusPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getReplaceBrickCommand()) {
                     return replaceBrickPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getBrickAdvancedDetailsCommand()) {
