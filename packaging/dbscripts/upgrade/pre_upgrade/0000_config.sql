@@ -257,6 +257,9 @@ select fn_db_add_config_value('IPTablesConfigForGluster',
 # glusterd
 -A INPUT -p tcp -m tcp --dport 24007 -j ACCEPT
 
+# gluster swift
+-A INPUT -p tcp -m tcp --dport 8080  -j ACCEPT
+
 # portmapper
 -A INPUT -p udp -m udp --dport 111   -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 38465 -j ACCEPT
@@ -265,6 +268,7 @@ select fn_db_add_config_value('IPTablesConfigForGluster',
 # nfs
 -A INPUT -p tcp -m tcp --dport 38467 -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 2049  -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 38469 -j ACCEPT
 
 # status
 -A INPUT -p tcp -m tcp --dport 39543 -j ACCEPT
@@ -679,6 +683,9 @@ select fn_db_update_config_value('IPTablesConfigForGluster',
 # glusterd
 -A INPUT -p tcp -m tcp --dport 24007 -j ACCEPT
 
+# gluster swift
+-A INPUT -p tcp -m tcp --dport 8080  -j ACCEPT
+
 # portmapper
 -A INPUT -p udp -m udp --dport 111   -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 38465 -j ACCEPT
@@ -688,6 +695,7 @@ select fn_db_update_config_value('IPTablesConfigForGluster',
 -A INPUT -p tcp -m tcp --dport 111   -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 38467 -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 2049  -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 38469 -j ACCEPT
 
 # status
 -A INPUT -p tcp -m tcp --dport 39543 -j ACCEPT
