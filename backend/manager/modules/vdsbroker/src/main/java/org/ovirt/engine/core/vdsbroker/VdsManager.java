@@ -370,7 +370,12 @@ public class VdsManager {
      * @param dynamicData
      */
     public void UpdateDynamicData(VdsDynamic dynamicData) {
-        DbFacade.getInstance().getVdsDynamicDao().update(dynamicData);
+        if (dynamicData != null && _vds != null && _vds.getDynamicData() != null
+                && !dynamicData.equals(_vds.getDynamicData())) {
+            DbFacade.getInstance().getVdsDynamicDao().update(dynamicData);
+        } else {
+            log.debug("Ignoring unneeded update of VDSDynamic");
+        }
     }
 
     /**
