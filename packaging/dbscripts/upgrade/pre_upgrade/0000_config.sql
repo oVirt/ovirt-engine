@@ -597,6 +597,7 @@ select fn_db_add_config_value('ExternalSchedulerEnabled','false','general');
 select fn_db_add_config_value('ExternalSchedulerResponseTimeout','120000','general');
 
 select fn_db_add_config_value('DwhHeartBeatInterval', '30', 'general');
+select fn_db_add_config_value('DisconnectDwh', '0', 'general');
 
 -- OpenStack Glance
 select fn_db_add_config_value('GlanceImageListSize','20','general');

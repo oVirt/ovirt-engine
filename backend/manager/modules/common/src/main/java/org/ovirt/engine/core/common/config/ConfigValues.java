@@ -1538,6 +1538,10 @@ public enum ConfigValues {
     DwhHeartBeatInterval,
 
     @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("0")
+    DisconnectDwh,
+
+    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
     GlanceImageListSize,
 
