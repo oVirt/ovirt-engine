@@ -7,7 +7,7 @@ import org.ovirt.engine.core.authentication.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HeaderAuthenticatorFactory implements AuthenticatorFactory {
+public class    HeaderAuthenticatorFactory implements AuthenticatorFactory {
     private static final Logger log = LoggerFactory.getLogger(HeaderAuthenticatorFactory.class);
 
     /**
