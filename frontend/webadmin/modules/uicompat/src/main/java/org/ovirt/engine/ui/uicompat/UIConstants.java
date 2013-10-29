@@ -1503,7 +1503,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Could not find any host in Up status in the cluster. Please try again later.")
     String cannotAddBricksNoUpServerFound();
 
-    @DefaultStringValue("Brick Details")
+    @DefaultStringValue("Brick Advanced Details")
     String advancedDetailsBrickTitle();
 
     @DefaultStringValue("Error in fetching the brick details, please try again.")
