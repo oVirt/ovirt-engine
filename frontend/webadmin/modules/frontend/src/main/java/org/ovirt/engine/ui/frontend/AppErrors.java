@@ -2743,4 +2743,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Invalid time zone for given OS type.")
     String ACTION_TYPE_FAILED_INVALID_TIMEZONE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following disk(s) are not attached to any VM: ${diskAliases}.")
+    String ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK();
 }
