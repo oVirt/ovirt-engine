@@ -466,6 +466,9 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_IMPORT_IMAGE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_IMPORT_IMAGE_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_IMPORT_IMAGE_FINISHED_FAILURE, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_EXPORT_IMAGE, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_EXPORT_IMAGE_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_EXPORT_IMAGE_FINISHED_FAILURE, AuditLogSeverity.ERROR);
     }
 
     private static void initQuotaSeverities() {

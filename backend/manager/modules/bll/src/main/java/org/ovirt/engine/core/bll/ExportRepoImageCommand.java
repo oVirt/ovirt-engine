@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -161,6 +162,25 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     }
 
     @Override
+    public AuditLogType getAuditLogTypeValue() {
+        switch (getActionState()) {
+            case EXECUTE:
+                if (!getParameters().getTaskGroupSuccess()) {
+                    return AuditLogType.USER_EXPORT_IMAGE_FINISHED_FAILURE;
+                }
+                if (getParameters().getExecutionIndex() == 0 && getSucceeded()) {
+                    return AuditLogType.USER_EXPORT_IMAGE;
+                }
+                break;
+            case END_SUCCESS:
+                return AuditLogType.USER_EXPORT_IMAGE_FINISHED_SUCCESS;
+            case END_FAILURE:
+                return AuditLogType.USER_EXPORT_IMAGE_FINISHED_FAILURE;
+        }
+        return AuditLogType.UNASSIGNED;
+    }
+
+    @Override
     public Guid getStorageDomainId() {
         return getDiskImage() != null ? getDiskImage().getStorageIds().get(0) : null;
     }
@@ -182,6 +202,14 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
             }
         }
         return diskImage;
+    }
+
+    public String getRepoImageName() {
+        return getDiskImage() != null ? getDiskImage().getDiskAlias() : "";
+    }
+
+    public String getDestinationStorageDomainName() {
+        return getStorageDomainDAO().get(getParameters().getDestinationDomainId()).getName();
     }
 
     @Override
