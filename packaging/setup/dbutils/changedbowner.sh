@@ -13,13 +13,13 @@ set_defaults
 
 usage() {
     cat << __EOF__
-    Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] -f FROM_USER -t TO_USER
+Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] -f FROM_USER -t TO_USER
     -s SERVERNAME - The database servername for the database (def. ${SERVERNAME})
     -p PORT       - The database port for the database (def. ${PORT})
     -d DATABASE   - The database name (def. ${DATABASE})
     -f FROM_USER  - The current owner for the database
-    -f TO_USER    - The new owner for the database
-    -h            - This help text.\n"
+    -t TO_USER    - The new owner for the database
+    -h            - This help text.
 __EOF__
     exit $ret
 }
