@@ -5,11 +5,12 @@ import java.io.Serializable;
 public class ServerCpu implements Serializable {
     private static final long serialVersionUID = -267863982363067020L;
 
-    public ServerCpu(String name, int level, java.util.HashSet<String> flags, String verbData) {
+    public ServerCpu(String name, int level, java.util.HashSet<String> flags, String verbData, ArchitectureType architecture) {
         setCpuName(name);
         setLevel(level);
         setFlags(flags);
         setVdsVerbData(verbData);
+        this.privateArchitecture = architecture;
     }
 
     private String privateCpuName;
@@ -53,5 +54,11 @@ public class ServerCpu implements Serializable {
     }
 
     public ServerCpu() {
+    }
+
+    private ArchitectureType privateArchitecture;
+
+    public ArchitectureType getArchitecture() {
+        return privateArchitecture;
     }
 }

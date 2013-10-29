@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -37,6 +38,14 @@ public final class CpuFlagsManagerHandler {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.GetVDSVerbDataByCpuName(name);
+        }
+        return null;
+    }
+
+    public static ArchitectureType getArchitectureByCpuName(String name, Version ver) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
+            return cpuFlagsManager.getArchitectureByCpuName(name);
         }
         return null;
     }
@@ -105,15 +114,29 @@ public final class CpuFlagsManagerHandler {
         private Map<String, ServerCpu> _amdCpuByNameDictionary =
                 new HashMap<String, ServerCpu>();
         private final String _intelFlag = "vmx";
+        private final String _amdFlag = "svm";
 
         public CpuFlagsManager(Version ver) {
             InitDictionaries(ver);
+        }
+
+        public ArchitectureType getArchitectureByCpuName(String cpuName) {
+            ServerCpu cpu = getServerCpuByName(cpuName);
+
+            ArchitectureType result = ArchitectureType.undefined;
+
+            if (cpu != null) {
+                result = cpu.getArchitecture();
+            }
+
+            return result;
         }
 
         public ServerCpu getServerCpuByName(String cpuName) {
             ServerCpu result = null;
             if (cpuName != null) {
                 result = _intelCpuByNameDictionary.get(cpuName);
+
                 if (result == null) {
                     result = _amdCpuByNameDictionary.get(cpuName);
                 }
@@ -130,21 +153,34 @@ public final class CpuFlagsManagerHandler {
 
             String[] cpus = Config.<String> GetValue(ConfigValues.ServerCPUList, ver.toString()).split("[;]", -1);
             for (String cpu : cpus) {
+
                 if (!StringUtils.isEmpty(cpu)) {
-                    // [0]-level, [1]-name, [2]-flags, [3]-verb
+                    // [0]-level, [1]-name, [2]-flags, [3]-verb, [4]-arch
                     final String[] info = cpu.split("[:]", -1);
-                    if (info.length == 4) {
+
+                    if (info.length == 5) {
                         // if no flags at all create new list instead of split
                         HashSet<String> flgs =
                                 (StringUtils.isEmpty(info[2])) ? new HashSet<String>()
                                         : new HashSet<String>(Arrays.asList(info[2].split("[,]", -1)));
 
-                        ServerCpu sc = new ServerCpu(info[1], Integer.parseInt(info[0].trim()), flgs, info[3]);
+                        String arch = info[4].trim();
+                        ArchitectureType archType = ArchitectureType.valueOf(arch);
+
+                        String levelString = info[0].trim();
+                        int level = 0;
+
+                        if (StringUtils.isNotEmpty(levelString)) {
+                            level = Integer.parseInt(levelString);
+                        }
+
+                        ServerCpu sc = new ServerCpu(info[1], level, flgs, info[3], archType);
                         if (sc.getFlags().contains(_intelFlag)) {
                             _intelCpuByNameDictionary.put(sc.getCpuName(), sc);
-                        } else {
+                        } else if (sc.getFlags().contains(_amdFlag)) {
                             _amdCpuByNameDictionary.put(sc.getCpuName(), sc);
                         }
+
                         _allCpuList.add(sc);
                     } else {
                         log.errorFormat("Error getting info for CPU: {0}, not in expected format.", cpu);
@@ -201,9 +237,9 @@ public final class CpuFlagsManagerHandler {
 
             // first find cluster cpu
             if (clusterCpuName != null
-                    && ((clusterCpu = _intelCpuByNameDictionary.get(clusterCpuName)) != null || (clusterCpu =
-                            _amdCpuByNameDictionary
-                                    .get(clusterCpuName)) != null)) {
+                    && ((clusterCpu = _intelCpuByNameDictionary.get(clusterCpuName)) != null
+                            || (clusterCpu = _amdCpuByNameDictionary.get(clusterCpuName)) != null
+                    )) {
                 for (String flag : clusterCpu.getFlags()) {
                     if (!lstServerflags.contains(flag)) {
                         if (missingFlags == null) {
@@ -240,15 +276,20 @@ public final class CpuFlagsManagerHandler {
         public boolean CheckIfCpusSameManufacture(String cpuName1, String cpuName2) {
             boolean result = false;
             if (cpuName1 != null && cpuName2 != null) {
-                result = (_intelCpuByNameDictionary.containsKey(cpuName1)) ? _intelCpuByNameDictionary
-                        .containsKey(cpuName2) : _amdCpuByNameDictionary.containsKey(cpuName2);
+                if (_intelCpuByNameDictionary.containsKey(cpuName1)) {
+                    result = _intelCpuByNameDictionary.containsKey(cpuName2);
+                } else if (_amdCpuByNameDictionary.containsKey(cpuName1)) {
+                    result = _amdCpuByNameDictionary.containsKey(cpuName2);
+                }
             }
+
             return result;
         }
 
         public boolean CheckIfCpusExist(String cpuName) {
             return cpuName != null
-                    && (_intelCpuByNameDictionary.containsKey(cpuName) || _amdCpuByNameDictionary.containsKey(cpuName));
+                    && (_intelCpuByNameDictionary.containsKey(cpuName)
+                            || _amdCpuByNameDictionary.containsKey(cpuName));
         }
 
         /**
@@ -269,7 +310,7 @@ public final class CpuFlagsManagerHandler {
                         break;
                     }
                 }
-            } else {
+            } else if (lstFlags.contains(_amdFlag)) {
                 for (int i = _amdCpuList.size() - 1; i >= 0; i--) {
                     if (CheckIfFlagsContainsCpuFlags(_amdCpuList.get(i), lstFlags)) {
                         result = _amdCpuList.get(i);

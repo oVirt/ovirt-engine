@@ -109,6 +109,7 @@ import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
+import org.ovirt.engine.api.restapi.types.CPUMapper;
 import org.ovirt.engine.api.restapi.types.IpVersion;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
@@ -192,6 +193,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
                 CPU cpu = new CPU();
                 cpu.setId(sc.getCpuName());
                 cpu.setLevel(sc.getLevel());
+                cpu.setArchitecture(CPUMapper.map(sc.getArchitecture(), null));
                 version.getCpus().getCPUs().add(cpu);
             }
             addPowerManagers(version, getPowerManagers(v));
