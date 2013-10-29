@@ -12,6 +12,16 @@
     <param-value>false</param-value>
   </context-param>
 
+  <!-- Perform authentication: -->
+  <filter>
+    <filter-name>AuthenticationFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.authentication.AuthenticationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <!-- confidentiality -->
   <security-constraint>
     <web-resource-collection>
