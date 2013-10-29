@@ -232,6 +232,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             public Void runInTransaction() {
                 boolean taskGroupSucceeded = getParameters().getTaskGroupSuccess();
                 Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
+                boolean liveSnapshotRequired = isLiveSnapshotApplicable();
+                boolean liveSnapshotSucceeded = false;
                 // if the snapshot was not created the command should be
                 // handled as a failure
                 if (createdSnapshot == null) {
@@ -240,8 +242,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 if (taskGroupSucceeded) {
                     getSnapshotDao().updateStatus(createdSnapshot.getId(), SnapshotStatus.OK);
 
-                    if (isLiveSnapshotApplicable()) {
-                        performLiveSnapshot(createdSnapshot);
+                    if (liveSnapshotRequired) {
+                        liveSnapshotSucceeded = performLiveSnapshot(createdSnapshot);
                     } else {
                         // If the created snapshot contains memory, remove the memory volumes as
                         // they are not in use since no live snapshot was created
@@ -271,7 +273,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
                 incrementVmGeneration();
                 endActionOnDisks();
-                setSucceeded(taskGroupSucceeded);
+                setSucceeded(taskGroupSucceeded && (!liveSnapshotRequired || liveSnapshotSucceeded));
                 getReturnValue().setEndActionTryAgain(false);
                 return null;
             }
@@ -347,26 +349,25 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     /**
      * Perform live snapshot on the host that the VM is running on. If the snapshot fails, and the error is
-     * unrecoverable then the {@link CreateAllSnapshotsFromVmParameters#getTaskGroupSuccess()} will return false - which
-     * will indicate that rollback of snapshot command should happen.
+     * unrecoverable then the {@link CreateAllSnapshotsFromVmParameters#getTaskGroupSuccess()} will return false.
      *
-     * @param createdSnapshotId
+     * @param snapshot
      *            Snapshot to revert to being active, in case of rollback.
      */
-    protected void performLiveSnapshot(final Snapshot snapshot) {
+    protected boolean performLiveSnapshot(final Snapshot snapshot) {
         try {
             TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Void>() {
-
                 @Override
                 public Void runInTransaction() {
-
                     runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(snapshot));
                     return null;
                 }
             });
         } catch (VdcBLLException e) {
             handleVdsLiveSnapshotFailure(e);
+            return false;
         }
+        return true;
     }
 
     private SnapshotVDSCommandParameters buildLiveSnapshotParameters(Snapshot snapshot) {
