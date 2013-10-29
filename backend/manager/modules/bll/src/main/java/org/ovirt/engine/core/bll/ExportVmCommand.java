@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -213,7 +212,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         // Means that there are no asynchronous tasks to execute - so we can end the command
         // immediately after the execution of the previous steps
         if (!hasSnappableDisks() && snapshotsWithMemory.isEmpty()) {
-            endSuccessfullySynchronous();
+            endSuccessfully();
         } else {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
@@ -248,8 +247,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
 
         List<Guid> imageGroupIds = new ArrayList<>();
-        for (Disk disk : vm.getDiskMap().values()) {
-            if (DiskStorageType.IMAGE == disk.getDiskStorageType() && !disk.isShareable()) {
+        for (Disk disk : getDisksBasedOnImage()) {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 diskImage.setImageTemplateId(VmTemplateHandler.BlankVmTemplateId);
@@ -270,7 +268,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 }
                 AllVmImages.add(diskImage);
                 imageGroupIds.add(disk.getId());
-            }
         }
 
         if (StringUtils.isEmpty(vm.getVmtName())) {
@@ -507,13 +504,13 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     protected void endSuccessfully() {
         endActionOnAllImageGroups();
         VM vm = getVm();
-        VmHandler.unLockVm(vm);
         populateVmData(vm);
         if (getParameters().getCopyCollapse()) {
             endCopyCollapseOperations(vm);
         } else {
             updateSnapshotOvf(vm);
         }
+        VmHandler.unLockVm(vm);
         setSucceeded(true);
     }
 
@@ -536,14 +533,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     private void updateSnapshotOvf(VM vm) {
         vm.setSnapshots(getDbFacade().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
         updateVmImSpm();
-    }
-
-    protected void endSuccessfullySynchronous() {
-        VM vm = getVm();
-        VmHandler.unLockVm(vm);
-        VmDeviceUtils.setVmDevices(vm.getStaticData());
-        this.updateSnapshotOvf(vm);
-        setSucceeded(true);
     }
 
     @Override
