@@ -10,6 +10,8 @@ import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -24,6 +26,11 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void execute() {
+        if (!enclosingCommand.getReturnValue().getSucceeded()) {
+            throw new VdcBLLException(VdcBllErrors.imageErr,
+                "Auto-generated live snapshot for VM " + enclosingCommand.getParameters().getVmId() + " failed");
+        }
+
         for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
             CommandContext commandContext = ExecutionHandler.createInternalJobContext();
             ExecutionHandler.setAsyncJob(commandContext.getExecutionContext(), true);
