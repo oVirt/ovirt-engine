@@ -52,7 +52,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private List<PermissionSubject> listPermissionSubjects;
     private Map<Guid, List<Disk>> otherVmDisks = new HashMap<Guid, List<Disk>>();
-    private List<VM> vmsDiskPluggedTo, vmsDiskSnapshotPluggedTo, vmsDiskOrSnapshotPluggedTo, vmsDiskOrSnapshotAttachedTo;
+    private List<VM> vmsDiskSnapshotPluggedTo = new LinkedList<>();
+    private List<VM> vmsDiskPluggedTo = new LinkedList<>();
+    private List<VM> vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
+    private List<VM> vmsDiskOrSnapshotAttachedTo = new LinkedList<>();
 
     /**
      * vm device for the given vm and disk
@@ -547,11 +550,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private void loadVmDiskAttachedToInfo() {
         if (getOldDisk() != null) {
-            vmsDiskSnapshotPluggedTo = new LinkedList<>();
-            vmsDiskPluggedTo = new LinkedList<>();
-            vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
-            vmsDiskOrSnapshotAttachedTo = new LinkedList<>();
-
             List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDAO().getVmsWithPlugInfo(getOldDisk().getId());
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 VM vm = pair.getFirst();
