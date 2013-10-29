@@ -426,6 +426,9 @@ install-dev:	\
 		all-dev \
 		$(NULL)
 
+	# remove dbscripts to avoid dups
+	rm -fr "$(DESTDIR)$(DATA_DIR)/dbscripts"
+
 	$(MAKE) \
 		install \
 		BUILD_DEV=1 \
