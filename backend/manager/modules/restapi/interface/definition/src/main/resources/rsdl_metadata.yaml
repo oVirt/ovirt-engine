@@ -2881,8 +2881,8 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vnicprofiles/{vnicprofiles:id}/permissions/{permission:id}|rel=delete
-  description: get details of the specified permission on the virtual network interface card profile in the system
+- name: /api/vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission for the virtual network interface card profile
   request:
     body:
       parameterType: null
