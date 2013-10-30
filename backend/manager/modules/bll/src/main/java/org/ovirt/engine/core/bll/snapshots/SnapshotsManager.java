@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -299,12 +300,13 @@ public class SnapshotsManager {
      *            The snapshot containing the configuration.
      * @param version
      *            The compatibility version of the VM's cluster
-     * @param userId
+     * @param user
+     *            The user that performs the action
      */
     public void attempToRestoreVmConfigurationFromSnapshot(VM vm,
             Snapshot snapshot,
             Guid activeSnapshotId,
-            CompensationContext compensationContext, Version version, Guid userId) {
+            CompensationContext compensationContext, Version version, VdcUser user) {
         boolean vmUpdatedFromConfiguration = false;
         if (snapshot.getVmConfiguration() != null) {
             vmUpdatedFromConfiguration = updateVmFromConfiguration(vm, snapshot.getVmConfiguration());
@@ -320,7 +322,7 @@ public class SnapshotsManager {
 
         if (vmUpdatedFromConfiguration) {
             getVmStaticDao().update(vm.getStaticData());
-            synchronizeNics(vm, compensationContext, userId);
+            synchronizeNics(vm, compensationContext, user);
 
             for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vm.getId())) {
                 if (deviceCanBeRemoved(vmDevice)) {
@@ -406,8 +408,10 @@ public class SnapshotsManager {
      *            The nics from snapshot.
      * @param version
      *            The compatibility version of the VM's cluster
+     * @param user
+     *            The user that performs the action
      */
-    protected void synchronizeNics(VM vm, CompensationContext compensationContext, Guid userId) {
+    protected void synchronizeNics(VM vm, CompensationContext compensationContext, VdcUser user) {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(vm.getVdsGroupId(),
@@ -423,7 +427,7 @@ public class SnapshotsManager {
                 vmInterface.setId(Guid.newGuid());
             }
 
-            vnicProfileHelper.updateNicWithVnicProfileForUser(vmInterface, userId);
+            vnicProfileHelper.updateNicWithVnicProfileForUser(vmInterface, user);
             vmInterfaceManager.add(vmInterface, compensationContext, false, vm.getVdsGroupCompatibilityVersion());
         }
 

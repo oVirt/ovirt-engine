@@ -391,7 +391,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             nic.setSpeed(iface.getSpeed());
             nic.setType(iface.getType());
 
-            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser().getUserId());
+            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
             nic.setVnicProfileId(iface.getVnicProfileId());
             getVmNicDao().save(nic);
             getCompensationContext().snapshotNewEntity(nic);
