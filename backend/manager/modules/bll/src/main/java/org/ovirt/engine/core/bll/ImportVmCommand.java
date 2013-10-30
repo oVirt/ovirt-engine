@@ -1024,7 +1024,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
-            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser().getId());
+            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
             vmInterfaceManager.add(iface,
                     getCompensationContext(),
                     getParameters().isImportAsNewEntity(),

@@ -99,7 +99,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 getParameters().getNetworkName(),
                 getParameters().isPortMirroring(),
                 getVm().getStaticData(),
-                getCurrentUser().getId()))) {
+                getCurrentUser()))) {
             return false;
         }
 

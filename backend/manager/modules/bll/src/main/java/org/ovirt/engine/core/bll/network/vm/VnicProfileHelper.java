@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -52,11 +53,11 @@ public class VnicProfileHelper {
      *
      * @param iface
      *            The vm network interface to be updated
-     * @param userId
-     *            The id of the user which performs the action
+     * @param user
+     *            The user which performs the action
      */
-    public void updateNicWithVnicProfileForUser(VmNetworkInterface vmInterface, Guid userId) {
-        if (!updateNicWithVnicProfile(vmInterface, userId)) {
+    public void updateNicWithVnicProfileForUser(VmNetworkInterface vmInterface, DbUser user) {
+        if (!updateNicWithVnicProfile(vmInterface, user)) {
             markNicHasNoProfile(vmInterface);
         }
     }
@@ -66,11 +67,11 @@ public class VnicProfileHelper {
      *
      * @param iface
      *            The vm network interface to be updated
-     * @param userId
-     *            The id of the user which performs the action
+     * @param user
+     *            The user which performs the action
      * @return {@code true} if the vnic profile id is updated, else {@code false}
      */
-    private boolean updateNicWithVnicProfile(VmNetworkInterface iface, Guid userId) {
+    private boolean updateNicWithVnicProfile(VmNetworkInterface iface, DbUser user) {
 
         if (iface.getNetworkName() == null) {
             if (FeatureSupported.networkLinking(compatibilityVersion)) {
@@ -88,7 +89,7 @@ public class VnicProfileHelper {
 
         VnicProfile vnicProfile = getVnicProfileForNetwork(network, iface.getVnicProfileName());
         if (vnicProfile == null) {
-            vnicProfile = findVnicProfileForUser(userId, network);
+            vnicProfile = findVnicProfileForUser(user, network);
             if (vnicProfile == null) {
                 return false;
             }
@@ -98,11 +99,12 @@ public class VnicProfileHelper {
         return true;
     }
 
-    private VnicProfile findVnicProfileForUser(Guid userId, Network network) {
+    private VnicProfile findVnicProfileForUser(DbUser user, Network network) {
         List<VnicProfile> networkProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
 
         for (VnicProfile profile : networkProfiles) {
-            if (isVnicProfilePermitted(userId, profile, false)) {
+            if ((user == null && !profile.isPortMirroring())
+                    || (user != null && isVnicProfilePermitted(user, profile, false))) {
                 return profile;
             }
         }
@@ -126,9 +128,9 @@ public class VnicProfileHelper {
         return null;
     }
 
-    private static boolean isVnicProfilePermitted(Guid userId, VnicProfile profile, boolean portMirroringRequired) {
+    private static boolean isVnicProfilePermitted(DbUser user, VnicProfile profile, boolean portMirroringRequired) {
         return portMirroringRequired == profile.isPortMirroring()
-                && getPermissionDAO().getEntityPermissions(userId,
+                && getPermissionDAO().getEntityPermissions(user.getId(),
                         ActionGroup.CONFIGURE_VM_NETWORK,
                         profile.getId(),
                         VdcObjectType.VnicProfile) != null;
@@ -154,7 +156,7 @@ public class VnicProfileHelper {
             String networkName,
             boolean portMirroring,
             VmBase vm,
-            Guid userId) {
+            DbUser user) {
 
         if (networkName == null) {
             return ValidationResult.VALID;
@@ -177,7 +179,7 @@ public class VnicProfileHelper {
 
         List<VnicProfile> vnicProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
         for (VnicProfile profile : vnicProfiles) {
-            if (isVnicProfilePermitted(userId, profile, portMirroring)) {
+            if (isVnicProfilePermitted(user, profile, portMirroring)) {
                 nic.setVnicProfileId(profile.getId());
                 return ValidationResult.VALID;
             }

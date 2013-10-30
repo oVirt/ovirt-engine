@@ -52,7 +52,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
                 getParameters().getNetworkName(),
                 getParameters().isPortMirroring(),
                 getVmTemplate(),
-                getCurrentUser().getId()))) {
+                getCurrentUser()))) {
             return false;
         }
 
