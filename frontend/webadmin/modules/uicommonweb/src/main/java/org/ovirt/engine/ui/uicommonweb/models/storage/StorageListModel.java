@@ -1415,6 +1415,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
                 storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+                storageListModel.connection.setid((String) vdcReturnValueBase.getActionReturnValue());
             }
         };
 
