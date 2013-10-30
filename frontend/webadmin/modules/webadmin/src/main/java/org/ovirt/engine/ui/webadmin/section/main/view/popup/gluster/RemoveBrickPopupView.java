@@ -108,7 +108,7 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
                 ArrayList<String> items = (ArrayList<String>) object.getItems();
 
                 for (String item : items) {
-                    itemsPanel.add(new Label(item));
+                    itemsPanel.add(new Label(getItemTextFormatted(item)));
                 }
             }
         });
@@ -130,6 +130,10 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
                 warningLabel.setVisible(!(Boolean) object.getMigrateData().getEntity());
             }
         });
+    }
+
+    private String getItemTextFormatted(String itemText) {
+        return "- " + itemText; //$NON-NLS-1$
     }
 
     @Override
