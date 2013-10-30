@@ -238,7 +238,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
         OvfManager ovfManager = new OvfManager();
         ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
-        VmHandler.updateDisksFromDb(vm);
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces != null) {
             // TODO remove this when the API changes
@@ -494,7 +493,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
                 new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
         OvfDataUpdater.getInstance().loadVmData(getVm());
-        VmHandler.updateDisksFromDb(getVm());
         OvfDataUpdater.getInstance().buildMetadataDictionaryForVm(getVm(), metaDictionary);
         return OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
                 metaDictionary, getParameters().getStorageDomainId());
