@@ -1841,7 +1841,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("There are no new hosts in the cluster")
     String emptyNewGlusterHosts();
 
-    @DefaultStringValue("Detach Gluster Hosts")
+    @DefaultStringValue("Detach Hosts")
     String detachGlusterHostsTitle();
 
     // Vnic
