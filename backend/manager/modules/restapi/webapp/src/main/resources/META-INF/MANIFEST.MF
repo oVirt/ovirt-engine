@@ -1,2 +1,3 @@
 Manifest-Version: 1.0
-Dependencies: org.yaml.snakeyaml
+Dependencies: org.codehaus.jackson.jackson-xc,org.yaml.snakeyaml
+
