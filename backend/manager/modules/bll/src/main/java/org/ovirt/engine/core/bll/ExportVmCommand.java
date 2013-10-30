@@ -544,7 +544,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         endActionOnAllImageGroups();
         VM vm = getVm();
         VmHandler.unLockVm(vm);
-        VmHandler.updateDisksFromDb(vm);
         setSucceeded(true);
     }
 
