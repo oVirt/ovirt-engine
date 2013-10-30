@@ -182,7 +182,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private void handleSingleAgent(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
         executor = new FenceExecutor(getVds(), getParameters().getAction());
         if (executor.findProxyHost()) {
-            vdsReturnValue = executor.Fence();
+            vdsReturnValue = executor.fence();
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
                 executor = new FenceExecutor(getVds(), FenceActionType.Status);
@@ -209,7 +209,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private void handleMultipleSequentialAgents(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
         executor = new FenceExecutor(getVds(), getParameters().getAction());
         if (executor.findProxyHost()) {
-            vdsReturnValue = executor.Fence(FenceAgentOrder.Primary);
+            vdsReturnValue = executor.fence(FenceAgentOrder.Primary);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
                 executor = new FenceExecutor(getVds(), FenceActionType.Status);
@@ -235,7 +235,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * @param lastStatus
      */
     private void tryOtherSequentialAgent(VDSStatus lastStatus) {
-        VDSReturnValue vdsReturnValue = executor.Fence(FenceAgentOrder.Secondary);
+        VDSReturnValue vdsReturnValue = executor.fence(FenceAgentOrder.Secondary);
         setFenceSucceeded(vdsReturnValue.getSucceeded());
         if (getFenceSucceeded()) {
             executor = new FenceExecutor(getVds(), FenceActionType.Status);
@@ -361,7 +361,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private FenceInvocationResult run(FenceExecutor fenceExecutor, FenceAgentOrder order) {
         FenceInvocationResult fenceInvocationResult = new FenceInvocationResult();
         fenceInvocationResult.setOrder(order);
-        fenceInvocationResult.setValue(fenceExecutor.Fence(order));
+        fenceInvocationResult.setValue(fenceExecutor.fence(order));
         if (fenceInvocationResult.getValue().getSucceeded()) {
             this.executor = new FenceExecutor(getVds(), FenceActionType.Status);
             fenceInvocationResult.setSucceeded(waitForStatus(getVds().getName(), getParameters().getAction(), order));
@@ -376,7 +376,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // before giving up
         if (getParameters().getAction() == FenceActionType.Start) {
             executor = new FenceExecutor(getVds(), FenceActionType.Start);
-            vdsReturnValue = executor.Fence(order);
+            vdsReturnValue = executor.fence(order);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
                 executor = new FenceExecutor(getVds(), FenceActionType.Status);
@@ -509,7 +509,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         while (!statusReached && i <= getRerties()) {
             log.infoFormat("Attempt {0} to get vds {1} status", i, vdsName);
             if (executor.findProxyHost()) {
-                VDSReturnValue returnValue = executor.Fence(order);
+                VDSReturnValue returnValue = executor.fence(order);
                 if (returnValue != null && returnValue.getReturnValue() != null) {
                     FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
                     if (value.getStatus().equalsIgnoreCase("unknown")) {

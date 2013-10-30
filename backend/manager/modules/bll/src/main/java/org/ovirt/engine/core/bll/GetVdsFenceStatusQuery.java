@@ -26,13 +26,13 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fence
         FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
         VDSReturnValue returnValue = null;
         if (executor.findProxyHost()) {
-            returnValue = executor.Fence(FenceAgentOrder.Primary);
+            returnValue = executor.fence(FenceAgentOrder.Primary);
             if (returnValue.getReturnValue() != null) {
                 if (returnValue.getSucceeded()) {
                     boolean succeeded = true;
                     // check if we have secondary agent settings
                     if (vds.getPmSecondaryIp() != null && !vds.getPmSecondaryIp().isEmpty()) {
-                        returnValue = executor.Fence(FenceAgentOrder.Secondary);
+                        returnValue = executor.fence(FenceAgentOrder.Secondary);
                         succeeded = returnValue.getSucceeded();
                     }
                     if (succeeded) {

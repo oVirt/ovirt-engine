@@ -145,11 +145,11 @@ public class FenceExecutor {
                 proxy, origin, command, _vds.getName());
     }
 
-    public VDSReturnValue Fence() {
-        return Fence(FenceAgentOrder.Primary);
+    public VDSReturnValue fence() {
+        return fence(FenceAgentOrder.Primary);
     }
 
-    public VDSReturnValue Fence(FenceAgentOrder order) {
+    public VDSReturnValue fence(FenceAgentOrder order) {
         VDSReturnValue retValue = null;
         try {
             // skip following code in case of testing a new host status
