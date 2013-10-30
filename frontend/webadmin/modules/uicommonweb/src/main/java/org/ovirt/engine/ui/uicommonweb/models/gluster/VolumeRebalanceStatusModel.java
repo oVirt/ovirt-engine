@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
@@ -120,11 +121,13 @@ public class VolumeRebalanceStatusModel extends Model {
                 refresh.cancel();
             }
         }
-        getStopReblanceFromStatus().setIsExecutionAllowed(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.STARTED);
+        if (GlusterTaskType.REBALANCE == getEntity().getAsyncTask().getType()) {
+            getStopReblanceFromStatus().setIsExecutionAllowed(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.STARTED);
+        }
     }
 
     public void cancelRefresh() {
-        if(refresh != null) {
+        if (refresh != null) {
             refresh.cancel();
         }
     }
@@ -142,6 +145,7 @@ public class VolumeRebalanceStatusModel extends Model {
             }
         }), volumeEntity.getClusterId(), volumeEntity.getId());
     }
+
     public GlusterVolumeEntity getEntity() {
         return entity;
     }
@@ -164,7 +168,7 @@ public class VolumeRebalanceStatusModel extends Model {
 
     public void setStatusAvailable(boolean isStatusAvailable) {
         this.isStatusAvailable = isStatusAvailable;
-        if(isStatusAvailable == true) {
+        if (isStatusAvailable == true) {
             onPropertyChanged(new PropertyChangedEventArgs("IS_STATUS_APPLICABLE"));//$NON-NLS-1$
         }
     }
