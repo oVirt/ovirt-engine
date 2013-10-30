@@ -46,6 +46,9 @@ class Plugin(plugin.PluginBase):
             with open(conf, 'r') as src_file:
                 conf_content = src_file.read()
 
+            self.environment[
+                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+            ].append(conf)
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
                     name=conf,
