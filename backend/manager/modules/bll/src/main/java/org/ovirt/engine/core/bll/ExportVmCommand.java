@@ -508,7 +508,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         endActionOnAllImageGroups();
         VM vm = getVm();
         VmHandler.unLockVm(vm);
-        endDiskRelatedActions(vm);
+        populateVmData(vm);
         if (getParameters().getCopyCollapse()) {
             endCopyCollapseOperations(vm);
         } else {
@@ -517,7 +517,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         setSucceeded(true);
     }
 
-    private void endDiskRelatedActions(VM vm) {
+    private void populateVmData(VM vm) {
         VmHandler.updateDisksFromDb(vm);
         VmDeviceUtils.setVmDevices(vm.getStaticData());
     }
