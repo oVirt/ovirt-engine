@@ -2000,6 +2000,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         boolean success = returnVal != null && returnVal.getSucceeded();
                         if (success)
                         {
+                            storageListModel.fileConnection.setid((String) returnVal.getActionReturnValue());
                             AsyncDataProvider.getExistingStorageDomainList(new AsyncQuery(storageListModel,
                                     new INewAsyncCallback() {
                                         @Override
@@ -2007,32 +2008,23 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                                             StorageListModel storageListModel1 = (StorageListModel) target;
                                             ArrayList<StorageDomain> domains = (ArrayList<StorageDomain>) returnValue;
-                                            if (domains != null)
-                                            {
-                                                if (domains.isEmpty())
-                                                {
-                                                    postImportFileStorage(storageListModel1.context,
-                                                            false,
-                                                            storageListModel1.storageModel,
-                                                            ConstantsManager.getInstance()
-                                                                    .getConstants()
-                                                                    .thereIsNoStorageDomainUnderTheSpecifiedPathMsg());
-                                                }
-                                                else
-                                                {
-                                                    storageListModel1.importFileStorageAddDomain(domains);
-                                                }
+                                            if (domains != null && !domains.isEmpty()) {
+                                                storageListModel1.importFileStorageAddDomain(domains);
                                             }
-                                            else
-                                            {
+                                            else {
+                                                String errorMessage = domains == null ?
+                                                        ConstantsManager.getInstance().getConstants()
+                                                                .failedToRetrieveExistingStorageDomainInformationMsg() :
+                                                        ConstantsManager.getInstance().getConstants()
+                                                                .thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
+
                                                 postImportFileStorage(storageListModel1.context,
                                                         false,
                                                         storageListModel1.storageModel,
-                                                        ConstantsManager.getInstance()
-                                                                .getConstants()
-                                                                .failedToRetrieveExistingStorageDomainInformationMsg());
-                                            }
+                                                        errorMessage);
 
+                                                storageListModel1.cleanConnection(storageListModel1.fileConnection, storageListModel1.hostId);
+                                            }
                                         }
                                     }),
                                     hostId,
