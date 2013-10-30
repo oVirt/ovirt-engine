@@ -246,6 +246,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             interfaces.clear();
             interfaces.addAll(getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
+
+        List<Guid> imageGroupIds = new ArrayList<>();
         for (Disk disk : vm.getDiskMap().values()) {
             if (DiskStorageType.IMAGE == disk.getDiskStorageType() && !disk.isShareable()) {
                 DiskImage diskImage = (DiskImage) disk;
@@ -267,20 +269,17 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     diskImage.setActualSizeInBytes(fromVdsm.getActualSizeInBytes());
                 }
                 AllVmImages.add(diskImage);
+                imageGroupIds.add(disk.getId());
             }
         }
+
         if (StringUtils.isEmpty(vm.getVmtName())) {
             VmTemplate t = getDbFacade().getVmTemplateDao().get(vm.getVmtGuid());
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
         String vmMeta = ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
-        List<Guid> imageGroupIds = new ArrayList<Guid>();
-        for(Disk disk : vm.getDiskMap().values()) {
-            if(disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                imageGroupIds.add(disk.getId());
-            }
-        }
+
         vmsAndMetaDictionary
                     .put(vm.getId(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
