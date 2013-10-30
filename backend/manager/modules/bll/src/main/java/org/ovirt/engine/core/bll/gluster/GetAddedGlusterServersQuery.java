@@ -9,8 +9,10 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -19,6 +21,8 @@ import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
@@ -40,6 +44,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
                             new VdsIdVDSCommandParametersBase(upServer.getId()));
             glusterServers = getAddedGlusterServers((List<GlusterServerInfo>) returnValue.getReturnValue());
         }
+
         getQueryReturnValue().setReturnValue(glusterServers);
     }
 
@@ -54,14 +59,14 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
                     returnValue = getBackendInstance().
                             runInternalQuery(VdcQueryType.GetServerSSHKeyFingerprint,
                                              new ServerParameters(server.getHostnameOrIp()));
-                    if (returnValue != null && returnValue.getSucceeded()) {
+                    if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
                         fingerprint = returnValue.getReturnValue().toString();
                     }
                 }
-                serversAndFingerprint.put(
-                    server.getHostnameOrIp(),
-                    fingerprint == null ? "" : fingerprint
-                );
+                // Keep server details in the map only for the servers which are reachable
+                if (fingerprint != null && !(fingerprint.isEmpty())) {
+                    serversAndFingerprint.put(server.getHostnameOrIp(), fingerprint);
+                }
             }
         }
         return serversAndFingerprint;
@@ -71,8 +76,13 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         return GlusterDBUtils.getInstance();
     }
 
-    private boolean serverExists(GlusterServerInfo glusterServer) {
-        return getDbUtils().serverExists(getParameters().getClusterId(), glusterServer.getHostnameOrIp());
+    public boolean serverExists(GlusterServerInfo glusterServer) {
+        VDSGroup cluster = getVdsGroupDao().get(getParameters().getClusterId());
+        if (GlusterFeatureSupported.glusterHostUuidSupported(cluster.getcompatibility_version())) {
+            return getDbUtils().serverExists(glusterServer.getUuid());
+        } else {
+            return getDbUtils().serverExists(getParameters().getClusterId(), glusterServer.getHostnameOrIp());
+        }
     }
 
     public ClusterUtils getClusterUtils() {
@@ -86,5 +96,9 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
     public BackendInternal getBackendInstance() {
         return Backend.getInstance();
+    }
+
+    public VdsGroupDAO getVdsGroupDao() {
+        return DbFacade.getInstance().getVdsGroupDao();
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -32,6 +33,10 @@ public class GlusterDBUtils {
 
     private GlusterVolumeDao getGlusterVolumeDao() {
         return getDbFacade().getGlusterVolumeDao();
+    }
+
+    private GlusterServerDao getGlusterServerDao() {
+        return getDbFacade().getGlusterServerDao();
     }
 
     public boolean hasBricks(Guid serverId) {
@@ -67,6 +72,19 @@ public class GlusterDBUtils {
 
     public boolean serverExists(Guid clusterId, String hostnameOrIp) {
         return getServer(clusterId, hostnameOrIp) != null;
+    }
+
+    public boolean serverExists(Guid uuid) {
+        return getServerByUuid(uuid) != null;
+    }
+
+    /**
+     * Returns a server from the given cluster, having given UUID
+     *
+     * @return GlusterServer object for the said server if found, else null
+     */
+    public GlusterServer getServerByUuid(Guid uuid) {
+        return getGlusterServerDao().getByGlusterServerUuid(uuid);
     }
 
     /**
