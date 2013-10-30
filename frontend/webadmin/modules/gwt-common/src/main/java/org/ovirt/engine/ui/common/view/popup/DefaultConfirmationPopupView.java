@@ -57,10 +57,14 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
                 ArrayList<String> items = (ArrayList<String>) object.getItems();
 
                 for (String item : items) {
-                    descriptionPanel.add(new Label(item));
+                    descriptionPanel.add(new Label(getItemTextFormatted(item)));
                 }
             }
         });
+    }
+
+    private String getItemTextFormatted(String itemText) {
+        return "- " + itemText; //$NON-NLS-1$
     }
 
     @Override
