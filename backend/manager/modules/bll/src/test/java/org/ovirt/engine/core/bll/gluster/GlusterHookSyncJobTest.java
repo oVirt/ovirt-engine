@@ -77,6 +77,7 @@ public class GlusterHookSyncJobTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
+            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
             mockConfig(ConfigValues.GlusterHooksEnabled, "3.2", true));
 
     @Before
