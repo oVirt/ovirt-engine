@@ -2791,4 +2791,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskAlias} is being exported.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_EXPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskAlias} alignment is currently being determined.")
+    String ACTION_TYPE_FAILED_DISK_IS_USED_BY_GET_ALIGNMENT();
 }
