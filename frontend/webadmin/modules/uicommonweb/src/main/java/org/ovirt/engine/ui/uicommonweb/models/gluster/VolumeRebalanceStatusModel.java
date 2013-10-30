@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -133,8 +134,11 @@ public class VolumeRebalanceStatusModel extends Model {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                GlusterVolumeTaskStatusEntity rebalanceEntity = (GlusterVolumeTaskStatusEntity) returnValue;
-                showStatus(rebalanceEntity);
+                VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
+                GlusterVolumeTaskStatusEntity rebalanceStatusEntity =vdcValue.getReturnValue();
+                if (rebalanceStatusEntity != null) {
+                    showStatus(rebalanceStatusEntity);
+                }
             }
         }), volumeEntity.getClusterId(), volumeEntity.getId());
     }
