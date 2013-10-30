@@ -2788,4 +2788,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The following disk(s) are not attached to any VM: ${diskAliases}.")
     String ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskAlias} is being exported.")
+    String ACTION_TYPE_FAILED_DISK_IS_BEING_EXPORTED();
 }
