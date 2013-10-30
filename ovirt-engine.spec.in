@@ -823,12 +823,10 @@ fi
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
 %dir %{engine_data}/firewalld
 %dir %{engine_log}/setup
-%{_bindir}/engine-backup
 %{_bindir}/engine-cleanup
 %{_bindir}/engine-setup
 %{_bindir}/engine-upgrade-check
 %{_mandir}/man8/engine-setup.*
-%{engine_data}/bin/engine-backup.sh
 %{engine_data}/bin/ovirt-engine-log-setup-event.sh
 %{engine_data}/conf/iptables.default.in
 %{engine_data}/conf/nfs.sysconfig.in
@@ -908,10 +906,12 @@ fi
 %dir %{engine_etc}/engine-manage-domains
 %dir %{engine_etc}/notifier
 %ghost %config(noreplace) %{engine_etc}/notifier/notifier.conf
+%{_bindir}/engine-backup
 %{_bindir}/engine-config
 %{_bindir}/engine-manage-domains
 %{_mandir}/man8/engine-config.*
 %{_mandir}/man8/engine-manage-domains.*
+%{engine_data}/bin/engine-backup.sh
 %{engine_data}/bin/engine-config.sh
 %{engine_data}/bin/engine-manage-domains.sh
 %{engine_data}/bin/engine-prolog.sh
