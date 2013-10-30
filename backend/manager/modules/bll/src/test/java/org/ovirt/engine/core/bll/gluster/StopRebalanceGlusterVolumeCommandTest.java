@@ -248,7 +248,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
     public void executeCommandWhenFailed() {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
-        mockBackend(false, JobExecutionStatus.FAILED,JobExecutionStatus.FINISHED,false,VdcBllErrors.GlusterVolumeRebalanceStopFailed);
+        mockBackend(false, JobExecutionStatus.FAILED, JobExecutionStatus.FINISHED, false, VdcBllErrors.GlusterVolumeRebalanceStopFailed);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
