@@ -179,7 +179,7 @@ class Plugin(plugin.PluginBase):
         self._waitEngineUp()
         self.logger.debug('Connecting to the Engine')
         engine_api = self._ovirtsdk_api.API(
-            url='https://{fqdn}:{port}/api'.format(
+            url='https://{fqdn}:{port}/ovirt-engine/api'.format(
                 fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
                 port=self.environment[osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT],
             ),

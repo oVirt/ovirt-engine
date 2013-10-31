@@ -42,11 +42,11 @@ public class BackendApiResourceTest extends Assert {
 
     private static final String ROOT_TAG_REL = "tags/root";
 
-    private static final String ROOT_TAG_HREF = "/api/tags/00000000-0000-0000-0000-000000000000";
+    private static final String ROOT_TAG_HREF = "/ovirt-engine/api/tags/00000000-0000-0000-0000-000000000000";
 
     private static final String BLANK_TEMPLATE_REL = "templates/blank";
 
-    private static final String BLANK_TEMPLATE_HREF = "/api/templates/00000000-0000-0000-0000-000000000000";
+    private static final String BLANK_TEMPLATE_HREF = "/ovirt-engine/api/templates/00000000-0000-0000-0000-000000000000";
 
     protected BackendApiResource resource;
 
@@ -62,7 +62,7 @@ public class BackendApiResourceTest extends Assert {
 
     protected static final String URI_ROOT = "http://localhost:8099";
     protected static final String SLASH = "/";
-    protected static final String BASE_PATH = "/api";
+    protected static final String BASE_PATH = "/ovirt-engine/api";
     protected static final String URI_BASE = URI_ROOT + BASE_PATH;
     protected static final String BUNDLE_PATH = "org/ovirt/engine/api/restapi/logging/Messages";
     protected static final String sessionId = Guid.newGuid().toString();

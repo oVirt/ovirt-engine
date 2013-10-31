@@ -66,7 +66,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected static final String[] DESCRIPTIONS = { "top notch entity", "a fine example",
             "state of the art" };
     protected static final String URI_ROOT = "http://localhost:8088";
-    protected static final String BASE_PATH = "/api";
+    protected static final String BASE_PATH = "/ovirt-engine/api";
     protected static final String URI_BASE = URI_ROOT + BASE_PATH;
     protected static final String BUNDLE_PATH = "org/ovirt/engine/api/restapi/logging/Messages";
 
@@ -459,9 +459,9 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected void verifyLinks(BaseResource model) {
         assertNotNull(model.getHref());
-        assertTrue(model.getHref().startsWith("/api"));
+        assertTrue(model.getHref().startsWith("/ovirt-engine/api"));
         for (Link link : model.getLinks()) {
-            assertTrue(link.getHref().startsWith("/api"));
+            assertTrue(link.getHref().startsWith("/ovirt-engine/api"));
         }
     }
 
