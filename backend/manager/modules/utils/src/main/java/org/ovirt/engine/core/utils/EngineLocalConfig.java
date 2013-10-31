@@ -163,7 +163,7 @@ public class EngineLocalConfig extends LocalConfig {
      *     number of the URL
      */
     public URL getExternalHttpUrl(String path) throws MalformedURLException {
-        return new URL("http", getHost(), getExternalHttpPort(), path);
+        return new URL("http", getHost(), getExternalHttpPort(), getEngineURI() + path);
     }
 
     /**
@@ -175,7 +175,7 @@ public class EngineLocalConfig extends LocalConfig {
      *     number of the URL
      */
     public URL getExternalHttpsUrl(String path) throws MalformedURLException {
-        return new URL("https", getHost(), getExternalHttpsPort(), path);
+        return new URL("https", getHost(), getExternalHttpsPort(), getEngineURI() + path);
     }
 
     public File getPKIDir() {
@@ -212,5 +212,9 @@ public class EngineLocalConfig extends LocalConfig {
 
     public File getEngineUpMark(){
         return getFile("ENGINE_UP_MARK");
+    }
+
+    public String getEngineURI(){
+        return getProperty("ENGINE_URI");
     }
 }

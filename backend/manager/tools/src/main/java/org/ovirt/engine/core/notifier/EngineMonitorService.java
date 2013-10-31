@@ -46,7 +46,7 @@ public class EngineMonitorService implements Runnable {
     private static final Logger log = Logger.getLogger(EngineMonitorService.class);
     private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
-    private static final String HEALTH_SERVLET_PATH = "/OvirtEngineWeb/HealthStatus";
+    private static final String HEALTH_SERVLET_PATH = "/services/health";
     private DataSource ds;
     private NotificationProperties prop = null;
     private long serverMonitorTimeout;
