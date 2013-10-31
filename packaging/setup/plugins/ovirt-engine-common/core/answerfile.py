@@ -75,7 +75,7 @@ class Plugin(plugin.PluginBase):
                     name=answer,
                 )
             )
-            with open(answer, 'w') as f:
+            with open(self.resolveFile(answer), 'w') as f:
                 f.write(
                     (
                         '# action=%s\n'
