@@ -38,6 +38,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class VnicProfileModel extends Model {
 
+    private static NetworkQoS emptyQos;
+
     private EntityModel name;
     private EntityModel portMirroring;
     private KeyValueModel customPropertySheet;
@@ -49,8 +51,18 @@ public abstract class VnicProfileModel extends Model {
     private ListModel network;
     private ListModel networkQoS;
     private VnicProfile vnicProfile = null;
-    private boolean customPropertiesVisible;
+    private final boolean customPropertiesVisible;
     private Guid dcId;
+    private final Guid defaultQosId;
+
+    private static NetworkQoS getEmptyQos() {
+        if (emptyQos == null) {
+            emptyQos = new NetworkQoS();
+            emptyQos.setName(ConstantsManager.getInstance().getConstants().unlimitedQoSTitle());
+            emptyQos.setId(Guid.Empty);
+        }
+        return emptyQos;
+    }
 
     public EntityModel getName()
     {
@@ -140,8 +152,10 @@ public abstract class VnicProfileModel extends Model {
             Version dcCompatibilityVersion,
             boolean customPropertiesVisible,
             Guid dcId,
-            Guid qosId) {
+            Guid defaultQosId) {
         this.sourceModel = sourceModel;
+        this.customPropertiesVisible = customPropertiesVisible;
+        this.defaultQosId = defaultQosId;
 
         setName(new EntityModel());
         setNetwork(new ListModel());
@@ -153,13 +167,12 @@ public abstract class VnicProfileModel extends Model {
         setPublicUse(publicUse);
         setDescription(new EntityModel());
 
-        updateDc(dcCompatibilityVersion, customPropertiesVisible, dcId, qosId);
+        updateDc(dcCompatibilityVersion, dcId);
         initCommands();
     }
 
-    public void updateDc(Version dcCompatibilityVersion, boolean customPropertiesVisible, Guid dcId, Guid qosId) {
+    public void updateDc(Version dcCompatibilityVersion, Guid dcId) {
         this.dcCompatibilityVersion = dcCompatibilityVersion;
-        this.customPropertiesVisible = customPropertiesVisible;
         this.dcId = dcId;
 
         customPropertiesSupported =
@@ -168,7 +181,7 @@ public abstract class VnicProfileModel extends Model {
 
         getPortMirroring().setIsChangable(isPortMirroringSupported());
         initCustomPropertySheet();
-        initNetworkQoSList(qosId);
+        initNetworkQoSList();
     }
 
     protected boolean isPortMirroringSupported() {
@@ -304,7 +317,7 @@ public abstract class VnicProfileModel extends Model {
         }
     }
 
-    private void initNetworkQoSList(final Guid selectedItemId) {
+    private void initNetworkQoSList() {
         if (getDcId() == null) {
             return;
         }
@@ -317,12 +330,9 @@ public abstract class VnicProfileModel extends Model {
             {
                 ArrayList<NetworkQoS> networkQoSes =
                         (ArrayList<NetworkQoS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                NetworkQoS none = new NetworkQoS();
-                none.setName(ConstantsManager.getInstance().getConstants().unlimitedQoSTitle());
-                none.setId(Guid.Empty);
-                networkQoSes.add(0, none);
+                networkQoSes.add(0, getEmptyQos());
                 getNetworkQoS().setItems(networkQoSes);
-                setSelectedNetworkQoSId(selectedItemId);
+                setSelectedNetworkQoSId(defaultQosId);
             }
         };
 
@@ -345,16 +355,13 @@ public abstract class VnicProfileModel extends Model {
         return new VnicProfileParameters(vnicProfile);
     }
 
-    public void setSelectedNetworkQoSId(Guid networkQoSId) {
-        if (networkQoSId != null) {
-            for (Object item : getNetworkQoS().getItems()) {
-                if (((NetworkQoS)item).getId().equals(networkQoSId)) {
-                    getNetworkQoS().setSelectedItem(item);
-                    break;
-                }
+    private void setSelectedNetworkQoSId(Guid networkQoSId) {
+        for (Object item : getNetworkQoS().getItems()) {
+            if (((NetworkQoS) item).getId().equals(networkQoSId)) {
+                getNetworkQoS().setSelectedItem(item);
+                return;
             }
-        } else {
-            setSelectedNetworkQoSId(Guid.Empty);
         }
+        getNetworkQoS().setSelectedItem(getEmptyQos());
     }
 }
