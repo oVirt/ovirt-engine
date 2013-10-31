@@ -65,7 +65,8 @@ public class ManageGlusterServiceCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
-            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20));
+            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
+            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 100));
 
     private final Guid startedServiceId1 = Guid.newGuid();
     private final Guid startedServiceId2 = Guid.newGuid();
