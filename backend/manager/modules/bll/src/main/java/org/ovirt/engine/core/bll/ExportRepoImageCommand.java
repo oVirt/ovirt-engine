@@ -165,13 +165,8 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
             case EXECUTE:
-                if (!getParameters().getTaskGroupSuccess()) {
-                    return AuditLogType.USER_EXPORT_IMAGE_FINISHED_FAILURE;
-                }
-                if (getParameters().getExecutionIndex() == 0 && getSucceeded()) {
-                    return AuditLogType.USER_EXPORT_IMAGE;
-                }
-                break;
+                return getSucceeded() ? AuditLogType.USER_EXPORT_IMAGE
+                        : AuditLogType.USER_EXPORT_IMAGE_FINISHED_FAILURE;
             case END_SUCCESS:
                 return AuditLogType.USER_EXPORT_IMAGE_FINISHED_SUCCESS;
             case END_FAILURE:
