@@ -71,6 +71,7 @@ public class GlusterServiceSyncJobTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.DefaultMinThreadPoolSize, 5),
             mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 500),
+            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10),
             mockConfig(ConfigValues.GlusterServicesEnabled,
                     Version.v3_3.toString(),
                     true));
