@@ -63,6 +63,6 @@ public class GlusterVolumeTaskReturnForXmlRpc extends GlusterTaskInfoReturnForXm
     }
 
     public GlusterVolumeTaskStatusEntity getStatusDetails() {
-        return statusDetails.sort();
+        return statusDetails;
     }
 }

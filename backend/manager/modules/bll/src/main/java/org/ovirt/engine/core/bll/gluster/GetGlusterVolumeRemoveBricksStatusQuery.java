@@ -66,7 +66,7 @@ public class GetGlusterVolumeRemoveBricksStatusQuery<P extends GlusterVolumeRemo
         // Set the host ip in status details
         updateHostIP(entity);
 
-        return entity;
+        return entity.sort();
     }
 
     private void updateHostIP(GlusterVolumeTaskStatusEntity taskStatus) {
