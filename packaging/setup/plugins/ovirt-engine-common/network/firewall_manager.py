@@ -16,18 +16,35 @@
 #
 
 
-"""ovirt-host-setup network plugin."""
+"""
+Firewall manager selection plugin.
+"""
+
+import gettext
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 from otopi import util
+from otopi import plugin
 
 
-from . import firewall_manager
+from ovirt_engine_setup import constants as osetupcons
 
 
 @util.export
-def createPlugins(context):
-    firewall_manager.Plugin(context=context)
+class Plugin(plugin.PluginBase):
+    """
+    Firewall manager selection plugin.
+    """
+
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGERS] = []
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -60,26 +60,26 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_LATE_SETUP,
     )
     def _late_setup(self):
-        if self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ]:
-            self._enabled = True
-        else:
-            if (
-                not os.path.exists(
-                    osetupcons.FileLocations.
-                    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE
-                ) and
-                self.services.exists(name='ovirt-websocket-proxy')
-            ):
-                self._enabled = True
-
-            self._needStart = self.services.status(
-                name='ovirt-websocket-proxy',
+        if (
+            not os.path.exists(
+                osetupcons.FileLocations.
+                OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE
             )
+            # Do not check if service exists. when upgrading from
+            # 3.2 it will not exist at this point, but is Required
+            # by the package so will be installed.
+            # TODO: Fix and do something more complex if/when it can
+            # be installed separately from the engine.
+        ):
+            self._enabled = True
+
+        self._needStart = self.services.status(
+            name='ovirt-websocket-proxy',
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
         condition=lambda self: self._enabled,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
@@ -110,20 +110,34 @@ class Plugin(plugin.PluginBase):
             osetupcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ]
 
-        if self._enabled:
-            self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
-                {
-                    'name': 'ovirt-websocket-proxy',
-                    'directory': 'base'
-                },
-            ])
-            self.environment[
-                osetupcons.NetEnv.FIREWALLD_SUBST
-            ].update({
-                '@WEBSOCKET_PROXY_PORT@': self.environment[
-                    osetupcons.ConfigEnv.WEBSOCKET_PROXY_PORT
-                ],
-            })
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        condition=lambda self: self.environment[
+            osetupcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+        ],
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+        ),
+        after=(
+            osetupcons.Stages.DB_CONNECTION_STATUS,
+            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+            osetupcons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
+        ),
+    )
+    def _customization_firewall(self):
+        self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
+            {
+                'name': 'ovirt-websocket-proxy',
+                'directory': 'base'
+            },
+        ])
+        self.environment[
+            osetupcons.NetEnv.FIREWALLD_SUBST
+        ].update({
+            '@WEBSOCKET_PROXY_PORT@': self.environment[
+                osetupcons.ConfigEnv.WEBSOCKET_PROXY_PORT
+            ],
+        })
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
