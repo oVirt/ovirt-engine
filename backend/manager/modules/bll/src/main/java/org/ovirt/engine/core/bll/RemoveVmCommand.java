@@ -321,9 +321,10 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<>();
-        for (DiskImage disk : getVm().getDiskList()) {
-                ImagesHandler.fillImagesBySnapshots(getVm());
+        if (getParameters().isRemoveDisks()) {
+            List<QuotaConsumptionParameter> list = new ArrayList<>();
+            ImagesHandler.fillImagesBySnapshots(getVm());
+            for (DiskImage disk : getVm().getDiskList()) {
                 for (DiskImage snapshot : disk.getSnapshots()) {
                     if (snapshot.getQuotaId() != null && !Guid.Empty.equals(snapshot.getQuotaId())) {
                         if (snapshot.getActive()) {
@@ -343,8 +344,10 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                         }
                     }
                 }
+            }
+            return list;
         }
-        return list;
+        return Collections.emptyList();
     }
 
     ///////////////////////////////////////
