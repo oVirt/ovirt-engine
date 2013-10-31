@@ -21,9 +21,17 @@ public class PinToHostPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
         if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-            for (VDS host : hosts) {
-                if (host.getId().equals(vm.getDedicatedVmForVds())) {
-                    return Arrays.asList(host);
+            // host has been specified for pin to host.
+            if(vm.getDedicatedVmForVds() != null) {
+                for (VDS host : hosts) {
+                    if (host.getId().equals(vm.getDedicatedVmForVds())) {
+                        return Arrays.asList(host);
+                    }
+                }
+            } else {
+                // check pin to any (the VM should be down/ no migration allowed).
+                if (vm.getRunOnVds() == null) {
+                    return hosts;
                 }
             }
 
