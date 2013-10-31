@@ -134,7 +134,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             protected String getText(GlusterVolumeTaskStatusForHost entity) {
                 return entity.getFilesMoved() + "";
             }
-        }, constants.rebalanceFileCount());
+        }, getColumnHeaderForFilesMoved());
 
         rebalanceHostsTable.addEntityModelColumn(new RebalanceFileSizeColumn<EntityModel>(messages) {
 
@@ -180,6 +180,10 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
                 return entity.getStatus().toString();
             }
         }, constants.rebalanceStatus());
+    }
+
+    public String getColumnHeaderForFilesMoved() {
+        return constants.rebalanceFileCount();
     }
 
     @Override

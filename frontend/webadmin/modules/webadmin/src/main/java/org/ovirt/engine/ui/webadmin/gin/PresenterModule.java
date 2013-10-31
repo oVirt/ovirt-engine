@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBric
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
@@ -248,6 +249,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopu
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.DetachGlusterHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickStatusPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeParameterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumePopupView;
@@ -1040,6 +1042,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VolumeRebalanceStatusPopupPresenterWidget.class,
                 VolumeRebalanceStatusPopupPresenterWidget.ViewDef.class,
                 VolumeRebalanceStatusPopupView.class);
+
+        bindPresenterWidget(RemoveBrickStatusPopupPresenterWidget.class,
+                RemoveBrickStatusPopupPresenterWidget.ViewDef.class,
+                RemoveBrickStatusPopupView.class);
 
         bindPresenterWidget(ManageGlusterSwiftPopupPresenterWidget.class,
                 ManageGlusterSwiftPopupPresenterWidget.ViewDef.class,

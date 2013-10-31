@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
@@ -96,7 +97,7 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<AddBrickPopupPresenterWidget> addBrickPopupProvider,
             final Provider<RemoveBrickPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<RemoveBrickPopupPresenterWidget> removeBrickPopupProvider,
-            final Provider<VolumeRebalanceStatusPopupPresenterWidget> removeBricksStatusPopupProvider,
+            final Provider<RemoveBrickStatusPopupPresenterWidget> removeBricksStatusPopupProvider,
             final Provider<ReplaceBrickPopupPresenterWidget> replaceBrickPopupProvider,
             final Provider<BrickAdvancedDetailsPopupPresenterWidget> brickDetailsPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(

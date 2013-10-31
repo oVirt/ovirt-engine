@@ -3314,6 +3314,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Files Rebalanced")
     String rebalanceFileCount();
 
+    @DefaultStringValue("Files Migrated")
+    String filesMigrated();
+
     @DefaultStringValue("Size")
     String rebalanceSize();
 
