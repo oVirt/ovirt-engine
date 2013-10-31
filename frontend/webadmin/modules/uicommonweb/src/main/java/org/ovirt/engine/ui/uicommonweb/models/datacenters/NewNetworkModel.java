@@ -117,7 +117,7 @@ public class NewNetworkModel extends NetworkModel {
         } else {
             // not first run (user picked different DC), want to keep existing entries and update DC-related properties
             for (VnicProfileModel profile : existingProfiles) {
-                profile.updateDc(getSelectedDc().getcompatibility_version(), false, getSelectedDc().getId(), null);
+                profile.updateDc(getSelectedDc().getcompatibility_version(), getSelectedDc().getId());
             }
         }
     }
