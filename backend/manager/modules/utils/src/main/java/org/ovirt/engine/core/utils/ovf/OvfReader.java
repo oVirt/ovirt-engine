@@ -183,7 +183,7 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     /**
-     * Reads vm device attributes from OVF and stores in in the collection
+     * Reads vm device attributes from OVF and stores it in the collection
      *
      * @param node
      * @param vmBase
