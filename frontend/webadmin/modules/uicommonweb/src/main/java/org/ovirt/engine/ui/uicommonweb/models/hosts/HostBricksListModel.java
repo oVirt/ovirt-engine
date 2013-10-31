@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -7,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -70,6 +72,7 @@ public class HostBricksListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 List<GlusterBrickEntity> glusterBricks = (List<GlusterBrickEntity>) returnValue;
+                Collections.sort(glusterBricks, new Linq.ServerBricksComparer());
                 setItems(glusterBricks);
             }
         }), getEntity().getId());
