@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -24,7 +23,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -47,7 +45,6 @@ public abstract class VnicProfileModel extends Model {
     private EntityModel description;
     private final EntityModel sourceModel;
     private Version dcCompatibilityVersion;
-    private boolean customPropertiesSupported;
     private ListModel network;
     private ListModel networkQoS;
     private VnicProfile vnicProfile = null;
@@ -175,20 +172,8 @@ public abstract class VnicProfileModel extends Model {
         this.dcCompatibilityVersion = dcCompatibilityVersion;
         this.dcId = dcId;
 
-        customPropertiesSupported =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
-                        dcCompatibilityVersion.toString());
-
-        getPortMirroring().setIsChangable(isPortMirroringSupported());
         initCustomPropertySheet();
         initNetworkQoSList();
-    }
-
-    protected boolean isPortMirroringSupported() {
-        Version v31 = new Version(3, 1);
-        boolean isLessThan31 = getDcCompatibilityVersion().compareTo(v31) < 0;
-
-        return !isLessThan31;
     }
 
     protected void initCommands() {
@@ -284,37 +269,33 @@ public abstract class VnicProfileModel extends Model {
             return;
         }
 
-        if (customPropertiesSupported) {
-            GetDeviceCustomPropertiesParameters params = new GetDeviceCustomPropertiesParameters();
-            params.setVersion(getDcCompatibilityVersion());
-            params.setDeviceType(VmDeviceGeneralType.INTERFACE);
-            startProgress(null);
-            Frontend.RunQuery(VdcQueryType.GetDeviceCustomProperties,
-                    params,
-                    new AsyncQuery(this,
-                            new INewAsyncCallback() {
-                                @Override
-                                public void onSuccess(Object target, Object returnValue) {
-                                    if (returnValue != null) {
-                                        Map<String, String> customPropertiesList =
-                                                ((Map<String, String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+        GetDeviceCustomPropertiesParameters params = new GetDeviceCustomPropertiesParameters();
+        params.setVersion(getDcCompatibilityVersion());
+        params.setDeviceType(VmDeviceGeneralType.INTERFACE);
+        startProgress(null);
+        Frontend.RunQuery(VdcQueryType.GetDeviceCustomProperties,
+                params,
+                new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
+                                if (returnValue != null) {
+                                    Map<String, String> customPropertiesList =
+                                            ((Map<String, String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
 
-                                        List<String> lines = new ArrayList<String>();
+                                    List<String> lines = new ArrayList<String>();
 
-                                        for (Map.Entry<String, String> keyValue : customPropertiesList.entrySet()) {
-                                            lines.add(keyValue.getKey() + '=' + keyValue.getValue());
-                                        }
-                                        getCustomPropertySheet().setKeyValueString(lines);
-                                        getCustomPropertySheet().setIsChangable(!lines.isEmpty());
-
-                                        initCustomProperties();
+                                    for (Map.Entry<String, String> keyValue : customPropertiesList.entrySet()) {
+                                        lines.add(keyValue.getKey() + '=' + keyValue.getValue());
                                     }
-                                    stopProgress();
+                                    getCustomPropertySheet().setKeyValueString(lines);
+                                    getCustomPropertySheet().setIsChangable(!lines.isEmpty());
+
+                                    initCustomProperties();
                                 }
-                            }));
-        } else {
-            getCustomPropertySheet().setIsChangable(false);
-        }
+                                stopProgress();
+                            }
+                        }));
     }
 
     private void initNetworkQoSList() {

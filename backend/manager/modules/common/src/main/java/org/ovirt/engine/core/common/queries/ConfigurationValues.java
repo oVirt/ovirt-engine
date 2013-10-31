@@ -88,7 +88,6 @@ public enum ConfigurationValues {
     MigrationNetworkEnabled,
     VncKeyboardLayout(ConfigAuthType.User),
     VncKeyboardLayoutValidValues(ConfigAuthType.User),
-    SupportCustomDeviceProperties(ConfigAuthType.User),
     CustomDeviceProperties(ConfigAuthType.User),
     MultipleGatewaysSupported,
     VirtIoScsiEnabled(ConfigAuthType.User),
