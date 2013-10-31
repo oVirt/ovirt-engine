@@ -96,8 +96,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // load the disks of vm from database
         VmHandler.updateDisksFromDb(getVm());
-
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(getDisksBasedOnImage());
+        List<DiskImage> disksForExport = getDisksBasedOnImage();
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksForExport);
         if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
                 !validate(diskImagesValidator.diskImagesNotLocked())) {
             return false;
@@ -123,16 +123,17 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             }
         }
 
-        Map<Guid, ? extends Disk> images = getVm().getDiskMap();
+
         // check that the images requested format are valid (COW+Sparse)
         if (!ImagesHandler.checkImagesConfiguration(getParameters().getStorageDomainId(),
-                new ArrayList<Disk>(images.values()),
+                disksForExport,
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
+        Map<Guid, ? extends Disk> images = getVm().getDiskMap();
         if (getParameters().getCopyCollapse()) {
-            for (DiskImage img : getDisksBasedOnImage()) {
+            for (DiskImage img : disksForExport) {
                 if (images.containsKey(img.getId())) {
                     // check that no RAW format exists (we are in collapse mode)
                     if (((DiskImage) images.get(img.getId())).getVolumeFormat() == VolumeFormat.RAW
@@ -154,7 +155,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         snapshotsWithMemory = getSnapshotsToBeExportedWithMemory();
 
         // check destination storage have free space
-        int sizeInGB = (int) getVm().getActualDiskWithSnapshotsSize() + getTotalMemoryStatesSizeGb();
+        int sizeInGB = (int) ImagesHandler.sumImagesTotalSizeWithSnapshotSize(disksForExport) + getTotalMemoryStatesSizeGb();
         if (!doesStorageDomainhaveSpaceForRequest(getStorageDomain(), sizeInGB)) {
             return false;
         }
@@ -166,7 +167,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())
                 && validate(new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
-                ImagesHandler.getAllStorageIdsForImageIds(getDisksBasedOnImage())).allDomainsExistAndActive()))) {
+                ImagesHandler.getAllStorageIdsForImageIds(disksForExport)).allDomainsExistAndActive()))) {
             return false;
         }
 
