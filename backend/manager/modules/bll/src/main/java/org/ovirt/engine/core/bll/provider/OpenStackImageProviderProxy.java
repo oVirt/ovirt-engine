@@ -325,8 +325,8 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         } finally {
             try {
                 downloadImage.getInputStream().close();
-            } catch (IOException e) {
-                // Silently skip errors on close
+            } catch (IOException | IllegalStateException e) {
+                // Silently skip IOException and IllegalStateException errors
             }
         }
 
