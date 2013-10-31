@@ -68,9 +68,12 @@ public class AttestationService {
 
     private static KeyStore getTrustStore(String filePath, String password) throws IOException,
             KeyStoreException, CertificateException, NoSuchAlgorithmException {
-        InputStream in = new FileInputStream(filePath);
-        KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(in, password.toCharArray());
+        KeyStore ks;
+        try (InputStream in = new FileInputStream(filePath)) {
+            ks = KeyStore.getInstance("JKS");
+            ks.load(in, password.toCharArray());
+        }
+
         return ks;
     }
 
