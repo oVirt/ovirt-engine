@@ -187,13 +187,14 @@ class Plugin(plugin.PluginBase):
                         content=osetuputil.processTemplate(
                             name,
                             {
-                                '@AIA@': 'http://%s:%s/ca.crt' % (
+                                '@AIA@': 'http://%s:%s%s' % (
                                     self.environment[
                                         osetupcons.ConfigEnv.FQDN
                                     ],
                                     self.environment[
                                         osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
                                     ],
+                                    osetupcons.Const.ENGINE_PKI_CA_URI,
                                 )
                             }
                         ),

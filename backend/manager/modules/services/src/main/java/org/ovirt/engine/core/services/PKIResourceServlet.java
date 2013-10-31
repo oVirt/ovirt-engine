@@ -10,6 +10,7 @@ import java.security.cert.CertificateFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,13 +26,15 @@ public class PKIResourceServlet extends HttpServlet {
 
     private class Details {
         File file;
+        String format;
         String alias;
-        Details(File file, String alias) {
+        Details(File file, String format, String alias) {
             this.file = file;
+            this.format = format;
             this.alias = alias;
         }
-        Details(File file) {
-            this(file, null);
+        Details(File file, String format) {
+            this(file, format, null);
         }
     }
 
@@ -39,58 +42,61 @@ public class PKIResourceServlet extends HttpServlet {
 
     private static final Logger log = Logger.getLogger(PKIResourceServlet.class);
 
-    private static final String PARAMETER_RESOURCE = "resource";
-    private static final String PARAMETER_FORMAT = "format";
-
-    private String resource;
-    private String format;
-
     private Map<String, Details> pkiResources;
 
-    @Override
-    public void init() throws ServletException {
-        EngineLocalConfig config = EngineLocalConfig.getInstance();
-        pkiResources = new HashMap<String, Details>();
-        pkiResources.put("ca-certificate", new Details(config.getPKICACert()));
-        pkiResources.put("engine-certificate", new Details(config.getPKIEngineCert(), "ovirt-engine"));
+    private String getMyParameter(String name, HttpServletRequest request) {
+        String value;
 
-        resource = getInitParameter(PARAMETER_RESOURCE);
-        format = getInitParameter(PARAMETER_FORMAT);
+        value = request.getParameter(name);
+        if (value == null) {
+            value = (String)request.getAttribute(name);
+        }
+        if (value == null) {
+            value = getInitParameter(name);
+        }
+        return value;
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        EngineLocalConfig localconfig = EngineLocalConfig.getInstance();
+        pkiResources = new HashMap<String, Details>();
+        pkiResources.put("ca-certificate", new Details(localconfig.getPKICACert(), "X509-PEM-CA"));
+        pkiResources.put("engine-certificate", new Details(localconfig.getPKIEngineCert(), "X509-PEM", "ovirt-engine"));
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String localResource = (String)request.getAttribute(PARAMETER_RESOURCE);
-        String localFormat = (String)request.getAttribute(PARAMETER_FORMAT);
+        String resource = getMyParameter("resource", request);
+        String format = getMyParameter("format", request);
+        String alias = getMyParameter("alias", request);
 
         try {
-            if (localResource == null) {
-                localResource = resource;
-            }
-            if (localResource == null) {
+            if (resource == null) {
                 throw new IllegalArgumentException("Missing resource name");
             }
 
-            Details details = pkiResources.get(localResource);
+            Details details = pkiResources.get(resource);
             if (details == null) {
-                throw new IllegalArgumentException(String.format("Resource %1$s is invalid", localResource));
+                throw new IllegalArgumentException(String.format("Resource '%1$s' is invalid", resource));
             }
 
-            if (localFormat == null) {
-                localFormat = format;
+            if (format == null) {
+                format = details.format;
             }
-            if (localFormat == null) {
-                throw new IllegalArgumentException("Missing format");
+
+            if (alias == null) {
+                alias = details.alias;
             }
 
             try (InputStream in = new FileInputStream(details.file)) {
 
-                final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                final Certificate certificate = cf.generateCertificate(in);
+                final Certificate certificate =  CertificateFactory.getInstance("X.509").generateCertificate(in);
 
-                if (localFormat.startsWith("X509-PEM")) {
-                    if (localFormat.endsWith("-CA")) {
+                if (format.startsWith("X509-PEM")) {
+                    if (format.endsWith("-CA")) {
                         response.setContentType("application/x-x509-ca-cert");
                     }
                     else {
@@ -115,20 +121,20 @@ public class PKIResourceServlet extends HttpServlet {
                         )
                     );
                 }
-                else if ("OPENSSH-PUBKEY".equals(localFormat)) {
+                else if ("OPENSSH-PUBKEY".equals(format)) {
                     response.setContentType("text/plain");
                     // do not let println to use platform specific new line
                     response.getWriter().print(
                         OpenSSHUtils.getKeyString(
                             certificate.getPublicKey(),
-                            details.alias
+                            alias
                         )
                     );
                 }
                 else {
                     throw new IllegalArgumentException(
                         String.format(
-                            "Unsupported output format %1$s", localFormat
+                            "Unsupported output format '%1$s'", format
                         )
                     );
                 }
@@ -138,8 +144,8 @@ public class PKIResourceServlet extends HttpServlet {
             log.error(
                 String.format(
                     "Cannot send public key resource '%1$s' format '%2$s'",
-                    localResource,
-                    localFormat
+                    resource,
+                    format
                 ),
                 e
             );
@@ -149,8 +155,8 @@ public class PKIResourceServlet extends HttpServlet {
             log.error(
                 String.format(
                     "Cannot send public key resource '%1$s' format '%2$s'",
-                    localResource,
-                    localFormat
+                    resource,
+                    format
                 ),
                 e
             );

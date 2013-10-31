@@ -599,6 +599,13 @@ class Const(object):
     MAC_RANGE_BASE = '00:1a:4a'
 
     ENGINE_URI = '/ovirt-engine'
+    ENGINE_PKI_CA_URI = (
+        '%s/services/pki-resource?'
+        'resource=ca-certificate&'
+        'format=X509-PEM-CA'
+    ) % (
+        ENGINE_URI,
+    )
 
     ENGINE_PACKAGE_NAME = 'ovirt-engine'
     ENGINE_PACKAGE_SETUP_NAME = '%s-setup' % ENGINE_PACKAGE_NAME
