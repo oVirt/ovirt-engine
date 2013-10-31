@@ -22,44 +22,12 @@
         RequestHeader unset Expect early
     </IfModule>
 
-    <Proxy ajp://127.0.0.1:@JBOSS_AJP_PORT@>
-        # This is needed to make sure that connections to the application server
-        # are recovered in a short time interval (5 seconds at the moment)
-        # otherwise when the application server is restarted the web server will
-        # refuse to connect during 60 seconds.
-        ProxySet retry=5
+    <LocationMatch ^/(ovirt-engine($|/)|api($|/)|RHEVManagerWeb/|OvirtEngineWeb/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$)>
+        ProxyPassMatch ajp://127.0.0.1:@JBOSS_AJP_PORT@ timeout=3600
 
-        # This is needed to make sure that long RESTAPI requests have time to
-        # finish before the web server aborts the request as the default timeout
-        # (controlled by the Timeout directive in httpd.conf) is 60 seconds.
-        ProxySet timeout=3600
-    </Proxy>
-
-    <Location /ovirt-engine>
-        ProxyPass ajp://127.0.0.1:@JBOSS_AJP_PORT@/ovirt-engine
-        <IfModule deflate_module>
-            AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
-        </IfModule>
-    </Location>
-
-    <LocationMatch ^RHEVManagerWeb/|OvirtEngineWeb/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$>
-        ProxyPassMatch ajp://127.0.0.1:@JBOSS_AJP_PORT@
         <IfModule deflate_module>
             AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
         </IfModule>
     </LocationMatch>
-
-    <Location /api>
-        #
-        # The timeout has to be specified here again because versions of
-        # Apache older than 2.4 don't copy the setting from the Proxy
-        # directive:
-        #
-        ProxyPass ajp://127.0.0.1:@JBOSS_AJP_PORT@/api timeout=3600
-
-        <IfModule deflate_module>
-            AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
-        </IfModule>
-    </Location>
 
 </IfModule>
