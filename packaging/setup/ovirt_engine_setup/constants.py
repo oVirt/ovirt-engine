@@ -530,10 +530,10 @@ class Stages(object):
     DB_CONNECTION_AVAILABLE = 'osetup.db.connection.available'
     DB_SCHEMA = 'osetup.db.schema'
     NET_FIREWALL_MANAGER_AVAILABLE = 'osetup.net.firewallmanager.available'
-    NET_FIREWALL_MANAGER_PROCESS_TEMPLATES = \
-        'osetup.net.firewallmanager.templates.available'
     CONFIG_DB_CREDENTIALS = 'osetup.config.database.credentials'
     CONFIG_PROTOCOLS_CUSTOMIZATION = 'osetup.config.protocols.customization'
+    CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION = \
+        'setup.config.websocket-proxy.customization'
     CONFIG_DB_ENCRYPTION_AVAILABLE = 'osetup.config.encryption.available'
     CONFIG_APPLICATION_MODE_AVAILABLE = \
         'osetup.config.applicationMode.available'
@@ -582,6 +582,8 @@ class Stages(object):
     RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
 
     MEMORY_CHECK = 'osetup.memory.check'
+    KEEP_ONLY_VALID_FIREWALL_MANAGERS = \
+        'osetup.keep.only.valid.firewall.managers'
 
 
 @util.export
@@ -631,6 +633,9 @@ class Const(object):
     ACTION_REMOVE = 'cleanup'
     ACTION_UPGRADE = 'upgrade'
     ACTION_RENAME = 'rename'
+    FIREWALL_MANAGER_HUMAN = 'skip'
+    FIREWALL_MANAGER_IPTABLES = 'iptables'
+    FIREWALL_MANAGER_FIREWALLD = 'firewalld'
 
 
 @util.export
@@ -922,6 +927,16 @@ class ConfigEnv(object):
     def FIREWALL_MANAGER(self):
         return 'OVESETUP_CONFIG/firewallManager'
 
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Update Firewall'),
+    )
+    def UPDATE_FIREWALL(self):
+        return 'OVESETUP_CONFIG/updateFirewall'
+
+    FIREWALL_MANAGERS = 'OVESETUP_CONFIG/firewallManagers'
+    VALID_FIREWALL_MANAGERS = 'OVESETUP_CONFIG/validFirewallManagers'
     FQDN_REVERSE_VALIDATION = 'OVESETUP_CONFIG/fqdnReverseValidation'
     FQDN_NON_LOOPBACK_VALIDATION = 'OVESETUP_CONFIG/fqdnNonLoopback'
 

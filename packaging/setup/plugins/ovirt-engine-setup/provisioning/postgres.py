@@ -403,6 +403,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DB_HOST_LOCATION_CUSTOMIZATION,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
             osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
@@ -487,12 +488,27 @@ class Plugin(plugin.PluginBase):
                 osetupcons.DBEnv.SECURED_HOST_VALIDATION
             ] = osetupcons.Defaults.DEFAULT_DB_SECURED_HOST_VALIDATION
 
-            self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
-                {
-                    'name': 'ovirt-postgres',
-                    'directory': 'base'
-                },
-            ])
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
+            osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
+        ),
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
+            osetupcons.Stages.DB_HOST_LOCATION_CUSTOMIZATION,
+        ),
+        condition=lambda self: (
+            self.environment[osetupcons.DBEnv.HOST] == 'localhost'
+        )
+    )
+    def _customization_firewall(self):
+        self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
+            {
+                'name': 'ovirt-postgres',
+                'directory': 'base'
+            },
+        ])
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,

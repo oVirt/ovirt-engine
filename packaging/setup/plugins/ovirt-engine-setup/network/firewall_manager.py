@@ -20,21 +20,17 @@
 Firewall manager selection plugin.
 """
 
-import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
-import libxml2
-
-
+from otopi import constants as otopicons
 from otopi import util
 from otopi import plugin
-from otopi import constants as otopicons
-from otopi import filetransaction
+
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
+from ovirt_engine_setup import dialog
 
 
 @util.export
@@ -43,60 +39,10 @@ class Plugin(plugin.PluginBase):
     Firewall manager selection plugin.
     """
 
-    def _parseFirewalld(self, format, portSeparator='-'):
-        ret = ''
-        for content in [
-            content
-            for key, content in self.environment.items()
-            if key.startswith(
-                otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX
-            )
-        ]:
-            doc = None
-            ctx = None
-            try:
-                doc = libxml2.parseDoc(content)
-                ctx = doc.xpathNewContext()
-                nodes = ctx.xpathEval("/service/port")
-                for node in nodes:
-                    ret += format.format(
-                        protocol=node.prop('protocol'),
-                        port=node.prop('port').replace('-', portSeparator),
-                    )
-            finally:
-                if doc is not None:
-                    doc.freeDoc()
-                if ctx is not None:
-                    ctx.xpathFreeContext()
-
-        return ret
-
-    def _createIptablesConfig(self):
-        return osetuputil.processTemplate(
-            osetupcons.FileLocations.OVIRT_IPTABLES_DEFAULT,
-            subst={
-                '@CUSTOM_RULES@': self._parseFirewalld(
-                    format=(
-                        '-A INPUT -p {protocol} -m state --state NEW '
-                        '-m {protocol} --dport {port} -j ACCEPT\n'
-                    ),
-                    portSeparator=':',
-                )
-            }
-        )
-
-    def _createHumanConfig(self):
-        return '\n'.join(
-            sorted(
-                self._parseFirewalld(
-                    format='{protocol}:{port}\n',
-                ).splitlines()
-            )
-        ) + '\n'
-
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._enabled = False
+        self._detected_managers = []
+        self._available_managers = []
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -107,26 +53,94 @@ class Plugin(plugin.PluginBase):
             None
         )
         self.environment.setdefault(
-            osetupcons.NetEnv.FIREWALLD_SERVICES,
-            []
+            osetupcons.ConfigEnv.UPDATE_FIREWALL,
+            None
         )
         self.environment.setdefault(
-            osetupcons.NetEnv.FIREWALLD_SUBST,
-            {}
+            osetupcons.ConfigEnv.VALID_FIREWALL_MANAGERS,
+            ''
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
+        name=osetupcons.Stages.KEEP_ONLY_VALID_FIREWALL_MANAGERS,
+        condition=lambda self: self.environment[
+            osetupcons.ConfigEnv.VALID_FIREWALL_MANAGERS
+        ],
     )
-    def _setup(self):
-        self._enabled = not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
+    def _keep_only_valid_firewall_managers(self):
+        valid_managers = [
+            x.strip()
+            for x in self.environment[
+                osetupcons.ConfigEnv.VALID_FIREWALL_MANAGERS
+            ].split(',')
+        ]
+        # Note: valid_managers is just the names (parsed out of
+        # env[VALID_FIREWALL_MANAGERS], which is a string), whereas
+        # env[FIREWALL_MANAGERS], as well as later lists in this file
+        # with 'managers' in their name, are lists of firewall manager
+        # objects.
+        self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGERS] = [
+            m
+            for m in self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGERS]
+            if m.name in valid_managers or not m.selectable()
         ]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        condition=lambda self: not self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ],
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
+            osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
+        ),
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
+        ),
+    )
+    def _customization_is_requested(self):
+        self._detected_managers = [
+            m
+            for m in self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGERS]
+            if m.selectable() and m.detect()
+        ]
+
+        if self.environment[
+            osetupcons.ConfigEnv.UPDATE_FIREWALL
+        ] is None:
+            if not self._detected_managers:
+                self.environment[osetupcons.ConfigEnv.UPDATE_FIREWALL] = False
+            else:
+                self.dialog.note(
+                    text=_(
+                        'Setup can automatically configure the firewall '
+                        'on this system.\n'
+                        'Note: automatic configuration of the firewall may '
+                        'overwrite current settings.\n'
+                    ),
+                )
+                self.environment[
+                    osetupcons.ConfigEnv.UPDATE_FIREWALL
+                ] = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='OVESETUP_UPDATE_FIREWALL',
+                    note=_(
+                        'Do you want Setup to configure the firewall? '
+                        '(@VALUES@) [@DEFAULT@]: '
+                    ),
+                    prompt=True,
+                    true=_('Yes'),
+                    false=_('No'),
+                    default=True,
+                )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
-        condition=lambda self: self._enabled,
+        condition=lambda self: self.environment[
+            osetupcons.ConfigEnv.UPDATE_FIREWALL
+        ],
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
         ),
@@ -135,125 +149,88 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _customization(self):
-        if self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGER] is None:
-            managers = []
-            if (
-                self.environment[otopicons.NetEnv.FIREWALLD_AVAILABLE] and
-                self.services.status('firewalld')
-            ):
-                managers.append('firewalld')
-            if (
-                self.services.exists('iptables') and
-                self.services.status('iptables')
-            ):
-                managers.append('iptables')
+        active_managers = [m for m in self._detected_managers if m.active()]
 
-            for manager in managers:
-                response = self.dialog.queryString(
+        self._available_managers = (
+            active_managers if active_managers
+            else self._detected_managers
+        )
+
+        if self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGER] is None:
+            if active_managers and len(self._available_managers) == 1:
+                self.environment[
+                    osetupcons.ConfigEnv.FIREWALL_MANAGER
+                ] = self._available_managers[0].name
+            else:
+                self.dialog.note(
+                    text=_(
+                        'The following firewall managers were detected on '
+                        'this system: {managers}\n'
+                    ).format(
+                        managers=', '.join(
+                            m.name
+                            for m in self._available_managers
+                        ),
+                    ),
+                )
+                self.environment[
+                    osetupcons.ConfigEnv.FIREWALL_MANAGER
+                ] = self.dialog.queryString(
                     name='OVESETUP_CONFIG_FIREWALL_MANAGER',
                     note=_(
-                        '{manager} was detected on your computer. '
-                        'Do you wish Setup to configure it? '
-                        '(@VALUES@) [@DEFAULT@]: '
-                    ).format(
-                        manager=manager,
+                        'Firewall manager to configure '
+                        '(@VALUES@): '
                     ),
                     prompt=True,
-                    validValues=(_('yes'), _('no')),
+                    validValues=self._available_managers,
                     caseSensitive=False,
-                    default=_('yes'),
                 )
-                if response == _('yes'):
-                    self.environment[
-                        osetupcons.ConfigEnv.FIREWALL_MANAGER
-                    ] = manager
-                    break
-
-        self.environment[otopicons.NetEnv.IPTABLES_ENABLE] = (
-            self.environment[
-                osetupcons.ConfigEnv.FIREWALL_MANAGER
-            ] == 'iptables'
-        )
-        self.environment[otopicons.NetEnv.FIREWALLD_ENABLE] = (
-            self.environment[
-                osetupcons.ConfigEnv.FIREWALL_MANAGER
-            ] == 'firewalld'
-        )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
-        name=osetupcons.Stages.NET_FIREWALL_MANAGER_PROCESS_TEMPLATES,
-        # must be always enabled to create examples
-        # TODO: add:
-        # before=(
-        #    otopicons.Stages.FIREWALLD_VALIDATION,
-        #    constants.Stages.IPTABLES_VALIDATION,
-        #),
-        # and remove:
-        priority=plugin.Stages.PRIORITY_HIGH,
-    )
-    def _process_templates(self):
-        for service in self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES]:
-            content = osetuputil.processTemplate(
-                template=os.path.join(
-                    osetupcons.FileLocations.OVIRT_FIREWALLD_CONFIG,
-                    service['directory'],
-                    '%s.xml.in' % service['name'],
-                ),
-                subst=self.environment[osetupcons.NetEnv.FIREWALLD_SUBST],
-            )
-
-            self.environment[
-                otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX +
-                service['name']
-            ] = content
-
-            target = os.path.join(
-                osetupcons.FileLocations.OVIRT_FIREWALLD_EXAMPLE_DIR,
-                '%s.xml' % service['name']
-            )
-
-            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                filetransaction.FileTransaction(
-                    name=target,
-                    content=content,
-                    modifiedList=self.environment[
-                        otopicons.CoreEnv.MODIFIED_FILES
-                    ],
-                )
-            )
-
-        self.environment[
-            otopicons.NetEnv.IPTABLES_RULES
-        ] = self._createIptablesConfig()
-
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                name=osetupcons.FileLocations.OVIRT_IPTABLES_EXAMPLE,
-                content=self.environment[otopicons.NetEnv.IPTABLES_RULES],
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
+        self.logger.info(
+            _('{manager} will be configured as firewall manager.').format(
+                manager=self.environment[
+                    osetupcons.ConfigEnv.FIREWALL_MANAGER
                 ],
             )
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
+        stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self.environment[
-            otopicons.NetEnv.IPTABLES_ENABLE
+            osetupcons.ConfigEnv.UPDATE_FIREWALL
         ],
+        before=(
+            otopicons.Stages.FIREWALLD_VALIDATION,
+            otopicons.Stages.IPTABLES_VALIDATION,
+        ),
     )
-    def _iptablesmark(self):
-        # This file is updated by otopi. Here we just prevent it from
-        # being deleted on cleanup.
-        # TODO: copy/move some uninstall code from the engine to otopi
-        # to allow just adding lines to iptables instead of replacing
-        # the file and also remove these lines on cleanup.
-        self.environment[
-            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ].append(
-            osetupcons.FileLocations.SYSCONFIG_IPTABLES,
-        )
+    def _validation(self):
+        if self.environment[
+            osetupcons.ConfigEnv.FIREWALL_MANAGER
+        ] not in [m.name for m in self._available_managers]:
+            raise RuntimeError(
+                _(
+                    'Firewall manager {manager} is not available'
+                ).format(
+                    manager=self.environment[
+                        osetupcons.ConfigEnv.FIREWALL_MANAGER
+                    ],
+                ),
+            )
+        next(
+            m for m in self._available_managers
+            if m.name == self.environment[
+                osetupcons.ConfigEnv.FIREWALL_MANAGER
+            ]
+        ).enable()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+    )
+    def _prepare_examples(self):
+        for manager in self.environment[
+            osetupcons.ConfigEnv.FIREWALL_MANAGERS
+        ]:
+            manager.prepare_examples()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
@@ -268,55 +245,10 @@ class Plugin(plugin.PluginBase):
         ] is None
     )
     def _closeup(self):
-        self.dialog.note(
-            text=_(
-                'The following network ports should be opened:\n'
-                '{ports}'
-            ).format(
-                ports='\n'.join([
-                    '    ' + l
-                    for l in self._createHumanConfig().splitlines()
-                ]),
-            ),
-        )
-
-        self.dialog.note(
-            text=_(
-                'An example of the required configuration for iptables '
-                'can be found at:\n'
-                '    {example}'
-            ).format(
-                example=osetupcons.FileLocations.OVIRT_IPTABLES_EXAMPLE
-            )
-        )
-
-        commands = []
-        for service in [
-            key[len(otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX):]
-            for key in self.environment
-            if key.startswith(
-                otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX
-            )
+        for manager in self.environment[
+            osetupcons.ConfigEnv.FIREWALL_MANAGERS
         ]:
-            commands.append('firewall-cmd -service %s' % service)
-        self.dialog.note(
-            text=_(
-                'In order to configure firewalld, copy the '
-                'files from\n'
-                '{examples} to {configdir}\n'
-                'and execute the following commands:\n'
-                '{commands}'
-            ).format(
-                examples=(
-                    osetupcons.FileLocations.OVIRT_FIREWALLD_EXAMPLE_DIR
-                ),
-                configdir='/etc/firewalld/services',
-                commands='\n'.join([
-                    '    ' + l
-                    for l in commands
-                ]),
-            )
-        )
+            manager.print_manual_configuration_instructions()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
