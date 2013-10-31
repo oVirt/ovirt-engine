@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,11 +106,11 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
         // update vm snapshots for storage free space check
         ImagesHandler.fillImagesBySnapshots(getVm());
-        return retValue && destinationHasSpace();
+        return retValue && destinationHasSpace(diskImagesToValidate);
     }
 
-    private boolean destinationHasSpace() {
-        return validate(new StorageDomainValidator(getStorageDomain()).isDomainHasSpaceForRequest((long) getVm().getActualDiskWithSnapshotsSize()));
+    private boolean destinationHasSpace(Collection<DiskImage> diskImages) {
+        return validate(new StorageDomainValidator(getStorageDomain()).isDomainHasSpaceForRequest((long) ImagesHandler.sumImagesTotalSizeWithSnapshotSize(diskImages)));
     }
 
     protected boolean checkTemplateInStorageDomain(List<DiskImage> diskImages) {
