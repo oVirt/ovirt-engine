@@ -77,7 +77,7 @@ DECLARE
          RAISE EXCEPTION 'Materialized view % already exists.',
            v_matview;
      END IF;
-     IF current_user != 'engine' THEN
+     IF current_user != usename from pg_database , pg_user where datdba=usesysid and datname=current_database THEN
          RAISE EXCEPTION 'Materialized view % should be created with user ''engine''.',
            v_matview;
      END IF;
