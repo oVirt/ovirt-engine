@@ -70,7 +70,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>health</servlet-name>
-    <url-pattern>/health</url-pattern>
+    <url-pattern>/health/*</url-pattern>
   </servlet-mapping>
 
   <!-- PageNotFoundForward Servlet -->

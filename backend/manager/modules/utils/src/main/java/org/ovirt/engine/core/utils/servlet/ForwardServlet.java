@@ -32,11 +32,10 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
  * &nbsp;&nbsp;&lt;param-name&gt;uri&lt;/param-name&gt;<br />
  * &nbsp;&nbsp;&lt;param-value&gt;/pkiresource&lt;/param-value&gt;<br />
  * &lt;/init-param&gt; <br />
- * The uri can be '*' which means all URLs relative to the ForwardServlet context are used to determine
- * the path in the target servlet context. So if the ForwardServlet is mapped to /docs and the target context
- * is /ovirt-engine/docs. Then /docs/something gets forwarded to /ovirt-engine/docs/something. <br />
+ * Any extra path associated with the URL (i.e. any path after the servlet context path)
+ * will be appended to given URI relative to the target context path.
  * <br />
- * The targetContext param value can contain property expressions for expanding Engine property values in
+ * The parameters' value can contain property expressions for expanding Engine property values in
  * form of %{PROP_NAME}.
  */
 public class ForwardServlet extends HttpServlet {
@@ -59,11 +58,6 @@ public class ForwardServlet extends HttpServlet {
      */
     public static final String URI_PARAM = "uri"; //$NON-NLS-1$
     /**
-     * The URI parameter that will simply try to forward the request path to the new context without any additional
-     * URI suffix.
-     */
-    public static final String ALL = "*"; //$NON-NLS-1$
-    /**
      * Init param prefix for adding attributes.
      */
     public static final String ATTR_PREF = "attr-";
@@ -81,19 +75,22 @@ public class ForwardServlet extends HttpServlet {
     public void init(final ServletConfig config) throws ServletException {
         // Let the parent do its work:
         super.init(config);
-        if (getServletConfig() != null) {
-            // we use %{x} convention to avoid conflict with jboss properties
-            targetContext = ServletUtils.getAsAbsoluteContext(getServletContext().getContextPath(),
-                    EngineLocalConfig.getInstance().expandString(
-                            config.getInitParameter(CONTEXT_PARAM).replaceAll("%\\{", "\\${")));
-            uri = getInitParameter(URI_PARAM);
-        }
+        targetContext = config.getInitParameter(CONTEXT_PARAM);
         if (targetContext == null) {
             throw new ServletException("Target context not defined in web.xml"); //$NON-NLS-1$
         }
+        uri = config.getInitParameter(URI_PARAM);
         if (uri == null) {
-            uri = ALL;
+            throw new ServletException("Target URI not defined in web.xml"); //$NON-NLS-1$
         }
+
+        // we use %{x} convention to avoid conflict with jboss properties
+        EngineLocalConfig engineLocalConfig = EngineLocalConfig.getInstance();
+        targetContext = ServletUtils.getAsAbsoluteContext(
+            getServletContext().getContextPath(),
+            engineLocalConfig.expandString(targetContext.replaceAll("%\\{", "\\${"))
+        );
+        uri = engineLocalConfig.expandString(uri.replaceAll("%\\{", "\\${"));
     }
 
     /**
@@ -122,8 +119,8 @@ public class ForwardServlet extends HttpServlet {
         final ServletContext forwardContext = getServletContext().getContext(targetContext);
         if (forwardContext != null) {
             String forwardUri = uri;
-            if (ALL.equals(uri)) {
-                forwardUri = request.getRequestURI();
+            if (request.getPathInfo() != null) {
+                forwardUri += request.getPathInfo();
             }
             final RequestDispatcher dispatcher = forwardContext.getRequestDispatcher(forwardUri);
             if (dispatcher != null) {
