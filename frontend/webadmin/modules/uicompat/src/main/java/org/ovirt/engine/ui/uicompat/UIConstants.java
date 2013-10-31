@@ -1363,12 +1363,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allocation can be modified only when importing a single VM")
     String allocCanBeModifiedOnlyWhenImportSingleVm();
 
-    @DefaultStringValue("Configure Network Interfaces")
-    String vmConfigureNetworkInterfacesAction();
-
-    @DefaultStringValue("Add another Network Interface")
-    String vmAddAnotherNetworkInterfaceAction();
-
     @DefaultStringValue("Configure Virtual Disks")
     String vmConfigureVirtualDisksAction();
 
