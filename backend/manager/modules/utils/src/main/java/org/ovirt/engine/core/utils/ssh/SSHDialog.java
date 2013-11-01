@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.ssh;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * The implementation is a wrapper around SSHClient's executeCommand().
  */
-public class SSHDialog {
+public class SSHDialog implements Closeable {
 
     private static final int BUFFER_SIZE = 10 * 1024;
     private static final int DEFAULT_SSH_PORT = 22;
@@ -40,7 +41,7 @@ public class SSHDialog {
         /**
          * Disconnect session.
          */
-        public void disconnect();
+        public void close() throws IOException;
     }
 
     /**
@@ -102,7 +103,12 @@ public class SSHDialog {
      */
     @Override
     protected void finalize() {
-        disconnect();
+        try {
+            close();
+        }
+        catch (IOException e) {
+            log.error("Finalize exception", e);
+        }
     }
 
     /**
@@ -201,9 +207,9 @@ public class SSHDialog {
     /**
      * Disconnect session.
      */
-    public void disconnect() {
+    public void close() throws IOException {
         if (_client != null) {
-            _client.disconnect();
+            _client.close();
             _client = null;
         }
     }
@@ -297,9 +303,9 @@ public class SSHDialog {
             sink.setControl(
                 new Control() {
                     @Override
-                    public void disconnect() {
+                    public void close() throws IOException {
                         if (_client != null) {
-                            _client.disconnect();
+                            _client.close();
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -63,52 +64,35 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
      * @returns {@code true} if command has been executed successfully, {@code false} otherwise
      */
     private boolean executeSshSoftFencingCommand(String version) {
-        boolean result = false;
-        EngineSSHClient sshClient = null;
+        boolean ret = false;
+        try (
+            final EngineSSHClient sshClient = new EngineSSHClient();
+            final ByteArrayOutputStream cmdOut = new ByteArrayOutputStream();
+            final ByteArrayOutputStream cmdErr = new ByteArrayOutputStream();
+        ) {
+            try {
+                log.infoFormat("Opening SSH Soft Fencing session on host {0}", getVds().getHostName());
+                sshClient.setVds(getVds());
+                sshClient.useDefaultKeyPair();
+                sshClient.connect();
+                sshClient.authenticate();
 
-        try {
-            sshClient = new EngineSSHClient();
-            sshClient.setVds(getVds());
-            sshClient.useDefaultKeyPair();
-            sshClient.connect();
-            sshClient.authenticate();
-        } catch (Exception ex) {
-            log.errorFormat("SSH connection to host {0} failed: {1}", getVds().getHostName(), ex);
-            closeSshConnection(sshClient);
-            return result;
-        }
-
-        ByteArrayOutputStream cmdOut = new ByteArrayOutputStream();
-        ByteArrayOutputStream cmdErr = new ByteArrayOutputStream();
-        try {
-            log.infoFormat("Executing SSH Soft Fencing command on host {0}", getVds().getHostName());
-            sshClient.executeCommand(Config.<String> GetValue(ConfigValues.SshSoftFencingCommand, version),
+                log.infoFormat("Executing SSH Soft Fencing command on host {0}", getVds().getHostName());
+                sshClient.executeCommand(
+                    Config.<String> GetValue(ConfigValues.SshSoftFencingCommand, version),
                     null,
                     cmdOut,
-                    cmdErr);
-            result = true;
-        } catch (Exception ex) {
-            log.errorFormat("SSH Soft Fencing command failed on host {0}: {1}\nStdout: {2}\nStderr: {3}\nStacktrace: {4}",
-                    getVds().getHostName(), ex.getMessage(), cmdOut.toString(), cmdErr.toString(), ex);
-        } finally {
-            closeSshConnection(sshClient);
-        }
-        return result;
-    }
-
-    /**
-     * Tries to close SSH client connection
-     *
-     * @param sshClient
-     *            SSH client to close
-     */
-    private void closeSshConnection(EngineSSHClient sshClient) {
-        if (sshClient != null) {
-            try {
-                sshClient.disconnect();
+                    cmdErr
+                );
+                ret = true;
             } catch (Exception ex) {
-                log.error("Error disconnecting SSH connection", ex);
+                log.errorFormat("SSH Soft Fencing command failed on host {0}: {1}\nStdout: {2}\nStderr: {3}\nStacktrace: {4}",
+                        getVds().getHostName(), ex.getMessage(), cmdOut.toString(), cmdErr.toString(), ex);
             }
         }
+        catch(IOException e) {
+            log.error("IOException", e);
+        }
+        return ret;
     }
 }

@@ -50,7 +50,8 @@ public class GlusterUtilTest {
     }
 
     private void setupMock() throws AuthenticationException, IOException {
-        doReturn(client).when(glusterUtil).connect(SERVER_NAME1);
+        doReturn(client).when(glusterUtil).getSSHClient();
+        doNothing().when(glusterUtil).connect(client, SERVER_NAME1);
         doReturn(FINGER_PRINT1).when(client).getHostFingerprint();
         doReturn(OUTPUT_XML).when(glusterUtil).executePeerStatusCommand(client);
         doNothing().when(glusterUtil).authenticate(client, USER, PASSWORD);
@@ -62,6 +63,8 @@ public class GlusterUtilTest {
     public void testGetPeersWithFingerprint() throws AuthenticationException, IOException {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         EXPECTED_MAP.put(SERVER_NAME2, FINGER_PRINT2);
+        doReturn(client).when(glusterUtil).getSSHClient();
+        doNothing().when(glusterUtil).connect(client, SERVER_NAME1);
         doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(any(Set.class));
         Map<String, String> peers = glusterUtil.getPeers(SERVER_NAME1, USER, PASSWORD, FINGER_PRINT1);
         assertNotNull(peers);
@@ -73,9 +76,11 @@ public class GlusterUtilTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetPeers() throws AuthenticationException {
+    public void testGetPeers() throws AuthenticationException, IOException {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         EXPECTED_MAP.put(SERVER_NAME2, FINGER_PRINT2);
+        doReturn(client).when(glusterUtil).getSSHClient();
+        doNothing().when(glusterUtil).connect(client, SERVER_NAME1);
         doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(any(Set.class));
         Set<String> peers = glusterUtil.getPeers(SERVER_NAME1, USER, PASSWORD);
         assertNotNull(peers);
@@ -85,8 +90,9 @@ public class GlusterUtilTest {
 
     @SuppressWarnings("unchecked")
     @Test(expected = AuthenticationException.class)
-    public void testGetPeersWithWrongPassword() throws AuthenticationException {
+    public void testGetPeersWithWrongPassword() throws AuthenticationException, IOException {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
+        doReturn(client).when(glusterUtil).getSSHClient();
         doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(any(Set.class));
         glusterUtil.getPeers(SERVER_NAME1, USER, WRONG_PASSWORD);
     }

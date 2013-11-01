@@ -105,7 +105,7 @@ public class TransferTest {
             }
             catch(Exception e) {}
             try {
-                client.disconnect();
+                client.close();
             }
             catch(Exception e) {}
             client = null;

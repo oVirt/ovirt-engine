@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.ssh;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
@@ -46,9 +47,14 @@ public class BasicTest {
 
     @After
     public void tearDown() {
-        if (client != null) {
-            client.disconnect();
-            client = null;
+        try {
+            if (client != null) {
+                client.close();
+                client = null;
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -73,22 +79,24 @@ public class BasicTest {
     @Test
     public void testPassword()
     throws Exception {
-        client.setPassword(TestCommon.password);
-        client.connect();
-        client.authenticate();
-        ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(500);
-        client.executeCommand(hello_command, null, out, null);
-        assertEquals(hello_result, new String(out.toByteArray(), "UTF-8"));
+        try (final ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(500)) {
+            client.setPassword(TestCommon.password);
+            client.connect();
+            client.authenticate();
+            client.executeCommand(hello_command, null, out, null);
+            assertEquals(hello_result, new String(out.toByteArray(), "UTF-8"));
+        }
     }
 
     @Test
     public void testPK() throws Exception {
-        client.setKeyPair(TestCommon.keyPair);
-        client.connect();
-        client.authenticate();
-        ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(500);
-        client.executeCommand(hello_command, null, out, null);
-        assertEquals(hello_result, new String(out.toByteArray(), "UTF-8"));
+        try (final ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(500)) {
+            client.setKeyPair(TestCommon.keyPair);
+            client.connect();
+            client.authenticate();
+            client.executeCommand(hello_command, null, out, null);
+            assertEquals(hello_result, new String(out.toByteArray(), "UTF-8"));
+        }
     }
 
     @Test

@@ -419,9 +419,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             !getParameters().getAddPending() &&
             Config.<Boolean> GetValue(ConfigValues.InstallVds)
         ) {
-            EngineSSHClient sshclient = null;
-            try {
-                sshclient = getSSHClient();
+            try (final EngineSSHClient sshclient = getSSHClient()) {
                 sshclient.connect();
                 sshclient.authenticate();
 
@@ -457,10 +455,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         );
 
                 return failCanDoAction(VdcBllMessages.VDS_CANNOT_CONNECT_TO_SERVER);
-            } finally {
-                if (sshclient != null) {
-                    sshclient.disconnect();
-                }
             }
         }
         return true;

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils.ssh;
 
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -11,11 +13,8 @@ import org.junit.Test;
  */
 public class PropertiesTest {
     @Test
-    public void testProperties() {
-        SSHClient ssh = null;
-        try {
-            ssh = new SSHClient();
-
+    public void testProperties() throws IOException {
+        try (final SSHClient ssh = new SSHClient()) {
             assertEquals(ssh.getHost(), null);
             assertEquals(ssh.getPort(), 22);
             assertEquals(ssh.getUser(), null);
@@ -32,11 +31,6 @@ public class PropertiesTest {
             assertEquals(ssh.getDisplayHost(), "user1@host1:1234");
             ssh.setHost("host2");
             assertEquals(ssh.getDisplayHost(), "user1@host2");
-        }
-        finally {
-            if (ssh != null) {
-                ssh.disconnect();
-            }
         }
     }
 }

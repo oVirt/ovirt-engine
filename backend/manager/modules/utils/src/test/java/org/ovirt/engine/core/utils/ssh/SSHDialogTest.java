@@ -132,7 +132,12 @@ public class SSHDialogTest {
                 }
             }
             finally {
-                _control.disconnect();
+                try {
+                    _control.close();
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -266,9 +271,14 @@ public class SSHDialogTest {
 
     @After
     public void tearDown() {
-        if (_sshdialog != null) {
-            _sshdialog.disconnect();
-            _sshdialog = null;
+        try {
+            if (_sshdialog != null) {
+                _sshdialog.close();
+                _sshdialog = null;
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -304,27 +314,27 @@ public class SSHDialogTest {
 
     @Test
     public void testSimple() throws Throwable {
-        Sink sink = new Sink(
-            new String[] {
-                "start",
-                "text1",
-                "text2"
-            },
-            new String[] {
-                "text1",
-                "text2"
-            }
-        );
-        _sshdialog.connect();
-        _sshdialog.authenticate();
-        _sshdialog.executeCommand(
-            sink,
-            "cat",
-            new InputStream[] {
-                new ByteArrayInputStream("start\n".getBytes("UTF-8"))
-            }
-        );
-        sink.exception();
+        try (final InputStream start = new ByteArrayInputStream("start\n".getBytes("UTF-8"))) {
+            Sink sink = new Sink(
+                new String[] {
+                    "start",
+                    "text1",
+                    "text2"
+                },
+                new String[] {
+                    "text1",
+                    "text2"
+                }
+            );
+            _sshdialog.connect();
+            _sshdialog.authenticate();
+            _sshdialog.executeCommand(
+                sink,
+                "cat",
+                new InputStream[] {start}
+            );
+            sink.exception();
+        }
     }
 
     @Test(expected=TimeLimitExceededException.class)
@@ -349,27 +359,27 @@ public class SSHDialogTest {
 
     @Test(expected=RuntimeException.class)
     public void testStderr() throws Throwable {
-        Sink sink = new Sink(
-            new String[] {
-                "start",
-                "text1",
-                "text2"
-            },
-            new String[] {
-                "text1",
-                "text2"
-            }
-        );
-        _sshdialog.connect();
-        _sshdialog.authenticate();
-        _sshdialog.executeCommand(
-            sink,
-            "echo message >&2 && cat",
-            new InputStream[] {
-                new ByteArrayInputStream("start\n".getBytes("UTF-8"))
-            }
-        );
-        sink.exception();
+        try (final InputStream start = new ByteArrayInputStream("start\n".getBytes("UTF-8"))) {
+            Sink sink = new Sink(
+                new String[] {
+                    "start",
+                    "text1",
+                    "text2"
+                },
+                new String[] {
+                    "text1",
+                    "text2"
+                }
+            );
+            _sshdialog.connect();
+            _sshdialog.authenticate();
+            _sshdialog.executeCommand(
+                sink,
+                "echo message >&2 && cat",
+                new InputStream[] {start}
+            );
+            sink.exception();
+        }
     }
 
     @Test

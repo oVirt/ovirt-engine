@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.ssh;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,8 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.nio.charset.Charset;
 import java.net.SocketAddress;
+import java.nio.charset.Charset;
 import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
 import java.security.KeyPair;
@@ -34,7 +35,7 @@ import org.apache.sshd.client.ServerKeyVerifier;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 
-public class SSHClient {
+public class SSHClient implements Closeable {
     private static final String COMMAND_FILE_RECEIVE = "test -r '%2$s' && md5sum -b '%2$s' | cut -d ' ' -f 1 >&2 && %1$s < '%2$s'";
     private static final String COMMAND_FILE_SEND = "%1$s > '%2$s' && md5sum -b '%2$s' | cut -d ' ' -f 1 >&2";
     private static final int STREAM_BUFFER_SIZE = 8192;
@@ -114,7 +115,12 @@ public class SSHClient {
      */
     @Override
     protected void finalize() {
-        disconnect();
+        try {
+            close();
+        }
+        catch (IOException e) {
+            log.error("Finalize exception", e);
+        }
     }
 
     /**
@@ -382,14 +388,20 @@ public class SSHClient {
      *
      * Must be called when done with client.
      */
-    public void disconnect() {
-        if (_session != null) {
-            _session.close(true);
-            _session = null;
+    public void close() throws IOException {
+        try {
+            if (_session != null) {
+                _session.close(true);
+                _session = null;
+            }
+            if (_client != null) {
+                _client.stop();
+                _client = null;
+            }
         }
-        if (_client != null) {
-            _client.stop();
-            _client = null;
+        catch (Exception e) {
+            log.error("Failed to close session", e);
+            throw new IOException(e);
         }
     }
 

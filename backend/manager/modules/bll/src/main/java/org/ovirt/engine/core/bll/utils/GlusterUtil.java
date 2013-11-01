@@ -54,18 +54,13 @@ public class GlusterUtil {
      * @throws AuthenticationException
      *             If SSH authentication with given root password fails
      */
-    public Set<String> getPeers(String server, String username, String password) throws AuthenticationException {
-        SSHClient client = null;
+    public Set<String> getPeers(String server, String username, String password) throws AuthenticationException, IOException {
 
-        try {
-            client = connect(server);
+        try (final SSHClient client = getSSHClient()) {
+            connect(client, server);
             authenticate(client, username, password);
             String serversXml = executePeerStatusCommand(client);
             return extractServers(serversXml);
-        } finally {
-            if (client != null) {
-                client.disconnect();
-            }
         }
     }
 
@@ -101,29 +96,21 @@ public class GlusterUtil {
      */
     public Map<String, String> getPeers(String server, String username, String password, String fingerprint)
             throws AuthenticationException, IOException {
-        SSHClient client = null;
-
-        try {
-            client = connect(server);
+        try (final SSHClient client = getSSHClient()) {
+            connect(client, server);
             authenticate(client, username, password);
             String serversXml = executePeerStatusCommand(client);
             return getFingerprints(extractServers(serversXml));
-        } finally {
-            if (client != null) {
-                client.disconnect();
-            }
         }
     }
 
-    protected SSHClient connect(String serverName) {
-        SSHClient client = new EngineSSHClient();
+    protected void connect(SSHClient client, String serverName) {
         Integer timeout = Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds) * 1000;
         client.setHardTimeout(timeout);
         client.setSoftTimeout(timeout);
         client.setHost(serverName, SSH_PORT);
         try {
             client.connect();
-            return client;
         } catch (Exception e) {
             log.debug(String.format("Could not connect to server %1$s: %2$s", serverName, e.getMessage()));
             throw new RuntimeException(e);
@@ -203,5 +190,9 @@ public class GlusterUtil {
 
     public BackendInternal getBackendInstance() {
         return Backend.getInstance();
+    }
+
+    protected SSHClient getSSHClient() {
+        return new EngineSSHClient();
     }
 }

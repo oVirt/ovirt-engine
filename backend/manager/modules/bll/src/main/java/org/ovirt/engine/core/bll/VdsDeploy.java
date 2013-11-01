@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -74,7 +75,7 @@ import org.ovirt.ovirt_host_deploy.constants.VirtEnv;
  * The installer environment is set according to the ovirt-host-deploy
  * documentation.
  */
-public class VdsDeploy implements SSHDialog.Sink {
+public class VdsDeploy implements SSHDialog.Sink, Closeable {
 
     public static enum DeployStatus {Complete, Incomplete, Failed, Reboot};
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000; // milliseconds
@@ -868,7 +869,12 @@ public class VdsDeploy implements SSHDialog.Sink {
         catch (Exception e) {
             _failException = e;
             log.error("Error during deploy dialog", e);
-            _control.disconnect();
+            try {
+                _control.close();
+            }
+            catch (IOException ee) {
+                log.error("Error during close", e);
+            }
         }
     }
 
@@ -908,16 +914,21 @@ public class VdsDeploy implements SSHDialog.Sink {
      */
     @Override
     protected void finalize() {
-        close();
+        try {
+            close();
+        }
+        catch (IOException e) {
+            log.error("Exception during finalize", e);
+        }
     }
 
     /**
      * Release resources.
      */
-    public void close() {
+    public void close() throws IOException {
         stop();
         if (_dialog != null) {
-            _dialog.disconnect();
+            _dialog.close();
             _dialog = null;
         }
     }

@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -20,7 +22,7 @@ import org.ovirt.engine.core.utils.ssh.SSHDialog;
 /**
  * ovirt-node upgrade.
  */
-public class OVirtNodeUpgrade implements SSHDialog.Sink {
+public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
 
     public static enum DeployStatus {Complete, Failed, Reboot};
 
@@ -67,7 +69,12 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
         catch (Exception e) {
             _failException = e;
             log.error("Error during upgrade", e);
-            _control.disconnect();
+            try {
+                _control.close();
+            }
+            catch (IOException ee) {
+                log.error("Error during close", ee);
+            }
         }
     }
 
@@ -98,7 +105,12 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
      */
     @Override
     protected void finalize() {
-        close();
+        try {
+            close();
+        }
+        catch (IOException e) {
+            log.error("Exception during finalize", e);
+        }
     }
 
     public void setCorrelationId(String correlationId) {
@@ -108,10 +120,10 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
     /**
      * Free resources.
      */
-    public void close() {
+    public void close() throws IOException {
         stop();
         if (_dialog != null) {
-            _dialog.disconnect();
+            _dialog.close();
             _dialog = null;
         }
     }

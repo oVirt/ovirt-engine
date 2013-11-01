@@ -20,18 +20,15 @@ public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends
 
     public String getServerFingerprint(String serverName) {
         String fingerPrint = null;
-        EngineSSHClient dialog = getEngineSSHClient();
-        try {
-            dialog.setHost(serverName);
-            dialog.connect();
-            fingerPrint = dialog.getHostFingerprint();
+        try (final EngineSSHClient client = getEngineSSHClient()) {
+            client.setHost(serverName);
+            client.connect();
+            fingerPrint = client.getHostFingerprint();
         } catch (Throwable e) {
             log.errorFormat("Could not fetch fingerprint of host {0} with message: {1}",
                 serverName,
                 ExceptionUtils.getMessage(e)
             );
-        } finally {
-            dialog.disconnect();
         }
         return fingerPrint;
     }

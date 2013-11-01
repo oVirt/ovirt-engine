@@ -118,8 +118,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
     }
 
     private void installHost() {
-        VdsDeploy installer = null;
-        try {
+        try (final VdsDeploy installer = new VdsDeploy(getVds())) {
             log.infoFormat(
                 "Before Installation host {0}, {1}",
                 getVds().getId(),
@@ -127,7 +126,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             );
 
             T parameters = getParameters();
-            installer = new VdsDeploy(getVds());
             installer.setCorrelationId(getCorrelationId());
             boolean configureNetworkUsingHostDeploy = !FeatureSupported.setupManagementNetwork(
                 getVds().getVdsGroupCompatibilityVersion()
@@ -218,21 +216,16 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             handleError(e, e.getStatus());
         } catch (Exception e) {
             handleError(e, VDSStatus.InstallFailed);
-        } finally {
-            if (installer != null) {
-                installer.close();
-            }
         }
     }
 
     private void upgradeNode() {
-        OVirtNodeUpgrade upgrade = null;
-        try {
-            T parameters = getParameters();
-            upgrade = new OVirtNodeUpgrade(
+        try (
+            final OVirtNodeUpgrade upgrade = new OVirtNodeUpgrade(
                 getVds(),
-                parameters.getoVirtIsoFile()
-            );
+                getParameters().getoVirtIsoFile()
+            )
+        ) {
             upgrade.setCorrelationId(getCorrelationId());
             log.infoFormat(
                 "Execute upgrade host {0}, {1}",
@@ -264,11 +257,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             handleError(e, e.getStatus());
         } catch (Exception e) {
             handleError(e, VDSStatus.InstallFailed);
-        }
-        finally {
-            if (upgrade != null) {
-                upgrade.close();
-            }
         }
     }
 

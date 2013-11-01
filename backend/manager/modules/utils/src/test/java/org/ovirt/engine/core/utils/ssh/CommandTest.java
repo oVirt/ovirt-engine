@@ -48,9 +48,14 @@ public class CommandTest {
 
     @After
     public void tearDown() {
-        if (client != null) {
-            client.disconnect();
-            client = null;
+        try {
+            if (client != null) {
+                client.close();
+                client = null;
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -72,34 +77,43 @@ public class CommandTest {
     @Test
     public void testEchoStdout() throws Exception {
         String content = "hello\nworld!\nother\ndata";
-        InputStream stdin = new ByteArrayInputStream(content.getBytes("UTF-8"));
-        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-        client.executeCommand("cat", stdin, stdout, stderr);
-        assertEquals(content, new String(stdout.toByteArray(), "UTF-8"));
-        assertEquals(0, stderr.size());
+        try (
+            final InputStream stdin = new ByteArrayInputStream(content.getBytes("UTF-8"));
+            final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+            final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        ) {
+            client.executeCommand("cat", stdin, stdout, stderr);
+            assertEquals(content, new String(stdout.toByteArray(), "UTF-8"));
+            assertEquals(0, stderr.size());
+        }
     }
 
     @Test
     public void testEchoStderr() throws Exception {
         String content = "hello\nworld!\nother\ndata";
-        InputStream stdin = new ByteArrayInputStream(content.getBytes("UTF-8"));
-        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-        client.executeCommand("cat >&2", stdin, stdout, stderr);
-        assertEquals(content, new String(stderr.toByteArray(), "UTF-8"));
-        assertEquals(0, stdout.size());
+        try (
+            final InputStream stdin = new ByteArrayInputStream(content.getBytes("UTF-8"));
+            final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+            final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        ) {
+            client.executeCommand("cat >&2", stdin, stdout, stderr);
+            assertEquals(content, new String(stderr.toByteArray(), "UTF-8"));
+            assertEquals(0, stdout.size());
+        }
     }
 
     @Test
     public void testEchoBoth() throws Exception {
         String content = "hello\nworld!\nother\ndata";
-        InputStream stdin = new ByteArrayInputStream(content.getBytes("UTF-8"));
-        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-        client.executeCommand("cat | tee /proc/self/fd/2", stdin, stdout, stderr);
-        assertEquals(content, new String(stdout.toByteArray(), "UTF-8"));
-        assertEquals(content, new String(stderr.toByteArray(), "UTF-8"));
+        try (
+            final InputStream stdin = new ByteArrayInputStream(content.getBytes("UTF-8"));
+            final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+            final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        ) {
+            client.executeCommand("cat | tee /proc/self/fd/2", stdin, stdout, stderr);
+            assertEquals(content, new String(stdout.toByteArray(), "UTF-8"));
+            assertEquals(content, new String(stderr.toByteArray(), "UTF-8"));
+        }
     }
 
     /* Expected harmless exception of sshd (if used) */
