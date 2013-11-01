@@ -2561,6 +2561,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Rebalance")
     String rebalanceVolume();
 
+    @DefaultStringValue("Started At :")
+    String rebalanceStartTime();
+
+    @DefaultStringValue("Stopped At :")
+    String rebalanceStopTime();
+
     @DefaultStringValue("Optimize for Virt Store")
     String optimizeForVirtStore();
 
@@ -3285,9 +3291,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Rebalance completed")
     String rebalanceCompleted();
-
-    @DefaultStringValue("Started At :")
-    String rebalanceStartTime();
 
     @DefaultStringValue("Status At :")
     String rebalanceStatusTime();

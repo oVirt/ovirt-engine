@@ -53,7 +53,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
 
     protected GlusterVolumeTaskStatusEntity updateStatusEntity(GlusterVolumeTaskStatusEntity status) {
         // Set the volume remove bricks start time
-        setStartTime(status);
+        setStartAndStopTime(status);
         // update the latest status
         updateLatestStatus(status);
         // Update the host details as required into entity
@@ -89,7 +89,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
         }
     }
 
-    private GlusterVolumeTaskStatusEntity setStartTime(GlusterVolumeTaskStatusEntity status) {
+    private GlusterVolumeTaskStatusEntity setStartAndStopTime(GlusterVolumeTaskStatusEntity status) {
         if (status == null) {
             return null;
         }
@@ -99,6 +99,7 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
             List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
             if (stepsList != null && !stepsList.isEmpty()) {
                 status.setStartTime(stepsList.get(0).getStartTime());
+                status.setStopTime(stepsList.get(0).getEndTime());
             }
         }
 

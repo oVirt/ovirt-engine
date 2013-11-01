@@ -11,6 +11,7 @@ public class GlusterVolumeTaskStatusEntity implements Serializable {
 
     private Date startTime;
     private Date statusTime;
+    private Date stopTime;
     private List<GlusterVolumeTaskStatusForHost> hostwiseStatusDetails;
     private GlusterVolumeTaskStatusDetail statusSummary;
 
@@ -67,5 +68,13 @@ public class GlusterVolumeTaskStatusEntity implements Serializable {
                 .append(", Total size moved: ")
                 .append(statusSummary.getTotalSizeMoved());
         return builder.toString();
+    }
+
+    public Date getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(Date stopTime) {
+        this.stopTime = stopTime;
     }
 }

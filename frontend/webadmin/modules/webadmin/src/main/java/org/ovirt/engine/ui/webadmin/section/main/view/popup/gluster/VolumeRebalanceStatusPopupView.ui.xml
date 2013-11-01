@@ -7,7 +7,7 @@
 	<ui:style>
 		.tablePanel {
 		height: 415px;
-		width: 781px;
+		width: 981px;
 		padding: 1px;
 		border: 1px solid #CED8DF;
 		}
@@ -19,6 +19,10 @@
 		color: #333333;
 		}
 
+                .stopTime {
+                padding-top: 30px;
+                }
+
 		.messageLabel {
 		color: #FF0000;
 		left: 10px;
@@ -27,21 +31,23 @@
 		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="800px" height="550px"
-		ui:field="panel">
+	<d:SimpleDialogPanel width="1000px" height="550px">
 		<d:content>
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
 					<g:VerticalPanel>
 						<e:EntityModelLabelEditor ui:field="volumeEditor" />
-						<e:EntityModelLabelEditor ui:field="startedTimeEditor" />
+						<e:EntityModelLabelEditor ui:field="startTimeEditor" />
+					</g:VerticalPanel>
+					<g:VerticalPanel ui:field="stopTimePanel" addStyleNames="{style.stopTime}">
+					    <e:EntityModelLabelEditor ui:field="stopTimeEditor" />
 					</g:VerticalPanel>
 					<g:VerticalPanel>
 					        <e:EntityModelLabelEditor ui:field="clusterEditor" />
 						<e:EntityModelLabelEditor ui:field="statusTimeEditor" />
 					</g:VerticalPanel>
 					<g:VerticalPanel>
-					        <g:Label ui:field="statusLabel" addStyleNames="{style.labelStyle}"/>
+					    <g:Label ui:field="status" addStyleNames="{style.labelStyle}"/>
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<g:ScrollPanel addStyleNames="{style.tablePanel}"

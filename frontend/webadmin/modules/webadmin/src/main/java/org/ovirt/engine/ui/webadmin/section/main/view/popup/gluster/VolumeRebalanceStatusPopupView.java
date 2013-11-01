@@ -33,7 +33,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<VolumeRebalanceStatusModel> implements VolumeRebalanceStatusPopupPresenterWidget.ViewDef {
@@ -60,9 +60,9 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     EntityModelLabelEditor clusterEditor;
 
     @UiField(provided = true)
-    @Path("startedTime.entity")
+    @Path("startTime.entity")
     @WithElementId
-    EntityModelLabelEditor startedTimeEditor;
+    EntityModelLabelEditor startTimeEditor;
 
     @UiField(provided = true)
     @Path("statusTime.entity")
@@ -72,12 +72,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @UiField
     @Ignore
     @WithElementId
-    Label statusLabel;
-
-    @UiField
-    @Ignore
-    @WithElementId
-    ScrollPanel sPanel;
+    Label status;
 
     @UiField(provided = true)
     @Ignore
@@ -87,6 +82,16 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @UiField
     @Ignore
     Label messageLabel;
+
+    @UiField(provided = true)
+    @Path("stopTime.entity")
+    @WithElementId
+    EntityModelLabelEditor stopTimeEditor;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    VerticalPanel stopTimePanel;
 
     ApplicationMessages messages;
 
@@ -103,16 +108,20 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
+        setVisibilities();
         driver.initialize(this);
     }
 
+    private void setVisibilities() {
+        status.setVisible(false);
+    }
+
     private void localize(final ApplicationConstants constants) {
-        startedTimeEditor.setLabel(constants.rebalanceStartTime());
+        startTimeEditor.setLabel(constants.rebalanceStartTime());
         volumeEditor.setLabel(constants.rebalanceVolumeName());
         clusterEditor.setLabel(constants.rebalanceClusterVolume());
         statusTimeEditor.setLabel(constants.rebalanceStatusTime());
-        statusLabel.setText(constants.rebalanceComplete());
-        statusLabel.setVisible(false);
+        stopTimeEditor.setLabel(constants.rebalanceStopTime());
     }
 
     void initEditors(ApplicationConstants constants) {
@@ -120,7 +129,9 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
 
         statusTimeEditor = getInstanceOfDateEditor();
 
-        startedTimeEditor = getInstanceOfDateEditor();
+        startTimeEditor = getInstanceOfDateEditor();
+
+        stopTimeEditor = getInstanceOfDateEditor();
 
         rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
             @Override
@@ -196,8 +207,11 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if(e.PropertyName.equals("IS_STATUS_APPLICABLE")) {//$NON-NLS-1$
-                    statusLabel.setVisible(object.isStatusAvailable());
+                if (e.PropertyName.equals("IS_STATUS_APPLICABLE")) {//$NON-NLS-1$
+                    status.setText(constants.rebalanceComplete());
+                    status.setVisible(true);
+                } else if (e.PropertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
+                    stopTimePanel.setVisible(object.isStopTimeVisible());
                 }
             }
         });

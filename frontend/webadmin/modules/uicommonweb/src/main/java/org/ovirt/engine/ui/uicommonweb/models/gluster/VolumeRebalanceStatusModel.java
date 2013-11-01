@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -26,11 +27,19 @@ public class VolumeRebalanceStatusModel extends Model {
 
     private EntityModel cluster;
 
-    private EntityModel startedTime;
+    private EntityModel startTime;
 
     private EntityModel statusTime;
 
-    private EntityModel status;
+    public EntityModel getStopTime() {
+        return stopTime;
+    }
+
+    public void setStopTime(EntityModel stopTime) {
+        this.stopTime = stopTime;
+    }
+
+    private EntityModel stopTime;
 
     private GlusterVolumeEntity entity;
 
@@ -43,11 +52,13 @@ public class VolumeRebalanceStatusModel extends Model {
     private UICommand stopReblanceFromStatus;
 
     public VolumeRebalanceStatusModel(final GlusterVolumeEntity volumeEntity) {
-        setStatus(new EntityModel());
         setVolume(new EntityModel());
         setCluster(new EntityModel());
-        setStartedTime(new EntityModel());
+        setStartTime(new EntityModel());
+        getStartTime().setEntity(new Date());
         setStatusTime(new EntityModel());
+        setStopTime(new EntityModel());
+        getStopTime().setEntity(new Date());
         setRebalanceSessions(new ListModel());
         setEntity(volumeEntity);
         refresh = new Timer() {
@@ -77,12 +88,12 @@ public class VolumeRebalanceStatusModel extends Model {
         this.volume = volume;
     }
 
-    public EntityModel getStartedTime() {
-        return startedTime;
+    public EntityModel getStartTime() {
+        return startTime;
     }
 
-    public void setStartedTime(EntityModel startedTime) {
-        this.startedTime = startedTime;
+    public void setStartTime(EntityModel startedTime) {
+        this.startTime = startedTime;
     }
 
     public EntityModel getCluster() {
@@ -109,7 +120,7 @@ public class VolumeRebalanceStatusModel extends Model {
             EntityModel sessionModel = new EntityModel(hostDetail);
             sessionList.add(sessionModel);
         }
-        getStartedTime().setEntity(rebalanceStatusEntity.getStartTime());
+        getStartTime().setEntity(rebalanceStatusEntity.getStartTime());
         getStatusTime().setEntity(rebalanceStatusEntity.getStatusTime());
         getRebalanceSessions().setItems(sessionList);
         if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FINISHED) {
@@ -119,6 +130,10 @@ public class VolumeRebalanceStatusModel extends Model {
             setStatusAvailable(false);
             if ((rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED || rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FAILED)) {
                 refresh.cancel();
+                if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED) {
+                    getStopTime().setEntity(rebalanceStatusEntity.getStopTime());
+                    setStopTimeVisible(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED);
+                }
             }
         }
         if (GlusterTaskType.REBALANCE == getEntity().getAsyncTask().getType()) {
@@ -154,14 +169,6 @@ public class VolumeRebalanceStatusModel extends Model {
         this.entity = entity;
     }
 
-    public EntityModel getStatus() {
-        return status;
-    }
-
-    public void setStatus(EntityModel statusLabel) {
-        this.status = statusLabel;
-    }
-
     public boolean isStatusAvailable() {
         return isStatusAvailable;
     }
@@ -173,11 +180,22 @@ public class VolumeRebalanceStatusModel extends Model {
         }
     }
 
+    private boolean stopTimeVisible;
+
     public UICommand getStopReblanceFromStatus() {
         return stopReblanceFromStatus;
     }
 
     public void setStopReblanceFromStatus(UICommand stopReblanceFromStatus) {
         this.stopReblanceFromStatus = stopReblanceFromStatus;
+    }
+
+    public boolean isStopTimeVisible() {
+        return stopTimeVisible;
+    }
+
+    public void setStopTimeVisible(boolean stopTimeVisible) {
+        this.stopTimeVisible = stopTimeVisible;
+        onPropertyChanged(new PropertyChangedEventArgs("STOP_TIME_UPDATED"));//$NON-NLS-1$
     }
 }
