@@ -678,7 +678,6 @@ public class VdsDeploy implements SSHDialog.Sink {
             return null;
         }},
         new Callable<Object>() { public Object call() throws Exception {
-            OutputStream os = null;
             File logFile = new File(
                 EngineLocalConfig.getInstance().getLogDir(),
                 String.format(
@@ -699,8 +698,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                     logFile
                 )
             );
-            try {
-                os = new FileOutputStream(logFile);
+            try (final OutputStream os = new FileOutputStream(logFile)) {
                 _parser.cliDownloadLog(os);
             }
             catch (IOException e) {
@@ -709,16 +707,6 @@ public class VdsDeploy implements SSHDialog.Sink {
             catch (Exception e) {
                 log.error("Unexpected exception", e);
                 throw new RuntimeException(e);
-            }
-            finally {
-                if (os != null) {
-                    try {
-                        os.close();
-                    }
-                    catch (IOException e) {
-                        log.error("cannot close log file", e);
-                    }
-                }
             }
             return null;
         }},
@@ -1013,7 +1001,6 @@ public class VdsDeploy implements SSHDialog.Sink {
      * Execute the command and initiate the dialog.
      */
     public void execute() throws Exception {
-        InputStream in = null;
         try {
             _dialog.setVds(_vds);
             _dialog.connect();
@@ -1042,13 +1029,13 @@ public class VdsDeploy implements SSHDialog.Sink {
                 s_deployPackage.getFileNoUse()
             );
 
-            in = new FileInputStream(s_deployPackage.getFile());
-
-            _dialog.executeCommand(
-                this,
-                command,
-                new InputStream[] {in}
-            );
+            try (final InputStream in = new FileInputStream(s_deployPackage.getFile())) {
+                _dialog.executeCommand(
+                    this,
+                    command,
+                    new InputStream[] {in}
+                );
+            }
 
             if (_failException != null) {
                 throw _failException;
@@ -1102,16 +1089,6 @@ public class VdsDeploy implements SSHDialog.Sink {
                     _failException
                 );
                 throw _failException;
-            }
-        }
-        finally {
-            if (in != null) {
-                try {
-                    in.close();
-                }
-                catch (IOException e) {
-                    log.error("Cannot close deploy package", e);
-                }
             }
         }
     }

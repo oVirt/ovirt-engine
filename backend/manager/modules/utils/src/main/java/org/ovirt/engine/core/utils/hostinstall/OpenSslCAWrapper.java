@@ -37,13 +37,9 @@ public class OpenSslCAWrapper {
 
     public static String getCACertificate() throws Exception {
 
-        InputStream in = null;
+        try (final InputStream in = new FileInputStream(EngineLocalConfig.getInstance().getPKICACert())) {
 
-        try {
-            in = new FileInputStream(EngineLocalConfig.getInstance().getPKICACert());
-
-            final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            final Certificate certificate = cf.generateCertificate(in);
+            final Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(in);
 
             return String.format(
                 (
@@ -60,11 +56,6 @@ public class OpenSslCAWrapper {
                 )
             );
         }
-        finally {
-            if (in != null) {
-                in.close();
-            }
-        }
     }
 
     public static String signCertificateRequest(
@@ -73,25 +64,15 @@ public class OpenSslCAWrapper {
     ) throws IOException {
         EngineLocalConfig config = EngineLocalConfig.getInstance();
 
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(
+        try (
+            final OutputStream os = new FileOutputStream(
                 new File(
                     new File(config.getPKIDir(), "requests"),
                     String.format("%s.req", hostname)
                 )
-            );
+            )
+        ) {
             os.write(request.getBytes(Charset.forName("UTF-8")));
-        }
-        finally {
-            if (os != null) {
-                try {
-                    os.close();
-                }
-                catch (IOException e) {
-                    log.error("error during close", e);
-                }
-            }
         }
 
         if (
@@ -147,55 +128,44 @@ public class OpenSslCAWrapper {
         boolean returnValue = true;
         String outputString = null;
         String errorString = null;
-        BufferedReader stdOutput = null;
-        BufferedReader stdError = null;
         try {
             log.debug("Running Sign Certificate request script");
             Process process = getRuntime().exec(command_array);
-            stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-            stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.forName("UTF-8")));
-            int exitCode = 0;
-            boolean completed = false;
-            for (int x = 0; x < signatureTimeout; x++) {
-                try {
-                    Thread.sleep(1000);
-                    exitCode = process.exitValue();
-                    completed = true;
-                    break;
-                } catch (IllegalThreadStateException | InterruptedException e) {
-                    // keep going
+            try (
+                final BufferedReader stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
+                final BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.forName("UTF-8")));
+            ) {
+                int exitCode = 0;
+                boolean completed = false;
+                for (int x = 0; x < signatureTimeout; x++) {
+                    try {
+                        Thread.sleep(1000);
+                        exitCode = process.exitValue();
+                        completed = true;
+                        break;
+                    } catch (IllegalThreadStateException | InterruptedException e) {
+                        // keep going
+                    }
                 }
-            }
-            outputString += readAllLines(stdOutput);
-            errorString += readAllLines(stdError);
-            if (!completed) {
-                process.destroy();
-                returnValue = false;
-                log.error("Sign Certificate request script killed due to timeout");
-                logOutputAndErrors(outputString, errorString);
-            } else if (exitCode != 0) {
-                returnValue = false;
-                log.error("Sign Certificate request failed with exit code " + exitCode);
-                logOutputAndErrors(outputString, errorString);
-            } else {
-                log.debug("Successfully completed certificate signing script");
+                outputString = readAllLines(stdOutput);
+                errorString = readAllLines(stdError);
+                if (!completed) {
+                    process.destroy();
+                    returnValue = false;
+                    log.error("Sign Certificate request script killed due to timeout");
+                    logOutputAndErrors(outputString, errorString);
+                } else if (exitCode != 0) {
+                    returnValue = false;
+                    log.error("Sign Certificate request failed with exit code " + exitCode);
+                    logOutputAndErrors(outputString, errorString);
+                } else {
+                    log.debug("Successfully completed certificate signing script");
+                }
             }
         } catch (IOException e) {
             log.error("Exception signing the certificate", e);
             logOutputAndErrors(outputString, errorString);
             returnValue = false;
-        } finally {
-            // Close the BufferedReaders
-            try {
-                if (stdOutput != null) {
-                    stdOutput.close();
-                }
-                if (stdError != null) {
-                    stdError.close();
-                }
-            } catch (IOException ex) {
-                log.error("Unable to close BufferedReader");
-            }
         }
         return returnValue;
     }

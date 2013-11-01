@@ -278,22 +278,22 @@ public class SSHDialog {
 
         log.info(String.format("SSH execute %1$s '%2$s'", _client.getDisplayHost(), command));
 
-        final PipedInputStream pinStdin = new PipedInputStream(BUFFER_SIZE);
-        final OutputStream poutStdin = new PipedOutputStream(pinStdin);
-        final PipedInputStream pinStdout = new PipedInputStream(BUFFER_SIZE);
-        final OutputStream poutStdout = new PipedOutputStream(pinStdout);
-        final ByteArrayOutputStream stderr = new ConstraintByteArrayOutputStream(1024);
+        try (
+            final PipedInputStream pinStdin = new PipedInputStream(BUFFER_SIZE);
+            final OutputStream poutStdin = new PipedOutputStream(pinStdin);
+            final PipedInputStream pinStdout = new PipedInputStream(BUFFER_SIZE);
+            final OutputStream poutStdout = new PipedOutputStream(pinStdout);
+            final ByteArrayOutputStream stderr = new ConstraintByteArrayOutputStream(1024);
+        ) {
+            List<InputStream> stdinList;
+            if (initial == null) {
+                stdinList = new LinkedList<InputStream>();
+            }
+            else {
+                stdinList = new LinkedList<InputStream>(Arrays.asList(initial));
+            }
+            stdinList.add(pinStdin);
 
-        List<InputStream> stdinList;
-        if (initial == null) {
-            stdinList = new LinkedList<InputStream>();
-        }
-        else {
-            stdinList = new LinkedList<InputStream>(Arrays.asList(initial));
-        }
-        stdinList.add(pinStdin);
-
-        try {
             sink.setControl(
                 new Control() {
                     @Override

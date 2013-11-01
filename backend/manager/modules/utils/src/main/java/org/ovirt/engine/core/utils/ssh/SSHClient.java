@@ -409,26 +409,33 @@ public class SSHClient {
 
         log.debug(String.format("Executing: '%1$s'", command));
 
+        InputStream _xin = null;
+        OutputStream _xout = null;
+        OutputStream _xerr = null;
+
         if (in == null) {
-            in = new ByteArrayInputStream(new byte[0]);
+            _xin = in = new ByteArrayInputStream(new byte[0]);
         }
         if (out == null) {
-            out = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+            _xout = out = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
         }
         if (err == null) {
-            err = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+            _xerr = err = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
         }
 
         /*
          * Redirect streams into indexed streams.
          */
-        ProgressInputStream iin = new ProgressInputStream(in);
-        ProgressOutputStream iout = new ProgressOutputStream(out);
-        ProgressOutputStream ierr = new ProgressOutputStream(err);
-
-        ClientChannel channel = _session.createExecChannel(command);
-
-        try {
+        ClientChannel channel = null;
+        try (
+            final InputStream _xxin = _xin;
+            final OutputStream _xxout = _xout;
+            final OutputStream _xxerr = _xerr;
+            final ProgressInputStream iin = new ProgressInputStream(in);
+            final ProgressOutputStream iout = new ProgressOutputStream(out);
+            final ProgressOutputStream ierr = new ProgressOutputStream(err);
+        ) {
+            channel = _session.createExecChannel(command);
             channel.setIn(iin);
             channel.setOut(iout);
             channel.setErr(ierr);
@@ -528,15 +535,17 @@ public class SSHClient {
             throw e;
         }
         finally {
-            int stat = channel.waitFor(
-                (
-                    ClientChannel.CLOSED |
-                    ClientChannel.TIMEOUT
-                ),
-                1
-            );
-            if ((stat & ClientChannel.CLOSED) != 0) {
-                channel.close(true);
+            if (channel != null) {
+                int stat = channel.waitFor(
+                    (
+                        ClientChannel.CLOSED |
+                        ClientChannel.TIMEOUT
+                    ),
+                    1
+                );
+                if ((stat & ClientChannel.CLOSED) != 0) {
+                    channel.close(true);
+                }
             }
         }
 
@@ -568,53 +577,41 @@ public class SSHClient {
         MessageDigest localDigest = MessageDigest.getInstance("MD5");
 
         // file1->{}->digest->in->out->pout->pin->stdin
-
-        final InputStream in = new DigestInputStream(
-            new FileInputStream(file1),
-            localDigest
-        );
-        PipedInputStream pin = new PipedInputStream(STREAM_BUFFER_SIZE);
-        final OutputStream pout = new PipedOutputStream(pin);
-
-        Thread t = new Thread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    OutputStream out = null;
-                    try {
-                        out = new GZIPOutputStream(pout);
-                        byte b[] = new byte[STREAM_BUFFER_SIZE];
-                        int n;
-                        while ((n = in.read(b)) != -1) {
-                            out.write(b, 0, n);
-                        }
-                    }
-                    catch (IOException e) {
-                        log.debug("Exceution during stream processing", e);
-                    }
-                    finally {
-                        if (out != null) {
-                            try {
-                                out.close();
-                            }
-                            catch (IOException e) {
-                                log.error("Cannot close stream", e);
+        Thread t = null;
+        try (
+            final InputStream in = new DigestInputStream(
+                new FileInputStream(file1),
+                localDigest
+            );
+            final PipedInputStream pin = new PipedInputStream(STREAM_BUFFER_SIZE);
+            final OutputStream pout = new PipedOutputStream(pin);
+            final OutputStream dummy = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+            final ByteArrayOutputStream remoteDigest = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+        ) {
+            t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try (OutputStream out = new GZIPOutputStream(pout)) {
+                            byte b[] = new byte[STREAM_BUFFER_SIZE];
+                            int n;
+                            while ((n = in.read(b)) != -1) {
+                                out.write(b, 0, n);
                             }
                         }
+                        catch (IOException e) {
+                            log.debug("Exceution during stream processing", e);
+                        }
                     }
-                }
-            },
-            "SSHClient.compress " + file1
-        );
-        try {
+                },
+                "SSHClient.compress " + file1
+            );
             t.start();
-
-            ByteArrayOutputStream remoteDigest = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
 
             executeCommand(
                 String.format(COMMAND_FILE_SEND, "gunzip -q", file2),
                 pin,
-                new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE),
+                dummy,
                 remoteDigest
             );
 
@@ -630,12 +627,8 @@ public class SSHClient {
             throw e;
         }
         finally {
-            t.interrupt();
-            try {
-                in.close();
-            }
-            catch(IOException e) {
-                log.error("Cannot close stream", e);
+            if (t != null) {
+                t.interrupt();
             }
         }
 
@@ -666,53 +659,41 @@ public class SSHClient {
         MessageDigest localDigest = MessageDigest.getInstance("MD5");
 
         // stdout->pout->pin->in->out->digest->{}->file2
+        Thread t = null;
+        try (
+            final PipedOutputStream pout = new PipedOutputStream();
+            final InputStream pin = new PipedInputStream(pout, STREAM_BUFFER_SIZE);
+            final OutputStream out = new DigestOutputStream(
+                new FileOutputStream(file2),
+                localDigest
+            );
+            final InputStream empty = new ByteArrayInputStream(new byte[0]);
+            final ByteArrayOutputStream remoteDigest = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
+        ) {
+            t = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try (final InputStream in = new GZIPInputStream(pin)) {
 
-        PipedOutputStream pout = new PipedOutputStream();
-        final InputStream pin = new PipedInputStream(pout, STREAM_BUFFER_SIZE);
-        final OutputStream out = new DigestOutputStream(
-            new FileOutputStream(file2),
-            localDigest
-        );
-        Thread t = new Thread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    InputStream in = null;
-                    try {
-                        in = new GZIPInputStream(pin);
-
-                        byte [] b = new byte[STREAM_BUFFER_SIZE];
-                        int n;
-                        while ((n = in.read(b)) != -1) {
-                            out.write(b, 0, n);
-                        }
-                    }
-                    catch (IOException e) {
-                        log.debug("Exceution during stream processing", e);
-                    }
-                    finally {
-                        if (in != null) {
-                            try {
-                                in.close();
-                            }
-                            catch(IOException e) {
-                                log.error("Cannot close stream", e);
+                            byte [] b = new byte[STREAM_BUFFER_SIZE];
+                            int n;
+                            while ((n = in.read(b)) != -1) {
+                                out.write(b, 0, n);
                             }
                         }
+                        catch (IOException e) {
+                            log.debug("Exceution during stream processing", e);
+                        }
                     }
-                }
-            },
-            "SSHClient.decompress " + file2
-        );
-
-        try {
+                },
+                "SSHClient.decompress " + file2
+            );
             t.start();
-
-            ByteArrayOutputStream remoteDigest = new ConstraintByteArrayOutputStream(CONSTRAINT_BUFFER_SIZE);
 
             executeCommand(
                 String.format(COMMAND_FILE_RECEIVE, "gzip -q", file1),
-                new ByteArrayInputStream(new byte[0]),
+                empty,
                 pout,
                 remoteDigest
             );
@@ -729,12 +710,8 @@ public class SSHClient {
             throw e;
         }
         finally {
-            t.interrupt();
-            try {
-                out.close();
-            }
-            catch(IOException e) {
-                log.error("Cannot close stream", e);
+            if (t != null) {
+                t.interrupt();
             }
         }
 
