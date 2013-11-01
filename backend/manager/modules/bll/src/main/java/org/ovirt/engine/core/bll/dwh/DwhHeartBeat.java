@@ -60,5 +60,6 @@ public class DwhHeartBeat {
                 0,
                 Config.<Integer> GetValue(ConfigValues.DwhHeartBeatInterval),
                 TimeUnit.SECONDS);
+        log.info("DWH Heart Beat initialized");
     }
 }
