@@ -144,7 +144,7 @@ public class LocalConfig {
     private void loadProperties(File file) throws IOException {
         // Do nothing if the file doesn't exist or isn't readable:
         if (!file.canRead()) {
-            log.warn("The file \"" + file.getAbsolutePath() + "\" doesn't exist or isn't readable. Will return an empty set of properties.");
+            log.info("The file \"" + file.getAbsolutePath() + "\" doesn't exist or isn't readable. Will return an empty set of properties.");
             return;
         }
 
