@@ -5,8 +5,12 @@ import java.util.logging.Logger;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.DOM;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
@@ -20,15 +24,37 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
 
     private final CurrentUser user;
     private final PlaceRequest defaultLoginSectionRequest;
+    protected final ClientAgentType clientAgentType;
 
     private PlaceRequest autoLoginRequest;
 
     public ApplicationPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter,
-            CurrentUser user, PlaceRequest defaultLoginSectionRequest) {
+            CurrentUser user, ClientAgentType clientAgentType,
+            PlaceRequest defaultLoginSectionRequest) {
         super(eventBus, tokenFormatter);
         this.user = user;
+        this.clientAgentType = clientAgentType;
         this.defaultLoginSectionRequest = defaultLoginSectionRequest;
         eventBus.addHandler(UserLoginChangeEvent.getType(), this);
+    }
+
+    /**
+     * Work around Firefox bug
+     * https://bugzilla.mozilla.org/show_bug.cgi?id=519028
+     * (change location.hash leads to location bar icon (favicon) disappearance).
+     * Simply detach and re-attach the favicon link tag on hashchange.
+     */
+    @Override
+    public void onValueChange(ValueChangeEvent<String> event) {
+        super.onValueChange(event);
+        if ("firefox".equalsIgnoreCase(clientAgentType.getBrowser())) { //$NON-NLS-1$
+            Node favicon = DOM.getElementById("id-link-favicon");  //$NON-NLS-1$
+            if (favicon != null) {
+                Node parent = favicon.getParentNode();
+                favicon.removeFromParent();
+                parent.appendChild(favicon);
+            }
+        }
     }
 
     @Override
