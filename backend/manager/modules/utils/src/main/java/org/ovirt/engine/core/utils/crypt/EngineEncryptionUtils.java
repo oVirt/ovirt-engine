@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils.crypt;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
@@ -46,9 +45,7 @@ public class EngineEncryptionUtils {
      * @return engine key store.
      */
     private static KeyStore _getKeyStore(String type, File file, char [] password) {
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
+        try (final InputStream in = new FileInputStream(file)) {
             KeyStore ks = KeyStore.getInstance(type);
             ks.load(in, password);
             return ks;
@@ -60,14 +57,6 @@ public class EngineEncryptionUtils {
                 ),
                 e
             );
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    log.error("Cannot close key store", e);
-                }
-            }
         }
     }
 
