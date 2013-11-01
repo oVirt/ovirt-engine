@@ -347,7 +347,7 @@ public class SSHDialogTest {
         sink.exception();
     }
 
-    @Test(expected=IOException.class)
+    @Test(expected=RuntimeException.class)
     public void testStderr() throws Throwable {
         Sink sink = new Sink(
             new String[] {
