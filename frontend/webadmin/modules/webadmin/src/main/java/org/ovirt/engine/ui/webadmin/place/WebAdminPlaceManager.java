@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 
 import com.google.gwt.event.shared.EventBus;
@@ -18,10 +19,14 @@ public class WebAdminPlaceManager extends ApplicationPlaceManager {
     private final PlaceRequest defaultMainSectionRequest;
 
     @Inject
-    public WebAdminPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter, CurrentUser user,
+    public WebAdminPlaceManager(EventBus eventBus,
+            TokenFormatter tokenFormatter,
+            CurrentUser user,
+            ClientAgentType clientAgentType,
             @DefaultLoginSectionPlace String defaultLoginSectionPlace,
             @DefaultMainSectionPlace String defaultMainSectionPlace) {
-        super(eventBus, tokenFormatter, user, PlaceRequestFactory.get(defaultLoginSectionPlace));
+        super(eventBus, tokenFormatter, user, clientAgentType,
+                PlaceRequestFactory.get(defaultLoginSectionPlace));
         this.defaultMainSectionRequest = PlaceRequestFactory.get(defaultMainSectionPlace);
     }
 
