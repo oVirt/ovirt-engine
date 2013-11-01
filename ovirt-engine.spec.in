@@ -734,7 +734,6 @@ fi
 %dir %{engine_data}/bin
 %dir %{engine_data}/ui-plugins
 %dir %{engine_ear}
-%dir %{engine_etc}/osinfo.conf.d
 %{engine_data}/conf/osinfo-defaults.properties
 %{engine_data}/files/
 %{engine_data}/manual/
@@ -743,7 +742,7 @@ fi
 %{engine_ear}/lib
 %{engine_ear}/root.war
 %{engine_ear}/scheduler.jar
-%{engine_etc}/osinfo.conf.d/00-defaults.properties
+%{engine_etc}/osinfo.conf.d/
 %{engine_java}/bll.jar
 %{engine_java}/dal.jar
 %{engine_java}/scheduler.jar
