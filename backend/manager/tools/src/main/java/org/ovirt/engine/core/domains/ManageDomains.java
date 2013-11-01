@@ -491,6 +491,7 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
 
         String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
+        String userName = parser.getArg(Arguments.user.toString());
         if (domainNameEntry.doesDomainExist(domainName)) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_ALREADY_EXISTS_IN_CONFIGURATION, domainName);
         }
@@ -520,7 +521,7 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentLDAPProviderTypes, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
         LdapProviderType ldapProviderType = getLdapProviderType(parser);
-        adUserNameEntry.setValueForDomain(domainName, parser.getArg(Arguments.user.toString()));
+        adUserNameEntry.setValueForDomain(domainName, userName);
         adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput(parser));
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
@@ -547,7 +548,7 @@ public class ManageDomains {
                 false,
                 ldapServers);
 
-        handleAddPermissions(domainName, adUserNameEntry, adUserIdEntry);
+        handleAddPermissions(domainName, userName, adUserIdEntry.getValueForDomain(domainName));
 
         // Update the configuration
         setConfigurationEntries(domainNameEntry,
@@ -567,27 +568,19 @@ public class ManageDomains {
         System.out.println(SERVICE_RESTART_MESSAGE);
     }
 
-    private void handleAddPermissions(String domainName, DomainsConfigurationEntry adUserNameEntry, DomainsConfigurationEntry adUserIdEntry) {
+    private void handleAddPermissions(String domainName, String userName, String userId) {
         if (addPermissions) {
-            updatePermissionsTable(adUserNameEntry, adUserIdEntry);
+            updatePermissionsTable(userName, domainName, userId);
         } else
-        if (!userHasPermissions(adUserNameEntry, adUserIdEntry)) {
+        if (!userHasPermissions(userName, domainName)) {
             System.out.println(String.format(INFO_ABOUT_NOT_ADDING_PERMISSIONS, domainName));
         }
     }
 
-    private ManageDomainsResult updatePermissionsTable(DomainsConfigurationEntry adUserNameEntry,
-            DomainsConfigurationEntry adUseridEntry) {
+    private ManageDomainsResult updatePermissionsTable(String userName, String domainName,
+            String adUserId) {
         try {
-            Set<Entry<String, String>> userNameValues = adUserNameEntry.getValues();
-
-            for (Entry<String, String> currUserEntry : userNameValues) {
-                String currDomain = currUserEntry.getKey();
-                String currUser = currUserEntry.getValue();
-                String guid = adUseridEntry.getValueForDomain(currDomain);
-
-                daoImpl.updatePermissionsTable(guid, currUser, currDomain);
-            }
+            daoImpl.updatePermissionsTable(adUserId, userName, domainName);
             return OK_RESULT;
         } catch (SQLException e) {
             return new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_APPLYING_CHANGES_IN_DATABASE,
@@ -595,21 +588,14 @@ public class ManageDomains {
         }
     }
 
-    private boolean userHasPermissions(DomainsConfigurationEntry adUserNameEntry,
-        DomainsConfigurationEntry adUseridEntry) {
+    private boolean userHasPermissions(String userName, String domainName) {
+        boolean result = false;
         try {
-            Set<Entry<String, String>> userNameValues = adUserNameEntry.getValues();
-            for (Entry<String, String> currUserEntry : userNameValues) {
-                String currDomain = currUserEntry.getKey();
-                String currUser = currUserEntry.getValue();
-                if (daoImpl.getUserHasPermissions(currUser, currDomain)) {
-                    return true;
-                }
-            }
-        } catch (SQLException e) {
-            log.error(e);
+            result = daoImpl.getUserHasPermissions(userName, domainName);
+        } catch (SQLException ex) {
+            log.error("Error testing user permissions", ex);
         }
-        return false;
+        return result;
     }
 
     public void editDomain(CLIParser parser) throws ManageDomainsResult {
@@ -681,7 +667,7 @@ public class ManageDomains {
                 false,
                 ldapServers);
 
-        handleAddPermissions(domainName, adUserNameEntry, adUserIdEntry);
+        handleAddPermissions(domainName, userName, adUserIdEntry.getValueForDomain(domainName));
 
         setConfigurationEntries(domainNameEntry,
                 adUserNameEntry,
