@@ -2,6 +2,7 @@ package org.ovirt.engine.core.services;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -12,111 +13,290 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.RegisterVdsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.utils.PKIResources;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class RegisterServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 2156012277778558480L;
-    private static final int SSH_PORT = 22;
-    private static final String SSH_USER = "root";
-    public static final String VDS_IP = "vds_ip";
-    public static final String VDS_NAME = "vds_name";
-    public static final String VDS_ID = "vds_unique_id";
-    public static final String PORT = "port";
-
-    private SimpleDateFormat m_sdfFormatter;
     private static Log log = LogFactory.getLog(RegisterServlet.class);
 
-    @Override
-    public void init() throws ServletException {
-        // yyyy-MM-ddTHH:mm:ss
-        m_sdfFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        m_sdfFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+    private static final int SSH_PORT = 22;
+    private static final int VDSM_PORT = 54321;
+    private static final int INTERFACE_VERSION = 1;
+
+    protected void getVersionV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        log.info(
+            String.format(
+                "Version request: source='%s', secured='%s'",
+                request.getRemoteHost(),
+                request.isSecure()
+            )
+        );
+
+        try (PrintWriter out = response.getWriter()) {
+            response.setContentType("text/plain");
+            out.print(INTERFACE_VERSION);
+        }
     }
 
-    private VdcQueryReturnValue runQuery(HttpServletRequest request) {
-        VdcQueryReturnValue fReturn = null;
-        // TODO: should be BackendLocal
-        BackendInternal backend = null;
-        RegisterVdsParameters params = null;
+    protected void getPKITrustV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // Implement basic sanity: check each parameter exists
-        String strIP = "";
-        String strName = "";
-        String strID = "";
-        int nPort = -1;
+        log.info(
+            String.format(
+                "PKI Trust request: source='%s', secured='%s'",
+                request.getRemoteHost(),
+                request.isSecure()
+            )
+        );
 
-        try {
-            backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
-            strIP = request.getParameterValues(VDS_IP)[0];
-            strName = request.getParameterValues(VDS_NAME)[0];
-            strID = request.getParameterValues(VDS_ID)[0];
-            nPort = Integer.parseInt(request.getParameterValues(PORT)[0]);
+        try (PrintWriter out = response.getWriter()) {
+            response.setContentType(PKIResources.Resource.CACertificate.getContentType(PKIResources.Format.X509_PEM_CA));
+            out.print(PKIResources.Resource.CACertificate.toString(PKIResources.Format.X509_PEM_CA));
+        }
+    }
 
-            log.debug("Using the following parameters to call query:\nIP: " + strIP + ", Name: "
-                    + strName + ", UUID: " + strID + ", Port: " + nPort);
+    protected void getSSHTrustV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-            /*
-             * Ignore MAC if exists (old format)
-             */
-            String strIDNoMAC = strID.split("_")[0];
-            params = new RegisterVdsParameters(Guid.Empty, strIP, SSH_PORT, SSH_USER, strName, strIDNoMAC, nPort,
-                    Guid.Empty);
+        log.info(
+            String.format(
+                "SSH Trust request: source='%s', secured='%s'",
+                request.getRemoteHost(),
+                request.isSecure()
+            )
+        );
 
-            fReturn = backend.runInternalQuery(VdcQueryType.RegisterVds, params);
-            if (fReturn == null) {
-                log.error("Got NULL from backend.RunQuery!");
-            }
-        } catch (Throwable t) {
-            log.error("Caught exception while trying to run query: ", t);
-            log.error("Parameters used to call query:\nIP: " + strIP + ", Name: " + strName
-                    + ", UUID: " + strID + ", Port: " + nPort);
-            fReturn = null;
+        try (PrintWriter out = response.getWriter()) {
+            response.setContentType(PKIResources.Resource.EngineCertificate.getContentType(PKIResources.Format.OPENSSH_PUBKEY));
+            out.print(PKIResources.Resource.EngineCertificate.toString(PKIResources.Format.OPENSSH_PUBKEY));
+        }
+    }
+
+    protected void doRegister(
+        String hostAddress,
+        int hostSSHPort,
+        String hostSSHUser,
+        int hostVdsPort,
+        String hostName,
+        String hostUniqueId
+    ) {
+        if (hostSSHUser == null) {
+            hostSSHUser = "root";
+        }
+        if (hostName == null) {
+            hostName = hostAddress;
+        }
+        if (hostUniqueId == null) {
+            throw new RuntimeException("Unique id was not provided");
         }
 
-        return fReturn;
+        VdcQueryReturnValue queryReturnValue  =  ((BackendInternal)EjbUtils.findBean(
+            BeanType.BACKEND,
+            BeanProxyType.LOCAL
+        )).runInternalQuery(
+            VdcQueryType.RegisterVds,
+            new RegisterVdsParameters(
+                Guid.Empty,
+                hostAddress,
+                hostSSHPort,
+                hostSSHUser,
+                hostName,
+                hostUniqueId,
+                hostVdsPort,
+                Guid.Empty
+            )
+        );
+        if (queryReturnValue == null) {
+            throw new RuntimeException("runInternalQuery failed (null)");
+        }
+
+        if (!queryReturnValue.getSucceeded()) {
+            String r = queryReturnValue.getExceptionString();
+            if (r == null) {
+                throw new RuntimeException("runInternalQuery failed (null)");
+            }
+            if (!r.equals(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.name())) {
+                throw new RuntimeException(String.format("runInternalQuery failed '%s'", r));
+            }
+        }
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void registerV0(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String hostAddress = request.getParameter("vds_ip");
+        String hostVdsPortString = request.getParameter("port");
+        String hostName = request.getParameter("vds_name");
+        String hostUniqueId = request.getParameter("vds_unique_id");
+
+        if (hostAddress == null) {
+            throw new RuntimeException("Missing vds_ip");
+        }
+
+        int hostVdsPort = VDSM_PORT;
+        if (hostVdsPortString != null) {
+            hostVdsPort = Integer.parseInt(hostVdsPortString);
+        }
+
+        log.info(
+            String.format(
+                "Registration request: source='%s', secured='%s', address='%s', vdsPort=%s, name='%s', uniqueId='%s'",
+                request.getRemoteHost(),
+                request.isSecure(),
+                hostAddress,
+                hostVdsPort,
+                hostName,
+                hostUniqueId
+            )
+        );
+
+        if (hostUniqueId != null) {
+            // remove legacy mac
+            hostUniqueId = hostUniqueId.split("_")[0];
+        }
+
+        doRegister(
+            hostAddress,
+            SSH_PORT,
+            null,
+            hostVdsPort,
+            hostName,
+            hostUniqueId
+        );
+
         response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-
-        try {
-            VdcQueryReturnValue runQuery = runQuery(request);
-            if (runQuery != null && succeddedOrOther(runQuery)) {
-                out.print(m_sdfFormatter.format(new Date()));
-                log.info("Succeeded to run RegisterVds.");
-            } else {
-                response.setStatus(500);
-                log.error("Failed to run RegisterVds.");
-            }
-        } catch (Exception e) {
-            response.setStatus(500);
-            log.error("Error calling runQuery: ", e);
-        } finally {
-            out.close();
+        try (PrintWriter out = response.getWriter()) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            out.print(format.format(new Date()));
         }
     }
 
-    private boolean succeddedOrOther(VdcQueryReturnValue runQuery) {
-        if (runQuery.getSucceeded()) {
-            return true;
-        } else if (VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE.name().equals(runQuery.getExceptionString())) {
-            log.debug("host was't updated due to its status - ignoring and reporting succesful registration.");
-            return true;
-        } else {
-            return false;
+    protected void registerV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String hostAddress = request.getParameter("address");
+        String hostSSHPortString = request.getParameter("sshPort");
+        String hostSSHUser = request.getParameter("sshUser");
+        String hostVdsPortString = request.getParameter("vdsPort");
+        String hostName = request.getParameter("name");
+        String hostUniqueId = request.getParameter("uniqueId");
+
+        if (hostAddress == null) {
+            hostAddress = InetAddress.getByName(request.getRemoteHost()).getHostName();
+        }
+
+        int hostSSHPort = SSH_PORT;
+        if (hostSSHPortString != null) {
+            hostSSHPort = Integer.parseInt(hostSSHPortString);
+        }
+
+        int hostVdsPort = VDSM_PORT;
+        if (hostVdsPortString != null) {
+            hostVdsPort = Integer.parseInt(hostVdsPortString);
+        }
+
+        log.info(
+            String.format(
+                "Registration request: source='%s', secured='%s', address='%s%s:%s', vdsPort=%s, name='%s', uniqueId='%s'",
+                request.getRemoteHost(),
+                request.isSecure(),
+                hostSSHUser != null ? hostSSHUser + "@" : "",
+                hostAddress,
+                hostSSHPort,
+                hostVdsPort,
+                hostName,
+                hostUniqueId
+            )
+        );
+
+        doRegister(
+            hostAddress,
+            hostSSHPort,
+            hostSSHUser,
+            hostVdsPort,
+            hostName,
+            hostUniqueId
+        );
+
+        try (PrintWriter out = response.getWriter()) {
+            response.setContentType("text/plain");
+            out.print("OK\n");
+        }
+    }
+
+    protected void doV0(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            registerV0(request, response);
+        }
+        catch (Exception e) {
+            log.error("Registration failed", e);
+            response.sendError(response.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    protected void doV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            String cmd = request.getParameter("command");
+            if (cmd == null) {
+                throw new RuntimeException("command parameter is missing");
+            }
+
+            if (cmd.equals("get-version")) {
+                getVersionV1(request, response);
+            }
+            else if (cmd.equals("get-pki-trust")) {
+                getPKITrustV1(request, response);
+            }
+            else if (cmd.equals("get-ssh-trust")) {
+                getSSHTrustV1(request, response);
+            }
+            else if (cmd.equals("register")) {
+                registerV1(request, response);
+            }
+        }
+        catch (Exception e) {
+            log.error("Registration failed", e);
+            response.sendError(response.SC_BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String versionString = request.getParameter("version");
+        int version;
+        if (versionString == null) {
+            version = 0;
+        }
+        else {
+            version = -1;
+            try {
+                version = Integer.parseInt(versionString);
+            }
+            catch(NumberFormatException e) {}
+        }
+
+        switch(version) {
+            default:
+                String m = String.format("Invalid registration protocol version %s", version);
+                log.error(m);
+                response.sendError(response.SC_BAD_REQUEST, m);
+            break;
+
+            case 0:
+                doV0(request, response);
+            break;
+
+            case 1:
+                doV1(request, response);
+            break;
         }
     }
 }
