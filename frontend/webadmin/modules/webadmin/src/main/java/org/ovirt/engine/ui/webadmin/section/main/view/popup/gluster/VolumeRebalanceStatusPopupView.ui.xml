@@ -12,6 +12,13 @@
 		border: 1px solid #CED8DF;
 		}
 
+		.labelStyle {
+                padding-top: 36px;
+                font-size: 14px;
+		font-weight: bold;
+		color: #333333;
+		}
+
 		.messageLabel {
 		color: #FF0000;
 		left: 10px;
@@ -30,11 +37,11 @@
 						<e:EntityModelLabelEditor ui:field="startedTimeEditor" />
 					</g:VerticalPanel>
 					<g:VerticalPanel>
-						<e:EntityModelLabelEditor ui:field="clusterEditor" />
-						<g:HorizontalPanel>
-							<e:EntityModelLabelEditor ui:field="statusTimeEditor" />
-							<g:Label ui:field="statusLabel" />
-						</g:HorizontalPanel>
+					        <e:EntityModelLabelEditor ui:field="clusterEditor" />
+						<e:EntityModelLabelEditor ui:field="statusTimeEditor" />
+					</g:VerticalPanel>
+					<g:VerticalPanel>
+					        <g:Label ui:field="statusLabel" addStyleNames="{style.labelStyle}"/>
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<g:ScrollPanel addStyleNames="{style.tablePanel}"
