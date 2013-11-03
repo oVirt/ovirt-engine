@@ -214,7 +214,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
-              <runTarget>webadmin/WebAdmin.html</runTarget>
+              <runTarget>ovirt-engine/webadmin/WebAdmin.html</runTarget>
               <module>org.ovirt.engine.ui.webadmin.WebAdmin</module>
               <webappDirectory>${project.build.directory}/generated-gwt</webappDirectory>
             </configuration>
