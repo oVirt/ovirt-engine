@@ -24,16 +24,16 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     protected void executeVdsBrokerCommand() {
         _result = getBroker().getAllTasksStatuses();
         proceedProxyReturnValue();
-        setReturnValue(ParseTaskStatusList(_result.TaskStatusList));
+        setReturnValue(parseTaskStatusList(_result.TaskStatusList));
     }
 
-    protected AsyncTaskStatus ParseTaskStatus(TaskStatusForXmlRpc taskStatus) {
+    protected AsyncTaskStatus parseTaskStatus(TaskStatusForXmlRpc taskStatus) {
         AsyncTaskStatus task = new AsyncTaskStatus();
         task.setStatus((taskStatus != null && taskStatus.mTaskState != null) ? (AsyncTaskStatusEnum
                 .valueOf(taskStatus.mTaskState)) : AsyncTaskStatusEnum.unknown);
 
         if (task.getStatus() == AsyncTaskStatusEnum.finished) {
-            UpdateReturnStatus(taskStatus);
+            updateReturnStatus(taskStatus);
 
             try {
                 proceedProxyReturnValue();
@@ -59,7 +59,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
         return task;
     }
 
-    protected HashMap<Guid, AsyncTaskStatus> ParseTaskStatusList(Map<String, ?> taskStatusList) {
+    protected HashMap<Guid, AsyncTaskStatus> parseTaskStatusList(Map<String, ?> taskStatusList) {
         HashMap<Guid, AsyncTaskStatus> result = new HashMap<Guid, AsyncTaskStatus>(
                 taskStatusList.size());
         for (Map.Entry<String, ?> entry : taskStatusList.entrySet()) {
@@ -76,7 +76,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
                     tempVar.mTaskResult = xrsTaskStatus.get("taskResult").toString();
                     tempVar.mTaskState = xrsTaskStatus.get("taskState").toString();
                     TaskStatusForXmlRpc taskStatus = tempVar;
-                    AsyncTaskStatus task = ParseTaskStatus(taskStatus);
+                    AsyncTaskStatus task = parseTaskStatus(taskStatus);
                     result.put(taskGuid, task);
                 }
             } catch (RuntimeException exp) {
@@ -102,7 +102,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     // the same VDSCommand on different status values, for example, a regular
     // verb
     // execution status and an asynchronous task status.
-    protected void UpdateReturnStatus(StatusForXmlRpc newReturnStatus) {
+    protected void updateReturnStatus(StatusForXmlRpc newReturnStatus) {
         _result.mStatus = newReturnStatus;
     }
 

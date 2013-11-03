@@ -19,17 +19,17 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
     protected void executeVdsBrokerCommand() {
         _result = getBroker().getAllTasksInfo();
         proceedProxyReturnValue();
-        setReturnValue(ParseTaskInfoList(_result.TaskInfoList));
+        setReturnValue(parseTaskInfoList(_result.TaskInfoList));
     }
 
-    protected java.util.ArrayList<AsyncTaskCreationInfo> ParseTaskInfoList(Map<String, Map<String, String>> taskInfoList) {
+    protected java.util.ArrayList<AsyncTaskCreationInfo> parseTaskInfoList(Map<String, Map<String, String>> taskInfoList) {
         try {
             java.util.ArrayList<AsyncTaskCreationInfo> result = new java.util.ArrayList<AsyncTaskCreationInfo>(
                     taskInfoList.size());
             for (java.util.Map.Entry<String, java.util.Map<String, String>> entry : taskInfoList.entrySet()) {
                 Guid taskID = new Guid(entry.getKey());
                 Map<String, String> taskInfo = entry.getValue();
-                AsyncTaskCreationInfo task = ParseTaskInfo(taskInfo, taskID);
+                AsyncTaskCreationInfo task = parseTaskInfo(taskInfo, taskID);
                 if (task != null) {
                     result.add(task);
                 }
@@ -41,7 +41,7 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
         }
     }
 
-    protected AsyncTaskCreationInfo ParseTaskInfo(Map<String, String> taskInfo, Guid taskID) {
+    protected AsyncTaskCreationInfo parseTaskInfo(Map<String, String> taskInfo, Guid taskID) {
         try {
             String deTaskType = taskInfo.get(VERB_KEY);
             AsyncTaskType taskType;

@@ -304,7 +304,7 @@ public final class VdsProperties {
     public static final String QOS_PEAK = "peak";
     public static final String QOS_BURST = "burst";
 
-    public static String MigrationMethostoString(MigrationMethod method) {
+    public static String migrationMethodtoString(MigrationMethod method) {
         if (method == MigrationMethod.OFFLINE) {
             return offline;
         } else if (method == MigrationMethod.ONLINE) {

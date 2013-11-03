@@ -13,7 +13,7 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
 
     public MigrateBrokerVDSCommand(P parameters) {
         super(parameters);
-        String migMethod = VdsProperties.MigrationMethostoString(parameters.getMigrationMethod());
+        String migMethod = VdsProperties.migrationMethodtoString(parameters.getMigrationMethod());
         log.infoFormat("VdsBroker::migrate::Entered (vm_guid='{0}', srcHost='{1}', dstHost='{2}',  method='{3}'",
                 parameters.getVmId().toString(), parameters.getSrcHost(), parameters.getDstHost(), migMethod);
         migrationInfo = new HashMap<String, String>();

@@ -18,7 +18,7 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
     protected void executeVdsBrokerCommand() {
         _result = getBroker().getTaskStatus(getParameters().getTaskId().toString());
         proceedProxyReturnValue();
-        setReturnValue(ParseTaskStatus(_result.TaskStatus));
+        setReturnValue(parseTaskStatus(_result.TaskStatus));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
     }
 
     @Override
-    protected void UpdateReturnStatus(StatusForXmlRpc newReturnStatus) {
+    protected void updateReturnStatus(StatusForXmlRpc newReturnStatus) {
         _result.mStatus = newReturnStatus;
     }
 }
