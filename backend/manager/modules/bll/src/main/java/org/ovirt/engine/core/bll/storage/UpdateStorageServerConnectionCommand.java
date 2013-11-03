@@ -84,7 +84,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
         }
 
-        if (isConnWithSameDetailsExists(newConnectionDetails)) {
+        Guid storagePoolId = getStoragePoolIdByFileConnectionId(oldConnection.getid());
+        if (isConnWithSameDetailsExists(newConnectionDetails, storagePoolId)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
