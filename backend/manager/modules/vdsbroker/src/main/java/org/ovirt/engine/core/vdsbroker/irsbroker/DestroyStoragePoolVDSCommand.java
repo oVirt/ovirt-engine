@@ -15,6 +15,6 @@ public class DestroyStoragePoolVDSCommand<P extends IrsBaseVDSCommandParameters>
         status = getIrsProxy().destroyStoragePool(getParameters().getStoragePoolId().toString(),
                 vds.getVdsSpmId(), getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
-        RemoveIrsProxy();
+        removeIrsProxy();
     }
 }

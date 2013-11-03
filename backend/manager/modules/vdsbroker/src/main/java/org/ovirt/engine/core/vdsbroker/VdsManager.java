@@ -281,7 +281,7 @@ public class VdsManager {
                 // Now update the status of domains, this code should not be in
                 // synchronized part of code
                 if (domainsList != null) {
-                    IrsBrokerCommand.UpdateVdsDomainsData(tmpVds, storagePoolId, domainsList);
+                    IrsBrokerCommand.updateVdsDomainsData(tmpVds, storagePoolId, domainsList);
                 }
             } catch (Exception e) {
                 log.error("Timer update runtimeinfo failed. Exception:", e);

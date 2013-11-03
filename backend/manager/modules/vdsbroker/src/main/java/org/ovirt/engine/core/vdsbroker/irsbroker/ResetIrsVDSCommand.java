@@ -28,7 +28,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
             if (getParameters().getPreferredSPMId() != null) {
                 getCurrentIrsProxyData().setPreferredHostId(getParameters().getPreferredSPMId());
             }
-            getCurrentIrsProxyData().ResetIrs();
+            getCurrentIrsProxyData().resetIrs();
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(parameters.getStoragePoolId());
             if (pool != null && (pool.getStatus() == StoragePoolStatus.NotOperational)) {
                 ResourceManager

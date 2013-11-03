@@ -36,7 +36,7 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
             });
 
             if (vds.getSpmStatus() != VdsSpmStatus.None && parameters.getStatus() != VDSStatus.Up) {
-                log.infoFormat("VDS {0} is spm and moved from up calling ResetIrs.", vds.getName());
+                log.infoFormat("VDS {0} is spm and moved from up calling resetIrs.", vds.getName());
                 // check if this host was spm and reset if do.
                 getVDSReturnValue().setSucceeded(
                         ResourceManager

@@ -88,7 +88,7 @@ public class ResourceManager {
         for (VDS curVds : allVdsList) {
             AddVds(curVds, true);
         }
-        IrsBrokerCommand.Init();
+        IrsBrokerCommand.init();
         log.info("Finished initializing " + getClass().getSimpleName());
     }
 

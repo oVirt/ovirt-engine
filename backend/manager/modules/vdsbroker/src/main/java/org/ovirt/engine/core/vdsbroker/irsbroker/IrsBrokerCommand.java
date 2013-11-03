@@ -94,12 +94,12 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
      * @param storagePoolId
      * @param vdsDomainData
      */
-    public static void UpdateVdsDomainsData(VDS vds, Guid storagePoolId,
+    public static void updateVdsDomainsData(VDS vds, Guid storagePoolId,
             ArrayList<VDSDomainsData> vdsDomainData) {
         if (vds.getStatus() == VDSStatus.Up) {
             IrsProxyData proxy = _irsProxyData.get(storagePoolId);
             if (proxy != null) {
-                proxy.UpdateVdsDomainsData(vds.getId(), vds.getName(), vdsDomainData);
+                proxy.updateVdsDomainsData(vds.getId(), vds.getName(), vdsDomainData);
             }
         }
     }
@@ -117,7 +117,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         return new IRSErrorException(errorMessage);
     }
 
-    public static void Init() {
+    public static void init() {
         for (StoragePool sp : DbFacade.getInstance().getStoragePoolDao().getAll()) {
             if (!_irsProxyData.containsKey(sp.getId())) {
                 _irsProxyData.put(sp.getId(), new IrsProxyData(sp.getId()));
@@ -125,8 +125,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
     }
 
-    public void RemoveIrsProxy() {
-        _irsProxyData.get(getParameters().getStoragePoolId()).Dispose();
+    public void removeIrsProxy() {
+        _irsProxyData.get(getParameters().getStoragePoolId()).dispose();
         _irsProxyData.remove(getParameters().getStoragePoolId());
     }
 
@@ -984,7 +984,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             return String.format("\\\\%1$s\\CD", ((tempVar != null) ? tempVar : gethostFromVds()));
         }
 
-        public void ResetIrs() {
+        public void resetIrs() {
             nullifyInternalProxies();
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
             if (storagePool != null) {
@@ -1005,7 +1005,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private final Map<Guid, HashSet<Guid>> _domainsInProblem = new ConcurrentHashMap<Guid, HashSet<Guid>>();
         private final Map<Guid, String> _timers = new HashMap<Guid, String>();
 
-        public void UpdateVdsDomainsData(final Guid vdsId, final String vdsName,
+        public void updateVdsDomainsData(final Guid vdsId, final String vdsName,
                 final ArrayList<VDSDomainsData> data) {
 
             Set<Guid> domainsInProblems = null;
@@ -1077,7 +1077,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     domainsInProblems.addAll(domainsSeenByVdsInProblem);
 
                 } catch (RuntimeException ex) {
-                    log.error("error in UpdateVdsDomainsData", ex);
+                    log.error("error in updateVdsDomainsData", ex);
                 }
 
             }
@@ -1165,10 +1165,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             for (Guid domainId : domainsInProblems) {
                 if (domainsInProblemKeySet.contains(domainId)) {
                     // existing domains in problem
-                    UpdateDomainInProblemData(domainId, vdsId, vdsName);
+                    updateDomainInProblemData(domainId, vdsId, vdsName);
                 } else {
                     // new domains in problems
-                    AddDomainInProblemData(domainId, vdsId, vdsName);
+                    addDomainInProblemData(domainId, vdsId, vdsName);
                 }
             }
             Set<Guid> notReportedDomainsByHost = new HashSet<Guid>(_domainsInProblem.keySet());
@@ -1193,7 +1193,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private void AddDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
+        private void addDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
             _domainsInProblem.put(domainId, new java.util.HashSet<Guid>(java.util.Arrays.asList(vdsId)));
             log.warnFormat("domain {0} in problem. vds: {1}", getDomainIdTuple(domainId), vdsName);
             Class[] inputType = new Class[] { Guid.class };
@@ -1214,8 +1214,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         public EventResult call() {
                             EventResult result = null;
                             if (_domainsInProblem.containsKey(domainId)) {
-                                log.info("starting ProcessDomainRecovery for domain " + getDomainIdTuple(domainId));
-                                result = ProcessDomainRecovery(domainId);
+                                log.info("starting processDomainRecovery for domain " + getDomainIdTuple(domainId));
+                                result = processDomainRecovery(domainId);
                             }
                             _timers.remove(domainId);
                             return result;
@@ -1223,12 +1223,12 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     });
         }
 
-        private void UpdateDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
+        private void updateDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
             log.debugFormat("domain {0} still in problem. vds: {1}", getDomainIdTuple(domainId), vdsName);
             _domainsInProblem.get(domainId).add(vdsId);
         }
 
-        private EventResult ProcessDomainRecovery(final Guid domainId) {
+        private EventResult processDomainRecovery(final Guid domainId) {
             EventResult result = null;
             // build a list of all the hosts in status UP in
             // Pool.
@@ -1416,10 +1416,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         private boolean _disposed;
 
-        public void Dispose() {
+        public void dispose() {
             synchronized (syncObj) {
                 log.info("IrsProxyData::disposing");
-                ResetIrs();
+                resetIrs();
                 SchedulerUtilQuartzImpl.getInstance().deleteJob(storagePoolRefreshJobId);
                 _disposed = true;
             }
