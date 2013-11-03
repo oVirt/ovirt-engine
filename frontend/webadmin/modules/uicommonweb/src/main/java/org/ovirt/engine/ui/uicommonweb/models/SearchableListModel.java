@@ -224,13 +224,13 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         String pageStringRegex = PAGE_STRING_REGEX;
 
         Match match = Regex.Match(getSearchString(), pageStringRegex, RegexOptions.IgnoreCase);
-        if (match.Success())
+        if (match.success())
         {
             // retrieve the page number itself:
             String pageString = match.getValue(); // == "page <n>"
             String pageNumberRegex = PAGE_NUMBER_REGEX;
             match = Regex.Match(pageString, pageNumberRegex);
-            if (match.Success())
+            if (match.success())
             {
                 final Integer retValue = IntegerCompat.tryParse(match.getValue());
                 if (retValue != null)

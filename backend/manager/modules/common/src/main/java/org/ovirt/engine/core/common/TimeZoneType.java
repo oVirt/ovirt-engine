@@ -1,10 +1,5 @@
 package org.ovirt.engine.core.common;
 
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.Match;
-import org.ovirt.engine.core.compat.Regex;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,6 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.Match;
+import org.ovirt.engine.core.compat.Regex;
 
 public enum TimeZoneType {
     GENERAL_TIMEZONE(ConfigValues.DefaultGeneralTimeZone, ConfigurationValues.DefaultGeneralTimeZone, "Etc/GMT") {
@@ -232,11 +232,11 @@ public enum TimeZoneType {
             int a = 0, b = 0;
             Match match1 = Regex.Match(o1.toString(), TimeZoneExtractTimePattern);
             Match match2 = Regex.Match(o2.toString(), TimeZoneExtractTimePattern);
-            if (match1.Success() && match1.Groups().size() > 0) {
-                a = Integer.parseInt(match1.Groups().get(0).getValue().substring(3).replace(":", "").replace("+", ""));
+            if (match1.success() && match1.groups().size() > 0) {
+                a = Integer.parseInt(match1.groups().get(0).getValue().substring(3).replace(":", "").replace("+", ""));
             }
-            if (match2.Success() && match2.Groups().size() > 0) {
-                b = Integer.parseInt(match2.Groups().get(0).getValue().substring(3).replace(":", "").replace("+", ""));
+            if (match2.success() && match2.groups().size() > 0) {
+                b = Integer.parseInt(match2.groups().get(0).getValue().substring(3).replace(":", "").replace("+", ""));
             }
 
             if (a == b) {

@@ -38,7 +38,7 @@ public class RegexTest {
     @Test
     public void testGroups() {
         Match match = Regex.Match("ABC,123", "([A-Z]+),([0-9]+)");
-        assertEquals("First Group", "ABC", match.Groups().get(0).getValue());
-        assertEquals("Second Group", "123", match.Groups().get(1).getValue());
+        assertEquals("First Group", "ABC", match.groups().get(0).getValue());
+        assertEquals("Second Group", "123", match.groups().get(1).getValue());
     }
 }

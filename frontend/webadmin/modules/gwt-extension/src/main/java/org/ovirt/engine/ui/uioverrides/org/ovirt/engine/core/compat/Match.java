@@ -33,7 +33,7 @@ public class Match {
         this.success = true;
     }
 
-    public MatchGroups Groups() {
+    public MatchGroups groups() {
         return groups;
     }
 
@@ -41,7 +41,7 @@ public class Match {
         return value;
     }
 
-    public boolean Success() {
+    public boolean success() {
         return success;
     }
 

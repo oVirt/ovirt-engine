@@ -34,11 +34,11 @@ public class Match {
         return Value;
     }
 
-    public MatchGroups Groups() {
+    public MatchGroups groups() {
         return Groups;
     }
 
-    public boolean Success() {
+    public boolean success() {
         return Success;
     }
 }
