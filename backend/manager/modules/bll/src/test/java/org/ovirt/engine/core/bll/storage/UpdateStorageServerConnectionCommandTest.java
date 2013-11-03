@@ -270,7 +270,7 @@ public class UpdateStorageServerConnectionCommandTest {
         connections.add(conn2);
         when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
-        doReturn(true).when(command).isConnWithSameDetailsExists(newNFSConnection);
+        doReturn(true).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
     }
@@ -297,7 +297,7 @@ public class UpdateStorageServerConnectionCommandTest {
         domains.add(domain2);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
-        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
+        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         List<String> messages =
                 CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                         VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
@@ -321,7 +321,7 @@ public class UpdateStorageServerConnectionCommandTest {
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
-        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
+        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
     }
@@ -510,7 +510,7 @@ public class UpdateStorageServerConnectionCommandTest {
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
-        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
+        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
@@ -545,7 +545,7 @@ public class UpdateStorageServerConnectionCommandTest {
         domain1.setStatus(StorageDomainStatus.Maintenance);
         domains.add(domain1);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
-        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
+        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
@@ -566,7 +566,7 @@ public class UpdateStorageServerConnectionCommandTest {
         parameters.setStorageServerConnection(newPosixConnection);
         when(storageConnDao.get(newPosixConnection.getid())).thenReturn(oldPosixConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newPosixConnection.getid());
-        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection);
+        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
@@ -705,7 +705,7 @@ public class UpdateStorageServerConnectionCommandTest {
        connections.add(connection2);
 
        when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);
-       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection);
+       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
        assertTrue(isExists);
     }
 
@@ -723,8 +723,8 @@ public class UpdateStorageServerConnectionCommandTest {
        connections.add(connection1);
 
        when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);
-       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection);
-       assertFalse(isExists);
+       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
+        assertFalse(isExists);
     }
 
     @Test
@@ -739,7 +739,7 @@ public class UpdateStorageServerConnectionCommandTest {
        List<StorageServerConnections> connections = new ArrayList<>();
 
        when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);
-       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection);
+       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
        assertFalse(isExists);
     }
 
@@ -752,7 +752,7 @@ public class UpdateStorageServerConnectionCommandTest {
        connections.add(connection1);
 
        when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
-       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection);
+       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
        assertTrue(isExists);
     }
 
@@ -764,7 +764,7 @@ public class UpdateStorageServerConnectionCommandTest {
        connections.add(newISCSIConnection);
 
        when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
-       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection);
-       assertFalse(isExists);
+       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
+        assertFalse(isExists);
     }
 }
