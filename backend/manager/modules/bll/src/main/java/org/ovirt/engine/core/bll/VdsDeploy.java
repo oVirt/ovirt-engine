@@ -26,6 +26,7 @@ import java.util.concurrent.Callable;
 import javax.naming.TimeLimitExceededException;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.PKIResources;
 import org.ovirt.engine.core.utils.archivers.tar.CachedTar;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
@@ -92,6 +94,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
     private EngineSSHDialog _dialog;
     private MachineDialogParser _parser;
     private final InstallerMessages _messages;
+    private final PKIResources _pkiResources;
 
     private VDS _vds;
     private boolean _isNode = false;
@@ -832,7 +835,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
 
                     if (org.ovirt.ovirt_host_deploy.constants.Queries.CERTIFICATE_CHAIN.equals(event.name)) {
                         event.value = (
-                            OpenSslCAWrapper.getCACertificate() +
+                            _pkiResources.getAsString(PKIResources.Resource.CACertificate, PKIResources.OutputType.X509_PEM) +
                             _certificate
                         ).split("\n");
                         _parser.sendResponse(event);
@@ -888,6 +891,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         _messages = new InstallerMessages(_vds);
         _dialog = new EngineSSHDialog();
         _parser = new MachineDialogParser();
+        _pkiResources = PKIResources.getInstance();
         _thread = new Thread(
             new Runnable() {
                 @Override

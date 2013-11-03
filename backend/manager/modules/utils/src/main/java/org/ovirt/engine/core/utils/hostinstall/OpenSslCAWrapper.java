@@ -2,17 +2,12 @@ package org.ovirt.engine.core.utils.hostinstall;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 
-import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -33,29 +28,6 @@ public class OpenSslCAWrapper {
         }
 
         return ret.toString();
-    }
-
-    public static String getCACertificate() throws Exception {
-
-        try (final InputStream in = new FileInputStream(EngineLocalConfig.getInstance().getPKICACert())) {
-
-            final Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(in);
-
-            return String.format(
-                (
-                    "-----BEGIN CERTIFICATE-----%1$c" +
-                    "%2$s" +
-                    "-----END CERTIFICATE-----%1$c"
-                ),
-                '\n',
-                new Base64(
-                    76,
-                    new byte[] { (byte)'\n' }
-                ).encodeToString(
-                    certificate.getEncoded()
-                )
-            );
-        }
     }
 
     public static String signCertificateRequest(

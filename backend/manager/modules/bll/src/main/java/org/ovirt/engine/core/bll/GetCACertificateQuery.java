@@ -1,11 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.PKIResources;
 
 public class GetCACertificateQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     public GetCACertificateQuery(P parameters) {
@@ -14,16 +10,17 @@ public class GetCACertificateQuery<P extends VdcQueryParametersBase> extends Que
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setSucceeded(false);
-        File path = EngineLocalConfig.getInstance().getPKICACert();
-        if (path.exists()) {
-            try {
-                getQueryReturnValue().setReturnValue(FileUtil.readAllText(path.getAbsolutePath()));
-            } catch (IOException e) {
-                getQueryReturnValue().setExceptionString(e.getMessage());
-                return;
-            }
+        try {
+            getQueryReturnValue().setSucceeded(false);
+            getQueryReturnValue().setReturnValue(
+                PKIResources.getInstance().getAsString(
+                    PKIResources.Resource.CACertificate,
+                    PKIResources.OutputType.X509_PEM
+                )
+            );
             getQueryReturnValue().setSucceeded(true);
+        } catch (Exception e) {
+            getQueryReturnValue().setExceptionString(e.getMessage());
         }
     }
 }
