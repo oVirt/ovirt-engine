@@ -31,6 +31,7 @@ BUILD_LOCALES=0
 BUILD_DEV=0
 BUILD_UT=1
 EXTRA_BUILD_FLAGS=
+BUILD_PYTHON_VALIDATION=1
 DEV_REBUILD=1
 DEV_BUILD_GWT_DRAFT=0
 DEV_EXTRA_BUILD_FLAGS=
@@ -41,6 +42,8 @@ ENGINE_NAME=$(PACKAGE_NAME)
 MVN=mvn
 RPMBUILD=rpmbuild
 PYTHON=python
+PYFLAKES=pyflakes
+PEP8=pep8
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
 BIN_DIR=$(PREFIX)/bin
@@ -147,11 +150,14 @@ BUILD_TARGET=install
 	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g" \
 	-e "s|@DISPLAY_VERSION@|$(DISPLAY_VERSION)|g" \
 	-e "s|@JBOSS_HOME@|$(JBOSS_HOME)|g" \
+	-e "s|@PEP8@|$(PEP8)|g" \
+	-e "s|@PYFLAKES@|$(PYFLAKES)|g" \
 	$< > $@
 
 # List of files that will be generated from templates:
 GENERATED = \
 	ovirt-engine.spec \
+	build/python-check.sh \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/ovirt-engine-log-setup-event.sh \
 	packaging/bin/pki-common.sh \
@@ -184,11 +190,13 @@ GENERATED = \
 
 all: \
 	generated-files \
+	python-validation \
 	dbscripts-validations \
 	$(BUILD_FILE) \
 	$(NULL)
 
 generated-files:	$(GENERATED)
+	chmod a+x build/python-check.sh
 	chmod a+x packaging/services/ovirt-engine/ovirt-engine.sysv
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv
 	chmod a+x packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv
@@ -300,6 +308,11 @@ copy-recursive:
 		[ -x "$(SOURCEDIR)/$${f}" ] && MASK=0755 || MASK=0644; \
 		install -m "$${MASK}" "$(SOURCEDIR)/$${f}" "$$(dirname "$(TARGETDIR)/$${f}")"; \
 	done
+
+python-validation:
+	if [ "$(BUILD_PYTHON_VALIDATION)" != 0 ]; then \
+		build/python-check.sh; \
+	fi
 
 dbscripts-validations:
 	test/dbscripts/check_for_duplicate_upgrade_scripts.sh
@@ -416,6 +429,7 @@ install-dev:	\
 	$(MAKE) \
 		install \
 		BUILD_DEV=1 \
+		BUILD_PYTHON_VALIDATION=0 \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		$(NULL)
 

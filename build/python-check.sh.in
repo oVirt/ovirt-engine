@@ -1,0 +1,19 @@
+#!/bin/sh
+
+PEP8="@PEP8@"
+PYFLAKES="@PYFLAKES@"
+SRCDIR="$(dirname "$0")/.."
+
+cd "${SRCDIR}"
+
+ret=0
+FILES="$(
+	find build packaging -name '*.py' | while read f; do
+		[ -e "${f}.in" ] || echo "${f}"
+	done
+)"
+
+"${PYFLAKES}" ${FILES} || ret=1
+"${PEP8}" ${FILES} || ret=1
+
+exit ${ret}

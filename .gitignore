@@ -43,6 +43,7 @@ __pycache__
 # Files generated from templates
 ###########################
 ovirt-engine.spec
+build/python-check.sh
 packaging/bin/engine-prolog.sh
 packaging/bin/ovirt-engine-log-setup-event.sh
 packaging/bin/pki-common.sh
