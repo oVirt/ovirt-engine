@@ -115,7 +115,7 @@ public class PKIResourceServlet extends HttpServlet {
                         )
                     );
                 }
-                else if ("RFC4716".equals(localFormat)) {
+                else if ("OPENSSH-PUBKEY".equals(localFormat)) {
                     response.setContentType("text/plain");
                     // do not let println to use platform specific new line
                     response.getWriter().print(

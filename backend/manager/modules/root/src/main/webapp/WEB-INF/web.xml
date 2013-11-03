@@ -50,7 +50,7 @@
     </init-param>
     <init-param>
         <param-name>attr-format</param-name>
-        <param-value>RFC4716</param-value>
+        <param-value>OPENSSH-PUBKEY</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
