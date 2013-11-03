@@ -77,7 +77,7 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
             // 3.1. If the timeout was a failure to call the VDSM in the first place, then probably the call to delete
             // the network will timeout also.
             if (getReturnValueFromBroker() == null ||
-                    VdcBllErrors.Done == GetReturnValueFromStatus(getReturnStatus())) {
+                    VdcBllErrors.Done == getReturnValueFromStatus(getReturnStatus())) {
                 String network = (getParameters().getNetworkName() == null) ? "" : getParameters()
                         .getNetworkName();
                 String vlanId = (getParameters().getVlanId() != null) ? getParameters().getVlanId()

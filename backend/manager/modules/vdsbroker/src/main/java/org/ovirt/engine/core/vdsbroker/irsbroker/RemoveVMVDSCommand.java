@@ -26,7 +26,7 @@ public class RemoveVMVDSCommand<P extends RemoveVMVDSCommandParameters> extends 
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:
             return;

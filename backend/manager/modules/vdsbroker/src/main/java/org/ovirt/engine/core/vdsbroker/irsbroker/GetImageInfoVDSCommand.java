@@ -40,7 +40,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
             proceedProxyReturnValue();
             di = buildImageEntity(imageInfoReturn.mInfo);
         } catch (java.lang.Exception e) {
-            PrintReturnValue();
+            printReturnValue();
             // nothing to do - logging inside upper functions
         } finally {
             // if couldn't parse image then succeeded should be false
@@ -56,7 +56,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         if (returnStatus != VdcBllErrors.Done) {
             log.errorFormat(
                     "IrsBroker::getImageInfo::Failed getting image info imageId = {0} does not exist on domainName = {1} , domainId = {2},  error code: {3}, message: {4}",
@@ -118,7 +118,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
             }
         } catch (RuntimeException ex) {
             log.errorFormat("irsBroker::buildImageEntity::Failed building DIskImage");
-            PrintReturnValue();
+            printReturnValue();
             log.error(ex.getMessage(), ex);
             newImage = null;
         }

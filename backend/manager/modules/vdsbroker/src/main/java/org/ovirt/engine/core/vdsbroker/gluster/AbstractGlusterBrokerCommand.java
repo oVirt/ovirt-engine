@@ -16,7 +16,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case GlusterGeneralException:
         case GlusterPermissionDeniedException:

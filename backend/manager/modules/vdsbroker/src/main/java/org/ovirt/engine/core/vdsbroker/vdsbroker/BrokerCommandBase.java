@@ -33,7 +33,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
     }
 
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         VDSExceptionBase outEx;
         switch (returnStatus) {
         case Done:
@@ -201,7 +201,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
 
     protected abstract VDSExceptionBase createDefaultConcreteException(String errorMessage);
 
-    protected VdcBllErrors GetReturnValueFromStatus(StatusForXmlRpc xmlRpcStatus) {
+    protected VdcBllErrors getReturnValueFromStatus(StatusForXmlRpc xmlRpcStatus) {
         try {
             VdcBllErrors bllErrors = VdcBllErrors.forValue(xmlRpcStatus.mCode);
             if (bllErrors == null) {
@@ -227,7 +227,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
     }
 
     @SuppressWarnings("unchecked")
-    protected void PrintReturnValue() {
+    protected void printReturnValue() {
         if (getReturnValueFromBroker() != null && getIsPrintReturnValue()) {
             String returnValue;
             StringBuilder builder = new StringBuilder();

@@ -16,7 +16,7 @@ public class HSMRevertTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParamete
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
 
         switch (returnStatus) {
         case UnknownTask:

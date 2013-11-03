@@ -28,7 +28,7 @@ public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSComma
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case DeviceNotFound:
             getVDSReturnValue().setSucceeded(false);

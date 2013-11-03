@@ -25,7 +25,7 @@ public class CancelMigrateVDSCommand<P extends VdsAndVmIDVDSParametersBase> exte
      */
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case noVM:
             VDSExceptionBase outEx =

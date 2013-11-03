@@ -41,7 +41,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case GetStorageDomainListError:
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));

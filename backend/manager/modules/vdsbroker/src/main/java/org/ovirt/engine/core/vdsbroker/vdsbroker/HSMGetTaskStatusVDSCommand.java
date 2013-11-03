@@ -23,7 +23,7 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case UnknownTask:
             // ignore this, the parser can handle the empty result.

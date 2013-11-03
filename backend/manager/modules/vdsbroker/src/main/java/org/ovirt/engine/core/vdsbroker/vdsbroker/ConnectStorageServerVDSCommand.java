@@ -39,7 +39,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case StorageServerConnectionRefIdAlreadyInUse:
         case StorageServerConnectionRefIdDoesNotExist:

@@ -52,7 +52,7 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:
             return;

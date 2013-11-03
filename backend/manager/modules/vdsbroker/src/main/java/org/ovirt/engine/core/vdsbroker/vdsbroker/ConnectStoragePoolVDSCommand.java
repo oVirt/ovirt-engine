@@ -21,7 +21,7 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
     // master domain failure treatment
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:
         case StoragePoolMasterNotFound:

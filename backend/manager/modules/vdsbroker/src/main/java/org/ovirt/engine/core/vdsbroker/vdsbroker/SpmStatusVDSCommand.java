@@ -33,7 +33,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case StoragePoolUnknown:
             // ignore this, the parser can handle the empty result.

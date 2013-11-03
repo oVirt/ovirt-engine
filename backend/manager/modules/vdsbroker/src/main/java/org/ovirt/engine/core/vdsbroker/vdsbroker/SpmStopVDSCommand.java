@@ -95,7 +95,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case StoragePoolUnknown:
         case SpmStatusError:

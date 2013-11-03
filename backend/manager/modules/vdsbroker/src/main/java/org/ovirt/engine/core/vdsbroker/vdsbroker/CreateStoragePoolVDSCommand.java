@@ -33,7 +33,7 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
 
     @Override
     protected void proceedProxyReturnValue() {
-        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         // fail the operation without throwing exception
         case StorageDomainAccessError:

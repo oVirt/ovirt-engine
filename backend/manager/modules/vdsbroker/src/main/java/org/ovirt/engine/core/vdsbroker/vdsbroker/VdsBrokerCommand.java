@@ -95,19 +95,19 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         try {
             executeVdsBrokerCommand();
         } catch (VDSExceptionBase ex) {
-            PrintReturnValue();
+            printReturnValue();
             throw ex;
         } catch (XmlRpcRunTimeException ex) {
             Throwable rootCause = ExceptionUtils.getRootCause(ex);
             VDSNetworkException networkException = new VDSNetworkException(rootCause);
             networkException.setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, rootCause.toString()));
-            PrintReturnValue();
+            printReturnValue();
             throw networkException;
         }
 
         // TODO: look for invalid certificates error handling
         catch (RuntimeException e) {
-            PrintReturnValue();
+            printReturnValue();
             if (getAndSetVdsStatic() == null) {
                 log.errorFormat("Failed in {0} method, for vds id: {1}",
                         getCommandName(), getParameters().getVdsId());
