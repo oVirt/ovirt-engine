@@ -359,7 +359,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
     }
 
-    public boolean isCrossReferece(String text, String obj) {
+    public boolean isCrossReference(String text, String obj) {
         IAutoCompleter completer = getCrossRefAutoCompleter(obj);
         if (completer != null) {
             return completer.validate(text);

@@ -301,7 +301,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
 
-                } else if (mSearchObjectAC.isCrossReferece(nextObject, syntaxContainer.getFirst().getBody())) {
+                } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
                     if (searchCharArr.length >= idx + 2) // Check that this
                                                          // maybe a plural
                     {
@@ -354,7 +354,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 } else if (mPageAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
-                } else if (mSearchObjectAC.isCrossReferece(nextObject, syntaxContainer.getFirst().getBody())) {
+                } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
                     if (searchCharArr.length >= idx + 2) // Check that this
                                                          // maybe a plural
                     {
@@ -408,7 +408,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     } else if (mPageAC.validate(nextObject)) {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
-                    } else if (mSearchObjectAC.isCrossReferece(nextObject, syntaxContainer.getFirst().getBody())) {
+                    } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
                         if (searchCharArr.length >= idx + 2) // Check that this
                                                              // maybe a
                                                              // plural

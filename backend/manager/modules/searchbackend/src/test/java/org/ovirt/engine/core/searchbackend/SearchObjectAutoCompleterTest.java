@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.searchbackend;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class SearchObjectAutoCompleterTest {
     private SearchObjectAutoCompleter comp;
@@ -33,11 +33,11 @@ public class SearchObjectAutoCompleterTest {
 
     @Test
     public void testIsCrossReference() {
-        assertTrue("EVENTS", comp.isCrossReferece("EVENTS", "TEMPLATES"));
-        assertFalse("Garbage Cross", comp.isCrossReferece("fsfsdf", "TEMPLATES"));
-        assertFalse("Garbage Object", comp.isCrossReferece("EVENTS", "fsfds"));
-        assertFalse("Null Object", comp.isCrossReferece("EVENTS", null));
-        assertFalse("Null text", comp.isCrossReferece(null, "TEMPLATES"));
+        assertTrue("EVENTS", comp.isCrossReference("EVENTS", "TEMPLATES"));
+        assertFalse("Garbage Cross", comp.isCrossReference("fsfsdf", "TEMPLATES"));
+        assertFalse("Garbage Object", comp.isCrossReference("EVENTS", "fsfds"));
+        assertFalse("Null Object", comp.isCrossReference("EVENTS", null));
+        assertFalse("Null text", comp.isCrossReference(null, "TEMPLATES"));
     }
 
     @Test
