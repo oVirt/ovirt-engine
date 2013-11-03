@@ -7,6 +7,8 @@ import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -38,6 +40,9 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     }
 
     public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<Disk> {
+
+        IEventListener getDiskTypeChangedEventListener();
+
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -60,5 +65,15 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     @Override
     protected PlaceRequest getMainTabRequest() {
         return PlaceRequestFactory.get(ApplicationPlaces.diskMainTabPlace);
+    }
+
+    @Override
+    protected void onReveal() {
+        Event entityChangedEvent = getModel().getDiskViewType().getEntityChangedEvent();
+        if (!entityChangedEvent.getListeners().contains(getView().getDiskTypeChangedEventListener())) {
+            entityChangedEvent.addListener(getView().getDiskTypeChangedEventListener());
+        }
+
+        super.onReveal();
     }
 }

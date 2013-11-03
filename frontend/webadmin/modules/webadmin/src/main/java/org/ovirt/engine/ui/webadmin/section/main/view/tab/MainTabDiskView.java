@@ -53,15 +53,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         initTableButtons();
         initTableOverhead();
         initWidget(getTable());
-
-        modelProvider.getModel().getDiskViewType().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                EntityModel diskViewType = (EntityModel) sender;
-                disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
-                onDiskViewTypeChanged();
-            }
-        });
     }
 
     final ClickHandler clickHandler = new ClickHandler() {
@@ -72,6 +63,20 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
             }
         }
     };
+
+    final IEventListener diskTypeChangedEventListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            EntityModel diskViewType = (EntityModel) sender;
+            disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
+            onDiskViewTypeChanged();
+        }
+    };
+
+    @Override
+    public IEventListener getDiskTypeChangedEventListener() {
+        return diskTypeChangedEventListener;
+    }
 
     void onDiskViewTypeChanged() {
         boolean all = disksViewRadioGroup.getAllButton().getValue();
