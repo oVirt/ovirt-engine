@@ -315,7 +315,7 @@ python-validation:
 	fi
 
 dbscripts-validations:
-	test/dbscripts/check_for_duplicate_upgrade_scripts.sh
+	build/dbscripts/check_for_duplicate_upgrade_scripts.sh
 
 install_artifacts:
 	# we must exclude tmp.repos directory so we
