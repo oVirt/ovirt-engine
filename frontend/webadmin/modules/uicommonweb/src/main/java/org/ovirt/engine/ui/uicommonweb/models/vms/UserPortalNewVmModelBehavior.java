@@ -48,7 +48,6 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel model = (UnitVmModel) target;
                         final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
                         for (StoragePool a : (ArrayList<StoragePool>) returnValue)
                         {

@@ -55,7 +55,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
                         final StoragePool dataCenter = (StoragePool) returnValue;
                         if (dataCenter == null)
                         {
@@ -118,7 +117,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
 
                         for (Disk disk : vmDisks) {
-                            if (disk.getDiskStorageType() == DiskStorageType.IMAGE && !disk.isShareable() && !disk.isDiskSnapshot()) {
+                            if (disk.getDiskStorageType() == DiskStorageType.IMAGE && !disk.isShareable()
+                                    && !disk.isDiskSnapshot()) {
                                 imageDisks.add(disk);
                             }
                         }

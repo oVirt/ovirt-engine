@@ -267,9 +267,6 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
-
-                                VdcReturnValueBase returnValue = result.getReturnValue();
-
                                 rollback5();
                             }
                         });
