@@ -254,7 +254,7 @@ public class VmHandler {
 
     public static void updateDisksForVm(VM vm, Collection<? extends Disk> disks) {
         for (Disk disk : disks) {
-            if (disk.isAllowSnapshot()) {
+            if (disk.isAllowSnapshot() && !disk.isDiskSnapshot()) {
                 DiskImage image = (DiskImage) disk;
                 vm.getDiskMap().put(image.getId(), image);
                 vm.getDiskList().add(image);
@@ -264,16 +264,18 @@ public class VmHandler {
         }
     }
 
-    public static void filterDisksForVM(VM vm, boolean allowOnlyNotShareableDisks,
-                                        boolean allowOnlySnapableDisks, boolean allowOnlyActiveDisks) {
-        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(),
+    /**
+     * Filters the vm image disks/disk devices according to the given parameters
+     * note: all the given parameters are relevant for image disks, luns will be filtered.
+     */
+    public static void filterImageDisksForVM(VM vm, boolean allowOnlyNotShareableDisks,
+                                             boolean allowOnlySnapableDisks, boolean allowOnlyActiveDisks) {
+        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskMap().values(),
                 allowOnlyNotShareableDisks, allowOnlySnapableDisks, allowOnlyActiveDisks);
-        Collection<DiskImage> vmDisksToRemove = CollectionUtils.subtract(vm.getDiskList(), filteredDisks);
-        // done so that lun disks would be included as well
-        Collection<Disk> vmDisksAfterFilter = CollectionUtils.disjunction(vm.getDiskMap().values(), vmDisksToRemove);
+        Collection<? extends Disk> vmDisksToRemove = CollectionUtils.subtract(vm.getDiskMap().values(), filteredDisks);
         vm.clearDisks();
-        updateDisksForVm(vm, vmDisksAfterFilter);
-        for (DiskImage diskToRemove : vmDisksToRemove) {
+        updateDisksForVm(vm, filteredDisks);
+        for (Disk diskToRemove : vmDisksToRemove) {
             vm.getManagedVmDeviceMap().remove(diskToRemove.getId());
         }
     }
