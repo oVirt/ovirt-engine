@@ -92,7 +92,8 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             return false;
         }
 
-        if (isConnWithSameDetailsExists(paramConnection)) {
+        Guid storagePoolId = Guid.isNullOrEmpty(getParameters().getVdsId()) ? null : getVds().getStoragePoolId();
+        if (isConnWithSameDetailsExists(paramConnection, storagePoolId)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
