@@ -214,7 +214,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
-              <runTarget>/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</runTarget>
+              <runTarget>ovirt-engine/userportal/UserPortal.html</runTarget>
               <module>org.ovirt.engine.ui.userportal.UserPortal</module>
               <webappDirectory>${project.build.directory}/generated-gwt</webappDirectory>
             </configuration>
