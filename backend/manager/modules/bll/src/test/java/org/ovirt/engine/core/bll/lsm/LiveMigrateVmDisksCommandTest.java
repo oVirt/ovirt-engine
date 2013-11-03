@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.lsm;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -22,10 +23,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -73,10 +75,10 @@ public class LiveMigrateVmDisksCommandTest {
     private VmValidator vmValidator;
 
     @Mock
-    private DiskImagesValidator diskImagesValidator;
+    private SnapshotsValidator snapshotsValidator;
 
     @Mock
-    private SnapshotsValidator snapshotsValidator;
+    private DiskValidator diskValidator;
 
     /**
      * The command under test
@@ -99,7 +101,7 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters() {
-        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId, srcStorageId, dstStorageId, vmId, quotaId));
+        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId, srcStorageId, dstStorageId, vmId, quotaId, diskImageId));
     }
 
     private void createParameters() {
@@ -213,18 +215,18 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     @Test
-    public void canDoActionVmHavingDeviceSnapshotsPluggedToOtherVms() {
+    public void canDoActionVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
         createParameters();
         initDiskImage(diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM)).when(diskImagesValidator)
-                .diskImagesSnapshotsNotAttachedToOtherVms(true);
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN)).when(diskValidator)
+                .isDiskPluggedToVmsThatAreNotDown(anyBoolean(), anyList());
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM.name()));
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.name()));
     }
 
     /** Initialize Entities */
@@ -303,11 +305,10 @@ public class LiveMigrateVmDisksCommandTest {
 
     private void mockValidators() {
         doReturn(vmValidator).when(command).createVmValidator();
-        doReturn(diskImagesValidator).when(command).createDiskImagesValidator(anyList());
         doReturn(snapshotsValidator).when(command).createSnapshotsValidator();
+        doReturn(diskValidator).when(command).createDiskValidator(any(Disk.class));
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
-        doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesSnapshotsNotAttachedToOtherVms(true);
+        doReturn(ValidationResult.VALID).when(diskValidator).isDiskPluggedToVmsThatAreNotDown(anyBoolean(), anyList());
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(false);
     }
 }

@@ -57,8 +57,8 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
 
             if (ret.getSucceeded()) {
                 updateImagesInfo();
-                ImagesHandler.updateImageStatus(getEnclosingCommand().getParameters().getDestinationImageId(),
-                        ImageStatus.OK);
+                ImagesHandler.updateAllDiskImageSnapshotsStatus(
+                        getEnclosingCommand().getParameters().getImageGroupID(), ImageStatus.OK);
             }
             else {
                 throw new VdcBLLException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());

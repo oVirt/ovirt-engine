@@ -9,12 +9,17 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDAO;
 
 /**
  * A validator for the {@link Disk} class.
@@ -74,5 +79,33 @@ public class DiskValidator {
 
     public boolean isVirtioScsiControllerAttached(Guid vmId) {
         return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
+    }
+
+    public ValidationResult isDiskPluggedToVmsThatAreNotDown(boolean checkOnlyVmsSnapshotPluggedTo, List<Pair<VM, VmDevice>> vmsForDisk) {
+        if (vmsForDisk == null) {
+            vmsForDisk = getVmDAO().getVmsWithPlugInfo(disk.getId());
+        }
+
+        for (Pair<VM, VmDevice> pair : vmsForDisk) {
+            VmDevice vmDevice = pair.getSecond();
+
+            if (checkOnlyVmsSnapshotPluggedTo && vmDevice.getSnapshotId() == null) {
+                continue;
+            }
+
+            VM currVm = pair.getFirst();
+            if (VMStatus.Down != currVm.getStatus()) {
+                if (vmDevice.getIsPlugged()) {
+                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                }
+            }
+        }
+
+        return ValidationResult.VALID;
+
+    }
+
+    protected VmDAO getVmDAO() {
+        return DbFacade.getInstance().getVmDao();
     }
 }

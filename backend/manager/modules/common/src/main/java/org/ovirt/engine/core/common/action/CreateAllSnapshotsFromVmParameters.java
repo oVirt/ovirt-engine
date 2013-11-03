@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.Collections;
+import java.util.Set;
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -27,14 +30,19 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     /** Used to indicate whether the memory should be saved as part of this snapshot or not */
     private boolean saveMemory;
 
+    @JsonIgnore
+    private Set<Guid> diskIdsToIgnoreInChecks;
+
     public CreateAllSnapshotsFromVmParameters() {
         needsLocking = true;
+        diskIdsToIgnoreInChecks = Collections.emptySet();
     }
 
     public CreateAllSnapshotsFromVmParameters(Guid vmId, String description) {
         super(vmId);
         this.description = description;
         needsLocking = true;
+        diskIdsToIgnoreInChecks = Collections.emptySet();
     }
 
     public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory) {
@@ -73,5 +81,13 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     public void setNeedsLocking(boolean needsLocking) {
         this.needsLocking = needsLocking;
+    }
+
+    public Set<Guid> getDiskIdsToIgnoreInChecks() {
+        return diskIdsToIgnoreInChecks;
+    }
+
+    public void setDiskIdsToIgnoreInChecks(Set<Guid> diskIdsToIgnoreInChecks) {
+        this.diskIdsToIgnoreInChecks = diskIdsToIgnoreInChecks;
     }
 }

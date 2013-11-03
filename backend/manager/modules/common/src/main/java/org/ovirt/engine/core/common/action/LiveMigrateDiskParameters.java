@@ -10,10 +10,11 @@ public class LiveMigrateDiskParameters extends MoveOrCopyImageGroupParameters {
         // Empty constructor for serializing / deserializing
     }
 
-    public LiveMigrateDiskParameters(Guid imageId, Guid sourceDomainId, Guid destDomainId, Guid vmId, Guid quotaId) {
+    public LiveMigrateDiskParameters(Guid imageId, Guid sourceDomainId, Guid destDomainId, Guid vmId, Guid quotaId, Guid imageGroupId) {
         super(imageId, sourceDomainId, destDomainId, ImageOperation.Move);
         setVmId(vmId);
         setQuotaId(quotaId);
+        setImageGroupID(imageGroupId);
     }
 
     public Guid getSourceStorageDomainId() {

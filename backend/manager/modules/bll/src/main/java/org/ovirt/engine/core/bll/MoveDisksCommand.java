@@ -170,7 +170,8 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
                 moveDiskParameters.getSourceDomainId(),
                 moveDiskParameters.getStorageDomainId(),
                 vmId,
-                moveDiskParameters.getQuotaId());
+                moveDiskParameters.getQuotaId(),
+                diskMap.get(moveDiskParameters.getImageId()).getId());
     }
 
     private LiveMigrateVmDisksParameters createLiveMigrateVmDisksParameters(List<MoveDiskParameters> moveDiskParamsList, Guid vmId) {

@@ -309,7 +309,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /**
      * @return the compensationContext
      */
-    protected CompensationContext getCompensationContext() {
+    public CompensationContext getCompensationContext() {
         return context.getCompensationContext();
     }
 

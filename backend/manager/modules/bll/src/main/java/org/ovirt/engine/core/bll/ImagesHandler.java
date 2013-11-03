@@ -654,7 +654,7 @@ public final class ImagesHandler {
         DbFacade.getInstance().getImageDao().updateStatus(imageId, imageStatus);
     }
 
-    protected static void updateAllDiskImageSnapshotsStatusWithCompensation(final Guid diskId,
+    public static void updateAllDiskImageSnapshotsStatusWithCompensation(final Guid diskId,
             final ImageStatus status,
             ImageStatus statusForCompensation,
             final CompensationContext compensationContext) {
@@ -680,7 +680,7 @@ public final class ImagesHandler {
         }
     }
 
-    protected static void updateAllDiskImageSnapshotsStatus(Guid diskId, ImageStatus status) {
+    public static void updateAllDiskImageSnapshotsStatus(Guid diskId, ImageStatus status) {
         DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
     }
 }

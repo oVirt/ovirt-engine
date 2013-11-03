@@ -326,13 +326,17 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 log.errorFormat("Unable to update the image info for image {0} (image group: {1}) on domain {2}",
                         newImageId, newImageGroupId, newStorageDomainID);
             } finally {
-                // Unlock destination image:
-                getDestinationDiskImage().setImageStatus(ImageStatus.OK);
+                if (!getParameters().isLeaveLocked()) {
+                    getDestinationDiskImage().setImageStatus(ImageStatus.OK);
+                }
                 getImageDao().update(getDestinationDiskImage().getImage());
             }
         }
 
-        unLockImage();
+        if (!getParameters().isLeaveLocked()) {
+            unLockImage();
+        }
+
         setSucceeded(true);
     }
 

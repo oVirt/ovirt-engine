@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -43,7 +45,7 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
-@NonTransactiveCommandAttribute
+@NonTransactiveCommandAttribute(forceCompensation = true)
 @InternalCommandAttribute
 public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> extends CommandBase<T>
         implements TaskHandlerCommand<LiveMigrateVmDisksParameters>, QuotaStorageDependent {
@@ -56,6 +58,11 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
         getParameters().setCommandType(getActionType());
         setVmId(getParameters().getVmId());
+    }
+
+    // ctor for compensation
+    protected LiveMigrateVmDisksCommand(Guid commandId) {
+        super(commandId);
     }
 
     @Override
@@ -155,6 +162,21 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        Map<String, Pair<String, String>> locksMap = new HashMap<>();
+        for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
+            locksMap.put(parameters.getImageGroupID().toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                    getDiskIsBeingMigratedMessage(getDiskImageByDiskId(parameters.getImageGroupID()))));
+        }
+        return locksMap;
+    }
+
+    private String getDiskIsBeingMigratedMessage(Disk disk) {
+        return VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED.name()
+                + String.format("$DiskName %1$s", disk != null ? disk.getDiskAlias() : "");
+    }
+
+    @Override
     public VM getVm() {
         VM vm = super.getVm();
         if (vm != null) {
@@ -176,7 +198,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return getDbFacade().getStorageDomainDao();
     }
 
-    private DiskImage getDiskImageById(Guid imageId) {
+    private DiskImage getDiskImageByImageId(Guid imageId) {
         if (diskImagesMap.containsKey(imageId)) {
             return diskImagesMap.get(imageId);
         }
@@ -185,6 +207,17 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         diskImagesMap.put(imageId, diskImage);
 
         return diskImage;
+    }
+
+    private Disk getDiskImageByDiskId(Guid diskId) {
+        Disk disk = getDiskDao().get(diskId);
+        if (disk != null && disk.getDiskStorageType() == Disk.DiskStorageType.IMAGE) {
+            DiskImage diskImage = (DiskImage)disk;
+            if (!diskImagesMap.containsKey(diskImage.getImageId())) {
+                diskImagesMap.put(diskImage.getImageId(), (DiskImage)disk);
+            }
+        }
+        return disk;
     }
 
     private StorageDomain getStorageDomainById(Guid storageDomainId, Guid storagePoolId) {
@@ -209,7 +242,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
-            DiskImage diskImage = getDiskImageById(parameters.getImageId());
+            DiskImage diskImage = getDiskImageByImageId(parameters.getImageId());
 
             list.add(new QuotaStorageConsumptionParameter(
                     parameters.getQuotaId(),
@@ -241,7 +274,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
             getReturnValue().setCanDoAction(isDiskNotShareable(parameters.getImageId())
-                    && isDiskSnapshotNotPluggedToOtherVms(parameters.getImageId())
+                    && isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(parameters.getImageId())
                     && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getStorageDomainId())
                     && validateSourceStorageDomain(parameters.getImageId())
                     && validateDestStorage(parameters.getImageId(), parameters.getStorageDomainId()));
@@ -269,7 +302,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     private boolean isDiskNotShareable(Guid imageId) {
-        DiskImage diskImage = getDiskImageById(imageId);
+        DiskImage diskImage = getDiskImageByImageId(imageId);
 
         if (diskImage.isShareable()) {
             addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", diskImage.getDiskAlias()));
@@ -279,13 +312,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return true;
     }
 
-    private boolean isDiskSnapshotNotPluggedToOtherVms(Guid imageId) {
-        DiskImage diskImage = getDiskImageById(imageId);
-        return validate((createDiskImagesValidator(Collections.singletonList(diskImage))).diskImagesSnapshotsNotAttachedToOtherVms(true));
-    }
-
     private boolean isTemplateInDestStorageDomain(Guid imageId, Guid sourceDomainId) {
-        Guid templateId = getDiskImageById(imageId).getImageTemplateId();
+        Guid templateId = getDiskImageByImageId(imageId).getImageTemplateId();
 
         if (!Guid.Empty.equals(templateId)) {
             DiskImage templateImage = getDiskImageDao().get(templateId);
@@ -298,7 +326,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     private boolean validateSourceStorageDomain(Guid imageId) {
-        DiskImage diskImage = getDiskImageById(imageId);
+        DiskImage diskImage = getDiskImageByImageId(imageId);
         Guid domainId = diskImage.getStorageIds().get(0);
         StorageDomainValidator validator = getValidator(domainId, getStoragePoolId());
 
@@ -320,7 +348,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
             MultiValueMapUtils.addToMap(parameters.getStorageDomainId(),
-                    getDiskImageById(parameters.getImageId()),
+                    getDiskImageByImageId(parameters.getImageId()),
                     storageDomainsImagesMap);
         }
 
@@ -352,6 +380,10 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return true;
     }
 
+    protected boolean isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(Guid imageId) {
+        return validate(createDiskValidator(getDiskImageByImageId(imageId)).isDiskPluggedToVmsThatAreNotDown(true, null));
+    }
+
     protected boolean isStorageDomainWithinThresholds(StorageDomain storageDomain) {
         return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
     }
@@ -369,15 +401,15 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return new VmValidator(getVm());
     }
 
-    protected DiskImagesValidator createDiskImagesValidator(Iterable<DiskImage> disks) {
-        return new DiskImagesValidator(disks);
-    }
-
     private boolean isVmNotInPreview() {
         return validate(createSnapshotsValidator().vmNotInPreview(getVmId()));
     }
 
     protected SnapshotsValidator createSnapshotsValidator() {
         return new SnapshotsValidator();
+    }
+
+    protected DiskValidator createDiskValidator(Disk disk) {
+        return new DiskValidator(disk);
     }
 }

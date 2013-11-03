@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -26,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -207,25 +207,13 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean checkCanBeMoveInVm() {
-        List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
-
-        for (Pair<VM, VmDevice> pair : vmsForDisk) {
-            VM currVm = pair.getFirst();
-            if (VMStatus.Down != currVm.getStatus()) {
-                if (pair.getSecond().getIsPlugged()) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return validate(new DiskValidator(getImage()).isDiskPluggedToVmsThatAreNotDown(false, getVmsWithVmDeviceInfoForDiskId()));
     }
 
     /**
      * Cache method to retrieve all the VMs with the device info related to the image
      */
-    private List<Pair<VM, VmDevice>> getVmsWithVmDeviceInfoForDiskId() {
+    protected List<Pair<VM, VmDevice>> getVmsWithVmDeviceInfoForDiskId() {
         if (cachedVmsDeviceInfo == null) {
             cachedVmsDeviceInfo = getVmDAO().getVmsWithPlugInfo(getImage().getId());
         }

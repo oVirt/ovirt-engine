@@ -17,6 +17,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private Guid vmSnapshotId;
     private Guid imageGroupID;
     private boolean importEntity;
+    private boolean leaveLocked;
 
     public ImagesActionsParametersBase() {
         imageId = Guid.Empty;
@@ -97,5 +98,13 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public void setImportEntity(boolean importEntity) {
         this.importEntity = importEntity;
+    }
+
+    public boolean isLeaveLocked() {
+        return leaveLocked;
+    }
+
+    public void setLeaveLocked(boolean leaveLocked) {
+        this.leaveLocked = leaveLocked;
     }
 }

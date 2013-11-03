@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.lsm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
@@ -11,13 +12,16 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
@@ -50,7 +54,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     protected boolean checkCanBeMoveInVm() {
-        return true;
+        return validate(createDiskValidator(getDiskImage()).isDiskPluggedToVmsThatAreNotDown(true, getVmsWithVmDeviceInfoForDiskId()));
     }
 
     @Override
@@ -126,8 +130,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         getParameters().setExecutionIndex(0);
 
         // We should always unlock the disk
-        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
-        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.OK);
+        ImagesHandler.updateAllDiskImageSnapshotsStatus(getParameters().getImageGroupID(), ImageStatus.OK);
     }
 
     private boolean isFirstTaskHandler() {
@@ -150,6 +153,17 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     @Override
+    protected boolean isImageNotLocked() {
+        // During LSM the disks are being locked prior to the snapshot phase
+        // therefore returning true here.
+        return true;
+    }
+
+    protected DiskValidator createDiskValidator(DiskImage disk) {
+        return new DiskValidator(disk);
+    }
+
+    @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
@@ -169,5 +183,10 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         }
 
         return AuditLogType.UNASSIGNED;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return null;
     }
 }
