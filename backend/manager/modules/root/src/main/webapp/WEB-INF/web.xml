@@ -19,12 +19,12 @@
         <param-value>/pki-resource</param-value>
     </init-param>
     <init-param>
-    	<param-name>attr-resource</param-name>
-	<param-value>ca-certificate</param-value>
+        <param-name>attr-resource</param-name>
+        <param-value>ca-certificate</param-value>
     </init-param>
     <init-param>
-    	<param-name>attr-format</param-name>
-	<param-value>X509-PEM-CA</param-value>
+        <param-name>attr-format</param-name>
+        <param-value>X509-PEM-CA</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -45,12 +45,12 @@
         <param-value>/pki-resource</param-value>
     </init-param>
     <init-param>
-    	<param-name>attr-resource</param-name>
-	<param-value>engine-certificate</param-value>
+        <param-name>attr-resource</param-name>
+        <param-value>engine-certificate</param-value>
     </init-param>
     <init-param>
-    	<param-name>attr-format</param-name>
-	<param-value>RFC4716</param-value>
+        <param-name>attr-format</param-name>
+        <param-value>RFC4716</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
