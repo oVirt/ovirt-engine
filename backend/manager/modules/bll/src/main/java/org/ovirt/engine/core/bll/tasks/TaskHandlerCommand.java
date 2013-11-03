@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -45,4 +46,6 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
     ArrayList<Guid> getTaskIdList();
 
     void deleteAsyncTaskPlaceHolder(String taskKey);
+
+    CompensationContext getCompensationContext();
 }

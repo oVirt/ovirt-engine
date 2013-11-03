@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.lsm;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -17,18 +18,36 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     private final TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand;
+    private LinkedHashSet<Guid> movedVmDiskIds;
 
     public LiveSnapshotTaskHandler(TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
     }
 
+    private LinkedHashSet<Guid> getMovedDiskIds() {
+       if (movedVmDiskIds == null) {
+           movedVmDiskIds = new LinkedHashSet<>();
+           for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
+               movedVmDiskIds.add(parameters.getImageGroupID());
+           }
+       }
+        return movedVmDiskIds;
+    }
+
     @Override
     public void execute() {
+        for (Guid movedDiskId : getMovedDiskIds()) {
+            ImagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(movedDiskId,
+                    ImageStatus.LOCKED,
+                    ImageStatus.OK,
+                    enclosingCommand.getCompensationContext());
+        }
         if (enclosingCommand.getParameters().getTaskGroupSuccess()) {
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
@@ -88,8 +107,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
     public void compensate() {
         // Unlock the image we left locked
         for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
-            ImagesHandler.updateImageStatus(parameters.getImageId(), ImageStatus.OK);
-            ImagesHandler.updateImageStatus(parameters.getDestinationImageId(), ImageStatus.OK);
+            ImagesHandler.updateAllDiskImageSnapshotsStatus(parameters.getImageGroupID(), ImageStatus.OK);
         }
     }
 
@@ -114,6 +132,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
         params.setParentParameters(enclosingCommand.getParameters());
         params.setImagesParameters(enclosingCommand.getParameters().getImagesParameters());
         params.setTaskGroupSuccess(enclosingCommand.getParameters().getTaskGroupSuccess());
+        params.setDiskIdsToIgnoreInChecks(getMovedDiskIds());
         params.setNeedsLocking(false);
 
         return params;

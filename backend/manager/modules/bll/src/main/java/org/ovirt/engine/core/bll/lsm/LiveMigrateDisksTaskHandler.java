@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.lsm;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
@@ -12,8 +13,12 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
 
@@ -30,27 +35,39 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
             throw new VdcBLLException(VdcBllErrors.imageErr,
                 "Auto-generated live snapshot for VM " + enclosingCommand.getParameters().getVmId() + " failed");
         }
+        TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
+                    CommandContext commandContext = ExecutionHandler.createInternalJobContext();
+                    ExecutionHandler.setAsyncJob(commandContext.getExecutionContext(), true);
+                    parameters.setSessionId(enclosingCommand.getParameters().getSessionId());
 
-        for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
-            CommandContext commandContext = ExecutionHandler.createInternalJobContext();
-            ExecutionHandler.setAsyncJob(commandContext.getExecutionContext(), true);
-            parameters.setSessionId(enclosingCommand.getParameters().getSessionId());
+                    VdcReturnValueBase vdcReturnValue =
+                            Backend.getInstance().runInternalAction(VdcActionType.LiveMigrateDisk,
+                                    parameters,
+                                    commandContext);
 
-            VdcReturnValueBase vdcReturnValue =
-                    Backend.getInstance().runInternalAction(VdcActionType.LiveMigrateDisk,
-                            parameters,
-                            commandContext);
+                    if (!vdcReturnValue.getSucceeded()) {
+                        ImagesHandler.updateAllDiskImageSnapshotsStatus(parameters.getImageGroupID(), ImageStatus.OK);
+                    }
 
-            enclosingCommand.getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+                    enclosingCommand.getReturnValue()
+                            .getVdsmTaskIdList()
+                            .addAll(vdcReturnValue.getInternalVdsmTaskIdList());
 
-            if (!parameters.getTaskGroupSuccess()) {
-                ExecutionHandler.endTaskJob(commandContext.getExecutionContext(), false);
-                log.errorFormat("Failed LiveMigrateDisk (Disk {0} , VM {1})",
-                        parameters.getImageGroupID(),
-                        parameters.getVmId());
+                    if (!parameters.getTaskGroupSuccess()) {
+                        ExecutionHandler.endTaskJob(commandContext.getExecutionContext(), false);
+                        log.errorFormat("Failed LiveMigrateDisk (Disk {0} , VM {1})",
+                                parameters.getImageGroupID(),
+                                parameters.getVmId());
+                    }
+                }
+
+                enclosingCommand.getReturnValue().setSucceeded(true);
+                return null;
             }
-        }
-        enclosingCommand.getReturnValue().setSucceeded(true);
+        });
     }
 
     @Override

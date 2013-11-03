@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -105,6 +106,21 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     true);
         }
         return cachedSelectedActiveDisks;
+    }
+
+    protected List<DiskImage> getDisksListForChecks() {
+        if (getParameters().getDiskIdsToIgnoreInChecks().isEmpty()) {
+            return getDisksList();
+        }
+
+        List<DiskImage> toReturn = new LinkedList<>();
+        for (DiskImage diskImage : getDisksList()) {
+            if (!getParameters().getDiskIdsToIgnoreInChecks().contains(diskImage.getId())) {
+                toReturn.add(diskImage);
+            }
+        }
+
+        return toReturn;
     }
 
     private void incrementVmGeneration() {
@@ -212,6 +228,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         result.setEntityInfo(getParameters().getEntityInfo());
         result.setParentCommand(parentCommand);
         result.setParentParameters(getParametersForTask(parentCommand, getParameters()));
+        if (getParameters().getDiskIdsToIgnoreInChecks().contains(image.getId())) {
+            result.setLeaveLocked(true);
+        }
         return result;
     }
 
@@ -456,7 +475,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             return false;
         }
 
-        List<DiskImage> disksList = getDisksList();
+        List<DiskImage> disksList = getDisksListForChecks();
         if (disksList.size() > 0) {
             MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(disksList);
             DiskImagesValidator diskImagesValidator = createDiskImageValidator(disksList);

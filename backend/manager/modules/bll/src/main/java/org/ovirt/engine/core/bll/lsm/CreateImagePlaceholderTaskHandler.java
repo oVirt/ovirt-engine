@@ -22,8 +22,6 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
 
     @Override
     protected void beforeTask() {
-        ImagesHandler.updateImageStatus(
-                getEnclosingCommand().getParameters().getDestinationImageId(), ImageStatus.LOCKED);
     }
 
     @Override
@@ -57,9 +55,8 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
 
     @Override
     protected void revertTask() {
-        // Unlock the image we left locked
-        ImagesHandler.updateImageStatus(getEnclosingCommand().getParameters().getImageId(), ImageStatus.OK);
-        ImagesHandler.updateImageStatus(getEnclosingCommand().getParameters().getDestinationImageId(), ImageStatus.OK);
+        ImagesHandler.updateAllDiskImageSnapshotsStatus(
+                getEnclosingCommand().getParameters().getImageGroupID(), ImageStatus.OK);
     }
 
     @Override
