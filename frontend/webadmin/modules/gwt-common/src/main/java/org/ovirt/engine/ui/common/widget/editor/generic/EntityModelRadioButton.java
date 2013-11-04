@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.editor;
+package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -10,21 +10,22 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RadioButton;
+import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
+import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
 
 /**
  * This class extends Composite instead of RadioButton because RadioButton is a Boolean type editor.
- * @deprecated use org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButton
  */
-public class EntityModelRadioButton extends Composite implements EditorWidget<Object, LeafValueEditor<Object>>, TakesValue<Object>, HasValueChangeHandlers<Object> {
+public class EntityModelRadioButton extends Composite implements EditorWidget<Boolean, LeafValueEditor<Boolean>>, TakesValue<Boolean>, HasValueChangeHandlers<Boolean> {
 
-    private TakesValueWithChangeHandlersEditor<Object> editor;
+    private TakesValueWithChangeHandlersEditor<Boolean> editor;
 
     public EntityModelRadioButton(String group) {
         initWidget(new RadioButton(group));
     }
 
     @Override
-    public TakesValueWithChangeHandlersEditor<Object> asEditor() {
+    public TakesValueWithChangeHandlersEditor<Boolean> asEditor() {
         if (editor == null) {
             editor = TakesValueWithChangeHandlersEditor.of(this, this);
         }
@@ -81,18 +82,17 @@ public class EntityModelRadioButton extends Composite implements EditorWidget<Ob
     }
 
     @Override
-    public Object getValue() {
+    public Boolean getValue() {
         return asRadioButton().getValue();
     }
 
     @Override
-    public void setValue(Object value) {
-        asRadioButton().setValue((Boolean) value);
+    public void setValue(Boolean value) {
+        asRadioButton().setValue(value);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Boolean> handler) {
         return asRadioButton().addValueChangeHandler(handler);
     }
 

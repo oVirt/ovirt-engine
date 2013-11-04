@@ -1,0 +1,51 @@
+package org.ovirt.engine.ui.common.widget.editor.generic;
+
+import com.google.gwt.editor.client.IsEditor;
+import com.google.gwt.text.shared.Parser;
+import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.ui.Widget;
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
+
+/*
+ * Represents a Model bound editor containing only a TextBox with no label.
+ */
+public class EntityModelTextBoxOnlyEditor<T> extends AbstractValidatedWidgetWithLabel<T, EntityModelTextBox<T>>
+        implements IsEditor<WidgetWithLabelEditor<T, EntityModelTextBoxOnlyEditor<T>>> {
+
+    private final WidgetWithLabelEditor<T, EntityModelTextBoxOnlyEditor<T>> editor;
+
+    public EntityModelTextBoxOnlyEditor(Renderer<T> renderer, Parser<T> parser) {
+        this(new EntityModelTextBox<T>(renderer, parser), new VisibilityRenderer.SimpleVisibilityRenderer());
+    }
+
+    public EntityModelTextBoxOnlyEditor(EntityModelTextBox<T> textBox, VisibilityRenderer visibilityRenderer) {
+        super(textBox, visibilityRenderer);
+        this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
+    }
+
+    @Override
+    protected void initWidget(Widget wrapperWidget) {
+        super.initWidget(wrapperWidget);
+
+        // Fix styles.
+        com.google.gwt.dom.client.Style labelStyle = getLabelElement().getStyle();
+        labelStyle.setDisplay(com.google.gwt.dom.client.Style.Display.NONE);
+
+        // Style textBoxStyle = getContentWidgetElement().getStyle();
+        // textBoxStyle.setWidth(240, Style.Unit.PX);
+
+        com.google.gwt.dom.client.Style panelStyle = getContentWidgetContainer().getElement().getStyle();
+        panelStyle.setFloat(com.google.gwt.dom.client.Style.Float.NONE);
+    }
+
+    @Override
+    public WidgetWithLabelEditor<T, EntityModelTextBoxOnlyEditor<T>> asEditor() {
+        return editor;
+    }
+
+    public EntityModelTextBox asValueBox() {
+        return getContentWidget();
+    }
+}

@@ -1,10 +1,4 @@
-package org.ovirt.engine.ui.common.widget.editor;
-
-import java.util.List;
-
-import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LabelElement;
@@ -15,15 +9,19 @@ import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.user.client.ui.RadioButton;
+import java.util.List;
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
 
 /**
  * Composite Editor that uses {@link EntityModelRadioButton}.
- * @deprecated use org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor
  */
-public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLabel<Object, EntityModelRadioButton>
-        implements IsEditor<WidgetWithLabelEditor<Object, EntityModelRadioButtonEditor>> {
+public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLabel<Boolean, EntityModelRadioButton>
+        implements IsEditor<WidgetWithLabelEditor<Boolean, EntityModelRadioButtonEditor>> {
 
-    private final WidgetWithLabelEditor<Object, EntityModelRadioButtonEditor> editor;
+    private final WidgetWithLabelEditor<Boolean, EntityModelRadioButtonEditor> editor;
 
     private final boolean useRadioButtonWidgetLabel;
 
@@ -58,7 +56,7 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
     }
 
     @Override
-    public WidgetWithLabelEditor<Object, EntityModelRadioButtonEditor> asEditor() {
+    public WidgetWithLabelEditor<Boolean, EntityModelRadioButtonEditor> asEditor() {
         return editor;
     }
 
