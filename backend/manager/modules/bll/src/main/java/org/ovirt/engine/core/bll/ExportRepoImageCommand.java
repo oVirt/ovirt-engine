@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -227,6 +229,12 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
             if (vm.getStatus() != VMStatus.Down) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
             }
+        }
+
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Arrays.asList(getDiskImage()));
+        if (!validate(diskImagesValidator.diskImagesNotIllegal())
+                || !validate(diskImagesValidator.diskImagesNotLocked())) {
+            return false;
         }
 
         return true;
