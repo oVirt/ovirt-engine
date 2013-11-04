@@ -237,8 +237,10 @@ public class NotificationService implements Runnable {
             connection = ds.getConnection();
             ps =
                     connection
-                            .prepareStatement("select * from event_audit_log_subscriber_view " +
-                                    "where audit_log_id <= (select max(audit_log_id) from audit_log)");
+                            .prepareStatement("SELECT * " +
+                                    "FROM event_audit_log_subscriber_view " +
+                                    "WHERE audit_log_id <= (SELECT MAX(audit_log_id) FROM audit_log) " +
+                                    "ORDER BY log_time ASC");
             rs = ps.executeQuery();
             while (rs.next()) {
                 eventSubscribers.add(getEventAuditLogSubscriber(rs));
