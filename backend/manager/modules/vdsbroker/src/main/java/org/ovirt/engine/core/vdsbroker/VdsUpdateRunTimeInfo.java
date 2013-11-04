@@ -1738,13 +1738,15 @@ public class VdsUpdateRunTimeInfo {
                         String.format("Could not find VM %s on host, assuming it went down unexpectedly",
                                 vmToRemove.getName()));
             }
-            log.infoFormat("vm {0} running in db and not running in vds - add to rerun treatment. vds {1}",
-                    vmToRemove.getName(), _vds.getName());
+
+            log.infoFormat("VM {0} ({1}) is running in db and not running in VDS {2}",
+                    vmToRemove.getName(), vmToRemove.getId(), _vds.getName());
 
             vmGuid = vmToRemove.getId();
             if (!isInMigration && !_vmsToRerun.contains(vmGuid)
                     && ResourceManager.getInstance().IsVmInAsyncRunningList(vmGuid)) {
                 _vmsToRerun.add(vmGuid);
+                log.infoFormat("add VM {0} to rerun treatment", vmToRemove.getName());
             }
             // vm should be auto startup
             // not already in start up list
@@ -1756,6 +1758,7 @@ public class VdsUpdateRunTimeInfo {
                             .getVmDynamic()
                             .getExitStatus() != VmExitStatus.Normal))) {
                 _autoVmsToRun.add(vmGuid);
+                log.infoFormat("add VM {0} to HA rerun treatment", vmToRemove.getName());
             }
         }
     }
