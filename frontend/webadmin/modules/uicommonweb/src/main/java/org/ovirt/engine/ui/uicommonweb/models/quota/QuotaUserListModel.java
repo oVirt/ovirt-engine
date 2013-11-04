@@ -126,8 +126,8 @@ public class QuotaUserListModel extends SearchableListModel {
     }
 
     @Override
-    protected void onSelectedItemChanged() {
-        super.onSelectedItemChanged();
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
         updateActionAvailability();
     }
 
