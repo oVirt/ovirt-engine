@@ -11,9 +11,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InternalNetworksPanel extends UnassignedNetworksPanel {
 
-    private VerticalPanel requiredPanel = new VerticalPanel();
-    private VerticalPanel nonRequiredPanel = new VerticalPanel();
+    private final VerticalPanel requiredPanel = new VerticalPanel();
+    private final VerticalPanel nonRequiredPanel = new VerticalPanel();
     private final List<VerticalPanel> unassignNetworksList = new ArrayList<VerticalPanel>();
+    private SimplePanel requiredTitlePanel;
+    private SimplePanel nonRequiredTitlePanel;
 
     public InternalNetworksPanel() {
         unassignNetworksList.add(requiredPanel);
@@ -23,24 +25,28 @@ public class InternalNetworksPanel extends UnassignedNetworksPanel {
     @Override
     public void setStyle(final NetworkPanelsStyle style) {
         super.setStyle(style);
-        stylePanel(requiredPanel, constants.requiredNetwork());
-        stylePanel(nonRequiredPanel, constants.nonRequiredNetwork());
+
+        stylePanel(requiredPanel);
+        stylePanel(nonRequiredPanel);
+
+        requiredTitlePanel = initTitlePanel(constants.requiredNetwork());
+        nonRequiredTitlePanel = initTitlePanel(constants.nonRequiredNetwork());
     }
 
-    private void stylePanel(VerticalPanel panel, String title) {
+    private SimplePanel initTitlePanel(String title) {
         Label label = new Label(title);
-        SimplePanel titlePanel = new SimplePanel(new Label(title));
+        SimplePanel titlePanel = new SimplePanel(label);
 
         titlePanel.setStyleName(style.requiredTitlePanel());
         label.getElement().addClassName(style.requiredLabel());
 
-        panel.add(titlePanel);
-
-        super.stylePanel(panel);
+        return titlePanel;
     }
 
     @Override
     public void addAll(List<NetworkPanel> list, boolean fadeIn) {
+        requiredPanel.add(requiredTitlePanel);
+        nonRequiredPanel.add(nonRequiredTitlePanel);
         for (NetworkPanel networkPanel : list) {
             LogicalNetworkModel networkModel = (LogicalNetworkModel) networkPanel.getItem();
             boolean isRequired =
