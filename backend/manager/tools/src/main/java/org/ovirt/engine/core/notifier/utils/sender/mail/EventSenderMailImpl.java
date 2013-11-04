@@ -66,11 +66,11 @@ public class EventSenderMailImpl implements EventSender {
             result.setSent(false);
             return result;
         }
-
+        log.info(String.format("Send email to [%s]%n subject:%n [%s]",
+                recipient,
+                message.getMessageSubject()));
         if (log.isDebugEnabled()) {
-            log.debug(String.format("Send email to [%s]%n subject:%n [%s]%n body:%n [%s]",
-                    recipient,
-                    message.getMessageSubject(),
+            log.debug(String.format("body:%n [%s]",
                     message.getMessageBody()));
         }
 
