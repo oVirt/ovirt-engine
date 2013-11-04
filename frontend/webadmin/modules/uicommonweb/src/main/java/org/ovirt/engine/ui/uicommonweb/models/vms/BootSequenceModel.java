@@ -107,7 +107,7 @@ public class BootSequenceModel extends ListModel
     {
         if (getSelectedItemIndex() < getItems().size() - 1)
         {
-            getItems().Move(getSelectedItemIndex(), getSelectedItemIndex() + 1);
+            getItems().move(getSelectedItemIndex(), getSelectedItemIndex() + 1);
         }
     }
 
@@ -115,7 +115,7 @@ public class BootSequenceModel extends ListModel
     {
         if (getSelectedItemIndex() > 0)
         {
-            getItems().Move(getSelectedItemIndex(), getSelectedItemIndex() - 1);
+            getItems().move(getSelectedItemIndex(), getSelectedItemIndex() - 1);
         }
     }
 

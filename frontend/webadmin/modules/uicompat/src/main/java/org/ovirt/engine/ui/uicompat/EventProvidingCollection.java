@@ -19,9 +19,9 @@ public class EventProvidingCollection<T> extends ObservableCollection<T> impleme
 	}
 
 	@Override
-	protected void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+	protected void onCollectionChanged(NotifyCollectionChangedEventArgs e)
 	{
-		super.OnCollectionChanged(e);
+		super.onCollectionChanged(e);
 		getCollectionChangedEvent().raise(this, e);
 	}
 }

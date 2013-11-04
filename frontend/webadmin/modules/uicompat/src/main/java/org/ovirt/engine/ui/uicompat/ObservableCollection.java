@@ -16,7 +16,7 @@ public class ObservableCollection<T> extends ArrayList<T> implements IProvideCol
      * @param sourceIndex
      * @param destIndex
      */
-    public void Move(int sourceIndex, int destIndex) {
+    public void move(int sourceIndex, int destIndex) {
         if (sourceIndex == destIndex || sourceIndex > this.size() || destIndex > this.size()) {
             return;
         }
@@ -26,11 +26,11 @@ public class ObservableCollection<T> extends ArrayList<T> implements IProvideCol
         this.add(destIndex, tempObj);
     }
 
-    protected void OnCollectionChanged() {
-        OnCollectionChanged(new NotifyCollectionChangedEventArgs());
+    protected void onCollectionChanged() {
+        onCollectionChanged(new NotifyCollectionChangedEventArgs());
     }
 
-    protected void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
+    protected void onCollectionChanged(NotifyCollectionChangedEventArgs e) {
         collectionChangedEvent.raise(this, e);
     }
 
@@ -47,45 +47,45 @@ public class ObservableCollection<T> extends ArrayList<T> implements IProvideCol
     @Override
     public boolean add(T e) {
         boolean b = super.add(e);
-        OnCollectionChanged();
+        onCollectionChanged();
         return b;
     }
 
     @Override
     public void add(int index, T element) {
         super.add(index, element);
-        OnCollectionChanged();
+        onCollectionChanged();
     }
 
     @Override
     public T set(int index, T element) {
         T t = super.set(index, element);
-        OnCollectionChanged();
+        onCollectionChanged();
         return t;
     }
 
     @Override
     public boolean remove(Object o) {
         boolean b = super.remove(o);
-        OnCollectionChanged();
+        onCollectionChanged();
         return b;
     }
 
 
     public void clear() {
         super.clear();
-        OnCollectionChanged();
+        onCollectionChanged();
     }
 
     public boolean addAll(Collection<? extends T> c) {
         boolean b = super.addAll(c);
-        OnCollectionChanged();
+        onCollectionChanged();
         return b;
     }
 
     public boolean addAll(int index, Collection<? extends T> c) {
         boolean b = super.addAll(index, c);
-        OnCollectionChanged();
+        onCollectionChanged();
         return b;
     }
 
