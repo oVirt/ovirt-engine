@@ -6,13 +6,13 @@ import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.ClusterTypeLabel;
-import org.ovirt.engine.ui.common.widget.label.MemorySizeLabel;
 import org.ovirt.engine.ui.common.widget.label.ResiliencePolicyLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -27,7 +27,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     TextBoxLabel dataCenterName = new TextBoxLabel();
     TextBoxLabel cpuName = new TextBoxLabel();
     BooleanLabel cpuThreads;
-    MemorySizeLabel<Integer> memoryOverCommit;
+    PercentLabel<Integer> memoryOverCommit;
     ResiliencePolicyLabel resiliencePolicy;
     ClusterTypeLabel clusterType;
     TextBoxLabel noOfVolumesTotal = new TextBoxLabel();
@@ -42,7 +42,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
             final ApplicationConstants constants) {
         super(modelProvider, 3, 5);
         cpuThreads = new BooleanLabel(constants.yes(), constants.no());
-        memoryOverCommit = new MemorySizeLabel<Integer>(constants);
+        memoryOverCommit = new PercentLabel<Integer>();
         resiliencePolicy = new ResiliencePolicyLabel(constants);
         clusterType = new ClusterTypeLabel(constants);
 
