@@ -63,7 +63,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
                 && !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             returnValue = false;
         }
-        if (returnValue && _storageDomainNameChanged && IsStorageWithSameNameExists()) {
+        if (returnValue && _storageDomainNameChanged && isStorageWithSameNameExists()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
             returnValue = false;
         }

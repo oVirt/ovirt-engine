@@ -54,8 +54,8 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     @Override
     protected boolean canDoAction() {
         boolean returnValue = checkStoragePool()
-                && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
-                                                  VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
+                && checkStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && checkStorageDomain()
                 && storageDomainStatusIsValid()
                 && (getStorageDomain().getStorageDomainType() == StorageDomainType.Master || checkMasterDomainIsUp())

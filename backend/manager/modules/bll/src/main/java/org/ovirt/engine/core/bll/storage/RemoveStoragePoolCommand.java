@@ -303,7 +303,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     protected boolean canDoAction() {
         if (!super.canDoAction() ||
                 !checkStoragePool() ||
-                !CheckStoragePoolStatusNotEqual(StoragePoolStatus.Up,
+                !checkStoragePoolStatusNotEqual(StoragePoolStatus.Up,
                         VdcBllMessages.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL)) {
             return false;
         }

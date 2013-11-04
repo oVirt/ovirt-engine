@@ -66,7 +66,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         super(commandId);
     }
 
-    public static List<VDS> GetAllRunningVdssInPool(StoragePool pool) {
+    public static List<VDS> getAllRunningVdssInPool(StoragePool pool) {
         return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
     }
 
@@ -128,7 +128,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return true;
     }
 
-    protected boolean CheckStoragePoolStatus(StoragePoolStatus status) {
+    protected boolean checkStoragePoolStatus(StoragePoolStatus status) {
         boolean returnValue = false;
         StoragePool storagePool = getStoragePool();
         if (storagePool != null) {
@@ -142,7 +142,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return returnValue;
     }
 
-    protected boolean CheckStoragePoolStatusNotEqual(StoragePoolStatus status, VdcBllMessages onFailMessage) {
+    protected boolean checkStoragePoolStatusNotEqual(StoragePoolStatus status, VdcBllMessages onFailMessage) {
         boolean returnValue = false;
         StoragePool storagePool = getStoragePool();
         if (storagePool != null) {

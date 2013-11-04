@@ -86,7 +86,7 @@ public final class StoragePoolStatusHandler {
 
     private static void nonOperationalPoolTreatment(StoragePool pool) {
         boolean changeStatus = false;
-        if (StorageHandlingCommandBase.GetAllRunningVdssInPool(pool).size() > 0) {
+        if (StorageHandlingCommandBase.getAllRunningVdssInPool(pool).size() > 0) {
             changeStatus = true;
         }
         if (changeStatus) {
