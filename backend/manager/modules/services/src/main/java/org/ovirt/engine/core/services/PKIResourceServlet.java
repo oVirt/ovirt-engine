@@ -24,7 +24,7 @@ import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 
 public class PKIResourceServlet extends HttpServlet {
 
-    private class Details {
+    private static class Details {
         File file;
         String format;
         String alias;
