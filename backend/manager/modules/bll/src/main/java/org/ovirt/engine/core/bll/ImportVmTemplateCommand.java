@@ -423,7 +423,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().EndAction(getImagesActionType(), p);
+            getBackend().endAction(getImagesActionType(), p);
         }
     }
 

@@ -378,7 +378,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Override
     protected void endSuccessfully() {
-        VdcReturnValueBase ret = getBackend().EndAction(VdcActionType.ExtendImageSize,
+        VdcReturnValueBase ret = getBackend().endAction(VdcActionType.ExtendImageSize,
                 createExtendImageSizeParameters());
 
         if (ret.getSucceeded()) {
@@ -420,7 +420,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private void endInternalCommandWithFailure() {
         ExtendImageSizeParameters params = createExtendImageSizeParameters();
         params.setTaskGroupSuccess(false);
-        getBackend().EndAction(VdcActionType.ExtendImageSize, params);
+        getBackend().endAction(VdcActionType.ExtendImageSize, params);
     }
 
     @Override

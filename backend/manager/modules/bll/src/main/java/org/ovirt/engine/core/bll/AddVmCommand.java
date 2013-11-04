@@ -98,7 +98,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     public AddVmCommand(T parameters) {
         super(parameters);
-        // if we came from EndAction the VmId is not null
+        // if we came from endAction the VmId is not null
         setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.newGuid() : parameters.getVmId());
         setVmName(parameters.getVm().getName());
         parameters.setVmId(getVmId());

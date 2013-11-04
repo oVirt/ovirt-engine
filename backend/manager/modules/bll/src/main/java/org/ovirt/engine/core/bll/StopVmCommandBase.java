@@ -198,7 +198,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         }
 
         else {
-            log.warn("StopVmCommandBase::EndVmCommand: Vm is null - not performing full EndAction");
+            log.warn("StopVmCommandBase::EndVmCommand: Vm is null - not performing full endAction");
         }
 
         setSucceeded(true);

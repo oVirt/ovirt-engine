@@ -277,7 +277,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
         else {
             setCommandShouldBeLogged(false);
-            log.warn("MoveOrCopyTemplateCommand::EndMoveOrCopyCommand: VmTemplate is null, not performing full EndAction");
+            log.warn("MoveOrCopyTemplateCommand::EndMoveOrCopyCommand: VmTemplate is null, not performing full endAction");
         }
     }
 
@@ -297,7 +297,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            getBackend().EndAction(getImagesActionType(), p);
+            getBackend().endAction(getImagesActionType(), p);
         }
     }
 

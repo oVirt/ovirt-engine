@@ -250,7 +250,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                         getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext())).getSucceeded());
 
                 if (!getSucceeded()) {
-                    log.warn("EndSuccessfully: EndAction of RunVm failed, detaching user from Vm");
+                    log.warn("EndSuccessfully: endAction of RunVm failed, detaching user from Vm");
                     detachUserFromVmFromPool(); // just in case.
                     getReturnValue().setEndActionTryAgain(false);
                 }
@@ -258,7 +258,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             else
                 // Pool-snapshot is gone (probably due to ProcessVmPoolOnStopVm
                 // treatment) ->
-                // no point in running the VM or trying to run again the EndAction
+                // no point in running the VM or trying to run again the endAction
                 // method:
             {
                 log.warn("EndSuccessfully: No images were created for Vm, detaching user from Vm");
@@ -267,7 +267,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             }
         } else {
             setCommandShouldBeLogged(false);
-            log.warn("AttachUserToVmFromPoolAndRunCommand::EndSuccessfully: Vm is null - not performing full EndAction");
+            log.warn("AttachUserToVmFromPoolAndRunCommand::EndSuccessfully: Vm is null - not performing full endAction");
             setSucceeded(true);
         }
     }
@@ -278,7 +278,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                 getParameters().getImagesParameters().get(0),
                 new CommandContext(getCompensationContext())).getSucceeded());
         if (!getSucceeded()) {
-            log.warn("AttachUserToVmFromPoolAndRunCommand::EndWitFailure: EndAction of RunVm Failed");
+            log.warn("AttachUserToVmFromPoolAndRunCommand::EndWitFailure: endAction of RunVm Failed");
         }
         detachUserFromVmFromPool();
     }

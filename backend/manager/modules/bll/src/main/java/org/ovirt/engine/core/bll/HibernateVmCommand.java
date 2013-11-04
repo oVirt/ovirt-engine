@@ -332,7 +332,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         }
 
         else {
-            log.warn("HibernateVmCommand::EndSuccessfully: Vm is null - not performing full EndAction.");
+            log.warn("HibernateVmCommand::EndSuccessfully: Vm is null - not performing full endAction.");
             setSucceeded(true);
         }
     }
@@ -366,7 +366,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
         else {
             setCommandShouldBeLogged(false);
-            log.warn("HibernateVmCommand::endWithFailure: Vm is null - not performing full EndAction.");
+            log.warn("HibernateVmCommand::endWithFailure: Vm is null - not performing full endAction.");
             setSucceeded(true);
         }
     }

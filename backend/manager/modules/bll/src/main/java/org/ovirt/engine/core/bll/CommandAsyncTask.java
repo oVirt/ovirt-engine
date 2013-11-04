@@ -90,11 +90,11 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
         else if (entityInfo.ShouldEndAction()) {
             log.infoFormat(
-                    "CommandAsyncTask::EndActionIfNecessary: All tasks of command '{0}' has ended -> executing 'EndAction'",
+                    "CommandAsyncTask::EndActionIfNecessary: All tasks of command '{0}' has ended -> executing 'endAction'",
                     getCommandId());
 
             log.infoFormat(
-                    "CommandAsyncTask::EndAction: Ending action for {0} tasks (command ID: '{1}'): calling EndAction '.",
+                    "CommandAsyncTask::endAction: Ending action for {0} tasks (command ID: '{1}'): calling endAction '.",
                     entityInfo.getTasksCountCurrentActionType(),
                     entityInfo.getCommandId());
 
@@ -131,7 +131,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         dbAsyncTask.getActionParameters().setImagesParameters(imagesParameters);
 
         try {
-            log.infoFormat("CommandAsyncTask::EndCommandAction [within thread] context: Attempting to EndAction '{0}', executionIndex: '{1}'",
+            log.infoFormat("CommandAsyncTask::EndCommandAction [within thread] context: Attempting to endAction '{0}', executionIndex: '{1}'",
                     dbAsyncTask.getActionParameters().getCommandType(),
                     dbAsyncTask.getActionParameters().getExecutionIndex());
 
@@ -160,7 +160,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
         catch (RuntimeException Ex2) {
             log.error(
-                    "CommandAsyncTask::EndCommandAction [within thread]: An exception has been thrown (not related to 'EndAction' itself)",
+                    "CommandAsyncTask::EndCommandAction [within thread]: An exception has been thrown (not related to 'endAction' itself)",
                     Ex2);
             endActionRuntimeException = true;
         }
@@ -185,7 +185,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
     }
 
     private String getErrorMessage() {
-        return String.format("[within thread]: EndAction for action type %1$s threw an exception.",
+        return String.format("[within thread]: endAction for action type %1$s threw an exception.",
                 getParameters().getDbAsyncTask().getActionParameters().getCommandType());
     }
 
@@ -193,7 +193,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         try {
             VdcActionType actionType = getParameters().getDbAsyncTask().getaction_type();
             log.infoFormat(
-                    "CommandAsyncTask::HandleEndActionResult: EndAction for action type '{0}' threw an unrecoverable RuntimeException the task will be cleared.",
+                    "CommandAsyncTask::HandleEndActionResult: endAction for action type '{0}' threw an unrecoverable RuntimeException the task will be cleared.",
                     actionType);
             commandInfo.clearTaskByVdsmTaskId(dbAsyncTask.getVdsmTaskId());
             RemoveTaskFromDB();
@@ -218,12 +218,12 @@ public class CommandAsyncTask extends SPMAsyncTask {
         try {
             VdcActionType actionType = getParameters().getDbAsyncTask().getaction_type();
             log.infoFormat(
-                    "CommandAsyncTask::HandleEndActionResult [within thread]: EndAction for action type '{0}' completed, handling the result.",
+                    "CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type '{0}' completed, handling the result.",
                     actionType);
 
                 if (vdcReturnValue == null || (!vdcReturnValue.getSucceeded() && vdcReturnValue.getEndActionTryAgain())) {
                     log.infoFormat(
-                            "CommandAsyncTask::HandleEndActionResult [within thread]: EndAction for action type {0} hasn't succeeded, not clearing tasks, will attempt again next polling.",
+                            "CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type {0} hasn't succeeded, not clearing tasks, will attempt again next polling.",
                         actionType);
 
                     commandInfo.Repoll();
@@ -231,12 +231,12 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
                 else {
                     log.infoFormat(
-                            "CommandAsyncTask::HandleEndActionResult [within thread]: EndAction for action type {0} {1}succeeded, clearing tasks.",
+                            "CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type {0} {1}succeeded, clearing tasks.",
                         actionType,
                             (vdcReturnValue.getSucceeded() ? "" : "hasn't "));
 
                     /**
-                     * Terminate the job by the return value of EndAction.
+                     * Terminate the job by the return value of endAction.
                      * The operation will end also the FINALIZING step.
                      */
                     if (context != null) {

@@ -96,7 +96,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             restoreVmConfigFromSnapshot();
         } else {
             setCommandShouldBeLogged(false);
-            log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
+            log.warn("VmCommand::EndVmCommand: Vm is null - not performing endAction on Vm");
         }
 
         setSucceeded(true);

@@ -493,7 +493,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             handleTransactivity();
             TransactionSupport.executeInScope(endActionScope, this);
         } catch (TransactionRolledbackLocalException e) {
-            log.infoFormat("EndAction: Transaction was aborted in {0}", this.getClass().getName());
+            log.infoFormat("endAction: Transaction was aborted in {0}", this.getClass().getName());
         } finally {
             freeLockEndAction();
             if (getCommandShouldBeLogged()) {
@@ -1446,7 +1446,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param asyncTaskCreationInfo
      *            info to send to AsyncTaskManager when creating the task.
      * @param parentCommand
-     *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
+     *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param entityType
      *            type of entities that are associated with the task
      * @param entityIds
@@ -1486,7 +1486,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param asyncTaskCreationInfo
      *            info to send to AsyncTaskManager when creating the task.
      * @param parentCommand
-     *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
+     *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param entityType
      *            type of entities that are associated with the task
      * @param entityIds
@@ -1530,7 +1530,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param asyncTaskCreationInfo
      *            info to send to AsyncTaskManager when creating the task.
      * @param parentCommand
-     *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
+     *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param description
      *            A message which describes the task
      * @param entitiesMap - map of entities

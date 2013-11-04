@@ -104,7 +104,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
     }
 
-    private void InitHandlers() {
+    private void initHandlers() {
         mTagsHandler = HandlersFactory.createTagsHandler();
         BaseConditionFieldAutoCompleter.TagsHandler = mTagsHandler;
         VmHandler.Init();
@@ -197,7 +197,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         initOsRepository();
         initSearchDependencies();
-        InitHandlers();
+        initHandlers();
 
         final String AppErrorsFileName = "bundles/AppErrors.properties";
         final String VdsErrorsFileName = "bundles/VdsmErrors.properties";
@@ -436,7 +436,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
 
     @Override
-    public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters) {
+    public VdcReturnValueBase endAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         return endAction(actionType, parameters, null);
     }
 

@@ -280,7 +280,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private void endCommandActions() {
-        getBackend().EndAction(getImagesActionType(), getParameters());
+        getBackend().endAction(getImagesActionType(), getParameters());
         setSucceeded(true);
     }
 

@@ -16,7 +16,7 @@ public interface BackendLocal {
 
     VdcQueryReturnValue RunQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 
-    public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters);
+    public VdcReturnValueBase endAction(VdcActionType actionType, VdcActionParametersBase parameters);
 
     ErrorTranslator getErrorsTranslator();
 

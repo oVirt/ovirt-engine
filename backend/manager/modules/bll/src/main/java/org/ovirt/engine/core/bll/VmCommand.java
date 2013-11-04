@@ -213,7 +213,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             }
 
-            getBackend().EndAction(
+            getBackend().endAction(
                     p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(), p);
         }
     }
@@ -229,7 +229,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
         } else {
             setLoggingForCommand();
-            log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
+            log.warn("VmCommand::EndVmCommand: Vm is null - not performing endAction on Vm");
         }
     }
 

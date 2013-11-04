@@ -1086,7 +1086,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().EndAction(getImagesActionType(), p);
+            getBackend().endAction(getImagesActionType(), p);
         }
     }
 
@@ -1152,7 +1152,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         else {
             setCommandShouldBeLogged(false);
-            log.warn("ImportVmCommand::EndImportCommand: Vm is null - not performing full EndAction");
+            log.warn("ImportVmCommand::EndImportCommand: Vm is null - not performing full endAction");
         }
     }
 

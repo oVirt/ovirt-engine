@@ -379,7 +379,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
                 getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 // save RunVmParams so we'll know how to run
-                // the stateless VM in the EndAction part.
+                // the stateless VM in the endAction part.
                 VmHandler.updateDisksFromDb(getVm());
             } else {
                 if (areDisksLocked(vdcReturnValue)) {
@@ -849,7 +849,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (isVmRunningStateless()) {
             CreateAllSnapshotsFromVmParameters createSnapshotParameters = buildCreateSnapshotParameters();
             createSnapshotParameters.setImagesParameters(getParameters().getImagesParameters());
-            getBackend().EndAction(VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
+            getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
 
             getParameters().setShouldBeLogged(false);
             getParameters().setRunAsStateless(false);

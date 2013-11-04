@@ -208,7 +208,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
         else {
             setCommandShouldBeLogged(false);
-            log.warn("MoveVmCommand::EndMoveVmCommand: Vm is null - not performing full EndAction");
+            log.warn("MoveVmCommand::EndMoveVmCommand: Vm is null - not performing full endAction");
         }
 
         setSucceeded(true);
