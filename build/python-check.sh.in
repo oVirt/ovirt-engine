@@ -13,7 +13,11 @@ FILES="$(
 	done
 )"
 
-"${PYFLAKES}" ${FILES} || ret=1
-"${PEP8}" ${FILES} || ret=1
-
+for exe in "${PYFLAKES}" "${PEP8}"; do
+	if ! which "${exe}" > /dev/null 2>&1; then
+		echo "WARNING: tool '${exe}' is missing" >&2
+	else
+		"${exe}" ${FILES} || ret=1
+	fi
+done
 exit ${ret}

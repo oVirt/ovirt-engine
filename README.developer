@@ -23,6 +23,8 @@ Install the following system components:
  - ovirt-host-deploy >= 1.1.0
  - jboss-as (optional)
  - maven-3 (optional)
+ - pyflakes (optional)
+ - python-pep8 / pep8 (optional)
 
 Maven-3 is required, download and extract if not installed using
 distribution package management, and add to PATH.
