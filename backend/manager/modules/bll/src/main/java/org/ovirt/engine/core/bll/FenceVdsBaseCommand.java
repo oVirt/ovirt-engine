@@ -422,7 +422,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         return new FenceExecutor(getVds(), FenceActionType.Status);
     }
 
-    protected void DestroyVmOnDestination(VM vm) {
+    protected void destroyVmOnDestination(VM vm) {
         if (vm.getStatus() == VMStatus.MigratingFrom) {
             try {
                 if (vm.getMigratingToVds() != null) {
@@ -442,12 +442,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         }
     }
 
-    protected void RestartVdsVms() {
+    protected void restartVdsVms() {
         java.util.ArrayList<VdcActionParametersBase> runVmParamsList =
                 new java.util.ArrayList<VdcActionParametersBase>();
         // restart all running vms of a failed vds.
         for (VM vm : mVmList) {
-            DestroyVmOnDestination(vm);
+            destroyVmOnDestination(vm);
             VDSReturnValue returnValue = Backend
                     .getInstance()
                     .getResourceManager()

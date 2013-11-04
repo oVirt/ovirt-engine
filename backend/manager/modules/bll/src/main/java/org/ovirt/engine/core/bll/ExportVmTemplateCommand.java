@@ -139,7 +139,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
         // check if template (with no override option)
         if (retVal && !getParameters().getForceOverride()) {
-            retVal = !ExportVmCommand.CheckTemplateInStorageDomain(getVmTemplate().getStoragePoolId(),
+            retVal = !ExportVmCommand.checkTemplateInStorageDomain(getVmTemplate().getStoragePoolId(),
                     getParameters().getStorageDomainId(), getVmTemplateId());
             if (!retVal) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);

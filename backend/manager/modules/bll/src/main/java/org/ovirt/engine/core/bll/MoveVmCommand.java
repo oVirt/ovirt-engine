@@ -73,7 +73,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
         // check that images are ok
         // not checking storage domain, there is a check in
-        // CheckTemplateInStorageDomain later
+        // checkTemplateInStorageDomain later
         VmHandler.updateDisksFromDb(getVm());
         List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false, true);
         List<DiskImage> diskImagesToValidate = ImagesHandler.filterImageDisks(diskImages, true, false, true);

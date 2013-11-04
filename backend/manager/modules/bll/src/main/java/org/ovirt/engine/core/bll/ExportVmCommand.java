@@ -116,7 +116,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // check if template exists only if asked for
         if (getParameters().getTemplateMustExists()) {
-            if (!CheckTemplateInStorageDomain(getVm().getStoragePoolId(), getParameters().getStorageDomainId(),
+            if (!checkTemplateInStorageDomain(getVm().getStoragePoolId(), getParameters().getStorageDomainId(),
                     getVm().getVmtGuid())) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN,
                         String.format("$TemplateName %1$s", getVm().getVmtName()));
@@ -449,7 +449,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return retVal;
     }
 
-    public static boolean CheckTemplateInStorageDomain(Guid storagePoolId, Guid storageDomainId, final Guid tmplId) {
+    public static boolean checkTemplateInStorageDomain(Guid storagePoolId, Guid storageDomainId, final Guid tmplId) {
         boolean retVal = false;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(storagePoolId,
                 storageDomainId);
