@@ -1,11 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -316,15 +318,16 @@ public class ImportVmModel extends ListWithDetailsModel {
                 if (!templateDiskMap.containsKey(vm.getVmtGuid())) {
                     templateDiskMap.put(vm.getVmtGuid(), new ArrayList<Disk>());
                 }
-                templateDiskMap.get(vm.getVmtGuid()).addAll(vm.getDiskMap().values());
+                templateDiskMap.get(vm.getVmtGuid()).addAll(extractRootDisks(vm));
             }
-                for (Disk disk : vm.getDiskMap().values()) {
-                    DiskImage diskImage = (DiskImage) disk;
+
+            for (Disk disk : vm.getDiskMap().values()) {
+                DiskImage diskImage = (DiskImage) disk;
                 addDiskImportData(diskImage.getId(),
                         filteredStorageDomains,
                         diskImage.getVolumeType(),
                         importVmData.getCollapseSnapshots());
-                }
+            }
         }
         if (!templateDiskMap.isEmpty()) {
             ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
@@ -369,6 +372,29 @@ public class ImportVmModel extends ListWithDetailsModel {
             postInitDisks();
         }
 
+    }
+
+    private Collection<Disk> extractRootDisks(VM vm) {
+        Set<Disk> rootDisks = new HashSet<Disk>();
+
+        for (DiskImage candidate : vm.getImages()) {
+            if (isRoot(candidate, vm.getImages())) {
+                rootDisks.add(candidate);
+            }
+        }
+
+        return rootDisks;
+    }
+
+    private boolean isRoot(DiskImage candidate, List<DiskImage> images) {
+        for (DiskImage image : images) {
+            if (candidate.getParentId().equals(image.getImageId())) {
+//                if the candidate has a parent then it is not a root
+                return false;
+            }
+        }
+//        if we did not find a parent of a candidate then it is a root
+        return true;
     }
 
     protected void getTemplatesFromExportDomain() {
