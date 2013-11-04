@@ -166,7 +166,10 @@ public class OvfVmReader extends OvfReader {
         }
         node = content.SelectSingleNode("quota_id");
         if (node != null) {
-            _vm.getStaticData().setQuotaId(new Guid(node.InnerText));
+            Guid quotaId = new Guid(node.InnerText);
+            if (!Guid.Empty.equals(quotaId)) {
+                _vm.getStaticData().setQuotaId(quotaId);
+            }
         }
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
 
