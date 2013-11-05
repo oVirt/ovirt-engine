@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -1063,7 +1064,7 @@ public final class AuditLogDirector {
         sb.append(logable.getVmTemplateId().equals(Guid.Empty) ? "" : logable.getVmTemplateId().toString());
         sb.append(DELIMITER);
         sb.append("customId=");
-        sb.append(logable.getCustomId() == null ? "" : logable.getCustomId().toString());
+        sb.append(StringUtils.defaultString(logable.getCustomId()));
         sb.append(DELIMITER);
 
         return sb.toString();

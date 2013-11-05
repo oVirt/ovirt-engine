@@ -76,7 +76,7 @@ public class AuditLogableBase extends TimeoutBase {
     private Guid glusterVolumeId;
     private String glusterVolumeName;
     private GlusterVolumeEntity glusterVolume;
-    private Integer customId = null;
+    private String customId;
     private String origin = "oVirt";
     private int customEventId = -1;
     private int eventFloodInSec = 30;
@@ -646,11 +646,11 @@ public class AuditLogableBase extends TimeoutBase {
         return DbFacade.getInstance();
     }
 
-    public Integer getCustomId() {
+    public String getCustomId() {
         return customId;
     }
 
-    public void setCustomId(Integer customId) {
+    public void setCustomId(String customId) {
         this.customId = customId;
     }
 

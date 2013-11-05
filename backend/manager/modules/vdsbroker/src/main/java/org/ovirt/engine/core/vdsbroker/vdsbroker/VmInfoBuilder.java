@@ -589,7 +589,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vm.getId());
         event.setVdsGroupId(vm.getVdsGroupId());
-        event.setCustomId(nic.getId().hashCode());
+        event.setCustomId(nic.getId().toString());
         event.setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion().toString());
         event.addCustomValue("NicName", nic.getName());
         event.addCustomValue("VnicProfile", vnicProfile.getName());
