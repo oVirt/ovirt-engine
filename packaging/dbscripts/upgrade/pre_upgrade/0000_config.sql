@@ -390,6 +390,8 @@ select fn_db_add_config_value('MTUOverrideSupported','false','3.0');
 select fn_db_add_config_value('MTUOverrideSupported','true','3.1');
 select fn_db_add_config_value('MTUOverrideSupported','true','3.2');
 select fn_db_add_config_value('MTUOverrideSupported','true','3.3');
+select fn_db_add_config_value('PortMirroringSupported','false','3.0');
+select fn_db_add_config_value('PortMirroringSupported','false','3.1');
 --Handling Organization Name
 select fn_db_add_config_value('OrganizationName','oVirt','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');

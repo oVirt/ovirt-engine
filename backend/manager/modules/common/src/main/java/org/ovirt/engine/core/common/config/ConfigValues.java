@@ -1103,6 +1103,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     MTUOverrideSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    PortMirroringSupported,
+
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1800")

@@ -35,6 +35,15 @@ public class FeatureSupported {
     /**
      * @param version
      *            Compatibility version to check for.
+     * @return <code>true</code> if port mirroring is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean portMirroring(Version version) {
+        return supportedInConfig(ConfigValues.PortMirroringSupported, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
      * @return <code>true</code> if non-VM network is supported for the version, <code>false</code> if it's not.
      */
     public static boolean nonVmNetwork(Version version) {
