@@ -13,7 +13,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class InstallerMessages {
     private VDS _vds;
     private String _correlationId;
-    private int _sequence = 0;
 
     public enum Severity {
         INFO,
@@ -41,12 +40,10 @@ public class InstallerMessages {
             break;
         default:
         case WARNING:
-            logable.setCustomId(_sequence++);
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING;
             log.warnFormat("Installation {0}: {1}", _vds.getHostName(), text);
             break;
         case ERROR:
-            logable.setCustomId(_sequence++);
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_ERROR;
             log.errorFormat("Installation {0}: {1}", _vds.getHostName(), text);
             break;
