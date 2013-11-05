@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.memory.MemoryImageRemoverFromExportDomain;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
@@ -173,5 +174,13 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
             jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
         }
         return jobProperties;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(
+                getParameters().getStorageDomainId(),
+                VdcObjectType.Storage,
+                getActionType().getActionGroup()));
     }
 }

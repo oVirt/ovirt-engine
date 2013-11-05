@@ -41,7 +41,7 @@ public enum VdcActionType {
     HotUnPlugDiskFromVm(183, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     ChangeFloppy(35, QuotaDependency.NONE),
     ImportVm(36, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
-    RemoveVmFromImportExport(37, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    RemoveVmFromImportExport(37, ActionGroup.DELETE_VM, QuotaDependency.NONE),
     RemoveVmTemplateFromImportExport(38, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     ImportVmTemplate(39, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     ChangeVMCluster(40, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
