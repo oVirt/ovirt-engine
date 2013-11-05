@@ -9,12 +9,12 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Guid _dstVdsId;
     private String _dstHost;
     private MigrationMethod _migrationMethod;
-    private Boolean tunnelMigration;
+    private boolean tunnelMigration;
     private String dstQemu;
     private Version clusterVersion;
 
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId, String dstHost,
-            MigrationMethod migrationMethod, Boolean tunnelMigration, String dstQemu, Version clusterVersion) {
+            MigrationMethod migrationMethod, boolean tunnelMigration, String dstQemu, Version clusterVersion) {
         super(vdsId, vmId);
         _srcHost = srcHost;
         _dstVdsId = dstVdsId;
@@ -41,7 +41,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return _migrationMethod;
     }
 
-    public Boolean getTunnelMigration() {
+    public boolean isTunnelMigration() {
         return tunnelMigration;
     }
 
@@ -61,7 +61,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 getDstVdsId(),
                 getDstHost(),
                 getMigrationMethod(),
-                getTunnelMigration());
+                isTunnelMigration());
     }
 
     public void setClusterVersion(Version clusterVersion) {

@@ -166,15 +166,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getVdsGroupCompatibilityVersion());
     }
 
-    private Boolean isTunnelMigrationUsed() {
-        if (FeatureSupported.tunnelMigration(getVm().getVdsGroupCompatibilityVersion())) {
-            // if vm has no override for tunnel migration (its null),
-            // use cluster's setting
-            return getVm().getTunnelMigration() != null ?
-                    getVm().getTunnelMigration()
-                    : getVdsGroup().isTunnelMigration();
+    private boolean isTunnelMigrationUsed() {
+        if (!FeatureSupported.tunnelMigration(getVm().getVdsGroupCompatibilityVersion())) {
+            return false;
         }
-        return null;
+        // if vm has no override for tunnel migration (its null),
+        // use cluster's setting
+        return getVm().getTunnelMigration() != null ?
+                getVm().getTunnelMigration()
+                : getVdsGroup().isTunnelMigration();
     }
 
     private String getMigrationNetworkIp() {
