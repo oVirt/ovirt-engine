@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * <code>VdsSpmIdMapDAO</code> defines a type that performs CRUD operations on instances of {@link vds_spm_iso_map}.
  */
-public interface VdsSpmIdMapDAO extends GenericDao<vds_spm_id_map, Guid> {
+public interface VdsSpmIdMapDAO extends GenericDao<vds_spm_id_map, Guid>, CachedDao<vds_spm_id_map, Guid> {
     /**
      * Gets the map for a given storage pool and vds id
      *

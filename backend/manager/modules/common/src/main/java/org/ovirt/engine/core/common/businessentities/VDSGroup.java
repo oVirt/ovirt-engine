@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @ValidVdsGroup(groups = { CreateEntity.class })
 
-public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented {
+public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented, CachedEntity {
 
     private static final long serialVersionUID = 5659359762655478095L;
 
@@ -335,6 +335,11 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties)
                 && enableBallooning == other.enableBallooning
                 && detectEmulatedMachine == other.detectEmulatedMachine);
+    }
+
+    @Override
+    public long getExpiration() {
+        return CachedEntity.LONG_LIVED_OBJECT;
     }
 
 }

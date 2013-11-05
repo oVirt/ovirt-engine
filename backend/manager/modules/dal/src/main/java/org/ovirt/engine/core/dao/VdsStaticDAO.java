@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface VdsStaticDAO extends GenericDao<VdsStatic, Guid> {
+public interface VdsStaticDAO extends GenericDao<VdsStatic, Guid>, CachedDao<VdsStatic, Guid> {
     /**
      * Retrieves the instance for the given host name.
      *
@@ -37,4 +37,5 @@ public interface VdsStaticDAO extends GenericDao<VdsStatic, Guid> {
      * @return the list of instances
      */
     List<VdsStatic> getAllForVdsGroup(Guid vdsGroup);
+
  }

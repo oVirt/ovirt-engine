@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
+public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus>, CachedEntity {
     private static final long serialVersionUID = -6010035855157006935L;
 
     private Guid id;
@@ -691,6 +691,11 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(hwFamily, other.hwFamily)
                 && ObjectUtils.objectsEqual(HBAs, other.HBAs)
                 && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines));
+    }
+
+    @Override
+    public long getExpiration() {
+        return CachedEntity.SHORT_LIVED_OBJECT;
     }
 
 }
