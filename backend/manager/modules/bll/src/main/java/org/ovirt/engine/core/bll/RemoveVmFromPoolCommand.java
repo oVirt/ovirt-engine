@@ -25,7 +25,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
             returnValue = false;
         }
         if (returnValue) {
-            if (RemoveVmCommand.IsVmRunning(vmId)) {
+            if (RemoveVmCommand.isVmRunning(vmId)) {
                 messages.add(VdcBllMessages.VM_POOL_CANNOT_REMOVE_RUNNING_VM_FROM_POOL.toString());
                 returnValue = false;
             }

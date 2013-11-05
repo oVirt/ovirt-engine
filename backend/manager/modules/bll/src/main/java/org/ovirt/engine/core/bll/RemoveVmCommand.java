@@ -157,7 +157,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 
-    public static boolean IsVmRunning(Guid vmId) {
+    public static boolean isVmRunning(Guid vmId) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm != null) {
             return vm.isRunningOrPaused() || vm.getStatus() == VMStatus.Unknown;
@@ -170,7 +170,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private boolean canRemoveVm() {
-        if (IsVmRunning(getVmId()) || (getVm().getStatus() == VMStatus.NotResponding)) {
+        if (isVmRunning(getVmId()) || (getVm().getStatus() == VMStatus.NotResponding)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
         if (getVm().getStatus() == VMStatus.Suspended) {

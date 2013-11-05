@@ -30,7 +30,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
     public static boolean canAddVmToPool(Guid vmId, java.util.ArrayList<String> messages, Guid poolId) {
         boolean returnValue = true;
 
-        boolean isRunning = RemoveVmCommand.IsVmRunning(vmId);
+        boolean isRunning = RemoveVmCommand.isVmRunning(vmId);
         if (isRunning) {
             returnValue = false;
             if (messages != null) {

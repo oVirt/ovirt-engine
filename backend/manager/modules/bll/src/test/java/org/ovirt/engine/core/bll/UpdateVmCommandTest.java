@@ -90,7 +90,7 @@ public class UpdateVmCommandTest {
         when(osRepository.getMaximumRam(0, null)).thenReturn(256);
         when(osRepository.isWindows(0)).thenReturn(false);
 
-        VmHandler.Init();
+        VmHandler.init();
         vm = new VM();
         vmStatic = new VmStatic();
         group = new VDSGroup();

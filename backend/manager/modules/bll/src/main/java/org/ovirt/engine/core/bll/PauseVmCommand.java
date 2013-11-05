@@ -34,7 +34,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
         return getSucceeded() ? AuditLogType.USER_PAUSE_VM : AuditLogType.USER_FAILED_PAUSE_VM;
     }
 
-    public boolean CanPauseVm(Guid vmId, java.util.ArrayList<String> message) {
+    public boolean canPauseVm(Guid vmId, java.util.ArrayList<String> message) {
         boolean retValue = true;
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm == null) {
@@ -68,6 +68,6 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
 
     @Override
     protected boolean canDoAction() {
-        return CanPauseVm(getParameters().getVmId(), getReturnValue().getCanDoActionMessages());
+        return canPauseVm(getParameters().getVmId(), getReturnValue().getCanDoActionMessages());
     }
 }

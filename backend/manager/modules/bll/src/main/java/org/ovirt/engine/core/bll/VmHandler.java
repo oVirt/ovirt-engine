@@ -75,7 +75,7 @@ public class VmHandler {
      *
      * @see Backend#InitHandlers
      */
-    public static void Init() {
+    public static void init() {
         Class<?>[] inspectedClassNames = new Class<?>[] {
                 VmBase.class,
                 VM.class,
@@ -367,9 +367,9 @@ public class VmHandler {
      *            - Messages for CanDoAction().
      * @return - True , if name is valid, false, if name already exist.
      */
-    public static boolean IsNotDuplicateInterfaceName(List<VmNic> interfaces,
-            final String interfaceName,
-            List<String> messages) {
+    public static boolean isNotDuplicateInterfaceName(List<VmNic> interfaces,
+                                                      final String interfaceName,
+                                                      List<String> messages) {
 
         // Interface iface = interfaces.FirstOrDefault(i => i.name ==
         // AddVmInterfaceParameters.Interface.name);

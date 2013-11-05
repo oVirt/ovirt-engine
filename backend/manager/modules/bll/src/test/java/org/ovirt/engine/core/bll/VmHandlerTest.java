@@ -82,7 +82,7 @@ public class VmHandlerTest {
 
     @Before
     public void setUp() {
-        VmHandler.Init();
+        VmHandler.init();
     }
 
     @Test

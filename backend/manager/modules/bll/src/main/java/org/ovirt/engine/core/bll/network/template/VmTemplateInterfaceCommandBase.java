@@ -37,7 +37,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
     }
 
     protected boolean interfaceNameUnique(List<VmNic> interfaces) {
-        return VmHandler.IsNotDuplicateInterfaceName(interfaces,
+        return VmHandler.isNotDuplicateInterfaceName(interfaces,
                 getInterfaceName(),
                 getReturnValue().getCanDoActionMessages());
     }
