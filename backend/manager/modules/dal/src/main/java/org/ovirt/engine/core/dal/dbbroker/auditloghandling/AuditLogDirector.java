@@ -1012,13 +1012,13 @@ public final class AuditLogDirector {
      *            the log type which determine if timeout is used for it
      */
     private static void updateTimeoutLogableObject(AuditLogableBase auditLogable, AuditLogType logType) {
-        int duplicateEventsIntrvalValue = (auditLogable.isExternal())
+        int eventFloodRate = (auditLogable.isExternal())
                 ?
                 Math.max(auditLogable.getEventFloodInSec(), 30) // Min duration for External Events is 30 sec
                 :
-                logType.getDuplicateEventsIntervalValue();
-        if (duplicateEventsIntrvalValue > 0) {
-            auditLogable.setEndTime(TimeUnit.SECONDS.toMillis(duplicateEventsIntrvalValue));
+                logType.getEventFloodRate();
+        if (eventFloodRate > 0) {
+            auditLogable.setEndTime(TimeUnit.SECONDS.toMillis(eventFloodRate));
             auditLogable.setTimeoutObjectId(composeObjectId(auditLogable, logType));
         }
     }

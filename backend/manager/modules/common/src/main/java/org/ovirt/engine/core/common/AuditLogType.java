@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum AuditLogType {
     UNASSIGNED(0),
@@ -842,9 +843,9 @@ public enum AuditLogType {
     USER_FAILED_TO_UPDATE_MOM_POLICIES(10201);
 
     private int intValue;
-    // indicates time interval in seconds on which identical events from same instance are supressed.
-    private int duplicateEventsIntervalValue;
-    private static final java.util.HashMap<Integer, AuditLogType> mappings = new HashMap<Integer, AuditLogType>();
+    // indicates time interval in seconds on which identical events from same instance are suppressed.
+    private int eventFloodRate;
+    private static final Map<Integer, AuditLogType> mappings = new HashMap<Integer, AuditLogType>();
 
     static {
         for (AuditLogType logType : values()) {
@@ -856,17 +857,17 @@ public enum AuditLogType {
         this(value, 0);
     }
 
-    private AuditLogType(int value, int duplicateEventsInterval) {
+    private AuditLogType(int value, int eventFloodRate) {
         intValue = value;
-        duplicateEventsIntervalValue = duplicateEventsInterval;
+        this.eventFloodRate = eventFloodRate;
     }
 
     public int getValue() {
         return intValue;
     }
 
-    public int getDuplicateEventsIntervalValue() {
-        return duplicateEventsIntervalValue;
+    public int getEventFloodRate() {
+        return eventFloodRate;
     }
 
     public static AuditLogType forValue(int value) {
