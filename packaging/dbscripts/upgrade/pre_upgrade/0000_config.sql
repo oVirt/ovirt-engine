@@ -243,7 +243,7 @@ select fn_db_add_config_value('IPTablesConfig',
 # SSH
 -A INPUT -p tcp --dport @SSH_PORT@ -j ACCEPT
 # guest consoles
--A INPUT -p tcp -m multiport --dports 5634:6166 -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 5900:6923 -j ACCEPT
 # migration
 -A INPUT -p tcp -m multiport --dports 49152:49216 -j ACCEPT
 # snmp
@@ -296,7 +296,7 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 -A INPUT -p tcp --dport 16514 -j ACCEPT
 
 # guest consoles
--A INPUT -p tcp -m multiport --dports 5634:6166 -j ACCEPT
+-A INPUT -p tcp -m multiport --dports 5900:6923 -j ACCEPT
 
 # migration
 -A INPUT -p tcp -m multiport --dports 49152:49216 -j ACCEPT
@@ -722,6 +722,17 @@ select fn_db_update_config_value('IPTablesConfigForGluster',
 -A INPUT -p tcp -m tcp --dport 24009:24108 -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 49152:49251 -j ACCEPT
 ','general');
+select fn_db_update_config_value('IPTablesConfigForVirt',
+'
+# libvirt tls
+-A INPUT -p tcp --dport 16514 -j ACCEPT
+
+# guest consoles
+-A INPUT -p tcp -m multiport --dports 5900:6923 -j ACCEPT
+
+# migration
+-A INPUT -p tcp -m multiport --dports 49152:49216 -j ACCEPT
+', 'general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_update_config_value('MaxNumOfVmCpus','64','3.0');
 select fn_db_update_config_value('MaxNumOfVmCpus','160','3.1');

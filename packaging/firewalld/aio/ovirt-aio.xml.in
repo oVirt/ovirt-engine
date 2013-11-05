@@ -2,6 +2,6 @@
 <service>
     <short>ovirt-aio</short>
     <description>oVirt configured aio service</description>
-    <port protocol="tcp" port="5634-6166"/>
+    <port protocol="tcp" port="5900-6923"/>
     <port protocol="tcp" port="49152-49216"/>
 </service>
