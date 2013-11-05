@@ -88,6 +88,12 @@
     </dependency>
 
     <dependency>
+        <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
+        <artifactId>vdsm-jsonrpc-java-client</artifactId>
+        <version>${vdsm-jsonrpc-java.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
       <version>${quartz.version}</version>
@@ -307,6 +313,12 @@
                 <groupId>org.ovirt.ovirt-host-deploy</groupId>
                 <artifactId>ovirt-host-deploy</artifactId>
                 <moduleName>org.ovirt.ovirt-host-deploy</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
+                <artifactId>vdsm-jsonrpc-java-client</artifactId>
+                <moduleName>org.ovirt.vdsm-jsonrpc-java</moduleName>
               </module>
 
               <module>

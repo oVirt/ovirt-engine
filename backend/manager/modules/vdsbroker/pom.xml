@@ -53,6 +53,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+        <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
+        <artifactId>vdsm-jsonrpc-java-client</artifactId>
+        <version>${vdsm-jsonrpc-java.version}</version>
+    </dependency>
+
     <!--  external dependencies-->
     <dependency>
       <groupId>commons-httpclient</groupId>

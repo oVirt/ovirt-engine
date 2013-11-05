@@ -38,6 +38,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         inverse.setHostName(to.getHostName());
         inverse.setVdsGroupId(to.getVdsGroupId());
         inverse.setPort(to.getPort());
+        inverse.setProtocol(to.getProtocol());
         inverse.setSshKeyFingerprint(to.getSshKeyFingerprint());
         inverse.setSshPort(to.getSshPort());
         inverse.setSshUsername(to.getSshUsername());

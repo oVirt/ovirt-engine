@@ -109,6 +109,9 @@
             width: 200px;
         }
 
+        .protocolStyle {
+            width: 200px;
+        }
 
         .consoleAddressStyle {
             line-height: 30px;
@@ -268,6 +271,7 @@
                                         <d:AdvancedParametersExpander ui:field="expander"/>
                                         <g:FlowPanel ui:field="expanderContent">
                                             <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
+                                            <ge:EntityModelCheckBoxEditor ui:field="protocolEditor" />
                                             <g:Label ui:field="fingerprintLabel" addStyleNames="{style.headerFp}" />
                                             <ge:StringEntityModelTextBoxEditor ui:field="fetchSshFingerprint"/>
                                             <g:SimplePanel ui:field="fetchPanel" addStyleNames="{style.fetchLink}, generalDialogComment" />

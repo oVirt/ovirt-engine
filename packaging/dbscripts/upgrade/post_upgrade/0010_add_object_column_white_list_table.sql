@@ -56,7 +56,7 @@ BEGIN
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
           'non_operational_reason', 'recoverable', 'sshkeyfingerprint', 'count_threads_as_cores', 'cpu_threads',
           'hw_manufacturer', 'hw_product_name', 'hw_version', 'hw_serial_number', 'hw_uuid', 'hw_family', 'ssh_port', 'ssh_username', 'boot_time',
-          'pm_detect_kdump'));
+          'pm_detect_kdump', 'protocol'));
 -- pm_options are missing
 END; $function$
 LANGUAGE plpgsql;
@@ -75,3 +75,4 @@ select fn_db_add_column_to_object_white_list('vds', 'selinux_enforce_mode');
 select fn_db_add_column_to_object_white_list('vds', 'auto_numa_balancing');
 select fn_db_add_column_to_object_white_list('vds', 'is_numa_supported');
 select fn_db_add_column_to_object_white_list('vds', 'is_live_snapshot_supported');
+select fn_db_add_column_to_object_white_list('vds', 'protocol');

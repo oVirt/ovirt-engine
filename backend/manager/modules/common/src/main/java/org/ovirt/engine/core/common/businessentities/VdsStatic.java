@@ -62,6 +62,9 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
             message = "VALIDATION.VDS.PORT.RANGE")
     private int port;
 
+    @EditableField
+    private VdsProtocol protocol;
+
     @EditableOnVdsStatus
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
@@ -188,6 +191,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         autoRecoverable = true;
         disablePowerManagementPolicy = false;
         pmKdumpDetection = true;
+        this.protocol = VdsProtocol.XML;
     }
 
     public VdsStatic(String host_name, String ip, String uniqueId, int port, int ssh_port, String ssh_username, Guid vds_group_id, Guid vds_id,
@@ -256,6 +260,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setPort(int value) {
         this.port = value;
+    }
+
+    public VdsProtocol getProtocol() {
+        return this.protocol;
+    }
+
+    public void setProtocol(VdsProtocol value) {
+        this.protocol = value;
     }
 
     public int getSshPort() {
@@ -576,6 +588,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         result = prime * result + ((pmSecondaryUser == null) ? 0 : pmSecondaryUser.hashCode());
         result = prime * result + (pmKdumpDetection ? 1 : 0);
         result = prime * result + port;
+        result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
         result = prime * result + sshPort;
         result = prime * result + ((sshUsername == null) ? 0 : sshUsername.hashCode());
         result = prime * result + ((serverSslEnabled == null) ? 0 : serverSslEnabled.hashCode());
@@ -622,6 +635,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && ObjectUtils.objectsEqual(pmSecondaryUser, other.pmSecondaryUser)
                 && pmKdumpDetection == other.isPmKdumpDetection()
                 && port == other.port
+                && protocol == other.protocol
                 && sshPort == other.sshPort
                 && ObjectUtils.objectsEqual(sshUsername, other.sshUsername)
                 && ObjectUtils.objectsEqual(serverSslEnabled, other.serverSslEnabled)

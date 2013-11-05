@@ -179,4 +179,9 @@ public class NewHostModel extends HostModel {
     public boolean showNetworkProviderTab() {
         return ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly;
     }
+
+    @Override
+    protected boolean showTransportProperties() {
+        return true;
+    }
 }

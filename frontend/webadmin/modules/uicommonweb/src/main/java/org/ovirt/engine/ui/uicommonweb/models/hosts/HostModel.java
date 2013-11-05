@@ -329,6 +329,18 @@ public abstract class HostModel extends Model
         privateOverrideIpTables = value;
     }
 
+    private EntityModel<Boolean> privateProtocol;
+
+    public EntityModel<Boolean> getProtocol()
+    {
+        return privateProtocol;
+    }
+
+    private void setProtocol(EntityModel<Boolean> value)
+    {
+        privateProtocol = value;
+    }
+
     private EntityModel<Boolean> privateIsPm;
 
     public EntityModel<Boolean> getIsPm()
@@ -922,6 +934,8 @@ public abstract class HostModel extends Model
         setFetchResult(new EntityModel<String>());
         setOverrideIpTables(new EntityModel<Boolean>());
         getOverrideIpTables().setEntity(false);
+        setProtocol(new EntityModel());
+        getProtocol().setEntity(false);
 
         IEventListener pmListener = new IEventListener() {
             @Override
@@ -1684,6 +1698,7 @@ public abstract class HostModel extends Model
     {
         setHostId(vds.getId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
+        getProtocol().setIsAvailable(showTransportProperties());
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setOriginalName(vds.getName());
         getName().setEntity(vds.getName());
@@ -1788,6 +1803,8 @@ public abstract class HostModel extends Model
     }
 
     protected abstract boolean showInstallationProperties();
+
+    protected abstract boolean showTransportProperties();
 
     public abstract boolean showExternalProviderPanel();
 

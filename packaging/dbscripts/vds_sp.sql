@@ -397,6 +397,7 @@ Create or replace FUNCTION InsertVdsStatic(
     v_ip VARCHAR(255) ,
     v_vds_unique_id VARCHAR(128) ,
     v_port INTEGER,
+    v_protocol SMALLINT,
     v_vds_group_id UUID,
     v_vds_name VARCHAR(255),
     v_server_SSL_enabled BOOLEAN ,
@@ -429,12 +430,12 @@ RETURNS VOID
 BEGIN
    IF v_vds_unique_id IS NULL OR NOT EXISTS(SELECT vds_name FROM vds_static WHERE vds_unique_id = v_vds_unique_id) then
       BEGIN
-         INSERT INTO vds_static(vds_id,host_name, free_text_comment, ip, vds_unique_id, port, vds_group_id, vds_name, server_SSL_enabled,
+         INSERT INTO vds_static(vds_id,host_name, free_text_comment, ip, vds_unique_id, port, protocol, vds_group_id, vds_name, server_SSL_enabled,
                                vds_type,vds_strength,pm_type,pm_user,pm_password,pm_port,pm_options,pm_enabled,
                                pm_proxy_preferences, pm_secondary_ip, pm_secondary_type, pm_secondary_user,
                                pm_secondary_password, pm_secondary_port, pm_secondary_options, pm_secondary_concurrent, pm_detect_kdump,
                                vds_spm_priority, sshKeyFingerprint, console_address, ssh_port, ssh_username, disable_auto_pm)
-			VALUES(v_vds_id,v_host_name, v_free_text_comment, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,
+			VALUES(v_vds_id,v_host_name, v_free_text_comment, v_ip, v_vds_unique_id, v_port, v_protocol, v_vds_group_id, v_vds_name, v_server_SSL_enabled,
                                v_vds_type,v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port,v_pm_options,v_pm_enabled,
                                v_pm_proxy_preferences, v_pm_secondary_ip, v_pm_secondary_type, v_pm_secondary_user,
                                v_pm_secondary_password, v_pm_secondary_port, v_pm_secondary_options, v_pm_secondary_concurrent, v_pm_detect_kdump,
@@ -454,6 +455,7 @@ Create or replace FUNCTION UpdateVdsStatic(v_host_name VARCHAR(255),
 	v_ip VARCHAR(255) ,
     v_vds_unique_id VARCHAR(128),
     v_port INTEGER,
+    v_protocol SMALLINT,
     v_vds_group_id UUID,
     v_vds_id UUID,
     v_vds_name VARCHAR(255),
@@ -491,7 +493,7 @@ BEGIN
    BEGIN
       UPDATE vds_static
       SET host_name = v_host_name, free_text_comment = v_free_text_comment, ip = v_ip,vds_unique_id = v_vds_unique_id,
-      port = v_port, vds_group_id = v_vds_group_id,vds_name = v_vds_name,server_SSL_enabled = v_server_SSL_enabled,
+      port = v_port, protocol = v_protocol, vds_group_id = v_vds_group_id,vds_name = v_vds_name,server_SSL_enabled = v_server_SSL_enabled,
       vds_type = v_vds_type,
       _update_date = LOCALTIMESTAMP,vds_strength = v_vds_strength,
       pm_type = v_pm_type,pm_user = v_pm_user,pm_password = v_pm_password,

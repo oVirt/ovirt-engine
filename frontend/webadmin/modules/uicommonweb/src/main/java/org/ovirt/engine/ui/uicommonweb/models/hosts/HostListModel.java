@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -908,6 +909,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setComment(model.getComment().getEntity());
         host.setHostName(model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
+        host.setProtocol(VdsProtocol.fromValue(model.getProtocol().getEntity() ? VdsProtocol.STOMP.toString() : VdsProtocol.XML.toString()));
         host.setSshPort(Integer.parseInt(model.getAuthSshPort().getEntity().toString()));
         boolean sshUsernameSet = model.getUserName().getEntity() != null;
         host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity() : null);

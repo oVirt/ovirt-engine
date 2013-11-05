@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -57,12 +56,13 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcVdsServer;
+import org.ovirt.engine.core.vdsbroker.jsonrpc.TransportFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CollectVdsNetworkDataVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetCapabilitiesVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsServerConnector;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsServerWrapper;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
@@ -195,18 +195,9 @@ public class VdsManager {
 
         // Get the values of the timeouts:
         int clientTimeOut = Config.<Integer> getValue(ConfigValues.vdsTimeout) * 1000;
-        int connectionTimeOut = Config.<Integer>getValue(ConfigValues.vdsConnectionTimeout) * 1000;
-        int clientRetries = Config.<Integer>getValue(ConfigValues.vdsRetries);
-
-        Pair<VdsServerConnector, HttpClient> returnValue =
-                XmlRpcUtils.getConnection(_vds.getHostName(),
-                        _vds.getPort(),
-                        clientTimeOut,
-                        connectionTimeOut,
-                        clientRetries,
-                        VdsServerConnector.class,
-                        Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
-        _vdsProxy = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
+        int connectionTimeOut = Config.<Integer> getValue(ConfigValues.vdsConnectionTimeout) * 1000;
+        int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
+        _vdsProxy = TransportFactory.createVdsServer(_vds.getProtocol(), _vds.getHostName(), _vds.getPort(), clientTimeOut, connectionTimeOut, clientRetries);
     }
 
     public void updateVmDynamic(VmDynamic vmDynamic) {
@@ -478,7 +469,7 @@ public class VdsManager {
                 if (_vds != null) {
                     _vds.setNonOperationalReason(vds.getNonOperationalReason());
                 }
-                if(vds.getVmCount() > 0) {
+                if (vds.getVmCount() > 0) {
                     break;
                 }
             case NonResponsive:
@@ -653,7 +644,7 @@ public class VdsManager {
         if (spmStatus != VdsSpmStatus.None) {
             spmIndicator = 1;
         }
-        int secToFence = (int)(
+        int secToFence = (int) (
                 // delay time can be fracture number, casting it to int should be enough
                 Config.<Integer> getValue(ConfigValues.TimeoutToResetVdsInSeconds) +
                 (Config.<Double> getValue(ConfigValues.DelayResetForSpmInSeconds) * spmIndicator) +
@@ -666,6 +657,7 @@ public class VdsManager {
 
         return TimeUnit.SECONDS.toMillis(secToFence);
     }
+
     /**
      * Handle network exception, return true if save vdsDynamic to DB is needed.
      *
@@ -721,7 +713,11 @@ public class VdsManager {
     public void dispose() {
         log.info("vdsManager::disposing");
         SchedulerUtilQuartzImpl.getInstance().deleteJob(onTimerJobId);
-        XmlRpcUtils.shutDownConnection(((VdsServerWrapper) _vdsProxy).getHttpClient());
+        if (VdsServerWrapper.class.isInstance(_vdsProxy)) {
+            XmlRpcUtils.shutDownConnection(((VdsServerWrapper) _vdsProxy).getHttpClient());
+        } else {
+            ((JsonRpcVdsServer) _vdsProxy).close();
+        }
     }
 
     /**
@@ -797,7 +793,7 @@ public class VdsManager {
 
     public void calculateNextMaintenanceAttemptTime() {
         this.nextMaintenanceAttemptTime = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(
-                Config.<Integer>getValue(ConfigValues.HostPreparingForMaintenanceIdleTime), TimeUnit.SECONDS);
+                Config.<Integer> getValue(ConfigValues.HostPreparingForMaintenanceIdleTime), TimeUnit.SECONDS);
     }
 
     public boolean isTimeToRetryMaintenance() {

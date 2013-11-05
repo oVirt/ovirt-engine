@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.1" name="org.ovirt.vdsm-jsonrpc-java">
+
+  <resources>
+    <resource-root path="vdsm-jsonrpc-java-client.jar"/>
+  </resources>
+
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="org.apache.commons.logging"/>
+    <module name="org.codehaus.jackson.jackson-mapper-asl"/>
+    <module name="org.codehaus.jackson.jackson-core-asl"/>
+  </dependencies>
+
+</module>

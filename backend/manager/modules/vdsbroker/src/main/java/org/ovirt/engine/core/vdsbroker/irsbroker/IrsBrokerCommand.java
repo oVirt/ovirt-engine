@@ -17,7 +17,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -37,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetStoragePoolInfoVDSCommandParameters;
@@ -78,12 +77,15 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcIIrsServer;
+import org.ovirt.engine.core.vdsbroker.jsonrpc.TransportFactory;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BrokerCommandBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
+
 @Logged(errorLevel = LogLevel.ERROR)
 public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> extends BrokerCommandBase<P> {
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
@@ -157,10 +159,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private String privatemCurrentIrsHost;
-        private IIrsServer privatemIrsProxy;
+        private IIrsServer irsProxy;
 
         private IIrsServer getmIrsProxy() {
-            return privatemIrsProxy;
+            return irsProxy;
         }
 
         private int privatemIrsPort;
@@ -171,6 +173,16 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         private void setmIrsPort(int value) {
             privatemIrsPort = value;
+        }
+
+        private VdsProtocol privateProtocol;
+
+        private VdsProtocol getProtocol() {
+            return this.privateProtocol;
+        }
+
+        private void setProtocol(VdsProtocol value) {
+            this.privateProtocol = value;
         }
 
         private Guid _storagePoolId = Guid.Empty;
@@ -537,6 +549,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             mCurrentVdsId = vds.getId();
             setmIrsPort(vds.getPort());
             privatemCurrentIrsHost = vds.getHostName();
+            setProtocol(vds.getProtocol());
         }
 
         public boolean failover() {
@@ -594,18 +607,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     if (host != null) {
                         // Get the values of the timeouts:
                         int clientTimeOut = Config.<Integer> getValue(ConfigValues.vdsTimeout) * 1000;
-                        int connectionTimeOut = Config.<Integer>getValue(ConfigValues.vdsConnectionTimeout) * 1000;
+                        int connectionTimeOut = Config.<Integer> getValue(ConfigValues.vdsConnectionTimeout) * 1000;
                         int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
-
-                        Pair<IrsServerConnector, HttpClient> returnValue =
-                                XmlRpcUtils.getConnection(host,
-                                        getmIrsPort(),
-                                        clientTimeOut,
-                                        connectionTimeOut,
-                                        clientRetries,
-                                        IrsServerConnector.class,
-                                        Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
-                        privatemIrsProxy = new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
+                        irsProxy = TransportFactory.createIrsServer(getProtocol(), host, getmIrsPort(), clientTimeOut, connectionTimeOut, clientRetries);
                         runStoragePoolUpEvent(storagePool);
                     }
                 }
@@ -1051,11 +1055,15 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private void nullifyInternalProxies() {
-            if (privatemIrsProxy != null) {
-                XmlRpcUtils.shutDownConnection(((IrsServerWrapper) privatemIrsProxy).getHttpClient());
+            if (irsProxy != null) {
+                if (IrsServerWrapper.class.isInstance(irsProxy)) {
+                    XmlRpcUtils.shutDownConnection(((IrsServerWrapper) irsProxy).getHttpClient());
+                } else {
+                    ((JsonRpcIIrsServer) irsProxy).close();
+                }
             }
             privatemCurrentIrsHost = null;
-            privatemIrsProxy = null;
+            irsProxy = null;
             mCurrentVdsId = null;
         }
 
@@ -1623,8 +1631,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     }
                     getVDSReturnValue().setSucceeded(false);
                 }
-            }
-            catch (UndeclaredThrowableException ex) {
+            } catch (UndeclaredThrowableException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
                 getVDSReturnValue().setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, ex.getMessage()));
@@ -1634,8 +1641,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
                 }
                 failover();
-            }
-            catch (XmlRpcRunTimeException ex) {
+            } catch (XmlRpcRunTimeException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
                 if (ex.isNetworkError()) {
@@ -1646,8 +1652,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
                     throw new IRSProtocolException(ex);
                 }
-            }
-            catch (IRSNoMasterDomainException ex) {
+            } catch (IRSNoMasterDomainException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
                 getVDSReturnValue().setVdsError(ex.getVdsError());
@@ -1727,8 +1732,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             return ResourceManager.getInstance()
                                     .getEventListener().masterDomainNotOperational(
                                             masterDomainId, getParameters().getStoragePoolId(), true,
-                                            getVDSReturnValue().getVdsError() != null &&
-                                                    getVDSReturnValue().getVdsError().getCode() == VdcBllErrors.StoragePoolWrongMaster);
+                                            getVDSReturnValue().getVdsError() != null
+                                                && getVDSReturnValue().getVdsError().getCode() == VdcBllErrors.StoragePoolWrongMaster);
                         }
                     });
         } else {

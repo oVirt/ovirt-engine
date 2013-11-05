@@ -111,6 +111,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setHostName(getHostName());
         vds.setComment(getComment());
         vds.setPort(getPort());
+        vds.setProtocol(getProtocol());
         vds.setSshPort(getSshPort());
         vds.setSshUsername(getSshUsername());
         vds.setStatus(getStatus());
@@ -334,6 +335,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setPort(int value) {
         this.mVdsStatic.setPort(value);
+    }
+
+    public VdsProtocol getProtocol() {
+        return this.mVdsStatic.getProtocol();
+    }
+
+    public void setProtocol(VdsProtocol value) {
+        this.mVdsStatic.setProtocol(value);
     }
 
     public int getSshPort() {

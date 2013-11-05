@@ -503,6 +503,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Automatically configure host firewall")
     String hostPopupOverrideIpTablesLabel();
 
+    @DefaultStringValue("Use JSON protocol")
+    String hostPopupProtocolLabel();
+
     @DefaultStringValue("Use External Providers")
     String hostPopupEnableExternalHostProvider();
 

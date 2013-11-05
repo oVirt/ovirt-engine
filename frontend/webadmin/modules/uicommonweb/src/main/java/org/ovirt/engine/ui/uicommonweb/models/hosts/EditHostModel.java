@@ -81,4 +81,9 @@ public class EditHostModel extends HostModel {
         return false;
     }
 
+    @Override
+    protected boolean showTransportProperties() {
+        return false;
+    }
+
 }

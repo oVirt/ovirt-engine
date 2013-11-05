@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -73,6 +74,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("ip", vds.getManagementIp())
                 .addValue("vds_unique_id", vds.getUniqueID())
                 .addValue("port", vds.getPort())
+                .addValue("protocol", vds.getProtocol())
                 .addValue("vds_group_id", vds.getVdsGroupId())
                 .addValue("vds_id", vds.getId())
                 .addValue("vds_name", vds.getName())
@@ -128,6 +130,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setManagementIp(rs.getString("ip"));
             entity.setUniqueID(rs.getString("vds_unique_id"));
             entity.setPort(rs.getInt("port"));
+            entity.setProtocol(VdsProtocol.fromValue(rs.getInt("protocol")));
             entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
             entity.setSshPort(rs.getInt("ssh_port"));

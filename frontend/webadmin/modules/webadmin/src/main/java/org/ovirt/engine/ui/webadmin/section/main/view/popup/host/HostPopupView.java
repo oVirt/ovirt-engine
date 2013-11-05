@@ -176,6 +176,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @WithElementId("overrideIpTables")
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
+    @UiField
+    @Path(value = "protocol.entity")
+    @WithElementId("protocol")
+    EntityModelCheckBoxEditor protocolEditor;
+
     @UiField(provided = true)
     @Path(value = "isPm.entity")
     @WithElementId("isPm")
@@ -452,6 +457,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
     private void addStyles() {
         overrideIpTablesEditor.addContentWidgetStyleName(style.overrideIpStyle());
+        protocolEditor.addContentWidgetStyleName(style.protocolStyle());
         externalHostProviderEnabledEditor.addContentWidgetStyleName(style.checkBox());
         providerSearchFilterEditor.addContentWidgetStyleName(style.searchFilter());
         providerSearchFilterEditor.setStyleName(style.searchFilterLabel());
@@ -525,6 +531,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         fingerprintLabel.setText(constants.hostPopupHostFingerprintLabel());
         overrideIpTablesEditor.setLabel(constants.hostPopupOverrideIpTablesLabel());
+        protocolEditor.setLabel(constants.hostPopupProtocolLabel());
         externalHostProviderEnabledEditor.setLabel(constants.hostPopupEnableExternalHostProvider());
         externalHostNameEditor.setLabel(constants.hostPopupExternalHostName());
         providerSearchFilterLabel.setLabel(constants.hostPopupProviderSearchFilter());
@@ -909,6 +916,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         String radioButton();
 
         String overrideIpStyle();
+
+        String protocolStyle();
 
         String checkBox();
 

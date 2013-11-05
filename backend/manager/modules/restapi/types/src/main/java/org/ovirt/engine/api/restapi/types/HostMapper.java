@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
@@ -78,6 +79,9 @@ public class HostMapper {
             entity.setPort(model.getPort());
         } else {
             entity.setPort(DEFAULT_VDSM_PORT);
+        }
+        if (model.isSetProtocol()) {
+            entity.setProtocol(VdsProtocol.fromValue(model.getProtocol()));
         }
         if (model.isSetSsh()) {
             map(model.getSsh(), entity);
@@ -343,6 +347,7 @@ public class HostMapper {
         if (entity.getPort() > 0) {
             model.setPort(entity.getPort());
         }
+        model.setProtocol(map(entity.getProtocol(), (String) null));
         HostStatus status = map(entity.getStatus(), null);
         model.setStatus(StatusUtils.create(status));
         if (status==HostStatus.NON_OPERATIONAL) {
@@ -793,6 +798,26 @@ public class HostMapper {
                 break;
             default:
                 break;
+            }
+        }
+        return result;
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.VdsProtocol.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.VdsProtocol protocol, String template) {
+        String result = null;
+        if (protocol != null) {
+            switch (protocol) {
+                case STOMP:
+                    result = VdsProtocol.STOMP.value();
+                    break;
+                case AMQP:
+                    result = VdsProtocol.AMQP.value();
+                    break;
+                case XML:
+                default:
+                    result = VdsProtocol.XML.value();
+                    break;
             }
         }
         return result;
