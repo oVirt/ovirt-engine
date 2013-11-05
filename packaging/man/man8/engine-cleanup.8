@@ -1,0 +1,28 @@
+.Dd Novermber 5, 2013
+.Os POSIX-compatible
+.Dt engine-cleanup 8
+.Sh NAME
+engine\-cleanup \- cleanup utility for Open Virtualization
+Manager.
+.Sh SYNOPSIS
+.Nm engine\-cleanup [options]
+.Sh DESCRIPTION
+The engine\-cleanup utility cleans an installation of Open Virtualization Manager.
+Configuration values must be provided interactively, as command line options,
+or using an answer file. Following a successful run of the engine\-cleanup
+utility all Open Virtualization Manager configuration will be removed.
+Where a run of the engine\-cleanip utility is unsuccessful,
+comprehensive logging and error information is output both to standard output and to the engine\-cleanup log file.
+.Sh OPTIONS
+.Bl -tag -width "AA"
+.It \-\-log=file
+write log to this file.
+.It \-\-config=file
+Load configuration files.
+.It \-\-config-append=file
+Load extra configuration files.
+.It \-\-generate-answer=file
+Generate answer file.
+.El
+.Sh BUGS
+Report bugs at https://bugzilla.redhat.com/.
