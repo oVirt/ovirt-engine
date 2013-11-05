@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -28,11 +27,11 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -131,7 +130,6 @@ public class MoveOrCopyDiskCommandTest {
         initVm();
         initSrcStorageDomain();
         initDestStorageDomain();
-        initVmDevice();
         doReturn(vmDeviceDao).when(command).getVmDeviceDAO();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -173,14 +171,19 @@ public class MoveOrCopyDiskCommandTest {
     }
 
     private void mockGetVmsListForDisk() {
-        List<VM> vmList = new ArrayList<VM>();
+        List<Pair<VM, VmDevice>> vmList = new ArrayList<>();
         VM vm1 = new VM();
         vm1.setStatus(VMStatus.PoweringDown);
         VM vm2 = new VM();
         vm2.setStatus(VMStatus.Down);
-        vmList.add(vm1);
-        vmList.add(vm2);
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(vmList);
+        VmDevice device1 = new VmDevice();
+        device1.setIsPlugged(true);
+        VmDevice device2 = new VmDevice();
+        device2.setIsPlugged(true);
+        vmList.add(new Pair<>(vm1, device1));
+        vmList.add(new Pair<>(vm1, device2));
+
+        when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
     }
 
     private void initSrcStorageDomain() {
@@ -195,12 +198,6 @@ public class MoveOrCopyDiskCommandTest {
         destDomain.setStatus(StorageDomainStatus.Active);
         destDomain.setStorageType(StorageType.NFS);
         doReturn(destDomain).when(command).getStorageDomain();
-    }
-
-    private void initVmDevice() {
-        VmDevice vmDevice = new VmDevice();
-        vmDevice.setIsPlugged(true);
-        when(vmDeviceDao.get(any(VmDeviceId.class))).thenReturn(vmDevice);
     }
 
     @SuppressWarnings("unchecked")

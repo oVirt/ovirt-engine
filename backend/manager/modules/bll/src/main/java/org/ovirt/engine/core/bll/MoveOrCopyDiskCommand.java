@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -44,7 +43,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         implements QuotaStorageDependent {
 
     private List<PermissionSubject> cachedPermsList;
-    private List<VM> cachedListVms;
+    private List<Pair<VM, VmDevice>> cachedVmsDeviceInfo;
     private String cachedDiskIsBeingMigratedMessage;
 
     public MoveOrCopyDiskCommand(T parameters) {
@@ -208,32 +207,28 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean checkCanBeMoveInVm() {
-        List<VM> vmsForDisk = getVmsForDiskId();
-        int vmCount = 0;
-        boolean canMoveDisk = true;
-        while (vmsForDisk.size() > vmCount && canMoveDisk) {
-            VM currVm = vmsForDisk.get(vmCount++);
+        List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
+
+        for (Pair<VM, VmDevice> pair : vmsForDisk) {
+            VM currVm = pair.getFirst();
             if (VMStatus.Down != currVm.getStatus()) {
-                VmDevice vmDevice =
-                        getVmDeviceDAO().get(new VmDeviceId(getImage().getId(), currVm.getId()));
-                if (vmDevice.getIsPlugged()) {
+                if (pair.getSecond().getIsPlugged()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-                    canMoveDisk = false;
+                    return false;
                 }
             }
         }
-        return canMoveDisk;
+        return true;
     }
 
     /**
-     * Cache method to retrieve all the VMs related to image
-     * @return List of Vms.
+     * Cache method to retrieve all the VMs with the device info related to the image
      */
-    private List<VM> getVmsForDiskId() {
-        if (cachedListVms == null) {
-            cachedListVms = getVmDAO().getVmsListForDisk(getImage().getId(), true);
+    private List<Pair<VM, VmDevice>> getVmsWithVmDeviceInfoForDiskId() {
+        if (cachedVmsDeviceInfo == null) {
+            cachedVmsDeviceInfo = getVmDAO().getVmsWithPlugInfo(getImage().getId());
         }
-        return cachedListVms;
+        return cachedVmsDeviceInfo;
     }
 
     /**
@@ -372,11 +367,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getDiskIsBeingMigratedMessage()));
             }
         } else {
-            List<VM> vmsForDisk = getVmsForDiskId();
+            List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
             if (!vmsForDisk.isEmpty()) {
                 Map<String, Pair<String, String>> lockMap = new HashMap<>();
-                for (VM currVm : vmsForDisk) {
-                    lockMap.put(currVm.getId().toString(),
+                for (Pair<VM, VmDevice> pair : vmsForDisk) {
+                    lockMap.put(pair.getFirst().getId().toString(),
                             LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingMigratedMessage()));
                 }
                 return lockMap;
