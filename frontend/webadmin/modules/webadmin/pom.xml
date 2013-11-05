@@ -188,12 +188,6 @@
             <goals>
               <goal>add-source</goal>
             </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/${generatedSourcesDirectory}</source>
-                <source>${project.build.directory}/generated-sources/gwt</source>
-              </sources>
-            </configuration>
           </execution>
         </executions>
       </plugin>

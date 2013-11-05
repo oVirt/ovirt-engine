@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -93,7 +94,6 @@ public class CommonModel extends ListModel
     private SearchableListModel eventList;
     private ReportsListModel reportsList;
     private SearchableListModel quotaList;
-    private SearchableListModel monitor;
     private SearchableListModel volumeList;
     private SearchableListModel diskList;
     private SearchableListModel networkList;

@@ -6,10 +6,12 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
+import org.ovirt.engine.ui.common.uicommon.model.CleanupModelEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -94,8 +96,13 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
     protected abstract void onLogin(T loginModel);
 
     @Override
-    public void onLogout() {
+    public abstract void onLogout();
+
+    protected void performLogout() {
+        getLoginModel().resetAfterLogout();
         user.onUserLogout();
+        AsyncDataProvider.clearCache();
+        CleanupModelEvent.fire(eventBus);
     }
 
     protected void performLogin(T loginModel) {
@@ -106,7 +113,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
         frontend.initLoggedInUser(loggedUser, loginPassword);
         beforeUiCommonInitEvent(loginModel);
         UiCommonInitEvent.fire(eventBus);
-
         // UI login actions
         user.onUserLogin(loggedUser);
 

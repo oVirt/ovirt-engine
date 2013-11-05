@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.frontend.communication.UserCallback;
 import org.ovirt.engine.ui.frontend.communication.VdcOperation;
 import org.ovirt.engine.ui.frontend.communication.VdcOperationCallback;
@@ -38,6 +39,9 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 import com.google.inject.Inject;
 
@@ -49,8 +53,7 @@ import com.google.inject.Inject;
  * Legacy code or code not managed within application's GIN context can use {@link #getInstance()} to retrieve the
  * instance of this class.
  */
-public class Frontend {
-
+public class Frontend implements HasHandlers {
     /**
      * Provides static access to {@code Frontend} singleton instance.
      */
@@ -173,17 +176,23 @@ public class Frontend {
     private Scheduler scheduler;
 
     /**
+     * GWT event bus.
+     */
+    private final EventBus eventBus;
+
+    /**
      * Constructor.
      * @param operationManager The {@code VdcOperationManger} to associate with this object.
      * @param applicationErrors The application error messages, we can use to translate application errors.
      * @param vdsmErrors The VDSM error messages, we can use to translate VDSM errors.
+     * @param gwtEventBut The GWT event bus.
      */
     @Inject
-    public Frontend(final VdcOperationManager operationManager,
-                    final AppErrors applicationErrors, final VdsmErrors vdsmErrors) {
+    public Frontend(final VdcOperationManager operationManager, final AppErrors applicationErrors,
+            final VdsmErrors vdsmErrors, final EventBus gwtEventBus) {
         this(operationManager,
                 new ErrorTranslator(applicationErrors),
-                new ErrorTranslator(vdsmErrors));
+                new ErrorTranslator(vdsmErrors), gwtEventBus);
     }
 
     /**
@@ -191,10 +200,11 @@ public class Frontend {
      */
     Frontend(final VdcOperationManager operationManager,
              final ErrorTranslator canDoActionErrorsTranslator,
-             final ErrorTranslator vdsmErrorsTranslator) {
+             final ErrorTranslator vdsmErrorsTranslator, final EventBus gwtEventBus) {
         this.operationManager = operationManager;
         this.canDoActionErrorsTranslator = canDoActionErrorsTranslator;
         this.vdsmErrorsTranslator = vdsmErrorsTranslator;
+        eventBus = gwtEventBus;
     }
 
     /**
@@ -449,6 +459,7 @@ public class Frontend {
                 logger.finer("Frontend: sucessfully executed runAction, determining result!"); //$NON-NLS-1$
                 handleActionResult(actionType, parameters, result,
                         callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, showErrorDialog);
+                RefreshActiveModelEvent.fire(Frontend.this, true);
             }
 
             @Override
@@ -531,6 +542,7 @@ public class Frontend {
                     callback.executed(new FrontendMultipleActionAsyncResult(actionType,
                             parameters, resultObject, state));
                 }
+                RefreshActiveModelEvent.fire(Frontend.this, true);
             }
 
             @Override
@@ -899,6 +911,11 @@ public class Frontend {
      */
     public String getCurrentContext() {
         return currentContext;
+    }
+
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        eventBus.fireEvent(event);
     }
 
     /**

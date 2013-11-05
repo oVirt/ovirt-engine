@@ -41,6 +41,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
@@ -84,6 +85,8 @@ public class FrontendActionTest {
     AsyncQuery mockAsyncQuery;
     @Mock
     INewAsyncCallback mockAsyncCallback;
+    @Mock
+    EventBus mockEventBus;
     @Captor
     ArgumentCaptor<AsyncCallback<ArrayList<VdcReturnValueBase>>> callbackMultipleActions;
     @Captor
@@ -101,7 +104,8 @@ public class FrontendActionTest {
         operationProcessor.setScheduler(fakeScheduler);
         VdcOperationManager operationsManager = new VdcOperationManager(operationProcessor);
         operationsManager.setLoggedIn(true);
-        frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator);
+        frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator,
+                mockEventBus);
         frontend.setEventsHandler(mockEventsHandler);
         frontend.setConstants(mockConstants);
         frontend.frontendFailureEvent = mockFrontendFailureEvent;

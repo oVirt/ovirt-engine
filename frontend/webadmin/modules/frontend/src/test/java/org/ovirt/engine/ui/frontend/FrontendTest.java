@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
@@ -82,6 +83,8 @@ public class FrontendTest {
     INewAsyncCallback mockAsyncCallback;
     @Mock
     IAsyncConverter<Object> mockConverter;
+    @Mock
+    EventBus mockEventBus;
     @Captor
     ArgumentCaptor<AsyncCallback<VdcQueryReturnValue>> callback;
     @Captor
@@ -95,7 +98,8 @@ public class FrontendTest {
         operationProcessor.setScheduler(fakeScheduler);
         VdcOperationManager operationsManager = new VdcOperationManager(operationProcessor);
         operationsManager.setLoggedIn(true);
-        frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator);
+        frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator,
+                mockEventBus);
         frontend.queryCompleteEvent = queryCompleteEvent;
         frontend.queryStartedEvent = queryStartEvent;
         frontend.frontendFailureEvent = mockFrontendFailureEvent;

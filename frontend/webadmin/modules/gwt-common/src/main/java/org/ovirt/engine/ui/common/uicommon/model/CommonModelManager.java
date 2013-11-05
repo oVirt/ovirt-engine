@@ -1,9 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
-import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
-import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -24,8 +21,7 @@ public class CommonModelManager {
      * <p>
      * Should be called right after successful user authentication, before redirecting the user to the main section.
      */
-    public static void init(final EventBus eventBus, final CurrentUser user, final LoginModel loginModel,
-            final FrontendFailureEventListener frontendFailureEventListener) {
+    public static void init(final EventBus eventBus) {
         commonModel = CommonModel.newInstance();
 
         commonModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
@@ -38,8 +34,6 @@ public class CommonModelManager {
         commonModel.getSignedOutEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                loginModel.resetAfterLogout();
-                user.onUserLogout();
 
                 // Clear CommonModel reference after the user signs out,
                 // use deferred command to ensure the reference is cleared

@@ -181,6 +181,16 @@
             </runClasspathExcludes>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <configuration>
+            <sources>
+              <source>${project.build.directory}/${generatedSourcesDirectory}</source>
+              <source>${project.build.directory}/generated-sources/gwt</source>
+            </sources>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>

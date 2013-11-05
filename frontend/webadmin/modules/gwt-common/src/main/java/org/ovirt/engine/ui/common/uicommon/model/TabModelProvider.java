@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -35,13 +34,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         this.eventBus = eventBus;
 
         // Configure UiCommon dialog handler
-        this.popupHandler = new ModelBoundPopupHandler<M>(this, eventBus) {
-            @Override
-            protected void hideAndClearPopup(AbstractModelBoundPopupPresenterWidget<?, ?> popup, boolean isConfirm) {
-                super.hideAndClearPopup(popup, isConfirm);
-                TabModelProvider.this.forceRefresh(getModel());
-            }
-        };
+        this.popupHandler = new ModelBoundPopupHandler<M>(this, eventBus);
         this.popupHandler.setDefaultConfirmPopupProvider(defaultConfirmPopupProvider);
 
         // Add handler to be notified when UiCommon models are (re)initialized
@@ -51,6 +44,20 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 TabModelProvider.this.onCommonModelChange();
             }
         });
+        eventBus.addHandler(CleanupModelEvent.getType(), new CleanupModelEvent.CleanupModelHandler() {
+
+            @Override
+            public void onCleanupModel(CleanupModelEvent event) {
+                if (hasModel()) {
+                    //Setting eventbus to null will also unregister the handlers.
+                    getModel().setEventBus(null);
+                }
+            }
+        });
+    }
+
+    protected boolean hasModel() {
+        return getCommonModel() != null && getModel() != null;
     }
 
     protected EventBus getEventBus() {
@@ -81,6 +88,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 }
             }
         });
+        getModel().setEventBus(getEventBus());
     }
 
     @SuppressWarnings("unchecked")
@@ -137,17 +145,6 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
         // No-op, override as necessary
         return null;
-    }
-
-    void forceRefresh(M model) {
-        if (model instanceof SearchableListModel) {
-            UICommand lastExecutedCommand = model.getLastExecutedCommand();
-            if (lastExecutedCommand != null && !lastExecutedCommand.getIsCancel()) {
-                // Refresh grid after invoking non-cancel command
-                SearchableListModel searchableList = (SearchableListModel) model;
-                searchableList.forceRefresh();
-            }
-        }
     }
 
 }

@@ -88,6 +88,11 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
         }
     }
 
+    @Override
+    protected boolean hasModel() {
+        return getModel() != null;
+    }
+
     /**
      * Retains the item selection of the model.
      */

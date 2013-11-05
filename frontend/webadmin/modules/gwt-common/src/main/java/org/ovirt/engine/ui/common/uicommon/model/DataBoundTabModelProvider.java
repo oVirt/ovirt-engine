@@ -56,7 +56,7 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         getModel().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (getModel() != null && handleItemsChangedEvent()) {
+                if (hasModel() && handleItemsChangedEvent()) {
                     updateData();
                 }
             }

@@ -27,6 +27,8 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.RegistrationResult;
+import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
+import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent.RefreshActiveModelHandler;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
 import org.ovirt.engine.ui.uicommonweb.ReportCommand;
@@ -295,8 +297,6 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
     }
 
     private GridTimer privatetimer;
-
-    private boolean rapidTimerRunning;
 
     public GridTimer gettimer()
     {
@@ -881,4 +881,21 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         return getListName();
     }
 
+    @Override
+    protected void registerHandlers() {
+        //Register to listen for operation complete events.
+        registerHandler(getEventBus().addHandler(RefreshActiveModelEvent.getType(),
+                new RefreshActiveModelHandler() {
+            @Override
+            public void onRefreshActiveModel(RefreshActiveModelEvent event) {
+                if (getTimer().isActive()) { //Only if we are active should we refresh.
+                    getForceRefreshCommand().execute();
+                    if (event.isDoFastForward()) {
+                        //Start the fast refresh.
+                        getTimer().fastForward();
+                    }
+                }
+            }
+        }));
+    }
 }

@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -103,10 +102,8 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
                 }
 
                 frontend.clearLoggedInUser();
-                getLoginModel().resetAfterLogout();
-                AsyncDataProvider.clearCache();
+                performLogout();
                 connectAutomaticallyManager.resetAlreadyOpened();
-                ApplicationInit.super.onLogout();
             }
         };
 

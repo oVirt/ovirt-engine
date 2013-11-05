@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -57,7 +56,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
 
     @Override
     protected void beforeUiCommonInitEvent(LoginModel loginModel) {
-        CommonModelManager.init(eventBus, user, loginModel, frontendFailureEventListener);
+        CommonModelManager.init(eventBus);
     }
 
     @Override
@@ -69,7 +68,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
     public void onLogout() {
         // Logout operation happens within the CommonModel SignOut event handler
         CommonModelManager.instance().signOut();
-        AsyncDataProvider.clearCache();
+        performLogout();
     }
 
     @Override

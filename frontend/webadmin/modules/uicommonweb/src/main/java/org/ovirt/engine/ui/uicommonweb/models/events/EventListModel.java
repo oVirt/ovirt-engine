@@ -16,6 +16,7 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
@@ -235,6 +236,10 @@ public class EventListModel extends ListWithDetailsModel
             return;
         }
 
+        if (!source.isEmpty()) {
+            //We received some new events, tell the active models to update.
+            RefreshActiveModelEvent.fire(this, false);
+        }
         List<AuditLog> list = (List<AuditLog>) getItems();
 
         Collections.sort(source, new Linq.AuditLogComparer());
