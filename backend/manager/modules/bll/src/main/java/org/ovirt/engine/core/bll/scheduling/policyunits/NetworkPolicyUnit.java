@@ -117,13 +117,16 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
     private boolean networkRequiredOnVds(VmNetworkInterface vmIface,
             Map<String, Network> networksByName,
             boolean onlyRequiredNetworks) {
-        boolean networkRequiredOnVds = true;
         if (!vmIface.isPlugged()) {
-            networkRequiredOnVds = false;
-        } else if (onlyRequiredNetworks) {
-            networkRequiredOnVds = networksByName.get(vmIface.getNetworkName()).getCluster().isRequired();
+            return false;
         }
-        return networkRequiredOnVds;
+
+        Network network = networksByName.get(vmIface.getNetworkName());
+        if (onlyRequiredNetworks) {
+            return network.getCluster().isRequired();
+        }
+
+        return !network.isExternal();
     }
 
     /**
