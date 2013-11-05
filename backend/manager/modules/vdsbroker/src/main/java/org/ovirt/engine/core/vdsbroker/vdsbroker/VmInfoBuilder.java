@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -34,6 +35,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -545,6 +548,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         VnicProfile vnicProfile = null;
         Network network = null;
         String networkName = "";
+        List<VNIC_PROFILE_PROPERTIES> unsupportedFeatures = new ArrayList<>();
         if (nic.getVnicProfileId() != null) {
             vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(nic.getVnicProfileId());
             if (vnicProfile != null) {
@@ -552,30 +556,78 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 networkName = network.getName();
                 log.debugFormat("VNIC {0} is using profile {1} on network {2}",
                         nic.getName(), vnicProfile, networkName);
-                addQosForDevice(struct, vnicProfile, vm.getVdsGroupCompatibilityVersion());
+                if (!addQosForDevice(struct, vnicProfile, vm.getVdsGroupCompatibilityVersion())) {
+                    unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.NETWORK_QOS);
+                }
             }
         }
 
         struct.put(VdsProperties.NETWORK, networkName);
 
-        if (vnicProfile != null && vnicProfile.isPortMirroring()) {
-            struct.put(VdsProperties.PORT_MIRRORING, network == null
-                    ? Collections.<String> emptyList() : Collections.singletonList(networkName));
+        if (!addPortMirroringToVmInterface(struct, vnicProfile, vm.getVdsGroupCompatibilityVersion(), network)) {
+            unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.PORT_MIRRORING);
         }
 
-        addCustomPropertiesForDevice(struct,
+        if (!addCustomPropertiesForDevice(struct,
                 vm,
                 vmDevice,
                 vm.getVdsGroupCompatibilityVersion(),
-                getVnicCustomProperties(vnicProfile));
+                getVnicCustomProperties(vnicProfile))) {
+            unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.CUSTOM_PROPERTIES);
+        }
+
+        if (!unsupportedFeatures.isEmpty()) {
+            reportUnsupportedVnicProfileFeatures(vm, nic, vnicProfile, unsupportedFeatures);
+        }
 
     }
 
-    private static void addQosForDevice(Map<String, Object> struct,
+    private static void reportUnsupportedVnicProfileFeatures(VM vm,
+            VmNic nic,
+            VnicProfile vnicProfile,
+            List<VNIC_PROFILE_PROPERTIES> unsupportedFeatures) {
+        AuditLogableBase event = new AuditLogableBase();
+        event.setVmId(vm.getId());
+        event.setVdsGroupId(vm.getVdsGroupId());
+        event.setCustomId(nic.getId().hashCode());
+        event.setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion().toString());
+        event.addCustomValue("NicName", nic.getName());
+        event.addCustomValue("VnicProfile", vnicProfile.getName());
+        String[] unsupportedFeatureNames = new String[unsupportedFeatures.size()];
+        for (int i = 0; i < unsupportedFeatures.size(); i++) {
+            unsupportedFeatureNames[i] = unsupportedFeatures.get(i).getFeatureName();
+        }
+
+        event.addCustomValue("UnsupportedFeatures", StringUtils.join(unsupportedFeatureNames, ", "));
+        AuditLogDirector.log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
+    }
+
+    private static boolean addPortMirroringToVmInterface(Map<String, Object> struct,
+            VnicProfile vnicProfile,
+            Version version,
+            Network network) {
+
+        if (vnicProfile != null && vnicProfile.isPortMirroring()) {
+            if (FeatureSupported.portMirroring(version)) {
+                struct.put(VdsProperties.PORT_MIRRORING, network == null ? Collections.<String> emptyList()
+                        : Collections.singletonList(network.getName()));
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean addQosForDevice(Map<String, Object> struct,
             VnicProfile vnicProfile,
             Version vdsGroupCompatibilityVersion) {
-        if (FeatureSupported.networkQoS(vdsGroupCompatibilityVersion)
-                && vnicProfile.getNetworkQosId() != null) {
+
+        if (vnicProfile.getNetworkQosId() != null) {
+            if (!FeatureSupported.networkQoS(vdsGroupCompatibilityVersion)) {
+                return false;
+            }
+
             NetworkQoS networkQoS = DbFacade.getInstance().getQosDao().get(vnicProfile.getNetworkQosId());
             if (networkQoS != null) {
                 Map<String, Object> specParams = (Map<String, Object>) struct.get(VdsProperties.SpecParams);
@@ -594,6 +646,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         networkQoS.getOutboundBurst());
             }
         }
+
+        return true;
     }
 
     private static void addQosData(Map<String, Object> specParams,
@@ -620,24 +674,31 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         return customProperties == null ? new HashMap<String, String>() : customProperties;
     }
 
-    public static void addCustomPropertiesForDevice(Map<String, Object> struct,
+    public static boolean addCustomPropertiesForDevice(Map<String, Object> struct,
             VM vm,
             VmDevice vmDevice,
             Version clusterVersion,
             Map<String, String> customProperties) {
-        if (FeatureSupported.deviceCustomProperties(clusterVersion)) {
-            if (customProperties == null) {
-                customProperties = new HashMap<>();
-            }
 
-            customProperties.putAll(vmDevice.getCustomProperties());
-            Map<String, String> runtimeCustomProperties = vm.getRuntimeDeviceCustomProperties().get(vmDevice);
-            if (runtimeCustomProperties != null) {
-                customProperties.putAll(runtimeCustomProperties);
-            }
-
-            struct.put(VdsProperties.Custom, customProperties);
+        if (customProperties == null) {
+            customProperties = new HashMap<>();
         }
+
+        customProperties.putAll(vmDevice.getCustomProperties());
+        Map<String, String> runtimeCustomProperties = vm.getRuntimeDeviceCustomProperties().get(vmDevice);
+        if (runtimeCustomProperties != null) {
+            customProperties.putAll(runtimeCustomProperties);
+        }
+
+        if (!customProperties.isEmpty()) {
+            if (FeatureSupported.deviceCustomProperties(clusterVersion)) {
+                struct.put(VdsProperties.Custom, customProperties);
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static void addNetworkFiltersToNic(Map<String, Object> struct, Version clusterVersion) {
@@ -879,4 +940,19 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
+    private static enum VNIC_PROFILE_PROPERTIES {
+        PORT_MIRRORING("Port Mirroring"),
+        CUSTOM_PROPERTIES("Custom Properties"),
+        NETWORK_QOS("Network QoS");
+
+        private String featureName;
+
+        private VNIC_PROFILE_PROPERTIES(String featureName) {
+            this.featureName = featureName;
+        }
+
+        public String getFeatureName() {
+            return featureName;
+        }
+    };
 }

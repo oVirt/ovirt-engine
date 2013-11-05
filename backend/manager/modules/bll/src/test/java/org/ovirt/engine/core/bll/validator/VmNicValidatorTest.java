@@ -178,67 +178,36 @@ public class VmNicValidatorTest {
 
     @Test
     public void vnicProfileExist() throws Exception {
-        vnicProfileValidationTest(isValid(), true, true, false, false);
+        vnicProfileValidationTest(isValid(), true, true);
     }
 
     @Test
     public void vnicProfileNotExist() throws Exception {
         vnicProfileValidationTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS),
                 false,
-                false,
-                false,
                 false);
     }
 
     @Test
-    public void networkQosSupported() throws Exception {
-        vnicProfileValidationTest(isValid(), true, true, true, true);
-    }
-
-    @Test
-    public void networkQosNotSupported() throws Exception {
-        vnicProfileValidationTest(both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_IS_NOT_SUPPORTED))
-                .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))), true, true, true, false);
-    }
-
-    @Test
-    public void networkQosNullAndSupported() throws Exception {
-        vnicProfileValidationTest(isValid(), true, true, false, true);
-    }
-
-    @Test
-    public void networkQosNullAndNotSupported() throws Exception {
-        vnicProfileValidationTest(isValid(), true, true, false, false);
-    }
-
-    @Test
     public void networkInCluster() throws Exception {
-        vnicProfileValidationTest(isValid(), true, true, false, false);
+        vnicProfileValidationTest(isValid(), true, true);
     }
 
     @Test
     public void networkNotInCluster() throws Exception {
         vnicProfileValidationTest(failsWith(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER),
                 true,
-                false,
-                false,
                 false);
     }
 
     private void vnicProfileValidationTest(Matcher<ValidationResult> matcher,
             boolean profileExist,
-            boolean networkExist,
-            boolean qosNotNull,
-            boolean qosSupported) {
+            boolean networkExist) {
         when(dbFacade.getVnicProfileDao()).thenReturn(vnicProfileDao);
         when(vnicProfileDao.get(any(Guid.class))).thenReturn(profileExist ? vnicProfile : null);
         when(vnicProfile.getNetworkId()).thenReturn(DEFAULT_GUID);
-
         doReturn(networkExist ? network : null).when(validator).getNetworkByVnicProfile(vnicProfile);
         doReturn(networkExist).when(validator).isNetworkInCluster(any(Network.class), any(Guid.class));
-
-        mockConfigRule.mockConfigValue(ConfigValues.NetworkQosSupported, version, qosSupported);
-        when(vnicProfile.getNetworkQosId()).thenReturn(qosNotNull ? DEFAULT_GUID : null);
         when(nic.getVnicProfileId()).thenReturn(VNIC_PROFILE_ID);
 
         assertThat(validator.profileValid(OTHER_GUID), matcher);

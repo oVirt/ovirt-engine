@@ -1533,6 +1533,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("500")
     GlanceImageTotalListSize(543),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    PortMirroringSupported(544),
+
     Invalid(65535);
 
     private int intValue;
