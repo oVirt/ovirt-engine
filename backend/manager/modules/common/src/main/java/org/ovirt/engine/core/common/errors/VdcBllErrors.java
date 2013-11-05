@@ -289,7 +289,7 @@ public enum VdcBllErrors {
     CouldNotRetrievePhysicalVolumeList(603),
     LogicalVolumeAlreadyExists(604),
     CouldNotRetrieveLogicalVolumesList(605),
-    InvalidPhysDev(606),
+    InaccessiblePhysDev(606),
     PartitionedPhysDev(607),
     MkfsError(608),
     MissingTagOnLogicalVolume(609),
