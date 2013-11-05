@@ -209,20 +209,19 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      */
     protected boolean checkCanBeMoveInVm() {
         List<VM> vmsForDisk = getVmsForDiskId();
-        int vmCount = 0;
-        boolean canMoveDisk = true;
-        while (vmsForDisk.size() > vmCount && canMoveDisk) {
-            VM currVm = vmsForDisk.get(vmCount++);
+
+        for (VM currVm : vmsForDisk) {
             if (VMStatus.Down != currVm.getStatus()) {
                 VmDevice vmDevice =
                         getVmDeviceDAO().get(new VmDeviceId(getImage().getId(), currVm.getId()));
                 if (vmDevice.getIsPlugged()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-                    canMoveDisk = false;
+                    return false;
                 }
             }
         }
-        return canMoveDisk;
+
+        return true;
     }
 
     /**
