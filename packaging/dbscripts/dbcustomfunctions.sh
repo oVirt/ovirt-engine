@@ -80,3 +80,7 @@ refresh_materialized_views() {
     execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
+update_sequence_numbers() {
+    execute_file "update_sequence_numbers.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
+}
+
