@@ -45,7 +45,10 @@ public class ThreadPoolUtil {
         @Override
         protected void beforeExecute(Thread t, Runnable r) {
             super.beforeExecute(t, r);
-            t.setName("org.ovirt.thread." + t.getName());
+            String threadName = t.getName();
+            if (!threadName.startsWith("org.ovirt.thread.")) {
+                t.setName("org.ovirt.thread." + threadName);
+            }
             if (log.isDebugEnabled()) {
                 log.debug("About to run task " + r.getClass().getName() + " from ", new Exception());
             }
