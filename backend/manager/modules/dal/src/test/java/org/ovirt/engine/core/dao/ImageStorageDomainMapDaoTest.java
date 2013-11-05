@@ -88,7 +88,6 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
     public void testChangeQuotaForDisk() {
         // fetch image
         image_storage_domain_map image_storage_domain_map = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
-        Guid imageId = image_storage_domain_map.getimage_id();
         Guid quotaId = image_storage_domain_map.getQuotaId();
         // test that the current quota doesn't equal with the new quota
         if (quotaId.equals(FixturesTool.DEFAULT_QUOTA_GENERAL)) {
