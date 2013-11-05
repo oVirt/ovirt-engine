@@ -411,16 +411,16 @@ public class AuditLogableBase extends TimeoutBase {
     public VDSGroup getVdsGroup() {
         if (mVdsGroup == null) {
             if (mVdsGroupId != null) {
-                mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
+                mVdsGroup = getVdsGroupDAO().getFromCache(mVdsGroupId);
             } else if (getVds() != null) {
                 mVdsGroupId = getVds().getVdsGroupId();
-                mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
+                mVdsGroup = getVdsGroupDAO().getFromCache(mVdsGroupId);
             } else if (getVm() != null) {
                 mVdsGroupId = getVm().getVdsGroupId();
-                mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
+                mVdsGroup = getVdsGroupDAO().getFromCache(mVdsGroupId);
             } else if (getVmTemplate() != null) {
                 mVdsGroupId = getVmTemplate().getVdsGroupId();
-                mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
+                mVdsGroup = getVdsGroupDAO().getFromCache(mVdsGroupId);
             }
         }
         return mVdsGroup;

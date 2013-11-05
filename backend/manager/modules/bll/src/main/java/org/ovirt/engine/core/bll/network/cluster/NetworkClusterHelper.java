@@ -43,7 +43,7 @@ public class NetworkClusterHelper {
                 DbFacade.getInstance().getNetworkClusterDao().get(new NetworkClusterId(vdsGroupId, net.getId()));
 
         if (networkCluster != null) {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vdsGroupId);
+            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().getFromCache(vdsGroupId);
 
             // Search all vds in cluster that have the specify network, if not the
             // network is not active

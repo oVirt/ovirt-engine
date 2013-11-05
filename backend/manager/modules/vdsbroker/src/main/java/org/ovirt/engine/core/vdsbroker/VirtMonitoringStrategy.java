@@ -50,7 +50,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         }
 
 
-        VDSGroup vdsGroup = vdsGroupDao.get(vds.getVdsGroupId());
+        VDSGroup vdsGroup = vdsGroupDao.getFromCache(vds.getVdsGroupId());
         if (!hostCompliesWithClusterEmulationMode(vds, vdsGroup) && vds.getStatus() != VDSStatus.NonOperational) {
 
             Map<String, String> customLogValues = new HashMap<>();
