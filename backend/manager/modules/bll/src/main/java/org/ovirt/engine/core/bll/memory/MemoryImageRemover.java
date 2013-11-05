@@ -82,11 +82,11 @@ public abstract class MemoryImageRemover {
 
         if (startPollingTasks) {
             if (!Guid.Empty.equals(memoryImageRemovalTaskId)) {
-                AsyncTaskManager.getInstance().StartPollingTask(memoryImageRemovalTaskId);
+                AsyncTaskManager.getInstance().startPollingTask(memoryImageRemovalTaskId);
             }
 
             if (confImageRemovalTaskId != null && !Guid.Empty.equals(confImageRemovalTaskId)) {
-                AsyncTaskManager.getInstance().StartPollingTask(confImageRemovalTaskId);
+                AsyncTaskManager.getInstance().startPollingTask(confImageRemovalTaskId);
             }
         }
 

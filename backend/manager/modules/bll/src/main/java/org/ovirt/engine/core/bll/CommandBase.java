@@ -1544,7 +1544,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         try {
             return createTaskImpl(taskId, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
         } catch (RuntimeException ex) {
-            log.errorFormat("Error during CreateTask for command: {0}. Exception {1}", getClass().getName(), ex);
+            log.errorFormat("Error during createTask for command: {0}. Exception {1}", getClass().getName(), ex);
         } finally {
             TransactionSupport.resume(transaction);
         }
@@ -1680,7 +1680,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
         for (Guid taskID : taskIds) {
-            getAsyncTaskManager().StartPollingTask(taskID);
+            getAsyncTaskManager().startPollingTask(taskID);
         }
     }
 
@@ -1713,7 +1713,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 public void run() {
                     log.infoFormat("Rollback for command: {0}.", CommandBase.this.getClass().getName());
                     try {
-                        getAsyncTaskManager().CancelTasks(getReturnValue().getVdsmTaskIdList());
+                        getAsyncTaskManager().cancelTasks(getReturnValue().getVdsmTaskIdList());
                     } catch (Exception e) {
                         log.errorFormat("Failed to cancel tasks for command: {0}.",
                                 CommandBase.this.getClass().getName());
@@ -1725,12 +1725,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void revertTasks() {
         if (getParameters().getVdsmTaskIds() != null) {
-            // list to send to the PollTasks method
+            // list to send to the pollTasks method
             ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();
 
             for (Guid taskId : getParameters().getVdsmTaskIds()) {
                 taskIdAsList.add(taskId);
-                ArrayList<AsyncTaskStatus> tasksStatuses = getAsyncTaskManager().PollTasks(
+                ArrayList<AsyncTaskStatus> tasksStatuses = getAsyncTaskManager().pollTasks(
                         taskIdAsList);
                 // call revert task only if ended successfully
                 if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {

@@ -249,7 +249,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void storagePoolUpEvent(StoragePool storagePool) {
-        AsyncTaskManager.getInstance().AddStoragePoolExistingTasks(storagePool);
+        AsyncTaskManager.getInstance().addStoragePoolExistingTasks(storagePool);
     }
 
     @Override

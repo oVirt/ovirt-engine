@@ -301,7 +301,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
             if (!vdsRetValue.getSucceeded()) {
                 if (startPollingTasks) {
-                    AsyncTaskManager.getInstance().StartPollingTask(guid1);
+                    AsyncTaskManager.getInstance().startPollingTask(guid1);
                 }
                 return false;
             }
@@ -310,8 +310,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             getTaskIdList().add(guid2);
 
             if (startPollingTasks) {
-                AsyncTaskManager.getInstance().StartPollingTask(guid1);
-                AsyncTaskManager.getInstance().StartPollingTask(guid2);
+                AsyncTaskManager.getInstance().startPollingTask(guid1);
+                AsyncTaskManager.getInstance().startPollingTask(guid2);
             }
         }
 

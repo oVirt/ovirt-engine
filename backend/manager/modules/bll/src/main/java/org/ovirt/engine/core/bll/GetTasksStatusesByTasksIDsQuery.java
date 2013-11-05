@@ -10,6 +10,6 @@ public class GetTasksStatusesByTasksIDsQuery<P extends GetTasksStatusesByTasksID
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(AsyncTaskManager.getInstance().PollTasks(getParameters().getTasksIDs()));
+        getQueryReturnValue().setReturnValue(AsyncTaskManager.getInstance().pollTasks(getParameters().getTasksIDs()));
     }
 }

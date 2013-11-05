@@ -156,7 +156,7 @@ public class CommandMultiAsyncTasks {
                 }
             } else {
                 log.warnFormat(
-                        "CommandMultiAsyncTasks::StartPollingTask: For some reason, task '{0}' has no parameters or no DB task - we don't know its action type",
+                        "CommandMultiAsyncTasks::startPollingTask: For some reason, task '{0}' has no parameters or no DB task - we don't know its action type",
                         TaskID);
             }
         }

@@ -219,7 +219,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
 
             // If it is force, we cannot remove if there are task
-            if (AsyncTaskManager.getInstance().HasTasksByStoragePoolId(getVm().getStoragePoolId())) {
+            if (AsyncTaskManager.getInstance().hasTasksByStoragePoolId(getVm().getStoragePoolId())) {
                 return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
             }
         }

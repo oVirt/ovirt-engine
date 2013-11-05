@@ -116,7 +116,7 @@ public class SPMAsyncTask {
         if (state != AsyncTaskState.AttemptingEndAction
                 && state != AsyncTaskState.Cleared
                 && state != AsyncTaskState.ClearFailed) {
-            log.infoFormat("BaseAsyncTask::StartPollingTask: Starting to poll task '{0}'.", getVdsmTaskId());
+            log.infoFormat("BaseAsyncTask::startPollingTask: Starting to poll task '{0}'.", getVdsmTaskId());
             ConcreteStartPollingTask();
         }
     }

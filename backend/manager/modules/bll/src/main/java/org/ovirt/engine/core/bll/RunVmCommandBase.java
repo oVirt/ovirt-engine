@@ -197,7 +197,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
         for (Guid taskId : vdcRetValue.getInternalVdsmTaskIdList()) {
-            AsyncTaskManager.getInstance().StartPollingTask(taskId);
+            AsyncTaskManager.getInstance().startPollingTask(taskId);
         }
     }
 

@@ -247,7 +247,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         if (vmStatus != VMStatus.Up) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
         }
-        if (AsyncTaskManager.getInstance().EntityHasTasks(getVmId())) {
+        if (AsyncTaskManager.getInstance().entityHasTasks(getVmId())) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
         }
         // check if vm has stateless images in db in case vm was run once as stateless

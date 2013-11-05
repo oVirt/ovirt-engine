@@ -125,10 +125,10 @@ public final class AsyncTaskManager {
 
     @OnTimerMethodAnnotation("_timer_Elapsed")
     public synchronized void _timer_Elapsed() {
-        if (ThereAreTasksToPoll()) {
-            PollAndUpdateAsyncTasks();
+        if (thereAreTasksToPoll()) {
+            pollAndUpdateAsyncTasks();
 
-            if (ThereAreTasksToPoll() && logChangedMap) {
+            if (thereAreTasksToPoll() && logChangedMap) {
                 log.infoFormat("Finished polling Tasks, will poll again in {0} seconds.",
                         Config.<Integer>GetValue(ConfigValues.AsyncTaskPollingRate));
 
@@ -159,7 +159,7 @@ public final class AsyncTaskManager {
      * @return - true for uncached object , and false when the object should be
      * cached.
      */
-    public synchronized boolean CachingOver(SPMAsyncTask task) {
+    public synchronized boolean cachingOver(SPMAsyncTask task) {
         // Get time in milliseconds that the task should be cached
         long SubtractMinutesAsMills = TimeUnit.MINUTES
                 .toMillis(_cacheTimeInMinutes);
@@ -172,7 +172,7 @@ public final class AsyncTaskManager {
                         .currentTimeMillis() - SubtractMinutesAsMills);
     }
 
-    public synchronized boolean HasTasksByStoragePoolId(Guid storagePoolID) {
+    public synchronized boolean hasTasksByStoragePoolId(Guid storagePoolID) {
         boolean retVal = false;
         if (_tasks != null) {
             for (SPMAsyncTask task : _tasks.values()) {
@@ -399,7 +399,7 @@ public final class AsyncTaskManager {
         }
     }
 
-    private int NumberOfTasksToPoll() {
+    private int numberOfTasksToPoll() {
         int retValue = 0;
         for (SPMAsyncTask task : _tasks.values()) {
             if (task.getShouldPoll()) {
@@ -410,7 +410,7 @@ public final class AsyncTaskManager {
         return retValue;
     }
 
-    private boolean ThereAreTasksToPoll() {
+    private boolean thereAreTasksToPoll() {
         for (SPMAsyncTask task : _tasks.values()) {
             if (task.getShouldPoll()) {
                 return true;
@@ -423,10 +423,10 @@ public final class AsyncTaskManager {
      * Fetch all tasks statuses from each storagePoolId , and update the _tasks
      * map with the updated statuses.
      */
-    private void PollAndUpdateAsyncTasks() {
+    private void pollAndUpdateAsyncTasks() {
         if (logChangedMap) {
             log.infoFormat("Polling and updating Async Tasks: {0} tasks, {1} tasks to poll now",
-                           _tasks.size(), NumberOfTasksToPoll());
+                           _tasks.size(), numberOfTasksToPoll());
         }
 
         // Fetch Set of pool id's
@@ -532,7 +532,7 @@ public final class AsyncTaskManager {
         Set<Guid> poolsOfClearedAndOldTasks = new HashSet<Guid>();
         ConcurrentMap<Guid, SPMAsyncTask> activeTaskMap = new ConcurrentHashMap<Guid, SPMAsyncTask>();
         for (SPMAsyncTask task : _tasks.values()) {
-            if (!CachingOver(task)) {
+            if (!cachingOver(task)) {
                 activeTaskMap.put(task.getVdsmTaskId(), task);
                 poolsOfActiveTasks.add(task.getStoragePoolID());
             } else {
@@ -617,17 +617,17 @@ public final class AsyncTaskManager {
         log.infoFormat("Setting new tasks map. The map contains now {0} tasks", _tasks.size());
     }
 
-    public SPMAsyncTask CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
+    public SPMAsyncTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
         return AsyncTaskFactory.construct(taskType, taskParameters, false);
     }
 
-    public synchronized void StartPollingTask(Guid vdsmTaskId) {
+    public synchronized void startPollingTask(Guid vdsmTaskId) {
         if (_tasks.containsKey(vdsmTaskId)) {
             _tasks.get(vdsmTaskId).StartPollingTask();
         }
     }
 
-    public synchronized ArrayList<AsyncTaskStatus> PollTasks(java.util.ArrayList<Guid> vdsmTaskIdList) {
+    public synchronized ArrayList<AsyncTaskStatus> pollTasks(java.util.ArrayList<Guid> vdsmTaskIdList) {
         ArrayList<AsyncTaskStatus> returnValue = new ArrayList<AsyncTaskStatus>();
 
         if (vdsmTaskIdList != null && vdsmTaskIdList.size() > 0) {
@@ -660,7 +660,7 @@ public final class AsyncTaskManager {
      *
      * @param sp the storage pool to retrieve running tasks from
      */
-    public void AddStoragePoolExistingTasks(StoragePool sp) {
+    public void addStoragePoolExistingTasks(StoragePool sp) {
         List<AsyncTaskCreationInfo> currPoolTasks = null;
         try {
             currPoolTasks = (ArrayList<AsyncTaskCreationInfo>) Backend.getInstance().getResourceManager()
@@ -717,7 +717,7 @@ public final class AsyncTaskManager {
                 });
 
                 for (SPMAsyncTask task : newlyAddedTasks) {
-                    StartPollingTask(task.getVdsmTaskId());
+                    startPollingTask(task.getVdsmTaskId());
                 }
 
                 log.infoFormat(
@@ -753,13 +753,13 @@ public final class AsyncTaskManager {
      *
      * @param vdsmTaskList - List of tasks to stop.
      */
-    public synchronized void CancelTasks(List<Guid> vdsmTaskList) {
+    public synchronized void cancelTasks(List<Guid> vdsmTaskList) {
         for (Guid vdsmTaskId : vdsmTaskList) {
-            CancelTask(vdsmTaskId);
+            cancelTask(vdsmTaskId);
         }
     }
 
-    public synchronized void CancelTask(Guid vdsmTaskId) {
+    public synchronized void cancelTask(Guid vdsmTaskId) {
         if (_tasks.containsKey(vdsmTaskId)) {
             log.infoFormat("Attempting to cancel task '{0}'.", vdsmTaskId);
             _tasks.get(vdsmTaskId).stopTask();
@@ -767,23 +767,12 @@ public final class AsyncTaskManager {
         }
     }
 
-    public synchronized boolean EntityHasTasks(Guid id) {
+    public synchronized boolean entityHasTasks(Guid id) {
         for (SPMAsyncTask task : _tasks.values()) {
             if (isCurrentTaskLookedFor(id, task)) {
                 return true;
             }
         }
-        return false;
-    }
-
-    public synchronized boolean StoragePoolHasUnclearedTasks(Guid storagePoolId) {
-        for (SPMAsyncTask task : _tasks.values()) {
-            if (task.getState() != AsyncTaskState.Cleared && task.getState() != AsyncTaskState.ClearFailed
-                    && task.getStoragePoolID().equals(storagePoolId)) {
-                return true;
-            }
-        }
-
         return false;
     }
 
