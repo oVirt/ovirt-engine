@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
@@ -247,6 +248,25 @@ public enum OsRepositoryImpl implements OsRepository {
                 "devices.disk.hotpluggableInterfaces",
                 version);
         return new HashSet<String>(trimElements(devices.split(",")));
+    }
+
+    @Override
+    public ArrayList<String> getWatchDogModels(int osId, Version version) {
+        String models = getValueByVersion(idToUnameLookup.get(osId),
+                "watchDogModels",
+                version);
+        return trimElements(models.split(","));
+    }
+
+    @Override
+    public Set<VmWatchdogType> getVmWatchdogTypes(int osId, Version version) {
+        Set<VmWatchdogType> vmWatchdogTypes = new HashSet<VmWatchdogType>();
+
+        for (String watchDogModel : getWatchDogModels(osId, version)) {
+            vmWatchdogTypes.add(VmWatchdogType.getByName(watchDogModel));
+        }
+
+        return vmWatchdogTypes;
     }
 
     @Override

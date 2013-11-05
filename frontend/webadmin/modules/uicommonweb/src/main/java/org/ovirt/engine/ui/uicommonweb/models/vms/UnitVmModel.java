@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -1159,6 +1161,7 @@ public class UnitVmModel extends Model {
                 VdcQueryType.GetVdsGroupById, VdcQueryType.GetStoragePoolById, VdcQueryType.GetAllDisksByVmId,
                 VdcQueryType.GetVmTemplate, VdcQueryType.GetVmConfigurationBySnapshot, VdcQueryType.GetAllVdsGroups,
                 VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetHostsByClusterId,
+                VdcQueryType.OsRepository,
                 VdcQueryType.Search });
 
         this.behavior = behavior;
@@ -1276,12 +1279,6 @@ public class UnitVmModel extends Model {
 
         setWatchdogModel(new NotChangableForVmInPoolListModel<String>());
         getWatchdogModel().getEntityChangedEvent().addListener(this);
-        ArrayList<String> watchDogModels = new ArrayList<String>();
-        watchDogModels.add(null);
-        for (VmWatchdogType type : VmWatchdogType.values()) {
-            watchDogModels.add(EnumTranslator.createAndTranslate(type));
-        }
-        getWatchdogModel().setItems(watchDogModels);
 
         setIsAutoAssign(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
@@ -1755,6 +1752,8 @@ public class UnitVmModel extends Model {
 
         updateMaximalVmMemSize();
         handleQxlClusterLevel();
+
+        updateWatchdogModels();
     }
 
     private void handleQxlClusterLevel() {
@@ -1802,7 +1801,45 @@ public class UnitVmModel extends Model {
 
         getBehavior().updateDefaultTimeZone();
 
+
         handleQxlClusterLevel();
+
+        updateWatchdogModels(osType);
+    }
+
+    private void updateWatchdogModels() {
+        updateWatchdogModels((Integer) getOSType().getSelectedItem());
+    }
+
+    private void updateWatchdogModels(Integer osType) {
+        VDSGroup cluster = getSelectedCluster();
+        if (osType != null && cluster != null && getWatchdogModel() != null) {
+            AsyncQuery asyncQuery = new AsyncQuery();
+            asyncQuery.asyncCallback = new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    updateWatchdogItems((HashSet<VmWatchdogType>) ((VdcQueryReturnValue) returnValue)
+                            .getReturnValue());
+                }
+            };
+            AsyncDataProvider.getVmWatchdogTypes(osType,
+                    cluster.getcompatibility_version(), asyncQuery);
+        }
+    }
+
+    private void updateWatchdogItems(Set<VmWatchdogType> vmWatchdogTypes) {
+        List<String> watchDogModels = new ArrayList<String>();
+        for (VmWatchdogType vmWatchdogType : vmWatchdogTypes) {
+            watchDogModels.add(EnumTranslator.createAndTranslate(vmWatchdogType));
+        }
+
+        watchDogModels.add(0, null);
+        String oldWatchdogSelected = (String) getWatchdogModel().getSelectedItem();
+        getWatchdogModel().setItems(watchDogModels);
+
+        if (watchDogModels.contains(oldWatchdogSelected)) {
+            getWatchdogModel().setSelectedItem(oldWatchdogSelected);
+        }
     }
 
     private void firstBootDevice_SelectedItemChanged(Object sender, EventArgs args)

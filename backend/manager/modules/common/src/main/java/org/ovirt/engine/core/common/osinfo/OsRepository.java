@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -166,6 +167,20 @@ public interface OsRepository {
      * @return set of disk hotpluggable interfaces
      */
     Set<String> getDiskHotpluggableInterfaces(int osId, Version version);
+
+    /**
+     * @param osId
+     * @param version
+     * @return list of supported watch dog models
+     */
+    ArrayList<String> getWatchDogModels(int osId, Version version);
+
+    /**
+     * @param osId
+     * @param version
+     * @return set of supported VmWatchdogTypes
+     */
+    Set<VmWatchdogType> getVmWatchdogTypes(int osId, Version version);
 
     /**
      * @param osId

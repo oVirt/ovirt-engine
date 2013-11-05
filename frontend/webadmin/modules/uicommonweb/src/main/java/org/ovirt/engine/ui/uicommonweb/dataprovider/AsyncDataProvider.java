@@ -3291,6 +3291,12 @@ public final class AsyncDataProvider {
         }
     }
 
+    public static void getVmWatchdogTypes(int osId, Version version,
+            AsyncQuery asyncQuery) {
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
+                OsRepositoryVerb.GetVmWatchdogTypes, osId, version), asyncQuery);
+    }
+
     public static ArrayList<Map.Entry<String, EntityModel>> getBondingOptionList(RefObject<Map.Entry<String, EntityModel>> defaultItem)
     {
         ArrayList<Map.Entry<String, EntityModel>> list =
