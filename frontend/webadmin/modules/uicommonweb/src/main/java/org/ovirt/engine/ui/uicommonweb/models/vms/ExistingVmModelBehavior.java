@@ -62,7 +62,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         };
         AsyncDataProvider.getVmNicList(getVmNicsQuery, vm.getId());
 
-        AsyncDataProvider.GetWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 UnitVmModel model = (UnitVmModel) target;

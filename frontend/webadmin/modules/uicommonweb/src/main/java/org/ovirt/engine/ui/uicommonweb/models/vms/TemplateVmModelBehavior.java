@@ -83,7 +83,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                     template.getStoragePoolId());
         }
 
-        AsyncDataProvider.GetWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 UnitVmModel model = (UnitVmModel) target;

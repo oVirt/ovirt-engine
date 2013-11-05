@@ -1171,7 +1171,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetStoragePoolById, new IdQueryParameters(dataCenterId), aQuery);
     }
 
-    public static void GetWatchdogByVmId(AsyncQuery aQuery, Guid vmId) {
+    public static void getWatchdogByVmId(AsyncQuery aQuery, Guid vmId) {
         Frontend.RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(vmId), aQuery);
     }
 
@@ -2775,7 +2775,7 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void GetAllProviders(AsyncQuery aQuery) {
+    public static void getAllProviders(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -2791,7 +2791,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), aQuery);
     }
 
-    public static void GetAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {
+    public static void getAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {
         query.converterCallback = new IAsyncConverter<List<Provider>>() {
             @Override
             public List<Provider> Convert(Object returnValue, AsyncQuery asyncQuery) {
@@ -2807,8 +2807,8 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), query);
     }
 
-    public static void GetAllNetworkProviders(AsyncQuery query) {
-        GetAllProvidersByProvidedEntity(query, VdcObjectType.Network);
+    public static void getAllNetworkProviders(AsyncQuery query) {
+        getAllProvidersByProvidedEntity(query, VdcObjectType.Network);
     }
 
     public static void GetAllProvidersByType(AsyncQuery aQuery, ProviderType providerType) {

@@ -74,7 +74,7 @@ public class HostNetworkProviderModel extends EntityModel {
             }
         };
         startProgress(null);
-        AsyncDataProvider.GetAllNetworkProviders(getProvidersQuery);
+        AsyncDataProvider.getAllNetworkProviders(getProvidersQuery);
     }
 
     public boolean validate() {

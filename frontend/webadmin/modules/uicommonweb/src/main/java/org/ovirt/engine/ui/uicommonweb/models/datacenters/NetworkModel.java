@@ -146,7 +146,7 @@ public abstract class NetworkModel extends Model
                 stopProgress();
             }
         };
-        AsyncDataProvider.GetAllNetworkProviders(getProvidersQuery);
+        AsyncDataProvider.getAllNetworkProviders(getProvidersQuery);
     }
 
     public EntityModel getName()

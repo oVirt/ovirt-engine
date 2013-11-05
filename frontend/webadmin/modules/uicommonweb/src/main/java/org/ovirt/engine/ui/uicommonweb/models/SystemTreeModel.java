@@ -355,7 +355,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                 AsyncDataProvider.getDataCenterList(dcQuery);
             }
         };
-        AsyncDataProvider.GetAllProviders(providersQuery);
+        AsyncDataProvider.getAllProviders(providersQuery);
     }
 
     @Override

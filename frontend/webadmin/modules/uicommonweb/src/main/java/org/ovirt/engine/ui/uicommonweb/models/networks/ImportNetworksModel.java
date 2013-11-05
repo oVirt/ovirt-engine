@@ -104,7 +104,7 @@ public class ImportNetworksModel extends Model {
 
     protected void initProviderList() {
         startProgress(null);
-        AsyncDataProvider.GetAllNetworkProviders(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getAllNetworkProviders(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
