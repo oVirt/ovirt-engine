@@ -164,6 +164,10 @@ class FileLocations(object):
         OVIRT_ENGINE_DB_UTILS_DIR,
         'taskcleaner.sh'
     )
+    OVIRT_ENGINE_DB_CHANGE_OWNER = os.path.join(
+        OVIRT_ENGINE_DB_UTILS_DIR,
+        'changedbowner.sh'
+    )
 
     OVIRT_ENGINE_DB_DIR = os.path.join(
         OVIRT_ENGINE_DATADIR,
