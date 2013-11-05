@@ -258,20 +258,20 @@ public class TagsDirector {
         if (tag == null) {
             return StringUtils.EMPTY;
         }
-        StringBuilder sb = tag.GetTagIdAndChildrenIds();
+        StringBuilder sb = tag.getTagIdAndChildrenIds();
         return sb.toString();
     }
 
     public String GetTagNameAndChildrenNames(Guid tagId) {
         tags tag = GetTagById(tagId);
-        StringBuilder sb = tag.GetTagNameAndChildrenNames();
+        StringBuilder sb = tag.getTagNameAndChildrenNames();
         return sb.toString();
     }
 
     public java.util.HashSet<Guid> GetTagIdAndChildrenIdsAsSet(Guid tagId) {
         tags tag = GetTagById(tagId);
         java.util.HashSet<Guid> set = new java.util.HashSet<Guid>();
-        tag.GetTagIdAndChildrenIdsAsList(set);
+        tag.getTagIdAndChildrenIdsAsList(set);
         return set;
     }
 
@@ -286,7 +286,7 @@ public class TagsDirector {
      */
     public String GetTagIdAndChildrenIds(String tagName) {
         tags tag = GetTagByName(tagName);
-        StringBuilder sb = tag.GetTagIdAndChildrenIds();
+        StringBuilder sb = tag.getTagIdAndChildrenIds();
         return sb.toString();
     }
 
@@ -314,14 +314,14 @@ public class TagsDirector {
                 {
                     if (sb.length() == 0) {
                         if (indicator == TagReturnValueIndicator.ID)
-                            sb.append(child.GetTagIdAndChildrenIds());
+                            sb.append(child.getTagIdAndChildrenIds());
                         else
-                            sb.append(child.GetTagNameAndChildrenNames());
+                            sb.append(child.getTagNameAndChildrenNames());
                     } else {
                         if (indicator == TagReturnValueIndicator.ID)
-                            sb.append(String.format(",%1$s", child.GetTagIdAndChildrenIds()));
+                            sb.append(String.format(",%1$s", child.getTagIdAndChildrenIds()));
                         else
-                            sb.append(String.format(",%1$s", child.GetTagNameAndChildrenNames()));
+                            sb.append(String.format(",%1$s", child.getTagNameAndChildrenNames()));
                     }
                 } else {
                     RecursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, child, indicator);

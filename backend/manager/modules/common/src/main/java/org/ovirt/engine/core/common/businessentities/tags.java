@@ -135,37 +135,37 @@ public class tags implements Serializable {
         _children = children;
     }
 
-    public StringBuilder GetTagIdAndChildrenIds() {
+    public StringBuilder getTagIdAndChildrenIds() {
         StringBuilder builder = new StringBuilder();
         builder.append("'").append(gettag_id()).append("'");
 
         for (tags tag : _children) {
-            builder.append(",").append(tag.GetTagIdAndChildrenIds());
+            builder.append(",").append(tag.getTagIdAndChildrenIds());
         }
         return builder;
     }
 
-    public StringBuilder GetTagNameAndChildrenNames() {
+    public StringBuilder getTagNameAndChildrenNames() {
         StringBuilder builder = new StringBuilder();
         builder.append("'").append(gettag_name()).append("'");
 
         for (tags tag : _children) {
-            builder.append("," + tag.GetTagNameAndChildrenNames());
+            builder.append("," + tag.getTagNameAndChildrenNames());
         }
         return builder;
     }
 
-    public void GetTagIdAndChildrenIdsAsList(java.util.HashSet<Guid> tagIds) {
+    public void getTagIdAndChildrenIdsAsList(java.util.HashSet<Guid> tagIds) {
         tagIds.add(gettag_id());
         for (tags tag : _children) {
-            tag.GetTagIdAndChildrenIdsAsList(tagIds);
+            tag.getTagIdAndChildrenIdsAsList(tagIds);
         }
     }
 
-    public void GetTagIdAndChildrenNamesAsList(java.util.HashSet<String> tagIds) {
+    public void getTagIdAndChildrenNamesAsList(java.util.HashSet<String> tagIds) {
         tagIds.add(gettag_name());
         for (tags tag : _children) {
-            tag.GetTagIdAndChildrenNamesAsList(tagIds);
+            tag.getTagIdAndChildrenNamesAsList(tagIds);
         }
     }
 
