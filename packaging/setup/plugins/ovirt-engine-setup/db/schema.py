@@ -89,6 +89,69 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
+    def _checkDatabaseOwnership(self):
+        statement = database.Statement(environment=self.environment)
+        result = statement.execute(
+            statement="""
+                select
+                    nsp.nspname as object_schema,
+                    cls.relname as object_name,
+                    rol.rolname as owner,
+                    case cls.relkind
+                        when 'r' then 'TABLE'
+                        when 'i' then 'INDEX'
+                        when 'S' then 'SEQUENCE'
+                        when 'v' then 'VIEW'
+                        when 'c' then 'TYPE'
+                    else
+                        cls.relkind::text
+                    end as object_type
+                from
+                    pg_class cls join
+                    pg_roles rol on rol.oid = cls.relowner join
+                    pg_namespace nsp on nsp.oid = cls.relnamespace
+                where
+                    nsp.nspname not in ('information_schema', 'pg_catalog') and
+                    nsp.nspname not like 'pg_toast%%' and
+                    rol.rolname != %(user)s
+                order by
+                    nsp.nspname,
+                    cls.relname
+            """,
+            args=dict(
+                user=self.environment[osetupcons.DBEnv.USER],
+            ),
+            ownConnection=True,
+            transaction=False,
+        )
+        if len(result) > 0:
+            raise RuntimeError(
+                _(
+                    'Cannot upgrade the database schema due to wrong '
+                    'ownership of some database entities.\n'
+                    'Please execute: {command}\n'
+                    'Using the password of the "postgres" user.'
+                ).format(
+                    command=(
+                        '{cmd} '
+                        '-s {server} '
+                        '-p {port} '
+                        '-d {db} '
+                        '-f postgres '
+                        '-t {user}'
+                    ).format(
+                        cmd=(
+                            osetupcons.FileLocations.
+                            OVIRT_ENGINE_DB_CHANGE_OWNER
+                        ),
+                        server=self.environment[osetupcons.DBEnv.HOST],
+                        port=self.environment[osetupcons.DBEnv.PORT],
+                        db=self.environment[osetupcons.DBEnv.DATABASE],
+                        user=self.environment[osetupcons.DBEnv.USER],
+                    ),
+                )
+            )
+
     def _checkSupportedVersionsPresent(self):
         # TODO: figure out a better way to do this for the future
         statement = database.Statement(environment=self.environment)
@@ -127,6 +190,18 @@ class Plugin(plugin.PluginBase):
                     versions=' '.join(versions - supported)
                 )
             )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        after=(
+            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
+        ),
+        condition=lambda self: not self.environment[
+            osetupcons.DBEnv.NEW_DATABASE
+        ],
+    )
+    def _validation(self):
+        self._checkDatabaseOwnership()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
