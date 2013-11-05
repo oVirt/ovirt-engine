@@ -58,7 +58,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 {
 
     private UICommand privateNewCommand;
-    private boolean clusterPolicyFirst;
 
 
     public UICommand getNewCommand()
@@ -979,9 +978,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     public void executeCommand(UICommand command, Object... parameters) {
         if (command == getEditCommand() && parameters.length > 0 && Boolean.TRUE.equals(parameters[0]))
         {
-            this.clusterPolicyFirst = true;
             super.executeCommand(command, parameters);
-            this.clusterPolicyFirst = false;
         }
     }
 
