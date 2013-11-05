@@ -275,7 +275,7 @@ public class BackendResource extends BaseBackendResource {
                     backend.RunAction(task, sp);
                 } finally {
                     if (user != null) {
-                        backend.Logoff(sh.sessionize(new LogoutUserParameters(user.getId())));
+                        backend.logoff(sh.sessionize(new LogoutUserParameters(user.getId())));
                     }
                     sh.clean();
                 }

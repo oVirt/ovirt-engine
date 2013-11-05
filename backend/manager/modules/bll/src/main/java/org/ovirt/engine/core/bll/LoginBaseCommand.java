@@ -200,7 +200,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     @Override
     protected boolean isUserAuthorizedToRunAction() {
         if (log.isDebugEnabled()) {
-            log.debugFormat("IsUserAutorizedToRunAction: Login - no permission check");
+            log.debugFormat("IsUserAutorizedToRunAction: login - no permission check");
         }
         return true;
     }

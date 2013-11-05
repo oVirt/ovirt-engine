@@ -578,7 +578,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
      * @return user if success, else null // //
      */
     @Override
-    public VdcReturnValueBase Login(LoginUserParameters parameters) {
+    public VdcReturnValueBase login(LoginUserParameters parameters) {
         switch (parameters.getActionType()) {
         case LoginUser:
         case LoginAdminUser:
@@ -591,7 +591,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcReturnValueBase Logoff(LogoutUserParameters parameters) {
+    public VdcReturnValueBase logoff(LogoutUserParameters parameters) {
         return RunAction(VdcActionType.LogoutUser, parameters);
     }
 

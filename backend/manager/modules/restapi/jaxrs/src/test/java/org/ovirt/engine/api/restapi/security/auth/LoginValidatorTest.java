@@ -125,9 +125,9 @@ public class LoginValidatorTest extends Assert {
         VdcReturnValueBase result = control.createMock(VdcReturnValueBase.class);
         Principal principal = new Principal(USER, SECRET, DOMAIN);
         expect(
-            backend.Login((LoginUserParameters) eqActionParams(LoginUserParameters.class,
-                    new String[] { "UserName", "UserPassword", "Domain", "ActionType", "SessionId" },
-                    new Object[] { USER, SECRET, DOMAIN, VdcActionType.LoginUser, session.getSessionId() }))).andReturn(result);
+            backend.login((LoginUserParameters) eqActionParams(LoginUserParameters.class,
+                    new String[]{"UserName", "UserPassword", "Domain", "ActionType", "SessionId"},
+                    new Object[]{USER, SECRET, DOMAIN, VdcActionType.LoginUser, session.getSessionId()}))).andReturn(result);
         expect(result.getCanDoAction()).andReturn(canDo);
         expect(result.getSucceeded()).andReturn(success).anyTimes();
 
@@ -170,9 +170,9 @@ public class LoginValidatorTest extends Assert {
         expect(current.get(DbUser.class)).andReturn(user);
         expect(user.getId()).andReturn(GUID);
         expect(
-            backend.Logoff((LogoutUserParameters) eqActionParams(LogoutUserParameters.class,
-                    new String[] { "UserId", "SessionId" },
-                    new Object[] { GUID, session.getSessionId() }))).andReturn(result);
+            backend.logoff((LogoutUserParameters) eqActionParams(LogoutUserParameters.class,
+                    new String[]{"UserId", "SessionId"},
+                    new Object[]{GUID, session.getSessionId()}))).andReturn(result);
         ServerResponse response = control.createMock(ServerResponse.class);
         control.replay();
         return response;

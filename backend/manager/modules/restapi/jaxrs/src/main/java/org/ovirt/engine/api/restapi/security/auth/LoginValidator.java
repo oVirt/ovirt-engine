@@ -77,7 +77,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
                 null, null, null);
         params.setActionType(VdcActionType.LoginUser);
         sessionHelper.setSessionId(sessionId);
-        VdcReturnValueBase ret = backend.Login(sessionHelper.sessionize(params));
+        VdcReturnValueBase ret = backend.login(sessionHelper.sessionize(params));
 
         if (ret.getCanDoAction() && ret.getSucceeded()) {
             return loginSuccess(principal, ret);
@@ -169,7 +169,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
             DbUser user = current.get(DbUser.class);
             if (user != null) {
                 if (!persistentSession) {
-                    backend.Logoff(
+                    backend.logoff(
                             sessionHelper.sessionize(new LogoutUserParameters(user.getId())));
                     if (httpSession != null) {
                         httpSession.invalidate();

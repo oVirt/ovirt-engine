@@ -30,9 +30,9 @@ public interface BackendLocal {
 
     VdcQueryReturnValue RunPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 
-    VdcReturnValueBase Login(LoginUserParameters parameters);
+    VdcReturnValueBase login(LoginUserParameters parameters);
 
-    VdcReturnValueBase Logoff(LogoutUserParameters parameters);
+    VdcReturnValueBase logoff(LogoutUserParameters parameters);
 
     // for auto backend
     VdcReturnValueBase RunAutoAction(VdcActionType actionType, VdcActionParametersBase parameters);

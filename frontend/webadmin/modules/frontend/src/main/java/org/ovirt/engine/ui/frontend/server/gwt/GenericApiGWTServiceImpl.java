@@ -157,7 +157,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     public VdcReturnValueBase logOff(DbUser userToLogoff) {
         LogoutUserParameters params = new LogoutUserParameters(userToLogoff.getId());
         params.setSessionId(getSessionId());
-        VdcReturnValueBase returnValue = getBackend().Logoff(params);
+        VdcReturnValueBase returnValue = getBackend().logoff(params);
         return returnValue;
     }
 
@@ -166,7 +166,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         LoginUserParameters params = new LoginUserParameters(userName, password, domain, null, null, null);
         params.setSessionId(getSessionId());
         params.setActionType(loginType);
-        VdcReturnValueBase returnValue = getBackend().Login(params);
+        VdcReturnValueBase returnValue = getBackend().login(params);
         return returnValue;
     }
 
