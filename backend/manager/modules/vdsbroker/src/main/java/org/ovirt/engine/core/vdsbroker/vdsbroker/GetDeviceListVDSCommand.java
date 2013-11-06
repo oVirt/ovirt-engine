@@ -38,18 +38,18 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         _result = getBroker().getDeviceList(storageType);
 
         proceedProxyReturnValue();
-        setReturnValue(ParseLUNList(_result.lunList));
+        setReturnValue(parseLUNList(_result.lunList));
     }
 
-    public static ArrayList<LUNs> ParseLUNList(Map<String, Object>[] lunList) {
+    public static ArrayList<LUNs> parseLUNList(Map<String, Object>[] lunList) {
         ArrayList<LUNs> result = new ArrayList<LUNs>(lunList.length);
         for (Map<String, Object> xlun : lunList) {
-            result.add(ParseLunFromXmlRpc(xlun));
+            result.add(parseLunFromXmlRpc(xlun));
         }
         return result;
     }
 
-    public static LUNs ParseLunFromXmlRpc(Map<String, Object> xlun) {
+    public static LUNs parseLunFromXmlRpc(Map<String, Object> xlun) {
         LUNs lun = new LUNs();
         if (xlun.containsKey("GUID")) {
             lun.setLUN_id(xlun.get("GUID").toString());
@@ -105,7 +105,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                     pathList[i] = (Map<String, Object>) temp[i];
                 }
                 for (Map xcon : pathList) {
-                    lun.getLunConnections().add(ParseConnection(xcon));
+                    lun.getLunConnections().add(parseConnection(xcon));
                 }
             }
         }
@@ -133,7 +133,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         return lun;
     }
 
-    public static StorageServerConnections ParseConnection(Map<String, Object> xcon) {
+    public static StorageServerConnections parseConnection(Map<String, Object> xcon) {
         StorageServerConnections con = new StorageServerConnections();
         if (xcon.containsKey("connection")) {
             con.setconnection(xcon.get("connection").toString());

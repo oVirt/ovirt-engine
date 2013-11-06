@@ -25,7 +25,7 @@ public class GetVGInfoVDSCommand<P extends GetVGInfoVDSCommandParameters> extend
                 pvList[i] = (Map<String, Object>) temp[i];
             }
         }
-        setReturnValue(GetDeviceListVDSCommand.ParseLUNList(pvList));
+        setReturnValue(GetDeviceListVDSCommand.parseLUNList(pvList));
     }
 
     @Override

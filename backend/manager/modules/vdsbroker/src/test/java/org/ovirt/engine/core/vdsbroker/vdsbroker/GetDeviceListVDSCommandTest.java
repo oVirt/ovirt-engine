@@ -32,7 +32,7 @@ public class GetDeviceListVDSCommandTest {
     }
 
     /**
-     * Test that ParseLunFromXmlRpc parses the {@link GetDeviceListVDSCommand#DEVTYPE_FIELD} correctly.
+     * Test that parseLunFromXmlRpc parses the {@link GetDeviceListVDSCommand#DEVTYPE_FIELD} correctly.
      *
      * @param expectedStorageType
      *            The storage type expected to return.
@@ -43,7 +43,7 @@ public class GetDeviceListVDSCommandTest {
         Map<String, Object> xlun = new HashMap<String, Object>();
         xlun.put(GetDeviceListVDSCommand.DEVTYPE_FIELD, mockDevtype);
 
-        LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);
+        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun);
 
         assertEquals(expectedStorageType, lun.getLunType());
     }
@@ -51,7 +51,7 @@ public class GetDeviceListVDSCommandTest {
     @Test
     public void parseLunFromXmlRpcReturnsUnknownForNoField() throws Exception {
         Map<String, Object> xlun = new HashMap<String, Object>();
-        LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);
+        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun);
 
         assertEquals(StorageType.UNKNOWN, lun.getLunType());
     }
@@ -79,7 +79,7 @@ public class GetDeviceListVDSCommandTest {
         xlun.put(GetDeviceListVDSCommand.PATHSTATUS, paths.toArray(new Map[paths.size()]));
 
         // Parse the XmlRpc
-        LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);
+        LUNs lun = GetDeviceListVDSCommand.parseLunFromXmlRpc(xlun);
 
         // Go over the directory
         assertEquals("wrong number of paths", numPaths, lun.getPathCount());
