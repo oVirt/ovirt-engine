@@ -1,3 +1,5 @@
+INSERT INTO vdc_options(option_name, option_value, version) values ('AutoRegistrationDefaultVdsGroupID', uuid_generate_v1(),'general');
+
 Create or replace FUNCTION insert_data()
 RETURNS VOID
    AS $procedure$
@@ -8,8 +10,8 @@ RETURNS VOID
    v_id_0009 UUID;
 BEGIN
    v_id_0000 := '00000000-0000-0000-0000-000000000000';
-   v_storage_pool_id := '5849B030-626E-47CB-AD90-3CE782D831B3';
-   v_cluster_id := '99408929-82CF-4DC7-A532-9D998063FA95';
+   v_storage_pool_id := uuid_generate_v1();
+   v_cluster_id := option_value from vdc_options where option_name = 'AutoRegistrationDefaultVdsGroupID' and version = 'general';
    v_id_0009 := '00000000-0000-0000-0000-000000000009';
 
 

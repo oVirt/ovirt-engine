@@ -14,30 +14,37 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateStoragePoolCommandTest {
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule();
 
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Version VERSION_2_0 = new Version(2, 0);
+    private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
 
     private UpdateStoragePoolCommand<StoragePoolManagementParameter> cmd;
 
@@ -139,6 +146,7 @@ public class UpdateStoragePoolCommandTest {
 
     @Test
     public void poolHasDefaultCluster() {
+        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
         addDefaultClusterToPool();
         storagePoolWithLocalFS();
         canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS.toString());
@@ -231,7 +239,7 @@ public class UpdateStoragePoolCommandTest {
     private void addDefaultClusterToPool() {
         VDSGroup defaultCluster = new VDSGroup();
         defaultCluster.setcompatibility_version(VERSION_1_1);
-        defaultCluster.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        defaultCluster.setId(DEFAULT_VDS_GROUP_ID);
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(defaultCluster);
         when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(clusters);

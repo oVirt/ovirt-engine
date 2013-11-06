@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -32,7 +33,7 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
             addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
             returnValue = false;
         } else {
-            if (getVdsGroup().getId().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
+            if (getVdsGroup().getId().equals(Config.GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID))) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP);
                 returnValue = false;
             }

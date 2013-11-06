@@ -20,8 +20,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private static final long serialVersionUID = 5659359762655478095L;
 
-    public static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
-
     private Guid id;
 
     @NotNull(message = "VALIDATION.VDS_GROUP.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
@@ -114,10 +112,12 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         description = value;
     }
 
+    @Override
     public String getComment() {
         return comment;
     }
 
+    @Override
     public void setComment(String value) {
         comment = value;
     }

@@ -48,7 +48,7 @@ public class UpdateVdsGroupCommandTest {
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
-
+    private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
     @Mock
     private VdsGroupDAO vdsGroupDAO;
     @Mock
@@ -150,6 +150,7 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void defaultClusterInLocalFs() {
+        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
         createCommandWithDefaultVdsGroup();
         oldGroupIsDetachedDefault();
         storagePoolIsLocalFS();
@@ -309,7 +310,7 @@ public class UpdateVdsGroupCommandTest {
     private static VDSGroup createDefaultVdsGroup() {
         VDSGroup group = new VDSGroup();
         group.setName("Default");
-        group.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        group.setId(DEFAULT_VDS_GROUP_ID);
         group.setcpu_name("Intel Conroe");
         group.setcompatibility_version(VERSION_1_1);
         group.setStoragePoolId(STORAGE_POOL_ID);
@@ -319,7 +320,7 @@ public class UpdateVdsGroupCommandTest {
     private static VDSGroup createVdsGroupWithNoCpuName() {
         VDSGroup group = new VDSGroup();
         group.setName("Default");
-        group.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        group.setId(DEFAULT_VDS_GROUP_ID);
         group.setcompatibility_version(VERSION_1_1);
         group.setStoragePoolId(STORAGE_POOL_ID);
         return group;
@@ -413,7 +414,7 @@ public class UpdateVdsGroupCommandTest {
 
     private void clusterHasVMs() {
         VM vm = new VM();
-        vm.setVdsGroupId(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        vm.setVdsGroupId(DEFAULT_VDS_GROUP_ID);
         List<VM> vmList = new ArrayList<VM>();
         vmList.add(vm);
 

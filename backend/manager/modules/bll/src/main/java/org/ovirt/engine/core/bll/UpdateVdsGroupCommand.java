@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -34,8 +36,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         VdsGroupOperationCommandBase<T>  implements RenamedEntityInfoProvider{
@@ -266,7 +266,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                                     .toString());
                     result = false;
                 }
-                else if (VDSGroup.DEFAULT_VDS_GROUP_ID.equals(getVdsGroup().getId())) {
+                else if (Config.GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID).equals(getVdsGroup().getId())) {
                     addCanDoActionMessage(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
                     result = false;
                 }

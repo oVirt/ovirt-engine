@@ -99,13 +99,12 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.DBEnv.STATEMENT].execute(
             statement="""
                 select inst_update_service_type(
-                    %(clusterid)s,
+                    null,
                     %(virt)s,
                     %(gluster)s
                 )
             """,
             args=dict(
-                clusterid=osetupcons.Const.DEFAULT_CLUSTER_ID,
                 virt=(v in ('both', 'virt')),
                 gluster=(v == 'gluster'),
             ),

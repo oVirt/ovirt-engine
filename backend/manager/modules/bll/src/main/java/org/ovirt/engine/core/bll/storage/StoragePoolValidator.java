@@ -3,10 +3,10 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -69,7 +69,7 @@ public class StoragePoolValidator {
         List<VDSGroup> clusters = getVdsGroupDao().getAllForStoragePool(storagePool.getId());
         boolean hasDefaultCluster = false;
         for (VDSGroup cluster : clusters) {
-            if (cluster.getId().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
+            if (cluster.getId().equals(Config.GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID))) {
                 hasDefaultCluster = true;
                 break;
             }
