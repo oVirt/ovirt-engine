@@ -8,11 +8,15 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -23,7 +27,7 @@ public class GlusterTasksService {
         VDS upServer = ClusterUtils.getInstance().getUpServer(id);
         if (upServer == null) {
             log.info("No up server in cluster");
-            return null;
+            throw new VdcBLLException(VdcBllErrors.NO_UP_SERVER_FOUND);
         }
         VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterTasksList,
                 new VdsIdVDSCommandParametersBase(upServer.getId()));
@@ -36,7 +40,7 @@ public class GlusterTasksService {
             return tasksMap;
         } else {
             log.error(returnValue.getVdsError());
-            return null;
+            throw new VdcBLLException(VdcBllErrors.GlusterVolumeStatusAllFailedException, returnValue.getVdsError().getMessage());
         }
     }
 
@@ -51,9 +55,9 @@ public class GlusterTasksService {
      * @return
      */
     public List<Guid> getMonitoredTaskIDsInDB() {
-     //   List<Guid> externalIds = DbFacade.getInstance().getStepDao().
-     //           getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
-        return null;
+      List<Guid> externalIds = DbFacade.getInstance().getStepDao().
+                getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
+        return externalIds;
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase params) {

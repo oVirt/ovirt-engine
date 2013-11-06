@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
@@ -64,24 +67,30 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         log.debug("Refreshing gluster tasks list");
         List<VDSGroup> clusters = getClusterDao().getAll();
 
+        List<Guid> tasksFromClusters = new ArrayList<>();
+        boolean cleanOrphanTasks = true;
         for (VDSGroup cluster : clusters) {
+            if (!getGlusterTaskUtils().supportsGlusterAsyncTasksFeature(cluster)) {
+                continue;
+            }
+            try {
+                Map<Guid, GlusterAsyncTask> runningTasks = getProvider().getTaskListForCluster(cluster.getId());
+                if (runningTasks != null) {
+                    updateTasksInCluster(cluster, runningTasks);
+                    tasksFromClusters.addAll(runningTasks.keySet());
+                }
+            } catch (VdcBLLException e) {
+                cleanOrphanTasks = false;
+            }
+        }
 
-            updateTasksInCluster(cluster);
+        if (cleanOrphanTasks) {
+            cleanUpOrphanTasks(tasksFromClusters);
         }
 
     }
 
-    private Map<Guid, GlusterAsyncTask> updateTasksInCluster(final VDSGroup cluster) {
-        if (!getGlusterTaskUtils().supportsGlusterAsyncTasksFeature(cluster))
-        {
-            return null;
-        }
-
-        Map<Guid, GlusterAsyncTask> runningTasks = getProvider().getTaskListForCluster(cluster.getId());
-
-        if (runningTasks == null) {
-            return null;
-        }
+    private void updateTasksInCluster(final VDSGroup cluster, final Map<Guid, GlusterAsyncTask> runningTasks) {
 
         for  (Entry<Guid, GlusterAsyncTask> entry :  runningTasks.entrySet()) {
             Guid taskId = entry.getKey();
@@ -106,8 +115,6 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             }
             getGlusterTaskUtils().updateSteps(cluster, task, steps);
         }
-
-        return runningTasks;
     }
 
 
@@ -230,5 +237,35 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     public JobRepository getJobRepository() {
         return JobRepositoryFactory.getJobRepository();
+    }
+
+    private void cleanUpOrphanTasks(List<Guid> runningTasksinCluster) {
+      //Populate the list of tasks that need to be monitored from database
+        List<Guid> taskListInDB = getProvider().getMonitoredTaskIDsInDB();
+        if (taskListInDB == null || taskListInDB.isEmpty()) {
+            return;
+        }
+
+        //if task is in DB but not in running task list
+        final Set<Guid> tasksNotRunning = new HashSet<Guid>(taskListInDB);
+        tasksNotRunning.removeAll(runningTasksinCluster);
+
+        for (Guid taskId: tasksNotRunning) {
+            GlusterVolumeEntity vol= getVolumeDao().getVolumeByGlusterTask(taskId);
+            if (vol != null && vol.getStatus() != GlusterStatus.UP) {
+                //the volume is not UP. Hence gluster may not have been able to return tasks for the volume
+                continue;
+            }
+
+            //Volume is up, but gluster does not know of task
+            //will mark job ended with status unknown.
+            List<Step> steps = getStepDao().getStepsByExternalId(taskId);
+            for (Step step: steps) {
+                step.markStepEnded(JobExecutionStatus.UNKNOWN);
+                getGlusterTaskUtils().endStepJob(step);
+            }
+            getGlusterTaskUtils().releaseVolumeLock(taskId);
+        }
+
     }
 }

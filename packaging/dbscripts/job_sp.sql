@@ -518,3 +518,20 @@ BEGIN
     ORDER BY parent_step_id nulls first, step_number;
 END; $procedure$
 LANGUAGE plpgsql;
+
+----------------------------------------------------
+-- Gets list of external task UUIDs from Step table
+-- for steps based on external system type and job status
+----------------------------------------------------
+Create or replace FUNCTION GetExternalIdsFromSteps(v_status VARCHAR(32),
+                                                   v_external_system_type VARCHAR(32))
+RETURNS SETOF UUID STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT step.external_id
+    FROM step
+    INNER JOIN job ON step.job_id = job.job_id
+    WHERE job.status = v_status
+    AND step.external_system_type = v_external_system_type;
+END; $procedure$
+LANGUAGE plpgsql;

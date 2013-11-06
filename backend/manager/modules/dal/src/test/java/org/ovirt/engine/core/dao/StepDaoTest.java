@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -115,5 +116,12 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         assertTrue("Verify the Step Type status", StepEnum.REBALANCING_VOLUME == step.getStepType());
         assertTrue("Verify the Step status", JobExecutionStatus.STARTED == step.getStatus());
         assertEquals("Invalid Step", REBALANCING_GLUSTER_VOLUME_STEP_ID, step.getId());
+    }
+
+    @Test
+    public void getExternalIdsForRunningSteps(){
+        List<Guid> externalIds = dao.getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
+        assertEquals("Verify external ids present", 1, externalIds.size());
+        assertEquals("Invalid TaskId", IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID, externalIds.get(0));
     }
 }

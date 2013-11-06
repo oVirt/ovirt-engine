@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
@@ -51,5 +52,10 @@ public interface StepDao extends GenericDao<Step, Guid> {
      * @return
      */
     List<Step> getStepsByExternalId(Guid externalId);
+
+    /**
+     * Retrieve all external ids for steps that are not yet completed
+     */
+    List<Guid> getExternalIdsForRunningSteps(ExternalSystemType systemType);
  }
 
