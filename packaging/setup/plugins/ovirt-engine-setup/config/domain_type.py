@@ -63,9 +63,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
             osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
-        condition=lambda self: self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
-        ],
+        condition=lambda self: (
+            self.environment[osetupcons.DBEnv.NEW_DATABASE] and
+            self.environment[osetupcons.ConfigEnv.APPLICATION_MODE] != 'gluster'
+        ),
     )
     def _customization(self):
         self._enabled = True
@@ -73,30 +74,23 @@ class Plugin(plugin.PluginBase):
         if self.environment[
             osetupcons.ConfigEnv.STORAGE_TYPE
         ] is None:
-            if self.environment[
-                osetupcons.ConfigEnv.APPLICATION_MODE
-            ] == 'gluster':
-                self.environment[
-                    osetupcons.ConfigEnv.STORAGE_TYPE
-                ] = osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_TYPE.lower()
-            else:
-                self.environment[
-                    osetupcons.ConfigEnv.STORAGE_TYPE
-                ] = self.dialog.queryString(
-                    name='OVESETUP_CONFIG_STORAGE_TYPE',
-                    note=_(
-                        'Default storage type: (@VALUES@) [@DEFAULT@]: '
-                    ),
-                    prompt=True,
-                    validValues=(
-                        'NFS',
-                        'FC',
-                        'ISCSI',
-                        'POSIXFS'
-                    ),
-                    caseSensitive=False,
-                    default=osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_TYPE,
-                )
+            self.environment[
+                osetupcons.ConfigEnv.STORAGE_TYPE
+            ] = self.dialog.queryString(
+                name='OVESETUP_CONFIG_STORAGE_TYPE',
+                note=_(
+                    'Default storage type: (@VALUES@) [@DEFAULT@]: '
+                ),
+                prompt=True,
+                validValues=(
+                    'NFS',
+                    'FC',
+                    'ISCSI',
+                    'POSIXFS'
+                ),
+                caseSensitive=False,
+                default=osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_TYPE,
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

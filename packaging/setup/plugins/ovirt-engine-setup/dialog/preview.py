@@ -59,7 +59,10 @@ class Plugin(plugin.PluginBase):
             for k in c.__dict__.values():
                 if hasattr(k, '__osetup_attrs__'):
                     attrs = k.__osetup_attrs__
-                    if attrs['summary']:
+                    if (
+                        attrs['summary'] and
+                        attrs['summary_condition'](self.environment)
+                    ):
                         env = k.fget(None)
                         value = self.environment.get(env)
                         if value is not None:

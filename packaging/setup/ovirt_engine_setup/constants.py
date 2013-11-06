@@ -48,6 +48,7 @@ def osetupattrs(
     summary=False,
     description=None,
     postinstallfile=False,
+    summary_condition=lambda env: True,
 ):
     class decorator(classproperty):
         def __init__(self, o):
@@ -56,7 +57,8 @@ def osetupattrs(
                 answerfile=answerfile,
                 summary=summary,
                 description=description,
-                postinstallfile=postinstallfile
+                postinstallfile=postinstallfile,
+                summary_condition=summary_condition,
             )
     return decorator
 
@@ -803,6 +805,9 @@ class SystemEnv(object):
         summary=True,
         description=_('NFS setup'),
         postinstallfile=True,
+        summary_condition=lambda env: env[
+            SystemEnv.NFS_CONFIG_ENABLED
+        ],
     )
     def NFS_CONFIG_ENABLED(self):
         return 'OVESETUP_SYSTEM/nfsConfigEnabled'
