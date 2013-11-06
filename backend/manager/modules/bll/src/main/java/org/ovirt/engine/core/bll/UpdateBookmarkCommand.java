@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
-        extends BookmarkOperationCommand {
+        extends BookmarkOperationCommand<T> {
 
     public UpdateBookmarkCommand(T parameters) {
         super(parameters);

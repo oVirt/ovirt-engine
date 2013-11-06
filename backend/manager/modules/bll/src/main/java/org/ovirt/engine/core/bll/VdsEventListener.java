@@ -165,7 +165,7 @@ public class VdsEventListener implements IVdsEventListener {
                                 DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
                         if (vmsToMigrate.size() > 0) {
                             ArrayList<VdcActionParametersBase> vmToServerParametersList =
-                                    new ArrayList(LinqUtils
+                                    new ArrayList<VdcActionParametersBase>(LinqUtils
                                             .foreach(vmsToMigrate, new Function<VmStatic, VdcActionParametersBase>() {
                                                 @Override
                                                 public VdcActionParametersBase eval(VmStatic vm) {

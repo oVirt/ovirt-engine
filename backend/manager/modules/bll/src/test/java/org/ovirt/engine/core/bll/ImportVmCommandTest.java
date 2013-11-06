@@ -61,7 +61,7 @@ public class ImportVmCommandTest {
     @Test
     public void insufficientDiskSpace() {
         final int lotsOfSpace = 1073741824;
-        final ImportVmCommand c = setupDiskSpaceTest(lotsOfSpace);
+        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(lotsOfSpace);
         assertFalse(c.canDoAction());
         assertTrue(c.getReturnValue()
                 .getCanDoActionMessages()
@@ -71,14 +71,14 @@ public class ImportVmCommandTest {
     @Test
     public void sufficientDiskSpace() {
         final int extraDiskSpaceRequired = 0;
-        final ImportVmCommand c = setupDiskSpaceTest(extraDiskSpaceRequired);
+        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(extraDiskSpaceRequired);
         assertTrue(c.canDoAction());
     }
 
-    private ImportVmCommand setupDiskSpaceTest(final int diskSpaceRequired) {
+    private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(final int diskSpaceRequired) {
         mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, diskSpaceRequired);
 
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand(createParameters()));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(createParameters()));
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
@@ -232,7 +232,7 @@ public class ImportVmCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(true);
-        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params));
 
         DiskImage collapsedDisk = params.getVm().getImages().get(1);
 
@@ -252,7 +252,7 @@ public class ImportVmCommandTest {
         params.setCopyCollapse(Boolean.TRUE);
         DiskImage diskImage = params.getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
-        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params));
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
@@ -275,7 +275,7 @@ public class ImportVmCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(false);
-        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params));
 
         for (DiskImage image : params.getVm().getImages()) {
             doNothing().when(cmd).saveImage(image);
