@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -181,5 +183,13 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
         }
         return jobProperties;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(
+                getParameters().getStorageDomainId(),
+                VdcObjectType.Storage,
+                getActionType().getActionGroup()));
     }
 }
