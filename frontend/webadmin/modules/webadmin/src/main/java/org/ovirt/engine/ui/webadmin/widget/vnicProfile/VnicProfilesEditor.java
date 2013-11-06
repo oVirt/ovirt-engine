@@ -45,15 +45,17 @@ public class VnicProfilesEditor extends AddRemoveRowWidget<ListModel, VnicProfil
         init(model);
     }
 
+    /**
+     * @deprecated Please use {@link #edit(ListModel, Version, Guid, VnicProfileModel)} instead.
+     **/
+    @Deprecated
     @Override
     public void edit(ListModel model) {
         edit(model, dcCompatibilityVersion, dcId, defaultProfile);
     }
 
     public ListModel flush() {
-        ListModel model = driver.flush();
-        flush(model);
-        return model;
+        return driver.flush();
     }
 
     @Override
