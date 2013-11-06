@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -157,6 +158,7 @@ public class ImportExportRepoImageCommandTest {
         diskImage.setId(diskImageId);
         diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
         diskImage.setStoragePoolId(storagePoolId);
+        diskImage.setImageStatus(ImageStatus.OK);
 
         when(storageDomainDao.get(repoStorageDomainId)).thenReturn(imageStorageDomain);
         when(storageDomainDao.getAllForStorageDomain(storageDomainId))

@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -86,4 +87,10 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
                 VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
     }
 
+    @Test
+    public void testCanDoActionImageLocked() {
+        getDiskImage().setImageStatus(ImageStatus.LOCKED);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+    }
 }
