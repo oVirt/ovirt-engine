@@ -17,20 +17,6 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
         setReturnValue(Guid.Empty);
 
         log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");
-        log.infoFormat("-- createVolume parameters:" + "\r\n" + "                sdUUID={0}"
-                + "\r\n" + "                spUUID={1}" + "\r\n" + "                imgGUID={2}"
-                + "\r\n" + "                size={3} bytes" + "\r\n"
-                + "                volFormat={4}" + "\r\n" + "                volType={5}" + "\r\n"
-                + "                volUUID={6}" + "\r\n"
-                + "                descr={7}" + "\r\n" + "                srcImgGUID={8}" + "\r\n"
-                + "                srcVolUUID={9}" + "\r\n" + "                ",
-                getParameters().getStorageDomainId().toString(), getParameters()
-                        .getStoragePoolId().toString(), getParameters().getImageGroupId()
-                        .toString(), getParameters().getImageSizeInBytes(),
-                getParameters().getVolumeFormat().name(), getParameters()
-                        .getImageType().name(), getParameters().getNewImageID().toString(), getParameters()
-                        .getNewImageDescription(), Guid.Empty.toString(), Guid.Empty.toString());
-
         // NOTE: The 'uuidReturn' variable will contain the taskID and not the
         // created image id!
         uuidReturn = getIrsProxy().createVolume(
