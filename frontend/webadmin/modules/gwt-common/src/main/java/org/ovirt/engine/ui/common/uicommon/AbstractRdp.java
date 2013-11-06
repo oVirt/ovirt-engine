@@ -31,7 +31,8 @@ public class AbstractRdp {
     }
 
     public String getUserPassword() {
-        return Frontend.getInstance().getLoginPassword();
+        String password = Frontend.getInstance().getLoginPassword();
+        return password != null ? password : ""; //$NON-NLS-1$
     }
 
     public String getUserDomainController() {
