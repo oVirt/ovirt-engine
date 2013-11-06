@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +33,7 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 
 public class VnicProfileHelper {
-    private List<String> invalidNetworkNames = new ArrayList<>();
+    private Set<String> invalidNetworkNames = new HashSet<>();
     private List<String> invalidIfaceNames = new ArrayList<>();
     private Map<String, Network> networksInClusterByName;
     private List<VnicProfileView> vnicProfilesInDc;
