@@ -362,7 +362,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     private boolean performVmRelatedChecks() {
         VmValidator vmValidator = createVmValidator();
-        return validate(vmValidator.vmNotRunningStateless()) && validate(!isVmNotInPreview());
+        return validate(vmValidator.vmNotRunningStateless()) && validateObject(!isVmNotInPreview());
     }
 
     protected VmValidator createVmValidator() {

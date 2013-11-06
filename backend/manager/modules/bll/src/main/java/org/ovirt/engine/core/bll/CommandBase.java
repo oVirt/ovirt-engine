@@ -102,8 +102,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.dao.DataAccessException;
 
-
-@SuppressWarnings("serial")
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
         RollbackHandler, TransactionMethod<Object> {
 
@@ -805,10 +803,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *         validation
      */
     protected boolean validateInputs() {
-        return validate(getParameters());
+        return validateObject(getParameters());
     }
 
-    protected <T> boolean validate(T value) {
+    protected boolean validateObject(Object value) {
         List<String> messages = ValidationUtils.validateInputs(getValidationGroups(), value);
         if (!messages.isEmpty()) {
             getReturnValue().getCanDoActionMessages().addAll(messages);

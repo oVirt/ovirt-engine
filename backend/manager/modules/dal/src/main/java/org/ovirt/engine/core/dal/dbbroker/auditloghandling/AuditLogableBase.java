@@ -52,7 +52,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AuditLogableBase extends TimeoutBase {
-    private static final long serialVersionUID = -4764813076922800727L;
     private Guid mVmId = Guid.Empty;
     private DbUser dbUser;
     private Guid mUserId = Guid.Empty;

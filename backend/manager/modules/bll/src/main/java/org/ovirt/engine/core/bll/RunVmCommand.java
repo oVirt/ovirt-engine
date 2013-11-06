@@ -771,7 +771,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
-        if (!validate(vm.getStaticData())) {
+        if (!validateObject(vm.getStaticData())) {
             return false;
         }
 
