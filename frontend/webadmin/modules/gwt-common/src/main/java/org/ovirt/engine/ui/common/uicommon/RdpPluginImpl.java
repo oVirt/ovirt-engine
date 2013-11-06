@@ -126,7 +126,6 @@ public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventList
                                      var extendedDiscReason = MsRdpClient.ExtendedDisconnectReason;
                                      var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(disconnectCode);
                                      disconnectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, errorCodeEventArgs);
-                                     $wnd.document.body.removeChild(MsRdpClient);
                                  }
 
                                  MsRdpClient.attachEvent('OnConnected', OnConnected);

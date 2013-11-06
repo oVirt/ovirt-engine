@@ -35,10 +35,13 @@ public class RdpConsoleModel extends ConsoleModel {
                 setrdp((IRdp) TypeResolver.getInstance().resolve(IRdpNative.class));
                 break;
             case Plugin:
-                setrdp((IRdp) TypeResolver.getInstance().resolve(IRdpPlugin.class));
+                IRdpPlugin plugin = (IRdpPlugin) TypeResolver.getInstance().resolve(IRdpPlugin.class);
+                plugin.setParentModel(this);
+                setrdp(plugin);
                 break;
             default:
                 IRdpPlugin impl = (IRdpPlugin) TypeResolver.getInstance().resolve(IRdpPlugin.class);
+                impl.setParentModel(this);
                 setrdp(consoleUtils.isBrowserPluginSupported(ConsoleProtocol.RDP) ? impl
                         : (IRdp) TypeResolver.getInstance().resolve(IRdpNative.class));
                 break;

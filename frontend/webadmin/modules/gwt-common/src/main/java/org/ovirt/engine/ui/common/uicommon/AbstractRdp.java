@@ -32,7 +32,7 @@ public class AbstractRdp {
 
     public String getVdcUserPassword() {
         String password = Frontend.getLoggedInUser().getPassword();
-        return password == null ? "" : password;
+        return password == null ? "" : password; //$NON-NLS-1$
     }
 
     public String getVdcUserDomainController() {
