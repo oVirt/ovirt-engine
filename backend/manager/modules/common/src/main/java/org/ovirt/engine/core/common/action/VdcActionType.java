@@ -42,7 +42,7 @@ public enum VdcActionType {
     ChangeFloppy(35, QuotaDependency.NONE),
     ImportVm(36, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     RemoveVmFromImportExport(37, ActionGroup.DELETE_VM, QuotaDependency.NONE),
-    RemoveVmTemplateFromImportExport(38, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    RemoveVmTemplateFromImportExport(38, ActionGroup.DELETE_TEMPLATE, QuotaDependency.NONE),
     ImportVmTemplate(39, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     ChangeVMCluster(40, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     CancelMigrateVm(41, ActionGroup.MIGRATE_VM, false, QuotaDependency.NONE),
