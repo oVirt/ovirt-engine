@@ -2,10 +2,11 @@ package org.ovirt.engine.ui.webadmin.widget.renderer;
 
 import java.util.ArrayList;
 
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.user.client.ui.ValueLabel;
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
 
-public class DetailsRenderer<V> extends AbstractRenderer<ArrayList<ValueLabel<V>>> {
+import com.google.gwt.text.shared.AbstractRenderer;
+
+public class DetailsRenderer<T extends ArrayList<TextBoxLabelBase<V>>, V> extends AbstractRenderer<T> {
 
     String[] delimiters;
 
@@ -16,7 +17,7 @@ public class DetailsRenderer<V> extends AbstractRenderer<ArrayList<ValueLabel<V>
     }
 
     @Override
-    public String render(ArrayList<ValueLabel<V>> widgets) {
+    public String render(T widgets) {
         StringBuilder formattedStr = new StringBuilder();
 
         for (int i = 0; i < widgets.size(); i++) {
@@ -25,7 +26,7 @@ public class DetailsRenderer<V> extends AbstractRenderer<ArrayList<ValueLabel<V>
                 formattedStr.append(", "); //$NON-NLS-1$
             }
         }
-
         return formattedStr.toString();
     }
+
 }

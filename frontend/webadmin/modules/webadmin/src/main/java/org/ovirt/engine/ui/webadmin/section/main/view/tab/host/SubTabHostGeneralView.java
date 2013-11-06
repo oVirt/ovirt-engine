@@ -13,10 +13,11 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
-import org.ovirt.engine.ui.common.widget.label.EnumLabel;
-import org.ovirt.engine.ui.common.widget.label.MemorySizeLabel;
+import org.ovirt.engine.ui.common.widget.label.BooleanTextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.EnumTextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.MemorySizeTextBoxLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -24,10 +25,10 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
-import org.ovirt.engine.ui.webadmin.widget.label.DetailsLabel;
-import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberLabel;
-import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
-import org.ovirt.engine.ui.webadmin.widget.label.VersionLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.PercentTextBoxLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.VersionTextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -36,7 +37,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListModel, HostGeneralModel> implements SubTabHostGeneralPresenter.ViewDef, Editor<HostGeneralModel> {
@@ -51,46 +51,46 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     @Path("OS")
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel kvmVersion = new TextBoxLabel();
-    VersionLabel libvirtVersion = new VersionLabel();
+    VersionTextBoxLabel libvirtVersion = new VersionTextBoxLabel();
     TextBoxLabel spiceVersion = new TextBoxLabel();
     TextBoxLabel kernelVersion = new TextBoxLabel();
-    VersionLabel glusterVersion = new VersionLabel();
+    VersionTextBoxLabel glusterVersion = new VersionTextBoxLabel();
     @Path("IScsiInitiatorName")
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
     TextBoxLabel cpuName = new TextBoxLabel();
     TextBoxLabel cpuType = new TextBoxLabel();
     TextBoxLabel threadsPerCore = new TextBoxLabel();
-    VersionLabel vdsmVersion = new VersionLabel();
-    PercentLabel<Integer> sharedMemory = new PercentLabel<Integer>();
-    BooleanLabel memoryPageSharing = new BooleanLabel(constants.active(), constants.inactive());
-    NullableNumberLabel<Integer> activeVms = new NullableNumberLabel<Integer>();
-    NullableNumberLabel<Integer> numberOfSockets = new NullableNumberLabel<Integer>(constants.unknown());
-    NullableNumberLabel<Integer> coresPerSocket = new NullableNumberLabel<Integer>(constants.unknown());
+    VersionTextBoxLabel vdsmVersion = new VersionTextBoxLabel();
+    PercentTextBoxLabel<Integer> sharedMemory = new PercentTextBoxLabel<Integer>();
+    BooleanTextBoxLabel memoryPageSharing = new BooleanTextBoxLabel(constants.active(), constants.inactive());
+    NullableNumberTextBoxLabel<Integer> activeVms = new NullableNumberTextBoxLabel<Integer>();
+    NullableNumberTextBoxLabel<Integer> numberOfSockets = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
+    NullableNumberTextBoxLabel<Integer> coresPerSocket = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
     TextBoxLabel spmPriority = new TextBoxLabel();
 
-    MemorySizeLabel<Integer> physicalMemory;
-    MemorySizeLabel<Integer> usedMemory;
-    MemorySizeLabel<Integer> freeMemory;
+    MemorySizeTextBoxLabel<Integer> physicalMemory;
+    MemorySizeTextBoxLabel<Integer> usedMemory;
+    MemorySizeTextBoxLabel<Integer> freeMemory;
 
-    MemorySizeLabel<Long> swapTotal;
-    MemorySizeLabel<Long> usedSwap;
-    MemorySizeLabel<Long> swapFree;
-    MemorySizeLabel<Float> maxSchedulingMemory;
+    MemorySizeTextBoxLabel<Long> swapTotal;
+    MemorySizeTextBoxLabel<Long> usedSwap;
+    MemorySizeTextBoxLabel<Long> swapFree;
+    MemorySizeTextBoxLabel<Float> maxSchedulingMemory;
 
     @Ignore
-    DetailsLabel<ArrayList<ValueLabel<Integer>>, Integer> physicalMemoryDetails =
-            new DetailsLabel<ArrayList<ValueLabel<Integer>>, Integer>(constants.total(),
+    DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Integer>>, Integer> physicalMemoryDetails =
+            new DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Integer>>, Integer>(constants.total(),
                     constants.used(),
                     constants.free());
 
     @Ignore
-    DetailsLabel<ArrayList<ValueLabel<Long>>, Long> swapSizeDetails =
-            new DetailsLabel<ArrayList<ValueLabel<Long>>, Long>(constants.total(),
+    DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long> swapSizeDetails =
+            new DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long>(constants.total(),
                     constants.used(),
                     constants.free());
 
     @Ignore
-    EnumLabel<VdsTransparentHugePagesState> automaticLargePage = new EnumLabel<VdsTransparentHugePagesState>();
+    EnumTextBoxLabel<VdsTransparentHugePagesState> automaticLargePage = new EnumTextBoxLabel<VdsTransparentHugePagesState>();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -162,15 +162,15 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     }
 
     void initMemorySizeLabels() {
-        this.physicalMemory = new MemorySizeLabel<Integer>(constants);
-        this.usedMemory = new MemorySizeLabel<Integer>(constants);
-        this.freeMemory = new MemorySizeLabel<Integer>(constants);
+        this.physicalMemory = new MemorySizeTextBoxLabel<Integer>(constants);
+        this.usedMemory = new MemorySizeTextBoxLabel<Integer>(constants);
+        this.freeMemory = new MemorySizeTextBoxLabel<Integer>(constants);
 
-        this.swapTotal = new MemorySizeLabel<Long>(constants);
-        this.usedSwap = new MemorySizeLabel<Long>(constants);
-        this.swapFree = new MemorySizeLabel<Long>(constants);
+        this.swapTotal = new MemorySizeTextBoxLabel<Long>(constants);
+        this.usedSwap = new MemorySizeTextBoxLabel<Long>(constants);
+        this.swapFree = new MemorySizeTextBoxLabel<Long>(constants);
 
-        this.maxSchedulingMemory = new MemorySizeLabel<Float>(constants);
+        this.maxSchedulingMemory = new MemorySizeTextBoxLabel<Float>(constants);
     }
 
     @SuppressWarnings("unchecked")
@@ -180,11 +180,11 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
         automaticLargePage.setValue((VdsTransparentHugePagesState) getDetailModel().getAutomaticLargePage());
 
-        ArrayList<ValueLabel<Integer>> physicalMemoryDetailsArray =
-                new ArrayList<ValueLabel<Integer>>(Arrays.asList(physicalMemory, usedMemory, freeMemory));
+        ArrayList<TextBoxLabelBase<Integer>> physicalMemoryDetailsArray =
+                new ArrayList<TextBoxLabelBase<Integer>>(Arrays.asList(physicalMemory, usedMemory, freeMemory));
 
-        ArrayList<ValueLabel<Long>> swapSizeDetailsArray =
-                new ArrayList<ValueLabel<Long>>(Arrays.asList(swapTotal, usedSwap, swapFree));
+        ArrayList<TextBoxLabelBase<Long>> swapSizeDetailsArray =
+                new ArrayList<TextBoxLabelBase<Long>>(Arrays.asList(swapTotal, usedSwap, swapFree));
 
         physicalMemoryDetails.setValue(physicalMemoryDetailsArray);
         swapSizeDetails.setValue(swapSizeDetailsArray);
