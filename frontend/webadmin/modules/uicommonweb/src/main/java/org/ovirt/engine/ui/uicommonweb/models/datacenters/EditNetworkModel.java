@@ -107,11 +107,13 @@ public class EditNetworkModel extends NetworkModel {
                     profilesModels.add(editModel);
                     editModel.getName().setIsChangable(false);
                 }
+                originalProfileModels.clear();
+                originalProfileModels.addAll(profilesModels);
+
                 if (profilesModels.isEmpty() && !(Boolean) getIsVmNetwork().getEntity()) {
                     profilesModels.add(getDefaultProfile());
                 }
                 getProfiles().setItems(profilesModels);
-                originalProfileModels = profilesModels;
             }
         };
         AsyncDataProvider.getVnicProfilesByNetworkId(profilesQuery, getNetwork().getId());
