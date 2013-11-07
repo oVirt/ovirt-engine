@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -38,6 +39,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
     private VmDevice vmDevice;
+
+    private VnicProfile vnicProfile;
 
     private Network network;
 
@@ -94,7 +97,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     public Network getNetwork() {
         if (getParameters().getNic().getVnicProfileId() != null && network == null) {
-            network = NetworkHelper.getNetworkByVnicProfileId(getParameters().getNic().getVnicProfileId());
+            vnicProfile = getDbFacade().getVnicProfileDao().get(getParameters().getNic().getVnicProfileId());
+            network = NetworkHelper.getNetworkByVnicProfile(vnicProfile);
         }
 
         return network;
@@ -132,7 +136,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private void handleExternalNetworks() {
         Provider<?> provider = getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
         NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
-        Map<String, String> runtimeProperties = providerProxy.allocate(getNetwork(), getParameters().getNic());
+        Map<String, String> runtimeProperties =
+                providerProxy.allocate(getNetwork(), vnicProfile, getParameters().getNic());
 
         if (runtimeProperties != null) {
             getVm().getRuntimeDeviceCustomProperties().put(vmDevice, runtimeProperties);

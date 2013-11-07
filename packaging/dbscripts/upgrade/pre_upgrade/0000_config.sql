@@ -740,6 +740,9 @@ select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.2');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.3');
 select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
 
+-- Allow to specify SecurityGroups property for vNICs, containing either an empty string or a list of one or more comma seperated UUIDs.
+select fn_db_update_config_value('CustomDeviceProperties', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '3.4');
+
 
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section

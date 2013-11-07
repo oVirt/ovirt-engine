@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -492,12 +493,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         VmDeviceGeneralType.INTERFACE));
 
         for (VmNic iface : getVm().getInterfaces()) {
-            Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
+            VnicProfile vnicProfile = getDbFacade().getVnicProfileDao().get(iface.getVnicProfileId());
+            Network network = NetworkHelper.getNetworkByVnicProfile(vnicProfile);
             VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
             if (network != null && network.isExternal() && vmDevice.getIsPlugged()) {
                 Provider<?> provider = getDbFacade().getProviderDao().get(network.getProvidedBy().getProviderId());
                 NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
-                Map<String, String> deviceProperties = providerProxy.allocate(network, iface);
+                Map<String, String> deviceProperties = providerProxy.allocate(network, vnicProfile, iface);
 
                 getVm().getRuntimeDeviceCustomProperties().put(vmDevice, deviceProperties);
             }

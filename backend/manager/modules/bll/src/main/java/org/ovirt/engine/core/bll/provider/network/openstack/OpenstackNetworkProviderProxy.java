@@ -2,11 +2,15 @@ package org.ovirt.engine.core.bll.provider.network.openstack;
 
 import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
@@ -14,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -27,9 +32,14 @@ import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.NetworkForCreate;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
-import com.woorea.openstack.quantum.model.PortForCreate;
 
 public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
+
+    private static final List<String> DEFAULT_SECURITY_GROUP = null;
+
+    private static final List<String> NO_SECURITY_GROUPS = Collections.emptyList();
+
+    private static final String SECURITY_GROUPS_PROPERTY = "SecurityGroups";
 
     private static final String API_VERSION = "/v2.0";
 
@@ -159,14 +169,15 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
-    public Map<String, String> allocate(Network network, VmNic nic) {
+    public Map<String, String> allocate(Network network, VnicProfile vnicProfile, VmNic nic) {
         try {
             Port port = locatePort(nic);
 
+            List<String> securityGroups = getSecurityGroups(vnicProfile);
             if (port == null) {
                 com.woorea.openstack.quantum.model.Network externalNetwork =
                         getClient().networks().show(network.getProvidedBy().getExternalId()).execute();
-                PortForCreate portForCreate = new PortForCreate();
+                Port portForCreate = new Port();
                 portForCreate.setAdminStateUp(true);
                 portForCreate.setName(nic.getName());
                 portForCreate.setTenantId(externalNetwork.getTenantId());
@@ -174,19 +185,51 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
                 portForCreate.setNetworkId(externalNetwork.getId());
                 portForCreate.setDeviceOwner(DEVICE_OWNER);
                 portForCreate.setDeviceId(nic.getId().toString());
+                portForCreate.setSecurityGroups(securityGroups);
                 port = getClient().ports().create(portForCreate).execute();
+            } else if (securityGroupsChanged(port.getSecurityGroups(), securityGroups)) {
+                Port portForUpdate = new PortForUpdate();
+                portForUpdate.setId(port.getId());
+                portForUpdate.setSecurityGroups(securityGroups);
+                port = getClient().ports().update(portForUpdate).execute();
             }
-
 
             Map<String, String> runtimeProperties = new HashMap<>();
             runtimeProperties.put("vnic_id", port.getId());
             runtimeProperties.put("provider_type", provider.getType().name());
             runtimeProperties.put("plugin_type", provider.getAdditionalProperties().getPluginType());
+            if (port.getSecurityGroups() != null && !port.getSecurityGroups().isEmpty()) {
+                runtimeProperties.put("security_groups", StringUtils.join(port.getSecurityGroups(), ','));
+            }
 
             return runtimeProperties;
         } catch (RuntimeException e) {
             throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
         }
+    }
+
+    private boolean securityGroupsChanged(List<String> existingSecurityGroups, List<String> desiredSecurityGroups) {
+        existingSecurityGroups = existingSecurityGroups == null ? NO_SECURITY_GROUPS : existingSecurityGroups;
+        return (desiredSecurityGroups == DEFAULT_SECURITY_GROUP
+                && existingSecurityGroups.isEmpty())
+                || (desiredSecurityGroups != DEFAULT_SECURITY_GROUP
+                && !CollectionUtils.isEqualCollection(existingSecurityGroups, desiredSecurityGroups));
+    }
+
+    private List<String> getSecurityGroups(VnicProfile vnicProfile) {
+        Map<String, String> customProperties = vnicProfile.getCustomProperties();
+
+        if (customProperties.containsKey(SECURITY_GROUPS_PROPERTY)) {
+            String securityGroupsString = customProperties.get(SECURITY_GROUPS_PROPERTY);
+
+            if (StringUtils.isEmpty(securityGroupsString)) {
+                return NO_SECURITY_GROUPS;
+            }
+
+            return Arrays.asList(securityGroupsString.split(",\\w*"));
+        }
+
+        return DEFAULT_SECURITY_GROUP;
     }
 
     @Override
