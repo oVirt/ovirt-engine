@@ -51,7 +51,7 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
         setSucceeded(true);
     }
 
-    public static boolean CanRemoveUser(Guid user_guid, java.util.ArrayList<String> errors) {
+    public static boolean canRemoveUser(Guid user_guid, java.util.ArrayList<String> errors) {
         boolean returnValue = true;
         // check that the user exists in DB
         if (DbFacade.getInstance().getDbUserDao().get(user_guid) == null) {
@@ -72,7 +72,7 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
                 addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_HIMSELF);
                 result = false;
             } else {
-                result = CanRemoveUser(getParameters().getAdElementId(), getReturnValue().getCanDoActionMessages());
+                result = canRemoveUser(getParameters().getAdElementId(), getReturnValue().getCanDoActionMessages());
             }
         }
         return result;
