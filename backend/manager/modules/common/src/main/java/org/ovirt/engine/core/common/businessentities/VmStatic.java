@@ -18,6 +18,10 @@ public class VmStatic extends VmBase {
 
     private boolean initialized;
 
+    private String originalTemplateName;
+
+    private Guid originalTemplateGuid;
+
     @EditableOnVmStatusField
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -193,6 +197,8 @@ public class VmStatic extends VmBase {
         result = prime * result + (useHostCpuFlags ? 1231 : 1237);
         result = prime * result + ((instanceTypeId == null) ? 0 : instanceTypeId.hashCode());
         result = prime * result + ((imageTypeId == null) ? 0 : imageTypeId.hashCode());
+        result = prime * result + ((originalTemplateGuid == null) ? 0 : originalTemplateGuid.hashCode());
+        result = prime * result + ((originalTemplateName == null) ? 0 : originalTemplateName.hashCode());
         return result;
     }
 
@@ -218,6 +224,8 @@ public class VmStatic extends VmBase {
                 && useHostCpuFlags == other.useHostCpuFlags
                 && ObjectUtils.objectsEqual(instanceTypeId, other.instanceTypeId)
                 && ObjectUtils.objectsEqual(imageTypeId, other.imageTypeId)
+                && ObjectUtils.objectsEqual(originalTemplateGuid, other.originalTemplateGuid)
+                && ObjectUtils.objectsEqual(originalTemplateName, other.originalTemplateName)
          );
     }
 
@@ -251,5 +259,21 @@ public class VmStatic extends VmBase {
 
     public void setImageTypeId(Guid imageTypeId) {
         this.imageTypeId = imageTypeId;
+    }
+
+    public String getOriginalTemplateName() {
+        return originalTemplateName;
+    }
+
+    public void setOriginalTemplateName(String originalTemplateName) {
+        this.originalTemplateName = originalTemplateName;
+    }
+
+    public Guid getOriginalTemplateGuid() {
+        return originalTemplateGuid;
+    }
+
+    public void setOriginalTemplateGuid(Guid originalTemplateGuid) {
+        this.originalTemplateGuid = originalTemplateGuid;
     }
 }

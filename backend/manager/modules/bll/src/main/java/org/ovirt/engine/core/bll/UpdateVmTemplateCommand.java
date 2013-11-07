@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -117,6 +118,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (getVmTemplate() != null) {
             getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
+            updateOriginalTemplateNameOnDerivedVms();
             UpdateVmTemplate();
             updateWatchdog();
             checkTrustedService();
@@ -173,6 +175,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_UPDATE_VM_TEMPLATE : AuditLogType.USER_FAILED_UPDATE_VM_TEMPLATE;
+    }
+
+    private void updateOriginalTemplateNameOnDerivedVms() {
+        boolean templateNameChanged = !ObjectUtils.equals(mOldTemplate.getName(), getVmTemplate().getName());
+        if (templateNameChanged) {
+            getVmDAO().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
+        }
     }
 
     private void UpdateVmTemplate() {

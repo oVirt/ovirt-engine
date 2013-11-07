@@ -267,4 +267,12 @@ public interface VmDAO extends DAO {
      * @return the list of VMs
      */
     List<VM> getAllForVnicProfile(Guid vnicProfileId);
+
+    /**
+     * Updates the original template name property of all the VMs which are based on template with id originalTemplateId
+     *
+     * @param originalTemplateId the template on which the VM has been based on (thin or clone)
+     * @param originalTemplateName the new name of the template on which the VM has been based on
+     */
+    void updateOriginalTemplateName(Guid originalTemplateId, String originalTemplateName);
 }

@@ -253,6 +253,15 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                         .addValue("vds_id", vdsId));
     }
 
+    @Override
+    public void updateOriginalTemplateName(Guid originalTemplateId, String originalTemplateName) {
+        getCallsHandler().executeModification("UpdateOriginalTemplateName",
+                getCustomMapSqlParameterSource()
+                        .addValue("original_template_id", originalTemplateId)
+                        .addValue("original_template_name", originalTemplateName)
+        );
+    }
+
     static final class VMRowMapper implements RowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 
@@ -379,6 +388,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setInstanceTypeId(Guid.createGuidFromString(rs.getString("instance_type_id")));
             entity.setImageTypeId(Guid.createGuidFromString(rs.getString("image_type_id")));
             entity.setClusterArch(ArchitectureType.forValue(rs.getInt("architecture")));
+            entity.setOriginalTemplateName(rs.getString("original_template_name"));
+            entity.setOriginalTemplateGuid(getGuid(rs, "original_template_id"));
             return entity;
         }
     }

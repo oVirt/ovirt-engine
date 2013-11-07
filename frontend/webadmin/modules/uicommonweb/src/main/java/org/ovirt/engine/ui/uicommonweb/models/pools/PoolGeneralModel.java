@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmTemplateNameRenderer;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -33,6 +34,8 @@ public class PoolGeneralModel extends EntityModel
 
     public static EventDefinition UpdateCompleteEventDefinition;
     private Event privateUpdateCompleteEvent;
+
+    private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
     public Event getUpdateCompleteEvent()
     {
@@ -426,7 +429,7 @@ public class PoolGeneralModel extends EntityModel
                 PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
                 if (getvm() != null)
                 {
-                    poolGeneralModel.setTemplate(getvm().getVmtName());
+                    poolGeneralModel.setTemplate(vmTemplateNameRenderer.render(getvm()));
                     poolGeneralModel.setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
                             getvm().getNumOfCpus(),
                             getvm().getNumOfSockets(),

@@ -228,6 +228,16 @@ public class OvfVmReader extends OvfReader {
        if (node != null) {
            _vm.setTrustedService(Boolean.parseBoolean(node.innerText));
        }
+
+        node = content.SelectSingleNode("OriginalTemplateId");
+        if (node != null) {
+            _vm.getStaticData().setOriginalTemplateGuid(new Guid(node.innerText));
+        }
+
+        node = content.SelectSingleNode("OriginalTemplateName");
+        if (node != null) {
+            _vm.getStaticData().setOriginalTemplateName(node.innerText);
+        }
     }
 
     @Override

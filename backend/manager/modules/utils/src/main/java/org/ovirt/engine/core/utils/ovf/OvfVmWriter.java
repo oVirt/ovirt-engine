@@ -73,6 +73,19 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("TrustedService");
         _writer.WriteRaw(String.valueOf(_vm.isTrustedService()));
         _writer.WriteEndElement();
+
+        if (_vm.getStaticData().getOriginalTemplateGuid() != null) {
+            _writer.WriteStartElement("OriginalTemplateId");
+            _writer.WriteRaw(_vm.getStaticData().getOriginalTemplateGuid().toString());
+            _writer.WriteEndElement();
+        }
+
+        if (_vm.getStaticData().getOriginalTemplateName() != null) {
+            _writer.WriteStartElement("OriginalTemplateName");
+            _writer.WriteRaw(_vm.getStaticData().getOriginalTemplateName());
+            _writer.WriteEndElement();
+        }
+
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
         // Gets a map that its keys are aliases to fields that should be OVF
         // logged.
@@ -80,6 +93,7 @@ public class OvfVmWriter extends OvfWriter {
         for (Map.Entry<String, String> entry : aliasesValuesMap.entrySet()) {
             writeLogEvent(entry.getKey(), entry.getValue());
         }
+
     }
 
     private void writeLogEvent(String name, String value) {

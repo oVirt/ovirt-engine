@@ -332,4 +332,11 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
             "scheduling requests ({0} requests), while some requests may fail due to the re-use of the " +
             "same resource allocation (Use this option only if you are familiar with this behavior).")
     String schedulerAllowOverbookingInfo(int numOfRequests);
+
+    @DefaultMessage("{0} (Clone/Independent)")
+    String vmTemplateWithCloneProvisioning(String templateName);
+
+    @DefaultMessage("{0} (Thin/Dependent)")
+    String vmTemplateWithThinProvisioning(String templateName);
+
 }

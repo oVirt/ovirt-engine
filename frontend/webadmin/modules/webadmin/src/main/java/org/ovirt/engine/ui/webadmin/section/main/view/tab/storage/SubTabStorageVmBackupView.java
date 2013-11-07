@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmTemplateNameRenderer;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -42,6 +43,8 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
     interface ViewUiBinder extends UiBinder<Widget, SubTabStorageVmBackupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
     @UiField
     HorizontalPanel mainContainer;
@@ -84,7 +87,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         TextColumnWithTooltip<VM> templateColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmtName();
+                return vmTemplateNameRenderer.render(object);
             }
         };
         getTable().addColumn(templateColumn, constants.templateVm(), "95px"); //$NON-NLS-1$

@@ -26,9 +26,12 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
+
 @SuppressWarnings("unused")
 public class VmGeneralModel extends EntityModel
 {
+
+    private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
     public static EventDefinition UpdateCompleteEventDefinition;
     private Event privateUpdateCompleteEvent;
@@ -536,7 +539,9 @@ public class VmGeneralModel extends EntityModel
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(vm.getQuotaEnforcementType() != null
                 && !vm.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
-        setTemplate(vm.getVmtName());
+
+        setTemplate(vmTemplateNameRenderer.render(vm));
+
         setDefinedMemory(vm.getVmMemSizeMb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 

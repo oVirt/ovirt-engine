@@ -92,7 +92,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("is_run_and_pause", vm.isRunAndPause())
                 .addValue("created_by_user_id", vm.getCreatedByUserId())
                 .addValue("instance_type_id", vm.getInstanceTypeId())
-                .addValue("image_type_id", vm.getImageTypeId());
+                .addValue("image_type_id", vm.getImageTypeId())
+                .addValue("original_template_name", vm.getOriginalTemplateName())
+                .addValue("original_template_id", vm.getOriginalTemplateGuid());
     }
 
     @Override
@@ -224,6 +226,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
             entity.setInstanceTypeId(Guid.createGuidFromString(rs.getString("instance_type_id")));
             entity.setImageTypeId(Guid.createGuidFromString(rs.getString("image_type_id")));
+            entity.setOriginalTemplateName(rs.getString("original_template_name"));
+            entity.setOriginalTemplateGuid(getGuid(rs, "original_template_id"));
 
             return entity;
         }

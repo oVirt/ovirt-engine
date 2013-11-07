@@ -451,4 +451,34 @@ public class VmDAOTest extends BaseDAOTestCase {
         updatedVm = dao.get(vmId);
         assertEquals("VM's is_initiazlied was not updated", origInitialized, updatedVm.isInitialized());
     }
+
+    @Test
+    public void testUpdateOriginalTemplateName() {
+        dao.updateOriginalTemplateName(
+                new Guid("1b85420c-b84c-4f29-997e-0eb674b40b82"),
+                "renamed"
+        );
+
+        List<String> renamedTemplates = Arrays.asList(
+                "77296e00-0cad-4e5a-9299-008a7b6f4354",
+                "77296e00-0cad-4e5a-9299-008a7b6f4355",
+                "77296e00-0cad-4e5a-9299-008a7b6f4356"
+        );
+
+        List<String> notRenamedTemplate = Arrays.asList(
+                "77296e00-0cad-4e5a-9299-008a7b6f4359"
+        );
+
+        // all will be renamed
+        assertOriginalTemplateNameIs(renamedTemplates, "renamed");
+
+        // since connected to other "original template" it will stay untouched
+        assertOriginalTemplateNameIs(notRenamedTemplate, "otherTemplateName");
+    }
+
+    private void assertOriginalTemplateNameIs(List<String> vmIds, String expectedTemplateName) {
+        for (String vmId : vmIds) {
+            assertEquals(expectedTemplateName, dao.get(new Guid(vmId)).getOriginalTemplateName());
+        }
+    }
 }

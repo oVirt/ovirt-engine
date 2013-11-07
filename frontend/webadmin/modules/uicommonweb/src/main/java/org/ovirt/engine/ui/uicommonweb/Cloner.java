@@ -210,6 +210,8 @@ public final class Cloner
         vm.setVmtName(instance.getVmtName());
         vm.setCreatedByUserId(instance.getCreatedByUserId());
         vm.setClusterArch(instance.getClusterArch());
+        vm.setOriginalTemplateGuid(instance.getOriginalTemplateGuid());
+        vm.setOriginalTemplateName(instance.getOriginalTemplateName());
 
         return vm;
     }

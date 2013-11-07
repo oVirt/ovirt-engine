@@ -738,6 +738,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             vmStatic.setPredefinedProperties(predefinedProperties);
             vmStatic.setUserDefinedProperties(userDefinedProperties);
         }
+
+        vmStatic.setOriginalTemplateGuid(vmStatic.getVmtGuid());
+        vmStatic.setOriginalTemplateName(getVmTemplate().getName());
         getVmStaticDao().save(vmStatic);
         getCompensationContext().snapshotNewEntity(vmStatic);
     }

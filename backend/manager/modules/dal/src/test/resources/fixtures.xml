@@ -1484,14 +1484,15 @@
         <column>predefined_properties</column>
         <column>quota_id</column>
         <column>db_generation</column>
-		<column>tunnel_migration</column>
-		<column>min_allocated_mem</column>
-		<column>is_run_and_pause</column>
+        <column>tunnel_migration</column>
+        <column>min_allocated_mem</column>
+        <column>is_run_and_pause</column>
         <column>created_by_user_id</column>
         <column>instance_type_id</column>
         <column>image_type_id</column>
         <column>sso_method</column>
-
+        <column>original_template_id</column>
+        <column>original_template_name</column>
         <!-- Templates -->
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
@@ -1541,6 +1542,8 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -1590,6 +1593,8 @@
             <null />
             <null />
             <value>none</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1639,6 +1644,8 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -1688,6 +1695,8 @@
             <null />
             <null />
             <value>none</value>
+            <null />
+            <null />
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -1737,6 +1746,8 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <null />
+            <null />
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -1786,6 +1797,8 @@
             <null />
             <null />
             <value>none</value>
+            <null />
+            <null />
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -1835,6 +1848,8 @@
             <null />
             <null />
             <value>none</value>
+            <null />
+            <null />
         </row>
 
         <!-- VMS -->
@@ -1886,6 +1901,8 @@
             <null />
             <null />
             <value>none</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
+            <value>someTemplateName</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -1935,6 +1952,8 @@
             <null />
             <null />
             <value>none</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
+            <value>someTemplateName</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -1984,6 +2003,8 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
+            <value>someTemplateName</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -2033,6 +2054,8 @@
             <null />
             <null />
             <value>none</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2082,6 +2105,8 @@
             <null />
             <null />
             <value>none</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
+            <value>otherTemplateName</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2131,6 +2156,8 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -2180,6 +2207,8 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <null />
+            <null />
         </row>
     </table>
 

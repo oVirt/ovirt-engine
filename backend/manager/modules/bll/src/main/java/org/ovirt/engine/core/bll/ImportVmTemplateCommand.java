@@ -280,6 +280,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             public Void runInTransaction() {
                 initImportClonedTemplateDisks();
                 addVmTemplateToDb();
+                updateOriginalTemplateNameOnDerivedVms();
                 addVmInterfaces();
                 getCompensationContext().stateChanged();
                 return null;
@@ -298,6 +299,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
         checkTrustedService();
         setSucceeded(success);
+    }
+
+    private void updateOriginalTemplateNameOnDerivedVms() {
+        if (!getParameters().isImportAsNewEntity()) {
+            // in case it has been renamed
+            getVmDAO().updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
+        }
     }
 
     private void checkTrustedService() {

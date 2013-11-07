@@ -984,6 +984,16 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         getVm().getStaticData().setVdsGroupId(getParameters().getVdsGroupId());
         getVm().getStaticData().setMinAllocatedMem(computeMinAllocatedMem());
         getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
+
+        if (getVm().getOriginalTemplateGuid() != null && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getOriginalTemplateGuid())) {
+            // no need to check this for blank
+            VmTemplate originalTemplate = getVmTemplateDAO().get(getVm().getOriginalTemplateGuid());
+            if (originalTemplate != null) {
+                // in case the original template name has been changed in the meantime
+                getVm().getStaticData().setOriginalTemplateName(originalTemplate.getName());
+            }
+        }
+
         if (getParameters().getCopyCollapse()) {
             getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         }

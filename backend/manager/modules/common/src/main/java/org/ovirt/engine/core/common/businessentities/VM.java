@@ -1626,6 +1626,22 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         vmStatic.setImageTypeId(ImageTypeId);
     }
 
+    public String getOriginalTemplateName() {
+        return vmStatic.getOriginalTemplateName();
+    }
+
+    public void setOriginalTemplateName(String originalTemplateName) {
+        vmStatic.setOriginalTemplateName(originalTemplateName);
+    }
+
+    public Guid getOriginalTemplateGuid() {
+        return vmStatic.getOriginalTemplateGuid();
+    }
+
+    public void setOriginalTemplateGuid(Guid originalTemplateGuid) {
+        vmStatic.setOriginalTemplateGuid(originalTemplateGuid);
+    }
+
     public void clearDisks() {
         getDiskList().clear();
         getDiskMap().clear();
