@@ -27,7 +27,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      * @param reason
      *            The reason.
      */
-    private void Alert(AuditLogType logType, String reason) {
+    private void alert(AuditLogType logType, String reason) {
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getParameters().getTargetVdsID());
         alert.addCustomValue("Reason", reason);
@@ -40,8 +40,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      * @param reason
      *            The reason.
      */
-    protected void AlertPowerManagementStatusFailed(String reason) {
-        Alert(AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, reason);
+    protected void alertPowerManagementStatusFailed(String reason) {
+        alert(AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, reason);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         if (!isAlreadyInRequestedStatus(options)) {
             _result = getBroker().fenceNode(getParameters().getIp(), "",
                     getParameters().getType(), getParameters().getUser(),
-                    getParameters().getPassword(), GetActualActionName(), "", options);
+                    getParameters().getPassword(), getActualActionName(), "", options);
 
             proceedProxyReturnValue();
             getVDSReturnValue().setSucceeded(false);
@@ -66,7 +66,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                     getVDSReturnValue().setSucceeded(true);
                 } else {
                     if (!getParameters().getTargetVdsID().equals(Guid.Empty)) {
-                        AlertPowerManagementStatusFailed(msg);
+                        alertPowerManagementStatusFailed(msg);
                     }
 
                 }
@@ -89,7 +89,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.addCustomValue("HostName",
                 (DbFacade.getInstance().getVdsDao().get(getParameters().getTargetVdsID())).getName());
-        auditLogable.addCustomValue("AgentStatus", GetActualActionName());
+        auditLogable.addCustomValue("AgentStatus", getActualActionName());
         auditLogable.addCustomValue("Operation", getParameters().getAction().toString());
         AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
         getVDSReturnValue().setSucceeded(true);
@@ -126,7 +126,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         return (_result.mStatus != null) ? _result.mStatus : new StatusForXmlRpc();
     }
 
-    private String GetActualActionName() {
+    private String getActualActionName() {
         String actualActionName;
         switch (getParameters().getAction()) {
         case Restart:
