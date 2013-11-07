@@ -592,7 +592,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         event.setCustomId(nic.getId().hashCode());
         event.setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion().toString());
         event.addCustomValue("NicName", nic.getName());
-        event.addCustomValue("VnicProfile", vnicProfile.getName());
+        event.addCustomValue("VnicProfile", vnicProfile == null ? null : vnicProfile.getName());
         String[] unsupportedFeatureNames = new String[unsupportedFeatures.size()];
         for (int i = 0; i < unsupportedFeatures.size(); i++) {
             unsupportedFeatureNames[i] = unsupportedFeatures.get(i).getFeatureName();
