@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -7,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Version;
@@ -18,14 +21,13 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import java.util.ArrayList;
-
 @SuppressWarnings("unused")
 public class ClusterHostListModel extends HostListModel
 {
 
     public ClusterHostListModel() {
         setUpdateMomPolicyCommand(new UICommand("updateMomPolicyCommand", this)); //$NON-NLS-1$
+        getUpdateMomPolicyCommand().setAvailableInModes(ApplicationMode.VirtOnly);
     }
 
     private UICommand updateMomPolicyCommand;
