@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.action.CloudInitParameters;
 import org.ovirt.engine.core.common.action.CloudInitParameters.Attachment;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -26,8 +26,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -533,7 +533,7 @@ public class CloudInitModel extends Model {
             ciParams.setHostname((String) getHostname().getEntity());
         }
         if ((Boolean) getAuthorizedKeysEnabled().getEntity()) {
-            ciParams.setAuthorizedKeys((String) getHostname().getEntity());
+            ciParams.setAuthorizedKeys((String) getAuthorizedKeys().getEntity());
         }
         if ((Boolean) getRegenerateKeysEnabled().getEntity()) {
             ciParams.setRegenerateKeys(Boolean.TRUE);
