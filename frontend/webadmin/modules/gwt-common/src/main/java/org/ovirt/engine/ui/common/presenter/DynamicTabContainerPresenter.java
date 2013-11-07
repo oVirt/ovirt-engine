@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
@@ -43,6 +46,8 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
 
     }
 
+    private static final Logger logger = Logger.getLogger(DynamicTabContainerPresenter.class.getName());
+
     private final Object tabContentSlot;
     private final Type<RequestTabsHandler> requestTabsEventType;
 
@@ -69,7 +74,7 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
                 TabContentProxy<?> proxy = (TabContentProxy<?>) presenter.getProxy();
                 getView().setActiveTabHistoryToken(proxy.getTargetHistoryToken());
             } catch (Exception e) {
-                // Do nothing
+                logger.log(Level.SEVERE, "Error while updating tab view", e); //$NON-NLS-1$
             }
         }
     }
