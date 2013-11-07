@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -351,39 +353,54 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         return glusterHostUuidFound && initGlusterPeerProcess();
     }
 
+    /**
+     *
+     * This method executes a "gluster peer probe" to add the newly added host to the cluster - this
+     * is done only if there's another UP server in cluster and the host being added is not already
+     * part of the UP server's peer list.
+     * Also, acquiring a wait lock only during a gluster peer process (wait as there's periodic job that also
+     * acquires lock.
+     *
+     * @return
+     */
     private boolean initGlusterPeerProcess() {
-        glusterPeerListSucceeded = true;
-        glusterPeerProbeSucceeded = true;
-        List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
-        // If the cluster already having Gluster servers, get an up server
-        if (vdsList != null && vdsList.size() > 0) {
-            VDS upServer = null;
-            for (VDS vds : vdsList) {
-                if (!getVdsId().equals(vds.getId())) {
-                    upServer = vds;
-                    break;
+       // If "gluster peer probe" and "gluster peer status" are executed simultaneously, the results
+       // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
+       // condition.
+        try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(getVds().getVdsGroupId())) {
+            glusterPeerListSucceeded = true;
+            glusterPeerProbeSucceeded = true;
+            Map<String, String> customLogValues = new HashMap<String, String>();
+            List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
+            // If the cluster already having Gluster servers, get an up server
+            if (vdsList != null && vdsList.size() > 0) {
+                VDS upServer = null;
+                for (VDS vds : vdsList) {
+                    if (!getVdsId().equals(vds.getId())) {
+                        upServer = vds;
+                        break;
+                    }
                 }
-            }
 
-            // If new server is not part of the existing gluster peers, add into peer group
-            if (upServer != null) {
-                List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer.getId());
-                Map<String, String> customLogValues = new HashMap<String, String>();
-                customLogValues.put("Server", upServer.getHostName());
-                if (glusterServers.size() == 0) {
-                    customLogValues.put("Command", "gluster peer status");
-                    setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
-                    return false;
-                } else if (!hostExists(glusterServers, getVds())) {
-                    if (!glusterPeerProbe(upServer.getId(), getVds().getHostName())) {
-                        customLogValues.put("Command", "gluster peer probe " + getVds().getHostName());
+                // If new server is not part of the existing gluster peers, add into peer group
+                if (upServer != null) {
+                    List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer.getId());
+                    customLogValues.put("Server", upServer.getHostName());
+                    if (glusterServers.size() == 0) {
+                        customLogValues.put("Command", "gluster peer status");
                         setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                         return false;
+                    } else if (!hostExists(glusterServers, getVds())) {
+                        if (!glusterPeerProbe(upServer.getId(), getVds().getHostName())) {
+                            customLogValues.put("Command", "gluster peer probe " + getVds().getHostName());
+                            setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
+                            return false;
+                        }
                     }
                 }
             }
+            return true;
         }
-        return true;
     }
 
     private boolean hostExists(List<GlusterServerInfo> glusterServers, VDS server) {
