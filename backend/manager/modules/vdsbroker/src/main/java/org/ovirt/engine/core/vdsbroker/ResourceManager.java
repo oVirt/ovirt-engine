@@ -167,7 +167,7 @@ public class ResourceManager {
             }
             if (status != vds.getStatus()) {
                 vdsManager.setStatus(status, vds);
-                vdsManager.UpdateStatisticsData(vds.getStatisticsData());
+                vdsManager.updateStatisticsData(vds.getStatisticsData());
             }
 
             // set pending to 0
@@ -291,7 +291,7 @@ public class ResourceManager {
     public void UpdateVdsStatisticsData(VdsStatistics vdsStatistics) {
         VdsManager vdsManager = GetVdsManager(vdsStatistics.getId());
         if (vdsManager != null) {
-            vdsManager.UpdateStatisticsData(vdsStatistics);
+            vdsManager.updateStatisticsData(vdsStatistics);
         }
     }
 

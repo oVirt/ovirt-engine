@@ -51,7 +51,7 @@ public class HibernateVDSCommand<P extends HibernateVDSCommandParameters> extend
                     public Object runInTransaction() {
                         VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getParameters().getVmId());
                         vmDynamic.setStatus(VMStatus.SavingState);
-                        _vdsManager.UpdateVmDynamic(vmDynamic);
+                        _vdsManager.updateVmDynamic(vmDynamic);
                         return null;
                     }
                 });

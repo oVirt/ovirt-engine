@@ -133,7 +133,7 @@ public class VdsUpdateRunTimeInfo {
 
         if (_saveVdsStatistics) {
             VdsStatistics stat = _vds.getStatisticsData();
-            _vdsManager.UpdateStatisticsData(stat);
+            _vdsManager.updateStatisticsData(stat);
             checkVdsMemoryThreshold(stat);
             checkVdsCpuThreshold(stat);
             checkVdsNetworkThreshold(stat);

@@ -201,7 +201,7 @@ public class VdsManager {
         _vdsProxy = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
     }
 
-    public void UpdateVmDynamic(VmDynamic vmDynamic) {
+    public void updateVmDynamic(VmDynamic vmDynamic) {
         DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
     }
 
@@ -378,7 +378,7 @@ public class VdsManager {
      *
      * @param statisticsData
      */
-    public void UpdateStatisticsData(VdsStatistics statisticsData) {
+    public void updateStatisticsData(VdsStatistics statisticsData) {
         DbFacade.getInstance().getVdsStatisticsDao().update(statisticsData);
     }
 
@@ -593,7 +593,7 @@ public class VdsManager {
                     && handleNetworkException((VDSNetworkException) vdsBrokerCommand.getVDSReturnValue()
                             .getExceptionObject(), vds)) {
                 UpdateDynamicData(vds.getDynamicData());
-                UpdateStatisticsData(vds.getStatisticsData());
+                updateStatisticsData(vds.getStatisticsData());
             }
             throw vdsBrokerCommand.getVDSReturnValue().getExceptionObject();
         } else {
