@@ -2758,4 +2758,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskAlias} alignment is currently being determined.")
     String ACTION_TYPE_FAILED_DISK_IS_USED_BY_GET_ALIGNMENT();
+
+    @DefaultStringValue("Cannot perform ${action}. Another power management action is already in progress.")
+    String POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS();
 }

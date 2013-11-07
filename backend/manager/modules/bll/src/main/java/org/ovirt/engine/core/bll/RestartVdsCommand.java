@@ -4,9 +4,13 @@ import static org.ovirt.engine.core.common.AuditLogType.SYSTEM_FAILED_VDS_RESTAR
 import static org.ovirt.engine.core.common.AuditLogType.SYSTEM_VDS_RESTART;
 import static org.ovirt.engine.core.common.AuditLogType.USER_FAILED_VDS_RESTART;
 import static org.ovirt.engine.core.common.AuditLogType.USER_VDS_RESTART;
+import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__ACTION__RESTART;
+import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__TYPE__HOST;
+import static org.ovirt.engine.core.common.errors.VdcBllMessages.VDS_FENCE_OPERATION_FAILED;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
@@ -19,9 +23,29 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 
+/**
+ * Send a Stop followed by Start action to a power management device.
+ *
+ * This command should be run exclusively on a host for it is assuming that when
+ * a host is down it can mark all VMs as DOWN and start them on other host.
+ * 2 parallel action like that on the same server can lead to a race where
+ * the 1st flow end by starting VMs and the 2nd flow marking them as down and
+ * starting another instance of VMs on other hosts, leading to split-brain where
+ * 2 exact instances of VMs running in 2 different hosts and writing to the same disk.
+ *
+ * In order to make this flow distinct the child commands, Start, FenceManually and Stop
+ * are under the same lock as the parent, preventing other Restart, Start, Stop,FenceVdsManually to interleave.
+ *
+ * @see FenceVdsBaseCommand#restartVdsVms() The critical section restaring the VMs
+ */
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
+
+    private CommandContext commandContext;
+
     protected List<VM> getVmList() {
         return mVmList;
     }
@@ -74,9 +98,10 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         fenceVdsManuallyParams.setStoragePoolId(getVds().getStoragePoolId());
         fenceVdsManuallyParams.setVdsId(vdsId);
         fenceVdsManuallyParams.setSessionId(sessionId);
+        fenceVdsManuallyParams.setParentCommand(VdcActionType.RestartVds);
 
         // if fencing succeeded, call to reset irs in order to try select new spm
-        Backend.getInstance().runInternalAction(VdcActionType.FenceVdsManualy, fenceVdsManuallyParams);
+        Backend.getInstance().runInternalAction(VdcActionType.FenceVdsManualy, fenceVdsManuallyParams, getContext());
     }
 
     private VdcReturnValueBase executeVdsFenceAction(final Guid vdsId,
@@ -86,14 +111,26 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         FenceVdsActionParameters params = new FenceVdsActionParameters(vdsId, fenceAction);
         params.setParentCommand(VdcActionType.RestartVds);
         params.setSessionId(sessionId);
-        return Backend.getInstance().runInternalAction(action, params);
+        return Backend.getInstance().runInternalAction(action, params, getContext());
+    }
+
+    private CommandContext getContext() {
+        if (commandContext == null) {
+            commandContext = new CommandContext(getExecutionContext(), new EngineLock(getExclusiveLocks(), null));
+        }
+        return commandContext;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RESTART);
     }
 
     @Override
     protected void handleError() {
-        addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RESTART);
+        addCanDoActionMessage(VDS_FENCE_OPERATION_FAILED);
+        addCanDoActionMessage(VAR__TYPE__HOST);
+        addCanDoActionMessage(VAR__ACTION__RESTART);
         log.errorFormat("Failed to run RestartVdsCommand on vds :{0}", getVdsName());
     }
 
@@ -119,4 +156,5 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
     @Override
     protected void handleSpecificCommandActions() {
     }
+
 }

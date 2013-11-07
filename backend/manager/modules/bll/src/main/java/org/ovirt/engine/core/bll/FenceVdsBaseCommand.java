@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -25,6 +27,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
@@ -596,5 +600,16 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         public void setSucceeded(boolean succeeded) {
             this.succeeded = succeeded;
         }
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return createFenceExclusiveLocksMap(getVdsId());
+    }
+
+    public static Map<String, Pair<String, String>> createFenceExclusiveLocksMap(Guid vdsId) {
+        return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
+                LockingGroup.VDS_FENCE,
+                VdcBllMessages.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
     }
 }

@@ -2,12 +2,23 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
+/**
+ * Send a Start action to a power control device.
+ *
+ * This command should be run mutually exclusive from other fence actions to prevent same action or other fence actions
+ * to clear the VMs and start them.
+ *
+ * @see RestartVdsCommand
+ * @see FenceVdsBaseCommand#restartVdsVms()
+ */
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     public StartVdsCommand(T parameters) {
@@ -43,6 +54,11 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
+    }
+
+    @Override
     protected void handleError() {
         log.errorFormat("Failed to run StartVdsCommand on vds :{0}", getVdsName());
     }
@@ -69,5 +85,12 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
     @Override
     protected int getDelayInSeconds() {
         return Config.<Integer> GetValue(ConfigValues.FenceStartStatusDelayBetweenRetriesInSec);
+    }
+
+    @Override
+    protected void freeLock() {
+        if (getParameters().getParentCommand() != VdcActionType.RestartVds) {
+            super.freeLock();
+        }
     }
 }
