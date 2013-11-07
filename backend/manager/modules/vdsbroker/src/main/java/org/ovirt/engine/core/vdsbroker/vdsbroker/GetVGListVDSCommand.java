@@ -21,7 +21,7 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
     protected void executeVdsBrokerCommand() {
         _result = getBroker().getVGList();
         proceedProxyReturnValue();
-        setReturnValue(ParseVGList(_result.vgList));
+        setReturnValue(parseVGList(_result.vgList));
     }
 
     @Override
@@ -29,7 +29,7 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
         return _result.mStatus;
     }
 
-    protected java.util.ArrayList<StorageDomain> ParseVGList(Map<String, Object>[] vgList) {
+    protected java.util.ArrayList<StorageDomain> parseVGList(Map<String, Object>[] vgList) {
         java.util.ArrayList<StorageDomain> result = new java.util.ArrayList<StorageDomain>(vgList.length);
         for (Map<String, Object> vg : vgList) {
             StorageDomain sDomain = new StorageDomain();
