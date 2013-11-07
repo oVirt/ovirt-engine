@@ -12,6 +12,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
@@ -31,6 +33,7 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
+        void setRefreshButtonVisibility(boolean visible);
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
@@ -50,6 +53,17 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
     @Override
     protected PlaceRequest getMainTabRequest() {
         return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getModelProvider().getModel().getTimer().addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                getView().setRefreshButtonVisibility(!getModelProvider().getModel().getTimer().isActive());
+            }
+        });
     }
 
     @ProxyEvent

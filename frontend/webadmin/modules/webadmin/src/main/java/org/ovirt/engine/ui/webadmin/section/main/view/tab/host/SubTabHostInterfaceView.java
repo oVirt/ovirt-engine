@@ -125,7 +125,6 @@ implements SubTabHostInterfacePresenter.ViewDef {
             }
         });
 
-        table.showRefreshButton();
         //The table items are in the form, so the table itself will never have items, so don't display the 'empty message'
         table.table.setEmptyTableWidget(null);
     }
@@ -136,6 +135,15 @@ implements SubTabHostInterfacePresenter.ViewDef {
         HostInterfaceForm hostInterfaceForm = new HostInterfaceForm(getDetailModel());
         contentPanel.remove(contentPanel.getWidgetCount() - 1);
         contentPanel.add(hostInterfaceForm);
+    }
+
+    @Override
+    public void setRefreshButtonVisibility(boolean visible) {
+        if (visible) {
+            table.showRefreshButton();
+        } else {
+            table.hideRefreshButton();
+        }
     }
 
 }
