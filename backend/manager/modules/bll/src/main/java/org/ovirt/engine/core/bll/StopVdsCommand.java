@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__ACTION__STOP;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -12,6 +14,16 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
+/**
+ * Send a Stop action to a power control device.
+ *
+ * This command should be run mutually exclusive from other fence actions to prevent same action or other fence actions
+ * to clear the VMs and start them.
+ *
+ * @see RestartVdsCommand
+ * @see FenceVdsBaseCommand#restartVdsVms()
+ */
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     public StopVdsCommand(T parameters) {
@@ -49,6 +61,11 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VAR__ACTION__STOP);
+    }
+
+    @Override
     protected void handleError() {
         addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
@@ -82,5 +99,12 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     @Override
     protected int getDelayInSeconds() {
         return Config.<Integer> GetValue(ConfigValues.FenceStopStatusDelayBetweenRetriesInSec);
+    }
+
+    @Override
+    protected void freeLock() {
+        if (getParameters().getParentCommand() != VdcActionType.RestartVds) {
+            super.freeLock();
+        }
     }
 }

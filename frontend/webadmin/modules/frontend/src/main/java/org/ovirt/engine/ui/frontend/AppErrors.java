@@ -2770,4 +2770,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. There is no host that satisfies current scheduling constraints. See bellow for details:")
     String SCHEDULING_ALL_HOSTS_FILTERED_OUT();
+
+    @DefaultStringValue("Cannot perform ${action}. Another power management action is already in progress.")
+    String POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS();
 }
