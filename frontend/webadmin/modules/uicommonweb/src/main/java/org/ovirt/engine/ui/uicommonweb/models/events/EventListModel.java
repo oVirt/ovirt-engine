@@ -169,7 +169,7 @@ public class EventListModel extends ListWithDetailsModel
             }
         });
 
-        SearchParameters params = new SearchParameters(getSearchString(), SearchType.AuditLog);
+        SearchParameters params = new SearchParameters(getSearchString(), SearchType.AuditLog, isCaseSensitiveSearch());
         params.setMaxCount(getSearchPageSize());
         params.setSearchFrom(getLastEvent() != null ? getLastEvent().getaudit_log_id() : 0);
         params.setRefresh(false);

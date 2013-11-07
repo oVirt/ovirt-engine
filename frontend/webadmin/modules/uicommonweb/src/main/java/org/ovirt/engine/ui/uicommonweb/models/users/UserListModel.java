@@ -380,7 +380,7 @@ public class UserListModel extends ListWithDetailsModel
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.DBUser);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.DBUser, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }

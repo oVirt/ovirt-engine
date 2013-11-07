@@ -1559,7 +1559,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VDS);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VDS, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }

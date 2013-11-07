@@ -201,6 +201,16 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         }
     }
 
+    private boolean caseSensitiveSearch = true;
+
+    public boolean isCaseSensitiveSearch() {
+        return caseSensitiveSearch;
+    }
+
+    public void setCaseSensitiveSearch(boolean value) {
+        caseSensitiveSearch = value;
+    }
+
     private String pagingSearchString;
 
     public int getSearchPageNumber()

@@ -131,7 +131,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Quota);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Quota, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }

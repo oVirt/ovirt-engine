@@ -202,7 +202,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Disk);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Disk, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }

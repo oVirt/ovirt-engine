@@ -185,7 +185,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     @Override
     protected void syncSearch() {
         // TODO - fix
-        // SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Profile);
+        // SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Profile, isCaseSensitiveSearch());
         // tempVar.setMaxCount(getSearchPageSize());
         // super.syncSearch(VdcQueryType.Search, tempVar);
 

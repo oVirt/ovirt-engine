@@ -684,6 +684,9 @@ public class CommonModel extends ListModel
             // Transfer a search string to the model.
             model.setSearchString(getEffectiveSearchString());
 
+            // Setting it now currently only to false, for case-insensitive search
+            model.setCaseSensitiveSearch(false);
+
             // Change active list model as neccesary.
             setSelectedItem(model);
 

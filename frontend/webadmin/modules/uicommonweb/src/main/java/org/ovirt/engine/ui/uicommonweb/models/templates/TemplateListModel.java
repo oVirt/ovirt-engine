@@ -271,7 +271,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VmTemplate);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VmTemplate, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }

@@ -258,7 +258,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.StorageDomain);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.StorageDomain, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }

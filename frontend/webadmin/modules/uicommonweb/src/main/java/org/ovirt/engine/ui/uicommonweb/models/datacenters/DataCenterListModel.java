@@ -256,7 +256,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.StoragePool);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.StoragePool, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
 

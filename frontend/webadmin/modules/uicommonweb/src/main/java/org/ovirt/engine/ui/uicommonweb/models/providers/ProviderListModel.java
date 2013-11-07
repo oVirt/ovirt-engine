@@ -149,7 +149,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Provider);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Provider, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
