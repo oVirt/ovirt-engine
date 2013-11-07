@@ -27,7 +27,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
 
     @Override
     protected void executeVmCommand() {
-        if (GetRunningOnVds()) {
+        if (getRunningOnVds()) {
             perform();
             return;
         }
@@ -41,7 +41,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
      * @return <code>true</code> if the virtual machine is running in a any host,
      *   <code>false</code> otherwise
      */
-    protected boolean GetRunningOnVds() {
+    protected boolean getRunningOnVds() {
         // We will need the virtual machine and the status, so it is worth saving references:
         final VM vm = getVm();
         final VMStatus status = vm.getStatus();
