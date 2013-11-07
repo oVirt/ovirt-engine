@@ -129,7 +129,7 @@ public final class VdcEventNotificationUtils {
      *
      * @return
      */
-    public static Map<EventNotificationEntity, HashSet<AuditLogType>> GetNotificationEvents() {
+    public static Map<EventNotificationEntity, HashSet<AuditLogType>> getNotificationEvents() {
         return _eventNotificationTypeMap;
     }
 
@@ -140,7 +140,7 @@ public final class VdcEventNotificationUtils {
      *            The type.
      * @return
      */
-    public static Map<EventNotificationEntity, HashSet<AuditLogType>> GetNotificationEventsByType(
+    public static Map<EventNotificationEntity, HashSet<AuditLogType>> getNotificationEventsByType(
             EventNotificationEntity type) {
         Map<EventNotificationEntity, HashSet<AuditLogType>> map =
                 new HashMap<EventNotificationEntity, HashSet<AuditLogType>>();

@@ -2913,7 +2913,7 @@ public final class AsyncDataProvider {
     }
 
     public static Map<EventNotificationEntity, HashSet<AuditLogType>> getAvailableNotificationEvents() {
-        return VdcEventNotificationUtils.GetNotificationEvents();
+        return VdcEventNotificationUtils.getNotificationEvents();
     }
 
     public static void getNicTypeList(final int osId, Version version, AsyncQuery asyncQuery) {
