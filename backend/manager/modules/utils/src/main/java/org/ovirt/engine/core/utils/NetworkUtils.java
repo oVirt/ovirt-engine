@@ -16,8 +16,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
 
 public final class NetworkUtils {
-    public static int MaxVmInterfaces = 8;
-    public static final String DASH = "-";
     public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
 
     public static String getEngineNetwork() {
