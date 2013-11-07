@@ -169,7 +169,7 @@ public class tags implements Serializable {
         }
     }
 
-    public void UpdateTag(tags from) {
+    public void updateTag(tags from) {
         setdescription(from.getdescription());
         settag_name(from.gettag_name());
     }
