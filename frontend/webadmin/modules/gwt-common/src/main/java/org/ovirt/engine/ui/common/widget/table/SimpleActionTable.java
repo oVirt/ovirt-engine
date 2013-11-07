@@ -126,6 +126,10 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         refreshPanel.setVisible(true);
     }
 
+    public void hideRefreshButton() {
+        refreshPanel.setVisible(false);
+    }
+
     public void showItemsCount() {
         itemsCountLabel.setVisible(true);
     }

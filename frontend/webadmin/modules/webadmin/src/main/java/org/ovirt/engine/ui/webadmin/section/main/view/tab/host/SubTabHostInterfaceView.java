@@ -126,7 +126,6 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
             }
         });
 
-        table.showRefreshButton();
         //The table items are in the form, so the table itself will never have items, so don't display the 'empty message'
         table.table.setEmptyTableWidget(null);
     }
@@ -144,6 +143,15 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         hostInterfaceForm = new HostInterfaceForm(getDetailModel());
         contentPanel.remove(contentPanel.getWidgetCount() - 1);
         contentPanel.add(hostInterfaceForm);
+    }
+
+    @Override
+    public void setRefreshButtonVisibility(boolean visible) {
+        if (visible) {
+            table.showRefreshButton();
+        } else {
+            table.hideRefreshButton();
+        }
     }
 
 }

@@ -2245,8 +2245,7 @@ public class HostInterfaceListModel extends SearchableListModel
         // Setup Networks is only available on 3.1 Clusters, all the other commands (except save network configuration)
         // available only on less than 3.1 Clusters
         if (host != null) {
-            Version v31 = new Version(3, 1);
-            boolean isLessThan31 = host.getVdsGroupCompatibilityVersion().compareTo(v31) < 0;
+            boolean isLessThan31 = host.getVdsGroupCompatibilityVersion().compareTo(Version.v3_1) < 0;
 
             getSetupNetworksCommand().setIsAvailable(!isLessThan31);
 
@@ -2258,6 +2257,14 @@ public class HostInterfaceListModel extends SearchableListModel
             getEditManagementNetworkCommand().setIsAvailable(isLessThan31);
 
             setSelectionAvailable(isLessThan31);
+
+            // disable subtab refresh for pre-3.1 clusters, to avoid interfering with row selection
+            setIsTimerDisabled(isLessThan31);
+            if (isLessThan31) {
+                getTimer().stop();
+            } else {
+                getTimer().start();
+            }
         }
     }
 
