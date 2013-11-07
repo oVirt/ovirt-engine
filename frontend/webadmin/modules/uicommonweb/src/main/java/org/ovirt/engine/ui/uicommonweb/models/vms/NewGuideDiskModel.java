@@ -11,6 +11,6 @@ public class NewGuideDiskModel extends NewDiskModel {
     @Override
     protected void postSave() {
         super.postSave();
-        sourceModel.updateOptions();
+        sourceModel.updateOptions(true);
     }
 }

@@ -32,14 +32,28 @@ public class VmGuideModel extends GuideModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        updateOptions();
+
+        if (getEntity() != null) {
+            startProgress(null);
+            AsyncDataProvider.getVmDiskList(new AsyncQuery(this,  new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        Collection<Disk> disks = (Collection<Disk>) returnValue;
+                        updateOptions(!disks.isEmpty());
+                    }
+                }), getEntity().getId());
+        }
     }
 
-    private void updateOptionsPostData(Collection<Disk> disks) {
+    public void updateOptions(boolean containsDisks) {
+        getCompulsoryActions().clear();
+        getOptionalActions().clear();
+        startProgress(null);
+
         // Add disk action.
         UICommand addDiskAction = new UICommand("AddDisk", this); //$NON-NLS-1$
 
-        if (disks.isEmpty())
+        if (!containsDisks)
         {
             addDiskAction.setTitle(VmConfigureVirtualDisksAction);
             getCompulsoryActions().add(addDiskAction);
@@ -51,25 +65,6 @@ public class VmGuideModel extends GuideModel
         }
 
         stopProgress();
-    }
-
-    public void updateOptions()
-    {
-        getCompulsoryActions().clear();
-        getOptionalActions().clear();
-
-        if (getEntity() != null)
-        {
-            startProgress(null);
-
-            AsyncDataProvider.getVmDiskList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            updateOptionsPostData((Collection<Disk>) returnValue);
-                        }
-                    }), getEntity().getId());
-        }
     }
 
     public void addDisk()
