@@ -2,10 +2,13 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 
 import static org.easymock.EasyMock.expect;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.easymock.IMocksControl;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -13,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvanc
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.MallInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.MemoryStatus;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterTestHelper {
@@ -64,11 +68,26 @@ public class GlusterTestHelper {
     }
 
     protected GlusterVolumeEntity getVolumeEntity(int index) {
-        GlusterVolumeEntity entity = control.createMock(GlusterVolumeEntity.class);
-        expect(entity.getId()).andReturn(volumeId).anyTimes();
-        expect(entity.getName()).andReturn(volumeName).anyTimes();
-        expect(entity.getClusterId()).andReturn(clusterId).anyTimes();
-        return entity;
+        List<GlusterVolumeEntity> volumesList = new ArrayList<>();
+
+        GlusterVolumeEntity entity1 = control.createMock(GlusterVolumeEntity.class);
+        expect(entity1.getId()).andReturn(volumeId).anyTimes();
+        expect(entity1.getName()).andReturn(volumeName).anyTimes();
+        expect(entity1.getClusterId()).andReturn(clusterId).anyTimes();
+        volumesList.add(entity1);
+
+        GlusterAsyncTask task = new GlusterAsyncTask();
+        task.setType(GlusterTaskType.REMOVE_BRICK);
+        task.setStatus(JobExecutionStatus.FINISHED);
+        task.setTaskId(GUIDS[2]);
+        GlusterVolumeEntity entity2 = control.createMock(GlusterVolumeEntity.class);
+        expect(entity2.getId()).andReturn(volumeId).anyTimes();
+        expect(entity2.getName()).andReturn(volumeName).anyTimes();
+        expect(entity2.getClusterId()).andReturn(clusterId).anyTimes();
+        expect(entity2.getAsyncTask()).andReturn(task).anyTimes();
+        volumesList.add(entity2);
+
+        return volumesList.get(index);
     }
 
     protected GlusterVolumeAdvancedDetails getVolumeAdvancedDetailsEntity(int index) {

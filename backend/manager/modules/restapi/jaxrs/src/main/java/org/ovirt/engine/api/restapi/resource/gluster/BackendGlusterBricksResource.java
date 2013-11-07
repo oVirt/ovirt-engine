@@ -24,9 +24,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
@@ -148,12 +150,26 @@ public class BackendGlusterBricksResource
     public Response remove(GlusterBricks bricks) {
         if (bricks.getGlusterBricks().size() > 0) {
             for (GlusterBrick brick : bricks.getGlusterBricks()) {
-                validateParameters(brick, "id");
+                validateParameters(brick, "id|name");
             }
         }
+
         int replicaCount = bricks.isSetReplicaCount() ? bricks.getReplicaCount() : 0;
-        return performAction(VdcActionType.GlusterVolumeRemoveBricks,
-                new GlusterVolumeRemoveBricksParameters(asGuid(getVolumeId()), mapBricks(asGuid(getVolumeId()), bricks), replicaCount));
+
+        GlusterVolumeRemoveBricksParameters params = toParameters(bricks);
+        params.setReplicaCount(replicaCount);
+
+        GlusterVolumeEntity volume =
+                getEntity(GlusterVolumeEntity.class,
+                        VdcQueryType.GetGlusterVolumeById,
+                        new IdQueryParameters(asGuid(getVolumeId())),
+                        "");
+        if (volume.getAsyncTask() != null && volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
+                && volume.getAsyncTask().getStatus() == JobExecutionStatus.FINISHED) {
+            return performAction(VdcActionType.CommitRemoveGlusterVolumeBricks, params);
+        } else {
+            return performAction(VdcActionType.GlusterVolumeRemoveBricks, params);
+        }
     }
 
     @Override
@@ -205,22 +221,25 @@ public class BackendGlusterBricksResource
 
     }
 
-    private GlusterVolumeRemoveBricksParameters toParameters(Action action) {
+    private GlusterVolumeRemoveBricksParameters toParameters(GlusterBricks bricks) {
         GlusterVolumeRemoveBricksParameters params = new GlusterVolumeRemoveBricksParameters();
 
         List<GlusterBrickEntity> entityBricks = new ArrayList<GlusterBrickEntity>();
-        for (GlusterBrick brick : action.getBricks().getGlusterBricks()) {
+        for (GlusterBrick brick : bricks.getGlusterBricks()) {
             GlusterBrickEntity entity = new GlusterBrickEntity();
             entity.setBrickDirectory(brick.getBrickDir());
             entity.setVolumeId(new Guid(getVolumeId()));
             if (brick.getName() != null) {
-                String [] arr = brick.getName().split("\\:");
+                String[] arr = brick.getName().split("\\:");
                 if (arr.length > 1) {
                     entity.setServerName(arr[0]);
                     entity.setBrickDirectory(arr[1]);
                 } else {
                     continue;
                 }
+            }
+            if (brick.getId() != null) {
+                entity.setId(asGuid(brick.getId()));
             }
             entityBricks.add(entity);
         }
@@ -248,7 +267,7 @@ public class BackendGlusterBricksResource
     public Response migrate(Action action) {
         validateParameters(action, "bricks");
         validateBrickNames(action);
-        GlusterVolumeRemoveBricksParameters params = toParameters(action);
+        GlusterVolumeRemoveBricksParameters params = toParameters(action.getBricks());
         return performAction(VdcActionType.StartRemoveGlusterVolumeBricks, params, action, false);
     }
 
@@ -256,7 +275,7 @@ public class BackendGlusterBricksResource
     public Response stopMigrate(Action action) {
         validateParameters(action, "bricks");
         validateBrickNames(action);
-        GlusterVolumeRemoveBricksParameters params = toParameters(action);
+        GlusterVolumeRemoveBricksParameters params = toParameters(action.getBricks());
         return performAction(VdcActionType.StopRemoveGlusterVolumeBricks, params, action, false);
     }
 

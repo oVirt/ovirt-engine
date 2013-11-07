@@ -176,10 +176,33 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
     @Test
     public void testRemove() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { volumeId },
+                helper.getVolumeEntity(0));
+
         setUriInfo(setUpActionExpectations(VdcActionType.GlusterVolumeRemoveBricks,
                 GlusterVolumeRemoveBricksParameters.class,
                 new String[] { "VolumeId", "Bricks" },
                 new Object[] { volumeId, getBricksToRemove() },
+                true,
+                true));
+        verifyRemove(collection.remove(GUIDS[0].toString()));
+    }
+
+    @Test
+    public void testRemoveCommit() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { volumeId },
+                helper.getVolumeEntity(1));
+
+        setUriInfo(setUpActionExpectations(VdcActionType.CommitRemoveGlusterVolumeBricks,
+                GlusterVolumeRemoveBricksParameters.class,
+                new String[] {},
+                new Object[] {},
                 true,
                 true));
         verifyRemove(collection.remove(GUIDS[0].toString()));
@@ -198,7 +221,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
         setUriInfo(setUpActionExpectations(VdcActionType.StartRemoveGlusterVolumeBricks,
                 GlusterVolumeRemoveBricksParameters.class,
-                new String [] {},
+                new String[] {},
                 new Object[] {},
                 true,
                 true));
@@ -386,5 +409,4 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         UriInfo uriInfo = setUpBasicUriExpectations(MIGRATE_BRICKS_ACTION_BASE_URL);
         return uriInfo;
     }
-
 }
