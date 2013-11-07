@@ -41,7 +41,7 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_NOT_EXTERNAL);
         }
-        else if (step != null) {
+        else {
             job = getJobDao().get(step.getJobId());
             if (job == null) {
                 retValue = false;
@@ -79,6 +79,7 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
         return DbFacade.getInstance().getJobDao();
     }
 
+    @Override
     public StepDao getStepDao() {
         return DbFacade.getInstance().getStepDao();
     }
