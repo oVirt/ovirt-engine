@@ -26,7 +26,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
     protected void executeVdsBrokerCommand() {
         _result = getBroker().getStorageDomainStats(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
-        StorageDomain domain = BuildStorageDynamicFromXmlRpcStruct(_result.mStorageStats);
+        StorageDomain domain = buildStorageDynamicFromXmlRpcStruct(_result.mStorageStats);
         domain.setId(getParameters().getStorageDomainId());
         setReturnValue(domain);
     }
@@ -37,7 +37,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
     }
 
     @SuppressWarnings("unchecked")
-    public static StorageDomain BuildStorageDynamicFromXmlRpcStruct(Map<String, Object> xmlRpcStruct) {
+    public static StorageDomain buildStorageDynamicFromXmlRpcStruct(Map<String, Object> xmlRpcStruct) {
         try {
             StorageDomain domain = new StorageDomain();
             if (xmlRpcStruct.containsKey("status")) {
@@ -75,7 +75,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
             return domain;
         } catch (RuntimeException ex) {
             log.errorFormat(
-                    "vdsBroker::BuildStorageDynamicFromXmlRpcStruct::Failed building Storage dynamic, xmlRpcStruct = {0}",
+                    "vdsBroker::buildStorageDynamicFromXmlRpcStruct::Failed building Storage dynamic, xmlRpcStruct = {0}",
                     xmlRpcStruct.toString());
             VDSErrorException outEx = new VDSErrorException(ex);
             log.error(outEx);

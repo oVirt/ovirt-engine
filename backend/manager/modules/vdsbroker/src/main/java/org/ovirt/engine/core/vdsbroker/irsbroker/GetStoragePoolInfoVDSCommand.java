@@ -50,7 +50,7 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
                 xmlRpcStruct.size());
         for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
             Map<String, Object> domainAsStruct = (Map<String, Object>) entry.getValue();
-            StorageDomain sd = GetStorageDomainStatsVDSCommand.BuildStorageDynamicFromXmlRpcStruct(domainAsStruct);
+            StorageDomain sd = GetStorageDomainStatsVDSCommand.buildStorageDynamicFromXmlRpcStruct(domainAsStruct);
             sd.setStoragePoolId(getParameters().getStoragePoolId());
             sd.setId(new Guid(entry.getKey()));
             if (!masterId.equals(Guid.Empty) && masterId.equals(sd.getId())) {
