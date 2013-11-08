@@ -2677,7 +2677,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Advanced Details")
     String advancedDetailsBrick();
 
-    @DefaultStringValue("Server")
+    @DefaultStringValue("Host")
     String serverBricks();
 
     @DefaultStringValue("Brick Directory")
