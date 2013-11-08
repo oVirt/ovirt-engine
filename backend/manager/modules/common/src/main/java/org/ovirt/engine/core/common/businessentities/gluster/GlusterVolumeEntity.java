@@ -373,6 +373,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         result = prime * result + ((options == null) ? 0 : options.hashCode());
         result = prime * result + ((accessProtocols == null) ? 0 : accessProtocols.hashCode());
         result = prime * result + ((bricks == null) ? 0 : bricks.hashCode());
+        result = prime * result + ((asyncTask == null) ? 0 : asyncTask.hashCode());
         return result;
     }
 
@@ -409,6 +410,10 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         }
 
         if (!ListUtils.listsEqual(bricks, volume.getBricks())) {
+            return false;
+        }
+
+        if (!ObjectUtils.objectsEqual(getAsyncTask(), volume.getAsyncTask())) {
             return false;
         }
 

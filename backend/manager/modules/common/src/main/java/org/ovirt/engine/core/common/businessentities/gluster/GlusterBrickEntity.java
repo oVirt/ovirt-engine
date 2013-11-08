@@ -117,6 +117,7 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityW
         result = prime * result + ((brickDirectory == null) ? 0 : brickDirectory.hashCode());
         result = prime * result + ((brickOrder == null) ? 0 : brickOrder.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + ((asyncTask == null) ? 0 : asyncTask.hashCode());
         return result;
     }
 
@@ -132,6 +133,7 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityW
                 && (ObjectUtils.objectsEqual(serverId, brick.getServerId()))
                 && (ObjectUtils.objectsEqual(brickDirectory, brick.getBrickDirectory()))
                 && (ObjectUtils.objectsEqual(brickOrder, brick.getBrickOrder()))
+                && (ObjectUtils.objectsEqual(getAsyncTask(), brick.getAsyncTask()))
                 && status == brick.getStatus());
     }
 
