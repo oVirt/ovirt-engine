@@ -94,7 +94,6 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
     private EngineSSHDialog _dialog;
     private MachineDialogParser _parser;
     private final InstallerMessages _messages;
-    private final PKIResources _pkiResources;
 
     private VDS _vds;
     private boolean _isNode = false;
@@ -835,7 +834,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
 
                     if (org.ovirt.ovirt_host_deploy.constants.Queries.CERTIFICATE_CHAIN.equals(event.name)) {
                         event.value = (
-                            _pkiResources.getAsString(PKIResources.Resource.CACertificate, PKIResources.OutputType.X509_PEM) +
+                            PKIResources.Resource.CACertificate.toString(PKIResources.Format.X509_PEM) +
                             _certificate
                         ).split("\n");
                         _parser.sendResponse(event);
@@ -891,7 +890,6 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         _messages = new InstallerMessages(_vds);
         _dialog = new EngineSSHDialog();
         _parser = new MachineDialogParser();
-        _pkiResources = PKIResources.getInstance();
         _thread = new Thread(
             new Runnable() {
                 @Override

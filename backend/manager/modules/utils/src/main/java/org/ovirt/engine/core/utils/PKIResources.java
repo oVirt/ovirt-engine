@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -15,133 +13,109 @@ import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 
 public class PKIResources {
 
-    public static enum Resource {
-        CACertificate,
-        EngineCertificate
+    private interface IFormatter {
+        String toString(Certificate cert, String alias);
     }
 
-    public static enum OutputType {
-        X509_PEM_CA,
-        X509_PEM,
-        OPENSSH_PUBKEY
+    private static IFormatter formatPEM = new IFormatter() {
+        public String toString(Certificate cert, String alias) {
+            try {
+                return String.format(
+                    (
+                        "-----BEGIN CERTIFICATE-----%1$c" +
+                        "%2$s" +
+                        "-----END CERTIFICATE-----%1$c"
+                    ),
+                    '\n',
+                    new Base64(
+                        76,
+                        new byte[] { (byte)'\n' }
+                    ).encodeToString(
+                        cert.getEncoded()
+                    )
+                );
+            }
+            catch (CertificateEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    };
+
+    private static IFormatter formatOpenSSH = new IFormatter() {
+        public String toString(Certificate cert, String alias) {
+            return OpenSSHUtils.getKeyString(
+                cert.getPublicKey(),
+                alias
+            );
+        }
+    };
+
+    public enum Format {
+
+        X509_PEM_CA("application/x-x509-ca-cert", formatPEM),
+        X509_PEM("application/x-x509-cert", formatPEM),
+        OPENSSH_PUBKEY("text/plain", formatOpenSSH);
+
+        private String contentType;
+        private IFormatter formatter;
+
+        private Format(String contentType, IFormatter formatter) {
+            this.contentType = contentType;
+            this.formatter = formatter;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
+
+        public String toString(Certificate cert, String alias) {
+            return formatter.toString(cert, alias);
+        }
+
+        public String toString(Certificate cert) {
+            return toString(cert, null);
+        }
     }
 
-    private class Details {
-        Certificate cert;
-        OutputType outputType;
-        String alias;
-        Details(File file, OutputType outputType, String alias) {
-            try (InputStream in = new FileInputStream(file)) {
+    public enum Resource {
+        CACertificate(EngineLocalConfig.getInstance().getPKICACert(), Format.X509_PEM_CA, null),
+        EngineCertificate(EngineLocalConfig.getInstance().getPKIEngineCert(), Format.X509_PEM, "ovirt-engine");
+
+        private Certificate cert;
+        private Format defaultFormat;
+        private String defaultAlias;
+        private Resource(File cert, Format defaultFormat, String defaultAlias) {
+            try (InputStream in = new FileInputStream(cert)) {
                 this.cert = CertificateFactory.getInstance("X.509").generateCertificate(in);
-                this.outputType = outputType;
-                this.alias = alias;
+                this.defaultFormat = defaultFormat;
+                this.defaultAlias = defaultAlias;
             }
             catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-        Details(File file, OutputType outputType) {
-            this(file, outputType, null);
-        }
-    }
 
-    private static volatile PKIResources instance;
-    private Map<Resource, Details> resources;
-
-    private PKIResources() {
-        EngineLocalConfig config = EngineLocalConfig.getInstance();
-        resources = new HashMap<Resource, Details>();
-        resources.put(Resource.CACertificate, new Details(config.getPKICACert(), OutputType.X509_PEM_CA));
-        resources.put(Resource.EngineCertificate, new Details(config.getPKIEngineCert(), OutputType.X509_PEM, "ovirt-engine"));
-    }
-
-    public static PKIResources getInstance() {
-        if (instance == null) {
-            synchronized(PKIResources.class) {
-                if (instance == null) {
-                    instance = new PKIResources();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public String getAsString(Resource resource, OutputType outputType, String alias) {
-        try {
-            String ret;
-
-            Details details = resources.get(resource);
-            if (details == null) {
-                throw new IllegalArgumentException("Invalid resource");
-            }
-
-            switch (outputType != null ? outputType : details.outputType) {
-                default:
-                    throw new RuntimeException("Invalid output type");
-
-                case X509_PEM:
-                case X509_PEM_CA:
-                    ret = String.format(
-                        (
-                            "-----BEGIN CERTIFICATE-----%1$c" +
-                            "%2$s" +
-                            "-----END CERTIFICATE-----%1$c"
-                        ),
-                        '\n',
-                        new Base64(
-                            76,
-                            new byte[] { (byte)'\n' }
-                        ).encodeToString(
-                            details.cert.getEncoded()
-                        )
-                    );
-                break;
-                case OPENSSH_PUBKEY:
-                    ret = OpenSSHUtils.getKeyString(
-                        details.cert.getPublicKey(),
-                        alias != null ? alias : details.alias
-                    );
-                break;
-            }
-
-            return ret;
-        }
-        catch (CertificateEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String getAsString(Resource resource, OutputType outputType) {
-        return getAsString(resource, outputType, null);
-    }
-
-    public String getContentType(Resource resource, OutputType outputType) {
-        String ret;
-
-        Details details = resources.get(resource);
-        if (details == null) {
-            throw new IllegalArgumentException("Invalid resource");
+        public String toString(Format format, String alias) {
+            return (format != null ? format : defaultFormat).toString(
+                cert,
+                alias != null ? alias : defaultAlias
+            );
         }
 
-        switch (outputType != null ? outputType : details.outputType) {
-            default:
-                throw new RuntimeException("Invalid output type");
-
-            case X509_PEM:
-                ret = "application/x-x509-cert";
-            break;
-            case X509_PEM_CA:
-                ret = "application/x-x509-ca-cert";
-            break;
-            case OPENSSH_PUBKEY:
-                ret = "text/plain";
-            break;
+        public String toString(Format format) {
+            return toString(format, null);
         }
 
-        return ret;
-    }
+        public String toString() {
+            return toString(null, null);
+        }
 
-    public String getContentType(Resource resource) {
-        return getContentType(resource, null);
+        public String getContentType(Format format) {
+            return (format != null ? format : defaultFormat).getContentType();
+        }
+
+        public String getContentType() {
+            return getContentType(null);
+        }
     }
 }

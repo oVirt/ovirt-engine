@@ -19,17 +19,16 @@ public class PKIResourceServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(PKIResourceServlet.class);
 
     private static Map<String, PKIResources.Resource> resources;
-    private static Map<String, PKIResources.OutputType> formats;
-    private transient PKIResources pkiResources;
+    private static Map<String, PKIResources.Format> formats;
 
     static {
         resources = new HashMap<String, PKIResources.Resource>();
         resources.put("ca-certificate", PKIResources.Resource.CACertificate);
         resources.put("engine-certificate", PKIResources.Resource.EngineCertificate);
-        formats = new HashMap<String, PKIResources.OutputType>();
-        formats.put("X509-PEM", PKIResources.OutputType.X509_PEM);
-        formats.put("X509-PEM-CA", PKIResources.OutputType.X509_PEM_CA);
-        formats.put("OPENSSH-PUBKEY", PKIResources.OutputType.OPENSSH_PUBKEY);
+        formats = new HashMap<String, PKIResources.Format>();
+        formats.put("X509-PEM", PKIResources.Format.X509_PEM);
+        formats.put("X509-PEM-CA", PKIResources.Format.X509_PEM_CA);
+        formats.put("OPENSSH-PUBKEY", PKIResources.Format.OPENSSH_PUBKEY);
     }
 
     private String getMyParameter(String name, HttpServletRequest request) {
@@ -46,47 +45,41 @@ public class PKIResourceServlet extends HttpServlet {
     }
 
     @Override
-    public void init() throws ServletException {
-        pkiResources = PKIResources.getInstance();
-    }
-
-    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        PKIResources.OutputType outputType = null;
-
-        String resource = getMyParameter("resource", request);
-        String format = getMyParameter("format", request);
+        String resourceStr = getMyParameter("resource", request);
+        String formatStr = getMyParameter("format", request);
         String alias = getMyParameter("alias", request);
 
         try {
-            if (resource == null) {
+            if (resourceStr == null) {
                 throw new IllegalArgumentException("Missing resource name");
             }
 
-            PKIResources.Resource r = resources.get(resource);
-            if (r == null) {
-                throw new IllegalArgumentException(String.format("Resource '%1$s' is invalid", resource));
+            PKIResources.Resource resource = resources.get(resourceStr);
+            if (resource == null) {
+                throw new IllegalArgumentException(String.format("Resource '%1$s' is invalid", resourceStr));
             }
 
-            if (format != null) {
-                outputType = formats.get(format);
-                if (outputType == null) {
-                    throw new IllegalArgumentException(String.format("Format '%1$s' is invalid", format));
+            PKIResources.Format format = null;
+            if (formatStr != null) {
+                format = formats.get(formatStr);
+                if (format == null) {
+                    throw new IllegalArgumentException(String.format("Format '%1$s' is invalid", formatStr));
                 }
             }
 
             try (PrintWriter out = response.getWriter()) {
-                response.setContentType(pkiResources.getContentType(r, outputType));
-                out.print(pkiResources.getAsString(r, outputType, alias));
+                response.setContentType(resource.getContentType(format));
+                out.print(resource.toString(format, alias));
             }
         }
         catch(Exception e) {
             log.error(
                 String.format(
                     "Cannot send public key resource '%1$s' format '%2$s'",
-                    resource,
-                    format
+                    resourceStr,
+                    formatStr
                 ),
                 e
             );
