@@ -45,12 +45,12 @@ public class WelcomeServlet extends HttpServlet {
     /**
      * Back-end bean for database access.
      */
-    private BackendLocal backend;
+    private transient BackendLocal backend;
 
     /**
      * The branding manager.
      */
-    private BrandingManager brandingManager;
+    private transient BrandingManager brandingManager;
 
     /**
      * Setter for the {@code BackendLocal} bean.
