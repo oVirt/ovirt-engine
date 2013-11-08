@@ -20,7 +20,7 @@ public class PKIResourceServlet extends HttpServlet {
 
     private static Map<String, PKIResources.Resource> resources;
     private static Map<String, PKIResources.OutputType> formats;
-    private PKIResources pkiResources;
+    private transient PKIResources pkiResources;
 
     static {
         resources = new HashMap<String, PKIResources.Resource>();
