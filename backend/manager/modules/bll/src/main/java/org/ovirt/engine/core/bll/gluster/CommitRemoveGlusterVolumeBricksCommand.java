@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -48,8 +47,8 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
         }
 
-        if (!(GlusterTaskUtils.isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK))
-                || !(GlusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.FINISHED))) {
+        if (!(getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK))
+                || !(getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.FINISHED))) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_FINISHED);
         }
 

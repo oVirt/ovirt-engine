@@ -1,15 +1,14 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
@@ -23,9 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
@@ -40,11 +37,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class GlusterTasksSyncJob extends GlusterJob  {
-    private static final String REBALANCE_IN_PROGRESS = "IN PROGRESS";
-    private static final String REMOVE_BRICK_FAILED = "MIGRATION FAILED";
-    private static final String REMOVE_BRICK_IN_PROGRESS = "MIGRATION IN PROGRESS";
-    private static final String REMOVE_BRICK_FINISHED = "MIGRATION COMPLETE";
-
     private static final Log log = LogFactory.getLog(GlusterTasksSyncJob.class);
 
     private static GlusterTasksSyncJob instance = new GlusterTasksSyncJob();
@@ -61,10 +53,6 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     public GlusterTasksService getProvider() {
         return provider;
-    }
-
-    public JobRepository getJobRepository() {
-        return JobRepositoryFactory.getJobRepository();
     }
 
     public BackendInternal getBackend() {
@@ -84,7 +72,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     private Map<Guid, GlusterAsyncTask> updateTasksInCluster(final VDSGroup cluster) {
-        if (!supportsGlusterAsyncTasksFeature(cluster))
+        if (!getGlusterTaskUtils().supportsGlusterAsyncTasksFeature(cluster))
         {
             return null;
         }
@@ -116,24 +104,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                     }
                 });
             }
-            //update status in step table
-            for (Step step: steps) {
-                if (step.getEndTime() != null) {
-                    //we have already processed the task
-                    continue;
-                }
-                step.setDescription(getTaskMessage(cluster, step.getStepType(), task));
-                step.setStatus(task.getStatus());
-                if (hasTaskCompleted(task)) {
-                    step.markStepEnded(task.getStatus());
-                    endStepJob(step);
-                    releaseVolumeLock(task.getTaskId());
-                } else {
-                    getJobRepository().updateStep(step);
-                }
-            }
-
-
+            getGlusterTaskUtils().updateSteps(cluster, task, steps);
         }
 
         return runningTasks;
@@ -173,7 +144,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     private Guid addAsyncTaskStep(VDSGroup cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
         VdcReturnValueBase result;
         result = getBackend().runInternalAction(VdcActionType.AddInternalStep,
-                new AddStepParameters(execStepId, getTaskMessage(cluster, step, task), step));
+                new AddStepParameters(execStepId, getGlusterTaskUtils().getTaskMessage(cluster, step, task), step));
 
         if (!result.getSucceeded()) {
             //log and return
@@ -199,7 +170,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     private Guid addJob(VDSGroup cluster, GlusterAsyncTask task, VdcActionType actionType) {
         VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddInternalJob,
-                new AddInternalJobParameters(ExecutionMessageDirector.resolveJobMessage(actionType, getMessageMap(cluster, task)),
+                new AddInternalJobParameters(ExecutionMessageDirector.resolveJobMessage(actionType, getGlusterTaskUtils().getMessageMap(cluster, task)),
                         actionType, true) );
         if (!result.getSucceeded()) {
             //log and return
@@ -207,19 +178,6 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }
         Guid jobId = (Guid)result.getActionReturnValue();
         return jobId;
-    }
-
-    private void releaseVolumeLock(Guid taskId) {
-        //get volume associated with task
-        GlusterVolumeEntity vol= getVolumeDao().getVolumeByGlusterTask(taskId);
-
-        if (vol != null) {
-            //release lock on volume
-            releaseLock(vol.getId());
-
-        } else {
-            log.debugFormat("Did not find a volume associated with task {0}", taskId);
-        }
     }
 
     private void updateVolumeBricksAndLock(VDSGroup cluster, GlusterAsyncTask task) {
@@ -266,83 +224,11 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }
     }
 
-    protected void endStepJob(Step step) {
-        getJobRepository().updateStep(step);
-        ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
-        ExecutionHandler.endTaskJob(finalContext, isTaskSuccess(step));
+    public GlusterTaskUtils getGlusterTaskUtils() {
+        return GlusterTaskUtils.getInstance();
     }
 
-    private static boolean isTaskSuccess(Step step) {
-        switch (step.getStatus()) {
-        case ABORTED:
-        case FAILED:
-            return false;
-        case FINISHED:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    private static boolean hasTaskCompleted(GlusterAsyncTask task) {
-        //Remove brick task is marked completed only if committed or aborted.
-        if (JobExecutionStatus.ABORTED == task.getStatus() ||
-                (JobExecutionStatus.FINISHED == task.getStatus() && task.getType() != GlusterTaskType.REMOVE_BRICK)
-                || JobExecutionStatus.FAILED == task.getStatus()) {
-            return true;
-        }
-        return false;
-    }
-
-    private static String getTaskMessage(VDSGroup cluster, StepEnum stepType, GlusterAsyncTask task) {
-        if (task==null) {
-            return null;
-        }
-        Map<String, String> values = getMessageMap(cluster, task);
-
-        return ExecutionMessageDirector.resolveStepMessage(stepType, values);
-    }
-
-    private static Map<String, String> getMessageMap(VDSGroup cluster, GlusterAsyncTask task) {
-        Map<String, String> values = new HashMap<String, String>();
-        values.put(GlusterConstants.CLUSTER, cluster.getName());
-        values.put(GlusterConstants.VOLUME, task.getTaskParameters().getVolumeName());
-        String jobStatus = getJobStatusInfo(task);
-        values.put(GlusterConstants.JOB_STATUS, jobStatus);
-        values.put(GlusterConstants.JOB_INFO, task.getMessage());
-        return values;
-    }
-
-    private static String getJobStatusInfo(GlusterAsyncTask task) {
-        String jobStatus = task.getStatus().toString();
-        if (task.getType() == GlusterTaskType.REMOVE_BRICK) {
-            switch (task.getStatus()) {
-            case FINISHED:
-                jobStatus = REMOVE_BRICK_FINISHED;
-                break;
-            case STARTED:
-                jobStatus = REMOVE_BRICK_IN_PROGRESS;
-                break;
-            case FAILED:
-                jobStatus = REMOVE_BRICK_FAILED;
-                break;
-            default:
-                break;
-            }
-        }
-        if (task.getType() == GlusterTaskType.REBALANCE) {
-            switch (task.getStatus()) {
-            case STARTED:
-                jobStatus = REBALANCE_IN_PROGRESS;
-                break;
-            default:
-                break;
-            }
-        }
-        return jobStatus;
-    }
-
-    private boolean supportsGlusterAsyncTasksFeature(VDSGroup cluster) {
-        return cluster.supportsGlusterService() && GlusterFeatureSupported.glusterAsyncTasks(cluster.getcompatibility_version());
+    public JobRepository getJobRepository() {
+        return JobRepositoryFactory.getJobRepository();
     }
 }

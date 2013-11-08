@@ -47,8 +47,8 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
             return false;
         }
 
-        if (GlusterTaskUtils.isTaskOfType(volume, GlusterTaskType.REBALANCE)
-                && GlusterTaskUtils.isTaskStatus(volume, JobExecutionStatus.STARTED)) {
+        if (getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REBALANCE)
+                && getGlusterTaskUtils().isTaskStatus(volume, JobExecutionStatus.STARTED)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REBALANCE_IN_PROGRESS);
         }
 
@@ -78,5 +78,9 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_STOP_FAILED : errorType;
         }
+    }
+
+    public GlusterTaskUtils getGlusterTaskUtils() {
+        return GlusterTaskUtils.getInstance();
     }
 }

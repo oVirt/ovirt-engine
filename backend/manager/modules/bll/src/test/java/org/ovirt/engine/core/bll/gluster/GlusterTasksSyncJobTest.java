@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.JobRepository;
@@ -80,6 +81,8 @@ public class GlusterTasksSyncJobTest {
     @Mock
     private BackendInternal backend;
 
+    private GlusterTaskUtils taskUtils;
+
     private GlusterAuditLogUtil logUtil;
 
     private GlusterTasksSyncJob tasksSyncJob;
@@ -94,6 +97,7 @@ public class GlusterTasksSyncJobTest {
         MockitoAnnotations.initMocks(this);
         tasksSyncJob = Mockito.spy(GlusterTasksSyncJob.getInstance());
         logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
+        taskUtils = Mockito.spy(GlusterTaskUtils.getInstance());
         doNothing().when(logUtil).logClusterMessage(any(Guid.class),
                                 any(AuditLogType.class));
         doReturn(clusterDao).when(tasksSyncJob).getClusterDao();
@@ -101,11 +105,14 @@ public class GlusterTasksSyncJobTest {
         doReturn(provider).when(tasksSyncJob).getProvider();
         doReturn(stepDao).when(tasksSyncJob).getStepDao();
         doReturn(volumeDao).when(tasksSyncJob).getVolumeDao();
+        doReturn(volumeDao).when(taskUtils).getVolumeDao();
         doReturn(jobRepository).when(tasksSyncJob).getJobRepository();
+        doReturn(jobRepository).when(taskUtils).getJobRepository();
         doReturn(backend).when(tasksSyncJob).getBackend();
+        doReturn(taskUtils).when(tasksSyncJob).getGlusterTaskUtils();
         doNothing().when(tasksSyncJob).releaseLock(any(Guid.class));
-        doNothing().when(tasksSyncJob).endStepJob(any(Step.class));
-
+        doNothing().when(taskUtils).endStepJob(any(Step.class));
+        doNothing().when(taskUtils).releaseLock(any(Guid.class));
     }
 
     @Test
@@ -115,7 +122,7 @@ public class GlusterTasksSyncJobTest {
 
         tasksSyncJob.updateGlusterAsyncTasks();
         Mockito.verify(jobRepository, times(1)).updateStep(any(Step.class));
-        Mockito.verify(tasksSyncJob, times(1)).endStepJob(any(Step.class));
+        Mockito.verify(taskUtils, times(1)).endStepJob(any(Step.class));
     }
 
     @Test
@@ -125,7 +132,7 @@ public class GlusterTasksSyncJobTest {
         Mockito.verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[0], null);
         Mockito.verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[1], null);
         Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
-        Mockito.verify(tasksSyncJob, times(0)).endStepJob(any(Step.class));
+        Mockito.verify(taskUtils, times(0)).endStepJob(any(Step.class));
     }
 
     @Test
@@ -137,7 +144,7 @@ public class GlusterTasksSyncJobTest {
 
         tasksSyncJob.updateGlusterAsyncTasks();
         Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
-        Mockito.verify(tasksSyncJob, times(0)).endStepJob(any(Step.class));
+        Mockito.verify(taskUtils, times(0)).endStepJob(any(Step.class));
         Mockito.verify(backend, times(6)).runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class));
     }
 
@@ -150,7 +157,7 @@ public class GlusterTasksSyncJobTest {
 
         tasksSyncJob.updateGlusterAsyncTasks();
         Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
-        Mockito.verify(tasksSyncJob, times(0)).endStepJob(any(Step.class));
+        Mockito.verify(taskUtils, times(0)).endStepJob(any(Step.class));
         Mockito.verify(backend, times(2)).runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class));
     }
 
@@ -161,7 +168,7 @@ public class GlusterTasksSyncJobTest {
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
         Mockito.verify(jobRepository, times(2)).updateStep(any(Step.class));
-        Mockito.verify(tasksSyncJob, times(0)).endStepJob(any(Step.class));
+        Mockito.verify(taskUtils, times(0)).endStepJob(any(Step.class));
     }
 
     @Test
@@ -170,7 +177,7 @@ public class GlusterTasksSyncJobTest {
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
           Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
-        Mockito.verify(tasksSyncJob, times(2)).endStepJob(any(Step.class));
+        Mockito.verify(taskUtils, times(2)).endStepJob(any(Step.class));
     }
 
     private void prepareMocks() {
@@ -192,7 +199,6 @@ public class GlusterTasksSyncJobTest {
         steps.add(createStep());
         return steps;
     }
-
 
     private Step createStep() {
         Step step = new Step();
@@ -254,5 +260,4 @@ public class GlusterTasksSyncJobTest {
         cluster.setcompatibility_version(v);
         return cluster;
     }
-
 }
