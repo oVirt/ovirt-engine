@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.services;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class PKIResourceServlet extends HttpServlet {
         String format = getMyParameter("format", request);
         String alias = getMyParameter("alias", request);
 
-        try {
+        try (PrintWriter out = response.getWriter()) {
             if (resource == null) {
                 throw new IllegalArgumentException("Missing resource name");
             }
@@ -75,7 +76,8 @@ public class PKIResourceServlet extends HttpServlet {
                 }
             }
 
-            pkiResources.setHttpResponse(response, r, outputType, alias);
+            response.setContentType(pkiResources.getContentType(r, outputType));
+            out.print(pkiResources.getAsString(r, outputType, alias));
         }
         catch(Exception e) {
             log.error(

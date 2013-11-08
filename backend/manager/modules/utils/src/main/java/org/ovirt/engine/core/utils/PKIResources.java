@@ -2,16 +2,12 @@ package org.ovirt.engine.core.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -147,20 +143,5 @@ public class PKIResources {
 
     public String getContentType(Resource resource) {
         return getContentType(resource, null);
-    }
-
-    public void setHttpResponse(HttpServletResponse response, Resource resource, OutputType outputType, String alias) throws IOException {
-        try (PrintWriter out = response.getWriter()) {
-            response.setContentType(getContentType(resource, outputType));
-            out.print(getAsString(resource, outputType, alias));
-        }
-    }
-
-    public void setHttpResponse(HttpServletResponse response, Resource resource, OutputType outputType) throws IOException {
-        setHttpResponse(response, resource, outputType, null);
-    }
-
-    public void setHttpResponse(HttpServletResponse response, Resource resource) throws IOException {
-        setHttpResponse(response, resource, null, null);
     }
 }
