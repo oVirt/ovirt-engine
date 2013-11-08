@@ -50,7 +50,6 @@ public class VolumeBrickListModel extends SearchableListModel {
     public VolumeBrickListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().bricksTitle());
         setHashName("bricks"); //$NON-NLS-1$
-        setIsTimerDisabled(false);
         setAddBricksCommand(new UICommand("Add Bricks", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("Remove Bricks", this)); //$NON-NLS-1$
         setStopRemoveBricksCommand(new UICommand("StopRemoveBricks", this)); //$NON-NLS-1$
@@ -175,10 +174,6 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
         boolean allowRemove = true;
-        boolean allowStopRemove = true;
-        boolean allowCommitRemove = true;
-        boolean allowStatusRemove = true;
-        boolean allowRetain = true;
         boolean allowReplace = true;
         boolean allowAdvanced = true;
 
@@ -213,7 +208,18 @@ public class VolumeBrickListModel extends SearchableListModel {
             }
         }
 
-        // Stop/Commit brick removal can be invoked from the Volume(tab) Activities menu as well
+        getRemoveBricksCommand().setIsExecutionAllowed(allowRemove);
+        getReplaceBrickCommand().setIsExecutionAllowed(allowReplace);
+        getBrickAdvancedDetailsCommand().setIsExecutionAllowed(allowAdvanced);
+    }
+
+    public void updateRemoveBrickActionsAvailability(GlusterVolumeEntity volumeEntity) {
+        boolean allowStopRemove = true;
+        boolean allowCommitRemove = true;
+        boolean allowStatusRemove = true;
+        boolean allowRetain = true;
+
+        // Stop/Commit/Retain brick removal can be invoked from the Volume(tab) Activities menu as well
         // So no need to check if there are any bricks selected or not, command availability
         // will be decided based on the task on the volume
         allowStopRemove =
@@ -234,28 +240,23 @@ public class VolumeBrickListModel extends SearchableListModel {
                 volumeEntity != null && volumeEntity.getAsyncTask() != null
                         && volumeEntity.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
 
-        getRemoveBricksCommand().setIsExecutionAllowed(allowRemove);
         getStopRemoveBricksCommand().setIsExecutionAllowed(allowStopRemove);
         getCommitRemoveBricksCommand().setIsExecutionAllowed(allowCommitRemove);
         getStatusRemoveBricksCommand().setIsExecutionAllowed(allowStatusRemove);
         getRetainBricksCommand().setIsExecutionAllowed(allowRetain);
-        getReplaceBrickCommand().setIsExecutionAllowed(allowReplace);
-        getBrickAdvancedDetailsCommand().setIsExecutionAllowed(allowAdvanced);
     }
 
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
-        getSearchCommand().execute();
-    }
-
-    @Override
-    protected void syncSearch() {
-        if (getEntity() == null) {
-            return;
+        if (getEntity() != null) {
+            GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
+            setItems(glusterVolumeEntity.getBricks());
         }
-        GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
-        setItems(glusterVolumeEntity.getBricks());
+        else {
+            setItems(null);
+        }
+        updateRemoveBrickActionsAvailability((GlusterVolumeEntity) getEntity());
     }
 
     private void checkUpServerAndAddBricks() {
