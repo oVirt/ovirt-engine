@@ -458,6 +458,11 @@ public class GlusterSyncJob extends GlusterJob {
                         volume.getName());
                 return;
             }
+
+            // Set initial brick status as similar to volume status.
+            // As actual brick status is updated by another sync job,
+            // till it happens, this gives better UI experience
+            brick.setStatus(volume.getStatus());
         }
 
         logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_CREATED_FROM_CLI);
