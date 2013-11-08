@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -37,10 +39,19 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class GlusterTaskUtils {
     private static GlusterTaskUtils instance;
 
+    private static final GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
     private static final String REBALANCE_IN_PROGRESS = "IN PROGRESS";
     private static final String REMOVE_BRICK_FAILED = "MIGRATION FAILED";
     private static final String REMOVE_BRICK_IN_PROGRESS = "MIGRATION IN PROGRESS";
     private static final String REMOVE_BRICK_FINISHED = "MIGRATION COMPLETE";
+    private static final Map<GlusterTaskType, String> taskTypeStrMap = new HashMap<>();
+    private static final Map<GlusterTaskType, AuditLogType> taskTypeAuditMsg = new HashMap<>();
+    static {
+        taskTypeStrMap.put(GlusterTaskType.REBALANCE, "Rebalance");
+        taskTypeStrMap.put(GlusterTaskType.REMOVE_BRICK, "Data Migration");
+        taskTypeAuditMsg.put(GlusterTaskType.REBALANCE, AuditLogType.GLUSTER_VOLUME_REBALANCE_FINISHED);
+        taskTypeAuditMsg.put(GlusterTaskType.REMOVE_BRICK, AuditLogType.GLUSTER_VOLUME_MIGRATE_BRICK_DATA_FINISHED);
+    }
 
     private static final Log log = LogFactory.getLog(GlusterTasksSyncJob.class);
 
@@ -191,14 +202,26 @@ public class GlusterTaskUtils {
                 // we have already processed the task
                 continue;
             }
+            JobExecutionStatus oldStatus = step.getStatus();
             step.setDescription(getTaskMessage(cluster, step.getStepType(), task));
             step.setStatus(task.getStatus());
+            eventMessageLogger(task, oldStatus, cluster);
             if (hasTaskCompleted(task)) {
                 step.markStepEnded(task.getStatus());
                 endStepJob(step);
                 releaseVolumeLock(task.getTaskId());
             } else {
                 getJobRepository().updateStep(step);
+            }
+        }
+    }
+
+    public void eventMessageLogger(GlusterAsyncTask task, JobExecutionStatus oldStatus, VDSGroup cluster) {
+        String vol = task.getTaskParameters().getVolumeName();
+        GlusterVolumeEntity volume = getVolumeDao().getByName(cluster.getId(), vol);
+        if (JobExecutionStatus.ABORTED == task.getStatus() || JobExecutionStatus.FINISHED == task.getStatus() || JobExecutionStatus.FAILED == task.getStatus()){
+            if(oldStatus != task.getStatus()){
+                logMessage(cluster.getId(), volume , taskTypeStrMap.get(task.getType()), task.getStatus().name().toLowerCase(), taskTypeAuditMsg.get(task.getType()));
             }
         }
     }
@@ -218,5 +241,13 @@ public class GlusterTaskUtils {
 
     public LockManager getLockManager() {
         return LockManagerFactory.getLockManager();
+    }
+    @SuppressWarnings("serial")
+    private void logMessage(Guid clusterId, GlusterVolumeEntity volume, final String action, final String status, AuditLogType logType) {
+        logUtil.logAuditMessage(clusterId, volume, null, logType, new HashMap<String, String>(){
+            {
+                put("action", action);
+                put("status", status);
+            }});
     }
 }

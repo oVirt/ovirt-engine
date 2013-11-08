@@ -96,6 +96,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_VOLUME_REBALANCE_START, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_REBALANCE_START_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_VOLUME_REBALANCE_FINISHED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_VOLUME_MIGRATE_BRICK_DATA_FINISHED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_STOP_FAILED, AuditLogSeverity.ERROR);
