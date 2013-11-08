@@ -38,7 +38,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     public void template_SelectedItemChanged() {
         super.template_SelectedItemChanged();
-        VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+        VmTemplate template = getModel().getTemplate().getSelectedItem();
 
         if (template == null) {
             return;
@@ -63,9 +63,9 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         boolean parentValidation = super.validate();
         if (getModel().getName().getIsValid()) {
             getModel().getName().validateEntity(new IValidation[] { new NewPoolNameLengthValidation(
-                    (String) getModel().getName().getEntity(),
-                    Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),
-                    (Integer) getModel().getOSType().getSelectedItem()
+                    getModel().getName().getEntity(),
+                    getModel().getNumOfDesktops().getEntity(),
+                    getModel().getOSType().getSelectedItem()
                     ) });
 
             return getModel().getName().getIsValid() && parentValidation;

@@ -2,6 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
 
 	<ui:style  type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmMakeTemplatePopupWidget.WidgetStyle">
@@ -30,16 +31,16 @@
 	</ui:style>
 
 	<g:FlowPanel>
-		<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-		<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-		<e:EntityModelTextBoxEditor ui:field="commentEditor" />
+		<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
+		<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
+		<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
 		<e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" />
 		<e:ListModelListBoxEditor ui:field="quotaEditor" />
 		<g:Label ui:field="disksAllocationLabel" addStyleNames="{style.disksAllocationLabel}" />
 		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="145px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />
 		<g:FlowPanel>
-			<e:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" />
-            <e:EntityModelCheckBoxEditor ui:field="copyVmPermissions" />
+			<ge:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" />
+            <ge:EntityModelCheckBoxEditor ui:field="copyVmPermissions" />
 			<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
 		</g:FlowPanel>
 	</g:FlowPanel>

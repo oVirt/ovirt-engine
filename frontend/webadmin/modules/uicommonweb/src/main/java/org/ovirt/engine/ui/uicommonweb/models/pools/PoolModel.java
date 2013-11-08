@@ -14,7 +14,7 @@ public class PoolModel extends UnitVmModel {
     public PoolModel(VmModelBehaviorBase behavior) {
         super(behavior);
 
-        ArrayList<EntityModel> poolTypeItems = new ArrayList<EntityModel>();
+        ArrayList<EntityModel<VmPoolType>> poolTypeItems = new ArrayList<EntityModel<VmPoolType>>();
 
         EntityModel automaticOption = new EntityModel();
         automaticOption.setTitle(ConstantsManager.getInstance().getConstants().automaticTitle());

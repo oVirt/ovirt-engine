@@ -114,20 +114,19 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             updateDomain();
 
             // Update display protocol selected item
-            EntityModel displayProtocol = null;
+            EntityModel<DisplayType> displayProtocol = null;
             boolean isFirst = true;
-            for (Object item : getModel().getDisplayProtocol().getItems())
+            for (EntityModel<DisplayType> item : getModel().getDisplayProtocol().getItems())
             {
-                EntityModel a = (EntityModel) item;
                 if (isFirst)
                 {
-                    displayProtocol = a;
+                    displayProtocol = item;
                     isFirst = false;
                 }
-                DisplayType dt = (DisplayType) a.getEntity();
+                DisplayType dt = item.getEntity();
                 if (dt == extractDisplayType(vmBase))
                 {
-                    displayProtocol = a;
+                    displayProtocol = item;
                     break;
                 }
             }
@@ -189,8 +188,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         updateCustomPropertySheet();
         updateMinAllocatedMemory();
         updateNumOfSockets();
-        if ((VmTemplate) getModel().getTemplate().getSelectedItem() != null) {
-            VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+        if (getModel().getTemplate().getSelectedItem() != null) {
+            VmTemplate template = getModel().getTemplate().getSelectedItem();
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
         updateMemoryBalloon();
@@ -221,7 +220,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         double overCommitFactor = 100.0 / cluster.getmax_vds_memory_over_commit();
         getModel().getMinAllocatedMemory()
-                .setEntity((int) ((Integer) getModel().getMemSize().getEntity() * overCommitFactor));
+                .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
     }
 
     private void updateTemplate()
@@ -255,7 +254,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     private void postInitTemplate(ArrayList<VmTemplate> templates)
     {
         // If there was some template selected before, try select it again.
-        VmTemplate oldTemplate = (VmTemplate) getModel().getTemplate().getSelectedItem();
+        VmTemplate oldTemplate = getModel().getTemplate().getSelectedItem();
 
         getModel().getTemplate().setItems(templates);
 

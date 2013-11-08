@@ -6,10 +6,10 @@ import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.text.shared.Parser;
 
-public class MemorySizeParser implements Parser<Object> {
+public class MemorySizeParser implements Parser<Integer> {
 
     @Override
-    public Object parse(CharSequence text) throws ParseException {
+    public Integer parse(CharSequence text) throws ParseException {
         MatchResult match = RegExp.compile("(\\d*)\\s*(\\w*)").exec(text.toString()); //$NON-NLS-1$
         String prefix = match.getGroup(1);
         String suffix = match.getGroup(2);

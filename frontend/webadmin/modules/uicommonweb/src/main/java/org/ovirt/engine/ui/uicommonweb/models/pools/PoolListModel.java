@@ -11,15 +11,11 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -46,7 +42,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
-import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -257,12 +252,11 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                             public void eventRaised(Event ev, Object sender, EventArgs args) {
                                 final PoolModel model = behavior.getModel();
 
-                                for (Object item : model.getPoolType().getItems())
+                                for (EntityModel<VmPoolType> item : model.getPoolType().getItems())
                                 {
-                                    EntityModel a = (EntityModel) item;
-                                    if (a.getEntity() == pool.getVmPoolType())
+                                    if (item.getEntity() == pool.getVmPoolType())
                                     {
-                                        model.getPoolType().setSelectedItem(a);
+                                        model.getPoolType().setSelectedItem(item);
                                         break;
                                     }
                                 }
@@ -281,8 +275,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                 else
                                 {
                                     model.getDataCenterWithClustersList()
-                                            .setSelectedItem(Linq.firstOrDefault(Linq.<StoragePool> cast(model.getDataCenterWithClustersList()
-                                                    .getItems())));
+                                            .setSelectedItem(Linq.firstOrDefault(model.getDataCenterWithClustersList().getItems()));
                                 }
 
                                 model.getDataCenterWithClustersList().setIsChangable(vm == null);
@@ -427,7 +420,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         final VmPool pool = model.getIsNew() ? new VmPool() : (VmPool) Cloner.clone(getSelectedItem());
 
-        final String name = (String) model.getName().getEntity();
+        final String name = model.getName().getEntity();
 
         // Check name unicitate.
         AsyncDataProvider.isPoolNameUnique(new AsyncQuery(this,
@@ -447,19 +440,19 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         }
 
                         // Save changes.
-                        pool.setName((String) model.getName().getEntity());
-                        pool.setVmPoolDescription((String) model.getDescription().getEntity());
+                        pool.setName(model.getName().getEntity());
+                        pool.setVmPoolDescription(model.getDescription().getEntity());
                         pool.setVdsGroupId(model.getSelectedCluster().getId());
-                        pool.setComment((String) model.getComment().getEntity());
-                        pool.setPrestartedVms(model.getPrestartedVms().asConvertible().integer());
-                        pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().asConvertible().integer());
+                        pool.setComment(model.getComment().getEntity());
+                        pool.setPrestartedVms(model.getPrestartedVms().getEntity());
+                        pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().getEntity());
 
-                        EntityModel poolTypeSelectedItem = (EntityModel) model.getPoolType().getSelectedItem();
-                        pool.setVmPoolType((VmPoolType) poolTypeSelectedItem.getEntity());
+                        EntityModel<VmPoolType> poolTypeSelectedItem = model.getPoolType().getSelectedItem();
+                        pool.setVmPoolType(poolTypeSelectedItem.getEntity());
 
                         Guid default_host;
-                        VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
-                        if ((Boolean) model.getIsAutoAssign().getEntity())
+                        VDS defaultHost = model.getDefaultHost().getSelectedItem();
+                        if (model.getIsAutoAssign().getEntity())
                         {
                             default_host = null;
                         }
@@ -470,58 +463,54 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
 
                         VM vm = new VM();
-                        vm.setVmtGuid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
+                        vm.setVmtGuid((model.getTemplate().getSelectedItem()).getId());
                         vm.setName(name);
-                        vm.setVmOs((Integer) model.getOSType().getSelectedItem());
-                        vm.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
-                        vm.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
-                        vm.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
-                        vm.setSingleQxlPci((Boolean)model.getIsSingleQxlEnabled().getEntity());
-                        vm.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain()
+                        vm.setVmOs(model.getOSType().getSelectedItem());
+                        vm.setDeleteProtected(model.getIsDeleteProtected().getEntity());
+                        vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
+                        vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
+                        vm.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
+                        vm.setVmDomain(model.getDomain().getIsAvailable() ? model.getDomain()
                                 .getSelectedItem() : ""); //$NON-NLS-1$
-                        vm.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
-                        vm.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
+                        vm.setVmMemSizeMb(model.getMemSize().getEntity());
+                        vm.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
                         vm.setVdsGroupId(model.getSelectedCluster().getId());
                         vm.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
-                                .getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
-                                .getSelectedItem()).getTimeZoneKey()
+                                .getSelectedItem() != null) ? model.getTimeZone().getSelectedItem().getTimeZoneKey()
                                 : ""); //$NON-NLS-1$
-                        vm.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
-                        vm.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
-                                / (Integer) model.getNumOfSockets().getSelectedItem());
-                        vm.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
+                        vm.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
+                        vm.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
+                                / model.getNumOfSockets().getSelectedItem());
+                        vm.setUsbPolicy(model.getUsbPolicy().getSelectedItem());
                         vm.setStateless(false);
                         vm.setDefaultBootSequence(model.getBootSequence());
-                        vm.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
+                        vm.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage()
                                 .getSelectedItem() : ""); //$NON-NLS-1$
                         vm.setDedicatedVmForVds(default_host);
-                        vm.setKernelUrl((String) model.getKernel_path().getEntity());
-                        vm.setKernelParams((String) model.getKernel_parameters().getEntity());
-                        vm.setInitrdUrl((String) model.getInitrd_path().getEntity());
-                        vm.setMigrationSupport((MigrationSupport) (model.getMigrationMode().getSelectedItem()));
-                        vm.setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
+                        vm.setKernelUrl(model.getKernel_path().getEntity());
+                        vm.setKernelParams(model.getKernel_parameters().getEntity());
+                        vm.setInitrdUrl(model.getInitrd_path().getEntity());
+                        vm.setMigrationSupport(model.getMigrationMode().getSelectedItem());
+                        vm.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
 
-                        EntityModel displayProtocolSelectedItem =
-                                (EntityModel) model.getDisplayProtocol().getSelectedItem();
-                        vm.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
+                        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
+                        vm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
                         vm.setCustomProperties(model.getCustomPropertySheet().getEntity());
-                        vm.setVmType((VmType) model.getVmType().getSelectedItem());
-                        vm.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
+                        vm.setVmType(model.getVmType().getSelectedItem());
+                        vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
 
                         AddVmPoolWithVmsParameters param =
-                                new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops()
-                                        .asConvertible()
-                                        .integer(), 0);
+                                new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity(), 0);
 
                         param.setStorageDomainId(Guid.Empty);
                         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                                 .getImageToDestinationDomainMap());
-                        param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
-                        param.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
+                        param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                        param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
-                        param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                         if (model.getQuota().getSelectedItem() != null) {
-                            vm.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+                            vm.setQuotaId(model.getQuota().getSelectedItem().getId());
                         }
 
                         model.startProgress(null);

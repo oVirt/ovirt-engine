@@ -113,8 +113,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         // Filter templates list (include only templates that belong to the selected datacenter)
         ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
         VmTemplate blankTemplate = null;
-        DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool selectedDataCenter = dataCenterWithCluster.getDataCenter();
         Guid selectedDataCenterId = selectedDataCenter.getId();
         if (selectedDataCenterId == null) {
@@ -148,7 +147,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         }
 
         // If there was some template selected before, try select it again.
-        VmTemplate oldTemplate = (VmTemplate) getModel().getTemplate().getSelectedItem();
+        VmTemplate oldTemplate = getModel().getTemplate().getSelectedItem();
 
         getModel().getTemplate().setItems(templatesList);
 

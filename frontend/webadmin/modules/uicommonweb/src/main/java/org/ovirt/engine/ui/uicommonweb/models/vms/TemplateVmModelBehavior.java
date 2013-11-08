@@ -68,7 +68,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
 
                                                         @Override
                                                         public void onSuccess(Object model, Object returnValue) {
-                                                            getModel().getIsSoundcardEnabled().setEntity(returnValue);
+                                                            getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
                                                             initTemplate();
                                                             initCdImage();
                                                         }
@@ -89,7 +89,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                 UnitVmModel model = (UnitVmModel) target;
                 @SuppressWarnings("unchecked")
                 Collection<VmWatchdog> watchdogs =
-                        (Collection<VmWatchdog>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        ((VdcQueryReturnValue) returnValue).getReturnValue();
                 for (VmWatchdog watchdog : watchdogs) {
                     model.getWatchdogAction().setSelectedItem(watchdog.getAction().name().toLowerCase());
                     model.getWatchdogModel().setSelectedItem(watchdog.getModel().name());
@@ -179,14 +179,13 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getProvisioning().setIsAvailable(false);
 
         // Select display protocol.
-        for (Object item : getModel().getDisplayProtocol().getItems())
+        for (EntityModel<DisplayType> model : getModel().getDisplayProtocol().getItems())
         {
-            EntityModel model = (EntityModel) item;
-            DisplayType displayType = (DisplayType) model.getEntity();
+            DisplayType displayType = model.getEntity();
 
             if (displayType == this.template.getDefaultDisplayType())
             {
-                getModel().getDisplayProtocol().setSelectedItem(item);
+                getModel().getDisplayProtocol().setSelectedItem(model);
                 break;
             }
         }

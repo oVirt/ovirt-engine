@@ -1,17 +1,16 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.text.shared.Parser;
 import java.text.ParseException;
-
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.ToStringEntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -19,9 +18,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.text.shared.Parser;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
 
 public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
@@ -47,18 +44,19 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         initTabAvailabilityListeners(object);
 
         if (object.getIsNew()) {
-            object.getNumOfDesktops().setEntity("1"); //$NON-NLS-1$
+            object.getNumOfDesktops().setEntity(1);
             prestartedVmsEditor.setEnabled(false);
         }
     }
 
     @Override
     protected void createNumOfDesktopEditors() {
-        numOfVmsEditor = new EntityModelTextBoxEditor();
-        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor(new EntityModelRenderer(), new Parser<Object>() {
+        numOfVmsEditor = new IntegerEntityModelTextBoxEditor();
+        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor<Integer>(
+                new ToStringEntityModelRenderer<Integer>(), new Parser<Integer>() {
 
             @Override
-            public Object parse(CharSequence text) throws ParseException {
+            public Integer parse(CharSequence text) throws ParseException {
                 // forwards to the currently active editor
                 return numOfVmsEditor.asEditor().getValue();
             }

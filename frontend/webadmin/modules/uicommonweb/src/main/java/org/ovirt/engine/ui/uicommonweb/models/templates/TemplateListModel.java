@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -12,14 +11,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
@@ -44,7 +39,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
-import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -393,7 +387,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             return;
         }
 
-        String name = (String) model.getName().getEntity();
+        String name = model.getName().getEntity();
 
         AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -420,7 +414,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         VmTemplate selectedItem = (VmTemplate) getSelectedItem();
         final VmTemplate template = (VmTemplate) Cloner.clone(selectedItem);
 
-        String name = (String) model.getName().getEntity();
+        String name = model.getName().getEntity();
 
         // Check name unicitate.
         if (!isNameUnique && name.compareToIgnoreCase(template.getName()) != 0)
@@ -434,52 +428,52 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
 
         // Save changes.
-        template.setVmType((VmType) model.getVmType().getSelectedItem());
+        template.setVmType(model.getVmType().getSelectedItem());
         template.setName(name);
-        template.setOsId((Integer) model.getOSType().getSelectedItem());
-        template.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
-        template.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
-        template.setDescription((String) model.getDescription().getEntity());
-        template.setComment((String) model.getComment().getEntity());
-        template.setDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
-        template.setMemSizeMb((Integer) model.getMemSize().getEntity());
-        template.setMinAllocatedMem(((Integer) model.getMinAllocatedMemory().getEntity()));
+        template.setOsId(model.getOSType().getSelectedItem());
+        template.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
+        template.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
+        template.setDescription(model.getDescription().getEntity());
+        template.setComment(model.getComment().getEntity());
+        template.setDomain(model.getDomain().getIsAvailable() ? model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
+        template.setMemSizeMb(model.getMemSize().getEntity());
+        template.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
 
         template.setVdsGroupId((model.getSelectedCluster()).getId());
-        template.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
+        template.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? (model.getTimeZone()
                 .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
-        template.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
-        template.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
-                / (Integer) model.getNumOfSockets().getSelectedItem());
-        template.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-        template.setStateless((Boolean) model.getIsStateless().getEntity());
-        template.setRunAndPause((Boolean) model.getIsRunAndPause().getEntity());
-        template.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
-        template.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
+        template.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
+        template.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
+                / model.getNumOfSockets().getSelectedItem());
+        template.setUsbPolicy(model.getUsbPolicy().getSelectedItem());
+        template.setStateless(model.getIsStateless().getEntity());
+        template.setRunAndPause(model.getIsRunAndPause().getEntity());
+        template.setDeleteProtected(model.getIsDeleteProtected().getEntity());
+        template.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
         template.setDefaultBootSequence(model.getBootSequence());
-        template.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
-        template.setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
-        template.setKernelUrl((String) model.getKernel_path().getEntity());
-        template.setKernelParams((String) model.getKernel_parameters().getEntity());
-        template.setInitrdUrl((String) model.getInitrd_path().getEntity());
-        template.setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
+        template.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
+        template.setAutoStartup(model.getIsHighlyAvailable().getEntity());
+        template.setKernelUrl(model.getKernel_path().getEntity());
+        template.setKernelParams(model.getKernel_parameters().getEntity());
+        template.setInitrdUrl(model.getInitrd_path().getEntity());
+        template.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
         template.setCreatedByUserId(selectedItem.getCreatedByUserId());
-        template.setSingleQxlPci((Boolean)model.getIsSingleQxlEnabled().getEntity());
+        template.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
 
         if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
-            template.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+            template.setQuotaId(model.getQuota().getSelectedItem().getId());
         }
 
-        EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
-        template.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
+        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
+        template.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
 
-        EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
-        template.setPriority((Integer) prioritySelectedItem.getEntity());
+        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
+        template.setPriority(prioritySelectedItem.getEntity());
 
         // host migration configuration
-        VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
-        if ((Boolean) model.getIsAutoAssign().getEntity())
+        VDS defaultHost = model.getDefaultHost().getSelectedItem();
+        if (model.getIsAutoAssign().getEntity())
         {
             template.setDedicatedVmForVds(null);
         }
@@ -488,14 +482,14 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             template.setDedicatedVmForVds(defaultHost.getId());
         }
 
-        template.setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
+        template.setMigrationSupport(model.getMigrationMode().getSelectedItem());
 
         model.startProgress(null);
 
         UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
-        parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+        parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setVmWatchdogToParams(model, parameters);
-        parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+        parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
 
         Frontend.RunAction(VdcActionType.UpdateVmTemplate, parameters,
                 new IFrontendActionAsyncCallback() {
@@ -510,12 +504,12 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, UpdateVmTemplateParameters updateVmParams) {
-        VmWatchdogType wdModel = VmWatchdogType.getByName((String) model.getWatchdogModel()
+        VmWatchdogType wdModel = VmWatchdogType.getByName(model.getWatchdogModel()
                 .getSelectedItem());
         updateVmParams.setUpdateWatchdog(true);
         if(wdModel != null) {
             VmWatchdog vmWatchdog = new VmWatchdog();
-            vmWatchdog.setAction(VmWatchdogAction.getByName((String) model.getWatchdogAction()
+            vmWatchdog.setAction(VmWatchdogAction.getByName(model.getWatchdogAction()
                     .getSelectedItem()));
             vmWatchdog.setModel(wdModel);
             updateVmParams.setWatchdog(vmWatchdog);
@@ -588,7 +582,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     {
         VmTemplate item = (VmTemplate) getSelectedItem();
         ArrayList items =
-                (((ArrayList) getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
+                ((getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
                         : new ArrayList();
 
         boolean blankSelected = isBlankTemplateSelected();

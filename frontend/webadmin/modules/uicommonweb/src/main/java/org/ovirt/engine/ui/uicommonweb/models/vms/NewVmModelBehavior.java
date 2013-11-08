@@ -76,7 +76,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     @Override
     public void template_SelectedItemChanged()
     {
-        VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+        VmTemplate template = getModel().getTemplate().getSelectedItem();
 
         if (template != null)
         {
@@ -114,20 +114,19 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             updateDomain();
 
             // Update display protocol selected item
-            EntityModel displayProtocol = null;
+            EntityModel<DisplayType> displayProtocol = null;
             boolean isFirst = true;
-            for (Object item : getModel().getDisplayProtocol().getItems())
+            for (EntityModel<DisplayType> item : getModel().getDisplayProtocol().getItems())
             {
-                EntityModel a = (EntityModel) item;
                 if (isFirst)
                 {
-                    displayProtocol = a;
+                    displayProtocol = item;
                     isFirst = false;
                 }
-                DisplayType dt = (DisplayType) a.getEntity();
+                DisplayType dt = item.getEntity();
                 if (dt == template.getDefaultDisplayType())
                 {
-                    displayProtocol = a;
+                    displayProtocol = item;
                     break;
                 }
             }
@@ -187,7 +186,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         updateMinAllocatedMemory();
         updateNumOfSockets();
         if (getModel().getTemplate().getSelectedItem() != null) {
-            VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+            VmTemplate template = getModel().getTemplate().getSelectedItem();
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
         updateCpuPinningVisibility();
@@ -231,7 +230,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     @Override
     public void provisioning_SelectedItemChanged()
     {
-        boolean provisioning = (Boolean) getModel().getProvisioning().getEntity();
+        boolean provisioning = getModel().getProvisioning().getEntity();
         getModel().getProvisioningThin_IsSelected().setEntity(!provisioning);
         getModel().getProvisioningClone_IsSelected().setEntity(provisioning);
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
@@ -244,8 +243,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     @Override
     public void updateMinAllocatedMemory()
     {
-        DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         VDSGroup cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
         if (cluster == null) {
             return;
@@ -253,13 +251,12 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
         double overCommitFactor = 100.0 / cluster.getmax_vds_memory_over_commit();
         getModel().getMinAllocatedMemory()
-                .setEntity((int) ((Integer) getModel().getMemSize().getEntity() * overCommitFactor));
+                .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
     }
 
     private void updateTemplate()
     {
-        DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool dataCenter = dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
         if (dataCenter == null) {
             return;
@@ -325,7 +322,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     private void postInitTemplate(ArrayList<VmTemplate> templates)
     {
         // If there was some template selected before, try select it again.
-        VmTemplate oldTemplate = (VmTemplate) getModel().getTemplate().getSelectedItem();
+        VmTemplate oldTemplate = getModel().getTemplate().getSelectedItem();
 
         getModel().getTemplate().setItems(templates);
 
@@ -338,8 +335,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
     public void initCdImage()
     {
-        DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster == null || dataCenterWithCluster.getDataCenter() == null) {
             return;
         }

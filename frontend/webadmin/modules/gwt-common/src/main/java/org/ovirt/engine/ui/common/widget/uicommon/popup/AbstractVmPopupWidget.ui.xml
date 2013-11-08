@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
              xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
              xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
@@ -331,19 +332,19 @@
 									<g:Label ui:field="nameLabel" addStyleNames="{style.nameLabel}" />
 									<d:InfoIcon ui:field="poolNameIcon" addStyleNames="{style.poolNameIcon}" />
 								</g:FlowPanel>
-								<e:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}" contentWidgetStyleName="{style.nameEditorContent}"/>
+								<ge:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}" contentWidgetStyleName="{style.nameEditorContent}"/>
 							</g:FlowPanel>
-							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-							<e:EntityModelTextBoxEditor ui:field="commentEditor" />
+							<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
+							<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
 
 <!-- 						New VM Pool							 -->
-							<e:EntityModelTextBoxEditor ui:field="numOfVmsEditor" />
+							<ge:EntityModelTextBoxEditor ui:field="numOfVmsEditor" />
                             <g:FlowPanel ui:field="newPoolEditVmsPanel" addStyleNames="{style.poolEditVms}">
                             	<g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">
 									<g:Label ui:field="prestartedLabel" addStyleNames="{style.prestartedLabel}" />
 									<d:InfoIcon ui:field="newPoolPrestartedVmsIcon" addStyleNames="{style.prestartedVmsIcon}" />
 								</g:FlowPanel>
-								<e:EntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" addStyleNames="{style.prestartedVmsEditor}" contentWidgetStyleName="{style.prestartedVmsEditorContent}" />
+								<ge:IntegerEntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" addStyleNames="{style.prestartedVmsEditor}" contentWidgetStyleName="{style.prestartedVmsEditorContent}" />
                             </g:FlowPanel>
                             
                             <g:FlowPanel ui:field="newPoolEditMaxAssignedVmsPerUserPanel" addStyleNames="{style.poolEditVms}">
@@ -351,7 +352,7 @@
                                     <g:Label text="{constants.maxAssignedVmsPerUser}" addStyleNames="{style.maxAssignedVmsPerUserLabel}" />
                                     <d:InfoIcon ui:field="newPoolMaxAssignedVmsPerUserIcon" addStyleNames="{style.maxAssignedVmsPerUserIcon}" />
                                 </g:FlowPanel>
-                                <e:EntityModelTextBoxOnlyEditor ui:field="maxAssignedVmsPerUserEditor" addStyleNames="{style.maxAssignedVmsPerUserEditor}" contentWidgetStyleName="{style.maxAssignedVmsPerUserEditorContent}" />
+                                <ge:EntityModelTextBoxOnlyEditor ui:field="maxAssignedVmsPerUserEditor" addStyleNames="{style.maxAssignedVmsPerUserEditor}" contentWidgetStyleName="{style.maxAssignedVmsPerUserEditorContent}" />
                             </g:FlowPanel>
 
 <!--                             Edit VM Pool -->
@@ -361,7 +362,7 @@
 									<d:InfoIcon ui:field="editPoolPrestartedVmsIcon" addStyleNames="{style.prestartedVmsIcon}" />
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="editPrestartedVmsPanel" addStyleNames="{style.editPrestartedVms}">
-									<e:EntityModelTextBoxOnlyEditor ui:field="editPrestartedVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
+									<ge:IntegerEntityModelTextBoxOnlyEditor ui:field="editPrestartedVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
 									<g:ValueLabel ui:field="outOfxInPool" />
 								</g:FlowPanel>
                             </g:FlowPanel>
@@ -369,7 +370,7 @@
                             <g:FlowPanel ui:field="editPoolIncraseNumOfVmsPanel" addStyleNames="{style.poolEditVms}">
 								<g:Label text="{constants.increaseNumberOfVMsInPoolBy}" addStyleNames="{style.increasePrestartedLabel}" />
 								<g:FlowPanel ui:field="editIncreaseVmsPanel" addStyleNames="{style.editIncreaseVms}">
-									<e:EntityModelTextBoxOnlyEditor ui:field="incraseNumOfVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
+									<ge:EntityModelTextBoxOnlyEditor ui:field="incraseNumOfVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
 									<g:Label text="{constants.vms}" addStyleNames="{style.increaseVmsInPoolVms}" />
 								</g:FlowPanel>
                             </g:FlowPanel>
@@ -380,16 +381,16 @@
                                     <d:InfoIcon ui:field="editPoolMaxAssignedVmsPerUserIcon" addStyleNames="{style.maxAssignedVmsPerUserIcon}" />
                                 </g:FlowPanel>
                                 <g:FlowPanel addStyleNames="{style.editMaxAssignedVmsPerUser}">
-                                    <e:EntityModelTextBoxOnlyEditor ui:field="editMaxAssignedVmsPerUserEditor" addStyleNames="{style.editMaxAssignedVmsPerUserEditor}" contentWidgetStyleName="{style.textBox}" />
+                                    <ge:EntityModelTextBoxOnlyEditor ui:field="editMaxAssignedVmsPerUserEditor" addStyleNames="{style.editMaxAssignedVmsPerUserEditor}" contentWidgetStyleName="{style.textBox}" />
                                     <g:Label text="{constants.vms}" addStyleNames="{style.maxAssignedVmsPerUserVms}" />
                                 </g:FlowPanel>
                             </g:FlowPanel>
                         </g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
-							<e:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
-							<e:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
-                            <e:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+							<ge:EntityModelCheckBoxEditor ui:field="isStatelessEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+							<ge:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+							<ge:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+                            <ge:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
 						</g:FlowPanel>
 						<g:FlowPanel ui:field="logicalNetworksEditorPanel" addStyleNames="{style.sectionPanel}">
                             <p:ProfilesInstanceTypeEditor ui:field="profilesInstanceTypeEditor" />
@@ -403,8 +404,8 @@
 			<t:DialogTab ui:field="systemTab">
 				<t:content>
 					<g:FlowPanel>
-                            <e:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
-                            <e:EntityModelTextBoxEditor ui:field="totalvCPUsEditor" />
+                            <ge:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
+                            <ge:EntityModelTextBoxEditor ui:field="totalvCPUsEditor" />
 							<g:FlowPanel addStyleNames="{style.sectionPanel}">
 								<d:AdvancedParametersExpander ui:field="vcpusAdvancedParameterExpander"/>
 								<g:FlowPanel ui:field="vcpusAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
@@ -449,19 +450,19 @@
                                  <g:HorizontalPanel verticalAlignment="middle">
                                  <g:Label text="{constants.monitors}" ui:field="numOfMonitorsLabel" addStyleNames="{style.monitorsLabel}" />
                                  <e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" addStyleNames="{style.monitorsStyles}" />
-                                   <e:EntityModelCheckBoxEditor ui:field="isSingleQxlEnabledEditor" addStyleNames="{style.checkbox}" />
+                                   <ge:EntityModelCheckBoxEditor ui:field="isSingleQxlEnabledEditor" addStyleNames="{style.checkbox}" />
                                  </g:HorizontalPanel>
                               </g:FlowPanel>
                         </g:FlowPanel>
-						<e:EntityModelCheckBoxEditor ui:field="isSmartcardEnabledEditor" addStyleNames="{style.checkbox}" />
+						<ge:EntityModelCheckBoxEditor ui:field="isSmartcardEnabledEditor" addStyleNames="{style.checkbox}" />
 						<g:Label ui:field="nativeUsbWarningMessage" text="{constants.nativeUsbSupportWarning}" addStyleNames="{style.warningMessageLabel}" />
 						<d:AdvancedParametersExpander ui:field="expander"/>
 						<g:FlowPanel ui:field="expanderContent" addStyleNames="{style.expanderContent}">
 							<g:Label addStyleNames="{style.warningLabel}" text="{constants.advancedOptionsLabel}" />
-							<e:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
+							<ge:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 						</g:FlowPanel>
-                        <e:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" addStyleNames="{style.checkbox}" />
-						<e:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" addStyleNames="{style.checkbox}" />
+                        <ge:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" addStyleNames="{style.checkbox}" />
+						<ge:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" addStyleNames="{style.checkbox}" />
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>
@@ -473,7 +474,7 @@
 						<d:InfoIcon ui:field="nonEditableWhileVmNotDownInfo" addStyleNames="{style.labelToCoupleCoupleLeft}"/>
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
 						<g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
-							<e:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
+							<ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
 								addStyleNames="{style.radioButton}" />
                             <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
                                 <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
@@ -484,7 +485,7 @@
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
 						<g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
 							<e:ListModelListBoxEditor ui:field="migrationModeEditor" addStyleNames="{style.migrationSelect}"/>
-							<e:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}" />
+							<ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}" />
 						</g:VerticalPanel>
 					</g:FlowPanel>
 				</t:content>
@@ -495,7 +496,7 @@
 				<t:content>
 					<g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<e:EntityModelCheckBoxEditor ui:field="isHighlyAvailableEditor" addStyleNames="{style.checkbox}" />
+							<ge:EntityModelCheckBoxEditor ui:field="isHighlyAvailableEditor" addStyleNames="{style.checkbox}" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.priorForRunMigrationQueueVmPopup}" />
@@ -521,7 +522,7 @@
                                 <g:Label ui:field="cpuSharesEditor" text="{constants.cpuShares}" addStyleNames="{style.labelToCoupleLabel}"/>
                                 <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
                                     <e:ListModelListBoxOnlyEditor ui:field="cpuSharesAmountSelectionEditor" addStyleNames="{style.labelToCoupleCoupleLeft}" contentWidgetStyleName="{style.cpuSahresValueListBox}" />
-                                    <e:EntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetStyleName="{style.cpuSahresValueTextBox}" />
+                                    <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetStyleName="{style.cpuSahresValueTextBox}" />
                                 </g:FlowPanel>
 							</g:FlowPanel>
 
@@ -529,15 +530,15 @@
                                 <g:Label text="{constants.cpuPinningLabel}" addStyleNames="{style.labelToCoupleLabel}"/>
                                 <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
                                     <d:InfoIcon ui:field="cpuPinningInfo" addStyleNames="{style.labelToCoupleCoupleLeft}"/>
-                                    <e:EntityModelTextBoxOnlyEditor ui:field="cpuPinning" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetStyleName="{style.cpuPinningTextBox}"/>
+                                    <ge:StringEntityModelTextBoxOnlyEditor ui:field="cpuPinning" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetStyleName="{style.cpuPinningTextBox}"/>
                                 </g:FlowPanel>
                             </g:FlowPanel>
 
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanelTight}">
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.memAllocVmPopup}" />
-							<e:EntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" />
-							<e:EntityModelCheckBoxEditor addStyleNames="{style.checkbox}" ui:field="isMemoryBalloonDeviceEnabled"/>
+							<ge:EntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" />
+							<ge:EntityModelCheckBoxEditor addStyleNames="{style.checkbox}" ui:field="isMemoryBalloonDeviceEnabled"/>
 						</g:FlowPanel>
 						<g:FlowPanel ui:field="storageAllocationPanel" addStyleNames="{style.sectionPanelTight}">
 							<g:HorizontalPanel>
@@ -547,12 +548,12 @@
 							<g:HorizontalPanel ui:field="provisionSelectionPanel">
 								<e:ListModelListBoxEditor ui:field="provisioningEditor" addStyleNames="{style.provisioningEditor}" />
 								<g:VerticalPanel>
-									<e:EntityModelRadioButtonEditor ui:field="provisioningThinEditor"/>
-									<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
+									<ge:EntityModelRadioButtonEditor ui:field="provisioningThinEditor"/>
+									<ge:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
 								</g:VerticalPanel>
 							</g:HorizontalPanel>
                             <g:HorizontalPanel>
-                                <e:EntityModelCheckBoxEditor ui:field="isVirtioScsiEnabled" addStyleNames="{style.checkbox}"/>
+                                <ge:EntityModelCheckBoxEditor ui:field="isVirtioScsiEnabled" addStyleNames="{style.checkbox}"/>
                                 <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
                             </g:HorizontalPanel>
 							<g:FlowPanel ui:field="disksAllocationPanel">
@@ -575,7 +576,7 @@
 							<e:ListModelListBoxEditor ui:field="firstBootDeviceEditor" />
 							<e:ListModelListBoxEditor ui:field="secondBootDeviceEditor" />
 							<g:HorizontalPanel addStyleNames="{style.attachCdPanel}" verticalAlignment="ALIGN_MIDDLE">
-								<e:EntityModelCheckBoxEditor label="{constants.attachCdVmPopup}" ui:field="cdAttachedEditor" />
+								<ge:EntityModelCheckBoxEditor label="{constants.attachCdVmPopup}" ui:field="cdAttachedEditor" />
 								<e:ListModelListBoxEditor ui:field="cdImageEditor" />
 								<g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton}">
 	                                <g:upFace image='{resources.refreshButtonImage}' />
@@ -584,9 +585,9 @@
 						</g:FlowPanel>
 						<g:FlowPanel ui:field="linuxBootOptionsPanel" addStyleNames="{style.sectionPanel}" visible="false">
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.linuxBootOptionsVmPopup}" />
-							<e:EntityModelTextBoxEditor ui:field="kernel_pathEditor" />
-							<e:EntityModelTextBoxEditor ui:field="initrd_pathEditor" />
-							<e:EntityModelTextBoxEditor ui:field="kernel_parametersEditor" />
+							<ge:StringEntityModelTextBoxEditor ui:field="kernel_pathEditor" />
+							<ge:StringEntityModelTextBoxEditor ui:field="initrd_pathEditor" />
+							<ge:StringEntityModelTextBoxEditor ui:field="kernel_parametersEditor" />
 						</g:FlowPanel>
 					</g:FlowPanel>
 				</t:content>

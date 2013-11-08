@@ -7,10 +7,10 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
@@ -45,22 +45,22 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @UiField
     @Path(value = "name.entity")
     @WithElementId("name")
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
     @WithElementId("description")
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Path(value = "comment.entity")
     @WithElementId("comment")
-    EntityModelTextBoxEditor commentEditor;
+    StringEntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
     @Path(value = "dataCenterWithClustersList.selectedItem")
     @WithElementId("dataCenterWithCluster")
-    public ListModelTypeAheadListBoxEditor<Object> clusterEditor;
+    public ListModelTypeAheadListBoxEditor<DataCenterWithCluster> clusterEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -70,7 +70,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
     @WithElementId("quota")
-    ListModelListBoxEditor<Object> quotaEditor;
+    ListModelListBoxEditor<Quota> quotaEditor;
 
     @UiField(provided = true)
     @Path(value = "isTemplatePublic.entity")
@@ -120,22 +120,21 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     }
 
     void initListBoxEditors() {
-        clusterEditor = new ListModelTypeAheadListBoxEditor<Object>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+        clusterEditor = new ListModelTypeAheadListBoxEditor<DataCenterWithCluster>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<DataCenterWithCluster>() {
 
                     @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        return ((DataCenterWithCluster) data).getCluster().getName() + "/" //$NON-NLS-1$
-                                + ((DataCenterWithCluster) data).getDataCenter().getName();
+                    public String getReplacementStringNullSafe(DataCenterWithCluster data) {
+                        return data.getCluster().getName() + "/" //$NON-NLS-1$
+                                + data.getDataCenter().getName();
                     }
 
                     @Override
-                    public String getDisplayStringNullSafe(Object data) {
+                    public String getDisplayStringNullSafe(DataCenterWithCluster data) {
 
-                        String clusterName = ((DataCenterWithCluster) data).getCluster().getName();
-                        String dcName = ((DataCenterWithCluster) data).getDataCenter().getName();
-                        String dcDescription =
-                                ((DataCenterWithCluster) data).getDataCenter().getdescription();
+                        String clusterName = data.getCluster().getName();
+                        String dcName = data.getDataCenter().getName();
+                        String dcDescription = data.getDataCenter().getdescription();
                         // description takes priority
                         String dcString = !StringHelper.isNullOrEmpty(dcDescription) ? dcDescription : dcName;
 
@@ -145,10 +144,10 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
                 });
 
-        quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        quotaEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Quota) object).getQuotaName();
+            public String renderNullSafe(Quota object) {
+                return object.getQuotaName();
             }
         });
     }

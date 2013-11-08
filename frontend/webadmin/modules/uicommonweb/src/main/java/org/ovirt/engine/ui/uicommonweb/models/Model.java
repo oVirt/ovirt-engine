@@ -140,13 +140,13 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
-    private EntityModel advancedMode;
+    private EntityModel<Boolean> advancedMode;
 
-    public EntityModel getAdvancedMode() {
+    public EntityModel<Boolean> getAdvancedMode() {
         return advancedMode;
     }
 
-    public void setAdvancedMode(EntityModel advancedMode) {
+    public void setAdvancedMode(EntityModel<Boolean> advancedMode) {
         this.advancedMode = advancedMode;
     }
 

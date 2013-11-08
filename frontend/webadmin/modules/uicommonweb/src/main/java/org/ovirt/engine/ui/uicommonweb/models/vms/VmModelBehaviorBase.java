@@ -77,8 +77,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void dataCenterWithClusterSelectedItemChanged() {
-        DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster == null) {
             return;
 
@@ -142,7 +141,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void setImagesToModel(UnitVmModel model, List<String> images) {
-        String oldCdImage = (String) model.getCdImage().getSelectedItem();
+        String oldCdImage = model.getCdImage().getSelectedItem();
         model.getCdImage().setItems(images);
         model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
                 : Linq.firstOrDefault(images));
@@ -203,7 +202,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public TimeZoneType getTimeZoneType() {
         // can be null as a consequence of setItems on ListModel
-        Integer vmOsType = (Integer) getModel().getOSType().getSelectedItem();
+        Integer vmOsType = getModel().getOSType().getSelectedItem();
         return AsyncDataProvider.isWindowsOsType(vmOsType) ? TimeZoneType.WINDOWS_TIMEZONE
                 : TimeZoneType.GENERAL_TIMEZONE;
     }
@@ -217,7 +216,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         List<String> domains = (List<String>) returnValue;
-                        String oldDomain = (String) behavior.getModel().getDomain().getSelectedItem();
+                        String oldDomain = behavior.getModel().getDomain().getSelectedItem();
                         if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
                         {
                             domains.add(0, oldDomain);
@@ -280,7 +279,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     private void postUpdatePriority()
     {
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
+        List<EntityModel<Integer>> items = new ArrayList<EntityModel<Integer>>();
         EntityModel tempVar = new EntityModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().lowTitle());
         tempVar.setEntity(1);
@@ -295,16 +294,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         items.add(tempVar3);
 
         // If there was some priority selected before, try select it again.
-        EntityModel oldPriority = (EntityModel) getModel().getPriority().getSelectedItem();
+        EntityModel<Integer> oldPriority = getModel().getPriority().getSelectedItem();
 
         getModel().getPriority().setItems(items);
 
         if (oldPriority != null)
         {
-            for (EntityModel item : items)
+            for (EntityModel<Integer> item : items)
             {
-                Integer val1 = (Integer) item.getEntity();
-                Integer val2 = (Integer) oldPriority.getEntity();
+                Integer val1 = item.getEntity();
+                Integer val2 = oldPriority.getEntity();
                 if (val1 != null && val1.equals(val2))
                 {
                     getModel().getPriority().setSelectedItem(item);
@@ -364,12 +363,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             hosts = (ArrayList<VDS>) returnValue;
                         } else if (returnValue instanceof VdcQueryReturnValue
                                 && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof ArrayList) {
-                            hosts = (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         } else {
                             throw new IllegalArgumentException("The return value should be ArrayList<VDS> or VdcQueryReturnValue with return value ArrayList<VDS>"); //$NON-NLS-1$
                         }
 
-                        VDS oldDefaultHost = (VDS) model.getDefaultHost().getSelectedItem();
+                        VDS oldDefaultHost = model.getDefaultHost().getSelectedItem();
                         if (model.getBehavior().getSystemTreeSelectedItem() != null
                                 && model.getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host)
                         {
@@ -470,7 +469,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void initDisks()
     {
-        VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+        VmTemplate template = getModel().getTemplate().getSelectedItem();
 
         AsyncDataProvider.getTemplateDiskList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
@@ -523,7 +522,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+        VmTemplate template = getModel().getTemplate().getSelectedItem();
 
         if (template != null && !template.getId().equals(Guid.Empty))
         {
@@ -542,7 +541,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        StoragePool dataCenter = (StoragePool) getModel().getSelectedDataCenter();
+        StoragePool dataCenter = getModel().getSelectedDataCenter();
         AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -550,7 +549,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
                 ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
 
-                boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
+                boolean provisioning = behavior.getModel().getProvisioning().getEntity();
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
                 Collections.sort(activeStorageDomains, new NameableComparator());
 
@@ -612,8 +611,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 @Override
                                 public void onSuccess(Object model, Object returnValue) {
                                     UnitVmModel vmModel = (UnitVmModel) model;
-                                    ArrayList<Quota> quotaList =
-                                            (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                    ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
                                     if (quotaList != null && !quotaList.isEmpty()) {
                                         vmModel.getQuota().setItems(quotaList);
                                     }
@@ -751,7 +749,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void updateMigrationAvailability() {
-        Boolean haHost = (Boolean) getModel().getIsHighlyAvailable().getEntity();
+        Boolean haHost = getModel().getIsHighlyAvailable().getEntity();
         if (haHost) {
             getModel().getMigrationMode().setChangeProhibitionReason(constants.hostIsHa());
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
@@ -765,18 +763,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getCpuSharesAmountSelection().getSelectedItem() == UnitVmModel.CpuSharesAmount.CUSTOM;
         boolean none =
                 getModel().getCpuSharesAmountSelection().getSelectedItem() == UnitVmModel.CpuSharesAmount.DISABLED;
-        getModel().getCpuSharesAmount().setIsChangable(changeable);
         getModel().getCpuSharesAmount()
                 .setEntity(changeable || none
-                        ? "" //$NON-NLS-1$
-                        : ((UnitVmModel.CpuSharesAmount) getModel().getCpuSharesAmountSelection()
-                        .getSelectedItem()).getValue());
+                        ? null //$NON-NLS-1$
+                        : getModel().getCpuSharesAmountSelection().getSelectedItem().getValue());
     }
 
     public void updateCpuSharesSelection() {
         boolean foundEnum = false;
         for (UnitVmModel.CpuSharesAmount cpuSharesAmount : UnitVmModel.CpuSharesAmount.values()) {
-            if (cpuSharesAmount.getValue() == (Integer)getModel().getCpuSharesAmount().getEntity()) {
+            if (cpuSharesAmount.getValue() == getModel().getCpuSharesAmount().getEntity()) {
                 getModel().getCpuSharesAmountSelection().setSelectedItem(cpuSharesAmount);
                 foundEnum = true;
                 break;
@@ -784,7 +780,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
         if (!foundEnum) {
             // saving the value - because when Custom is selected the value automatically clears.
-            int currentVal = Integer.parseInt(getModel().getCpuSharesAmount().getEntity().toString());
+            Integer currentVal = getModel().getCpuSharesAmount().getEntity();
             getModel().getCpuSharesAmountSelection().setSelectedItem(UnitVmModel.CpuSharesAmount.CUSTOM);
             getModel().getCpuSharesAmount().setEntity(currentVal);
         }
@@ -892,8 +888,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected int getTotalCpuCores() {
         try {
             return getModel().getTotalCPUCores().getEntity() != null ? Integer.parseInt(getModel().getTotalCPUCores()
-                    .getEntity()
-                    .toString()) : 0;
+                    .getEntity()) : 0;
         } catch (NumberFormatException e) {
             return 0;
         }
@@ -985,7 +980,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Frontend.RunQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmId), new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                List<String> consoleDevices = (List<String>) ((VdcQueryReturnValue)returnValue).getReturnValue();
+                List<String> consoleDevices = ((VdcQueryReturnValue)returnValue).getReturnValue();
                 getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
             }
         }));
@@ -1004,7 +999,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                getModel().getIsVirtioScsiEnabled().setEntity(returnValue);
+                getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
             }
         }), vmId);
     }
@@ -1019,7 +1014,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                getModel().getIsSoundcardEnabled().setEntity(returnValue);
+                getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
             }
         }), id);
     }

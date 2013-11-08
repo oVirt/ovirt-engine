@@ -90,7 +90,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                                         @Override
                                         public void onSuccess(Object model, Object returnValue) {
-                                            getModel().getIsSoundcardEnabled().setEntity(returnValue);
+                                            getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
                                         }
                                     }, getModel().getHash()), vm.getId());
                         }
@@ -219,14 +219,13 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getProvisioning().setIsAvailable(false);
 
         // Select display protocol.
-        for (Object item : getModel().getDisplayProtocol().getItems())
+        for (EntityModel<DisplayType> model : getModel().getDisplayProtocol().getItems())
         {
-            EntityModel model = (EntityModel) item;
-            DisplayType displayType = (DisplayType) model.getEntity();
+            DisplayType displayType = model.getEntity();
 
             if (displayType == this.vm.getDefaultDisplayType())
             {
-                getModel().getDisplayProtocol().setSelectedItem(item);
+                getModel().getDisplayProtocol().setSelectedItem(model);
                 break;
             }
         }

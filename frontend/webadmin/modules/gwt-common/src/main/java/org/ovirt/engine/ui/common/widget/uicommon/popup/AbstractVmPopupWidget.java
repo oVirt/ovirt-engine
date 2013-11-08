@@ -1,64 +1,6 @@
 
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
-import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
-import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
-import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
-import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
-import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -81,6 +23,70 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
+import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel> {
 
@@ -125,12 +131,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "dataCenterWithClustersList.selectedItem")
     @WithElementId("dataCenterWithCluster")
-    public ListModelTypeAheadListBoxEditor<Object> dataCenterWithClusterEditor;
+    public ListModelTypeAheadListBoxEditor<DataCenterWithCluster> dataCenterWithClusterEditor;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
     @WithElementId("quota")
-    public ListModelTypeAheadListBoxEditor<Object> quotaEditor;
+    public ListModelTypeAheadListBoxEditor<Quota> quotaEditor;
 
     @UiField
     @Ignore
@@ -139,7 +145,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "name.entity")
     @WithElementId("name")
-    public EntityModelTextBoxOnlyEditor nameEditor;
+    public StringEntityModelTextBoxOnlyEditor nameEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -148,27 +154,27 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "description.entity")
     @WithElementId("description")
-    public EntityModelTextBoxEditor descriptionEditor;
+    public StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Path(value = "comment.entity")
     @WithElementId("comment")
-    public EntityModelTextBoxEditor commentEditor;
+    public StringEntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
     @Path(value = "template.selectedItem")
     @WithElementId("template")
-    public ListModelTypeAheadListBoxEditor<Object> templateEditor;
+    public ListModelTypeAheadListBoxEditor<VmTemplate> templateEditor;
 
     @UiField(provided = true)
     @Path(value = "OSType.selectedItem")
     @WithElementId("osType")
-    public ListModelListBoxEditor<Object> oSTypeEditor;
+    public ListModelListBoxEditor<Integer> oSTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "vmType.selectedItem")
     @WithElementId("vmType")
-    public ListModelListBoxEditor<Object> vmTypeEditor;
+    public ListModelListBoxEditor<VmType> vmTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "isDeleteProtected.entity")
@@ -194,12 +200,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "memSize.entity")
     @WithElementId("memSize")
-    public EntityModelTextBoxEditor memSizeEditor;
+    public EntityModelTextBoxEditor<Integer> memSizeEditor;
 
     @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
     @WithElementId("totalCPUCores")
-    public EntityModelTextBoxEditor totalvCPUsEditor;
+    public EntityModelTextBoxEditor<String> totalvCPUsEditor;
 
     @UiField
     @Ignore
@@ -212,12 +218,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "numOfSockets.selectedItem")
     @WithElementId("numOfSockets")
-    public ListModelListBoxEditor<Object> numOfSocketsEditor;
+    public ListModelListBoxEditor<Integer> numOfSocketsEditor;
 
     @UiField(provided = true)
     @Path(value = "coresPerSocket.selectedItem")
     @WithElementId("coresPerSocket")
-    public ListModelListBoxEditor<Object> corePerSocketEditor;
+    public ListModelListBoxEditor<Integer> corePerSocketEditor;
 
     @UiField(provided = true)
     @Path(value = "isSoundcardEnabled.entity")
@@ -236,7 +242,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "poolType.selectedItem")
     @WithElementId("poolType")
-    public ListModelListBoxEditor<Object> poolTypeEditor;
+    public ListModelListBoxEditor<EntityModel<VmPoolType>> poolTypeEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -257,12 +263,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "prestartedVms.entity")
     @WithElementId("prestartedVms")
-    public EntityModelTextBoxOnlyEditor prestartedVmsEditor;
+    public IntegerEntityModelTextBoxOnlyEditor prestartedVmsEditor;
 
     @UiField(provided = true)
     @Path("maxAssignedVmsPerUser.entity")
     @WithElementId("maxAssignedVmsPerUser")
-    public EntityModelTextBoxOnlyEditor maxAssignedVmsPerUserEditor;
+    public IntegerEntityModelTextBoxOnlyEditor maxAssignedVmsPerUserEditor;
 
     @UiField
     @Ignore
@@ -279,7 +285,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path("numOfDesktops.entity")
     @WithElementId("numOfVms")
-    public EntityModelTextBoxEditor numOfVmsEditor;
+    public EntityModelTextBoxEditor<Integer> numOfVmsEditor;
 
     @UiField
     @Ignore
@@ -305,21 +311,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path("prestartedVms.entity")
     @WithElementId("editPrestartedVms")
-    public EntityModelTextBoxOnlyEditor editPrestartedVmsEditor;
+    public IntegerEntityModelTextBoxOnlyEditor editPrestartedVmsEditor;
 
     @UiField(provided = true)
     @Path("numOfDesktops.entity")
     @WithElementId("incraseNumOfVms")
-    public EntityModelTextBoxOnlyEditor incraseNumOfVmsEditor;
+    public EntityModelTextBoxOnlyEditor<Integer> incraseNumOfVmsEditor;
 
     @UiField(provided = true)
     @Path("maxAssignedVmsPerUser.entity")
     @WithElementId("editMaxAssignedVmsPerUser")
-    public EntityModelTextBoxOnlyEditor editMaxAssignedVmsPerUserEditor;
+    public IntegerEntityModelTextBoxOnlyEditor editMaxAssignedVmsPerUserEditor;
 
     @UiField(provided = true)
     @Path("assignedVms.entity")
-    public ValueLabel<Object> outOfxInPool;
+    public ValueLabel<Integer> outOfxInPool;
 
     // ==Initial run Tab==
     @UiField
@@ -328,12 +334,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "domain.selectedItem")
     @WithElementId("domain")
-    public ListModelListBoxEditor<Object> domainEditor;
+    public ListModelListBoxEditor<String> domainEditor;
 
     @UiField(provided = true)
     @Path(value = "timeZone.selectedItem")
     @WithElementId("timeZone")
-    public ListModelListBoxEditor<Object> timeZoneEditor;
+    public ListModelListBoxEditor<TimeZoneModel> timeZoneEditor;
 
     // ==Console Tab==
     @UiField
@@ -342,22 +348,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "displayProtocol.selectedItem")
     @WithElementId("displayProtocol")
-    public ListModelListBoxEditor<Object> displayProtocolEditor;
+    public ListModelListBoxEditor<EntityModel<DisplayType>> displayProtocolEditor;
 
     @UiField(provided = true)
     @Path(value = "vncKeyboardLayout.selectedItem")
     @WithElementId("vncKeyboardLayout")
-    public ListModelListBoxEditor<Object> vncKeyboardLayoutEditor;
+    public ListModelListBoxEditor<String> vncKeyboardLayoutEditor;
 
     @UiField(provided = true)
     @Path(value = "usbPolicy.selectedItem")
     @WithElementId("usbPolicy")
-    public ListModelListBoxEditor<Object> usbSupportEditor;
+    public ListModelListBoxEditor<UsbPolicy> usbSupportEditor;
 
     @UiField(provided = true)
     @Path(value = "numOfMonitors.selectedItem")
     @WithElementId("numOfMonitors")
-    public ListModelListBoxEditor<Object> numOfMonitorsEditor;
+    public ListModelListBoxEditor<Integer> numOfMonitorsEditor;
 
     @UiField(provided = true)
     @Path(value = "isSingleQxlEnabled.entity")
@@ -401,7 +407,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "migrationMode.selectedItem")
     @WithElementId("migrationMode")
-    public ListModelListBoxEditor<Object> migrationModeEditor;
+    public ListModelListBoxEditor<MigrationSupport> migrationModeEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -418,7 +424,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "defaultHost.selectedItem")
     @WithElementId("defaultHost")
-    public ListModelListBoxEditor<Object> defaultHostEditor;
+    public ListModelListBoxEditor<VDS> defaultHostEditor;
 
     @UiField(provided = true)
     @Path(value = "isAutoAssign.entity")
@@ -431,12 +437,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "cpuPinning.entity")
     @WithElementId("cpuPinning")
-    public EntityModelTextBoxOnlyEditor cpuPinning;
+    public StringEntityModelTextBoxOnlyEditor cpuPinning;
 
     @UiField(provided = true)
     @Path(value = "cpuSharesAmountSelection.selectedItem")
     @WithElementId("cpuSharesAmountSelection")
-    public ListModelListBoxOnlyEditor<Object> cpuSharesAmountSelectionEditor;
+    public ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount> cpuSharesAmountSelectionEditor;
 
     @UiField
     @Ignore
@@ -445,7 +451,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "cpuSharesAmount.entity")
     @WithElementId("cpuSharesAmount")
-    public EntityModelTextBoxOnlyEditor cpuSharesAmountEditor;
+    public IntegerEntityModelTextBoxOnlyEditor cpuSharesAmountEditor;
 
     // ==High Availability Tab==
     @UiField
@@ -465,12 +471,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "watchdogModel.selectedItem")
     @WithElementId("watchdogModel")
-    public ListModelListBoxEditor<Object> watchdogModelEditor;
+    public ListModelListBoxEditor<String> watchdogModelEditor;
 
     @UiField(provided = true)
     @Path(value = "watchdogAction.selectedItem")
     @WithElementId("watchdogAction")
-    public ListModelListBoxEditor<Object> watchdogActionEditor;
+    public ListModelListBoxEditor<String> watchdogActionEditor;
 
     // ==Resource Allocation Tab==
     @UiField
@@ -488,12 +494,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     @Ignore
     @WithElementId("provisioning")
-    public ListModelListBoxEditor<Object> provisioningEditor;
+    public ListModelListBoxEditor provisioningEditor;
 
     @UiField(provided = true)
     @Path(value = "minAllocatedMemory.entity")
     @WithElementId("minAllocatedMemory")
-    public EntityModelTextBoxEditor minAllocatedMemoryEditor;
+    public EntityModelTextBoxEditor<Integer> minAllocatedMemoryEditor;
 
     @UiField(provided = true)
     @Path(value = "memoryBalloonDeviceEnabled.entity")
@@ -533,17 +539,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "firstBootDevice.selectedItem")
     @WithElementId("firstBootDevice")
-    public ListModelListBoxEditor<Object> firstBootDeviceEditor;
+    public ListModelListBoxEditor<EntityModel<BootSequence>> firstBootDeviceEditor;
 
     @UiField(provided = true)
     @Path(value = "secondBootDevice.selectedItem")
     @WithElementId("secondBootDevice")
-    public ListModelListBoxEditor<Object> secondBootDeviceEditor;
+    public ListModelListBoxEditor<EntityModel<BootSequence>> secondBootDeviceEditor;
 
     @UiField(provided = true)
     @Path(value = "cdImage.selectedItem")
     @WithElementId("cdImage")
-    public ListModelListBoxEditor<Object> cdImageEditor;
+    public ListModelListBoxEditor<String> cdImageEditor;
 
     @UiField(provided = true)
     @Path(value = "cdAttached.entity")
@@ -556,17 +562,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "kernel_path.entity")
     @WithElementId("kernelPath")
-    public EntityModelTextBoxEditor kernel_pathEditor;
+    public StringEntityModelTextBoxEditor kernel_pathEditor;
 
     @UiField(provided = true)
     @Path(value = "initrd_path.entity")
     @WithElementId("initrdPath")
-    public EntityModelTextBoxEditor initrd_pathEditor;
+    public StringEntityModelTextBoxEditor initrd_pathEditor;
 
     @UiField(provided = true)
     @Path(value = "kernel_parameters.entity")
     @WithElementId("kernelParameters")
-    public EntityModelTextBoxEditor kernel_parametersEditor;
+    public StringEntityModelTextBoxEditor kernel_parametersEditor;
 
     @UiField
     @Ignore
@@ -614,16 +620,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         initListBoxEditors();
         // Contains a special parser/renderer
-        memSizeEditor = new EntityModelTextBoxEditor(
-                new MemorySizeRenderer(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
-        minAllocatedMemoryEditor = new EntityModelTextBoxEditor(
-                new MemorySizeRenderer(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
+        memSizeEditor = new EntityModelTextBoxEditor<Integer>(
+                new MemorySizeRenderer<Integer>(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
+        minAllocatedMemoryEditor = new EntityModelTextBoxEditor<Integer>(
+                new MemorySizeRenderer<Integer>(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
 
         // TODO: How to align right without creating the widget manually?
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        watchdogModelEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
-        watchdogActionEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
+        watchdogModelEditor = new ListModelListBoxEditor<String>(new ModeSwitchingVisibilityRenderer());
+        watchdogActionEditor = new ListModelListBoxEditor<String>(new ModeSwitchingVisibilityRenderer());
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -678,20 +684,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private void initTextBoxEditors() {
-        descriptionEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        commentEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        totalvCPUsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        numOfVmsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        cpuPinning = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        cpuSharesAmountEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        kernel_pathEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        initrd_pathEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        kernel_parametersEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        nameEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        prestartedVmsEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        editPrestartedVmsEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        maxAssignedVmsPerUserEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
-        editMaxAssignedVmsPerUserEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        descriptionEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        commentEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        totalvCPUsEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        numOfVmsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        cpuPinning = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        cpuSharesAmountEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        kernel_pathEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        initrd_pathEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        kernel_parametersEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        nameEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        prestartedVmsEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        editPrestartedVmsEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        maxAssignedVmsPerUserEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        editMaxAssignedVmsPerUserEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
     }
 
     protected void initPoolSpecificWidgets(CommonApplicationResources resources,
@@ -716,10 +722,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         editPoolMaxAssignedVmsPerUserIcon =
                 new InfoIcon(applicationTemplates.italicText(messages.maxAssignedVmsPerUserHelp()), resources);
 
-        outOfxInPool = new ValueLabel<Object>(new AbstractRenderer<Object>() {
+        outOfxInPool = new ValueLabel<Integer>(new AbstractRenderer<Integer>() {
 
             @Override
-            public String render(Object object) {
+            public String render(Integer object) {
                 return messages.outOfXVMsInPool(object.toString());
             }
 
@@ -733,8 +739,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
      * The default implementation just creates the simple editors
      */
     protected void createNumOfDesktopEditors() {
-        incraseNumOfVmsEditor = new EntityModelTextBoxOnlyEditor();
-        numOfVmsEditor = new EntityModelTextBoxEditor();
+        incraseNumOfVmsEditor = new IntegerEntityModelTextBoxOnlyEditor();
+        numOfVmsEditor = new IntegerEntityModelTextBoxEditor();
     }
 
     protected abstract void generateIds();
@@ -742,99 +748,99 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initListBoxEditors() {
         // General tab
-        dataCenterWithClusterEditor = new ListModelTypeAheadListBoxEditor<Object>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+        dataCenterWithClusterEditor = new ListModelTypeAheadListBoxEditor<DataCenterWithCluster>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<DataCenterWithCluster>() {
 
                     @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        return ((DataCenterWithCluster) data).getCluster().getName() + "/" //$NON-NLS-1$
-                                + ((DataCenterWithCluster) data).getDataCenter().getName();
+                    public String getReplacementStringNullSafe(DataCenterWithCluster data) {
+                        return data.getCluster().getName() + "/" //$NON-NLS-1$
+                                + data.getDataCenter().getName();
                     }
 
                     @Override
-                    public String getDisplayStringNullSafe(Object data) {
+                    public String getDisplayStringNullSafe(DataCenterWithCluster data) {
                         String dcDescription =
-                                ((DataCenterWithCluster) data).getDataCenter().getdescription();
+                                data.getDataCenter().getdescription();
 
                         return typeAheadNameDescriptionTemplateNullSafe(
-                                ((DataCenterWithCluster) data).getCluster().getName(),
+                                data.getCluster().getName(),
                                 !StringHelper.isNullOrEmpty(dcDescription) ? dcDescription
-                                        : ((DataCenterWithCluster) data).getDataCenter().getName()
+                                        : data.getDataCenter().getName()
                         );
                     }
 
                 },
                 new ModeSwitchingVisibilityRenderer());
 
-        quotaEditor = new ListModelTypeAheadListBoxEditor<Object>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+        quotaEditor = new ListModelTypeAheadListBoxEditor<Quota>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Quota>() {
 
                     @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        return ((Quota) data).getQuotaName();
+                    public String getReplacementStringNullSafe(Quota data) {
+                        return data.getQuotaName();
                     }
 
                     @Override
-                    public String getDisplayStringNullSafe(Object data) {
+                    public String getDisplayStringNullSafe(Quota data) {
                         return typeAheadNameDescriptionTemplateNullSafe(
-                                ((Quota) data).getQuotaName(),
-                                ((Quota) data).getDescription()
+                                data.getQuotaName(),
+                                data.getDescription()
                         );
                     }
 
                 },
                 new ModeSwitchingVisibilityRenderer());
 
-        templateEditor = new ListModelTypeAheadListBoxEditor<Object>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+        templateEditor = new ListModelTypeAheadListBoxEditor<VmTemplate>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<VmTemplate>() {
 
                     @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        return ((VmTemplate) data).getName();
+                    public String getReplacementStringNullSafe(VmTemplate data) {
+                        return data.getName();
                     }
 
                     @Override
-                    public String getDisplayStringNullSafe(Object data) {
+                    public String getDisplayStringNullSafe(VmTemplate data) {
                         return typeAheadNameDescriptionTemplateNullSafe(
-                                ((VmTemplate) data).getName(),
-                                ((VmTemplate) data).getDescription()
+                                data.getName(),
+                                data.getDescription()
                         );
                     }
                 },
                 new ModeSwitchingVisibilityRenderer());
 
 
-        oSTypeEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
+        oSTypeEditor = new ListModelListBoxEditor<Integer>(new AbstractRenderer<Integer>() {
             @Override
-            public String render(Object object) {
-                return AsyncDataProvider.getOsName((Integer)object);
+            public String render(Integer object) {
+                return AsyncDataProvider.getOsName(object);
             }
         }, new ModeSwitchingVisibilityRenderer());
-        vmTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
 
-        numOfSocketsEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
-        corePerSocketEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
+        vmTypeEditor = new ListModelListBoxEditor<VmType>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+
+        numOfSocketsEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
+        corePerSocketEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
 
         // Pools
-        poolTypeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        poolTypeEditor = new ListModelListBoxEditor<EntityModel<VmPoolType>>(new NullSafeRenderer<EntityModel<VmPoolType>>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((EntityModel) object).getTitle();
+            public String renderNullSafe(EntityModel<VmPoolType> object) {
+                return object.getTitle();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
         // Windows Sysprep
-        domainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        domainEditor = new ListModelListBoxEditor<String>(new NullSafeRenderer<String>() {
             @Override
-            public String renderNullSafe(Object object) {
+            public String renderNullSafe(String object) {
                 return object.toString();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        timeZoneEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        timeZoneEditor = new ListModelListBoxEditor<TimeZoneModel>(new NullSafeRenderer<TimeZoneModel>() {
             @Override
-            public String renderNullSafe(Object object) {
-                TimeZoneModel timeZone = (TimeZoneModel) object;
+            public String renderNullSafe(TimeZoneModel timeZone) {
                 if (timeZone.isDefault()) {
                     return messages.defaultTimeZoneCaption(timeZone.getDisplayValue());
                 } else {
@@ -844,33 +850,33 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, new ModeSwitchingVisibilityRenderer());
 
         // Console tab
-        displayProtocolEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        displayProtocolEditor = new ListModelListBoxEditor<EntityModel<DisplayType>>(new NullSafeRenderer<EntityModel<DisplayType>>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((EntityModel) object).getTitle();
+            public String renderNullSafe(EntityModel<DisplayType> object) {
+                return object.getTitle();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
         usbSupportEditor =
-                new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
-        numOfMonitorsEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+                new ListModelListBoxEditor<UsbPolicy>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+        numOfMonitorsEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
             @Override
-            public String renderNullSafe(Object object) {
+            public String renderNullSafe(Integer object) {
                 return object.toString();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        vncKeyboardLayoutEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new AbstractRenderer<String>() {
 
             final String globalLayout =
                     (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
 
             @Override
-            public String render(Object object) {
+            public String render(String object) {
                 if (object == null) {
                     return messages.globalVncKeyboardLayoutCaption(globalLayout);
                 } else {
-                    return object.toString();
+                    return object;
                 }
             };
         }, new ModeSwitchingVisibilityRenderer());
@@ -879,15 +885,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
         isAutoAssignEditor =
                 new EntityModelRadioButtonEditor("runVmOnHostGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
-        defaultHostEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        defaultHostEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((VDS) object).getName();
+            public String renderNullSafe(VDS object) {
+                return object.getName();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
         migrationModeEditor =
-                new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxEditor<MigrationSupport>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
 
         // Resource Allocation
         provisioningThinEditor =
@@ -896,29 +902,29 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new EntityModelRadioButtonEditor("provisioningGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
 
         // Boot Options Tab
-        firstBootDeviceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        firstBootDeviceEditor = new ListModelListBoxEditor<EntityModel<BootSequence>>(new NullSafeRenderer<EntityModel<BootSequence>>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((EntityModel) object).getTitle();
+            public String renderNullSafe(EntityModel<BootSequence> object) {
+                return object.getTitle();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        secondBootDeviceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        secondBootDeviceEditor = new ListModelListBoxEditor<EntityModel<BootSequence>>(new NullSafeRenderer<EntityModel<BootSequence>>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((EntityModel) object).getTitle();
+            public String renderNullSafe(EntityModel<BootSequence> object) {
+                return object.getTitle();
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        cdImageEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        cdImageEditor = new ListModelListBoxEditor<String>(new NullSafeRenderer<String>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return (String) object;
+            public String renderNullSafe(String object) {
+                return object;
             }
         }, new ModeSwitchingVisibilityRenderer());
 
         cpuSharesAmountSelectionEditor =
-                new ListModelListBoxOnlyEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -1092,7 +1098,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getIsAutoAssign().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean isAutoAssign = (Boolean) object.getIsAutoAssign().getEntity();
+                boolean isAutoAssign = object.getIsAutoAssign().getEntity();
                 defaultHostEditor.setEnabled(!isAutoAssign);
 
                 // only this is not bind to the model, so needs to listen to the change explicitly
@@ -1117,7 +1123,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
 
                 changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable || isDisksAvailable ||
-                    (Boolean) object.getIsVirtioScsiEnabled().getIsAvailable());
+                    object.getIsVirtioScsiEnabled().getIsAvailable());
             }
         });
 
@@ -1150,7 +1156,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getEditingEnabled().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                Boolean enabled = (Boolean) object.getEditingEnabled().getEntity();
+                Boolean enabled = object.getEditingEnabled().getEntity();
                 if (Boolean.FALSE.equals(enabled)) {
                     disableAllTabs();
                     generalWarningMessage.setText(constants.notAvailableWithNoUpDC());
@@ -1219,10 +1225,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                         resourceAllocationTab.markAsInvalid(null);
                     }
                 } else if ("IsHighlyAvailable".equals(propName)) { //$NON-NLS-1$
-                    changeApplicationLevelVisibility(highAvailabilityTab, (Boolean) vm.getIsHighlyAvailable()
-                            .getEntity());
+                    changeApplicationLevelVisibility(highAvailabilityTab, vm.getIsHighlyAvailable().getEntity());
                 } else if ("IsBootSequenceTabValid".equals(propName)) { //$NON-NLS-1$
-                    if ((Boolean) vm.getIsHighlyAvailable().getEntity()) {
+                    if (vm.getIsHighlyAvailable().getEntity()) {
                         bootOptionsTab.markAsValid();
                     } else {
                         bootOptionsTab.markAsInvalid(null);
@@ -1240,7 +1245,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
                     boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
                     changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable
-                            || isDisksAvailable || (Boolean) vm.getIsVirtioScsiEnabled().getIsAvailable());
+                            || isDisksAvailable || vm.getIsVirtioScsiEnabled().getIsAvailable());
 
                     if (isDisksAvailable) {
                         // Update warning message by disks status

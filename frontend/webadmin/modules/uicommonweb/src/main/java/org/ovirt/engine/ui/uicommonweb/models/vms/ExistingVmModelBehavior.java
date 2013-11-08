@@ -68,7 +68,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                 UnitVmModel model = (UnitVmModel) target;
                 VdcQueryReturnValue val = (VdcQueryReturnValue) returnValue;
                 @SuppressWarnings("unchecked")
-                Collection<VmWatchdog> watchdogs = (Collection<VmWatchdog>) val.getReturnValue();
+                Collection<VmWatchdog> watchdogs = val.getReturnValue();
                 for (VmWatchdog watchdog : watchdogs) {
                     model.getWatchdogAction().setSelectedItem(watchdog.getAction() == null ? null
                             : watchdog.getAction().name().toLowerCase());
@@ -108,7 +108,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                             DataCenterWithCluster dataCenterWithCluster =
                                     new DataCenterWithCluster(null, cluster);
                             model.getDataCenterWithClustersList().setItems(Arrays.asList(dataCenterWithCluster));
-                            model.getDataCenterWithClustersList().setSelectedItem(Arrays.asList(dataCenterWithCluster));
+                            model.getDataCenterWithClustersList().setSelectedItem(dataCenterWithCluster);
                             behavior.initTemplate();
                             behavior.initCdImage();
                             behavior.initSoundCard(vm.getId());
@@ -191,7 +191,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                     public void onSuccess(Object model, Object returnValue) {
                         @SuppressWarnings("unchecked")
                         List<VmWatchdog> watchdogs =
-                                (List<VmWatchdog>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                ((VdcQueryReturnValue) returnValue).getReturnValue();
                         if (watchdogs.isEmpty()) {
                             getModel().getWatchdogAction().setSelectedItem(null);
                             getModel().getWatchdogModel().setSelectedItem(null);
@@ -215,7 +215,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        getModel().getMemoryBalloonDeviceEnabled().setEntity(((VdcQueryReturnValue)returnValue).getReturnValue());
+                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue)returnValue).getReturnValue());
                     }
                 }
         ));
@@ -242,14 +242,13 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getVmtGuid()));
 
         // Select display protocol.
-        for (Object item : getModel().getDisplayProtocol().getItems())
+        for (EntityModel<DisplayType> model : getModel().getDisplayProtocol().getItems())
         {
-            EntityModel model = (EntityModel) item;
-            DisplayType displayType = (DisplayType) model.getEntity();
+            DisplayType displayType = model.getEntity();
 
             if (displayType == vm.getDefaultDisplayType())
             {
-                getModel().getDisplayProtocol().setSelectedItem(item);
+                getModel().getDisplayProtocol().setSelectedItem(model);
                 break;
             }
         }
@@ -293,8 +292,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     @Override
     public void updateMinAllocatedMemory()
     {
-        DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster == null) {
             return;
         }
@@ -306,7 +304,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             return;
         }
 
-        if ((Integer) getModel().getMemSize().getEntity() < vm.getVmMemSizeMb())
+        if (getModel().getMemSize().getEntity() < vm.getVmMemSizeMb())
         {
             double overCommitFactor = 100.0 / cluster.getmax_vds_memory_over_commit();
             getModel().getMinAllocatedMemory()

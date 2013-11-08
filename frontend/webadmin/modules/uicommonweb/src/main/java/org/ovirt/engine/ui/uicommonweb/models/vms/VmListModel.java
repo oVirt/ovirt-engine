@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -31,11 +30,8 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -1304,7 +1300,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else
         {
-            String name = (String) model.getName().getEntity();
+            String name = model.getName().getEntity();
 
             // Check name unicitate.
             AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
@@ -1344,31 +1340,31 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         VM tempVar = new VM();
         tempVar.setId(vm.getId());
-        tempVar.setVmType((VmType) model.getVmType().getSelectedItem());
+        tempVar.setVmType(model.getVmType().getSelectedItem());
         if (model.getQuota().getSelectedItem() != null) {
-            tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+            tempVar.setQuotaId(model.getQuota().getSelectedItem().getId());
         }
-        tempVar.setVmOs((Integer) model.getOSType().getSelectedItem());
-        tempVar.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
-        tempVar.setSingleQxlPci((Boolean) model.getIsSingleQxlEnabled().getEntity());
-        tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
-        tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
-        tempVar.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
-        tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
+        tempVar.setVmOs(model.getOSType().getSelectedItem());
+        tempVar.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
+        tempVar.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
+        tempVar.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
+        tempVar.setVmDomain(model.getDomain().getIsAvailable() ? model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
+        tempVar.setVmMemSizeMb(model.getMemSize().getEntity());
+        tempVar.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
         tempVar.setVdsGroupId(model.getSelectedCluster().getId());
-        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((TimeZoneModel) model.getTimeZone()
+        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? (model.getTimeZone()
                 .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
-        tempVar.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
-        tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
-                / (Integer) model.getNumOfSockets().getSelectedItem());
-        tempVar.setStateless((Boolean) model.getIsStateless().getEntity());
-        tempVar.setRunAndPause(((Boolean) model.getIsRunAndPause().getEntity()));
-        tempVar.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
-        tempVar.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
+        tempVar.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
+        tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
+                / model.getNumOfSockets().getSelectedItem());
+        tempVar.setStateless(model.getIsStateless().getEntity());
+        tempVar.setRunAndPause(model.getIsRunAndPause().getEntity());
+        tempVar.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
+        tempVar.setDeleteProtected(model.getIsDeleteProtected().getEntity());
         tempVar.setDefaultBootSequence(model.getBootSequence());
-        tempVar.setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
-        tempVar.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
+        tempVar.setAutoStartup(model.getIsHighlyAvailable().getEntity());
+        tempVar.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setUsbPolicy(vm.getUsbPolicy());
         tempVar.setInitrdUrl(vm.getInitrdUrl());
         tempVar.setKernelUrl(vm.getKernelUrl());
@@ -1379,24 +1375,24 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         VM newvm = tempVar;
 
-        EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
-        newvm.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
+        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
+        newvm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
 
-        EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
-        newvm.setPriority((Integer) prioritySelectedItem.getEntity());
+        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
+        newvm.setPriority(prioritySelectedItem.getEntity());
 
         AddVmTemplateParameters addVmTemplateParameters =
                 new AddVmTemplateParameters(newvm,
-                        (String) model.getName().getEntity(),
-                        (String) model.getDescription().getEntity());
-        addVmTemplateParameters.setPublicUse((Boolean) model.getIsTemplatePublic().getEntity());
+                        model.getName().getEntity(),
+                        model.getDescription().getEntity());
+        addVmTemplateParameters.setPublicUse(model.getIsTemplatePublic().getEntity());
 
         addVmTemplateParameters.setDiskInfoDestinationMap(
                 model.getDisksAllocationModel().getImageToDestinationDomainMap());
-        addVmTemplateParameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-        addVmTemplateParameters.setCopyVmPermissions((Boolean) model.getCopyPermissions().getEntity());
+        addVmTemplateParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
         model.startProgress(null);
-        addVmTemplateParameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+        addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
@@ -1865,7 +1861,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void preSave()
     {
         final UnitVmModel model = (UnitVmModel) getWindow();
-        final String name = (String) model.getName().getEntity();
+        final String name = model.getName().getEntity();
 
         if (model.getIsNew() == false && selectedItem == null)
         {
@@ -1923,80 +1919,76 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         final UnitVmModel model = (UnitVmModel) getWindow();
         VM selectedItem = (VM) getSelectedItem();
 
-        String name = (String) model.getName().getEntity();
+        String name = model.getName().getEntity();
 
         // Save changes.
-        VmTemplate template = (VmTemplate) model.getTemplate().getSelectedItem();
+        VmTemplate template = model.getTemplate().getSelectedItem();
 
-        getcurrentVm().setVmType((VmType) model.getVmType().getSelectedItem());
+        getcurrentVm().setVmType(model.getVmType().getSelectedItem());
         getcurrentVm().setVmtGuid(template.getId());
         getcurrentVm().setName(name);
         if (model.getQuota().getSelectedItem() != null) {
-            getcurrentVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+            getcurrentVm().setQuotaId(model.getQuota().getSelectedItem().getId());
         }
-        getcurrentVm().setVmOs((Integer) model.getOSType().getSelectedItem());
-        getcurrentVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
-        getcurrentVm().setSingleQxlPci((Boolean) model.getIsSingleQxlEnabled().getEntity());
-        getcurrentVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
-        getcurrentVm().setVmDescription((String) model.getDescription().getEntity());
-        getcurrentVm().setComment((String) model.getComment().getEntity());
-        getcurrentVm().setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem()
+        getcurrentVm().setVmOs(model.getOSType().getSelectedItem());
+        getcurrentVm().setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
+        getcurrentVm().setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
+        getcurrentVm().setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
+        getcurrentVm().setVmDescription(model.getDescription().getEntity());
+        getcurrentVm().setComment(model.getComment().getEntity());
+        getcurrentVm().setVmDomain(model.getDomain().getIsAvailable() ? model.getDomain().getSelectedItem()
                 : ""); //$NON-NLS-1$
-        getcurrentVm().setVmMemSizeMb((Integer) model.getMemSize().getEntity());
-        getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
+        getcurrentVm().setVmMemSizeMb(model.getMemSize().getEntity());
+        getcurrentVm().setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = model.getSelectedCluster().getId();
         getcurrentVm().setVdsGroupId(newClusterID);
-        getcurrentVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
-                .getSelectedItem()).getTimeZoneKey()
+        getcurrentVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? model.getTimeZone()
+                .getSelectedItem().getTimeZoneKey()
                 : ""); //$NON-NLS-1$
-        getcurrentVm().setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
-                / (Integer) model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-        getcurrentVm().setStateless((Boolean) model.getIsStateless().getEntity());
-        getcurrentVm().setRunAndPause((Boolean) model.getIsRunAndPause().getEntity());
-        getcurrentVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
-        getcurrentVm().setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
+        getcurrentVm().setNumOfSockets(model.getNumOfSockets().getSelectedItem());
+        getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
+                / model.getNumOfSockets().getSelectedItem());
+        getcurrentVm().setUsbPolicy(model.getUsbPolicy().getSelectedItem());
+        getcurrentVm().setStateless(model.getIsStateless().getEntity());
+        getcurrentVm().setRunAndPause(model.getIsRunAndPause().getEntity());
+        getcurrentVm().setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
+        getcurrentVm().setDeleteProtected(model.getIsDeleteProtected().getEntity());
         getcurrentVm().setDefaultBootSequence(model.getBootSequence());
-        getcurrentVm().setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem()
+        getcurrentVm().setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem()
                 : ""); //$NON-NLS-1$
-        getcurrentVm().setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
+        getcurrentVm().setAutoStartup(model.getIsHighlyAvailable().getEntity());
 
-        getcurrentVm().setInitrdUrl((String) model.getInitrd_path().getEntity());
-        getcurrentVm().setKernelUrl((String) model.getKernel_path().getEntity());
-        getcurrentVm().setKernelParams((String) model.getKernel_parameters().getEntity());
+        getcurrentVm().setInitrdUrl(model.getInitrd_path().getEntity());
+        getcurrentVm().setKernelUrl(model.getKernel_path().getEntity());
+        getcurrentVm().setKernelParams(model.getKernel_parameters().getEntity());
 
         getcurrentVm().setCustomProperties(model.getCustomPropertySheet().getEntity());
         getcurrentVm().setBalloonEnabled(balloonEnabled(model));
 
-        EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
-        getcurrentVm().setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
+        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
+        getcurrentVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
 
-        EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
-        getcurrentVm().setPriority((Integer) prioritySelectedItem.getEntity());
+        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
+        getcurrentVm().setPriority(prioritySelectedItem.getEntity());
 
-        getcurrentVm().setCpuPinning((String) model.getCpuPinning()
-                .getEntity());
-        getcurrentVm().setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
+        getcurrentVm().setCpuPinning(model.getCpuPinning().getEntity());
+        getcurrentVm().setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
 
-        if (model.getCpuSharesAmount().getIsAvailable()
-                && !model.getCpuSharesAmount().getEntity().toString().equals("")) {  // $NON-NLS-1$
-            try {
-                getcurrentVm().setCpuShares(Integer.parseInt(model.getCpuSharesAmount().getEntity().toString()));
-            } catch (NumberFormatException ignored) {}
+        if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) {  // $NON-NLS-1$
+            getcurrentVm().setCpuShares(model.getCpuSharesAmount().getEntity());
         }
 
-        if ((Boolean) model.getIsAutoAssign().getEntity()) {
+        if (model.getIsAutoAssign().getEntity()) {
             getcurrentVm().setDedicatedVmForVds(null);
         }
         else {
-            VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
+            VDS defaultHost = model.getDefaultHost().getSelectedItem();
             getcurrentVm().setDedicatedVmForVds(defaultHost.getId());
         }
 
-        getcurrentVm().setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
+        getcurrentVm().setMigrationSupport(model.getMigrationMode().getSelectedItem());
 
-        getcurrentVm().setUseHostCpuFlags((Boolean) model.getHostCpu().getEntity());
+        getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
 
         if (model.getIsNew())
         {
@@ -2031,9 +2023,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
                         new ArrayList<DiskImage>(),
                         Guid.Empty);
-                parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
-                parameters.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
+                parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
                 parameters.setBalloonEnabled(balloonEnabled(model));
 
                 setVmWatchdogToParams(model, parameters);
@@ -2047,7 +2039,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     return;
                 }
 
-                if ((Boolean) model.getProvisioning().getEntity())
+                if (model.getProvisioning().getEntity())
                 {
                     model.startProgress(null);
 
@@ -2064,11 +2056,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     vmListModel.getcurrentVm(),
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
-                            param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                            param.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
-                            param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                            param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                            param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+                            param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                             param.setBalloonEnabled(balloonEnabled(model));
-                            param.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
+                            param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                         }
@@ -2086,14 +2078,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
                     params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-                    params.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                    params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                     params.setBalloonEnabled(balloonEnabled(model));
-                    params.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
+                    params.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(params);
-                    params.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                    params.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
+                    params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                    params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
                     setVmWatchdogToParams(model, params);
 
                     Frontend.RunAction(VdcActionType.AddVm, params, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
@@ -2132,10 +2124,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     VmManagementParametersBase updateVmParams =
                                             new VmManagementParametersBase(vmListModel.getcurrentVm());
                                     setVmWatchdogToParams(model, updateVmParams);
-                                    updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled()
+                                    updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled()
                                             .getEntity());
                                     updateVmParams.setBalloonEnabled(balloonEnabled(model));
-                                    updateVmParams.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
+                                    updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
                                     Frontend.RunAction(VdcActionType.UpdateVm,
                                             updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vmListModel.getcurrentVm().getId()), vmListModel);
@@ -2160,27 +2152,27 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
 
                 setVmWatchdogToParams(model, updateVmParams);
-                updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                updateVmParams.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                 updateVmParams.setBalloonEnabled(balloonEnabled(model));
-                updateVmParams.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
+                updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
                 Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }
     }
 
     private boolean balloonEnabled(UnitVmModel model) {
-        return (Boolean) model.getMemoryBalloonDeviceEnabled().getEntity()
+        return model.getMemoryBalloonDeviceEnabled().getEntity()
                 && model.getSelectedCluster().getcompatibility_version().compareTo(BALLOON_DEVICE_MIN_VERSION) >= 0;
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {
-        VmWatchdogType wdModel = VmWatchdogType.getByName((String) model.getWatchdogModel()
+        VmWatchdogType wdModel = VmWatchdogType.getByName(model.getWatchdogModel()
                 .getSelectedItem());
         updateVmParams.setUpdateWatchdog(true);
         if (wdModel != null) {
             VmWatchdog vmWatchdog = new VmWatchdog();
-            vmWatchdog.setAction(VmWatchdogAction.getByName((String) model.getWatchdogAction()
+            vmWatchdog.setAction(VmWatchdogAction.getByName(model.getWatchdogAction()
                     .getSelectedItem()));
             vmWatchdog.setModel(wdModel);
             updateVmParams.setWatchdog(vmWatchdog);

@@ -54,7 +54,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         setupWindowModelFrom(pool.getStaticData());
         getModel().setIsDisksAvailable(true);
 
-        List<DataCenterWithCluster> dataCenterWithClusters = (List<DataCenterWithCluster>) getModel().getDataCenterWithClustersList().getItems();
+        Iterable<DataCenterWithCluster> dataCenterWithClusters = getModel().getDataCenterWithClustersList().getItems();
         DataCenterWithCluster selectDataCenterWithCluster =
                 Linq.firstOrDefault(dataCenterWithClusters,
                         new Linq.DataCenterWithClusterPredicate(pool.getStoragePoolId(), pool.getVdsGroupId()));
@@ -121,10 +121,9 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         boolean parentValidation = super.validate();
         if (getModel().getNumOfDesktops().getIsValid()) {
             getModel().getNumOfDesktops().validateEntity(new IValidation[] { new ExistingPoolNameLengthValidation(
-                    (String) getModel().getName().getEntity(),
-                    ((Integer) getModel().getAssignedVms().getEntity()) +
-                            Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),
-                    (Integer) getModel().getOSType().getSelectedItem()
+                    getModel().getName().getEntity(),
+                    getModel().getAssignedVms().getEntity() + getModel().getNumOfDesktops().getEntity(),
+                    getModel().getOSType().getSelectedItem()
             ) }
             );
 

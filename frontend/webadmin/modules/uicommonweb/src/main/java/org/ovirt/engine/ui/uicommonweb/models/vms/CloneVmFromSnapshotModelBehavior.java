@@ -68,7 +68,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     @Override
     public void provisioning_SelectedItemChanged()
     {
-        boolean provisioning = (Boolean) getModel().getProvisioning().getEntity();
+        boolean provisioning = getModel().getProvisioning().getEntity();
         getModel().getProvisioningThin_IsSelected().setEntity(!provisioning);
         getModel().getProvisioningClone_IsSelected().setEntity(provisioning);
     }
