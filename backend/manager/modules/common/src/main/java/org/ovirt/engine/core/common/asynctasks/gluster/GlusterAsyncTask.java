@@ -16,6 +16,8 @@ public class GlusterAsyncTask implements Serializable{
     private String message;
     private Guid stepId;
     private GlusterTaskParameters taskParameters;
+    private Guid jobId;
+    private JobExecutionStatus jobStatus;
 
     public GlusterAsyncTask(){
 
@@ -62,6 +64,22 @@ public class GlusterAsyncTask implements Serializable{
         this.taskParameters = taskParameters;
     }
 
+    public Guid getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(Guid jobId) {
+        this.jobId = jobId;
+    }
+
+    public JobExecutionStatus getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(JobExecutionStatus jobStatus) {
+        this.jobStatus = jobStatus;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -71,6 +89,8 @@ public class GlusterAsyncTask implements Serializable{
         result = prime * result + ((taskId == null) ? 0 : taskId.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((stepId == null) ? 0 : stepId.hashCode());
+        result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
+        result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
         return result;
     }
 
@@ -90,7 +110,9 @@ public class GlusterAsyncTask implements Serializable{
                 && ObjectUtils.objectsEqual(taskId, other.taskId)
                 && type == other.type
                 && status == other.status
-                && ObjectUtils.objectsEqual(stepId, other.stepId));
+                && ObjectUtils.objectsEqual(stepId, other.stepId)
+                && ObjectUtils.objectsEqual(jobId, other.jobId)
+                && jobStatus == other.jobStatus);
     }
 
 }

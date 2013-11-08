@@ -22,9 +22,11 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivitySeperatorCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeTaskWaitingCell;
 
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
@@ -111,8 +113,29 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             }
         });
 
-        getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(list),
-                constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$
+        List<HasCell<GlusterTaskSupport, ?>> compositeList = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
+        compositeList.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeTaskWaitingCell<GlusterTaskSupport>()) {
+            @Override
+            public GlusterTaskSupport getValue(GlusterTaskSupport object) {
+                return object;
+            }
+        });
+        compositeList.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeActivityCompositeCell<GlusterTaskSupport>(list)) {
+            @Override
+            public GlusterTaskSupport getValue(GlusterTaskSupport object) {
+                return object;
+            }
+        });
+
+        getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList) {
+                @Override
+                protected boolean isVisible(GlusterTaskSupport value) {
+                    return !(value == null || value.getAsyncTask() == null);
+                }
+                }),
+                constants.activitiesOnVolume(),
+                "100px"); //$NON-NLS-1$
+
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
@@ -219,4 +242,5 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
 
         return menuCell;
     }
+
 }

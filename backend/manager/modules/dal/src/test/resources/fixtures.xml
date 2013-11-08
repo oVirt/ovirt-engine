@@ -4864,6 +4864,11 @@
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
             <value>VDS</value>
         </row>
+        <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb0001</value>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>GlusterVolume</value>
+        </row>
     </table>
 
     <table name="step">

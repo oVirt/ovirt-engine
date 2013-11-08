@@ -168,6 +168,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     @Test
     public void testUpdateAsyncTaskId() {
         assertNotNull(existingDistVol.getAsyncTask());
+        assertNull(existingDistVol.getAsyncTask().getTaskId());
         dao.updateVolumeTask(existingDistVol.getId(), REBALANCING_VOLUME_TASKID);
         GlusterVolumeEntity volume = dao.getAllWithQuery("select * from gluster_volumes_view where id = '"
                         + existingDistVol.getId() + "'").get(0);

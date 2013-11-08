@@ -244,7 +244,8 @@ Create or replace FUNCTION GetGlusterTaskByGlusterVolumeGuid(v_volume_id UUID)
 BEGIN
        RETURN QUERY SELECT *
        FROM  gluster_volume_task_steps
-       WHERE volume_id = v_volume_id;
+       WHERE volume_id = v_volume_id
+       ORDER BY job_start_time desc LIMIT 1;
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -1606,10 +1606,17 @@ INNER JOIN gluster_volumes ON gluster_volumes.id = gluster_volume_bricks.volume_
 CREATE OR REPLACE VIEW gluster_volume_task_steps
 AS
 SELECT step.*,
-       gluster_volumes.id as volume_id
-FROM step
-INNER JOIN gluster_volumes ON gluster_volumes.task_id = step.external_id
-WHERE step.external_system_type = 'GLUSTER';
+       gluster_volumes.id as volume_id,
+       job.job_id as job_job_id,
+       job.action_type,
+       job.description as job_description,
+       job.status as job_status,
+       job.start_time as job_start_time,
+       job.end_time as job_end_time
+FROM gluster_volumes
+INNER JOIN job_subject_entity js ON js.entity_id = gluster_volumes.id
+INNER JOIN job on job.job_id = js.job_id
+LEFT OUTER JOIN step on step.external_id = gluster_volumes.task_id AND step.external_system_type = 'GLUSTER';
 
 CREATE OR REPLACE VIEW gluster_server_services_view
 AS

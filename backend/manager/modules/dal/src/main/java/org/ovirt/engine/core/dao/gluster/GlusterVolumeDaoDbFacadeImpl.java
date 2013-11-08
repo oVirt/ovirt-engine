@@ -241,7 +241,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 glusterAsyncTaskRowMapper,
                 createVolumeIdParams(volumeId));
 
-        if(glusterAsyncTasks != null && !glusterAsyncTasks.isEmpty()){
+        if(glusterAsyncTasks != null && !glusterAsyncTasks.isEmpty()) {
             return glusterAsyncTasks.get(0);
         }
         return null;
@@ -371,13 +371,18 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 throws SQLException {
             GlusterAsyncTask asyncTask = new GlusterAsyncTask();
             asyncTask.setTaskId(getGuid(rs, "external_id"));
-            String jobStatus =rs.getString("status");
+            String jobStatus =rs.getString("job_status");
+            if (asyncTask.getTaskId() != null || JobExecutionStatus.STARTED.name().equalsIgnoreCase(jobStatus)) {
+                asyncTask.setJobId(getGuid(rs, "job_job_id"));
+                asyncTask.setJobStatus(JobExecutionStatus.valueOf(jobStatus));
+            }
+            String stepStatus =rs.getString("status");
             String stepType = rs.getString("step_type");
             if(stepType != null && !stepType.isEmpty()){
                 asyncTask.setType(GlusterTaskType.forValue(StepEnum.valueOf(stepType)));
             }
-            if(jobStatus != null && !jobStatus.isEmpty()){
-                asyncTask.setStatus(JobExecutionStatus.valueOf(jobStatus));
+            if(stepStatus != null && !stepStatus.isEmpty()){
+                asyncTask.setStatus(JobExecutionStatus.valueOf(stepStatus));
             }
             return asyncTask;
         }

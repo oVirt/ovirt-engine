@@ -1590,4 +1590,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Active VM before the preview")
     String snapshotDescriptionActiveVmBeforePreview();
+
+    @DefaultStringValue("Waiting ...")
+    String waitForGlusterTask();
 }

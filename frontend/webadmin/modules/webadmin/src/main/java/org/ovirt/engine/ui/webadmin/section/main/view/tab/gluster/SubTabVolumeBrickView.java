@@ -117,7 +117,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                 new VolumeActivityCompositeCell<GlusterTaskSupport>(list) {
                     @Override
                     protected boolean isVisible(GlusterTaskSupport value) {
-                        return value.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
+                        return super.isVisible(value) && value.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
                     }
                 };
         return activityCell;
