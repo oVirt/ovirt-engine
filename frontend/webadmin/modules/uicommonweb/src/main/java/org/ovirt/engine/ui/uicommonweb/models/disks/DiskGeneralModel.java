@@ -104,7 +104,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setAlignment(String value)
     {
-        if (privateAlignment != value) {
+        if (!StringHelper.stringsEqual(privateAlignment, value)) {
             privateAlignment = value;
             onPropertyChanged(new PropertyChangedEventArgs("Alignment")); //$NON-NLS-1$
         }
