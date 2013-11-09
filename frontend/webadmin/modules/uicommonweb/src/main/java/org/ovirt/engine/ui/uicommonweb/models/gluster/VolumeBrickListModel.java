@@ -953,56 +953,84 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
 
         final GlusterVolumeEntity volumeEntity = getVolumeEntity();
-        ArrayList<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        final ArrayList<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
         for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
             if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null) {
                 bricks.add(brick);
             }
         }
+        final ConfirmationModel cModel = new ConfirmationModel();
+        UICommand removeBrickStatusOk = new UICommand("CancelConfirmation", VolumeBrickListModel.this);//$NON-NLS-1$
+        removeBrickStatusOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        removeBrickStatusOk.setIsCancel(true);
 
-        final RemoveBrickStatusModel removeBrickStatusModel = new RemoveBrickStatusModel(volumeEntity, bricks);
-        removeBrickStatusModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksStatusTitle());
-        removeBrickStatusModel.setHashName("remove_bricks_status"); ////$NON-NLS-1$
-        setWindow(removeBrickStatusModel);
+        cModel.startProgress(ConstantsManager.getInstance().getConstants().rebalanceStatusFetchMessage());
+        cModel.getCommands().add(removeBrickStatusOk);
+        cModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksStatusTitle());
+        setConfirmWindow(cModel);
 
-        removeBrickStatusModel.startProgress(null);
 
-        removeBrickStatusModel.getVolume().setEntity(volumeEntity.getName());
-        removeBrickStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
-
-        UICommand stopRemoveBrickFromStatus = new UICommand("StopRemoveBricksOnStatus", this);//$NON-NLS-1$
+        final UICommand stopRemoveBrickFromStatus = new UICommand("StopRemoveBricksOnStatus", this);//$NON-NLS-1$
         stopRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRemoveBricksButton());
         stopRemoveBrickFromStatus.setIsExecutionAllowed(false);
-        removeBrickStatusModel.addStopRemoveBricksCommand(stopRemoveBrickFromStatus);
 
-        UICommand commitRemoveBrickFromStatus = new UICommand("CommitRemoveBricksOnStatus", this);//$NON-NLS-1$
+        final UICommand commitRemoveBrickFromStatus = new UICommand("CommitRemoveBricksOnStatus", this);//$NON-NLS-1$
         commitRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().commitRemoveBricksButton());
         commitRemoveBrickFromStatus.setIsExecutionAllowed(false);
-        removeBrickStatusModel.addCommitRemoveBricksCommand(commitRemoveBrickFromStatus);
 
-        UICommand retainBricksFromStatus = new UICommand("RetainBricksOnStatus", this);//$NON-NLS-1$
+        final UICommand retainBricksFromStatus = new UICommand("RetainBricksOnStatus", this);//$NON-NLS-1$
         retainBricksFromStatus.setTitle(ConstantsManager.getInstance().getConstants().retainBricksButton());
         retainBricksFromStatus.setIsExecutionAllowed(false);
-        removeBrickStatusModel.addRetainBricksCommand(retainBricksFromStatus);
+
+        final UICommand cancelCommand = new UICommand("CancelRemoveBricksStatus", this);//$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        cancelCommand.setIsCancel(true);
 
         AsyncDataProvider.getGlusterRemoveBricksStatus(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
+                cModel.stopProgress();
+                VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;
 
-                removeBrickStatusModel.stopProgress();
+                if (vdcValue.getSucceeded() && vdcValue.getReturnValue() != null) {
+                    cancelConfirmation();
 
-                GlusterVolumeTaskStatusEntity removeBrickStatusEntity = (GlusterVolumeTaskStatusEntity) returnValue;
-                removeBrickStatusModel.showStatus(removeBrickStatusEntity);
+                    RemoveBrickStatusModel removeBrickStatusModel;
+                    GlusterVolumeTaskStatusEntity removeBrickStatusEntity = vdcValue.getReturnValue();
+
+                    if (getWindow() == null) {
+                        removeBrickStatusModel =
+                                new RemoveBrickStatusModel(volumeEntity, bricks);
+                        removeBrickStatusModel.setTitle(ConstantsManager.getInstance()
+                                .getConstants()
+                                .removeBricksStatusTitle());
+                        removeBrickStatusModel.setHashName("remove_bricks_status"); ////$NON-NLS-1$
+
+                        setWindow(removeBrickStatusModel);
+
+                        removeBrickStatusModel.getVolume().setEntity(volumeEntity.getName());
+                        removeBrickStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
+
+                        removeBrickStatusModel.addStopRemoveBricksCommand(stopRemoveBrickFromStatus);
+                        removeBrickStatusModel.addCommitRemoveBricksCommand(commitRemoveBrickFromStatus);
+                        removeBrickStatusModel.addRetainBricksCommand(retainBricksFromStatus);
+                        removeBrickStatusModel.getCommands().add(cancelCommand);
+                    }
+                    else {
+                        removeBrickStatusModel = (RemoveBrickStatusModel)getWindow();
+                    }
+
+                    removeBrickStatusModel.showStatus(removeBrickStatusEntity);
+
+                }
+                else {
+                    cModel.setMessage(ConstantsManager.getInstance().getMessages().removeBrickStatusFailed(bricks.toString()));
+                }
             }
         }),
                 volumeEntity.getClusterId(),
                 volumeEntity.getId(),
                 bricks);
-
-        UICommand cancelCommand = new UICommand("CancelRemoveBricksStatus", this);//$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
-        cancelCommand.setIsCancel(true);
-        removeBrickStatusModel.getCommands().add(cancelCommand);
     }
 
     private void cancelRemoveBrickStatus() {
@@ -1322,8 +1350,6 @@ public class VolumeBrickListModel extends SearchableListModel {
             showBrickAdvancedDetails();
         } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             setWindow(null);
-        } else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
-            setConfirmWindow(null);
         }
 
     }

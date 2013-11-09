@@ -61,7 +61,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterServi
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -1444,12 +1443,7 @@ public final class AsyncDataProvider {
             Guid clusterId,
             Guid volumeId,
             List<GlusterBrickEntity> bricks) {
-        aQuery.converterCallback = new IAsyncConverter<GlusterVolumeTaskStatusEntity>() {
-            @Override
-            public GlusterVolumeTaskStatusEntity Convert(Object source, AsyncQuery _asyncQuery) {
-                return (GlusterVolumeTaskStatusEntity) source;
-            }
-        };
+        aQuery.setHandleFailure(true);
         GlusterVolumeRemoveBricksQueriesParameters parameters =
                 new GlusterVolumeRemoveBricksQueriesParameters(clusterId, volumeId, bricks);
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeRemoveBricksStatus, parameters, aQuery);
