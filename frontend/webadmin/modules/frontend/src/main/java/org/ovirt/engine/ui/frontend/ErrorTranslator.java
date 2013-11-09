@@ -86,6 +86,7 @@ public class ErrorTranslator {
         String ret = ""; //$NON-NLS-1$
         try {
             if ((errorMsg != null) && (errorMsg.length() > 0)) {
+                String errMsgCopy = errorMsg; // Taking a copy of the error message
                 if (!isDynamicVariable(errorMsg)) {
                     errorMsg = errorMsg.replace('.', '_');
                 }
@@ -95,6 +96,9 @@ public class ErrorTranslator {
                     if ((isDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
                         ret = errorMsg;
                     } else {
+                        // The error message is not found in the errors map, revert to original one
+                        // without replacement of "." with "_"
+                        errorMsg = errMsgCopy;
                         // just a message that doesn't have a value in the resource:
                         String[] splitted = errorMsg.toLowerCase().split("_"); //$NON-NLS-1$
                         ret = StringHelper.join(" ", splitted); //$NON-NLS-1$
