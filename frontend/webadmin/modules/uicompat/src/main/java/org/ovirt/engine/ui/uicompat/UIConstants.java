@@ -1695,16 +1695,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cannot remove more than one brick from a Replicate volume at a time")
     String cannotRemoveBricksReplicateVolume();
 
-    @DefaultStringValue("Incorrect bricks selected for removal in Distributed Replicate volume. <br/> Either all the selected bricks should be from the same sub volume or one brick each for every sub volume!")
+    @DefaultStringValue("Incorrect bricks selected for removal in Distributed Replicate volume.\nEither all the selected bricks should be from the same sub volume or one brick each for every sub volume!")
     String cannotRemoveBricksDistributedReplicateVolume();
 
-    @DefaultStringValue("Incorrect bricks selected for removal in Distributed Stripe volume. <br/> Selected bricks should be from the same sub volume!")
+    @DefaultStringValue("Incorrect bricks selected for removal in Distributed Stripe volume.\nSelected bricks should be from the same sub volume!")
     String cannotRemoveBricksDistributedStripeVolume();
 
-    @DefaultStringValue("Incorrect bricks selected for removal in Striped Replicate volume. <br/> Selected bricks should be a multiple of stripe and replica count")
+    @DefaultStringValue("Incorrect bricks selected for removal in Striped Replicate volume.\nSelected bricks should be a multiple of stripe and replica count")
     String cannotRemoveBricksStripedReplicateVolume();
 
-    @DefaultStringValue("Incorrect bricks selected for removal in Distributed Striped Replicate volume. <br/> Selected bricks should be from the same sub volume!")
+    @DefaultStringValue("Incorrect bricks selected for removal in Distributed Striped Replicate volume.\nSelected bricks should be from the same sub volume!")
     String cannotRemoveBricksDistributedStripedReplicateVolume();
 
     @DefaultStringValue("Replica count can be increased by only one")
