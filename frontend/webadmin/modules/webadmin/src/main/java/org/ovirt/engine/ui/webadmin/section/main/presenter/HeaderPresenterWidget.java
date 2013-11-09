@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
@@ -27,7 +26,9 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         HasClickHandlers getAboutLink();
 
-        Label getFeedbackLabel();
+        HasClickHandlers getFeedbackLink();
+
+        void setFeedbackText(String feedbackText);
     }
 
     @ContentSlot
@@ -87,14 +88,13 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         }));
 
         if (feedbackUrl != null && feedbackUrl.length() > 0) {
-            getView().getFeedbackLabel().setText(feedbackLinkLabel);
-            registerHandler(getView().getFeedbackLabel().addClickHandler(new ClickHandler() {
+            getView().setFeedbackText(feedbackLinkLabel);
+            registerHandler(getView().getFeedbackLink().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     WebUtils.openUrlInNewWindow(feedbackLinkLabel, feedbackUrl);
                 }
             }));
-            getView().getFeedbackLabel().setVisible(true);
         }
     }
 

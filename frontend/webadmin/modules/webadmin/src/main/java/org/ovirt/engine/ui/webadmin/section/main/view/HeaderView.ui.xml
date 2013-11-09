@@ -84,7 +84,7 @@
                 <g:HTML addStyleNames="{style.obrand_logo}" />
                 <g:Label ui:field="headerLabel" addStyleNames="{style.headerLabelStyle}"/>
 
-                <g:HTMLPanel addStyleNames="{style.feedbackImagePanel}">
+                <g:HTMLPanel  ui:field="feedbackImagePanel" addStyleNames="{style.feedbackImagePanel}">
                     <g:HTMLPanel addStyleNames="{style.obrand_feedbackImageLeft}" />
                     <g:Label ui:field="feedbackImageLabel" addStyleNames="{style.obrand_feedbackImageLabel}" />
                 </g:HTMLPanel>
