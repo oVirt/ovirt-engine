@@ -902,7 +902,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         model.getCommands().add(okCommand);
 
         UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
         model.getCommands().add(cancelCommand);
     }
