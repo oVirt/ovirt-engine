@@ -70,6 +70,9 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     FlowPanel mainTabContainer;
 
     @UiField
+    HTMLPanel feedbackImagePanel;
+
+    @UiField
     Label feedbackImageLabel;
 
     @Inject
@@ -87,7 +90,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         setMainTabBarOffset(mainTabBarInitialOffset);
         localize(dynamicMessages);
 
-        feedbackImageLabel.setVisible(false);
+        feedbackImagePanel.setVisible(false);
     }
 
     private void localize(ApplicationDynamicMessages dynamicMessages) {
@@ -146,8 +149,14 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     }
 
     @Override
-    public Label getFeedbackLabel() {
+    public HasClickHandlers getFeedbackLink() {
         return feedbackImageLabel;
+    }
+
+    @Override
+    public void setFeedbackText(String feedbackText) {
+        feedbackImagePanel.setVisible(true);
+        feedbackImageLabel.setText(feedbackText);
     }
 
 }
