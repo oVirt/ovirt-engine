@@ -171,7 +171,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private boolean activateDeactivateVmNicAllowed(VMStatus vmStatus) {
-        return vmStatus == VMStatus.Up || vmStatus == VMStatus.Down;
+        return vmStatus == VMStatus.Up || vmStatus == VMStatus.Down || vmStatus == VMStatus.ImageLocked;
     }
 
     private boolean networkAttachedToVds(String networkName, Guid vdsId) {
