@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
@@ -51,6 +52,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
+        if (onlyPermittedFieldsChanged()) {
+            return true;
+        }
+
         NetworkValidator validatorNew = new NetworkValidator(getNetwork());
         UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork());
         return validate(validatorNew.dataCenterExists())
@@ -66,6 +71,28 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorOld.networkNotUsedByTemplates())
                 && (oldAndNewNetworkIsNotExternal()
                 || validate(validatorOld.externalNetworkDetailsUnchanged(getNetwork())));
+    }
+
+    /**
+     * @return <code>true</code> iff only the description or comment field were changed, otherwise <code>false</code>.
+     */
+    private boolean onlyPermittedFieldsChanged() {
+        Network oldNetwork = getOldNetwork();
+        Network newNetwork = getNetwork();
+
+        if (oldNetwork == null || newNetwork == null) {
+            return false;
+        }
+
+        return Objects.equals(oldNetwork.getName(), newNetwork.getName()) &&
+                Objects.equals(oldNetwork.getDataCenterId(), newNetwork.getDataCenterId()) &&
+                Objects.equals(oldNetwork.getId(), newNetwork.getId()) &&
+                Objects.equals(oldNetwork.getMtu(), newNetwork.getMtu()) &&
+                Objects.equals(oldNetwork.getName(), newNetwork.getName()) &&
+                Objects.equals(oldNetwork.getProvidedBy(), newNetwork.getProvidedBy()) &&
+                Objects.equals(oldNetwork.getStp(), newNetwork.getStp()) &&
+                Objects.equals(oldNetwork.getVlanId(), newNetwork.getVlanId()) &&
+                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork());
     }
 
     private boolean oldAndNewNetworkIsNotExternal() {
