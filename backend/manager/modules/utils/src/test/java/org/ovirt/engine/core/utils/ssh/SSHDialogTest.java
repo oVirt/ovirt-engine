@@ -44,7 +44,7 @@ public class SSHDialogTest {
 
     private static final int BUFFER_SIZE = 10 * 1024;
 
-    private class Sink
+    private static class Sink
     implements Runnable, SSHDialog.Sink {
 
         private SSHDialog.Control _control;
