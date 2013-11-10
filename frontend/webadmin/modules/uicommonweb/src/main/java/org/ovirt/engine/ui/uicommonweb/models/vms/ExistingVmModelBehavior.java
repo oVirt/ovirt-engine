@@ -49,6 +49,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
         super.initialize(systemTreeSelectedItem);
+        getModel().getVmInitEnabled().setEntity(getVm().getVmInit() != null);
+        getModel().getVmInitModel().init(getVm().getStaticData());
         getModel().getVmType().setIsChangable(true);
         getModel().getIsSoundcardEnabled().setIsChangable(true);
 
@@ -77,7 +79,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                 }
             }
         }), vm.getId());
-
     }
 
     private void postNetworkInterfacesLoaded() {
@@ -156,7 +157,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getMemSize().setEntity(vm.getVmMemSizeMb());
         getModel().getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
         getModel().getOSType().setSelectedItem(vm.getVmOsId());
-        getModel().getDomain().setSelectedItem(vm.getVmDomain());
         getModel().getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
         getModel().getNumOfMonitors().setSelectedItem(vm.getNumOfMonitors());
         getModel().getIsSingleQxlEnabled().setEntity(vm.getSingleQxlPci());

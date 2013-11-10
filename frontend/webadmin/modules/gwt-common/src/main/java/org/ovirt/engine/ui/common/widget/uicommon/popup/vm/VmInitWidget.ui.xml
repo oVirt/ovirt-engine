@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmInitWidget.Style">
+		.verticalPanel>* {
+			display: block;
+			clear: both;
+		}
+		.horizontalPanel>* {
+			float: left;
+		}
+		.optionCheckbox {
+			width: 150px;
+		}
+		.primaryOptionComboBox {
+			margin-left: 40px;
+		}
+		.nestedOption {
+			margin-left: 27px;
+			margin-right: 5px;
+			font-family: Arial Unicode MS,Arial,sans-serif !important;
+            float: left;
+		}
+		.comboBoxControlMargin {
+			margin-top: 3px;
+			margin-bottom: 5px;
+			margin-left: 32px;
+		}
+		.labelSep {
+			margin-left: 12px;
+			margin-right: 12px;
+		}
+		.buttonStyle {
+			margin-right: 7px;
+			width: 9px;
+			height: 10px;
+			padding-left: 2px;
+			padding-top: 2px;
+		}
+		.displayNone {
+			display: none !important;
+		}
+
+	</ui:style>
+
+	<g:FlowPanel addStyleNames="{style.verticalPanel}" ui:field="mainPanel">
+        <g:FlowPanel ui:field="syspreptOptionsContent">
+            <e:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" />
+            <e:ListModelListBoxEditor ui:field="windowsSysprepTimeZoneEditor" />
+        </g:FlowPanel>
+
+        <g:FlowPanel ui:field="cloudInitOptionsContent">
+            <g:FlowPanel>
+                <e:EntityModelTextBoxEditor ui:field="hostnameEditor" />
+                <e:EntityModelTextBoxEditor ui:field="domainEditor" />
+                <e:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" />
+                <e:ListModelListBoxEditor ui:field="timeZoneEditor" />
+            </g:FlowPanel>
+
+            <d:AdvancedParametersExpander ui:field="authenticationExpander"/>
+
+            <g:FlowPanel ui:field="authenticationExpanderContent">
+                <e:EntityModelPasswordBoxEditor ui:field="rootPasswordEditor" />
+                <e:EntityModelPasswordBoxEditor ui:field="rootPasswordVerificationEditor" />
+                <e:EntityModelTextAreaEditor ui:field="authorizedKeysEditor" />
+                <e:EntityModelCheckBoxEditor ui:field="regenerateKeysEnabledEditor" />
+            </g:FlowPanel>
+
+            <d:AdvancedParametersExpander ui:field="networkExpander"/>
+            <g:FlowPanel ui:field="networkExpanderContent" >
+                <e:EntityModelTextBoxEditor ui:field="dnsServers" />
+                <e:EntityModelTextBoxEditor ui:field="dnsSearchDomains" />
+
+                <g:FlowPanel>
+                    <e:EntityModelCheckBoxEditor ui:field="networkEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+                    <w:ComboBox ui:field="networkComboBox" addStyleNames="{style.primaryOptionComboBox}" />
+                </g:FlowPanel>
+                <g:FlowPanel addStyleNames="{style.horizontalPanel} {style.comboBoxControlMargin}">
+                    <g:Label ui:field="networkSelectLabel" />
+                    <g:Label ui:field="networkLabelSepSelectAdd" addStyleNames="{style.labelSep}" />
+                    <g:PushButton ui:field="networkAddButton" addStyleNames="{style.buttonStyle}">
+                        <g:upFace image='{resources.increaseIcon}' />
+                    </g:PushButton>
+                    <g:Label ui:field="networkAddLabel" />
+                    <g:Label ui:field="networkLabelSepAddRemove" addStyleNames="{style.labelSep}" />
+                    <g:PushButton ui:field="networkRemoveButton" addStyleNames="{style.buttonStyle}">
+                        <g:upFace image='{resources.decreaseIcon}' />
+                    </g:PushButton>
+                    <g:Label ui:field="networkRemoveLabel" />
+                </g:FlowPanel>
+                <g:FlowPanel ui:field="networkOptions" addStyleNames="{style.nestedOption}">
+                    <e:EntityModelCheckBoxEditor ui:field="networkDhcpEditor" />
+                    <e:EntityModelTextBoxEditor ui:field="networkIpAddressEditor" />
+                    <e:EntityModelTextBoxEditor ui:field="networkNetmaskEditor" />
+                    <e:EntityModelTextBoxEditor ui:field="networkGatewayEditor" />
+                    <e:EntityModelCheckBoxEditor ui:field="networkStartOnBootEditor" />
+                </g:FlowPanel>
+            </g:FlowPanel>
+
+            <d:AdvancedParametersExpander ui:field="customScriptExpander" addStyleNames="{style.verticalPanel}"/>
+            <g:FlowPanel ui:field="customScriptExpanderContent" >
+                <e:EntityModelTextAreaEditor ui:field="customScriptEditor"
+                                             labelStyleName="{style.displayNone}" />
+            </g:FlowPanel>
+
+        </g:FlowPanel>
+	</g:FlowPanel>
+</ui:UiBinder>

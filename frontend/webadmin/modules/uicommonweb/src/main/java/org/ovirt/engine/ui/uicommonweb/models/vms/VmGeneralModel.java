@@ -568,7 +568,9 @@ public class VmGeneralModel extends EntityModel
                 vm.getCpuPerSocket()));
 
         setHasDomain(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
-        setDomain(vm.getVmDomain());
+        if (vm.getVmInit() != null) {
+            setDomain(vm.getVmInit().getDomain());
+        }
 
         setHasTimeZone(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         setTimeZone(vm.getTimeZone());

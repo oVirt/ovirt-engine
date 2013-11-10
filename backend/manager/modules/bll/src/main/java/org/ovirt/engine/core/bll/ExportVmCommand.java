@@ -211,6 +211,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
         freeLock();
 
+        // update vm init
+        VmHandler.updateVmInitFromDB(getVm().getStaticData(), true);
+
         // Means that there are no asynchronous tasks to execute - so we can end the command
         // immediately after the execution of the previous steps
         if (!hasSnappableDisks() && snapshotsWithMemory.isEmpty()) {
@@ -518,6 +521,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     private void populateVmData(VM vm) {
         VmHandler.updateDisksFromDb(vm);
+        VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
         VmDeviceUtils.setVmDevices(vm.getStaticData());
     }
 

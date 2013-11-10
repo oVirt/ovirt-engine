@@ -75,6 +75,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 false);
 
         initPriority(0);
+        getModel().getVmInitModel().init(null);
     }
 
     @Override
@@ -100,7 +101,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
             getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
             getModel().getIsSingleQxlEnabled().setEntity(template.getSingleQxlPci());
-            getModel().getDomain().setSelectedItem(template.getDomain());
             getModel().getMemSize().setEntity(template.getMemSizeMb());
             getModel().setBootSequence(template.getDefaultBootSequence());
             getModel().getIsHighlyAvailable().setEntity(template.isAutoStartup());
@@ -190,6 +190,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
 
             updateNetworkInterfacesByTemplate(template);
+            getModel().getVmInitModel().init(template);
+            getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
         }
     }
 

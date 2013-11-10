@@ -160,7 +160,6 @@ public class OvfManagerTest {
         vm.setOrigin(OriginType.OVIRT);
         vm.setId(Guid.newGuid());
         vm.setVmDescription("test-description");
-        vm.getStaticData().setDomain("domain_name");
         vm.setTimeZone("Israel Standard Time");
         vm.setDbGeneration(2L);
         vm.setSingleQxlPci(false);

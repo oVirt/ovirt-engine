@@ -718,6 +718,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
+        // populating VMInit
+        AsyncQuery getVmInitQuery = new AsyncQuery();
+        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                vmInitLoaded((VM) result);
+            }
+        };
+        AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+
+    }
+
+    private void vmInitLoaded(VM vm) {
         UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm));
         model.getVmType().setSelectedItem(vm.getVmType());
         model.setVmAttachedToPool(vm.getVmPoolId() != null);
@@ -1203,11 +1216,21 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void runOnce()
     {
         VM vm = (VM) getSelectedItem();
-        RunOnceModel model = new WebadminRunOnceModel(vm,
-                getCustomPropertiesKeysList().get(vm.getVdsGroupCompatibilityVersion()),
-                this);
-        setWindow(model);
-        model.init();
+        // populating VMInit
+        AsyncQuery getVmInitQuery = new AsyncQuery();
+        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                RunOnceModel runOnceModel = new WebadminRunOnceModel((VM) result,
+                        getCustomPropertiesKeysList().get(((VM) result).getVdsGroupCompatibilityVersion()),
+                        VmListModel.this);
+                setWindow(runOnceModel);
+                runOnceModel.init();
+            }
+        };
+        AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+
+
     }
 
     private void newTemplate()
@@ -1313,7 +1336,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
         tempVar.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
         tempVar.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
-        tempVar.setVmDomain(model.getDomain().getIsAvailable() ? model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setVmMemSizeMb(model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
         tempVar.setVdsGroupId(model.getSelectedCluster().getId());
@@ -1887,8 +1909,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
         getcurrentVm().setVmDescription(model.getDescription().getEntity());
         getcurrentVm().setComment(model.getComment().getEntity());
-        getcurrentVm().setVmDomain(model.getDomain().getIsAvailable() ? model.getDomain().getSelectedItem()
-                : ""); //$NON-NLS-1$
         getcurrentVm().setVmMemSizeMb(model.getMemSize().getEntity());
         getcurrentVm().setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = model.getSelectedCluster().getId();
@@ -1941,6 +1961,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setMigrationSupport(model.getMigrationMode().getSelectedItem());
 
         getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
+
+        getcurrentVm().setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
 
         if (model.getIsNew())
         {

@@ -1,13 +1,25 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import java.util.Map;
-
-import org.ovirt.engine.core.common.action.CloudInitParameters.Attachment;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IndexedPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaEditor;
@@ -15,33 +27,23 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
-import org.ovirt.engine.ui.uicommonweb.models.vms.CloudInitModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmInitModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.Map;
 
-public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitModel> {
+public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitModel> implements IndexedPanel {
 
-    interface Driver extends SimpleBeanEditorDriver<CloudInitModel, CloudInitWidget> {
+    interface Driver extends SimpleBeanEditorDriver<VmInitModel, VmInitWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<Widget, CloudInitWidget> {
+    interface ViewUiBinder extends UiBinder<Widget, VmInitWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface ViewIdHandler extends ElementIdHandler<CloudInitWidget> {
+    interface ViewIdHandler extends ElementIdHandler<VmInitWidget> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
@@ -49,42 +51,79 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
 
     private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
+    public static interface BasicStyle extends CssResource {
+        String DEFAULT_CSS = "org/ovirt/engine/ui/common/css/BaseVmInitStyle.css"; //$NON-NLS-1$
+
+        String primaryOption();
+
+        String customScript();
+
+        String expanderContent();
+    }
+
+    public static interface Resources extends ClientBundle {
+        @Source({ CellTable.Style.DEFAULT_CSS})
+        BasicStyle createStyle();
+    }
+
     interface Style extends CssResource {
         String displayNone();
     }
 
+    private final BasicStyle customizableStyle;
+
     @UiField
     Style style;
 
-    @UiField(provided = true)
-    @Path(value = "hostnameEnabled.entity")
+    @UiField
+    @Ignore
+    FlowPanel mainPanel;
+
+    @UiField
+    @Ignore
+    FlowPanel syspreptOptionsContent;
+
+    @UiField
+    @Path(value = "windowsSysprepTimeZone.selectedItem")
     @WithElementId
-    EntityModelCheckBoxEditor hostnameEnabledEditor;
+    ListModelListBoxEditor<Object> windowsSysprepTimeZoneEditor;
+
+    @UiField
+    @Path(value = "windowsSysprepTimeZoneEnabled.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor windowsSyspreptimeZoneEnabledEditor;
+
+    @UiField
+    @Ignore
+    FlowPanel cloudInitOptionsContent;
 
     @UiField
     @Path(value = "hostname.entity")
     @WithElementId
     EntityModelTextBoxEditor hostnameEditor;
 
-
-    @UiField(provided = true)
-    @Path(value = "authorizedKeysEnabled.entity")
+    @UiField
+    @Path(value = "domain.entity")
     @WithElementId
-    EntityModelCheckBoxEditor authorizedKeysEnabledEditor;
+    EntityModelTextBoxEditor domainEditor;
 
     @UiField
     @Path(value = "authorizedKeys.entity")
     @WithElementId
     EntityModelTextAreaEditor authorizedKeysEditor;
 
+    @UiField
+    @Path(value = "customScript.entity")
+    @WithElementId
+    EntityModelTextAreaEditor customScriptEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Path(value = "regenerateKeysEnabled.entity")
     @WithElementId
     EntityModelCheckBoxEditor regenerateKeysEnabledEditor;
 
 
-    @UiField(provided = true)
+    @UiField
     @Path(value = "timeZoneEnabled.entity")
     @WithElementId
     EntityModelCheckBoxEditor timeZoneEnabledEditor;
@@ -94,11 +133,13 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
     @WithElementId
     ListModelListBoxEditor<Object> timeZoneEditor;
 
+    @UiField
+    @Ignore
+    AdvancedParametersExpander authenticationExpander;
 
-    @UiField(provided = true)
-    @Path(value = "rootPasswordEnabled.entity")
-    @WithElementId
-    EntityModelCheckBoxEditor rootPasswordEnabledEditor;
+    @UiField
+    @Ignore
+    FlowPanel authenticationExpanderContent;
 
     @UiField
     @Path(value = "rootPassword.entity")
@@ -110,6 +151,14 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
     @WithElementId
     EntityModelPasswordBoxEditor rootPasswordVerificationEditor;
 
+
+    @UiField
+    @Ignore
+    AdvancedParametersExpander networkExpander;
+
+    @UiField
+    @Ignore
+    FlowPanel networkExpanderContent;
 
     @UiField(provided = true)
     @Path(value = "networkEnabled.entity")
@@ -142,6 +191,14 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
     @UiField
     @Ignore
     Label networkAddLabel;
+
+    @UiField
+    @Ignore
+    AdvancedParametersExpander customScriptExpander;
+
+    @UiField
+    @Ignore
+    FlowPanel customScriptExpanderContent;
 
     @UiField
     @Ignore
@@ -193,70 +250,17 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
     @WithElementId
     EntityModelTextBoxEditor dnsSearchDomains;
 
+    public VmInitWidget(BasicStyle style) {
+        style.ensureInjected();
 
-    @UiField(provided = true)
-    @Path(value = "attachmentEnabled.entity")
-    @WithElementId
-    EntityModelCheckBoxEditor attachmentEnabledEditor;
+        this.customizableStyle = style;
 
-    @Path(value = "attachmentSelectedPath.entity")
-    @WithElementId
-    EntityModelTextBoxEditor attachmentPathEditor;
-
-    @Path(value = "attachmentList.selectedItem")
-    @WithElementId
-    ListModelListBoxEditor<Object> attachmentListEditor;
-
-    @UiField(provided = true)
-    @WithElementId
-    ComboBox attachmentComboBox;
-
-    @UiField
-    @Ignore
-    Label attachmentSelectLabel;
-
-    @UiField
-    @Ignore
-    Label attachmentLabelSepSelectAdd;
-
-    @UiField
-    PushButton attachmentAddButton;
-
-    @UiField
-    @Ignore
-    Label attachmentAddLabel;
-
-    @UiField
-    @Ignore
-    Label attachmentLabelSepAddRemove;
-
-    @UiField
-    PushButton attachmentRemoveButton;
-
-    @UiField
-    @Ignore
-    Label attachmentRemoveLabel;
-
-    @UiField
-    @Ignore
-    FlowPanel attachmentOptions;
-
-    @UiField(provided = true)
-    @Path(value = "attachmentType.selectedItem")
-    @WithElementId
-    ListModelListBoxEditor<Object> attachmentTypeEditor;
-
-    @UiField
-    @Path(value = "attachmentContent.entity")
-    @WithElementId
-    EntityModelTextAreaEditor attachmentContentEditor;
-
-
-    public CloudInitWidget() {
         initCheckBoxEditors();
         initListBoxEditors();
         initComboBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+
+        initAdvancedParameterExpanders();
 
         localize();
         addStyles();
@@ -265,16 +269,16 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
         driver.initialize(this);
     }
 
+    private void initAdvancedParameterExpanders() {
+        authenticationExpander.initWithContent(authenticationExpanderContent.getElement());
+        networkExpander.initWithContent(networkExpanderContent.getElement());
+        customScriptExpander.initWithContent(customScriptExpanderContent.getElement());
+    }
+
     void initCheckBoxEditors() {
-        hostnameEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        authorizedKeysEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        regenerateKeysEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        timeZoneEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        rootPasswordEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkDhcpEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkStartOnBootEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        attachmentEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void initListBoxEditors() {
@@ -287,15 +291,6 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
             }
         });
 
-        attachmentTypeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                @SuppressWarnings("unchecked")
-                Map.Entry<Attachment.AttachmentType, String> entry
-                        = (Map.Entry<Attachment.AttachmentType, String>) object;
-                return entry.getValue();
-            }
-        });
     }
 
     void initComboBoxEditors() {
@@ -303,21 +298,22 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
         networkNameEditor = new EntityModelTextBoxEditor();
         networkComboBox = new ComboBox(networkListEditor, networkNameEditor);
 
-        attachmentListEditor = new ListModelListBoxEditor<Object>();
-        attachmentPathEditor = new EntityModelTextBoxEditor();
-        attachmentComboBox = new ComboBox(attachmentListEditor, attachmentPathEditor);
     }
 
 
     void localize() {
-        hostnameEnabledEditor.setLabel(constants.cloudInitHostnameLabel());
-        authorizedKeysEnabledEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
+        hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
+        authorizedKeysEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
         regenerateKeysEnabledEditor.setLabel(constants.cloudInitRegenerateKeysLabel());
-        timeZoneEnabledEditor.setLabel(constants.cloudInitTimeZoneLabel());
-        rootPasswordEnabledEditor.setLabel(constants.cloudInitRootPasswordLabel());
+        timeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
+        timeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
+        windowsSyspreptimeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
+        windowsSysprepTimeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
+        rootPasswordEditor.setLabel(constants.cloudInitRootPasswordLabel());
         rootPasswordVerificationEditor.setLabel(constants.cloudInitRootPasswordVerificationLabel());
+
         networkEnabledEditor.setLabel(constants.cloudInitNetworkLabel());
-        attachmentEnabledEditor.setLabel(constants.cloudInitAttachmentLabel());
+        domainEditor.setLabel(constants.domainVmPopup());
 
         String sep = "|"; //$NON-NLS-1$
         // sequence is: <select label> | [+] <add label> | [-] <remove label>
@@ -335,17 +331,9 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
         dnsServers.setLabel(constants.cloudInitDnsServersLabel());
         dnsSearchDomains.setLabel(constants.cloudInitDnsSearchDomainsLabel());
 
-        attachmentSelectLabel.setText(constants.cloudInitAttachmentSelectLabel());
-        attachmentLabelSepSelectAdd.setText(sep);
-        attachmentAddLabel.setText(constants.cloudInitObjectAddLabel());
-        attachmentLabelSepAddRemove.setText(sep);
-        attachmentRemoveLabel.setText(constants.cloudInitObjectRemoveLabel());
-
-        attachmentTypeEditor.setLabel(constants.cloudInitAttachmentTypeLabel());
-        attachmentContentEditor.setLabel(constants.cloudInitAttachmentContentLabel());
-
         hostnameEditor.setTitle(constants.cloudInitHostnameToolTip());
         authorizedKeysEditor.setTitle(constants.cloudInitAuthorizedKeysToolTip());
+        customScriptEditor.setTitle(constants.customScriptToolTip());
         regenerateKeysEnabledEditor.setTitle(constants.cloudInitRegenerateKeysToolTip());
         timeZoneEditor.setTitle(constants.cloudInitTimeZoneToolTip());
         rootPasswordEditor.setTitle(constants.cloudInitRootPasswordToolTip());
@@ -361,10 +349,14 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
         dnsServers.setTitle(constants.cloudInitDnsServersToolTip());
         dnsSearchDomains.setTitle(constants.cloudInitDnsSearchDomainsToolTip());
 
-        attachmentListEditor.setTitle(constants.cloudInitAttachmentToolTip());
-        attachmentPathEditor.setTitle(constants.cloudInitAttachmentToolTip());
-        attachmentTypeEditor.setTitle(constants.cloudInitAttachmentTypeToolTip());
-        /* attachmentContentEditor tool-tip set below based on attachment type */
+        networkExpander.setTitleWhenExpended(constants.cloudInitNetworskLabel());
+        networkExpander.setTitleWhenCollapsed(constants.cloudInitNetworskLabel());
+
+        authenticationExpander.setTitleWhenExpended(constants.cloudInitAuthenticationLabel());
+        authenticationExpander.setTitleWhenCollapsed(constants.cloudInitAuthenticationLabel());
+
+        customScriptExpander.setTitleWhenExpended(constants.customScriptLabel());
+        customScriptExpander.setTitleWhenCollapsed(constants.customScriptLabel());
     }
 
     void addStyles() {
@@ -372,8 +364,25 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
         setNetworkDetailsStyle(false);
         setNetworkStaticDetailsStyle(false);
 
-        attachmentListEditor.addLabelStyleName(style.displayNone());
-        setAttachmentDetailsStyle(false);
+        windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
+        windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
+        windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
+        hostnameEditor.addStyleName(customizableStyle.primaryOption());
+        domainEditor.addStyleName(customizableStyle.primaryOption());
+        timeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
+        timeZoneEditor.addStyleName(customizableStyle.primaryOption());
+        rootPasswordEditor.addStyleName(customizableStyle.primaryOption());
+        rootPasswordVerificationEditor.addStyleName(customizableStyle.primaryOption());
+        authorizedKeysEditor.addStyleName(customizableStyle.primaryOption());
+        regenerateKeysEnabledEditor.addStyleName(customizableStyle.primaryOption());
+        networkExpanderContent.addStyleName(customizableStyle.primaryOption());
+
+        customScriptEditor.setContentWidgetStyleName(customizableStyle.primaryOption());
+        customScriptEditor.setContentWidgetStyleName(customizableStyle.customScript());
+
+        authenticationExpanderContent.addStyleName(customizableStyle.expanderContent());
+        networkExpanderContent.addStyleName(customizableStyle.expanderContent());
+        customScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
     }
 
     /* Controls style for network options based on network selection */
@@ -395,25 +404,13 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
         networkGatewayEditor.setVisible(visible);
     }
 
-    /* Controls style for attachment options based on attachment selection */
-    private void setAttachmentDetailsStyle(boolean enabled) {
-        attachmentPathEditor.setEnabled(enabled);
-        attachmentListEditor.setEnabled(enabled);
-        setLabelEnabled(attachmentSelectLabel, enabled);
-        setLabelEnabled(attachmentLabelSepSelectAdd, enabled);
-        setLabelEnabled(attachmentLabelSepAddRemove, enabled);
-        setLabelEnabled(attachmentRemoveLabel, enabled);
-        attachmentRemoveButton.setEnabled(enabled);
-        attachmentOptions.setVisible(enabled);
-    }
-
     private void setLabelEnabled(Label label, boolean enabled) {
         label.getElement().getStyle().setColor(enabled ? "#000000" : "#999999"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 
     @Override
-    public void edit(final CloudInitModel model) {
+    public void edit(final VmInitModel model) {
         driver.edit(model);
 
         initializeEnabledCBBehavior(model);
@@ -450,70 +447,9 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
             }
         });
 
-        attachmentAddButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.getAddAttachmentCommand().execute();
-            }
-        });
-
-        attachmentRemoveButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.getRemoveAttachmentCommand().execute();
-            }
-        });
-
-        model.getAttachmentList().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                // See note above regarding parameter to setNetworkDetailsStyle
-                setAttachmentDetailsStyle(model.getAttachmentList().getSelectedItem() != null);
-            }
-        });
-
-        model.getAttachmentType().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                setAttachmentContentToolTip(model);
-            }
-        });
-        setAttachmentContentToolTip(model);
     }
 
-    private void setAttachmentContentToolTip(final CloudInitModel model) {
-        @SuppressWarnings("unchecked")
-        Map.Entry<Attachment.AttachmentType, String> entry
-                = (Map.Entry<Attachment.AttachmentType, String>) model.getAttachmentType().getSelectedItem();
-        if (entry != null && entry.getKey() == Attachment.AttachmentType.BASE64) {
-            attachmentContentEditor.setTitle(constants.cloudInitAttachmentContentBase64ToolTip());
-        } else {
-            attachmentContentEditor.setTitle(constants.cloudInitAttachmentContentTextToolTip());
-        }
-    }
-
-    void initializeEnabledCBBehavior(final CloudInitModel model) {
-        // Initialize default checkbox state and add event listeners for user-initiated changes
-        if (model.getHostnameEnabled().getEntity() != null) {
-            hostnameEnabledEditor.setEnabled((Boolean) model.getHostnameEnabled().getEntity());
-        }
-        model.getHostnameEnabled().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                hostnameEditor.setEnabled((Boolean) model.getHostnameEnabled().getEntity());
-            }
-        });
-
-        if (model.getAuthorizedKeysEnabled().getEntity() != null) {
-            authorizedKeysEnabledEditor.setEnabled((Boolean) model.getAuthorizedKeysEnabled().getEntity());
-        }
-        model.getAuthorizedKeysEnabled().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-            authorizedKeysEditor.setEnabled((Boolean) model.getAuthorizedKeysEnabled().getEntity());
-            }
-        });
-
+    void initializeEnabledCBBehavior(final VmInitModel model) {
         if (model.getRegenerateKeysEnabled().getEntity() != null) {
             regenerateKeysEnabledEditor.setEnabled((Boolean) model.getRegenerateKeysEnabled().getEntity());
         }
@@ -521,21 +457,20 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
         if (model.getTimeZoneEnabled().getEntity() != null) {
             timeZoneEnabledEditor.setEnabled((Boolean) model.getTimeZoneEnabled().getEntity());
         }
+        model.getWindowsSysprepTimeZoneEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                windowsSysprepTimeZoneEditor.setEnabled((Boolean) model.getWindowsSysprepTimeZoneEnabled().getEntity());
+            }
+        });
+
+        if (model.getWindowsSysprepTimeZoneEnabled().getEntity() != null) {
+            windowsSysprepTimeZoneEditor.setEnabled((Boolean) model.getWindowsSysprepTimeZoneEnabled().getEntity());
+        }
         model.getTimeZoneEnabled().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 timeZoneEditor.setEnabled((Boolean) model.getTimeZoneEnabled().getEntity());
-            }
-        });
-
-        if (model.getRootPasswordEnabled().getEntity() != null) {
-            rootPasswordEnabledEditor.setEnabled((Boolean) model.getRootPasswordEnabled().getEntity());
-        }
-        model.getRootPasswordEnabled().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                rootPasswordEditor.setEnabled((Boolean) model.getRootPasswordEnabled().getEntity());
-                rootPasswordVerificationEditor.setEnabled((Boolean) model.getRootPasswordEnabled().getEntity());
             }
         });
 
@@ -553,24 +488,38 @@ public class CloudInitWidget extends AbstractModelBoundPopupWidget<CloudInitMode
             }
         });
 
-        if (model.getAttachmentEnabled().getEntity() != null) {
-            attachmentEnabledEditor.setEnabled((Boolean) model.getAttachmentEnabled().getEntity());
-        }
-        model.getAttachmentEnabled().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean enabled = (Boolean) model.getAttachmentEnabled().getEntity();
-                attachmentAddButton.setEnabled(enabled);
-                setLabelEnabled(attachmentAddLabel, enabled);
-                // See note above re: parameter to this method call
-                setAttachmentDetailsStyle(enabled && model.getAttachmentList().getSelectedItem() != null);
-            }
-        });
     }
 
+    public void setCloudInitContentVisible(boolean visible) {
+        cloudInitOptionsContent.setVisible(visible);
+    }
+
+    public void setSyspepContentVisible(boolean visible) {
+        syspreptOptionsContent.setVisible(visible);
+    }
 
     @Override
-    public CloudInitModel flush() {
+    public Widget getWidget(int index) {
+        return mainPanel.getWidget(index);
+    }
+
+    @Override
+    public int getWidgetCount() {
+        return mainPanel.getWidgetCount();
+    }
+
+    @Override
+    public int getWidgetIndex(Widget child) {
+        return mainPanel.getWidgetIndex(child);
+    }
+
+    @Override
+    public boolean remove(int index) {
+        return mainPanel.remove(index);
+    }
+
+    @Override
+    public VmInitModel flush() {
         return driver.flush();
     }
 }

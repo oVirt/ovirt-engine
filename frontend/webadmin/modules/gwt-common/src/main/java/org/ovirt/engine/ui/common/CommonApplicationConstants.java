@@ -118,9 +118,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Initial Run")
     String runOncePopupInitialRunLabel();
 
-    @DefaultStringValue("Windows Sysprep")
-    String runOncePopupSysprepLabel();
-
     @DefaultStringValue("To enable Sysprep, attach the \"[sysprep]\" Floppy to this VM.")
     String runOnceSysPrepToEnableLabel();
 
@@ -136,20 +133,26 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Password")
     String runOncePopupSysPrepPasswordLabel();
 
-    @DefaultStringValue("Cloud-Init")
-    String runOncePopupCloudInitLabel();
-
     @DefaultStringValue("Boot Sequence:")
     String runOncePopupBootSequenceLabel();
 
-    @DefaultStringValue("Hostname")
+    @DefaultStringValue("Use Cloud-Init")
+    String runOncePopupCloudInitLabe();
+
+    @DefaultStringValue("VM Hostname")
     String cloudInitHostnameLabel();
+
+    @DefaultStringValue("Authentication")
+    String cloudInitAuthenticationLabel();
 
     @DefaultStringValue("SSH Authorized Keys")
     String cloudInitAuthorizedKeysLabel();
 
-    @DefaultStringValue("Regenerate System SSH Keys")
+    @DefaultStringValue("Regenerate SSH Keys")
     String cloudInitRegenerateKeysLabel();
+
+    @DefaultStringValue("Configure Time Zone")
+    String cloudInitConfigureTimeZoneLabel();
 
     @DefaultStringValue("Time Zone")
     String cloudInitTimeZoneLabel();
@@ -159,6 +162,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Verify Root Password")
     String cloudInitRootPasswordVerificationLabel();
+
+    @DefaultStringValue("Networks")
+    String cloudInitNetworskLabel();
 
     @DefaultStringValue("Network")
     String cloudInitNetworkLabel();
@@ -187,6 +193,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("DNS Search Domains")
     String cloudInitDnsSearchDomainsLabel();
 
+    @DefaultStringValue("Custom Script")
+    String customScriptLabel();
+
     @DefaultStringValue("File Attachment")
     String cloudInitAttachmentLabel();
 
@@ -210,6 +219,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Add SSH keys (separated by newlines) to be added to the root user's authorized_keys file")
     String cloudInitAuthorizedKeysToolTip();
+
+    @DefaultStringValue("Add Script that will run at startup")
+    String customScriptToolTip();
 
     @DefaultStringValue("Regenerate system SSH keys (typically in /etc/ssh)")
     String cloudInitRegenerateKeysToolTip();
@@ -255,6 +267,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Enter the attachment content")
     String cloudInitAttachmentContentTextToolTip();
+
+    @DefaultStringValue("Use Cloud-Init/Sysprep")
+    String cloudInitOrSysprep();
 
     @DefaultStringValue("Enter the attachment content encoded in base-64")
     String cloudInitAttachmentContentBase64ToolTip();

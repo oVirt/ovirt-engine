@@ -18,6 +18,7 @@ public class GetVmsRelatedToQuotaIdQuery<P extends IdQueryParameters>
         List<VM> vms = getDbFacade().getVmDao().getAllVmsRelatedToQuotaId(getParameters().getId());
         for (VM vm : vms) {
             VmHandler.updateDisksFromDb(vm);
+            VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
             Collections.sort(vm.getDiskList(), new DiskImageByDiskAliasComparator());
             ImagesHandler.fillImagesBySnapshots(vm);
         }

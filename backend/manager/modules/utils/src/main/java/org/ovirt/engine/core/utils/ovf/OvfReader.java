@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -316,6 +318,7 @@ public abstract class OvfReader implements IOvfBuilder {
     protected void readGeneralData() {
         XmlNode content = _document.SelectSingleNode("//*/Content");
         XmlNode node;
+        vmBase.setVmInit(new VmInit());
 
         // set ovf version to the ovf object
         vmBase.setOvfVersion(getVersion());
@@ -327,7 +330,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
         node = content.SelectSingleNode("Domain");
         if (node != null) {
-            vmBase.setDomain(node.innerText);
+            vmBase.getVmInit().setDomain(node.innerText);
         }
 
         node = content.SelectSingleNode("CreationDate");
@@ -507,6 +510,49 @@ public abstract class OvfReader implements IOvfBuilder {
         }
 
         readGeneralData(content);
+
+        readVmInit(content);
+    }
+
+    private void readVmInit(XmlNode content) {
+        XmlNode node = content.SelectSingleNode("VmInit");
+        VmInit vmInit = vmBase.getVmInit();
+        vmInit.setId(vmBase.getId());
+        if (node != null) {
+            if (node.attributes.get("ovf:hostname") != null) {
+                vmInit.setHostname(node.attributes.get("ovf:hostname").getValue());
+            }
+            if (node.attributes.get("ovf:domain") != null) {
+                vmInit.setDomain(node.attributes.get("ovf:domain").getValue());
+            }
+            if (node.attributes.get("ovf:timeZone") != null) {
+                vmInit.setTimeZone(node.attributes.get("ovf:timeZone").getValue());
+            }
+            if (node.attributes.get("ovf:authorizedKeys") != null) {
+                vmInit.setAuthorizedKeys(node.attributes.get("ovf:authorizedKeys").getValue());
+            }
+            if (node.attributes.get("ovf:regenerateKeys") != null) {
+                vmInit.setRegenerateKeys(Boolean.parseBoolean(node.attributes.get("ovf:regenerateKeys").getValue()));
+            }
+            if (node.attributes.get("ovf:dnsServers") != null) {
+                vmInit.setDnsServers(node.attributes.get("ovf:dnsServers").getValue());
+            }
+            if (node.attributes.get("ovf:dnsSearch") != null) {
+                vmInit.setDnsSearch(node.attributes.get("ovf:dnsSearch").getValue());
+            }
+            if (node.attributes.get("ovf:networks") != null) {
+                vmInit.setNetworks(VmInitUtils.jsonNetworksToList(node.attributes.get("ovf:networks").getValue()));
+            }
+            if (node.attributes.get("ovf:winKey") != null) {
+                vmInit.setWinKey(node.attributes.get("ovf:winKey").getValue());
+            }
+            if (node.attributes.get("ovf:rootPassword") != null) {
+                vmInit.setRootPassword(node.attributes.get("ovf:rootPassword").getValue());
+            }
+            if (node.attributes.get("ovf:customScript") != null) {
+                vmInit.setCustomScript(node.attributes.get("ovf:customScript").getValue());
+            }
+        }
     }
 
     private XmlNode getNode(XmlNodeList nodeList, String attributeName, String attributeValue) {

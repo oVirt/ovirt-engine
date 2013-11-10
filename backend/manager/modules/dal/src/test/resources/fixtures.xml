@@ -1484,7 +1484,6 @@
         <column>os</column>
         <column>description</column>
         <column>vds_group_id</column>
-        <column>domain</column>
         <column>creation_date</column>
         <column>child_count</column>
         <column>num_of_monitors</column>
@@ -1536,7 +1535,6 @@
             <value>1</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value></value>
             <value>2010-11-21 16:39:27</value>
             <value>0</value>
             <value>1</value>
@@ -1588,7 +1586,6 @@
             <value>1</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value></value>
             <value>2010-11-21 16:39:27</value>
             <value>0</value>
             <value>1</value>
@@ -1640,7 +1637,6 @@
             <value>1</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value></value>
             <value>2010-11-21 16:39:27</value>
             <value>0</value>
             <value>1</value>
@@ -1692,7 +1688,6 @@
             <value>1</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
-            <value></value>
             <value>2010-11-21 16:39:27</value>
             <value>0</value>
             <value>1</value>
@@ -1744,7 +1739,6 @@
             <value>1</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
-            <value></value>
             <value>2010-11-21 16:39:27</value>
             <value>0</value>
             <value>1</value>
@@ -1796,7 +1790,6 @@
             <value>1</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
-            <value></value>
             <value>2013-10-10 16:39:27</value>
             <value>0</value>
             <value>1</value>
@@ -1848,7 +1841,6 @@
             <value>1</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
-            <value></value>
             <value>2013-10-10 16:39:27</value>
             <value>0</value>
             <value>1</value>
@@ -1902,7 +1894,6 @@
             <value>0</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value></value>
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
@@ -1954,7 +1945,6 @@
             <value>0</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value></value>
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
@@ -2006,7 +1996,6 @@
             <value>0</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value></value>
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
@@ -2058,7 +2047,6 @@
             <value>0</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value></value>
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
@@ -2110,7 +2098,6 @@
             <value>0</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
-            <value></value>
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
@@ -2162,7 +2149,6 @@
             <value>0</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
-            <value></value>
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
@@ -2213,7 +2199,6 @@
             <value>0</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value></value>
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
@@ -5721,6 +5706,35 @@
         <row>
             <value>3e1004c1-a683-4b9d-8f49-f65b584d78dc</value>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297d</value>
+        </row>
+    </table>
+
+    <table name="vm_init">
+        <column>vm_id</column>
+        <column>host_name</column>
+        <column>domain</column>
+        <column>authorized_keys</column>
+        <column>regenerate_keys</column>
+        <column>time_zone</column>
+        <column>dns_servers</column>
+        <column>dns_search_domains</column>
+        <column>networks</column>
+        <column>password</column>
+        <column>winkey</column>
+        <column>custom_script</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>users.mydomain.com</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>192.168.1.1</value>
+            <value>192.168.1.2,192.168.1.2</value>
+            <value>xxx-xxxx-xxxx-xxx-xxx</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value></value>
         </row>
     </table>
 </dataset>

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlTextWriter;
+import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 
 public abstract class OvfWriter implements IOvfBuilder {
@@ -90,6 +92,47 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteEndElement();
         }
         _writer.WriteEndElement();
+    }
+
+    protected void writeVmInit() {
+        if (vmBase.getVmInit() != null) {
+            VmInit vmInit = vmBase.getVmInit();
+            _writer.WriteStartElement("VmInit");
+            if (vmInit.getHostname() != null) {
+                _writer.WriteAttributeString(OVF_URI, "hostname", vmInit.getHostname());
+            }
+            if (vmInit.getDomain() != null) {
+                _writer.WriteAttributeString(OVF_URI, "domain", vmInit.getDomain());
+            }
+            if (vmInit.getTimeZone() != null) {
+                _writer.WriteAttributeString(OVF_URI, "timeZone", vmInit.getTimeZone());
+            }
+            if (vmInit.getAuthorizedKeys() != null) {
+                _writer.WriteAttributeString(OVF_URI, "authorizedKeys", vmInit.getAuthorizedKeys());
+            }
+            if (vmInit.getRegenerateKeys() != null) {
+                _writer.WriteAttributeString(OVF_URI, "regenerateKeys", vmInit.getRegenerateKeys().toString());
+            }
+            if (vmInit.getDnsSearch() != null) {
+                _writer.WriteAttributeString(OVF_URI, "dnsSearch", vmInit.getDnsSearch());
+            }
+            if (vmInit.getDnsServers() != null) {
+                _writer.WriteAttributeString(OVF_URI, "dnsServers", vmInit.getDnsServers());
+            }
+            if (vmInit.getNetworks() != null) {
+                _writer.WriteAttributeString(OVF_URI, "networks", VmInitUtils.networkListToJson(vmInit.getNetworks()));
+            }
+            if (vmInit.getWinKey() != null) {
+                _writer.WriteAttributeString(OVF_URI, "winKey", vmInit.getWinKey());
+            }
+            if (vmInit.getRootPassword() != null) {
+                _writer.WriteAttributeString(OVF_URI, "rootPassword", vmInit.getRootPassword());
+            }
+            if (vmInit.getCustomScript() != null) {
+                _writer.WriteAttributeString(OVF_URI, "customScript", vmInit.getCustomScript());
+            }
+            _writer.WriteEndElement();
+        }
     }
 
     @Override
@@ -194,9 +237,11 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(vmBase.getDescription());
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("Domain");
-        _writer.WriteRaw(vmBase.getDomain());
-        _writer.WriteEndElement();
+        if (!vmInitEnabled() && vmBase.getVmInit() != null) {
+            _writer.WriteStartElement("Domain");
+            _writer.WriteRaw(vmBase.getVmInit().getDomain());
+            _writer.WriteEndElement();
+        }
 
         _writer.WriteStartElement("CreationDate");
         _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getCreationDate()));
@@ -287,6 +332,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteRaw(String.valueOf(vmBase.getMigrationDowntime()));
             _writer.WriteEndElement();
         }
+        writeVmInit();
     }
 
     protected abstract void writeAppList();
@@ -438,6 +484,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         else {
             return usbPolicy.toString();
         }
+    }
+
+    protected boolean vmInitEnabled() {
+        return version.compareTo(Version.v3_4) < 0 ? false : true;
     }
 
     protected String getBackwardCompatibleDiskAlias(String diskAlias) {

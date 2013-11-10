@@ -57,6 +57,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmInitDAO;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -272,6 +273,46 @@ public class VmHandler {
                 vm.getDiskMap().put(disk.getId(), disk);
             }
         }
+    }
+
+    /**
+     * Fetch VmInit from Database
+     * @param vm VmBase to set the VmInit into
+     * @param secure if true don't return any password field
+     * We want to set false only when running VM becase the VmInitDAO
+     * decrypt the password.
+     */
+    public static void updateVmInitFromDB(VmBase vm, boolean secure) {
+        VmInitDAO db = DbFacade.getInstance().getVmInitDao();
+        vm.setVmInit(db.get(vm.getId()));
+        if (secure && vm.getVmInit() != null) {
+            vm.getVmInit().setRootPassword(null);
+        }
+    }
+
+    public static void addVmInitToDB(VmBase vm) {
+        if (vm.getVmInit() != null) {
+            vm.getVmInit().setId(vm.getId());
+            VmInitDAO db = DbFacade.getInstance().getVmInitDao();
+            if (db.get(vm.getId()) == null) {
+                db.save(vm.getVmInit());
+            } else {
+                db.update(vm.getVmInit());
+            }
+        }
+    }
+
+    public static void updateVmInitToDB(VmBase vm) {
+        if (vm.getVmInit() != null) {
+            VmHandler.addVmInitToDB(vm);
+        } else {
+            VmHandler.removeVmInitFromDB(vm);
+        }
+    }
+
+    public static void removeVmInitFromDB(VmBase vm) {
+        VmInitDAO db = DbFacade.getInstance().getVmInitDao();
+        db.remove(vm.getId());
     }
 
     /**

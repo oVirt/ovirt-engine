@@ -6,9 +6,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
+import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Usb;
@@ -89,6 +91,9 @@ public class VmMapperTest extends
         from.setPlacementPolicy(new VmPlacementPolicy());
         from.getPlacementPolicy().setHost(new Host());
         from.getPlacementPolicy().getHost().setId(Guid.Empty.toString());
+        for (GuestNicConfiguration guestNic: from.getInitialization().getNics().getNics()) {
+            guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
+        }
         return from;
     }
 
@@ -129,7 +134,6 @@ public class VmMapperTest extends
         assertEquals(model.getDisplay().isAllowOverride(), transform.getDisplay().isAllowOverride());
         assertEquals(model.getPlacementPolicy().getHost().getId(), transform.getPlacementPolicy().getHost().getId());
         assertTrue(Math.abs(model.getMemoryPolicy().getGuaranteed() - transform.getMemoryPolicy().getGuaranteed()) <= (1024 * 1024));
-        assertEquals(model.getDomain().getName(), transform.getDomain().getName());
         assertEquals(model.getTimezone(), transform.getTimezone());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
         assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());

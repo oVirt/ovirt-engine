@@ -100,6 +100,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected void executeCommand() {
+        VmHandler.updateVmInitFromDB(getVmTemplate(), true);
         if (!getTemplateDisks().isEmpty()) {
             moveOrCopyAllImageGroups();
         } else {
@@ -145,6 +146,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
+
         return retVal;
     }
 

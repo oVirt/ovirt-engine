@@ -28,5 +28,6 @@ public class GetVmByVmNameForDataCenterQuery<P extends GetVmByVmNameForDataCente
         VmHandler.updateDisksFromDb(vm);
         VmHandler.updateVmGuestAgentVersion(vm);
         VmHandler.updateNetworkInterfacesFromDb(vm);
+        VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
     }
 }

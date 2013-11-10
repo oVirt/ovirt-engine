@@ -652,6 +652,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     addVmStatistics();
                     addActiveSnapshot();
                     addVmPermission();
+                    addVmInit();
                     getCompensationContext().stateChanged();
                     return null;
                 }
@@ -772,6 +773,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             DbFacade.getInstance().getVmNetworkStatisticsDao().save(iface.getStatistics());
             getCompensationContext().snapshotNewEntity(iface.getStatistics());
         }
+    }
+
+    protected void addVmInit() {
+        VmHandler.addVmInitToDB(getParameters().getVmStaticData());
     }
 
     protected void addVmStatic() {

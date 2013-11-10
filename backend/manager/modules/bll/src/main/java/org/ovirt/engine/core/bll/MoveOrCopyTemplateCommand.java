@@ -272,6 +272,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     protected final void endVmTemplateRelatedOps() {
         if (getVmTemplate() != null) {
             VmDeviceUtils.setVmDevices(getVmTemplate());
+            VmHandler.updateVmInitFromDB(getVmTemplate(), true);
             incrementDbGeneration();
             VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
         }

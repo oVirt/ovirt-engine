@@ -18,22 +18,16 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
-public class TemplateGeneralModel extends EntityModel
-{
+public class TemplateGeneralModel extends EntityModel {
 
     @Override
-    public VmTemplate getEntity()
-    {
-        if (super.getEntity() == null)
-        {
+    public VmTemplate getEntity() {
+        if (super.getEntity() == null) {
             return null;
         }
-        if (super.getEntity() instanceof VmTemplate)
-        {
+        if (super.getEntity() instanceof VmTemplate) {
             return (VmTemplate) super.getEntity();
-        }
-        else
-        {
+        } else {
             Map.Entry<VmTemplate, ArrayList<DiskImage>> pair =
                     (Map.Entry<VmTemplate, ArrayList<DiskImage>>) super.getEntity();
             return pair.getKey();
@@ -42,15 +36,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String name;
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String value)
-    {
-        if (!StringHelper.stringsEqual(name, value))
-        {
+    public void setName(String value) {
+        if (!StringHelper.stringsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
@@ -58,15 +49,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String description;
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String value)
-    {
-        if (!StringHelper.stringsEqual(description, value))
-        {
+    public void setDescription(String value) {
+        if (!StringHelper.stringsEqual(description, value)) {
             description = value;
             onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
@@ -94,15 +82,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String hostCluster;
 
-    public String getHostCluster()
-    {
+    public String getHostCluster() {
         return hostCluster;
     }
 
-    public void setHostCluster(String value)
-    {
-        if (!StringHelper.stringsEqual(hostCluster, value))
-        {
+    public void setHostCluster(String value) {
+        if (!StringHelper.stringsEqual(hostCluster, value)) {
             hostCluster = value;
             onPropertyChanged(new PropertyChangedEventArgs("HostCluster")); //$NON-NLS-1$
         }
@@ -110,15 +95,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String definedMemory;
 
-    public String getDefinedMemory()
-    {
+    public String getDefinedMemory() {
         return definedMemory;
     }
 
-    public void setDefinedMemory(String value)
-    {
-        if (!StringHelper.stringsEqual(definedMemory, value))
-        {
+    public void setDefinedMemory(String value) {
+        if (!StringHelper.stringsEqual(definedMemory, value)) {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
@@ -126,15 +108,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String cpuInfo;
 
-    public String getCpuInfo()
-    {
+    public String getCpuInfo() {
         return cpuInfo;
     }
 
-    public void setCpuInfo(String value)
-    {
-        if (!StringHelper.stringsEqual(cpuInfo, value))
-        {
+    public void setCpuInfo(String value) {
+        if (!StringHelper.stringsEqual(cpuInfo, value)) {
             cpuInfo = value;
             onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
@@ -142,15 +121,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String os;
 
-    public String getOS()
-    {
+    public String getOS() {
         return os;
     }
 
-    public void setOS(String value)
-    {
-        if (!StringHelper.stringsEqual(os, value))
-        {
+    public void setOS(String value) {
+        if (!StringHelper.stringsEqual(os, value)) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
@@ -158,15 +134,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String defaultDisplayType;
 
-    public String getDefaultDisplayType()
-    {
+    public String getDefaultDisplayType() {
         return defaultDisplayType;
     }
 
-    public void setDefaultDisplayType(String value)
-    {
-        if (!StringHelper.stringsEqual(defaultDisplayType, value))
-        {
+    public void setDefaultDisplayType(String value) {
+        if (!StringHelper.stringsEqual(defaultDisplayType, value)) {
             defaultDisplayType = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
@@ -174,15 +147,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String origin;
 
-    public String getOrigin()
-    {
+    public String getOrigin() {
         return origin;
     }
 
-    public void setOrigin(String value)
-    {
-        if (!StringHelper.stringsEqual(origin, value))
-        {
+    public void setOrigin(String value) {
+        if (!StringHelper.stringsEqual(origin, value)) {
             origin = value;
             onPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
@@ -190,15 +160,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private boolean isHighlyAvailable;
 
-    public boolean getIsHighlyAvailable()
-    {
+    public boolean getIsHighlyAvailable() {
         return isHighlyAvailable;
     }
 
-    public void setIsHighlyAvailable(boolean value)
-    {
-        if (isHighlyAvailable != value)
-        {
+    public void setIsHighlyAvailable(boolean value) {
+        if (isHighlyAvailable != value) {
             isHighlyAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable")); //$NON-NLS-1$
         }
@@ -206,15 +173,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String priority;
 
-    public String getPriority()
-    {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(String value)
-    {
-        if (!StringHelper.stringsEqual(priority, value))
-        {
+    public void setPriority(String value) {
+        if (!StringHelper.stringsEqual(priority, value)) {
             priority = value;
             onPropertyChanged(new PropertyChangedEventArgs("Priority")); //$NON-NLS-1$
         }
@@ -222,15 +186,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private boolean hasMonitorCount;
 
-    public boolean getHasMonitorCount()
-    {
+    public boolean getHasMonitorCount() {
         return hasMonitorCount;
     }
 
-    public void setHasMonitorCount(boolean value)
-    {
-        if (hasMonitorCount != value)
-        {
+    public void setHasMonitorCount(boolean value) {
+        if (hasMonitorCount != value) {
             hasMonitorCount = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount")); //$NON-NLS-1$
         }
@@ -238,15 +199,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private int monitorCount;
 
-    public int getMonitorCount()
-    {
+    public int getMonitorCount() {
         return monitorCount;
     }
 
-    public void setMonitorCount(int value)
-    {
-        if (monitorCount != value)
-        {
+    public void setMonitorCount(int value) {
+        if (monitorCount != value) {
             monitorCount = value;
             onPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
         }
@@ -254,15 +212,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private boolean allowConsoleReconnect;
 
-    public boolean getAllowConsoleReconnect()
-    {
+    public boolean getAllowConsoleReconnect() {
         return allowConsoleReconnect;
     }
 
-    public void setAllowConsoleReconnect(boolean value)
-    {
-        if (allowConsoleReconnect != value)
-        {
+    public void setAllowConsoleReconnect(boolean value) {
+        if (allowConsoleReconnect != value) {
             allowConsoleReconnect = value;
             onPropertyChanged(new PropertyChangedEventArgs("AllowConsoleReconnect")); //$NON-NLS-1$
         }
@@ -270,15 +225,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private boolean hasDomain;
 
-    public boolean getHasDomain()
-    {
+    public boolean getHasDomain() {
         return hasDomain;
     }
 
-    public void setHasDomain(boolean value)
-    {
-        if (hasDomain != value)
-        {
+    public void setHasDomain(boolean value) {
+        if (hasDomain != value) {
             hasDomain = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
         }
@@ -286,15 +238,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private boolean hasTimeZone;
 
-    public boolean getHasTimeZone()
-    {
+    public boolean getHasTimeZone() {
         return hasTimeZone;
     }
 
-    public void setHasTimeZone(boolean value)
-    {
-        if (hasTimeZone != value)
-        {
+    public void setHasTimeZone(boolean value) {
+        if (hasTimeZone != value) {
             hasTimeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
         }
@@ -302,15 +251,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String domain;
 
-    public String getDomain()
-    {
+    public String getDomain() {
         return domain;
     }
 
-    public void setDomain(String value)
-    {
-        if (!StringHelper.stringsEqual(domain, value))
-        {
+    public void setDomain(String value) {
+        if (!StringHelper.stringsEqual(domain, value)) {
             domain = value;
             onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
@@ -318,15 +264,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String timeZone;
 
-    public String getTimeZone()
-    {
+    public String getTimeZone() {
         return timeZone;
     }
 
-    public void setTimeZone(String value)
-    {
-        if (!StringHelper.stringsEqual(timeZone, value))
-        {
+    public void setTimeZone(String value) {
+        if (!StringHelper.stringsEqual(timeZone, value)) {
             timeZone = value;
             onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
@@ -334,15 +277,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private boolean hasUsbPolicy;
 
-    public boolean getHasUsbPolicy()
-    {
+    public boolean getHasUsbPolicy() {
         return hasUsbPolicy;
     }
 
-    public void setHasUsbPolicy(boolean value)
-    {
-        if (hasUsbPolicy != value)
-        {
+    public void setHasUsbPolicy(boolean value) {
+        if (hasUsbPolicy != value) {
             hasUsbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("HasUsbPolicy")); //$NON-NLS-1$
         }
@@ -350,15 +290,12 @@ public class TemplateGeneralModel extends EntityModel
 
     private String usbPolicy;
 
-    public String getUsbPolicy()
-    {
+    public String getUsbPolicy() {
         return usbPolicy;
     }
 
-    public void setUsbPolicy(String value)
-    {
-        if (!StringHelper.stringsEqual(usbPolicy, value))
-        {
+    public void setUsbPolicy(String value) {
+        if (!StringHelper.stringsEqual(usbPolicy, value)) {
             usbPolicy = value;
             onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }
@@ -366,47 +303,39 @@ public class TemplateGeneralModel extends EntityModel
 
     private boolean isStateless;
 
-    public boolean getIsStateless()
-    {
+    public boolean getIsStateless() {
         return isStateless;
     }
 
-    public void setIsStateless(boolean value)
-    {
-        if (isStateless != value)
-        {
+    public void setIsStateless(boolean value) {
+        if (isStateless != value) {
             isStateless = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsStateless")); //$NON-NLS-1$
         }
     }
 
-    public TemplateGeneralModel()
-    {
+    public TemplateGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHashName("general"); //$NON-NLS-1$
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (super.getEntity() != null)
-        {
+        if (super.getEntity() != null) {
             updateProperties();
         }
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
         updateProperties();
     }
 
-    private void updateProperties()
-    {
+    private void updateProperties() {
         VmTemplate template = getEntity();
 
         setName(template.getName());
@@ -434,7 +363,9 @@ public class TemplateGeneralModel extends EntityModel
         setOrigin(translator.get(template.getOrigin()));
 
         setHasDomain(AsyncDataProvider.isWindowsOsType(template.getOsId()));
-        setDomain(template.getDomain());
+        if (template.getVmInit() != null) {
+            setDomain(template.getVmInit().getDomain());
+        }
 
         setHasTimeZone(AsyncDataProvider.isWindowsOsType(template.getOsId()));
         setTimeZone(template.getTimeZone());

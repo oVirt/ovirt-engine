@@ -484,6 +484,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // Mark that the hibernation volume should be cleared from the VM right after the sync part of
         // the create verb is finished (unlike hibernation volume that is created by hibernate command)
         parameters.setClearHibernationVolumes(true);
+        parameters.setVmInit(vmToBeCreated.getVmInit());
         return parameters;
     }
 
@@ -587,10 +588,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getParameters().getInitializationType() == null) {
             // if vm not initialized, use sysprep/cloud-init
             if (!getVm().isInitialized()) {
-                getVm().setInitializationType(osRepository.isWindows(getVm().getVmOsId()) ?
-                        InitializationType.Sysprep :
-                            // TODO: we should use cloud init automatically only when cloud init configuration will be available
-                            InitializationType.None);
+                VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+                if (osRepository.isWindows(getVm().getVmOsId())) {
+                    getVm().setInitializationType(InitializationType.Sysprep);
+                }
+                else if (getVm().getVmInit() != null) {
+                    getVm().setInitializationType(InitializationType.CloudInit);
+                }
+                else {
+                    getVm().setInitializationType(InitializationType.None);
+                }
             }
         } else {
             getVm().setInitializationType(getParameters().getInitializationType());

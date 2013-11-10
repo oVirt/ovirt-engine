@@ -5,33 +5,28 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.ovirt.engine.core.common.action.CloudInitParameters;
-import org.ovirt.engine.core.common.action.CloudInitParameters.Attachment;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.springframework.util.CollectionUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 public class CloudInitHandler {
     private static Log log = LogFactory.getLog(CloudInitHandler.class);
 
-    private final CloudInitParameters params;
+    private final VmInit vmInit;
     private final Map<String, Object> metaData;
     private final Map<String, Object> userData;
     private final Map<String, byte[]> files;
@@ -39,14 +34,15 @@ public class CloudInitHandler {
     private String interfaces;
 
     private final String passwordKey = "password";
+    private final String customScript = "customScript";
 
     private enum CloudInitFileMode {
         FILE,
         NETWORK;
     }
 
-    public CloudInitHandler(CloudInitParameters cloudInitParams) {
-        this.params = cloudInitParams;
+    public CloudInitHandler(VmInit vmInit) {
+        this.vmInit = vmInit;
         metaData = new HashMap<String, Object>();
         userData = new HashMap<String, Object>();
         files = new HashMap<String, byte[]>();
@@ -56,7 +52,7 @@ public class CloudInitHandler {
 
     public Map<String, byte[]> getFileData()
             throws UnsupportedEncodingException, IOException, JsonGenerationException, JsonMappingException {
-        if (params != null) {
+        if (vmInit != null) {
             try {
                 storeHostname();
                 storeAuthorizedKeys();
@@ -64,7 +60,7 @@ public class CloudInitHandler {
                 storeNetwork();
                 storeTimeZone();
                 storeRootPassword();
-                storeUserFiles();
+                storeCustomScript();
             } catch (IllegalArgumentException ex) {
                 throw new IllegalArgumentException("Malformed input", ex);
             }
@@ -86,7 +82,7 @@ public class CloudInitHandler {
 
         // mask password for log if exists
         if (metaDataStr.contains(passwordKey)) {
-            String oldStr = String.format("\"%s\" : \"%s\"", passwordKey, params.getRootPassword());
+            String oldStr = String.format("\"%s\" : \"%s\"", passwordKey, vmInit.getRootPassword());
             String newStr = String.format("\"%s\" : ***", passwordKey);
             metaDataStr = metaDataStr.replace(oldStr, newStr);
         }
@@ -98,21 +94,21 @@ public class CloudInitHandler {
 
 
     private void storeHostname() {
-        if (!StringUtils.isEmpty(params.getHostname())) {
-            metaData.put("hostname", params.getHostname());
-            metaData.put("name", params.getHostname());
+        if (!StringUtils.isEmpty(vmInit.getHostname())) {
+            metaData.put("hostname", vmInit.getHostname());
+            metaData.put("name", vmInit.getHostname());
         }
     }
 
     private void storeAuthorizedKeys() {
-        if (!StringUtils.isEmpty(params.getAuthorizedKeys())) {
-            metaData.put("public_keys", normalizeAuthorizedKeys(params.getAuthorizedKeys()));
+        if (!StringUtils.isEmpty(vmInit.getAuthorizedKeys())) {
+            metaData.put("public_keys", normalizeAuthorizedKeys(vmInit.getAuthorizedKeys()));
         }
     }
 
     private List<String> normalizeAuthorizedKeys(String authorizedKeys) {
         List<String> keys = new ArrayList<String>();
-        for (String key : params.getAuthorizedKeys().split("(\\r?\\n|\\r)+")) {
+        for (String key : vmInit.getAuthorizedKeys().split("(\\r?\\n|\\r)+")) {
             if (!StringUtils.isEmpty(key)) {
                 keys.add(key);
             }
@@ -121,7 +117,7 @@ public class CloudInitHandler {
     }
 
     private void storeRegenerateKeys() {
-        if (params.getRegenerateKeys() != null && (boolean) params.getRegenerateKeys()) {
+        if (vmInit.getRegenerateKeys() != null && (boolean) vmInit.getRegenerateKeys()) {
             // Create new system ssh keys
             userData.put("ssh_deletekeys", "True");
         }
@@ -131,43 +127,34 @@ public class CloudInitHandler {
         StringBuilder output = new StringBuilder();
 
         // As of cloud-init 0.7.1, you can't set DNS servers without also setting NICs
-        if (!CollectionUtils.isEmpty(params.getDnsServers())) {
-            output.append("dns-nameservers");
-            for (String server : params.getDnsServers()) {
-                output.append(" " + server);
-            }
+        if (vmInit.getDnsServers() != null) {
+            output.append("dns-nameservers")
+            .append(" ").append(vmInit.getDnsServers());
             output.append("\n");
         }
 
-        if (!CollectionUtils.isEmpty(params.getDnsSearch())) {
-            output.append("dns-search");
-            for (String domain : params.getDnsSearch()) {
-                output.append(" " + domain);
-            }
+        if (vmInit.getDnsSearch() != null) {
+            output.append("dns-search")
+            .append(" ").append(vmInit.getDnsSearch());
             output.append("\n");
         }
 
-        if (!CollectionUtils.isEmpty(params.getInterfaces())) {
-            Map<String, VdsNetworkInterface> interfaces = params.getInterfaces();
-            List<String> names = new ArrayList<String>(interfaces.keySet());
-            Collections.sort(names);
+        if (vmInit.getNetworks() != null) {
+            List<VmInitNetwork> networks = vmInit.getNetworks();
 
-            for (String name : names) {
-                VdsNetworkInterface iface = interfaces.get(name);
-                output.append("iface " + name + " inet "
-                        + networkBootProtocolToString(iface.getBootProtocol()) + "\n");
-                output.append("  address " + iface.getAddress() + "\n");
-                output.append("  netmask " + iface.getSubnet() + "\n");
+            for (VmInitNetwork iface: networks) {
+                output.append("iface " + iface.getName() + " inet "
+                        + iface.getBootProtocol().toString().toLowerCase() + "\n");
+                output.append("  address " + iface.getIp() + "\n");
+                output.append("  netmask " + iface.getNetmask() + "\n");
                 if (!StringUtils.isEmpty(iface.getGateway())) {
                     output.append("  gateway " + iface.getGateway() + "\n");
                 }
             }
-        }
 
-        if (!CollectionUtils.isEmpty(params.getStartOnBoot())) {
             output.append("auto");
-            for (String name : params.getStartOnBoot()) {
-                output.append(" " + name);
+            for (VmInitNetwork iface : networks) {
+                output.append(" " + iface.getName());
             }
             output.append("\n");
         }
@@ -184,46 +171,24 @@ public class CloudInitHandler {
         }
     }
 
-    private String networkBootProtocolToString(NetworkBootProtocol proto) {
-        switch (proto) {
-        case DHCP:
-            return "dhcp";
-        case STATIC_IP:
-            return "static";
-        case NONE:
-        default:
-            return "none";
-        }
-    }
-
     private void storeTimeZone() {
-        if (params.getTimeZone() != null) {
-            userData.put("timezone", params.getTimeZone());
+        if (vmInit.getTimeZone() != null) {
+            userData.put("timezone", vmInit.getTimeZone());
         }
     }
 
     private void storeRootPassword() {
-        if (!StringUtils.isEmpty(params.getRootPassword())) {
+        if (!StringUtils.isEmpty(vmInit.getRootPassword())) {
             // Note that this is in plain text in the config disk
-            userData.put(passwordKey, params.getRootPassword());
+            userData.put(passwordKey, vmInit.getRootPassword());
         }
     }
 
-    private void storeUserFiles() throws UnsupportedEncodingException {
-        if (params.getAttachments() != null) {
-            for (Map.Entry<String, Attachment> entry : params.getAttachments().entrySet()) {
-                Attachment attachment = entry.getValue();
-                byte[] data;
-                if (attachment.getAttachmentType() == Attachment.AttachmentType.BASE64) {
-                    data = Base64.decodeBase64(attachment.getContent());
-                } else {
-                    data = attachment.getContent().getBytes("UTF-8");
-                }
-                storeNextFile(CloudInitFileMode.FILE, entry.getKey(), data);
-            }
+    private void storeCustomScript() {
+        if (!StringUtils.isEmpty(vmInit.getCustomScript())) {
+            userData.put(customScript, vmInit.getCustomScript());
         }
     }
-
 
     private void storeExecutionParameters() {
         // Store defaults in meta-data and user-data that apply regardless

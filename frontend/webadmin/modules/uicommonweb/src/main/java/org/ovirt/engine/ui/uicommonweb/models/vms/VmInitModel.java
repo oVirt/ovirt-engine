@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,14 +10,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.ovirt.engine.core.common.TimeZoneType;
-import org.ovirt.engine.core.common.action.CloudInitParameters;
-import org.ovirt.engine.core.common.action.CloudInitParameters.Attachment;
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -27,20 +27,35 @@ import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
-public class CloudInitModel extends Model {
+public class VmInitModel extends Model {
 
-    private EntityModel privateHostnameEnabled;
-    public EntityModel getHostnameEnabled() {
-        return privateHostnameEnabled;
+    public boolean getHostnameEnabled() {
+        return !StringHelper.isNullOrEmpty((String) getHostname().getEntity());
     }
-    private void setHostnameEnabled(EntityModel value) {
-        privateHostnameEnabled = value;
+
+    private ListModel windowsSysprepTimeZone;
+
+    public ListModel getWindowsSysprepTimeZone() {
+        return windowsSysprepTimeZone;
+    }
+
+    public void setWindowsSysprepTimeZone(ListModel windowsSysprepTimeZone) {
+        this.windowsSysprepTimeZone = windowsSysprepTimeZone;
+    }
+
+    private EntityModel windowsSysprepTimeZoneEnabled;
+
+    public EntityModel getWindowsSysprepTimeZoneEnabled() {
+        return windowsSysprepTimeZoneEnabled;
+    }
+
+    public void setWindowsSysprepTimeZoneEnabled(EntityModel windowsSysprepTimeZoneEnabled) {
+        this.windowsSysprepTimeZoneEnabled = windowsSysprepTimeZoneEnabled;
     }
 
     private EntityModel privateHostname;
@@ -51,13 +66,24 @@ public class CloudInitModel extends Model {
         privateHostname = value;
     }
 
-
-    private EntityModel privateAuthorizedKeysEnabled;
-    public EntityModel getAuthorizedKeysEnabled() {
-        return privateAuthorizedKeysEnabled;
+    private EntityModel privateDomain;
+    public EntityModel getDomain() {
+        return privateDomain;
     }
-    private void setAuthorizedKeysEnabled(EntityModel value) {
-        privateAuthorizedKeysEnabled = value;
+    private void setDomain(EntityModel value) {
+        privateDomain = value;
+    }
+
+    private EntityModel privateCustomScript;
+    public EntityModel getCustomScript() {
+        return privateCustomScript;
+    }
+    private void setCustomScript(EntityModel value) {
+        privateCustomScript = value;
+    }
+
+    public boolean getAuthorizedKeysEnabled() {
+        return !StringHelper.isNullOrEmpty((String) getRootPassword().getEntity());
     }
 
     private EntityModel privateAuthorizedKeys;
@@ -94,13 +120,8 @@ public class CloudInitModel extends Model {
         privateTimeZoneList = value;
     }
 
-
-    private EntityModel privateRootPasswordEnabled;
-    public EntityModel getRootPasswordEnabled() {
-        return privateRootPasswordEnabled;
-    }
-    private void setRootPasswordEnabled(EntityModel value) {
-        privateRootPasswordEnabled = value;
+    public boolean getRootPasswordEnabled() {
+        return !StringHelper.isNullOrEmpty((String) getRootPassword().getEntity());
     }
 
     private EntityModel privateRootPassword;
@@ -235,6 +256,7 @@ public class CloudInitModel extends Model {
 
     private ListModel privateAttachmentList;
     public ListModel getAttachmentList() {
+
         return privateAttachmentList;
     }
     private void setAttachmentList(ListModel value) {
@@ -281,14 +303,9 @@ public class CloudInitModel extends Model {
     private static final String base64Message;
     private static final String base64Regex;
 
-    private SortedMap<String, VdsNetworkInterface> networkMap;
+    private SortedMap<String, VmInitNetwork> networkMap;
     private Set<String> networkStartOnBoot;
     private String lastSelectedNetworkName;
-
-    private static Map<Attachment.AttachmentType, String> attachmentTypes;
-    private SortedMap<String, Attachment> attachmentMap;
-    private String lastSelectedAttachmentPath;
-
 
     static {
         rootPasswordMatchMessage = ConstantsManager.getInstance().getConstants().cloudInitRootPasswordMatchMessage();
@@ -297,27 +314,20 @@ public class CloudInitModel extends Model {
         newAttachmentText = ConstantsManager.getInstance().getConstants().cloudInitNewAttachmentItem();
         base64Message = ConstantsManager.getInstance().getConstants().cloudInitBase64Message();
         base64Regex = "^[a-zA-Z0-9+/_\\r\\n-](=){0,2}$"; //$NON-NLS-1$
-
-        initAttachmentTypes();
     }
 
-    private static void initAttachmentTypes() {
-        attachmentTypes = new LinkedHashMap<Attachment.AttachmentType, String>();
-        attachmentTypes.put(Attachment.AttachmentType.PLAINTEXT,
-                ConstantsManager.getInstance().getConstants().cloudInitAttachmentTypePlainText());
-        attachmentTypes.put(Attachment.AttachmentType.BASE64,
-                ConstantsManager.getInstance().getConstants().cloudInitAttachmentTypeBase64());
-    }
+    public VmInitModel() {
 
-    public CloudInitModel() {
-        setHostnameEnabled(new EntityModel());
+        setWindowsSysprepTimeZone(new ListModel());
+        setWindowsSysprepTimeZoneEnabled(new EntityModel());
+
         setHostname(new EntityModel());
-        setAuthorizedKeysEnabled(new EntityModel());
+        setDomain(new EntityModel());
         setAuthorizedKeys(new EntityModel());
+        setCustomScript(new EntityModel());
         setRegenerateKeysEnabled(new EntityModel());
         setTimeZoneEnabled(new EntityModel());
         setTimeZoneList(new ListModel());
-        setRootPasswordEnabled(new EntityModel());
         setRootPassword(new EntityModel());
         setRootPasswordVerification(new EntityModel());
 
@@ -336,7 +346,7 @@ public class CloudInitModel extends Model {
         setAddNetworkCommand(new UICommand("addNetwork", this)); //$NON-NLS-1$
         setRemoveNetworkCommand(new UICommand("removeNetwork", this)); //$NON-NLS-1$
 
-        networkMap = new TreeMap<String, VdsNetworkInterface>();
+        networkMap = new TreeMap<String, VmInitNetwork>();
         networkStartOnBoot = new HashSet<String>();
         lastSelectedNetworkName = null;
         getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
@@ -354,30 +364,27 @@ public class CloudInitModel extends Model {
         setAddAttachmentCommand(new UICommand("addAttachment", this)); //$NON-NLS-1$
         setRemoveAttachmentCommand(new UICommand("removeAttachment", this)); //$NON-NLS-1$
 
-        attachmentMap = new TreeMap<String, Attachment>();
-        lastSelectedAttachmentPath = null;
-        getAttachmentList().setItems(new ArrayList<String>(attachmentMap.keySet()));
-        getAttachmentList().setSelectedItem(lastSelectedAttachmentPath);
-
         getAttachmentList().getSelectedItemChangedEvent().addListener(this);
         getAttachmentSelectedPath().getEntityChangedEvent().addListener(this);
     }
 
-    public void init(final VM vm, final CloudInitParameters ciParams) {
-        // if ciParams is null, initialize with default options
-        // TODO if not null, set fields from passed-in data (for persisted data, if/when supported)
-        getHostnameEnabled().setEntity(false);
-        getHostname().setEntity(vm.getName());
-        getAuthorizedKeysEnabled().setEntity(false);
+    public void init(final VmBase vm) {
+        getWindowsSysprepTimeZoneEnabled().setEntity(false);
         getRegenerateKeysEnabled().setEntity(false);
         getTimeZoneEnabled().setEntity(false);
-        getRootPasswordEnabled().setEntity(false);
         getNetworkEnabled().setEntity(false);
         getAttachmentEnabled().setEntity(false);
 
+        getHostname().setEntity("");
+        getDomain().setEntity("");
+        getRootPassword().setEntity("");
+        getRootPasswordVerification().setEntity("");
+        getAuthorizedKeys().setEntity("");
+        getRegenerateKeysEnabled().setEntity(false);
+        getCustomScript().setEntity("");
+
         Map<String, String> timezones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
         getTimeZoneList().setItems(timezones.entrySet());
-
         getTimeZoneList().setSelectedItem(Linq.firstOrDefault(timezones.entrySet(),
                 new IPredicate<Map.Entry<String, String>>() {
                     @Override
@@ -386,20 +393,123 @@ public class CloudInitModel extends Model {
                     }
                 }));
 
-        getAttachmentType().setItems(attachmentTypes.entrySet());
-        getAttachmentType().setSelectedItem(Linq.firstOrDefault(attachmentTypes.entrySet()));
+        Map<String, String> windowsTimezones = TimeZoneType.WINDOWS_TIMEZONE.getTimeZoneList();
+        getWindowsSysprepTimeZone().setItems(windowsTimezones.entrySet());
+        getWindowsSysprepTimeZone().setSelectedItem(Linq.firstOrDefault(windowsTimezones.entrySet(),
+                new IPredicate<Map.Entry<String, String>>() {
+                    @Override
+                    public boolean match(Map.Entry<String, String> item) {
+                        return item.getValue().startsWith("(GMT) Greenwich"); //$NON-NLS-1$
+                    }
+                }));
+
+        // if not proven to be hidden, show it
+        boolean isWindows = vm != null ? AsyncDataProvider.isWindowsOsType(vm.getOsId()) : true;
+        getDomain().setIsAvailable(isWindows);
+
+        VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
+        if (vmInit != null) {
+            if (!StringHelper.isNullOrEmpty(vmInit.getHostname())) {
+                getHostname().setEntity(vmInit.getHostname());
+            }
+            getDomain().setEntity(vmInit.getDomain());
+            final String tz = vmInit.getTimeZone();
+            if (!StringHelper.isNullOrEmpty(tz)) {
+                if (AsyncDataProvider.isWindowsOsType(vm.getOsId())) {
+                    getWindowsSysprepTimeZoneEnabled().setEntity(true);
+                    selectTimeZone(getWindowsSysprepTimeZone(), windowsTimezones, tz);
+                } else {
+                    getTimeZoneEnabled().setEntity(true);
+                    selectTimeZone(getTimeZoneList(), timezones, tz);
+                }
+            }
+
+            if (!StringHelper.isNullOrEmpty(vmInit.getRootPassword())) {
+                getRootPassword().setEntity(vmInit.getRootPassword());
+                getRootPasswordVerification().setEntity(vmInit.getRootPassword());
+            }
+            if (!StringHelper.isNullOrEmpty(vmInit.getAuthorizedKeys())) {
+                getAuthorizedKeys().setEntity(vmInit.getAuthorizedKeys());
+            }
+            if (vmInit.getRegenerateKeys() != null) {
+                getRegenerateKeysEnabled().setEntity(vmInit.getRegenerateKeys());
+            }
+
+            if (!StringHelper.isNullOrEmpty(vmInit.getCustomScript())) {
+                getCustomScript().setEntity(vmInit.getCustomScript());
+            }
+
+            initNetworks(vmInit);
+        }
+    }
+
+    private void initNetworks(VmInit vmInit) {
+        if (vmInit.getDnsServers() != null) {
+            getDnsServers().setEntity(vmInit.getDnsServers());
+        }
+
+        if (vmInit.getDnsSearch() != null) {
+            getDnsSearchDomains().setEntity(vmInit.getDnsSearch());
+        }
+
+        if (vmInit.getNetworks() == null || vmInit.getNetworks().size() == 0) {
+            return;
+        }
+
+        networkMap = new TreeMap<String, VmInitNetwork>();
+        networkStartOnBoot = new HashSet<String>();
+        lastSelectedNetworkName = null;
+
+        for (VmInitNetwork network : vmInit.getNetworks()) {
+            if (network.getName() == null) {
+                continue;
+            }
+
+            networkMap.put(network.getName(), network);
+            if (network.getStartOnBoot() != null && network.getStartOnBoot()) {
+                networkStartOnBoot.add(network.getName());
+            }
+        }
+
+        if (networkMap.size() != 0) {
+            lastSelectedNetworkName =  networkMap.keySet().iterator().next();
+            getNetworkEnabled().setEntity(true);
+        } else {
+            getNetworkEnabled().setEntity(false);
+        }
+
+        // update silently - do not listen to events
+        getNetworkList().getSelectedItemChangedEvent().removeListener(this);
+        getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
+        getNetworkList().setSelectedItem(lastSelectedNetworkName);
+        getNetworkList().getSelectedItemChangedEvent().addListener(this);
+
+        getNetworkSelectedName().getEntityChangedEvent().removeListener(this);
+        getNetworkSelectedName().setEntity(getNetworkList().getSelectedItem());
+        getNetworkSelectedName().getEntityChangedEvent().addListener(this);
+
+        updateNetworkDisplay();
+    }
+
+
+    private void selectTimeZone(ListModel specificTimeZoneModel, Map<String, String> timezones, final String tz) {
+        specificTimeZoneModel.setSelectedItem(Linq.firstOrDefault(timezones.entrySet(),
+                new IPredicate<Map.Entry<String, String>>() {
+                    @Override
+                    public boolean match(Map.Entry<String, String> item) {
+                        return item.getKey().equals(tz);
+                    }
+                }));
     }
 
     public boolean validate() {
         getHostname().setIsValid(true);
-        if ((Boolean) getHostnameEnabled().getEntity()) {
+        if (getHostnameEnabled()) {
             getHostname().validateEntity(new IValidation[] { new HostnameValidation() });
         }
+        getDomain().setIsValid(true);
 
         getAuthorizedKeys().setIsValid(true);
-        if ((Boolean) getAuthorizedKeysEnabled().getEntity()) {
-            getAuthorizedKeys().validateEntity(new IValidation[] { new NotEmptyValidation() });
-        }
 
         getTimeZoneList().setIsValid(true);
         if ((Boolean) getTimeZoneEnabled().getEntity()) {
@@ -408,11 +518,11 @@ public class CloudInitModel extends Model {
 
         getRootPassword().setIsValid(true);
         getRootPasswordVerification().setIsValid(true);
-        if ((Boolean) getRootPasswordEnabled().getEntity()) {
+        if (getRootPasswordEnabled()) {
             getRootPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
             if (getRootPassword().getIsValid()) {
-                if (!((String) getRootPassword().getEntity())
-                        .equals((String) getRootPasswordVerification().getEntity())) {
+                if (!(getRootPassword().getEntity())
+                        .equals(getRootPasswordVerification().getEntity())) {
                     ArrayList<String> reasons = new ArrayList<String>();
                     reasons.add(rootPasswordMatchMessage);
                     getRootPassword().setInvalidityReasons(reasons);
@@ -436,16 +546,16 @@ public class CloudInitModel extends Model {
         if ((Boolean) getNetworkEnabled().getEntity()) {
             saveNetworkFields();
 
-            for (Map.Entry<String, VdsNetworkInterface> entry : networkMap.entrySet()) {
+            for (Map.Entry<String, VmInitNetwork> entry : networkMap.entrySet()) {
                 String name = entry.getKey();
-                VdsNetworkInterface params = entry.getValue();
+                VmInitNetwork params = entry.getValue();
 
                 if (params.getBootProtocol() != NetworkBootProtocol.DHCP) {
                     if (!validateHidden(getNetworkList(), name, null,
                                     new IValidation[] { new AsciiNameValidation() })
-                            || !validateHidden(getNetworkIpAddress(), params.getAddress(), null,
+                            || !validateHidden(getNetworkIpAddress(), params.getIp(), null,
                                     new IValidation[] { new IpAddressValidation() })
-                            || !validateHidden(getNetworkNetmask(), params.getSubnet(), null,
+                            || !validateHidden(getNetworkNetmask(), params.getNetmask(), null,
                                     new IValidation[] { new SubnetMaskValidation() })
                             || !validateHidden(getNetworkGateway(), params.getGateway(), null,
                                     new IValidation[] { new IpAddressValidation() })) {
@@ -478,32 +588,13 @@ public class CloudInitModel extends Model {
             }
         }
 
-        boolean attachmentIsValid = true;
-        getAttachmentContent().setIsValid(true);
-        if ((Boolean) getAttachmentEnabled().getEntity()) {
-            saveAttachmentFields();
-
-            for (Map.Entry<String, Attachment> entry : attachmentMap.entrySet()) {
-                String name = entry.getKey();
-                Attachment params = entry.getValue();
-
-                if (params.getAttachmentType() == Attachment.AttachmentType.BASE64) {
-                    if (!validateHidden(getAttachmentContent(), params.getContent(), null,
-                            new IValidation[] { new RegexValidation(base64Regex, base64Message)})) {
-                        getAttachmentList().setSelectedItem(name);
-                        attachmentIsValid = false;
-                    }
-                }
-            }
-        }
-
         return getHostname().getIsValid()
+                && getDomain().getIsValid()
                 && getAuthorizedKeys().getIsValid()
                 && getTimeZoneList().getIsValid()
                 && getRootPassword().getIsValid()
                 && networkIsValid
-                && dnsIsValid
-                && attachmentIsValid;
+                && dnsIsValid;
     }
 
     /* Validate a shared display element, without having to display each shared value */
@@ -526,55 +617,79 @@ public class CloudInitModel extends Model {
         return tmp.getIsValid();
     }
 
-    public CloudInitParameters buildCloudInitParameters() {
-        CloudInitParameters ciParams = new CloudInitParameters();
-
-        if ((Boolean) getHostnameEnabled().getEntity()) {
-            ciParams.setHostname((String) getHostname().getEntity());
+    public VmInit buildCloudInitParameters(UnitVmModel model) {
+        if (model.getVmInitEnabled().getEntity()) {
+            return buildModelSpecificParameters(model.getIsWindowsOS(), model.getDomain().getEntity());
+        } else {
+            return null;
         }
-        if ((Boolean) getAuthorizedKeysEnabled().getEntity()) {
-            ciParams.setAuthorizedKeys((String) getAuthorizedKeys().getEntity());
+    }
+
+    public VmInit buildCloudInitParameters(RunOnceModel model) {
+        if ((Boolean) model.getIsSysprepEnabled().getEntity() ||
+                (Boolean) model.getIsCloudInitEnabled().getEntity()) {
+            return buildModelSpecificParameters(model.getIsWindowsOS(), (String) model.getSysPrepSelectedDomainName().getEntity());
+        } else {
+            return null;
+        }
+    }
+
+    private VmInit buildModelSpecificParameters(boolean isWindows, String domainFromModel) {
+        VmInit vmInit = buildCloudInitParameters();
+        if (isWindows && (Boolean) getWindowsSysprepTimeZoneEnabled().getEntity()) {
+            Map.Entry<String, String> entry = (Map.Entry<String, String>) getWindowsSysprepTimeZone().getSelectedItem();
+            vmInit.setTimeZone(entry.getKey());
+        } else if (!isWindows && (Boolean) getTimeZoneEnabled().getEntity()) {
+            Map.Entry<String, String> entry = (Map.Entry<String, String>) getTimeZoneList().getSelectedItem();
+            vmInit.setTimeZone(entry.getKey());
+        }
+
+        if (isWindows) {
+            vmInit.setDomain(domainFromModel);
+        } else {
+            vmInit.setDomain((String) getDomain().getEntity());
+        }
+
+        return vmInit;
+    }
+
+    public VmInit buildCloudInitParameters() {
+        VmInit vmInit = new VmInit();
+
+        if (getHostnameEnabled()) {
+            vmInit.setHostname((String) getHostname().getEntity());
+        }
+
+        if (getRootPasswordEnabled()) {
+            vmInit.setRootPassword((String) getRootPassword().getEntity());
+        }
+        if (getAuthorizedKeysEnabled()) {
+            vmInit.setAuthorizedKeys((String) getAuthorizedKeys().getEntity());
         }
         if ((Boolean) getRegenerateKeysEnabled().getEntity()) {
-            ciParams.setRegenerateKeys(Boolean.TRUE);
+            vmInit.setRegenerateKeys(Boolean.TRUE);
         }
-        if ((Boolean) getTimeZoneEnabled().getEntity()) {
-            @SuppressWarnings("unchecked")
-            Map.Entry<String, String> entry = (Map.Entry<String, String>) getTimeZoneList().getSelectedItem();
-            ciParams.setTimeZone(entry.getKey());
-        }
-        if ((Boolean) getRootPasswordEnabled().getEntity()) {
-            ciParams.setRootPassword((String) getRootPassword().getEntity());
-        }
-
         if ((Boolean) getNetworkEnabled().getEntity()) {
             saveNetworkFields();
             if (!networkMap.isEmpty()) {
-                for (Map.Entry<String, VdsNetworkInterface> entry : networkMap.entrySet()) {
-                    // VdsNetworkInterface is used locally to store UI state, unset
-                    // fields that shouldn't be passed down iff boot protocol is DHCP,
-                    // then pass the sanitized object down via CloudInitParams
-                    VdsNetworkInterface params = entry.getValue();
+                for (Map.Entry<String, VmInitNetwork> entry : networkMap.entrySet()) {
+                    VmInitNetwork params = entry.getValue();
                     if (params.getBootProtocol() == NetworkBootProtocol.DHCP) {
-                        params.setAddress(null);
-                        params.setSubnet(null);
+                        params.setIp(null);
+                        params.setNetmask(null);
                         params.setGateway(null);
                     }
+                    params.setStartOnBoot(networkStartOnBoot.contains(entry.getKey()));
+                    params.setName(entry.getKey());
                 }
-                ciParams.setInterfaces(networkMap);
-                ciParams.setStartOnBoot(new ArrayList<String>(networkStartOnBoot));
-
-                ciParams.setDnsServers(tokenizeString((String) getDnsServers().getEntity()));
-                ciParams.setDnsSearch(tokenizeString((String) getDnsSearchDomains().getEntity()));
+                vmInit.setNetworks(new ArrayList(networkMap.values()));
             }
         }
+        vmInit.setDnsServers((String) getDnsServers().getEntity());
+        vmInit.setDnsSearch((String) getDnsSearchDomains().getEntity());
+        vmInit.setCustomScript((String) getCustomScript().getEntity());
 
-        if ((Boolean) getAttachmentEnabled().getEntity()) {
-            saveAttachmentFields();
-            ciParams.setAttachments(attachmentMap);
-        }
-
-        return ciParams;
+        return vmInit;
     }
 
     private List<String> tokenizeString(String spaceDelimitedString) {
@@ -594,16 +709,10 @@ public class CloudInitModel extends Model {
             if (sender == getNetworkList()) {
                 networkList_SelectedItemChanged();
             }
-            else if (sender == getAttachmentList()) {
-                attachmentList_SelectedItemChanged();
-            }
         }
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
             if (sender == getNetworkSelectedName()) {
                 networkSelectedName_SelectionChanged();
-            }
-            else if (sender == getAttachmentSelectedPath()) {
-                attachmentSelectedPath_SelectionChanged();
             }
         }
     }
@@ -616,12 +725,6 @@ public class CloudInitModel extends Model {
         }
         else if (command.equals(getRemoveNetworkCommand())) {
             removeNetwork();
-        }
-        else if (command.equals(getAddAttachmentCommand())) {
-            addAttachment();
-        }
-        else if (command.equals(getRemoveAttachmentCommand())) {
-            removeAttachment();
         }
     }
 
@@ -648,7 +751,7 @@ public class CloudInitModel extends Model {
         String newName = (String) getNetworkSelectedName().getEntity();
 
         if (oldName != null && newName != null && !newName.trim().equals(oldName)) {
-            VdsNetworkInterface obj = networkMap.get(oldName);
+            VmInitNetwork obj = networkMap.get(oldName);
             newName = newName.trim();
             if (newName.isEmpty() || networkMap.containsKey(newName)) {
                 getNetworkSelectedName().setEntity(oldName);
@@ -663,7 +766,7 @@ public class CloudInitModel extends Model {
 
     private void addNetwork() {
         if (!networkMap.containsKey(newNetworkText)) {
-            networkMap.put(newNetworkText, new VdsNetworkInterface());
+            networkMap.put(newNetworkText, new VmInitNetwork());
             getNetworkList().setItems(new ArrayList<String>(networkMap.keySet()));
         }
         getNetworkList().setSelectedItem(newNetworkText);
@@ -678,12 +781,12 @@ public class CloudInitModel extends Model {
     /* Save displayed network properties */
     private void saveNetworkFields() {
         if (lastSelectedNetworkName != null) {
-            VdsNetworkInterface obj = networkMap.get(lastSelectedNetworkName);
+            VmInitNetwork obj = networkMap.get(lastSelectedNetworkName);
             if (obj != null) {
                 obj.setBootProtocol((getNetworkDhcp().getEntity() != null && (Boolean) getNetworkDhcp().getEntity())
                                     ? NetworkBootProtocol.DHCP : NetworkBootProtocol.NONE);
-                obj.setAddress((String) getNetworkIpAddress().getEntity());
-                obj.setSubnet((String) getNetworkNetmask().getEntity());
+                obj.setIp((String) getNetworkIpAddress().getEntity());
+                obj.setNetmask((String) getNetworkNetmask().getEntity());
                 obj.setGateway((String) getNetworkGateway().getEntity());
                 if (getNetworkStartOnBoot().getEntity() != null && (Boolean) getNetworkStartOnBoot().getEntity()) {
                     networkStartOnBoot.add(lastSelectedNetworkName);
@@ -697,100 +800,19 @@ public class CloudInitModel extends Model {
     /* Update displayed network properties to reflect currently-selected item */
     private void updateNetworkDisplay() {
         String networkName = null;
-        VdsNetworkInterface obj = null;
+        VmInitNetwork obj = null;
         if (getNetworkList().getSelectedItem() != null) {
             networkName = (String) getNetworkList().getSelectedItem();
             obj = networkMap.get(networkName);
         }
         getNetworkDhcp().setEntity(obj == null ? null : obj.getBootProtocol() == NetworkBootProtocol.DHCP);
-        getNetworkIpAddress().setEntity(obj == null ? null : obj.getAddress());
-        getNetworkNetmask().setEntity(obj == null ? null : obj.getSubnet());
+        getNetworkIpAddress().setEntity(obj == null ? null : obj.getIp());
+        getNetworkNetmask().setEntity(obj == null ? null : obj.getNetmask());
         getNetworkGateway().setEntity(obj == null ? null : obj.getGateway());
         getNetworkStartOnBoot().setEntity(networkName == null ? null : networkStartOnBoot.contains(networkName));
     }
 
-
-    /* === Attachments === */
-
-    private void attachmentList_SelectedItemChanged() {
-        saveAttachmentFields();
-
-        // The attachmentSelectedName EntityChangedEvent is really only
-        // to catch user updates; don't trigger it programmatically.
-        // Suppressing events locally works better than setEntity(, false).
-        getAttachmentSelectedPath().getEntityChangedEvent().removeListener(this);
-        getAttachmentSelectedPath().setEntity(getAttachmentList().getSelectedItem());
-        getAttachmentSelectedPath().getEntityChangedEvent().addListener(this);
-
-        updateAttachmentDisplay();
-        // lastSelectedAttachmentPath can be used throughout update process to see prior name
-        lastSelectedAttachmentPath = (String) getAttachmentList().getSelectedItem();
-    }
-
-    private void attachmentSelectedPath_SelectionChanged() {
-        String oldPath = (String) getAttachmentList().getSelectedItem();
-        String newPath = (String) getAttachmentSelectedPath().getEntity();
-
-        if (oldPath != null && newPath != null && !newPath.trim().equals(oldPath)) {
-            Attachment obj = attachmentMap.get(oldPath);
-            newPath = newPath.trim();
-            if (newPath.isEmpty() || attachmentMap.containsKey(newPath)) {
-                getAttachmentSelectedPath().setEntity(oldPath);
-            } else {
-                attachmentMap.remove(oldPath);
-                attachmentMap.put(newPath, obj);
-                getAttachmentList().setItems(new ArrayList<String>(attachmentMap.keySet()));
-                getAttachmentList().setSelectedItem(newPath);
-            }
-        }
-    }
-
-    private void addAttachment() {
-        if (!attachmentMap.containsKey(newAttachmentText)) {
-            attachmentMap.put(newAttachmentText, new Attachment());
-            getAttachmentList().setItems(new ArrayList<String>(attachmentMap.keySet()));
-        }
-        getAttachmentList().setSelectedItem(newAttachmentText);
-    }
-
-    private void removeAttachment() {
-        attachmentMap.remove((String) getAttachmentList().getSelectedItem());
-        getAttachmentList().setItems(new ArrayList<String>(attachmentMap.keySet()));
-        getAttachmentList().setSelectedItem(Linq.firstOrDefault(attachmentMap.keySet()));
-    }
-
-    /* Save displayed attachment properties */
-    private void saveAttachmentFields() {
-        if (lastSelectedAttachmentPath != null) {
-            Attachment obj = attachmentMap.get(lastSelectedAttachmentPath);
-            if (obj != null) {
-                @SuppressWarnings("unchecked")
-                Map.Entry<Attachment.AttachmentType, String> entry
-                        = (Map.Entry<Attachment.AttachmentType, String>) getAttachmentType().getSelectedItem();
-                obj.setAttachmentType(entry.getKey());
-                obj.setContent((String) getAttachmentContent().getEntity());
-            }
-        }
-    }
-
-    /* Update displayed attachment properties to reflect currently-selected item */
-    private void updateAttachmentDisplay() {
-        if (getAttachmentList().getSelectedItem() != null) {
-            String attachmentName = (String) getAttachmentList().getSelectedItem();
-            final Attachment obj = attachmentMap.get(attachmentName);
-
-            getAttachmentType().setSelectedItem(Linq.firstOrDefault(attachmentTypes.entrySet(),
-                    new IPredicate<Map.Entry<Attachment.AttachmentType, String>>() {
-                        @Override
-                        public boolean match(Map.Entry<Attachment.AttachmentType, String> item) {
-                            return item.getKey() == obj.getAttachmentType();
-                        }
-                    }));
-            getAttachmentContent().setEntity(obj.getContent());
-        }
-        else {
-            getAttachmentType().setSelectedItem(Linq.firstOrDefault(attachmentTypes.entrySet()));
-            getAttachmentContent().setEntity(null);
-        }
+    public void osTypeChanged(Integer selectedItem) {
+        getDomain().setIsAvailable(selectedItem != null && AsyncDataProvider.isWindowsOsType(selectedItem));
     }
 }

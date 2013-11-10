@@ -451,7 +451,6 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
 
                     setHasDomain(AsyncDataProvider.isWindowsOsType(getvm().getVmOsId()));
-                    poolGeneralModel.setDomain(getvm().getVmDomain());
 
                     setHasTimeZone(AsyncDataProvider.isWindowsOsType(getvm().getVmOsId()));
                     poolGeneralModel.setTimeZone(getvm().getTimeZone());

@@ -134,14 +134,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmStatic.setMemSizeMb(value);
     }
 
-    public String getVmDomain() {
-        return this.vmStatic.getDomain();
-    }
-
-    public void setVmDomain(String value) {
-        this.vmStatic.setDomain(value);
-    }
-
     public int getOs() {
         return this.getVmOsId();
     }
@@ -454,8 +446,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         String vmHost = this.vmDynamic.getVmHost();
         if (!StringHelper.isNullOrEmpty(this.getVmIp())) {
             this.vmDynamic.setVmHost(getVmIp());
-        } else {
-            String vmDomain = getVmDomain();
+        } else if (getVmInit() != null) {
+            String vmDomain = getVmInit().getDomain();
 
             // If VM's host name isn't available - set as VM's name
             // If no IP address is available - assure that 'vm_host' is FQN by concatenating
@@ -1682,5 +1674,13 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public Integer getMigrationDowntime() {
         return vmStatic.getMigrationDowntime();
+    }
+
+    public VmInit getVmInit() {
+        return this.vmStatic.getVmInit();
+    }
+
+    public void setVmInit(VmInit vmInit) {
+        this.vmStatic.setVmInit(vmInit);
     }
 }

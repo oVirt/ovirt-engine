@@ -20,6 +20,7 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -143,7 +144,10 @@ public class TemplateMapper {
             }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
-            entity.setDomain(model.getDomain().getName());
+            if (entity.getVmInit() == null) {
+                entity.setVmInit(new VmInit());
+            }
+            entity.getVmInit().setDomain(model.getDomain().getName());
         }
         if (model.isSetTimezone()) {
             String timezone = model.getTimezone();
@@ -264,7 +268,10 @@ public class TemplateMapper {
             }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
-            staticVm.setDomain(model.getDomain().getName());
+            if (staticVm.getVmInit() == null) {
+                staticVm.setVmInit(new VmInit());
+            }
+            staticVm.getVmInit().setDomain(model.getDomain().getName());
         }
         if (model.isSetTimezone()) {
             staticVm.setTimeZone(model.getTimezone());
@@ -345,9 +352,11 @@ public class TemplateMapper {
         if (entity.getCreationDate() != null) {
             model.setCreationTime(DateMapper.map(entity.getCreationDate(), null));
         }
-        if (entity.getDomain()!=null && !entity.getDomain().isEmpty()) {
+        if (entity.getVmInit() != null &&
+                entity.getVmInit().getDomain() != null &&
+                !entity.getVmInit().getDomain().isEmpty()) {
             Domain domain = new Domain();
-            domain.setName(entity.getDomain());
+            domain.setName(entity.getVmInit().getDomain());
             model.setDomain(domain);
         }
         if (entity.getUsbPolicy()!=null) {

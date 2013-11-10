@@ -196,6 +196,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 @Override
                 public Void runInTransaction() {
                     if (removeVmTemplateImages()) {
+                        VmHandler.removeVmInitFromDB(getVmTemplate());
                         setSucceeded(true);
                     }
                     return null;

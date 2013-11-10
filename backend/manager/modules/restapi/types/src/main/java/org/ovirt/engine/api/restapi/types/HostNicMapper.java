@@ -75,7 +75,7 @@ public class HostNicMapper {
             }
         }
         if(model.isSetBootProtocol()){
-            NetworkBootProtocol networkBootProtocol = map(BootProtocol.fromValue(model.getBootProtocol()), null);
+            NetworkBootProtocol networkBootProtocol = BootProtocolMapper.map(BootProtocol.fromValue(model.getBootProtocol()), null);
             if(networkBootProtocol != null){
                 entity.setBootProtocol(networkBootProtocol);
             }
@@ -136,7 +136,7 @@ public class HostNicMapper {
             }
         }
 
-        BootProtocol bootProtocol = map(entity.getBootProtocol(), null);
+        BootProtocol bootProtocol = BootProtocolMapper.map(entity.getBootProtocol(), null);
         if(bootProtocol!=null){
             model.setBootProtocol(bootProtocol.value());
         }
@@ -174,40 +174,6 @@ public class HostNicMapper {
                 return NicStatus.UP;
             case DOWN:
                 return NicStatus.DOWN;
-            default:
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @Mapping(from = NetworkBootProtocol.class, to = BootProtocol.class)
-    public static BootProtocol map(NetworkBootProtocol networkBootProtocol, BootProtocol template) {
-        if(networkBootProtocol!=null){
-            switch (networkBootProtocol) {
-            case DHCP:
-                return BootProtocol.DHCP;
-            case STATIC_IP:
-                return BootProtocol.STATIC;
-            case NONE:
-                return BootProtocol.NONE;
-            default:
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @Mapping(from = BootProtocol.class, to = NetworkBootProtocol.class)
-    public static NetworkBootProtocol map(BootProtocol bootProtocol, NetworkBootProtocol template) {
-        if(bootProtocol!=null){
-            switch (bootProtocol) {
-            case DHCP:
-                return NetworkBootProtocol.DHCP;
-            case STATIC:
-                return NetworkBootProtocol.STATIC_IP;
-            case NONE:
-                return NetworkBootProtocol.NONE;
             default:
                 return null;
             }

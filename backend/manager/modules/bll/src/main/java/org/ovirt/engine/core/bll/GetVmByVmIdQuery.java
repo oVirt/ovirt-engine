@@ -24,5 +24,6 @@ public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesComman
         VmHandler.updateDisksFromDb(vm);
         VmHandler.updateVmGuestAgentVersion(vm);
         VmHandler.updateNetworkInterfacesFromDb(vm);
+        VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
     }
 }

@@ -619,8 +619,6 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setVmDescription(model.getDescription().getEntity());
         getcurrentVm().setComment(model.getComment().getEntity());
-        getcurrentVm().setVmDomain(model.getDomain().getIsAvailable() ?
-                model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         getcurrentVm().setVmMemSizeMb(model.getMemSize().getEntity());
         getcurrentVm().setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = model.getSelectedCluster().getId();

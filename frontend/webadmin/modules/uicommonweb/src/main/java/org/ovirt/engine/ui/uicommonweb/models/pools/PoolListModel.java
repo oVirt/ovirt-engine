@@ -476,8 +476,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
                         vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
                         vm.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
-                        vm.setVmDomain(model.getDomain().getIsAvailable() ? model.getDomain()
-                                .getSelectedItem() : ""); //$NON-NLS-1$
                         vm.setVmMemSizeMb(model.getMemSize().getEntity());
                         vm.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
                         vm.setVdsGroupId(model.getSelectedCluster().getId());
@@ -504,6 +502,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setCustomProperties(model.getCustomPropertySheet().serialize());
                         vm.setVmType(model.getVmType().getSelectedItem());
                         vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
+                        vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
 
                         AddVmPoolWithVmsParameters param =
                                 new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity(), 0);

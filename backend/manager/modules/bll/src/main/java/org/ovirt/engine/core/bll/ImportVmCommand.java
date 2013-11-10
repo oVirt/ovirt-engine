@@ -643,6 +643,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
                 endVmRelatedOps();
             }
+            // Save Vm Init
+            VmHandler.addVmInitToDB(getVm().getStaticData());
         } catch (RuntimeException e) {
             MacPoolManager.getInstance().freeMacs(macsAdded);
             throw e;
