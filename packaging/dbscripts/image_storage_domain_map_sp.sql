@@ -72,7 +72,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION updateQuotaForImageAndSnapshots(v_disk_id UUID, v_storage_domain_id UUID, v_quota_id UUID)
+Create or replace FUNCTION UpdateQuotaForImageAndSnapshots(v_disk_id UUID, v_storage_domain_id UUID, v_quota_id UUID)
 RETURNS VOID
 AS $procedure$
 BEGIN
