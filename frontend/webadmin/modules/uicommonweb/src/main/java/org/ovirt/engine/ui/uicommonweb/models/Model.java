@@ -297,7 +297,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
     public void setChangeProhibitionReason(String value)
     {
-        if (privateChangeProhibitionReason != value) {
+        if (!StringHelper.stringsEqual(privateChangeProhibitionReason, value)) {
             privateChangeProhibitionReason = value;
             onPropertyChanged(new PropertyChangedEventArgs("ChangeProhibitionReason")); //$NON-NLS-1$
         }
