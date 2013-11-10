@@ -295,7 +295,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVmDescription(rs.getString("vm_description"));
             entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setComment(rs.getString("vm_comment"));
-            entity.setVmDomain(rs.getString("vm_domain"));
             entity.setVmCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("vm_creation_date")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setVdsGroupDescription(rs.getString("vds_group_description"));

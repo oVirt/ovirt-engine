@@ -51,7 +51,6 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("vds_group_id", vm.getVdsGroupId())
                 .addValue("vm_name", vm.getName())
                 .addValue("vmt_guid", vm.getVmtGuid())
-                .addValue("domain", vm.getDomain())
                 .addValue("creation_date", vm.getCreationDate())
                 .addValue("num_of_monitors", vm.getNumOfMonitors())
                 .addValue("single_qxl_pci", vm.getSingleQxlPci())
@@ -210,7 +209,6 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
 
             entity.setName(rs.getString("vm_name"));
             entity.setVmtGuid(getGuidDefaultEmpty(rs, "vmt_guid"));
-            entity.setDomain(rs.getString("domain"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setSingleQxlPci(rs.getBoolean("single_qxl_pci"));
             entity.setInitialized(rs.getBoolean("is_initialized"));

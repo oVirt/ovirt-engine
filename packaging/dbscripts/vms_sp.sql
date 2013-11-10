@@ -409,7 +409,6 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000),
  v_vm_guid UUID,
  v_vm_name VARCHAR(255),
  v_vmt_guid UUID,
- v_domain  VARCHAR(40),
  v_creation_date TIMESTAMP WITH TIME ZONE,
  v_num_of_monitors INTEGER,
  v_single_qxl_pci BOOLEAN,
@@ -457,8 +456,8 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000),
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_static(description, free_text_comment, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors, single_qxl_pci, allow_console_reconnect,is_initialized,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, nice_level, cpu_shares, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id, cpu_pinning, is_smartcard_enabled,is_delete_protected, sso_method, host_cpu_flags, tunnel_migration, vnc_keyboard_layout, is_run_and_pause, created_by_user_id, instance_type_id, image_type_id, original_template_id, original_template_name, migration_downtime, template_version_number)
-	VALUES(v_description, v_free_text_comment, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors,v_single_qxl_pci, v_allow_console_reconnect, v_is_initialized, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_nice_level, v_cpu_shares, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id, v_cpu_pinning, v_is_smartcard_enabled,v_is_delete_protected, v_sso_method, v_host_cpu_flags, v_tunnel_migration, v_vnc_keyboard_layout, v_is_run_and_pause, v_created_by_user_id, v_instance_type_id, v_image_type_id, v_original_template_id, v_original_template_name, v_migration_downtime, v_template_version_number);
+INSERT INTO vm_static(description, free_text_comment, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,creation_date,num_of_monitors, single_qxl_pci, allow_console_reconnect,is_initialized,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, nice_level, cpu_shares, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id, cpu_pinning, is_smartcard_enabled,is_delete_protected, sso_method, host_cpu_flags, tunnel_migration, vnc_keyboard_layout, is_run_and_pause, created_by_user_id, instance_type_id, image_type_id, original_template_id, original_template_name, migration_downtime, template_version_number)
+	VALUES(v_description, v_free_text_comment, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_creation_date, v_num_of_monitors,v_single_qxl_pci, v_allow_console_reconnect, v_is_initialized, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_nice_level, v_cpu_shares, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id, v_cpu_pinning, v_is_smartcard_enabled,v_is_delete_protected, v_sso_method, v_host_cpu_flags, v_tunnel_migration, v_vnc_keyboard_layout, v_is_run_and_pause, v_created_by_user_id, v_instance_type_id, v_image_type_id, v_original_template_id, v_original_template_name, v_migration_downtime, v_template_version_number);
 
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid;
@@ -536,7 +535,6 @@ Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
  v_vm_guid UUID,
  v_vm_name VARCHAR(255),
  v_vmt_guid UUID,
- v_domain  VARCHAR(40),
  v_creation_date TIMESTAMP WITH TIME ZONE,
  v_num_of_monitors INTEGER,
  v_single_qxl_pci BOOLEAN,
@@ -590,7 +588,7 @@ BEGIN
       UPDATE vm_static
       SET description = v_description, free_text_comment = v_free_text_comment ,mem_size_mb = v_mem_size_mb,os = v_os,vds_group_id = v_vds_group_id,
       VM_NAME = v_vm_name,vmt_guid = v_vmt_guid,
-      domain = v_domain,creation_date = v_creation_date,num_of_monitors = v_num_of_monitors,single_qxl_pci = v_single_qxl_pci,
+      creation_date = v_creation_date,num_of_monitors = v_num_of_monitors,single_qxl_pci = v_single_qxl_pci,
       allow_console_reconnect = v_allow_console_reconnect,
       is_initialized = v_is_initialized,
       num_of_sockets = v_num_of_sockets,cpu_per_socket = v_cpu_per_socket,
@@ -1150,6 +1148,81 @@ BEGIN
     FROM vms
     WHERE run_on_vds IS NOT NULL AND
         vds_group_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+---------------------
+-- vm_init functions
+---------------------
+
+Create or replace FUNCTION GetVmInitByVmId(v_vm_id UUID) RETURNS SETOF vm_init STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT vm_init.*
+   FROM vm_init
+   WHERE vm_id = v_vm_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateVmInit(
+    v_vm_id UUID,
+    v_host_name TEXT,
+    v_domain TEXT,
+    v_authorized_keys TEXT,
+    v_regenerate_keys BOOLEAN,
+    v_time_zone VARCHAR(40),
+    v_dns_servers TEXT,
+    v_dns_search_domains TEXT,
+    v_networks TEXT,
+    v_password TEXT,
+    v_winkey VARCHAR(30),
+    v_custom_script TEXT)
+RETURNS VOID
+
+   AS $procedure$
+BEGIN
+      UPDATE vm_init
+      SET host_name=v_host_name, domain=v_domain, authorized_keys=v_authorized_keys, regenerate_keys=v_regenerate_keys,
+          time_zone=v_time_zone, dns_servers=v_dns_servers, dns_search_domains=v_dns_search_domains,
+          networks=v_networks, password=v_password, winkey=v_winkey, custom_script=v_custom_script
+      WHERE vm_id = v_vm_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION DeleteVmInit(v_vm_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      DELETE FROM vm_init
+      WHERE vm_id = v_vm_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION InsertVmInit(
+    v_vm_id UUID,
+    v_host_name TEXT,
+    v_domain TEXT,
+    v_authorized_keys TEXT,
+    v_regenerate_keys BOOLEAN,
+    v_time_zone VARCHAR(40),
+    v_dns_servers TEXT,
+    v_dns_search_domains TEXT,
+    v_networks TEXT,
+    v_password TEXT,
+    v_winkey VARCHAR(30),
+    v_custom_script TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO vm_init(vm_id, host_name, domain, authorized_keys, regenerate_keys, time_zone, dns_servers, dns_search_domains,
+                    networks, password, winkey, custom_script)
+       VALUES(v_vm_id, v_host_name, v_domain, v_authorized_keys, v_regenerate_keys, v_time_zone, v_dns_servers, v_dns_search_domains,
+                    v_networks, v_password, v_winkey, v_custom_script);
 
 END; $procedure$
 LANGUAGE plpgsql;

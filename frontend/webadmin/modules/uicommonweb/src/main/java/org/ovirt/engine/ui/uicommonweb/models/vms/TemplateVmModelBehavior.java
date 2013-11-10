@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 public class TemplateVmModelBehavior extends VmModelBehaviorBase
 {
-    private final VmTemplate template;
+    private VmTemplate template;
 
     public TemplateVmModelBehavior(VmTemplate template)
     {
@@ -157,7 +157,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getMinAllocatedMemory().setIsChangable(false);
         getModel().getMemSize().setEntity(this.template.getMemSizeMb());
         getModel().getOSType().setSelectedItem(this.template.getOsId());
-        getModel().getDomain().setSelectedItem(this.template.getDomain());
         getModel().getUsbPolicy().setSelectedItem(this.template.getUsbPolicy());
         getModel().getNumOfMonitors().setSelectedItem(this.template.getNumOfMonitors());
         getModel().getAllowConsoleReconnect().setEntity(this.template.isAllowConsoleReconnect());
@@ -201,6 +200,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         }
 
         updateConsoleDevice(template.getId());
+        getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
+        getModel().getVmInitModel().init(template);
 
         initPriority(this.template.getPriority());
     }

@@ -67,7 +67,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     private boolean disabled;
 
     public VmTemplate(int childCount, Date creationDate, String description, int memSizeMb, String name,
-            int numOfSockets, int cpuPerSocket, int osId, Guid vdsGroupId, Guid vmtGuid, String domain,
+            int numOfSockets, int cpuPerSocket, int osId, Guid vdsGroupId, Guid vmtGuid,
             int numOfMonitors, boolean singleQxlPci, int status, int usbPolicy, String timeZone, int niceLevel,
             int cpuShares, boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, SsoMethod ssoMethod, Boolean tunnelMigration, String vncKeyboardLayout,
@@ -88,7 +88,6 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 cpuPerSocket,
                 numOfMonitors,
                 singleQxlPci,
-                domain,
                 timeZone,
                 vmType,
                 UsbPolicy.forValue(usbPolicy),
@@ -117,7 +116,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 allowConsoleReconnect,
                 dedicatedVmForVds,
                 defaultDisplayType,
-                migrationDowntime);
+                migrationDowntime,
+                null);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();

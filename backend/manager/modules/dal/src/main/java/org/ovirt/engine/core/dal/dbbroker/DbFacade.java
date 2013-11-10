@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -96,6 +97,7 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
+import org.ovirt.engine.core.dao.VmInitDAO;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
@@ -173,6 +175,7 @@ public class DbFacade {
             put(VnicProfileView.class, VnicProfileDao.class);
             put(DwhHistoryTimekeeping.class, DwhHistoryTimekeepingDao.class);
             put(IscsiBond.class, IscsiBondDao.class);
+            put(VmInit.class, VmInitDAO.class);
         }
     };
 
@@ -904,6 +907,7 @@ public class DbFacade {
 
     /**
      * Returns the singleton instance of {@link PolicyUnitDao}.
+     *
      * @return the dao
      */
     public PolicyUnitDao getPolicyUnitDao() {
@@ -912,6 +916,7 @@ public class DbFacade {
 
     /**
      * Returns the singleton instance of {@link ClusterPolicyDao}.
+     *
      * @return the dao
      */
     public ClusterPolicyDao getClusterPolicyDao() {
@@ -945,6 +950,9 @@ public class DbFacade {
         return getDao(VmNicDao.class);
     }
 
+    public VmInitDAO getVmInitDao() {
+        return getDao(VmInitDAO.class);
+    }
 
     /**
      * Returns the singleton instance of {@link DwhHistoryTimekeepingDAO}.
@@ -968,7 +976,8 @@ public class DbFacade {
      * This call will populate a translation table of OS Ids to they're name
      * The translation table shall be in use by DWH
      *
-     * @param osIdToName OS id to OS Name map
+     * @param osIdToName
+     *            OS id to OS Name map
      */
     public void populateDwhOsInfo(Map<Integer, String> osIdToName) {
         // first clear the table

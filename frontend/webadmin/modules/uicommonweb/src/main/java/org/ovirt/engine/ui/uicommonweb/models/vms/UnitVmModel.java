@@ -934,6 +934,47 @@ public class UnitVmModel extends Model {
         privateCustomProperties = value;
     }
 
+    private EntityModel<Boolean> vmInitEnabled;
+
+    public EntityModel<Boolean> getVmInitEnabled() {
+        return vmInitEnabled;
+    }
+
+    public void setVmInitEnabled(EntityModel<Boolean> vmInitEnabled) {
+        this.vmInitEnabled = vmInitEnabled;
+    }
+
+    private EntityModel<Boolean> cloudInitEnabled;
+
+    private EntityModel<Boolean> sysprepEnabled;
+
+    public EntityModel<Boolean> getCloudInitEnabled() {
+        return cloudInitEnabled;
+    }
+
+    public void setCloudInitEnabled(EntityModel<Boolean> cloudInitEnabled) {
+        this.cloudInitEnabled = cloudInitEnabled;
+    }
+
+    public EntityModel<Boolean> getSysprepEnabled() {
+        return sysprepEnabled;
+    }
+
+    public void setSysprepEnabled(EntityModel<Boolean> sysprepEnabled) {
+        this.sysprepEnabled = sysprepEnabled;
+    }
+
+    private VmInitModel vmInitModel;
+
+    public VmInitModel getVmInitModel() {
+        return vmInitModel;
+    }
+
+    public void setVmInitModel(VmInitModel vmInitModel) {
+        this.vmInitModel = vmInitModel;
+    }
+
+
     private NotChangableForVmInPoolKeyValueModel customPropertySheet;
 
     public KeyValueModel getCustomPropertySheet() {
@@ -1257,6 +1298,11 @@ public class UnitVmModel extends Model {
         setDisplayProtocol(new NotChangableForVmInPoolListModel<EntityModel<DisplayType>>());
         setSecondBootDevice(new NotChangableForVmInPoolListModel<EntityModel<BootSequence>>());
         setPriority(new NotChangableForVmInPoolListModel<EntityModel<Integer>>());
+        setVmInitEnabled(new EntityModel(false));
+        setCloudInitEnabled(new EntityModel());
+        setSysprepEnabled(new EntityModel<Boolean>());
+        getVmInitEnabled().getEntityChangedEvent().addListener(this);
+        setVmInitModel(new VmInitModel());
 
         setTemplate(new NotChangableForVmInPoolListModel<VmTemplate>());
         getTemplate().getSelectedItemChangedEvent().addListener(this);
@@ -1467,6 +1513,7 @@ public class UnitVmModel extends Model {
             else if (sender == getOSType())
             {
                 oSType_SelectedItemChanged(sender, args);
+                getVmInitModel().osTypeChanged(getOSType().getSelectedItem());
                 updateDisplayProtocol();
                 initUsbPolicy();
             }
@@ -1500,7 +1547,10 @@ public class UnitVmModel extends Model {
         }
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
         {
-            if (sender == getMemSize())
+            if (sender == getVmInitEnabled()) {
+                vmInitEnabledChanged();
+            }
+            else if (sender == getMemSize())
             {
                 memSize_EntityChanged(sender, args);
             }
@@ -1537,6 +1587,17 @@ public class UnitVmModel extends Model {
                 overrideMigrationDowntimeChanged();
             }
 
+        }
+    }
+
+    private void vmInitEnabledChanged() {
+        if(!getVmInitEnabled().getEntity()) {
+            getSysprepEnabled().setEntity(false);
+            getCloudInitEnabled().setEntity(false);
+        } else {
+            getSysprepEnabled().setEntity(getIsWindowsOS());
+            // for the "other" also use cloud init
+            getCloudInitEnabled().setEntity(!getIsWindowsOS());
         }
     }
 
@@ -1843,6 +1904,9 @@ public class UnitVmModel extends Model {
         handleQxlClusterLevel();
 
         updateWatchdogModels(osType);
+
+        vmInitEnabledChanged();
+
     }
 
     private void updateWatchdogModels() {

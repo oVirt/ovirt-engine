@@ -290,7 +290,6 @@ public class ImportVmTemplateCommandTest {
         ImportVmTemplateParameters parameters = createParameters();
 
         assertFalse(BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE > string100.length());
-        parameters.getVmTemplate().setDomain(string100);
         parameters.setImportAsNewEntity(true);
         ImportVmTemplateCommand command =
                 spy(new ImportVmTemplateCommand(parameters));
@@ -298,7 +297,6 @@ public class ImportVmTemplateCommandTest {
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         Assert.isTrue(validate.isEmpty());
-        parameters.getVmTemplate().setDomain(string100);
         parameters.setImportAsNewEntity(false);
         command = spy(new ImportVmTemplateCommand(parameters));
         validate =

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.OsRepositoryImpl;
 
 @NonTransactiveCommandAttribute
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
@@ -38,7 +39,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             return failCanDoAction(VdcBllMessages.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
         }
 
-        if (getParameters().getCloudInitParameters() != null
+        if ((getParameters().getVmInit() != null && !OsRepositoryImpl.INSTANCE.isWindows(getVm().getOs()))
                 && !FeatureSupported.cloudInit(getVm().getVdsGroupCompatibilityVersion())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
         }
@@ -79,7 +80,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         sysPrepParams.setSysPrepPassword(runOnceParams.getSysPrepPassword());
         createVmParams.setSysPrepParams(sysPrepParams);
 
-        createVmParams.setCloudInitParameters(runOnceParams.getCloudInitParameters());
+        createVmParams.setVmInit(runOnceParams.getVmInit());
 
         return createVmParams;
     }

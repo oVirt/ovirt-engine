@@ -85,10 +85,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private boolean singleQxlPci;
 
-    @EditableField
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE)
-    private String domain;
-
     @EditableOnVmStatusField
     @EditableOnTemplate
     @Size(max = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
@@ -257,6 +253,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     private Guid createdByUserId;
 
+    @EditableField
+    private VmInit vmInit;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -270,7 +269,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getCpuPerSocket(),
                 vmBase.getNumOfMonitors(),
                 vmBase.getSingleQxlPci(),
-                vmBase.getDomain(),
                 vmBase.getTimeZone(),
                 vmBase.getVmType(),
                 vmBase.getUsbPolicy(),
@@ -299,7 +297,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.isAllowConsoleReconnect(),
                 vmBase.getDedicatedVmForVds(),
                 vmBase.getDefaultDisplayType(),
-                vmBase.getMigrationDowntime());
+                vmBase.getMigrationDowntime(),
+                vmBase.getVmInit());
     }
 
     public VmBase(
@@ -315,7 +314,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             int cpusPerSocket,
             int numOfMonitors,
             boolean singleQxlPci,
-            String domain,
             String timezone,
             VmType vmType,
             UsbPolicy usbPolicy,
@@ -344,7 +342,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             boolean allowConsoleReconnect,
             Guid dedicatedVmForVds,
             DisplayType defaultDisplayType,
-            Integer migrationDowntime) {
+            Integer migrationDowntime,
+            VmInit vmInit) {
         this();
         this.name = name;
         this.id = id;
@@ -358,7 +357,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.cpuPerSocket = cpusPerSocket;
         this.numOfMonitors = numOfMonitors;
         this.singleQxlPci = singleQxlPci;
-        this.domain = domain;
         this.timeZone = timezone;
         this.vmType = vmType;
         this.usbPolicy = usbPolicy;
@@ -388,6 +386,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.allowConsoleReconnect = allowConsoleReconnect;
         this.dedicatedVmForVds = dedicatedVmForVds;
         this.migrationDowntime = migrationDowntime;
+        this.vmInit = vmInit;
     }
 
     public long getDbGeneration() {
@@ -531,14 +530,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setSingleQxlPci(boolean value) {
         singleQxlPci = value;
-    }
-
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String value) {
-        domain = value;
     }
 
     public String getTimeZone() {
@@ -703,7 +694,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
         result = prime * result + ((defaultBootSequence == null) ? 0 : defaultBootSequence.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + (failBack ? 1231 : 1237);
         result = prime * result + ((initrdUrl == null) ? 0 : initrdUrl.hashCode());
         result = prime * result + ((isoPath == null) ? 0 : isoPath.hashCode());
@@ -753,7 +743,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(creationDate, other.creationDate)
                 && defaultBootSequence == other.defaultBootSequence
                 && ObjectUtils.objectsEqual(description, other.description)
-                && ObjectUtils.objectsEqual(domain, other.domain)
                 && failBack == other.failBack
                 && ObjectUtils.objectsEqual(initrdUrl, other.initrdUrl)
                 && ObjectUtils.objectsEqual(isoPath, other.isoPath)
@@ -912,5 +901,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public Integer getMigrationDowntime() {
         return this.migrationDowntime;
+    }
+
+    public VmInit getVmInit() {
+        return vmInit;
+    }
+
+    public void setVmInit(VmInit vmInit) {
+        this.vmInit = vmInit;
     }
 }

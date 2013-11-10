@@ -74,9 +74,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             if (getVdsGroup() == null) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
             } else if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
-                    .getCanDoActionMessages())
-                    && isDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
-                            .getCanDoActionMessages())) {
+                    .getCanDoActionMessages()) && checkDomain()) {
                 returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
                 if (!returnValue) {
                     addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
@@ -146,6 +144,15 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         return returnValue;
+    }
+
+    private boolean checkDomain() {
+        if (getParameters().getVmTemplateData().getVmInit() != null &&
+                getParameters().getVmTemplateData().getVmInit().getDomain() != null) {
+            return isDomainLegal(getParameters().getVmTemplateData().getVmInit().getDomain(),
+                    getReturnValue().getCanDoActionMessages());
+        }
+        return true;
     }
 
     protected boolean hasWatchdog(Guid templateId) {
@@ -232,6 +239,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     private void UpdateVmTemplate() {
+        VmHandler.updateVmInitToDB(getVmTemplate());
         DbFacade.getInstance().getVmTemplateDao().update(getVmTemplate());
         // also update the smartcard device
         VmDeviceUtils.updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());

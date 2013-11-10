@@ -71,7 +71,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
         String attachImageSelectbox();
 
-        String cloudInitLabel();
     }
 
     @UiField
@@ -91,20 +90,17 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @UiField
     @WithElementId
-    VerticalPanel sysprepSubPanel;
+    VerticalPanel runOnceSpecificSysprepOptions;
 
     @UiField
+    @Path(value = "isCloudInitEnabled.entity")
     @WithElementId
-    VerticalPanel sysprepOptions;
-
-    @UiField
-    @WithElementId
-    VerticalPanel cloudInitSubPanel;
+    EntityModelCheckBoxEditor cloudInitEnabledEditor;
 
     @UiField
     @Ignore
-    @WithElementId("cloudInitWidget")
-    CloudInitWidget cloudInitWidget;
+    @WithElementId("vmInit")
+    RunOnceVmInitWidget vmInitWidget;
 
     @UiField
     @WithElementId
@@ -197,11 +193,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Path(value = "sysPrepPassword.entity")
     @WithElementId("sysPrepPassword")
     EntityModelTextBoxEditor sysPrepPasswordEditor;
-
-    @UiField(provided = true)
-    @Path(value = "isCloudInitEnabled.entity")
-    @WithElementId("isCloudInitEnabled")
-    EntityModelCheckBoxEditor cloudInitEnabledEditor;
 
     @UiField(provided = true)
     @Path(value = "displayConsole_Vnc_IsSelected.entity")
@@ -300,15 +291,15 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         initrdPathEditor.setLabel(constants.runOncePopupInitrdPathLabel());
         kernelParamsEditor.setLabel(constants.runOncePopupKernelParamsLabel());
 
+        // Cloud Init
+        cloudInitEnabledEditor.setLabel(constants.runOncePopupCloudInitLabe());
+
         // WindowsSysprep
         sysprepToEnableLabel.setText(constants.runOnceSysPrepToEnableLabel());
         sysPrepDomainNameListBoxEditor.setLabel(constants.runOncePopupSysPrepDomainNameLabel());
         useAlternateCredentialsEditor.setLabel(constants.runOnceUseAlternateCredentialsLabel());
         sysPrepUserNameEditor.setLabel(constants.runOncePopupSysPrepUserNameLabel());
         sysPrepPasswordEditor.setLabel(constants.runOncePopupSysPrepPasswordLabel());
-
-        // Linux Cloud-Init
-        cloudInitEnabledEditor.setLabel(constants.runOncePopupCloudInitLabel());
 
         // Display Protocol
         displayConsoleVncEditor.setLabel(constants.runOncePopupDisplayConsoleVncLabel());
@@ -326,7 +317,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         runAsStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         runAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         useAlternateCredentialsEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        cloudInitEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void initListBoxEditors() {
@@ -386,8 +376,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     void addStyles() {
         linuxBootOptionsPanel.setVisible(false);
         initialRunPanel.setVisible(false);
-        sysprepSubPanel.setVisible(false);
-        cloudInitSubPanel.setVisible(false);
         hostPanel.setVisible(true);
         attachFloppyEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
         attachIsoEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
@@ -395,7 +383,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         isoImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
         floppyImageEditor.addContentWidgetStyleName(style.attachImageSelectbox());
         isoImageEditor.addContentWidgetStyleName(style.attachImageSelectbox());
-        cloudInitEnabledEditor.addContentWidgetStyleName(style.cloudInitLabel());
     }
 
     @Override
@@ -414,35 +401,33 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             }
         });
 
-        object.getIsCloudInitEnabled().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean selected = (Boolean) object.getIsCloudInitEnabled().getEntity();
-                cloudInitWidget.setVisible(selected);
-            }
-        });
         object.getIsSysprepEnabled().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean selected = (Boolean) object.getIsSysprepEnabled().getEntity();
-                sysprepOptions.setVisible(selected);
-                sysprepToEnableLabel.setVisible(!selected);
+                updateSysprepVisibility(object);
             }
         });
 
         object.getIsCloudInitPossible().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                cloudInitSubPanel.setVisible((Boolean) object.getIsCloudInitPossible().getEntity());
-                initialRunPanel.setVisible(cloudInitSubPanel.isVisible() || sysprepSubPanel.isVisible());
+                updateCloudInitVisibility(object);
+                updateInitialRunTabVisibility(object);
+            }
+        });
+
+        object.getIsCloudInitEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateCloudInitVisibility(object);
             }
         });
 
         object.getIsSysprepPossible().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                sysprepSubPanel.setVisible((Boolean) object.getIsSysprepPossible().getEntity());
-                initialRunPanel.setVisible(cloudInitSubPanel.isVisible() || sysprepSubPanel.isVisible());
+                updateSysprepVisibility(object);
+                updateInitialRunTabVisibility(object);
             }
         });
 
@@ -453,7 +438,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
                     public void eventRaised(Event ev, Object sender, EventArgs args) {
                         boolean isAutoAssign = (Boolean) object.getIsAutoAssign().getEntity();
                         defaultHostEditor.setEnabled(!isAutoAssign);
-                        // only this is not bind to the model, so needs to
+                        // only this is not bind tloudInitSubo the model, so needs to
                         // listen to the change explicitly
                         specificHost.setValue(!isAutoAssign);
                     }
@@ -498,7 +483,34 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         bootSequenceModel = object.getBootSequence();
         UpdateBootSequenceListBox();
 
-        cloudInitWidget.edit(object.getCloudInit());
+        vmInitWidget.edit(object.getVmInit());
+    }
+
+    private void updateSysprepVisibility(RunOnceModel model) {
+        boolean selected = (Boolean) model.getIsSysprepEnabled().getEntity();
+        boolean possible = (Boolean) model.getIsSysprepPossible().getEntity();
+
+        vmInitWidget.setSyspepContentVisible(selected && possible);
+        runOnceSpecificSysprepOptions.setVisible(selected && possible);
+
+        sysprepToEnableLabel.setVisible(!selected && possible);
+    }
+
+    private void updateInitialRunTabVisibility(RunOnceModel model) {
+        boolean cloudInitPossible = model.getIsCloudInitPossible().getEntity() != null ?
+                (Boolean) model.getIsCloudInitPossible().getEntity() : false;
+
+        boolean sysprepPossible = model.getIsSysprepPossible().getEntity() != null ?
+                (Boolean) model.getIsSysprepPossible().getEntity() : false;
+
+        initialRunPanel.setVisible(sysprepPossible || cloudInitPossible);
+    }
+
+    private void updateCloudInitVisibility(RunOnceModel model) {
+        boolean selected = (Boolean) model.getIsCloudInitEnabled().getEntity();
+        boolean possible = (Boolean) model.getIsCloudInitPossible().getEntity();
+
+        vmInitWidget.setCloudInitContentVisible(selected && possible);
     }
 
     @UiHandler("refreshButton")
@@ -614,7 +626,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @Override
     public RunOnceModel flush() {
-        cloudInitWidget.flush();
+        vmInitWidget.flush();
         return driver.flush();
     }
 

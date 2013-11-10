@@ -1,14 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -34,6 +31,10 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class RunOnceModel extends Model
 {
@@ -263,18 +264,6 @@ public abstract class RunOnceModel extends Model
 
     // Initial Boot tab - Cloud-Init
 
-    public CloudInitModel privateCloudInitModel;
-
-    public CloudInitModel getCloudInit()
-    {
-        return privateCloudInitModel;
-    }
-
-    public void setCloudInit(CloudInitModel value)
-    {
-        privateCloudInitModel = value;
-    }
-
     private EntityModel privateIsCloudInitEnabled;
 
     public EntityModel getIsCloudInitEnabled()
@@ -285,6 +274,18 @@ public abstract class RunOnceModel extends Model
     private void setIsCloudInitEnabled(EntityModel value)
     {
         privateIsCloudInitEnabled = value;
+    }
+
+    public VmInitModel privateVmInitModel;
+
+    public VmInitModel getVmInit()
+    {
+        return privateVmInitModel;
+    }
+
+    public void setVmInit(VmInitModel value)
+    {
+        privateVmInitModel = value;
     }
 
     private EntityModel privateIsCloudInitPossible;
@@ -562,24 +563,26 @@ public abstract class RunOnceModel extends Model
         setInitrd_path(new EntityModel());
 
         // Initial Boot tab - Sysprep
+        setIsCloudInitEnabled(new EntityModel(false));
+
         setSysPrepDomainName(new ListModel());
         setSysPrepSelectedDomainName(new EntityModel());
 
         setSysPrepUserName(new EntityModel().setIsChangable(false));
         setSysPrepPassword(new EntityModel().setIsChangable(false));
 
-        setIsSysprepEnabled(new EntityModel());
+        setIsSysprepEnabled(new EntityModel(false));
         setIsSysprepPossible(new EntityModel());
+
         setIsVmFirstRun(new EntityModel(false));
         getIsVmFirstRun().getEntityChangedEvent().addListener(this);
         setUseAlternateCredentials(new EntityModel(false));
         getUseAlternateCredentials().getEntityChangedEvent().addListener(this);
 
         // Initial Boot tab - Cloud-Init
-        setIsCloudInitEnabled(new EntityModel());
         setIsCloudInitPossible(new EntityModel());
 
-        setCloudInit(new CloudInitModel());
+        setVmInit(new VmInitModel());
 
         // Custom Properties tab
         setCustomProperties(new EntityModel());
@@ -646,7 +649,8 @@ public abstract class RunOnceModel extends Model
         setIsWindowsOS(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         getIsVmFirstRun().setEntity(!vm.isInitialized());
 
-        getCloudInit().init(vm, null);
+        initVmInitEnabled(vm.getVmInit());
+        getVmInit().init(vm.getStaticData());
 
         setCustomPropertiesKeysList(customPropertiesKeysList);
 
@@ -670,6 +674,21 @@ public abstract class RunOnceModel extends Model
         getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
         getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vnc ?
                 vncProtocol : qxlProtocol);
+    }
+
+    private void initVmInitEnabled(VmInit vmInit) {
+        if (vmInit == null) {
+            getIsCloudInitEnabled().setEntity(false);
+            getIsSysprepEnabled().setEntity(false);
+            getAttachFloppy().setEntity(false);
+        } else {
+            if (getIsWindowsOS()) {
+                getIsSysprepEnabled().setEntity(true);
+                getAttachFloppy().setEntity(true);
+            } else {
+                getIsCloudInitEnabled().setEntity(true);
+            }
+        }
     }
 
     protected RunVmOnceParams createRunVmOnceParams() {
@@ -710,7 +729,7 @@ public abstract class RunOnceModel extends Model
         }
 
         if (getIsCloudInitEnabled() != null && (Boolean) getIsCloudInitEnabled().getEntity()) {
-            params.setCloudInitParameters(getCloudInit().buildCloudInitParameters());
+            params.setVmInit(getVmInit().buildCloudInitParameters(this));
         }
 
         EntityModel displayProtocolSelectedItem = (EntityModel) getDisplayProtocol().getSelectedItem();
@@ -983,8 +1002,10 @@ public abstract class RunOnceModel extends Model
     {
         getIsSysprepPossible().setEntity(getIsWindowsOS());
         getIsSysprepEnabled().setEntity(getInitializationType() == InitializationType.Sysprep);
-        getIsCloudInitPossible().setEntity(getIsLinuxOS());
+        // also other can be cloud inited
+        getIsCloudInitPossible().setEntity(!getIsWindowsOS());
         getIsCloudInitEnabled().setEntity(getInitializationType() == InitializationType.CloudInit);
+        getIsCloudInitEnabled().setIsAvailable(!getIsWindowsOS());
     }
 
     public boolean validate() {
@@ -1032,7 +1053,7 @@ public abstract class RunOnceModel extends Model
             getDefaultHost().setIsValid(true);
         }
 
-        boolean cloudInitIsValid = getCloudInit().validate();
+        boolean cloudInitIsValid = getVmInit().validate();
 
         return getIsoImage().getIsValid()
                 && getFloppyImage().getIsValid()

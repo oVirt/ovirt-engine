@@ -131,6 +131,8 @@
 		<include name="common/businessentities/VM.java" />
 		<include name="common/businessentities/VmPayload.java" />
 		<include name="common/businessentities/VmBase.java" />
+		<include name="common/businessentities/VmInit.java" />
+		<include name="common/businessentities/VmInitNetwork.java" />
 		<include name="common/businessentities/VmDynamic.java" />
 		<include name="common/businessentities/VmDevice.java" />
 		<include name="common/businessentities/VmDeviceGeneralType.java" />

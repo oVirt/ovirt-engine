@@ -42,7 +42,6 @@ import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
-import org.ovirt.engine.core.common.action.CloudInitParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -60,6 +59,7 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -260,8 +260,8 @@ public class BackendVmResource extends
                     }
                 }
                 params.setInitializationType(InitializationType.CloudInit);
-                ((RunVmOnceParams) params).setCloudInitParameters(
-                        getMapper(CloudInit.class, CloudInitParameters.class)
+                ((RunVmOnceParams) params).setVmInit(
+                        getMapper(CloudInit.class, VmInit.class)
                                 .map(cloudInit, null));
             }
         } else {

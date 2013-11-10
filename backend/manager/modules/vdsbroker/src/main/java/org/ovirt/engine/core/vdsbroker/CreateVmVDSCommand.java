@@ -79,7 +79,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                             getVdsId(),
                             vm,
                             vm.getName(),
-                            vm.getVmDomain());
+                            vm.getVmInit().getDomain());
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
             return new CreateVmFromSysPrepVDSCommand<CreateVmFromSysPrepVDSCommandParameters>(createVmFromSysPrepParam);
         }

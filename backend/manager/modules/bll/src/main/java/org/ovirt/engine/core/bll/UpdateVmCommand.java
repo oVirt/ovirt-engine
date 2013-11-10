@@ -99,6 +99,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
         updateWatchdog();
         checkTrustedService();
+        VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
         setSucceeded(true);
     }
 

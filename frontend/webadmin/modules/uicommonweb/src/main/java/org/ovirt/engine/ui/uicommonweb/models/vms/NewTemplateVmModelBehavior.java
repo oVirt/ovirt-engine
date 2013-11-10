@@ -42,6 +42,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         super.initialize(systemTreeSelectedItem);
+        getModel().getVmInitEnabled().setEntity(vm.getVmInit() != null);
+        getModel().getVmInitModel().init(vm.getStaticData());
         getModel().getTemplate().setIsChangable(false);
 
         getModel().getVmType().setIsChangable(true);
@@ -204,7 +206,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getMemSize().setEntity(this.vm.getVmMemSizeMb());
         getModel().getMinAllocatedMemory().setEntity(this.vm.getMinAllocatedMem());
         getModel().getOSType().setSelectedItem(this.vm.getVmOsId());
-        getModel().getDomain().setSelectedItem(this.vm.getVmDomain());
         getModel().getNumOfMonitors().setSelectedItem(this.vm.getNumOfMonitors());
         getModel().getAllowConsoleReconnect().setEntity(this.vm.getAllowConsoleReconnect());
         getModel().setBootSequence(this.vm.getDefaultBootSequence());

@@ -19,12 +19,17 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
             updateVmGuestAgentVersion(vm);
             if (getParameters().getIncludeDiskData()) {
                 updateDisksFromDB(vm);
+                updateVmInit(vm);
                 Collections.sort(vm.getDiskList(), new DiskImageByDiskAliasComparator());
                 fillImagesBySnapshots(vm);
             }
         }
         setReturnValue(vmList);
 
+    }
+
+    protected void updateVmInit(VM vm) {
+        VmHandler.updateVmInitFromDB(vm.getStaticData(), true);
     }
 
     protected void fillImagesBySnapshots(VM vm) {

@@ -455,7 +455,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getOsId(),
                         getParameters().getMasterVm().getVdsGroupId(),
                         getVmTemplateId(),
-                        getParameters().getMasterVm().getDomain(),
                         getParameters().getMasterVm().getNumOfMonitors(),
                         getParameters().getMasterVm().getSingleQxlPci(),
                         VmTemplateStatus.Locked.getValue(),
@@ -493,6 +492,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
+        // Load Vm Init from DB and set it to the template
+        VmHandler.updateVmInitFromDB(getParameters().getMasterVm(), true);
+        getVmTemplate().setVmInit(getParameters().getMasterVm().getVmInit());
+        VmHandler.addVmInitToDB(getVmTemplate());
     }
 
     protected void addVmInterfaces(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {

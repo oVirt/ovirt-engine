@@ -157,7 +157,6 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("os", template.getOsId())
                 .addValue("vmt_guid", template.getId())
                 .addValue("vds_group_id", template.getVdsGroupId())
-                .addValue("domain", template.getDomain())
                 .addValue("num_of_monitors", template.getNumOfMonitors())
                 .addValue("single_qxl_pci", template.getSingleQxlPci())
                 .addValue("allow_console_reconnect", template.isAllowConsoleReconnect())
@@ -269,7 +268,6 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setName(rs.getString("name"));
             entity.setOsId(rs.getInt("os"));
             entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
-            entity.setDomain(rs.getString("domain"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setSingleQxlPci(rs.getBoolean("single_qxl_pci"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));

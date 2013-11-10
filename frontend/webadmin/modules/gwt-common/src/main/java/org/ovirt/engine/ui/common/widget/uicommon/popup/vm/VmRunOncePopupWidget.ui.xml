@@ -143,7 +143,7 @@
 		}
 
         .cloudInitLabel {
-            font-weight: bold !important;
+            font-weight: bold;
         }
 	</ui:style>
 
@@ -194,21 +194,17 @@
 
         <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
 			<g:FlowPanel>
-	            <g:VerticalPanel ui:field="sysprepSubPanel" addStyleNames="{style.initialRunPanel}">
-					<g:Label addStyleNames="{style.initialRunSubPanelLabel}" text="{constants.runOncePopupSysprepLabel}" />
-					<g:Label ui:field="sysprepToEnableLabel" addStyleNames="{style.sysprepOption}" />
-					<g:VerticalPanel ui:field="sysprepOptions">
-						<w:ComboBox ui:field="sysPrepDomainNameComboBox" />
-						<e:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
-						<e:EntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
-						<e:EntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
-					</g:VerticalPanel>
-				</g:VerticalPanel>
+                <e:EntityModelCheckBoxEditor ui:field="cloudInitEnabledEditor" labelStyleName="{style.cloudInitLabel}"/>
+                <g:Label ui:field="sysprepToEnableLabel" addStyleNames="{style.sysprepOption}" />
 
-	            <g:VerticalPanel ui:field="cloudInitSubPanel" addStyleNames="{style.initialRunPanel}">
-                        <e:EntityModelCheckBoxEditor ui:field="cloudInitEnabledEditor" />
-					<vm:CloudInitWidget ui:field="cloudInitWidget"/>
-				</g:VerticalPanel>
+				<vm:RunOnceVmInitWidget ui:field="vmInitWidget"/>
+                <g:VerticalPanel ui:field="runOnceSpecificSysprepOptions">
+                    <w:ComboBox ui:field="sysPrepDomainNameComboBox" />
+                    <e:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
+                    <e:EntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
+                    <e:EntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
+                </g:VerticalPanel>
+
 			</g:FlowPanel>
 		</g:DisclosurePanel>
 

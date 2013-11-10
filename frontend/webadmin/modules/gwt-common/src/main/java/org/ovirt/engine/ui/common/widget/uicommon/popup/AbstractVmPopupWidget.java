@@ -1,8 +1,6 @@
 
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +55,7 @@ import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupVmInitWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -95,6 +94,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel> {
 
@@ -352,6 +352,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path("assignedVms.entity")
     public ValueLabel<Integer> outOfxInPool;
 
+    @UiField(provided = true)
+    @Path(value = "timeZone.selectedItem")
+    @WithElementId("timeZone")
+    public ListModelListBoxEditor<TimeZoneModel> timeZoneEditor;
+
     // ==Initial run Tab==
     @UiField
     protected DialogTab initialRunTab;
@@ -361,10 +366,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("domain")
     public ListModelListBoxEditor<String> domainEditor;
 
-    @UiField(provided = true)
-    @Path(value = "timeZone.selectedItem")
-    @WithElementId("timeZone")
-    public ListModelListBoxEditor<TimeZoneModel> timeZoneEditor;
+    @UiField
+    @Path(value = "vmInitEnabled.entity")
+    @WithElementId("vmInitEnabled")
+    public EntityModelCheckBoxEditor vmInitEnabledEditor;
+
+    @UiField
+    @Ignore
+    public VmPopupVmInitWidget vmInitEditor;
 
     // ==Console Tab==
     @UiField
@@ -1036,6 +1045,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         domainEditor.setLabel(constants.domainVmPopup());
         timeZoneEditor.setLabel(constants.tzVmPopup());
 
+        vmInitEnabledEditor.setLabel(constants.cloudInitOrSysprep());
+
         // Console Tab
         consoleTab.setLabel(constants.consoleVmPopup());
         displayProtocolEditor.setLabel(constants.protocolVmPopup());
@@ -1107,6 +1118,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         driver.edit(model);
         profilesInstanceTypeEditor.edit(model.getNicsWithLogicalNetworks());
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
+        vmInitEditor.edit(model.getVmInitModel());
         initTabAvailabilityListeners(model);
         initListeners(model);
         hideAlwaysHiddenFields();
@@ -1212,6 +1224,26 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(cpuSharesEditor, object.getCpuSharesAmountSelection().getIsAvailable());
+                }
+            }
+        });
+
+        object.getCloudInitEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (object.getCloudInitEnabled().getEntity() != null) {
+                    vmInitEditor.setCloudInitContentVisible(object.getCloudInitEnabled().getEntity());
+                }
+            }
+        });
+
+        object.getSysprepEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (object.getSysprepEnabled().getEntity() != null) {
+                    boolean sysprepEnabled = object.getSysprepEnabled().getEntity();
+                    vmInitEditor.setSyspepContentVisible(object.getSysprepEnabled().getEntity());
+                    domainEditor.setVisible(sysprepEnabled);
                 }
             }
         });
@@ -1391,6 +1423,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public UnitVmModel flush() {
         priorityEditor.flush();
         profilesInstanceTypeEditor.flush();
+        vmInitEditor.flush();
         return driver.flush();
     }
 

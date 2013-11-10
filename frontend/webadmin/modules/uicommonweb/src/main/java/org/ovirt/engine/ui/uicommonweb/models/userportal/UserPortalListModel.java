@@ -601,7 +601,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         tempVar.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
         tempVar.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
         tempVar.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
-        tempVar.setVmDomain(model.getDomain().getIsAvailable() ? model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setVmMemSizeMb(model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
 
@@ -676,12 +675,20 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
         VM vm = (VM) selectedItem.getEntity();
 
-        RunOnceModel model = new UserPortalRunOnceModel(vm,
-                getCustomPropertiesKeysList().get(vm.getVdsGroupCompatibilityVersion()),
-                this);
-        setWindow(model);
+        // populating VMInit
+        AsyncQuery getVmInitQuery = new AsyncQuery();
+        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                RunOnceModel runOnceModel = new UserPortalRunOnceModel((VM) result,
+                        getCustomPropertiesKeysList().get(((VM) result).getVdsGroupCompatibilityVersion()),
+                        UserPortalListModel.this);
+                setWindow(runOnceModel);
+                runOnceModel.init();
+            }
+        };
 
-        model.init();
+        AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
     }
 
     private void updateActionAvailability()
@@ -760,6 +767,18 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
         VM vm = (VM) selectedItem.getEntity();
 
+        // populating VMInit
+        AsyncQuery getVmInitQuery = new AsyncQuery();
+        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                vmInitLoaded((VM) result);
+            }
+        };
+        AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+    }
+
+    private void vmInitLoaded(VM vm) {
         UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm));
 
         model.setTitle(ConstantsManager.getInstance()
@@ -784,7 +803,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
-
     }
 
     private void remove() {
@@ -1029,8 +1047,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         gettempVm().setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
         gettempVm().setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
         gettempVm().setVmDescription(model.getDescription().getEntity());
-        gettempVm().setVmDomain(model.getDomain().getIsAvailable() ? model.getDomain()
-                .getSelectedItem() : ""); //$NON-NLS-1$
         gettempVm().setVmMemSizeMb(model.getMemSize().getEntity());
         gettempVm().setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = model.getSelectedCluster().getId();
@@ -1083,6 +1099,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
 
         gettempVm().setMigrationSupport(model.getMigrationMode().getSelectedItem());
+
+        gettempVm().setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
 
         if (model.getIsNew())
         {

@@ -284,6 +284,19 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             return;
         }
 
+        // populating VMInit
+        AsyncQuery getVmInitQuery = new AsyncQuery();
+        getVmInitQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                vmInitLoaded((VmTemplate) result);
+            }
+        };
+        AsyncDataProvider.getTemplateById(getVmInitQuery, template.getId());
+
+    }
+
+    private void vmInitLoaded(VmTemplate template) {
         UnitVmModel model = new UnitVmModel(createBehavior(template));
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
@@ -435,7 +448,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
         template.setDescription(model.getDescription().getEntity());
         template.setComment(model.getComment().getEntity());
-        template.setDomain(model.getDomain().getIsAvailable() ? model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         template.setMemSizeMb(model.getMemSize().getEntity());
         template.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
 
@@ -488,6 +500,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         model.startProgress(null);
 
+        template.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
         UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setVmWatchdogToParams(model, parameters);

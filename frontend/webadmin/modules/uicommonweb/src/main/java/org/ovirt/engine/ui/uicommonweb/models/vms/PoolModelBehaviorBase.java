@@ -114,7 +114,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getNumOfSockets().setSelectedItem(vmBase.getNumOfSockets());
             getModel().getNumOfMonitors().setSelectedItem(vmBase.getNumOfMonitors());
             getModel().getIsSingleQxlEnabled().setEntity(vmBase.getSingleQxlPci());
-            getModel().getDomain().setSelectedItem(vmBase.getDomain());
             getModel().getMemSize().setEntity(vmBase.getMemSizeMb());
             getModel().setBootSequence(vmBase.getDefaultBootSequence());
             getModel().getIsHighlyAvailable().setEntity(vmBase.isAutoStartup());
@@ -196,6 +195,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             initSoundCard(vmBase.getId());
 
             getModel().getAllowConsoleReconnect().setEntity(vmBase.isAllowConsoleReconnect());
+
+            getModel().getVmInitModel().init(vmBase);
+            getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
         }
     }
 
