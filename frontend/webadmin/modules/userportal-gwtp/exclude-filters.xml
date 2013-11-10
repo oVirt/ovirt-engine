@@ -34,4 +34,41 @@
        <Class name="org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.ExtendedVirtualMachineSelectionChange" />
        <Bug code="UuF"/>
      </Match>
+
+    <!--
+       findbugs complain of unused field in class.
+       This is a GWT class and use to generate code
+
+       findbugs reason:
+       UuF: Unused field (UUF_UNUSED_FIELD)
+     -->
+    <Match>
+      <Class name="org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter$ExtendedTemplateSelectionChange" />
+      <Bug code="UuF"/>
+    </Match>
+
+    <!--
+      findbugs complain of unused field in class.
+      This is a GWT class and use to generate code
+
+      findbugs reason:
+      UuF: Unused field (UUF_UNUSED_FIELD)
+    -->
+   <Match>
+     <Class name="org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter$ExtendedVirtualMachineSelectionChange" />
+     <Bug code="UuF"/>
+   </Match>
+
+    <!--
+      findbugs complain of unused field in class.
+      This is a GWT class and use to generate code
+
+      findbugs reason:
+      UuF: Unused field (UUF_UNUSED_FIELD)
+    -->
+   <Match>
+     <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfilePresenter$VnicProfileSelectionChange" />
+     <Bug code="UuF"/>
+   </Match>
+
  </FindBugsFilter>
