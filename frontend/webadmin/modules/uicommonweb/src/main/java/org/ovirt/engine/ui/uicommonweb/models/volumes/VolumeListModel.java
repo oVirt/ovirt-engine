@@ -517,22 +517,18 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void stopRebalance() {
-        if (getSelectedItems() == null) {
+        if (getSelectedItem() == null) {
             return;
         }
 
         ConfirmationModel model = new ConfirmationModel();
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItem();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().confirmStopVolumeRebalanceTitle());
         model.setHashName("volume_rebalance_stop"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().confirmStopVolumeRebalanceMsg());
+        model.setMessage(ConstantsManager.getInstance().getMessages().confirmStopVolumeRebalance(
+                volumeEntity.getName()));
 
-        ArrayList<String> list = new ArrayList<String>();
-        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
-        {
-            list.add(item.getName());
-        }
-        model.setItems(list);
         UICommand okCommand = new UICommand("onStopRebalance", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);

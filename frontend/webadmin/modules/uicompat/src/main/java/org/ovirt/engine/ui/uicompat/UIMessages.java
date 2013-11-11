@@ -312,6 +312,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Could not fetch remove brick status of volume :  {0}")
     String removeBrickStatusFailed(String name);
 
+    @DefaultMessage("Are you sure you want to stop the rebalance operation on the volume : {0}?")
+    String confirmStopVolumeRebalance(String name);
+
     @DefaultMessage("The following disks cannot be moved: {0}")
     String cannotMoveDisks(String disks);
 

@@ -1593,9 +1593,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Stop Rebalance")
     String confirmStopVolumeRebalanceTitle();
 
-    @DefaultStringValue("Are you sure you want to stop the rebalance operation in following Volume(s)?")
-    String confirmStopVolumeRebalanceMsg();
-
     @DefaultStringValue("Disable Gluster Hooks")
     String confirmDisableGlusterHooks();
 
