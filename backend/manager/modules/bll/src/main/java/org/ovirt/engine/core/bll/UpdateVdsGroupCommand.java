@@ -147,10 +147,9 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             result = false;
         }
-        // check that if name was changed, it was done to the same cluster
+        // if the name was changed then make sure the new name is unique
         if (result && !StringUtils.equals(oldGroup.getName(), getVdsGroup().getName())) {
-            VDSGroup groupWithName = getVdsGroupDAO().getByName(getVdsGroup().getName());
-            if (groupWithName != null && !groupWithName.getId().equals(getVdsGroup().getId())) {
+            if (!isVdsGroupUnique(getVdsGroup().getName())) {
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
                 result = false;
             }

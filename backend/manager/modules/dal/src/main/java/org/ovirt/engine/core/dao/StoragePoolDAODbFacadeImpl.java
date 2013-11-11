@@ -64,9 +64,18 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
+    public List<StoragePool> getByName(String name, boolean isCaseSensitive) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("name", name)
+                .addValue("is_case_sensitive", isCaseSensitive);
+        return getCallsHandler().executeReadList("Getstorage_poolByName", mapper, parameterSource);
+    }
+
+    @Override
     public StoragePool getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("name", name);
+                .addValue("name", name)
+                .addValue("is_case_sensitive", true);
         return getCallsHandler().executeRead("Getstorage_poolByName", mapper, parameterSource);
     }
 

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
@@ -77,7 +76,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     protected boolean canDoAction() {
         boolean result = true;
         StoragePoolValidator storagePoolValidator = new StoragePoolValidator(getStoragePool());
-        if (result && DbFacade.getInstance().getStoragePoolDao().getByName(getStoragePool().getName()) != null) {
+        if (result && !(isStoragePoolUnique(getStoragePool().getName()))) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         } else if (!checkStoragePoolNameLengthValid()) {

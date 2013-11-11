@@ -182,13 +182,13 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_poolByName(v_name VARCHAR(40))
+Create or replace FUNCTION Getstorage_poolByName(v_name VARCHAR(40), v_is_case_sensitive BOOLEAN)
 RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM storage_pool
-   WHERE name = v_name;
+   WHERE name = v_name OR (NOT v_is_case_sensitive AND name ilike v_name);
 END; $procedure$
 LANGUAGE plpgsql;
 

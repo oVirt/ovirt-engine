@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -288,6 +289,9 @@ public class UpdateVdsGroupCommandTest {
 
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
+        List<VDSGroup> vdsGroupList = new ArrayList<VDSGroup>();
+        vdsGroupList.add(createDefaultVdsGroup());
+        when(vdsGroupDAO.getByName(anyString(), anyBoolean())).thenReturn(vdsGroupList);
     }
 
     private void createCommandWithDifferentName() {

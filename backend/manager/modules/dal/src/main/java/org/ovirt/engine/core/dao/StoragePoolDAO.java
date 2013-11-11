@@ -39,10 +39,21 @@ public interface StoragePoolDAO extends GenericDao<StoragePool, Guid>, StatusAwa
      * Retrieves the storage pool with the given name.
      *
      * @param name
-     *            the storage pool name
+     *            the storage pool name (case-sensitive get)
      * @return the storage pool
      */
     StoragePool getByName(String name);
+
+    /**
+     * Retrieves the storage pools with the given name.
+     *
+     * @param name
+     *            the storage pool name
+     * @param isCaseSensitive
+     *            whether to do case-sensitive get or not
+     * @return the storage pool
+     */
+    List<StoragePool> getByName(String name, boolean isCaseSensitive);
 
     /**
      * Retrieves the storage pool for the specified VDS.

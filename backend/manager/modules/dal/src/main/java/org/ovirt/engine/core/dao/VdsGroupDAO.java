@@ -52,6 +52,17 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     VDSGroup getByName(String name);
 
     /**
+     * Retrieves the groups with the specified name.
+     *
+     * @param name
+     *            the group name
+     * @param isCaseSensitive
+     *            whether to do case-sensitive get or not
+     * @return the group
+     */
+    List<VDSGroup> getByName(String name, boolean isCaseSensitive);
+
+    /**
      * Retrieves the group with the specified name for the user
      *
      * @param name

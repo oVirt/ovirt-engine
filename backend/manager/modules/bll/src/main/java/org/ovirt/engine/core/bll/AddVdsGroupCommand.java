@@ -74,7 +74,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         boolean result = super.canDoAction();
         getReturnValue().getCanDoActionMessages()
                 .add(VdcBllMessages.VAR__ACTION__CREATE.toString());
-        if (DbFacade.getInstance().getVdsGroupDao().getByName(getVdsGroup().getName()) != null) {
+        if (!isVdsGroupUnique(getVdsGroup().getName())) {
             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
             result = false;
         } else if (getVdsGroup().supportsVirtService()

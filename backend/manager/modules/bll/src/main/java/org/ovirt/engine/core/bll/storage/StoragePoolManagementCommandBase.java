@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 
 public abstract class StoragePoolManagementCommandBase<T extends StoragePoolManagementParameter> extends
         StorageHandlingCommandBase<T> {
@@ -39,5 +40,11 @@ public abstract class StoragePoolManagementCommandBase<T extends StoragePoolMana
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateEntity.class, UpdateEntity.class);
         return super.getValidationGroups();
+    }
+
+    protected boolean isStoragePoolUnique(String storagePoolName) {
+        StoragePoolDAO spDao = getStoragePoolDAO();
+        List<StoragePool> sps = spDao.getByName(storagePoolName, false);
+        return (sps == null || sps.isEmpty());
     }
 }

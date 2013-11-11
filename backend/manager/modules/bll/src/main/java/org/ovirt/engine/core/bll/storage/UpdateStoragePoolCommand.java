@@ -158,7 +158,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         boolean returnValue = checkStoragePool();
         _oldStoragePool = getStoragePoolDAO().get(getStoragePool().getId());
         if (returnValue && !StringUtils.equals(_oldStoragePool.getName(), getStoragePool().getName())
-                && getStoragePoolDAO().getByName(getStoragePool().getName()) != null) {
+                && !isStoragePoolUnique(getStoragePool().getName())) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }

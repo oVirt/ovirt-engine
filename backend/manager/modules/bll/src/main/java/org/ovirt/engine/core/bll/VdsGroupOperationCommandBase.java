@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
 
@@ -106,4 +107,11 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
             }
         }
     }
+
+    protected boolean isVdsGroupUnique(String vdsGroupName) {
+        VdsGroupDAO vdsGroupDao = getVdsGroupDAO();
+        List<VDSGroup> vdsGroups = vdsGroupDao.getByName(vdsGroupName, false);
+        return (vdsGroups == null || vdsGroups.isEmpty());
+    }
+
 }

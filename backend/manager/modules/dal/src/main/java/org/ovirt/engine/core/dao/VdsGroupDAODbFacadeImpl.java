@@ -44,12 +44,24 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
     @Override
     public VDSGroup getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_group_name", name);
+                .addValue("vds_group_name", name)
+                .addValue("is_case_sensitive", true);
 
         return (VDSGroup) DbFacadeUtils.asSingleResult(
                 getCallsHandler().executeReadList("GetVdsGroupByVdsGroupName",
                         VdsGroupRowMapper.instance,
                         parameterSource));
+    }
+
+    @Override
+    public List<VDSGroup> getByName(String name, boolean isCaseSensitive) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_group_name", name)
+                .addValue("is_case_sensitive", isCaseSensitive);
+
+        return getCallsHandler().executeReadList("GetVdsGroupByVdsGroupName",
+                        VdsGroupRowMapper.instance,
+                        parameterSource);
     }
 
     @Override

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -154,7 +155,9 @@ public class UpdateStoragePoolCommandTest {
 
     private void newPoolNameIsAlreadyTaken() {
         when(spDao.get(any(Guid.class))).thenReturn(new StoragePool());
-        when(spDao.getByName(anyString())).thenReturn(createDefaultStoragePool());
+        List<StoragePool> storagePoolList = new ArrayList<StoragePool>();
+        storagePoolList.add(createDefaultStoragePool());
+        when(spDao.getByName(anyString(), anyBoolean())).thenReturn(new ArrayList<StoragePool>(storagePoolList));
     }
 
     private void storagePoolWithVersionHigherThanCluster() {

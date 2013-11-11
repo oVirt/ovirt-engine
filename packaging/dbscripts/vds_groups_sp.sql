@@ -134,12 +134,12 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsGroupByVdsGroupName(v_vds_group_name VARCHAR(40)) RETURNS SETOF vds_groups_view STABLE
+Create or replace FUNCTION GetVdsGroupByVdsGroupName(v_vds_group_name VARCHAR(40), v_is_case_sensitive BOOLEAN) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
       FROM vds_groups_view
-      WHERE name = v_vds_group_name;
+      WHERE name = v_vds_group_name OR (NOT v_is_case_sensitive AND name ilike v_vds_group_name);
 END; $procedure$
 LANGUAGE plpgsql;
 
