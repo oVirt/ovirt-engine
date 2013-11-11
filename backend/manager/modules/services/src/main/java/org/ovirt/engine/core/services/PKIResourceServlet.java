@@ -59,7 +59,7 @@ public class PKIResourceServlet extends HttpServlet {
         String format = getMyParameter("format", request);
         String alias = getMyParameter("alias", request);
 
-        try (PrintWriter out = response.getWriter()) {
+        try {
             if (resource == null) {
                 throw new IllegalArgumentException("Missing resource name");
             }
@@ -76,8 +76,10 @@ public class PKIResourceServlet extends HttpServlet {
                 }
             }
 
-            response.setContentType(pkiResources.getContentType(r, outputType));
-            out.print(pkiResources.getAsString(r, outputType, alias));
+            try (PrintWriter out = response.getWriter()) {
+                response.setContentType(pkiResources.getContentType(r, outputType));
+                out.print(pkiResources.getAsString(r, outputType, alias));
+            }
         }
         catch(Exception e) {
             log.error(
