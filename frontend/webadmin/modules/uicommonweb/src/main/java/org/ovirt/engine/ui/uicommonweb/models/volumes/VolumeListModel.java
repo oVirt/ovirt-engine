@@ -361,7 +361,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
-        getBrickListModel().updateRemoveBrickActionsAvailability((GlusterVolumeEntity) provideDetailModelEntity(getSelectedItem()));
+        getBrickListModel().setVolumeEntity((GlusterVolumeEntity) provideDetailModelEntity(getSelectedItem()));
     }
 
     @Override

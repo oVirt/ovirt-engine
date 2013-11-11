@@ -61,6 +61,17 @@ public class VolumeBrickListModel extends SearchableListModel {
         getReplaceBrickCommand().setIsAvailable(false);
     }
 
+    private GlusterVolumeEntity volumeEntity;
+
+    public void setVolumeEntity(GlusterVolumeEntity volumeEntity) {
+        this.volumeEntity = volumeEntity;
+        updateRemoveBrickActionsAvailability(volumeEntity);
+    }
+
+    public GlusterVolumeEntity getVolumeEntity() {
+        return volumeEntity;
+    }
+
     private UICommand addBricksCommand;
 
     public UICommand getAddBricksCommand()
@@ -256,7 +267,6 @@ public class VolumeBrickListModel extends SearchableListModel {
         else {
             setItems(null);
         }
-        updateRemoveBrickActionsAvailability((GlusterVolumeEntity) getEntity());
     }
 
     private void checkUpServerAndAddBricks() {
@@ -813,7 +823,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         model.setMessage(ConstantsManager.getInstance().getConstants().stopRemoveBricksMessage());
         model.setHashName("volume_remove_bricks_stop"); //$NON-NLS-1$
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getVolumeEntity();
         GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
         ArrayList<String> list = new ArrayList<String>();
         for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
@@ -847,7 +857,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getVolumeEntity();
 
         ArrayList<GlusterBrickEntity> list = new ArrayList<GlusterBrickEntity>();
         for (Object brickName : model.getItems()) {
@@ -885,7 +895,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         model.setMessage(ConstantsManager.getInstance().getConstants().commitRemoveBricksMessage());
         model.setHashName("volume_remove_bricks_commit"); //$NON-NLS-1$
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getVolumeEntity();
         GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
         ArrayList<String> list = new ArrayList<String>();
         for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
@@ -915,7 +925,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getVolumeEntity();
         ArrayList<GlusterBrickEntity> list = new ArrayList<GlusterBrickEntity>();
         for (Object brickName : model.getItems()) {
             GlusterBrickEntity brick = volumeEntity.getBrickWithQualifiedName((String) brickName);
@@ -946,7 +956,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        final GlusterVolumeEntity volumeEntity = getVolumeEntity();
         ArrayList<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
         for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
             if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null) {
@@ -1019,7 +1029,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         model.setMessage(ConstantsManager.getInstance().getConstants().retainBricksMessage());
         model.setHashName("volume_retain_brick"); //$NON-NLS-1$
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getVolumeEntity();
         GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
         ArrayList<String> list = new ArrayList<String>();
         for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
@@ -1049,7 +1059,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getVolumeEntity();
         ArrayList<GlusterBrickEntity> list = new ArrayList<GlusterBrickEntity>();
         for (Object brickName : model.getItems()) {
             GlusterBrickEntity brick = volumeEntity.getBrickWithQualifiedName((String) brickName);
