@@ -139,6 +139,10 @@ class Plugin(plugin.PluginBase):
                 otopicons.CoreEnv.MODIFIED_FILES
             ],
         )
+        self.environment[
+            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+        ].append(osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL)
+
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(sysctl)
 
         # we must do this here as postgres requires it
