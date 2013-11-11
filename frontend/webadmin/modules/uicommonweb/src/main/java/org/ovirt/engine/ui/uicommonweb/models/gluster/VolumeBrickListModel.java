@@ -853,10 +853,6 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        if (getSelectedItems() == null || getSelectedItems().isEmpty()) {
-            return;
-        }
-
         GlusterVolumeEntity volumeEntity = getVolumeEntity();
 
         ArrayList<GlusterBrickEntity> list = new ArrayList<GlusterBrickEntity>();
