@@ -207,6 +207,24 @@
       <version>${openstack-client.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.tukaani</groupId>
+      <artifactId>xz</artifactId>
+      <version>${tukaani-xz.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>c3p0</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>${c3p0.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <version>${aopalliance.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -403,6 +421,24 @@
                 <groupId>com.woorea</groupId>
                 <artifactId>resteasy-connector</artifactId>
                 <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.tukaani</groupId>
+                <artifactId>xz</artifactId>
+                <moduleName>org.tukaani.xz</moduleName>
+              </module>
+
+              <module>
+                <groupId>c3p0</groupId>
+                <artifactId>c3p0</artifactId>
+                <moduleName>com.mchange.c3p0</moduleName>
+              </module>
+
+              <module>
+                <groupId>aopalliance</groupId>
+                <artifactId>aopalliance</artifactId>
+                <moduleName>org.aopalliance</moduleName>
               </module>
 
             </modules>
