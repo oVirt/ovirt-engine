@@ -76,6 +76,11 @@ public class CloudInitHandler {
         String metaDataStr = mapToJson(metaData);
         String userDataStr = mapToYaml(userData);
 
+        // add #cloud-config for user data file head
+        if (StringUtils.isNotBlank(userDataStr)) {
+            userDataStr = "#cloud-config\n" + userDataStr;
+        }
+
         files.put("openstack/latest/meta_data.json", metaDataStr.getBytes("UTF-8"));
         files.put("openstack/latest/user_data", userDataStr.getBytes("UTF-8"));
 
@@ -200,7 +205,7 @@ public class CloudInitHandler {
     private void storeRootPassword() {
         if (!StringUtils.isEmpty(params.getRootPassword())) {
             // Note that this is in plain text in the config disk
-            metaData.put(passwordKey, params.getRootPassword());
+            userData.put(passwordKey, params.getRootPassword());
         }
     }
 
