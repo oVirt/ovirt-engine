@@ -17,6 +17,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
+/**
+ * @see RestartVdsCommand on why this command is requiring a lock
+ */
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters> extends RestartVdsCommand<T> {
     /**
