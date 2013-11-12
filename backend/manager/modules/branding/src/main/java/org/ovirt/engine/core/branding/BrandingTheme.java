@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -63,6 +64,12 @@ public class BrandingTheme {
     private static final String TEMPLATE_KEY = "welcome"; //$NON-NLS-1$
 
     /**
+     * The key used to determine if this template should completely replace the template build from all
+     * previously processed themes.
+     */
+    private static final String REPLACE_TEMPLATE_KEY = "welcome_replace"; //$NON-NLS-1$
+
+    /**
      * Property suffix for cascading resources file.
      */
     private static final String FILE_SUFFIX = ".file"; //$NON-NLS-1$
@@ -76,6 +83,8 @@ public class BrandingTheme {
      * Post fix for denoting css files.
      */
     private static final String CSS_POST_FIX = "_css";
+
+    private static final String[] TEMPLATE_REPLACE_VALUES = {"true", "false"}; //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * The properties associated with the branding theme.
@@ -128,6 +137,11 @@ public class BrandingTheme {
             if (!available) {
                 log.warn("Unable to load branding theme, mismatched version: " //$NON-NLS-1$
                     + getVersion(brandingProperties) + " wanted version: " + supportedBrandingVersion); //$NON-NLS-1$
+            } else {
+                available = verifyPropertyValues(brandingProperties);
+                if (!available) {
+                    log.warn("Unable to load branding theme, property value verification failed"); //$NON-NLS-1$
+                }
             }
         } catch (IOException e) {
             // Unable to load properties file, disable theme.
@@ -136,6 +150,21 @@ public class BrandingTheme {
                     + propertiesFileName, e);
         }
         return available;
+    }
+
+    /**
+     * Verify that all required property values are valid.
+     * @param properties The {@code Properties} object to check.
+     */
+    private boolean verifyPropertyValues(final Properties properties) {
+        boolean result = true;
+        if (brandingProperties.getProperty(REPLACE_TEMPLATE_KEY) != null &&
+            !Arrays.asList(TEMPLATE_REPLACE_VALUES).contains(
+                    brandingProperties.getProperty(REPLACE_TEMPLATE_KEY).toLowerCase())) {
+            log.warn(REPLACE_TEMPLATE_KEY + " value is not true or false"); //$NON-NLS-1$
+            result = false;
+        }
+        return result;
     }
 
     /**
@@ -239,6 +268,10 @@ public class BrandingTheme {
         }
 
         return result;
+    }
+
+    public boolean shouldReplaceWelcomePageSectionTemplate() {
+        return Boolean.valueOf(brandingProperties.getProperty(REPLACE_TEMPLATE_KEY));
     }
 
     /**
