@@ -962,7 +962,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         final RemoveBrickStatusModel removeBrickStatusModel = new RemoveBrickStatusModel(volumeEntity, bricks);
         removeBrickStatusModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksStatusTitle());
-
+        removeBrickStatusModel.setHashName("remove_bricks_status"); ////$NON-NLS-1$
         setWindow(removeBrickStatusModel);
 
         removeBrickStatusModel.startProgress(null);

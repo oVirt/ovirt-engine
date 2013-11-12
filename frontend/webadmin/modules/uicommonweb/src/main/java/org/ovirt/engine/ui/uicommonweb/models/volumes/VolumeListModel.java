@@ -201,6 +201,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
 
         VolumeModel volumeModel = new VolumeModel();
+        volumeModel.setHashName("new_volume"); //$NON-NLS-1$
         volumeModel.setTitle(ConstantsManager.getInstance().getConstants().newVolumeTitle());
         setWindow(volumeModel);
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -581,6 +582,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setConfirmWindow(cModel);
         cModel.setTitle(ConstantsManager.getInstance().getConstants().rebalanceStatusTitle());
         cModel.startProgress(ConstantsManager.getInstance().getConstants().rebalanceStatusFetchMessage());//$NON-NLS-1$
+        cModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
 
         final UICommand rebalanceStatusOk = new UICommand("rebalanceNotStarted", VolumeListModel.this);//$NON-NLS-1$
         rebalanceStatusOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
