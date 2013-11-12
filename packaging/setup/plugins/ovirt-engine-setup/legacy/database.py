@@ -64,7 +64,7 @@ class Plugin(plugin.PluginBase):
                     if ':%s:' % 'postgres' not in l:
                         d = l.split(':')
                         if len(d) == 5:
-                            self.environment.update({
+                            self._dbenv = {
                                 osetupcons.DBEnv.HOST: d[0],
                                 osetupcons.DBEnv.PORT: int(d[1]),
                                 osetupcons.DBEnv.SECURED: None,
@@ -77,14 +77,10 @@ class Plugin(plugin.PluginBase):
                                 osetupcons.DBEnv.USER: d[3],
                                 osetupcons.DBEnv.PASSWORD: d[4],
                                 osetupcons.DBEnv.NEW_DATABASE: False,
-                                osetupcons.CoreEnv.LEGACY_PG_CREDS_FOUND: True,
-                            })
+                            }
                             self.environment[
-                                otopicons.CoreEnv.LOG_FILTER
-                            ].append(
-                                self.environment[osetupcons.DBEnv.PASSWORD]
-                            )
-                            break
+                                osetupcons.CoreEnv.LEGACY_PG_CREDS_FOUND
+                            ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -96,6 +92,12 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _setup(self):
+        self.environment.update(self._dbenv)
+        self.environment[
+            otopicons.CoreEnv.LOG_FILTER
+        ].append(
+            self.environment[osetupcons.DBEnv.PASSWORD]
+        )
         dbovirtutils = database.OvirtUtils(plugin=self)
         dbovirtutils.tryDatabaseConnect()
         if dbovirtutils.isNewDatabase():
