@@ -56,8 +56,8 @@ public class PKIResources {
         X509_PEM("application/x-x509-cert", formatPEM),
         OPENSSH_PUBKEY("text/plain", formatOpenSSH);
 
-        private String contentType;
-        private IFormatter formatter;
+        private final String contentType;
+        private final IFormatter formatter;
 
         private Format(String contentType, IFormatter formatter) {
             this.contentType = contentType;
@@ -81,9 +81,10 @@ public class PKIResources {
         CACertificate(EngineLocalConfig.getInstance().getPKICACert(), Format.X509_PEM_CA, null),
         EngineCertificate(EngineLocalConfig.getInstance().getPKIEngineCert(), Format.X509_PEM, "ovirt-engine");
 
-        private Certificate cert;
-        private Format defaultFormat;
-        private String defaultAlias;
+        private final Certificate cert;
+        private final Format defaultFormat;
+        private final String defaultAlias;
+
         private Resource(File cert, Format defaultFormat, String defaultAlias) {
             try (InputStream in = new FileInputStream(cert)) {
                 this.cert = CertificateFactory.getInstance("X.509").generateCertificate(in);
