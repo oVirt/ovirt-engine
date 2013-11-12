@@ -183,7 +183,6 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         default:
             log.errorFormat("Failed in {0} method", getCommandName());
             outEx = createException();
-            log.errorFormat("Error code {0} and error message {1}", returnStatus, outEx.getMessage());
             break;
         }
         VDSError tempVar = new VDSError();
@@ -194,8 +193,8 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
     }
 
     private VDSExceptionBase createException() {
-        final String errorMessage = String.format("Failed to %1$s, error = %2$s", getCommandName(),
-                getReturnStatus().mMessage);
+        final String errorMessage = String.format("Failed to %1$s, error = %2$s, code = %3$s", getCommandName(),
+                getReturnStatus().mMessage, getReturnStatus().mCode);
         return createDefaultConcreteException(errorMessage);
     }
 
