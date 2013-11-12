@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.branding;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -105,4 +106,30 @@ public class BrandingThemeTest {
                 theme5.getCascadingResource("this_file_is_missing_anyway")); //$NON-NLS-1$
     }
 
+    @Test
+    public void testInvalidTemplateReplaceProperty() throws URISyntaxException {
+        File testThemeRootPath = new File(this.getClass().getClassLoader().
+                getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$
+                .toURI().getPath());
+        // theme 6 purposely has an invalid welcome_replace value.
+        File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "06-test6.brand"); //$NON-NLS-1$
+        BrandingTheme theme6 = new BrandingTheme(testThemePath.getAbsolutePath(),
+                testThemeRootPath, 1); //$NON-NLS-1$
+        assertFalse("Theme 6 should not load", theme6.load()); //$NON-NLS-1$
+
+    }
+
+    @Test
+    public void testTemplateReplaceProperty() throws URISyntaxException {
+        File testThemeRootPath = new File(this.getClass().getClassLoader().
+                getResource("./org/ovirt/engine/core/branding") //$NON-NLS-1$
+                .toURI().getPath());
+        File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "01-test.brand"); //$NON-NLS-1$
+        BrandingTheme theme1 = new BrandingTheme(testThemePath.getAbsolutePath(),
+                testThemeRootPath, 1); //$NON-NLS-1$
+        assertTrue("Theme 1 should load", theme1.load()); //$NON-NLS-1$
+        assertFalse("should replace template should be false", //$NON-NLS-1$
+                theme1.shouldReplaceWelcomePageSectionTemplate());
+
+    }
 }

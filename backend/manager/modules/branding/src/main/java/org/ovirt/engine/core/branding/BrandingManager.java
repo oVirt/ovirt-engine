@@ -270,6 +270,10 @@ public class BrandingManager {
                 }
             }
             replacedTemplate = replacedTemplate.replaceAll(USER_LOCALE_HOLDER, locale.toString());
+            if (theme.shouldReplaceWelcomePageSectionTemplate()) {
+                //Clear the template builder as the theme wants to replace instead of append to the template.
+                templateBuilder = new StringBuilder();
+            }
             templateBuilder.append(replacedTemplate);
         }
         return templateBuilder.toString();
