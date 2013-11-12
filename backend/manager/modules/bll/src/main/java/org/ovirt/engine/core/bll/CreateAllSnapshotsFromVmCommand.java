@@ -229,9 +229,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             } else {
                 // If the created snapshot contains memory, remove the memory volumes as
                 // they are not going to be in use since no live snapshot is created
-                if (createdSnapshot.containsMemory()) {
+                if (getParameters().isSaveMemory() && createdSnapshot.containsMemory()) {
                     logMemorySavingFailed();
-
                     getSnapshotDao().removeMemoryFromSnapshot(createdSnapshot.getId());
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
                 }
@@ -241,7 +240,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 revertToActiveSnapshot(createdSnapshot.getId());
                 // If the removed snapshot contained memory, remove the memory volumes
                 // Note that the memory volumes might not have been created
-                removeMemoryVolumesOfSnapshot(createdSnapshot);
+                if (getParameters().isSaveMemory() && createdSnapshot.containsMemory()) {
+                    removeMemoryVolumesOfSnapshot(createdSnapshot);
+                }
             } else {
                 log.warnFormat("No snapshot was created for VM {0} which is in LOCKED status", getVmId());
             }
