@@ -76,6 +76,7 @@ class Plugin(plugin.PluginBase):
                 )
             )
             with open(self.resolveFile(answer), 'w') as f:
+                os.fchmod(f.fileno(), 0o600)
                 f.write(
                     (
                         '# action=%s\n'
