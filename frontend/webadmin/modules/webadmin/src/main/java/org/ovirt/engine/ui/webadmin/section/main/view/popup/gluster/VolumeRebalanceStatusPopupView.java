@@ -145,6 +145,14 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         }, constants.rebalanceSize());
 
         rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+
+            @Override
+            protected String getText(GlusterVolumeTaskStatusForHost entity) {
+                return String.valueOf(entity.getFilesScanned());
+            }
+        }, constants.rebalanceScannedFileCount());
+
+        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
             @Override
             protected String getText(GlusterVolumeTaskStatusForHost entity) {
                 return String.valueOf(entity.getFilesFailed());
@@ -159,12 +167,11 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         }, constants.rebalanceSkippedFileCount());
 
         rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
-
             @Override
             protected String getText(GlusterVolumeTaskStatusForHost entity) {
-                return String.valueOf(entity.getFilesScanned());
+                return entity.getStatus().toString();
             }
-        }, constants.rebalanceScannedFileCount());
+        }, constants.rebalanceStatus());
 
         rebalanceHostsTable.addEntityModelColumn(new HumanReadableTimeColumn<EntityModel>() {
 
@@ -173,13 +180,6 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
                 return ((GlusterVolumeTaskStatusForHost)(object.getEntity())).getRunTime();
             }
         }, constants.rebalanceRunTime());
-
-        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
-            @Override
-            protected String getText(GlusterVolumeTaskStatusForHost entity) {
-                return entity.getStatus().toString();
-            }
-        }, constants.rebalanceStatus());
     }
 
     public String getColumnHeaderForFilesMoved() {
