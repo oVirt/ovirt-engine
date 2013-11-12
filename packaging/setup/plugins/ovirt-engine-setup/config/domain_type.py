@@ -65,7 +65,9 @@ class Plugin(plugin.PluginBase):
         ),
         condition=lambda self: (
             self.environment[osetupcons.DBEnv.NEW_DATABASE] and
-            self.environment[osetupcons.ConfigEnv.APPLICATION_MODE] != 'gluster'
+            self.environment[
+                osetupcons.ConfigEnv.APPLICATION_MODE
+            ] != 'gluster'
         ),
     )
     def _customization(self):
