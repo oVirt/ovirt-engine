@@ -94,8 +94,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setDisableSmartcardVisible(boolean visible);
 
-        void setCtrlAltDelEnabled(boolean enabled, String reason);
-
         void setSpiceProxyEnabled(boolean enabled, String reason);
 
         void selectVncImplementation(VncConsoleModel.ClientConsoleMode clientConsoleMode);
@@ -106,6 +104,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void flushToPrivateModel();
 
+        void setCtrlAltDeleteRemapHotkey(String hotkey);
     }
 
     private final ConsoleUtils consoleUtils;
@@ -142,6 +141,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         String vmName = model.getVmConsoles().getVm().getName();
         getView().setVmName(vmName);
+        getView().setCtrlAltDeleteRemapHotkey(consoleUtils.getRemapCtrlAltDelHotkey());
 
         super.init(model);
     }
@@ -241,9 +241,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         getView().setAdditionalConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.RDP));
         getView().setSpiceConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.SPICE));
-
-        boolean ctrlAltDelEnabled = true; // thiss will be removed anyway
-        getView().setCtrlAltDelEnabled(ctrlAltDelEnabled, constants.ctrlAltDeletIsNotSupportedOnWindows());
 
         boolean spiceProxyEnabled = consoleUtils.isSpiceProxyDefined();
         getView().setSpiceProxyEnabled(spiceProxyEnabled, constants.spiceProxyCanBeEnabledOnlyWhenDefined());

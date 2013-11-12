@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 
@@ -43,7 +44,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     interface Style extends CssResource {
-        String ctrlAltDelContentWidget();
+        String remapCADContentWidget();
         String consoleResourcesLink();
     }
 
@@ -83,7 +84,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
     @UiField(provided = true)
     @WithElementId
-    EntityModelValueCheckBoxEditor<ConsoleModel> ctrlAltDel;
+    EntityModelValueCheckBoxEditor<ConsoleModel> remapCtrlAltDeleteSpice;
+
+    @UiField(provided = true)
+    @WithElementId
+    EntityModelValueCheckBoxEditor<ConsoleModel> remapCtrlAltDeleteVnc;
 
     @UiField(provided = true)
     @WithElementId
@@ -222,21 +227,30 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         });
         wanEnabled.setLabel(constants.enableWanOptions());
 
-        ctrlAltDel = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+        remapCtrlAltDeleteSpice = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
             @Override
             protected void updateModel(ISpice spice, boolean value) {
-                spice.setSendCtrlAltDelete(value);
-                spice.setNoTaskMgrExecution(value);
+                spice.setRemapCtrlAltDel(value);
             }
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.getSendCtrlAltDelete();
+                return spice.isRemapCtrlAltDel();
             }
 
         });
 
-        ctrlAltDel.setLabel(constants.ctrlAltDel());
+        remapCtrlAltDeleteVnc = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new VncRenderer() {
+            @Override
+            protected void updateModel(IVnc vnc, boolean value) {
+                vnc.setRemapCtrlAltDelete(value);
+            }
+
+            @Override
+            protected boolean extractBoolean(IVnc vnc) {
+                return vnc.isRemapCtrlAltDelete();
+            }
+        });
 
         enableUsbAutoshare = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
 
@@ -319,7 +333,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         rdpPanel.setVisible(false);
 
         clientConsoleResourcesUrl.asWidget().addStyleName(style.consoleResourcesLink());
-        ctrlAltDel.getContentWidgetContainer().addStyleName(style.ctrlAltDelContentWidget());
+        remapCtrlAltDeleteSpice.getContentWidgetContainer().addStyleName(style.remapCADContentWidget());
+        remapCtrlAltDeleteVnc.getContentWidgetContainer().addStyleName(style.remapCADContentWidget());
         asWidget().addStatusWidget(clientConsoleResourcesUrl);
     }
 
@@ -329,13 +344,13 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         this.model = model;
 
         editCheckBoxes(model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class),
-                ctrlAltDel,
+                remapCtrlAltDeleteSpice,
                 enableUsbAutoshare,
                 openInFullScreen,
                 enableSpiceProxy,
                 wanEnabled,
                 disableSmartcard);
-
+        editCheckBoxes(model.getVmConsoles().getConsoleModel(VncConsoleModel.class), remapCtrlAltDeleteVnc);
         editCheckBoxes(model.getVmConsoles().getConsoleModel(RdpConsoleModel.class), useLocalDrives);
     }
 
@@ -361,13 +376,20 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         }
 
         flushCheckBoxes(
-                ctrlAltDel,
+                remapCtrlAltDeleteSpice,
+                remapCtrlAltDeleteVnc,
                 enableUsbAutoshare,
                 openInFullScreen,
                 enableSpiceProxy,
                 useLocalDrives,
                 wanEnabled,
                 disableSmartcard);
+    }
+
+    @Override
+    public void setCtrlAltDeleteRemapHotkey(String hotkey) {
+        remapCtrlAltDeleteSpice.setLabel(messages.remapCtrlAltDelete(hotkey));
+        remapCtrlAltDeleteVnc.setLabel(messages.remapCtrlAltDelete(hotkey));
     }
 
     private void setSelectedSpiceImpl() {
@@ -537,9 +559,36 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         protected abstract boolean extractBoolean(ISpice spice);
     }
 
+    private abstract class VncRenderer implements ValueCheckboxRenderer<ConsoleModel> {
+
+
+        @Override
+        public boolean render(ConsoleModel value) {
+            if (value instanceof VncConsoleModel) {
+                return extractBoolean(((VncConsoleModel) value).getVncImpl());
+            }
+
+            return false;
+        }
+
+        @Override
+        public ConsoleModel read(boolean value, ConsoleModel model) {
+            if (model instanceof VncConsoleModel) {
+                updateModel(((VncConsoleModel) model).getVncImpl(), value);
+            }
+
+            return model;
+        }
+
+        protected abstract void updateModel(IVnc spice, boolean value);
+
+        protected abstract boolean extractBoolean(IVnc spice);
+    }
+
+
     @Override
     public void setSpiceConsoleAvailable(boolean hasSpiceConsole) {
-        ctrlAltDel.setVisible(hasSpiceConsole);
+        remapCtrlAltDeleteSpice.setVisible(hasSpiceConsole);
         enableUsbAutoshare.setVisible(hasSpiceConsole);
         openInFullScreen.setVisible(hasSpiceConsole);
     }
@@ -562,14 +611,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public void setVmName(String vmName) {
         consoleTitle.setText(messages.selectConsoleFor(vmName));
-    }
-
-    @Override
-    public void setCtrlAltDelEnabled(boolean enabled, String reason) {
-        ctrlAltDel.setEnabled(enabled);
-        if (!enabled) {
-            ctrlAltDel.setTitle(reason);
-        }
     }
 
     @Override

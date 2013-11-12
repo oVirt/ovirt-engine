@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
 
@@ -14,6 +15,10 @@ public class VncNativeImpl extends AbstractVnc implements IVnc {
                 .append("\npassword=").append(getTicket()) //$NON-NLS-1$
                 .append("\ndelete-this-file=1") //$NON-NLS-1$
                 .append("\ntitle=").append(getTitle()); //$NON-NLS-1$
+
+        if (isRemapCtrlAltDelete() && !StringHelper.isNullOrEmpty(getSecureAttentionMapping())) {
+            configBuilder.append("\nsecure-attention=").append(getSecureAttentionMapping()); //$NON-NLS-1$
+        }
 
         ConsoleModel.makeConsoleConfigRequest("console.vv", "application/x-virt-viewer; charset=UTF-8", configBuilder.toString()); //$NON-NLS-1$ $NON-NLS-2$
     }

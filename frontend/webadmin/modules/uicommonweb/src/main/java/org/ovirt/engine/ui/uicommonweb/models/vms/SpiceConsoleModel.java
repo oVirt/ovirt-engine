@@ -35,7 +35,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
-import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -169,13 +168,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
             if (!AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId()) || !getEntity().getHasSpiceDriver()) {
                 getspice().setWanOptionsEnabled(false);
-            }
-
-            // make sure to not send the ctrl+alt+delete and TaskMgrExecution if not supported
-            ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
-            if (!consoleUtils.isCtrlAltDelEnabled()) {
-                getspice().setSendCtrlAltDelete(false);
-                getspice().setNoTaskMgrExecution(false);
             }
 
             UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$

@@ -73,6 +73,10 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
             configBuilder.append("\nrelease-cursor=").append(getReleaseCursorHotKey()); //$NON-NLS-1$
         }
 
+        if (isRemapCtrlAltDel() && !StringHelper.isNullOrEmpty(getSecureAttentionMapping())) {
+            configBuilder.append("\nsecure-attention=").append(getSecureAttentionMapping()); //$NON-NLS-1$
+        }
+
         if (!StringHelper.isNullOrEmpty(getSpiceProxy())) {
             configBuilder.append("\nproxy=").append(getSpiceProxy()); //$NON-NLS-1$
         }

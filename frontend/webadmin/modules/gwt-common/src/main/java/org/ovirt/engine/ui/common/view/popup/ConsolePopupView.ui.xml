@@ -9,41 +9,41 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
 	<ui:style type="org.ovirt.engine.ui.common.view.popup.ConsolePopupView.Style">
-		.explanationLabel {
-			font-style: italic;
-			margin-left: 40px;
-			margin-bottom: 10px;
-			width: 300px;
-		}
+        .explanationLabel {
+            font-style: italic;
+            margin-left: 40px;
+            margin-bottom: 10px;
+            width: 300px;
+        }
 
-		.fullWidth {
-			width: 100%;
-		}
+        .fullWidth {
+            width: 100%;
+        }
 
-		.labelStyle {
-			font-size: 11px;
-			font-weight: bold;
-			color: #333333;
-		}
+        .labelStyle {
+            font-size: 11px;
+            font-weight: bold;
+            color: #333333;
+        }
 
-		.ctrlAltDelContentWidget {
-			width: 300px;
-		}
+        .remapCADContentWidget {
+            width: 300px;
+        }
 
-		.protocolRadioButton {
-		    float:left;
-		    display:inline;
-	    }
+        .protocolRadioButton {
+            float: left;
+            display: inline;
+        }
 
-	    .protocolPanel {
-	        float: left;
+        .protocolPanel {
+            float: left;
             width: 90%;
-	    }
+        }
 
         .consoleResourcesLink {
             margin-left: 12px;
-	    }
-	</ui:style>
+        }
+    </ui:style>
 
 	<d:SimpleDialogPanel width="500px" height="420px">
 		<d:content>
@@ -65,7 +65,7 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 					<e:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton" title="{constants.spiceInvokeHtml5}"/>
 
 					<g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle}" />
-					<w:EntityModelValueCheckBoxEditor ui:field="ctrlAltDel" />
+					<w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" />
 					<w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
 					<w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />
 					<w:EntityModelValueCheckBoxEditor ui:field="enableSpiceProxy" />
@@ -83,6 +83,7 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 					<g:Label text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
 					<e:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" title="{constants.nativeClient}"/>
 					<e:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton" title="{constants.noVnc}"/>
+                    <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteVnc" />
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">

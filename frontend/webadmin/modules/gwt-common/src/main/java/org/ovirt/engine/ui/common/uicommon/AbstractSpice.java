@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
@@ -47,7 +49,7 @@ public abstract class AbstractSpice {
     protected String menu;
     protected String guestID;
     protected boolean noTaskMgrExecution;
-    protected boolean sendCtrlAltDelete;
+    protected boolean remapCtrlAltDelete;
     protected boolean usbAutoShare;
     protected String usbFilter;
     protected WanColorDepth wanColorDepth;
@@ -65,14 +67,14 @@ public abstract class AbstractSpice {
     // even the spice proxy is globally configured, user can choose to disable it for specific VM
     private boolean spiceProxyEnabled;
 
+    private final ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
+
     public AbstractSpice() {
         setWANDisableEffects(new ArrayList<WANDisableEffects>());
         setWanOptionsEnabled(false);
         setWANColorDepth(WanColorDepth.depth16);
-
-        // send the ctrl + alt + delete by default
-        setSendCtrlAltDelete(true);
-        setNoTaskMgrExecution(true);
+        setRemapCtrlAltDel(true);
+        setNoTaskMgrExecution(false);
     }
 
     public void setWANDisableEffects(List<WANDisableEffects> disableEffects) {
@@ -314,12 +316,12 @@ public abstract class AbstractSpice {
         this.noTaskMgrExecution = noTaskMgrExecution;
     }
 
-    public boolean getSendCtrlAltDelete() {
-        return sendCtrlAltDelete;
+    public boolean isRemapCtrlAltDel() {
+        return remapCtrlAltDelete;
     }
 
-    public void setSendCtrlAltDelete(boolean sendCtrlAltDelete) {
-        this.sendCtrlAltDelete = sendCtrlAltDelete;
+    public void setRemapCtrlAltDel(boolean remapCtrlAltDelete) {
+        this.remapCtrlAltDelete = remapCtrlAltDelete;
     }
 
     public boolean getUsbAutoShare() {
@@ -415,6 +417,10 @@ public abstract class AbstractSpice {
 
     public boolean isSpiceProxyEnabled() {
         return spiceProxyEnabled;
+    }
+
+    protected String getSecureAttentionMapping() {
+        return consoleUtils.getRemapCtrlAltDelHotkey();
     }
 
 }

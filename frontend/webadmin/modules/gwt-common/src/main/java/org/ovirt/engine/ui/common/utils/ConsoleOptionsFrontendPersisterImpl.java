@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 
@@ -24,15 +25,16 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
     // spice options
     private static final String SPICE_CLIENT_MODE = "_spiceClientMode"; //$NON-NLS-1$
-    private static final String CTRL_ALT_DEL = "_ctrlAltDel"; //$NON-NLS-1$
     private static final String OPEN_IN_FULL_SCREEN = "_openInFullScreen"; //$NON-NLS-1$
     private static final String SMARTCARD_ENABLED_OVERRIDDEN = "_smartcardEnabledOverridden"; //$NON-NLS-1$
     private static final String WAN_OPTIONS = "_wanOptions"; //$NON-NLS-1$
     private static final String USB_AUTOSHARE = "_usbAutoshare"; //$NON-NLS-1$
     private static final String SPICE_PROXY_ENABLED = "_spiceProxyEnabled"; //$NON-NLS-1$
+    private static final String REMAP_CAD_SPICE = "_remapCtrlAltDelSpice"; //$NON-NLS-1$
 
     // vnc options
     private static final String VNC_CLIENT_MODE = "_vncClientMode"; //$NON-NLS-1$
+    private static final String REMAP_CAD_VNC = "_remapCtrlAltDelVnc"; //$NON-NLS-1$
 
     // rdp options
     private static final String RDP_CLIENT_MODE = "_rdpClientMode"; //$NON-NLS-1$
@@ -103,6 +105,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         try {
             vmConsoles.getConsoleModel(VncConsoleModel.class).setVncImplementation(VncConsoleModel.ClientConsoleMode
                     .valueOf(clientStorage.getLocalItem(keyMaker.make(VNC_CLIENT_MODE))));
+            asVnc(vmConsoles).setRemapCtrlAltDelete(readBool(keyMaker.make(REMAP_CAD_VNC)));
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed loading VNC data. Exception message: " + e.getMessage()); //$NON-NLS-1$
         }
@@ -115,18 +118,19 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         clientStorage.setLocalItem(keyMaker.make(SPICE_CLIENT_MODE),
                 consoleModel.getClientConsoleMode().toString());
 
-        storeBool(keyMaker.make(CTRL_ALT_DEL), spice.getSendCtrlAltDelete());
         storeBool(keyMaker.make(OPEN_IN_FULL_SCREEN), spice.isFullScreen());
         storeBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN), spice.isSmartcardEnabledOverridden());
         storeBool(keyMaker.make(WAN_OPTIONS), spice.isWanOptionsEnabled());
         storeBool(keyMaker.make(USB_AUTOSHARE), spice.getUsbAutoShare());
         storeBool(keyMaker.make(SPICE_PROXY_ENABLED), spice.isSpiceProxyEnabled());
+        storeBool(keyMaker.make(REMAP_CAD_SPICE), spice.isRemapCtrlAltDel());
     }
 
     private void storeVncData(VmConsoles vmConsoles, KeyMaker keyMaker) {
         VncConsoleModel consoleModel = vmConsoles.getConsoleModel(VncConsoleModel.class);
         if (consoleModel != null) {
             clientStorage.setLocalItem(keyMaker.make(VNC_CLIENT_MODE), consoleModel.getClientConsoleMode().toString());
+            storeBool(keyMaker.make(REMAP_CAD_VNC), consoleModel.getVncImpl().isRemapCtrlAltDelete());
         }
     }
 
@@ -157,11 +161,6 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         }
 
         ISpice spice = asSpice(vmConsoles);
-
-        if (consoleUtils.isCtrlAltDelEnabled()) {
-            spice.setSendCtrlAltDelete(readBool(keyMaker.make(CTRL_ALT_DEL)));
-        }
-
         if (vmConsoles.getConsoleModel(SpiceConsoleModel.class).isWanOptionsAvailableForMyVm()) {
             spice.setWanOptionsEnabled(readBool(keyMaker.make(WAN_OPTIONS)));
         }
@@ -173,10 +172,15 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         spice.setFullScreen(readBool(keyMaker.make(OPEN_IN_FULL_SCREEN)));
         spice.setOverrideEnabledSmartcard(readBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN)));
         spice.setUsbAutoShare(readBool(keyMaker.make(USB_AUTOSHARE)));
+        spice.setRemapCtrlAltDel(readBool(keyMaker.make(REMAP_CAD_SPICE)));
     }
 
     protected ISpice asSpice(VmConsoles vmConsoles) {
         return (vmConsoles.getConsoleModel(SpiceConsoleModel.class)).getspice();
+    }
+
+    protected IVnc asVnc(VmConsoles vmConsoles) {
+        return (vmConsoles.getConsoleModel(VncConsoleModel.class)).getVncImpl();
     }
 
     protected void storeRdpData(VmConsoles vmConsoles, KeyMaker keyMaker) {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.uicommon;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.compat.StringHelper;
@@ -46,20 +48,37 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     }
 
     public String getHotKeysAsString() {
-        if (StringHelper.isNullOrEmpty(getToggleFullscreenHotKey()) && StringHelper.isNullOrEmpty(getReleaseCursorHotKey())) {
+        List<String> hotKeysList = getHotKeysAsList();
+
+        if (hotKeysList.size() == 0) {
             return null;
         }
 
-        String comma = (!StringHelper.isNullOrEmpty(getReleaseCursorHotKey()) && !StringHelper.isNullOrEmpty(getToggleFullscreenHotKey())) ? "," //$NON-NLS-1$
-                            : ""; //$NON-NLS-1$
+        StringBuilder hotKeysAsString = new StringBuilder();
+        for (String hotkey : hotKeysList) {
+            hotKeysAsString.append(hotkey);
+            hotKeysAsString.append(","); // $NON-NLS-1$
+        }
 
-        String releaseCursorKeysParameter =
-                StringHelper.isNullOrEmpty(getReleaseCursorHotKey()) ? "" : "release-cursor=" + getReleaseCursorHotKey(); //$NON-NLS-1$ //$NON-NLS-2$
+        return hotKeysAsString.substring(0, hotKeysAsString.length() - 1); // chop last comma
+    }
 
-        String toggleFullScreenKeysParameter =
-                StringHelper.isNullOrEmpty(getToggleFullscreenHotKey()) ? "" : "toggle-fullscreen=" + getToggleFullscreenHotKey(); //$NON-NLS-1$ //$NON-NLS-2$
+    private List<String> getHotKeysAsList() {
+        List<String> result = new LinkedList<String>();
 
-        return releaseCursorKeysParameter + comma + toggleFullScreenKeysParameter;
+        if (!StringHelper.isNullOrEmpty(getReleaseCursorHotKey())) {
+            result.add("release-cursor=" + getReleaseCursorHotKey()); // $NON-NLS-1$
+        }
+
+        if (!StringHelper.isNullOrEmpty(getToggleFullscreenHotKey())) {
+            result.add("toggle-fullscreen=" + getToggleFullscreenHotKey()); // $NON-NLS-1$
+        }
+
+        if (isRemapCtrlAltDel() && !StringHelper.isNullOrEmpty(getSecureAttentionMapping())) {
+            result.add("secure-attention=" + getSecureAttentionMapping()); // $NON-NLS-1$
+        }
+
+        return result;
     }
 
     public native String loadActiveX(String id, String codebase, String classId) /*-{
@@ -120,7 +139,6 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                var spiceCabOjectClassId = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getSpiceObjectClassId()();
                                                var id = "SpiceX_" + guestHostName;
                                                var noTaskMgrExecution = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getNoTaskMgrExecution()();
-                                               var sendCtrlAltDelete = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getSendCtrlAltDelete()();
                                                var usbAutoShare = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getUsbAutoShare()();
                                                var usbFilter = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getUsbFilter()();
                                                var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getDisconnectedEvent()();
@@ -157,7 +175,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                client.TrustStore = trustStore;
                                                client.HotKey = hotKey;
                                                client.NoTaskMgrExecution = noTaskMgrExecution;
-                                               client.SendCtrlAltDelete = sendCtrlAltDelete;
+                                               client.SendCtrlAltDelete = false;
                                                client.UsbAutoShare = usbAutoShare;
                                                client.SetUsbFilter(usbFilter);
                                                client.Smartcard = smartcardEnabled;
@@ -267,7 +285,6 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    var spiceCabURL = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getSpiceCabURL()();
                                                    var spiceCabOjectClassId = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getSpiceObjectClassId()();
                                                    var noTaskMgrExecution = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getNoTaskMgrExecution()();
-                                                   var sendCtrlAltDelete = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getSendCtrlAltDelete()();
                                                    var usbAutoShare = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getUsbAutoShare()();
                                                    var usbFilter = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getUsbFilter()();
                                                    var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getDisconnectedEvent()();
@@ -319,7 +336,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    client.TrustStore = trustStore;
                                                    client.HotKey = hotKey;
                                                    client.NoTaskMgrExecution = noTaskMgrExecution;
-                                                   client.SendCtrlAltDelete = sendCtrlAltDelete;
+                                                   client.SendCtrlAltDelete = false;
                                                    client.UsbAutoShare = usbAutoShare;
                                                    client.SetUsbFilter(usbFilter);
                                                    client.Smartcard = smartcardEnabled;

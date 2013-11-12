@@ -1370,9 +1370,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("SPICE HTML5 browser client (Tech preview)")
     String spiceHtml5();
 
-    @DefaultStringValue("Pass Ctrl-Alt-Del to virtual machine")
-    String ctrlAltDel();
-
     @DefaultStringValue("Enable USB Auto-Share")
     String usbAutoshare();
 
@@ -1381,9 +1378,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Enable SPICE Proxy")
     String enableSpiceProxy();
-
-    @DefaultStringValue("Ctrl-Alt-Del is always passed for this client OS")
-    String ctrlAltDeletIsNotSupportedOnWindows();
 
     @DefaultStringValue("Your browser doesn't support SPICE plugin")
     String spicePluginNotSupportedByBrowser();

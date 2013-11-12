@@ -128,4 +128,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Connecting to VM pool is not supported")
     String connectingToPoolIsNotSupported();
+
+    @DefaultMessage("Map control-alt-del shortcut to {0}")
+    String remapCtrlAltDelete(String hotkey);
 }

@@ -6,6 +6,8 @@ public interface IVnc {
     void setVncPort(String port);
     void setTicket(String ticket);
     void setTitle(String title);
+    boolean isRemapCtrlAltDelete();
+    void setRemapCtrlAltDelete(boolean remapCtrlAltDelete);
 
     void invokeClient();
 

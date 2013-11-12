@@ -13,6 +13,8 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     private final ClientAgentType clientAgentType;
     private final Configurator configurator;
 
+    private static final String SECURE_ATTENTION_MAPPING = "ctrl+alt+end";// $NON-NLS-1$
+
     @Inject
     public ConsoleUtilsImpl(Configurator configurator) {
         this.configurator = configurator;
@@ -22,29 +24,6 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     @Override
     public boolean isSpiceProxyDefined() {
         return configurator.isSpiceProxyDefined();
-    }
-
-    /**
-     * The ctrl+alt+del is enabled for all OS except windows newer than 7
-     * @return false if and only if the client OS type is Windows 7 or newer otherwise returns true
-     */
-    @Override
-    public boolean isCtrlAltDelEnabled() {
-        if (!configurator.isClientWindows()) {
-            return true;
-        }
-
-        float ntVersion = extractNtVersion(getUserAgentString());
-
-        // For Windows 7 and Windows Server 2008 R2 it is NT 6.1
-        // For Windows 8 and Windows Server 2012 it is NT 6.2
-        // The passing of ctrl+alt+del is enabled only on windows older
-        // than Windows 7, so NT less than 6.1
-        if (ntVersion >= 6.1f) {
-            return false;
-        }
-
-        return true;
     }
 
     private float extractNtVersion(String userAgentType) {
@@ -62,6 +41,11 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     @Override
     public boolean isWebSocketProxyDefined() {
         return configurator.isWebSocketProxyDefined();
+    }
+
+    @Override
+    public String getRemapCtrlAltDelHotkey() {
+        return SECURE_ATTENTION_MAPPING;
     }
 
     @Override

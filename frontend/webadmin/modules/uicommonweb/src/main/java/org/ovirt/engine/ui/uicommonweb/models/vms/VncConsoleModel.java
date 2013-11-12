@@ -84,6 +84,10 @@ public class VncConsoleModel extends ConsoleModel {
         this.vncImpl = (IVnc) TypeResolver.getInstance().resolve(implClass);
     }
 
+    public IVnc getVncImpl() {
+        return vncImpl;
+    }
+
     public ClientConsoleMode getClientConsoleMode() {
         return consoleMode;
     }

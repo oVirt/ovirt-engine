@@ -115,9 +115,9 @@ public interface ISpice
 
     void setNoTaskMgrExecution(boolean value);
 
-    boolean getSendCtrlAltDelete();
+    boolean isRemapCtrlAltDel();
 
-    void setSendCtrlAltDelete(boolean value);
+    void setRemapCtrlAltDel(boolean value);
 
     boolean getUsbAutoShare();
 
