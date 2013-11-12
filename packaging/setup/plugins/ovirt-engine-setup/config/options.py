@@ -218,7 +218,7 @@ class Plugin(plugin.PluginBase):
                     'name': 'SysPrep2K8R2Path',
                     'value': os.path.join(
                         osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gs4ysprep/sysprep.2k8',
+                        'gsysprep/sysprep.2k8',
                     ),
                 },
                 {
