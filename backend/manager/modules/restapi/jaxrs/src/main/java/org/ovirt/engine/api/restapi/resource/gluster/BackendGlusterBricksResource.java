@@ -280,6 +280,11 @@ public class BackendGlusterBricksResource
     }
 
     @Override
+    public Response activate(Action action) {
+        return stopMigrate(action);
+    }
+
+    @Override
     public ActionResource getActionSubresource(String action, String id) {
         return inject(new BackendActionResource(action, id));
     }

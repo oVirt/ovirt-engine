@@ -254,6 +254,29 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         collection.stopMigrate(action);
     }
 
+    @Test
+    public void testActivate() throws Exception {
+        GlusterBrick brick = new GlusterBrick();
+        GlusterVolume volume = new GlusterVolume();
+        brick.setName(serverName + ":" + brickDir);
+        volume.setId(volumeId.toString());
+        brick.setGlusterVolume(volume);
+
+        GlusterBricks bricks = control.createMock(GlusterBricks.class);
+        expect(bricks.getGlusterBricks()).andReturn(Collections.singletonList(brick)).anyTimes();
+
+        setUriInfo(setUpActionExpectations(VdcActionType.StopRemoveGlusterVolumeBricks,
+                GlusterVolumeRemoveBricksParameters.class,
+                new String[] {},
+                new Object[] {},
+                true,
+                true));
+
+        Action action = new Action();
+        action.setBricks(bricks);
+        collection.stopMigrate(action);
+    }
+
     /**
      * Overriding this as the bricks collection doesn't support search queries
      */

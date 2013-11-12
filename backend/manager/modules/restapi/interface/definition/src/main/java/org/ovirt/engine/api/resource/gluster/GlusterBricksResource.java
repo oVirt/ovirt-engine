@@ -82,6 +82,13 @@ public interface GlusterBricksResource {
     @Path("stopmigrate")
     public Response stopMigrate(Action action);
 
+    @POST
+    @Formatted
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("activate")
+    public Response activate(Action action);
+
     /**
      * Sub-resource locator method, returns individual GlusterBrickResource on which the remainder of the URI is
      * dispatched.
