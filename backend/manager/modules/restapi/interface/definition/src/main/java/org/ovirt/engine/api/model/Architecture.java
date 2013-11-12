@@ -2,7 +2,8 @@ package org.ovirt.engine.api.model;
 
 public enum Architecture {
     UNDEFINED,
-    X86_64;
+    X86_64,
+    PPC64;
 
     public String value() {
         return name();

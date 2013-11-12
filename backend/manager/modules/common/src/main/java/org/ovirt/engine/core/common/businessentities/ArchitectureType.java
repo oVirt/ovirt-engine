@@ -5,7 +5,8 @@ import java.util.HashMap;
 public enum ArchitectureType implements Identifiable {
 
     undefined(0),
-    x86_64(1);
+    x86_64(1),
+    ppc64(2);
 
     private int value;
     private static final HashMap<Integer, ArchitectureType> valueToArchitecture =

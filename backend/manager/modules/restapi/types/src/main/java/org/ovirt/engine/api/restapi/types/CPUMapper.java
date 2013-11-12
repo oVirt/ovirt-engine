@@ -28,6 +28,8 @@ public class CPUMapper {
                 return ArchitectureType.undefined;
             case X86_64:
                 return ArchitectureType.x86_64;
+            case PPC64:
+                return ArchitectureType.ppc64;
             default:
                 return null;
             }
@@ -44,6 +46,8 @@ public class CPUMapper {
                 return Architecture.UNDEFINED.value();
             case x86_64:
                 return Architecture.X86_64.value();
+            case ppc64:
+                return Architecture.PPC64.value();
             default:
                 return null;
             }

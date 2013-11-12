@@ -108,13 +108,17 @@ public final class CpuFlagsManagerHandler {
     private static class CpuFlagsManager {
         private List<ServerCpu> _intelCpuList;
         private List<ServerCpu> _amdCpuList;
+        private List<ServerCpu> _ibmCpuList;
         private List<ServerCpu> _allCpuList = new ArrayList<ServerCpu>();
         private Map<String, ServerCpu> _intelCpuByNameDictionary =
                 new HashMap<String, ServerCpu>();
         private Map<String, ServerCpu> _amdCpuByNameDictionary =
                 new HashMap<String, ServerCpu>();
+        private Map<String, ServerCpu> _ibmCpuByNameDictionary =
+                new HashMap<String, ServerCpu>();
         private final String _intelFlag = "vmx";
         private final String _amdFlag = "svm";
+        private final String _ibmFlag = "powernv";
 
         public CpuFlagsManager(Version ver) {
             InitDictionaries(ver);
@@ -140,6 +144,10 @@ public final class CpuFlagsManagerHandler {
                 if (result == null) {
                     result = _amdCpuByNameDictionary.get(cpuName);
                 }
+
+                if (result == null) {
+                    result = _ibmCpuByNameDictionary.get(cpuName);
+                }
             }
             return result;
         }
@@ -149,6 +157,7 @@ public final class CpuFlagsManagerHandler {
             // init dictionaries
             _intelCpuByNameDictionary.clear();
             _amdCpuByNameDictionary.clear();
+            _ibmCpuByNameDictionary.clear();
             _allCpuList.clear();
 
             String[] cpus = Config.<String> GetValue(ConfigValues.ServerCPUList, ver.toString()).split("[;]", -1);
@@ -179,6 +188,8 @@ public final class CpuFlagsManagerHandler {
                             _intelCpuByNameDictionary.put(sc.getCpuName(), sc);
                         } else if (sc.getFlags().contains(_amdFlag)) {
                             _amdCpuByNameDictionary.put(sc.getCpuName(), sc);
+                        } else if (sc.getFlags().contains(_ibmFlag)) {
+                            _ibmCpuByNameDictionary.put(sc.getCpuName(), sc);
                         }
 
                         _allCpuList.add(sc);
@@ -189,6 +200,7 @@ public final class CpuFlagsManagerHandler {
             }
             _intelCpuList = new ArrayList<ServerCpu>(_intelCpuByNameDictionary.values());
             _amdCpuList = new ArrayList<ServerCpu>(_amdCpuByNameDictionary.values());
+            _ibmCpuList = new ArrayList<ServerCpu>(_ibmCpuByNameDictionary.values());
 
             Comparator<ServerCpu> cpuComparator = new Comparator<ServerCpu>() {
                 @Override
@@ -201,6 +213,7 @@ public final class CpuFlagsManagerHandler {
             // selected first
             Collections.sort(_intelCpuList, cpuComparator);
             Collections.sort(_amdCpuList, cpuComparator);
+            Collections.sort(_ibmCpuList, cpuComparator);
         }
 
         public String GetVDSVerbDataByCpuName(String name) {
@@ -208,7 +221,8 @@ public final class CpuFlagsManagerHandler {
             ServerCpu sc = null;
             if (name != null) {
                 if ((sc = _intelCpuByNameDictionary.get(name)) != null
-                        || (sc = _amdCpuByNameDictionary.get(name)) != null) {
+                        || (sc = _amdCpuByNameDictionary.get(name)) != null
+                        || (sc = _ibmCpuByNameDictionary.get(name)) != null) {
                     result = sc.getVdsVerbData();
                 }
             }
@@ -239,6 +253,7 @@ public final class CpuFlagsManagerHandler {
             if (clusterCpuName != null
                     && ((clusterCpu = _intelCpuByNameDictionary.get(clusterCpuName)) != null
                             || (clusterCpu = _amdCpuByNameDictionary.get(clusterCpuName)) != null
+                            || (clusterCpu = _ibmCpuByNameDictionary.get(clusterCpuName)) != null
                     )) {
                 for (String flag : clusterCpu.getFlags()) {
                     if (!lstServerflags.contains(flag)) {
@@ -280,6 +295,8 @@ public final class CpuFlagsManagerHandler {
                     result = _intelCpuByNameDictionary.containsKey(cpuName2);
                 } else if (_amdCpuByNameDictionary.containsKey(cpuName1)) {
                     result = _amdCpuByNameDictionary.containsKey(cpuName2);
+                } else if (_ibmCpuByNameDictionary.containsKey(cpuName1)) {
+                    result = _ibmCpuByNameDictionary.containsKey(cpuName2);
                 }
             }
 
@@ -289,7 +306,8 @@ public final class CpuFlagsManagerHandler {
         public boolean CheckIfCpusExist(String cpuName) {
             return cpuName != null
                     && (_intelCpuByNameDictionary.containsKey(cpuName)
-                            || _amdCpuByNameDictionary.containsKey(cpuName));
+                            || _amdCpuByNameDictionary.containsKey(cpuName)
+                            || _ibmCpuByNameDictionary.containsKey(cpuName));
         }
 
         /**
@@ -314,6 +332,13 @@ public final class CpuFlagsManagerHandler {
                 for (int i = _amdCpuList.size() - 1; i >= 0; i--) {
                     if (CheckIfFlagsContainsCpuFlags(_amdCpuList.get(i), lstFlags)) {
                         result = _amdCpuList.get(i);
+                        break;
+                    }
+                }
+            } else if (lstFlags.contains(_ibmFlag)) {
+                for (int i = _ibmCpuList.size() - 1; i >= 0; i--) {
+                    if (CheckIfFlagsContainsCpuFlags(_ibmCpuList.get(i), lstFlags)) {
+                        result = _ibmCpuList.get(i);
                         break;
                     }
                 }
