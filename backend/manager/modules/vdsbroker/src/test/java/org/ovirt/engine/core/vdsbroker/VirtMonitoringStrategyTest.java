@@ -89,6 +89,7 @@ public class VirtMonitoringStrategyTest {
         VDSGroup value = new VDSGroup();
         value.setEmulatedMachine("pc-1.0");
         org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
+        org.mockito.Mockito.when(mock.getFromCache(any(Guid.class))).thenReturn(value);
         return mock;
     }
 }

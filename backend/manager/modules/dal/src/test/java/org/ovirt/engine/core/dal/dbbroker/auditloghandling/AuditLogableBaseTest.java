@@ -1110,6 +1110,7 @@ public class AuditLogableBaseTest {
             final VDSGroup g = new VDSGroup();
             g.setvds_group_id(GUID);
             when(v.get(GUID)).thenReturn(g);
+            when(v.getFromCache(GUID)).thenReturn(g);
             return v;
         }
 

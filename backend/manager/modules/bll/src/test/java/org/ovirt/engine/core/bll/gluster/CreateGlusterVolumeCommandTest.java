@@ -90,7 +90,9 @@ public class CreateGlusterVolumeCommandTest {
 
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
+        doReturn(getVdsStatic()).when(vdsStaticDao).getFromCache(serverId);
         doReturn(getVdsGroup(true)).when(vdsGroupDao).get(Mockito.any(Guid.class));
+        doReturn(getVdsGroup(true)).when(vdsGroupDao).getFromCache(Mockito.any(Guid.class));
     }
 
     private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks) {
@@ -134,6 +136,7 @@ public class CreateGlusterVolumeCommandTest {
         cmd = spy(createTestCommand(getVolume(2, false)));
         prepareMocks(cmd);
         doReturn(getVdsGroup(false)).when(vdsGroupDao).get(Mockito.any(Guid.class));
+        doReturn(getVdsGroup(false)).when(vdsGroupDao).getFromCache(Mockito.any(Guid.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);

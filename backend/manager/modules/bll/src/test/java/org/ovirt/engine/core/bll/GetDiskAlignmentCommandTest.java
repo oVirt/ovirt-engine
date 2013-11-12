@@ -108,6 +108,7 @@ public class GetDiskAlignmentCommandTest {
         when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up)).thenReturn(Collections.singletonList(vds));
         when(spDao.get(poolId)).thenReturn(storagePool);
         when(vdsGroupDao.get(groupId)).thenReturn(vdsGroup);
+        when(vdsGroupDao.getFromCache(groupId)).thenReturn(vdsGroup);
 
         cmd = spy(new GetDiskAlignmentCommand<GetDiskAlignmentParameters>(new GetDiskAlignmentParameters(diskId)));
 

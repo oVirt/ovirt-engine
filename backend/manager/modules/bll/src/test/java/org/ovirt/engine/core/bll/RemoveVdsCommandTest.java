@@ -78,6 +78,7 @@ public class RemoveVdsCommandTest {
         doReturn(glusterBrickDao).when(command).getGlusterBrickDao();
         doReturn(vdsGroupDao).when(command).getVdsGroupDAO();
         doReturn(vdsGroup).when(vdsGroupDao).get(Mockito.any(Guid.class));
+        doReturn(vdsGroup).when(vdsGroupDao).getFromCache(Mockito.any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
         when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
@@ -180,6 +181,7 @@ public class RemoveVdsCommandTest {
      */
     private void mockVdsDynamic() {
         when(vdsDynamicDAO.get(command.getParameters().getVdsId())).thenReturn(new VdsDynamic());
+        when(vdsDynamicDAO.getFromCache(command.getParameters().getVdsId())).thenReturn(new VdsDynamic());
     }
 
     /**

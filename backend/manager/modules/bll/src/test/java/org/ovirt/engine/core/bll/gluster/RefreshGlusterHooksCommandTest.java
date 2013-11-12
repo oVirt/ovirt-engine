@@ -43,6 +43,7 @@ public class RefreshGlusterHooksCommandTest {
 
     public void setupMocks() {
         when(vdsGroupDao.get(CLUSTER_ID)).thenReturn(getVdsGroup());
+        when(vdsGroupDao.getFromCache(CLUSTER_ID)).thenReturn(getVdsGroup());
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
         when(cmd.getSyncJobInstance()).thenReturn(hookSyncJob);
     }
