@@ -251,7 +251,7 @@ else
         CMD1="SELECT ${FIELDS} FROM GetAllFromasync_tasks();"
 fi
 
-psql -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${CMD1}${CMD2}" -x ${DATABASE}
+psql -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${CMD1}${CMD2}" -x ${DATABASE} -L ${LOGFILE}
 status=$?
 popd>/dev/null
 exit ${status}
