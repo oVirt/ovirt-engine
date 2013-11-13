@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -10,6 +11,8 @@ import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -41,6 +44,9 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
                             new SetVdsStatusVDSCommandParameters(getVdsId(),
                                     VDSStatus.NonOperational,
                                     getParameters().getNonOperationalReason()));
+            if (getVdsGroup() != null && getVdsGroup().supportsGlusterService()) {
+                updateBrickStatusDown();
+            }
         }
 
         // if host failed to recover, no point in sending migrate, as it would fail.
@@ -75,6 +81,14 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         }
 
         setSucceeded(true);
+    }
+
+    private void updateBrickStatusDown() {
+        List<GlusterBrickEntity> brickEntities = getDbFacade().getGlusterBrickDao().getGlusterVolumeBricksByServerId(getVdsId());
+        for (GlusterBrickEntity brick : brickEntities) {
+            brick.setStatus(GlusterStatus.DOWN);
+        }
+        getDbFacade().getGlusterBrickDao().updateBrickStatuses(brickEntities);
     }
 
     @Override
