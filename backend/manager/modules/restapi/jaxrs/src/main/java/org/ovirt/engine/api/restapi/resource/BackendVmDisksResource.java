@@ -75,7 +75,7 @@ public class BackendVmDisksResource
         getEntity(id); //verifies that entity exists, returns 404 otherwise.
         if (action.isSetDetach() && action.isDetach()) {
             return performAction(VdcActionType.DetachDiskFromVm,
-                    new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromStringDefaultEmpty(id), true, false));
+                    new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromStringDefaultEmpty(id)));
         } else {
             return remove(id);
         }

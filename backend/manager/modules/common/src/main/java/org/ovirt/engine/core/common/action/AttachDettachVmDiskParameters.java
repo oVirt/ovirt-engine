@@ -13,8 +13,8 @@ public class AttachDettachVmDiskParameters extends VmDiskOperationParameterBase 
     public AttachDettachVmDiskParameters() {
     }
 
-    public AttachDettachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug) {
-        this(vmId, diskId, isPlugUnPlug, false);
+    public AttachDettachVmDiskParameters(Guid vmId, Guid diskId) {
+        this(vmId, diskId, true, false);
     }
 
     public AttachDettachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug, boolean isReadOnly) {
