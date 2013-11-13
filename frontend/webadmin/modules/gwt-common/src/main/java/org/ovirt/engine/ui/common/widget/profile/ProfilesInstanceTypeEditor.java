@@ -107,8 +107,10 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
 
     @Override
     public ListModel flush() {
-        vnicsModel.getItemsChangedEvent().removeListener(vnicsChangedListener);
+        vnicsModel.getItemsChangedEvent().removeListener(vnicsChangedListener); // remove to avoid calling init() here
         flush(vnicsModel);
+        vnicsModel.getItemsChangedEvent().addListener(vnicsChangedListener); // put back in case dialog wasn't closed
+
         return driver.flush();
     }
 
