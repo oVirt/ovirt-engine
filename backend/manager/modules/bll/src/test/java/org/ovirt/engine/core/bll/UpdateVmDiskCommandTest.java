@@ -4,9 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -284,6 +286,29 @@ public class UpdateVmDiskCommandTest {
 
         device.setIsReadOnly(true);
         verify(vmDeviceDAO, times(1)).update(device);
+    }
+
+    @Test
+    public void testDoNotUpdateDeviceWhenReadOnlyIsNotChanged() {
+        // New disk is a read write
+        final UpdateVmDiskParameters parameters = createParameters();
+        parameters.getDiskInfo().setReadOnly(false);
+
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+
+        // Disk is already attached to VM as a read write
+        VmDevice device = createVmDevice(diskImageGuid, vmId);
+        doReturn(device).when(vmDeviceDAO).get(device.getId());
+
+        // To be sure that readOnly property is not changed
+        assertEquals(device.getIsReadOnly(), parameters.getDiskInfo().getReadOnly());
+
+        initializeCommand(parameters);
+        command.executeVmCommand();
+
+        assertFalse(command.shouldUpdateReadOnly());
+        verify(command, atLeast(1)).shouldUpdateReadOnly();
+        verify(vmDeviceDAO, never()).update(any(VmDevice.class));
     }
 
     private void initializeCommand(UpdateVmDiskParameters params) {

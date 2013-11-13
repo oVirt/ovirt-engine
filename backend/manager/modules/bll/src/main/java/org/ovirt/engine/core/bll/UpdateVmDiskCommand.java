@@ -529,7 +529,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return !ObjectUtils.objectsEqual(oldQuotaId, getQuotaId());
     }
 
-    private boolean shouldUpdateReadOnly() {
+    protected boolean shouldUpdateReadOnly() {
         return !vmDeviceForVm.getIsReadOnly().equals(getNewDisk().getReadOnly());
     }
 
