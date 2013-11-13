@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -55,7 +54,6 @@ public class RunVmValidatorTest {
     @Before
     public void setup() {
         mockVmPropertiesUtils();
-        mockIsoDomainListSyncronizer();
     }
 
     @Test
@@ -100,7 +98,7 @@ public class RunVmValidatorTest {
 
     @Test
     public void testVmFailNoDisks() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), null, new ArrayList<Disk>()),
+        validateResult(runVmValidator.validateBootSequence(new VM(), null, new ArrayList<Disk>(), null),
                 false,
                 VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
     }
@@ -109,23 +107,21 @@ public class RunVmValidatorTest {
     public void testVmWithDisks() {
         List<Disk> disks = new ArrayList<Disk>();
         disks.add(new DiskImage());
-        validateResult(runVmValidator.validateBootSequence(new VM(), null, disks),
+        validateResult(runVmValidator.validateBootSequence(new VM(), null, disks, null),
                 true,
                 null);
     }
 
     @Test
     public void testNoIsoDomain() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<Disk>()),
+        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<Disk>(), null),
                 false,
                 VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
     }
 
     @Test
     public void testNoDiskBootFromIsoDomain() {
-        IsoDomainListSyncronizer mock = mockIsoDomainListSyncronizer();
-        doReturn(Guid.newGuid()).when(mock).findActiveISODomain(any(Guid.class));
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<Disk>()),
+        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<Disk>(), Guid.newGuid()),
                 true,
                 null);
     }
@@ -135,7 +131,7 @@ public class RunVmValidatorTest {
         VmNicDao dao = mock(VmNicDao.class);
         doReturn(new ArrayList<VmNic>()).when(dao).getAllForVm(any(Guid.class));
         doReturn(dao).when(runVmValidator).getVmNicDao();
-        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.N, new ArrayList<Disk>()),
+        validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.N, new ArrayList<Disk>(), null),
                 false,
                 VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
     }
@@ -287,22 +283,9 @@ public class RunVmValidatorTest {
         return utils;
     }
 
-    private IsoDomainListSyncronizer mockIsoDomainListSyncronizer() {
-        IsoDomainListSyncronizer isoDomainListSyncronizer = mock(MockIsoDomainListSyncronizer.class);
-        doReturn(isoDomainListSyncronizer).when(runVmValidator).getIsoDomainListSyncronizer();
-        return isoDomainListSyncronizer;
-    }
-
     private static void validateResult(ValidationResult validationResult, boolean isValid, VdcBllMessages message) {
         assertEquals(isValid, validationResult.isValid());
         assertEquals(message, validationResult.getMessage());
-    }
-
-    class MockIsoDomainListSyncronizer extends IsoDomainListSyncronizer {
-        @Override
-        protected void init() {
-            // empty impl
-        }
     }
 
 }

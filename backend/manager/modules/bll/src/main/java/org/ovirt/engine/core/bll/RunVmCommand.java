@@ -95,6 +95,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      *  from the active snapshot was restored so the memory should not be used */
     private boolean memoryFromSnapshotIrrelevant;
 
+    private Guid cachedActiveIsoDomainId;
+
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
 
@@ -654,7 +656,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         boolean attachCd = false;
         String selectedToolsVersion = "";
         String selectedToolsClusterVersion = "";
-        Guid isoDomainId = getIsoDomainListSyncronizer().findActiveISODomain(getVm().getStoragePoolId());
+        Guid isoDomainId = getActiveIsoDomainId();
         if (osRepository.isWindows(getVm().getVmOsId()) && null != isoDomainId) {
 
             // get cluster version of the vm tools
@@ -765,13 +767,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setVmPayload(getParameters().getVmPayload());
         }
 
-        // if there is a CD path as part of the VM definition and there is no active ISO domain,
-        // we don't run the VM
-        if (!vm.isAutoStartup() && !StringUtils.isEmpty(getVm().getIsoPath())
-                && getIsoDomainListSyncronizer().findActiveISODomain(getVm().getStoragePoolId()) == null) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
-        }
-
         return true;
     }
 
@@ -782,7 +777,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected RunVmValidator getRunVmValidator() {
-        return new RunVmValidator(getVm(), getParameters(), isInternalExecution());
+        return new RunVmValidator(getVm(), getParameters(),
+                isInternalExecution(), getActiveIsoDomainId());
+    }
+
+    protected Guid getActiveIsoDomainId() {
+        if (cachedActiveIsoDomainId == null) {
+            cachedActiveIsoDomainId = getIsoDomainListSyncronizer()
+                    .findActiveISODomain(getVm().getStoragePoolId());
+        }
+
+        return cachedActiveIsoDomainId;
     }
 
     @Override

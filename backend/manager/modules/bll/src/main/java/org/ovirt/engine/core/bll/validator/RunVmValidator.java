@@ -11,7 +11,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ImagesHandler;
-import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -60,6 +59,7 @@ public class RunVmValidator {
     private VM vm;
     private RunVmParams runVmParam;
     private boolean isInternalExecution;
+    private Guid activeIsoDomainId;
 
     private List<Disk> cachedVmDisks;
     private List<DiskImage> cachedVmImageDisks;
@@ -67,10 +67,12 @@ public class RunVmValidator {
     private List<Network> cachedClusterNetworks;
     private Set<String> cachedClusterNetworksNames;
 
-    public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution) {
+    public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution,
+            Guid activeIsoDomainId) {
         this.vm = vm;
         this.runVmParam = rumVmParam;
         this.isInternalExecution = isInternalExecution;
+        this.activeIsoDomainId = activeIsoDomainId;
     }
 
     /**
@@ -104,12 +106,12 @@ public class RunVmValidator {
 
         return
                 validateVmProperties(vm, messages) &&
-                validate(validateBootSequence(vm, runVmParam.getBootSequence(), getVmDisks()), messages) &&
+                validate(validateBootSequence(vm, runVmParam.getBootSequence(), getVmDisks(), activeIsoDomainId), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
                 validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) &&
                 validate(validateVmStatusUsingMatrix(vm), messages) &&
                 validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
-                validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath()), messages)  &&
+                validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath(), activeIsoDomainId), messages)  &&
                 validate(vmDuringInitialization(vm), messages) &&
                 validate(validateStatelessVm(vm, getVmDisks(), runVmParam.getRunAsStateless()), messages) &&
                 validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
@@ -155,10 +157,9 @@ public class RunVmValidator {
         return true;
     }
 
-    protected ValidationResult validateBootSequence(VM vm, BootSequence bootSequence, List<Disk> vmDisks) {
+    protected ValidationResult validateBootSequence(VM vm, BootSequence bootSequence, List<Disk> vmDisks, Guid activeIsoDomainId) {
         BootSequence boot_sequence = (bootSequence != null) ?
                 bootSequence : vm.getDefaultBootSequence();
-        Guid storagePoolId = vm.getStoragePoolId();
         // Block from running a VM with no HDD when its first boot device is
         // HD and no other boot devices are configured
         if (boot_sequence == BootSequence.C && vmDisks.isEmpty()) {
@@ -167,8 +168,7 @@ public class RunVmValidator {
 
         // If CD appears as first and there is no ISO in storage
         // pool/ISO inactive - you cannot run this VM
-        if (boot_sequence == BootSequence.CD
-                && getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId) == null) {
+        if (boot_sequence == BootSequence.CD && activeIsoDomainId == null) {
             return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
@@ -233,21 +233,24 @@ public class RunVmValidator {
                 new DiskImagesValidator(vmDisks).diskImagesNotLocked() : ValidationResult.VALID;
     }
 
-    protected ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath) {
-        if (vm.isAutoStartup() || (StringUtils.isEmpty(diskPath) && StringUtils.isEmpty(floppyPath))) {
+    protected ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath, Guid activeIsoDomainId) {
+        if (vm.isAutoStartup()) {
             return ValidationResult.VALID;
         }
 
-        Guid storageDomainId = getIsoDomainListSyncronizer().findActiveISODomain(vm.getStoragePoolId());
-        if (storageDomainId == null) {
+        if (StringUtils.isEmpty(vm.getIsoPath()) && StringUtils.isEmpty(diskPath) && StringUtils.isEmpty(floppyPath)) {
+            return ValidationResult.VALID;
+        }
+
+        if (activeIsoDomainId == null) {
             return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
-        if (!StringUtils.isEmpty(diskPath) && !isRepoImageExists(diskPath, storageDomainId, ImageFileType.ISO)) {
+        if (!StringUtils.isEmpty(diskPath) && !isRepoImageExists(diskPath, activeIsoDomainId, ImageFileType.ISO)) {
             return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
 
-        if (!StringUtils.isEmpty(floppyPath) && !isRepoImageExists(floppyPath, storageDomainId, ImageFileType.Floppy)) {
+        if (!StringUtils.isEmpty(floppyPath) && !isRepoImageExists(floppyPath, activeIsoDomainId, ImageFileType.Floppy)) {
             return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH);
         }
 
@@ -430,10 +433,6 @@ public class RunVmValidator {
 
     protected StorageDomainDAO getStorageDomainDAO() {
         return DbFacade.getInstance().getStorageDomainDao();
-    }
-
-    protected IsoDomainListSyncronizer getIsoDomainListSyncronizer() {
-        return IsoDomainListSyncronizer.getInstance();
     }
 
     protected VmPropertiesUtils getVmPropertiesUtils() {

@@ -224,13 +224,18 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         RunVmParams runVmParams = new RunVmParams(vmId);
         runVmParams.setUseVnc(osRepository.isLinux(vm.getVmOsId()) || vm.getVmType() == VmType.Server);
 
-        return new RunVmValidator(vm, runVmParams, false).canRunVm(
-                messages,
-                fetchStoragePool(vm.getStoragePoolId()),
-                Collections.<Guid>emptyList(),
-                null,
-                null,
-                DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId()));
+        return new RunVmValidator(vm, runVmParams, false, findActiveISODomain(vm.getStoragePoolId()))
+                .canRunVm(
+                        messages,
+                        fetchStoragePool(vm.getStoragePoolId()),
+                        Collections.<Guid> emptyList(),
+                        null,
+                        null,
+                        DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId()));
+    }
+
+    private static Guid findActiveISODomain(Guid storagePoolId) {
+        return IsoDomainListSyncronizer.getInstance().findActiveISODomain(storagePoolId);
     }
 
     private static StoragePool fetchStoragePool(Guid storagePoolId) {
