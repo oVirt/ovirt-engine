@@ -295,6 +295,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_RECOVER_FAILED_VMS_UNKNOWN, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_MAINTENANCE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_MAINTENANCE_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.VDS_STATUS_CHANGE_FAILED_DUE_TO_STOP_SPM_FAILURE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_VDS_MAINTENANCE_MIGRATION_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.SYSTEM_VDS_RESTART, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.SYSTEM_FAILED_VDS_RESTART, AuditLogSeverity.ERROR);

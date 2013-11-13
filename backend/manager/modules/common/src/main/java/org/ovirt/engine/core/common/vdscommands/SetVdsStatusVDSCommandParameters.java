@@ -8,10 +8,16 @@ public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersB
     private VDSStatus _status;
     private NonOperationalReason nonOperationalReason;
 
+    /**
+     * Flag to display SPM stop command failure in audit log
+     */
+    private boolean stopSpmFailureLogged;
+
     public SetVdsStatusVDSCommandParameters(Guid vdsId, VDSStatus status) {
         super(vdsId);
         _status = status;
         nonOperationalReason = NonOperationalReason.NONE;
+        stopSpmFailureLogged = false;
     }
 
     public SetVdsStatusVDSCommandParameters(Guid vdsId, VDSStatus status, NonOperationalReason nonOperationalReason) {
@@ -26,6 +32,7 @@ public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersB
     public SetVdsStatusVDSCommandParameters() {
         _status = VDSStatus.Unassigned;
         nonOperationalReason = NonOperationalReason.NONE;
+        stopSpmFailureLogged = false;
     }
 
     public NonOperationalReason getNonOperationalReason() {
@@ -36,11 +43,20 @@ public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersB
         this.nonOperationalReason = (nonOperationalReason == null ? NonOperationalReason.NONE : nonOperationalReason);
     }
 
+    public boolean isStopSpmFailureLogged() {
+        return stopSpmFailureLogged;
+    }
+
+    public void setStopSpmFailureLogged(boolean stopSpmFailureLogged) {
+        this.stopSpmFailureLogged = stopSpmFailureLogged;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s, status=%s, nonOperationalReason=%s",
+        return String.format("%s, status=%s, nonOperationalReason=%s, stopSpmFailureLogged=%s",
                 super.toString(),
                 getStatus(),
-                getNonOperationalReason());
+                getNonOperationalReason(),
+                isStopSpmFailureLogged());
     }
 }

@@ -19,6 +19,7 @@ public enum AuditLogType {
     VDS_MAINTENANCE_FAILED(17, AuditLogTimeInterval.MINUTE.getValue()), // When VDS is transferred to maintenance mode
     VDS_ACTIVATE_FAILED(18, AuditLogTimeInterval.MINUTE.getValue()), // When VDS is reactivated
     VDS_RECOVER_FAILED(19, AuditLogTimeInterval.MINUTE.getValue()), // When VDS changes status down->up
+    VDS_STATUS_CHANGE_FAILED_DUE_TO_STOP_SPM_FAILURE(20, AuditLogTimeInterval.MINUTE.getValue()),
     VDS_SLOW_STORAGE_RESPONSE_TIME(123, AuditLogTimeInterval.MINUTE.getValue() * 5), // ?
     VDS_ALREADY_IN_REQUESTED_STATUS(493),
     VDS_MANUAL_FENCE_STATUS(494),

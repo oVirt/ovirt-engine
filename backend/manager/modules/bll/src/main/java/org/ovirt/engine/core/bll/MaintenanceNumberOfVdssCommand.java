@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +40,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 @NonTransactiveCommandAttribute
 public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssParameters> extends CommandBase<T> {
     private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<Guid, VDS>();
-    private ArrayList<Guid> _vdsGroupIds;
     private final List<PermissionSubject> inspectedEntitiesMap;
     private Map<String, Pair<String, String>> sharedLockMap;
 
@@ -56,16 +56,24 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     private void MoveVdssToGoingToMaintenanceMode() {
         List<VDS> spms = new ArrayList<VDS>();
-        for (VDS vds : vdssToMaintenance.values()) {
+        Iterator<VDS> it = vdssToMaintenance.values().iterator();
+        while (it.hasNext()) {
+            VDS vds = it.next();
+            // SPMs will move to Prepare For Maintenance later after standard hosts
             if (vds.getSpmStatus() != VdsSpmStatus.SPM) {
-                setVdsStatusToPrepareForMaintaice(vds);
+                if (!setVdsStatusToPrepareForMaintenance(vds)) {
+                    it.remove();
+                }
             } else {
                 spms.add(vds);
             }
         }
         for (VDS vds : spms) {
-            setVdsStatusToPrepareForMaintaice(vds);
+            if (!setVdsStatusToPrepareForMaintenance(vds)) {
+                vdssToMaintenance.remove(vds.getId());
+            }
         }
+
         cancelIncommingMigrations();
         freeLock();
     }
@@ -81,16 +89,20 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         }
     }
 
-    private void setVdsStatusToPrepareForMaintaice(VDS vds) {
+    private boolean setVdsStatusToPrepareForMaintenance(VDS vds) {
+        boolean result = true;
         if (vds.getStatus() != VDSStatus.PreparingForMaintenance && vds.getStatus() != VDSStatus.NonResponsive
                 && vds.getStatus() != VDSStatus.Down) {
-            runVdsCommand(VDSCommandType.SetVdsStatus,
-                    new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.PreparingForMaintenance));
+            SetVdsStatusVDSCommandParameters params =
+                    new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.PreparingForMaintenance);
+            params.setStopSpmFailureLogged(true);
+            result = runVdsCommand(VDSCommandType.SetVdsStatus, params).getSucceeded();
         }
+        return result;
     }
 
     private void MigrateAllVdss() {
-        for (Guid vdsId : getParameters().getVdsIdList()) {
+        for (Guid vdsId : vdssToMaintenance.keySet()) {
             // ParametersCurrentUser = CurrentUser
             MaintenanceVdsParameters tempVar = new MaintenanceVdsParameters(vdsId, getParameters().getIsInternal());
             tempVar.setSessionId(getParameters().getSessionId());
@@ -116,11 +128,17 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     protected void executeCommand() {
         MoveVdssToGoingToMaintenanceMode();
         MigrateAllVdss();
-        // set network to operational / non-operational
-        for (Guid id : _vdsGroupIds) {
-            List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(id);
-            for (Network net : networks) {
-                NetworkClusterHelper.setStatus(id, net);
+
+        // find clusters for hosts that should move to maintenance
+        Set<Guid> clusters = new HashSet<>();
+        for (VDS vds : vdssToMaintenance.values()) {
+            if (!clusters.contains(vds.getVdsGroupId())) {
+                clusters.add(vds.getVdsGroupId());
+                // set network to operational / non-operational
+                List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(vds.getVdsGroupId());
+                for (Network net : networks) {
+                    NetworkClusterHelper.setStatus(vds.getVdsGroupId(), net);
+                }
             }
         }
         setSucceeded(true);
@@ -129,7 +147,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     @Override
     protected boolean canDoAction() {
         boolean result = true;
-        _vdsGroupIds = new ArrayList<Guid>();
+        Set<Guid> clustersAsSet = new HashSet<Guid>();
         Set<Guid> vdsWithRunningVMs = new HashSet<Guid>();
         List<String> hostNotRespondingList = new ArrayList<String>();
         List<String> hostsWithNonMigratableVms = new ArrayList<String>();
@@ -171,7 +189,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                         if (vms.size() > 0) {
                             vdsWithRunningVMs.add(vdsId);
                         }
-                        _vdsGroupIds.add(vds.getVdsGroupId());
+                        clustersAsSet.add(vds.getVdsGroupId());
 
                         List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
                         for (VM vm : vms) {
@@ -238,8 +256,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 // In the end - if the clusters list is not empty - this is an
                 // error, use the "problematic clusters list" to format an error to
                 // the client
-                Set<Guid> clustersAsSet = new HashSet<Guid>();
-                clustersAsSet.addAll(_vdsGroupIds);
                 List<String> problematicClusters = new ArrayList<String>();
                 List<String> allHostsWithRunningVms = new ArrayList<String>();
                 for (Guid clusterID : clustersAsSet) {
