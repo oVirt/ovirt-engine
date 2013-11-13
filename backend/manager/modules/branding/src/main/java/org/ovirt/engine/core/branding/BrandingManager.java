@@ -264,7 +264,8 @@ public class BrandingManager {
             while (keyMatcher.find()) {
                 String key = keyMatcher.group(1);
                 // Don't replace {userLocale} here.
-                if (!USER_LOCALE_HOLDER.substring(2, USER_LOCALE_HOLDER.length() - 2).equals(key)) {
+                if (!USER_LOCALE_HOLDER.substring(2, USER_LOCALE_HOLDER.length() - 2).equals(key)
+                        && messageMap.get(key) != null) {
                     replacedTemplate = replacedTemplate.replaceAll("\\{" + key + "\\}", //$NON-NLS-1 //$NON-NLS-2$
                             messageMap.get(key));
                 }

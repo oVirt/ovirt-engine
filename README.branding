@@ -16,13 +16,13 @@ branding.properties
     This is the main properties file that defines where the branding
     resources can be found. Resources are relative to branding.properties.
 
-    user_portal_css - Css to inject into user portal (required, can be empty).
-    web_admin_css - Css to inject into web admin (required, can be empty).
-    welcome_css - Css for the welcome page (required, can be empty).
-    messages - Standard java message bundle (required). Comma-delimited list.
+    user_portal_css - Css to inject into user portal (optional).
+    web_admin_css - Css to inject into web admin (optional).
+    welcome_css - Css for the welcome page (optional).
+    messages - Standard java message bundle (optional). Comma-delimited list.
     resources - The file that defines cascading resources. These are static
       resources (favicon, images, PDFs, etc.) that exist outside of CSS,
-      but we still want to cascade them.
+      but we still want to cascade them (optional).
     version - The version of the branding in the package. Only versions
       that match the one defined in the engine will be loaded (required,
       theme will not load without it).
