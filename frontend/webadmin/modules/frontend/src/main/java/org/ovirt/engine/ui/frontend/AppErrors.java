@@ -838,11 +838,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action rebalance")
     String VAR__ACTION__REBALANCE_START();
 
-    @DefaultStringValue("$action stop rebalance")
-    String VAR__ACTION__REBALANCE_STOP();
-
     @DefaultStringValue("$action start removing")
     String VAR__ACTION__REMOVE_BRICKS_START();
+
+    @DefaultStringValue("$action stop rebalance")
+    String VAR__ACTION__REBALANCE_STOP();
 
     @DefaultStringValue("$action stop remove bricks")
     String VAR__ACTION__REMOVE_BRICKS_STOP();
@@ -940,7 +940,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Volume Rebalance")
     String VAR__TYPE__GLUSTER_VOLUME_REBALANCE();
 
-    @DefaultStringValue("$type Gluster Brick")
+    @DefaultStringValue("$type Gluster Brick(s)")
     String VAR__TYPE__GLUSTER_BRICK();
 
     @DefaultStringValue("$type Gluster Server")
