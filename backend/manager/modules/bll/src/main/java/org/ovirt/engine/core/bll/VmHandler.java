@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
@@ -52,6 +53,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -347,12 +350,16 @@ public class VmHandler {
      */
     public static void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
         if (! VmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
-            log.warnFormat("RAM value {0}mb for {1} is exceeding the recommended values {2}mb - {3}mb for {4}",
-                    vm.getMemSizeMb(),
-                    vm.getName(),
-                    VmValidationUtils.getMinMemorySizeInMb(vm.getOsId(), clusterVersion),
-                    VmValidationUtils.getMaxMemorySizeInMb(vm.getOsId(), clusterVersion),
-                    osRepository.getOsName(vm.getOsId()));
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.setVmId(vm.getId());
+            logable.addCustomValue("VmName", vm.getName());
+            logable.addCustomValue("VmMemInMb", String.valueOf(vm.getMemSizeMb()));
+            logable.addCustomValue("VmMinMemInMb",
+                    String.valueOf(VmValidationUtils.getMinMemorySizeInMb(vm.getOsId(), clusterVersion)));
+            logable.addCustomValue("VmMaxMemInMb",
+                    String.valueOf(VmValidationUtils.getMaxMemorySizeInMb(vm.getOsId(), clusterVersion)));
+
+            AuditLogDirector.log(logable, AuditLogType.VM_MEMORY_NOT_IN_RECOMMENDED_RANGE);
         }
     }
 
