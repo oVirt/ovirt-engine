@@ -412,6 +412,7 @@ public enum AuditLogType {
     VM_MEMORY_UNDER_GUARANTEED_VALUE(148, AuditLogTimeInterval.MINUTE.getValue() * 15),
     VM_BALLOON_DRIVER_ERROR(149, AuditLogTimeInterval.MINUTE.getValue() * 15),
     VM_BALLOON_DRIVER_UNCONTROLLED(150, AuditLogTimeInterval.MINUTE.getValue() * 15),
+    VM_MEMORY_NOT_IN_RECOMMENDED_RANGE(151),
 
     USER_ADD_VM_POOL(300),
     USER_ADD_VM_POOL_FAILED(301),
