@@ -27,6 +27,7 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE_BRICKS_STOP);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_BRICK);
         super.setActionMessageParameters();
     }
 

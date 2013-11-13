@@ -32,7 +32,9 @@ public class GlusterBrickValidator {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME);
         }
         if (volumeEntity.getVolumeType().isReplicatedType()) {
-            if (replicaCount < volumeEntity.getReplicaCount() - 1) {
+            if (replicaCount == volumeEntity.getReplicaCount() - 1 && !forceRemove) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION);
+            } else if (replicaCount < volumeEntity.getReplicaCount() - 1) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE);
             } else if (replicaCount > volumeEntity.getReplicaCount()) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT);

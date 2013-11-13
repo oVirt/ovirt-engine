@@ -826,6 +826,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action rebalance")
     String VAR__ACTION__REBALANCE_START();
 
+    @DefaultStringValue("$action start remove")
+    String VAR__ACTION__REMOVE_BRICKS_START();
+
     @DefaultStringValue("$action stop rebalance")
     String VAR__ACTION__REBALANCE_STOP();
 
@@ -2524,6 +2527,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be reduced by more than one.")
     String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE();
+
+    @DefaultStringValue("Cannot ${action} from ${type}. Data migration is not needed while reducing the replica count.")
+    String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION();
 
     @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be increased when removing bricks.")
     String ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT();

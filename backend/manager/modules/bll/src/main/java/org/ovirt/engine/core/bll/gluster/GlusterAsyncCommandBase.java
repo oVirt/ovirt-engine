@@ -49,7 +49,6 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
         addCanDoActionMessage(String.format("$volumeName %1$s", getGlusterVolumeName()));
         addCanDoActionMessage(String.format("$vdsGroup %1$s", getVdsGroupName()));
     }

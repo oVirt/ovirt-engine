@@ -28,6 +28,7 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REBALANCE_STOP);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
         super.setActionMessageParameters();
     }
 
