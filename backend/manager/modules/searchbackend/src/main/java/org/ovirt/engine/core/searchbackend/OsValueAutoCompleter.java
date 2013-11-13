@@ -15,7 +15,7 @@ public class OsValueAutoCompleter implements IConditionValueAutoCompleter {
     @Override
     public String convertFieldEnumValueToActualValue(String fieldValue) {
         for (Map.Entry<Integer, String> e : map.entrySet()) {
-            if (fieldValue.toLowerCase().startsWith(e.getValue())) {
+            if (fieldValue.equalsIgnoreCase(e.getValue())) {
                 return e.getKey().toString();
             }
         }
