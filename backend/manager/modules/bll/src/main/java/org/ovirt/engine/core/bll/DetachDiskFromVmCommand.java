@@ -50,15 +50,18 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
                 disk = loadDiskFromSnapshot(disk.getId(), vmDevice.getSnapshotId());
             }
         }
-        if (retValue && Boolean.TRUE.equals(getParameters().isPlugUnPlug())
-                && getVm().getStatus() != VMStatus.Down) {
-            retValue = isInterfaceSupportedForPlugUnPlug(disk);
-        }
 
-        if (retValue && Boolean.FALSE.equals(getParameters().isPlugUnPlug())
-                && getVm().getStatus() != VMStatus.Down) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-            retValue = false;
+        if (vmDevice.getIsPlugged()) {
+            if (retValue && Boolean.TRUE.equals(getParameters().isPlugUnPlug())
+                    && getVm().getStatus() != VMStatus.Down) {
+                retValue = isInterfaceSupportedForPlugUnPlug(disk);
+            }
+
+            if (retValue && Boolean.FALSE.equals(getParameters().isPlugUnPlug())
+                    && getVm().getStatus() != VMStatus.Down) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                retValue = false;
+            }
         }
 
         // Check if disk has no snapshots before detaching it.
