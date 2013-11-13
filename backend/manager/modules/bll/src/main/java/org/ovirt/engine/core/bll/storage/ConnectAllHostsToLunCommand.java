@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -82,10 +81,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             LUNs lun = lunsMap.get(lunId);
             if (lun == null) {
                 //fail
-                final ConnectAllHostsToLunCommandReturnValue result = getResult();
-                result.setFailedVds(spmVds);
-                result.setFailedLun(getDbFacade().getLunDao()
-                        .get(lunId));
+                handleFailure(spmVds, getDbFacade().getLunDao().get(lunId));
                 return;
             }
 
@@ -127,9 +123,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                 if (!connectStorageToLunByVdsId(vds, lun)) {
                     log.errorFormat("Could not connect host {0} to lun {1}", vds.getName(), lun.getLUN_id());
                     setVds(vds);
-                    final ConnectAllHostsToLunCommandReturnValue result = getResult();
-                    result.setFailedVds(vds);
-                    result.setFailedLun(lun);
+                    handleFailure(vds, lun);
                     return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.FALSE, resultMap);
                 } else {
                     List<Guid> hosts = resultMap.get(lun.getLUN_id());
@@ -154,9 +148,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                     .getItem(getStorageDomain().getStorageType())
                     .connectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty);
         } catch (VdcBLLException e) {
-            final ConnectAllHostsToLunCommandReturnValue result = getResult();
-            result.setFailedVds(vds);
-            result.setFailedLun(lun);
+            handleFailure(vds, lun);
             throw e;
         }
     }
@@ -175,27 +167,42 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
     }
 
     /**
-     * The following method will check which luns were successfully connected to vds
+     * Verify that all luns are connected to the host.
      *
      * @param vds
      *            - the host
      * @param processedLunIds
      *            - luns ids which we wants to check
-     * @return - true if all connections successes, false otherwise
+     * @return - true if all luns are connected to the host, false otherwise
+     *
+     * @throws VdcBLLException
      */
     private boolean validateConnectedLuns(VDS vds, List<String> processedLunIds) {
-        @SuppressWarnings("unchecked")
-        Map<String, Boolean> returnValue = (Map<String, Boolean>) Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.GetDevicesVisibility,
-                        new GetDevicesVisibilityVDSCommandParameters(vds.getId(),
-                                processedLunIds.toArray(new String[processedLunIds.size()]))).getReturnValue();
-        for (Map.Entry<String, Boolean> returnValueEntry : returnValue.entrySet()) {
-            if (!Boolean.TRUE.equals(returnValueEntry.getValue())) {
+        Map<String, Boolean> res;
+
+        try {
+            res = (Map<String, Boolean>) runVdsCommand(VDSCommandType.GetDevicesVisibility,
+                    new GetDevicesVisibilityVDSCommandParameters(vds.getId(),
+                            processedLunIds.toArray(new String[processedLunIds.size()]))).getReturnValue();
+        } catch(VdcBLLException e) {
+            handleFailure(vds, null);
+            throw e;
+        }
+
+        for (Map.Entry<String, Boolean> deviceVisibility : res.entrySet()) {
+            if (!Boolean.TRUE.equals(deviceVisibility.getValue())) {
+                handleFailure(vds, getDbFacade().getLunDao().get(deviceVisibility.getKey()));
                 return false;
             }
         }
+
         return true;
+    }
+
+    private void handleFailure(VDS vds, LUNs lun) {
+        ConnectAllHostsToLunCommandReturnValue result = getResult();
+        result.setFailedVds(vds);
+        result.setFailedLun(lun);
     }
 
     @Override
