@@ -1063,25 +1063,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         priorityEditor.asEditor().edit(model.getPriority());
         driver.edit(model);
         profilesInstanceTypeEditor.edit(model.getNicsWithLogicalNetworks());
+        customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
         initTabAvailabilityListeners(model);
         initListeners(model);
-        initCustomPropertySheet(model);
         hideAlwaysHiddenFields();
     }
 
     @UiHandler("refreshButton")
     void handleRefreshButtonClick(ClickEvent event) {
         unitVmModel.getBehavior().refreshCdImages();
-    }
-
-    private void initCustomPropertySheet(final UnitVmModel object) {
-        object.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
-            }
-        });
     }
 
     protected void setupCustomPropertiesAvailability(UnitVmModel model) {

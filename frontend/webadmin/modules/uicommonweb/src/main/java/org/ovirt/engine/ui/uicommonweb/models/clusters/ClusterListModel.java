@@ -696,7 +696,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
         cluster.setTrustedService(model.getEnableTrustedService().getEntity());
         cluster.setClusterPolicyId(model.getClusterPolicy().getSelectedItem().getId());
-        cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().getEntity()));
+        cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().serialize()));
         if (model.getOptimizeForSpeed().getEntity()) {
             cluster.setOptimizationType(OptimizationType.OPTIMIZE_FOR_SPEED);
         } else if (model.getAllowOverbooking().getEntity()) {

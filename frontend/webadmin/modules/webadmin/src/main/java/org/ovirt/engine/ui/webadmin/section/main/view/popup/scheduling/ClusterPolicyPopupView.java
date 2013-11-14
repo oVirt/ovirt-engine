@@ -169,13 +169,6 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
             customPropertiesSheetEditor.setEnabled(false);
         }
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
-        model.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
-            }
-        });
         updateTooltips(model);
         model.getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override

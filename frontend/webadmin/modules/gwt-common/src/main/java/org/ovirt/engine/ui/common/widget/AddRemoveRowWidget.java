@@ -131,6 +131,9 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         items.add(item);
         PushButton button = createButton(item);
 
+        AddRemoveRowPanel entry = new AddRemoveRowPanel(widget, button);
+        contentPanel.add(entry);
+
         final boolean ghost = isGhost(value);
         toggleGhost(value, widget, ghost);
         widget.addValueChangeHandler(new ValueChangeHandler<T>() {
@@ -142,21 +145,19 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
                 T value = event.getValue();
                 boolean becomingGhost = isGhost(value);
                 if (becomingGhost != wasGhost) {
-                    ((AddRemoveRowPanel) widget.getParent()).setButtonEnabled(!becomingGhost);
+                    setButtonEnabled(widget, !becomingGhost);
                     toggleGhost(value, widget, becomingGhost);
                     wasGhost = becomingGhost;
                 }
             }
         });
 
-        AddRemoveRowPanel entry = new AddRemoveRowPanel(widget, button);
-        contentPanel.add(entry);
         return widget;
     }
 
     private void removeEntry(Pair<T, V> item) {
         items.remove(item);
-        contentPanel.remove(item.getSecond().getParent());
+        removeWidget(item.getSecond());
     }
 
     private PushButton createButton(final Pair<T, V> item) {
@@ -174,7 +175,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
                     @Override
                     public void onClick(ClickEvent event) {
-                        ((AddRemoveRowPanel) widget.getParent()).swapButton(createButton(item));
+                        getEntry(widget).swapButton(createButton(item));
                         Pair<T, V> item = addGhostEntry();
                         onAdd(item.getFirst(), item.getSecond());
                     }
@@ -189,6 +190,19 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
                 });
 
         return button;
+    }
+
+    @SuppressWarnings("unchecked")
+    private AddRemoveRowPanel getEntry(V widget) {
+        return (AddRemoveRowPanel) widget.getParent();
+    }
+
+    protected void removeWidget(V widget) {
+        contentPanel.remove(getEntry(widget));
+    }
+
+    protected void setButtonEnabled(V widget, boolean enabled) {
+        getEntry(widget).setButtonEnabled(enabled);
     }
 
     private class AddRemoveRowPanel extends FlowPanel {

@@ -1052,7 +1052,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         gettempVm().setKernelUrl(model.getKernel_path().getEntity());
         gettempVm().setKernelParams(model.getKernel_parameters().getEntity());
 
-        gettempVm().setCustomProperties(model.getCustomPropertySheet().getEntity());
+        gettempVm().setCustomProperties(model.getCustomPropertySheet().serialize());
 
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
         gettempVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());

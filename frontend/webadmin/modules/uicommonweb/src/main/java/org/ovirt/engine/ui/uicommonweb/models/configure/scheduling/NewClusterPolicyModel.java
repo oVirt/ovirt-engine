@@ -109,10 +109,10 @@ public class NewClusterPolicyModel extends Model {
         }
         Map<String, String> defaultMap = new HashMap<String, String>(getCustomProperties());
         if(!reset) {
-            defaultMap.putAll(KeyValueModel.convertProperties(getCustomPropertySheet().getEntity()));
+            defaultMap.putAll(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
         }
         getCustomPropertySheet().setKeyValueString(lines);
-        getCustomPropertySheet().setEntity(KeyValueModel.convertProperties(defaultMap));
+        getCustomPropertySheet().deserialize(KeyValueModel.convertProperties(defaultMap));
     }
 
     private void initFilters() {
@@ -525,7 +525,7 @@ public class NewClusterPolicyModel extends Model {
         }
         policy.setFunctions(pairs);
         policy.setBalance(((PolicyUnit) getLoadBalanceList().getSelectedItem()).getId());
-        policy.setParameterMap(KeyValueModel.convertProperties(getCustomPropertySheet().getEntity()));
+        policy.setParameterMap(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
         Frontend.getInstance().runAction(commandType == CommandType.Edit ? VdcActionType.EditClusterPolicy
                 : VdcActionType.AddClusterPolicy,
                 new ClusterPolicyCRUDParameters(policy.getId(), policy), new IFrontendActionAsyncCallback() {

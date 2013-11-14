@@ -471,6 +471,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Override
     public void edit(final ClusterModel object) {
         driver.edit(object);
+        customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
 
         servicesCheckboxPanel.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
         servicesRadioPanel.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
@@ -533,14 +534,6 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 cpuThreadsPanel.setVisible(object.getVersionSupportsCpuThreads().getEntity());
-            }
-        });
-
-        object.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
             }
         });
 

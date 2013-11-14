@@ -182,7 +182,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getInitrd_path().setEntity(vm.getInitrdUrl());
 
         getModel().getCustomProperties().setEntity(vm.getCustomProperties());
-        getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
+        getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
         getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
         updateCpuSharesSelection();
 

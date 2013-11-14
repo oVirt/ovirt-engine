@@ -3,7 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" 
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
@@ -11,33 +11,12 @@
 		.fieldWidth {
 			width: 180px;
 	 	}
-	 	.buttonStyle {
-	 		margin-right: 7px;
-	 		width: 9px;
-	 		height: 10px;
-	 		padding-left: 2px;
-	 		padding-top: 2px;
-	 	}
-	 	.panelStyle {
-	 		float: right;
-	 		margin-top: 5px;
-	 	}
 	</ui:style>
 
 	<g:HorizontalPanel height="30px" width="400px">
-		<g:HorizontalPanel width="380px">
-			<e:ListModelListBoxEditor ui:field="keyField" addStyleNames="{style.fieldWidth}"/>
-			<e:EntityModelTextBoxEditor ui:field="valueField" addStyleNames="{style.fieldWidth}"/>
-			<e:ListModelListBoxEditor ui:field="valuesField" addStyleNames="{style.fieldWidth}"/>
-		</g:HorizontalPanel>
-		<g:HorizontalPanel addStyleNames="{style.panelStyle}">
-			<g:PushButton ui:field="plusButton" addStyleNames="{style.buttonStyle}">
-				<g:upFace image='{resources.increaseIcon}' />
-			</g:PushButton>
-			<g:PushButton ui:field="minusButton" addStyleNames="{style.buttonStyle}">
-				<g:upFace image='{resources.decreaseIcon}' />
-			</g:PushButton>
-		</g:HorizontalPanel>
+		<e:ListModelListBoxEditor ui:field="keyField" addStyleNames="{style.fieldWidth}"/>
+		<ge:StringEntityModelTextBoxEditor ui:field="valueField" addStyleNames="{style.fieldWidth}"/>
+		<e:ListModelListBoxEditor ui:field="valuesField" addStyleNames="{style.fieldWidth}"/>
 	</g:HorizontalPanel>
 
 </ui:UiBinder>

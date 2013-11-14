@@ -1348,9 +1348,9 @@ public class ClusterModel extends EntityModel
         getCustomPropertySheet().setKeyValueString(lines);
         if (getIsEdit() &&
                 clusterPolicy.getId().equals(getEntity().getClusterPolicyId())) {
-            getCustomPropertySheet().setEntity(KeyValueModel.convertProperties(getEntity().getClusterPolicyProperties()));
+            getCustomPropertySheet().deserialize(KeyValueModel.convertProperties(getEntity().getClusterPolicyProperties()));
         } else {
-            getCustomPropertySheet().setEntity(KeyValueModel.convertProperties(clusterPolicy.getParameterMap()));
+            getCustomPropertySheet().deserialize(KeyValueModel.convertProperties(clusterPolicy.getParameterMap()));
         }
     }
 

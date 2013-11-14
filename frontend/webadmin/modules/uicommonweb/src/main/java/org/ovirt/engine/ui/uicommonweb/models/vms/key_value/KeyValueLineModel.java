@@ -1,78 +1,45 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.key_value;
 
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 
-public class KeyValueLineModel extends EntityModel {
-    ListModel keys;
+public class KeyValueLineModel extends Model {
 
-    ListModel values;
-    EntityModel value;
+    ListModel<String> keys;
+    ListModel<String> values;
+    EntityModel<String> value;
 
-    private UICommand removeLine;
-    private UICommand addLine;
-
-    private final IModifyLines modifyLines;
-
-    public UICommand getRemoveLine() {
-        return removeLine;
-    }
-
-    public void setRemoveLine(UICommand removeLine) {
-        this.removeLine = removeLine;
-    }
-
-    public UICommand getAddLine() {
-        return addLine;
-    }
-
-    public void setAddLine(UICommand addLine) {
-        this.addLine = addLine;
-    }
-
-    public ListModel getKeys() {
+    public ListModel<String> getKeys() {
         return keys;
     }
 
-    public void setKeys(ListModel keys) {
+    public void setKeys(ListModel<String> keys) {
         this.keys = keys;
     }
 
-    public ListModel getValues() {
+    public ListModel<String> getValues() {
         return values;
     }
 
-    public void setValues(ListModel values) {
+    public void setValues(ListModel<String> values) {
         this.values = values;
     }
 
-    public EntityModel getValue() {
+    public EntityModel<String> getValue() {
         return value;
     }
 
-    public void setValue(EntityModel value) {
+    public void setValue(EntityModel<String> value) {
         this.value = value;
     }
 
-    public KeyValueLineModel(IModifyLines modifyLines) {
-        this.modifyLines = modifyLines;
-        setKeys(new ListModel());
-        setValue(new EntityModel());
-        setValues(new ListModel());
+    public KeyValueLineModel() {
+        setKeys(new ListModel<String>());
+        setValue(new EntityModel<String>());
+        setValues(new ListModel<String>());
+        getValue().setIsAvailable(false);
         getValues().setIsAvailable(false);
-        setRemoveLine(new UICommand("remove", this)); //$NON-NLS-1$
-        setAddLine(new UICommand("add", this)); //$NON-NLS-1$
     }
 
-    @Override
-    public void executeCommand(UICommand command) {
-        super.executeCommand(command);
-        if (command.equals(getAddLine())) {
-            modifyLines.addLine(this);
-        }
-        else if (command.equals(getRemoveLine())) {
-            modifyLines.removeLine(this);
-        }
-    }
 }

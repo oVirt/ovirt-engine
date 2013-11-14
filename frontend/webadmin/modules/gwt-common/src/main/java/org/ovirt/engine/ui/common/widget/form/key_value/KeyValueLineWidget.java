@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.widget.form.key_value;
 
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -10,17 +10,18 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class KeyValueLineWidget extends Composite implements HasEditorDriver<KeyValueLineModel>, HasEnabled {
+public class KeyValueLineWidget extends Composite implements HasValueChangeHandlers<KeyValueLineModel>, HasEditorDriver<KeyValueLineModel>, HasEnabled {
 
     interface WidgetUiBinder extends UiBinder<Widget, KeyValueLineWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -36,23 +37,15 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
 
     @UiField
     @Path(value = "keys.selectedItem")
-    ListModelListBoxEditor<Object> keyField;
+    ListModelListBoxEditor<String> keyField;
 
     @UiField
     @Path(value = "value.entity")
-    EntityModelTextBoxEditor valueField;
+    StringEntityModelTextBoxEditor valueField;
 
     @UiField
     @Path(value = "values.selectedItem")
-    ListModelListBoxEditor<Object> valuesField;
-
-    @UiField
-    @Ignore
-    PushButton plusButton;
-
-    @UiField
-    @Ignore
-    PushButton minusButton;
+    ListModelListBoxEditor<String> valuesField;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -77,23 +70,11 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
 
     @Override
     public void edit(final KeyValueLineModel object) {
-        //        plusButton.setCommand(object.getAddLine());
-        plusButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                object.getAddLine().execute();
-            }
-        });
-        minusButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                object.getRemoveLine().execute();
-            }
-        });
         updateKeyTitle(object);
         object.getKeys().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                ValueChangeEvent.fire(KeyValueLineWidget.this, object);
                 updateKeyTitle(object);
             }
         });
@@ -131,17 +112,12 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
         keyField.setEnabled(enabled);
         valueField.setEnabled(enabled);
         valuesField.setEnabled(enabled);
-        plusButton.setEnabled(enabled);
-        minusButton.setEnabled(enabled);
         this.enabled = enabled;
     }
 
-    public void setPlusButtonEnabled(boolean enabled) {
-        plusButton.setEnabled(enabled);
-    }
-
-    public void setMinusButtonEnabled(boolean enabled) {
-        minusButton.setEnabled(enabled);
+    @Override
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<KeyValueLineModel> handler) {
+        return addHandler(handler, ValueChangeEvent.getType());
     }
 
 }

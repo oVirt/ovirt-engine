@@ -27,7 +27,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
 
         // Custom Properties
         getCustomPropertySheet().setKeyValueString(customPropertiesKeysList);
-        getCustomPropertySheet().setEntity(vm.getCustomProperties());
+        getCustomPropertySheet().deserialize(vm.getCustomProperties());
 
         loadHosts();
     }

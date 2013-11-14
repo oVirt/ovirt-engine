@@ -1391,7 +1391,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             ClusterPolicy selectedPolicy = model.getClusterPolicy().getSelectedItem();
             cluster.setClusterPolicyId(selectedPolicy.getId());
             cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet()
-                    .getEntity()));
+                    .serialize()));
         }
 
         model.startProgress(null);

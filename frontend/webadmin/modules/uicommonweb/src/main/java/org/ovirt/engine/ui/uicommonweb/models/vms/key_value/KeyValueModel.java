@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
@@ -18,76 +18,74 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-public class KeyValueModel extends EntityModel implements IModifyLines {
+public class KeyValueModel extends ListModel<KeyValueLineModel> {
 
     public final static String SELECT_KEY = ConstantsManager.getInstance().getConstants().pleaseSelectKey();
     public final static String NO_KEYS = ConstantsManager.getInstance().getConstants().noKeyAvailable();
     public final static String PROPERTIES_DELIMETER = ";"; //$NON-NLS-1$
     public final static String KEY_VALUE_DELIMETER = "="; //$NON-NLS-1$
 
-    ListModel keyValueLines;
     Map<String, String> allKeyValueMap;
     Map<String, List<String>> allRegExKeys;
     private Map<String, String> keyValueMap_used = new HashMap<String, String>();
     boolean disableEvent = false;
-    private Object saveEntity;
+    private String saveEntity;
 
-    private final IEventListener keyChangedListener = new IEventListener() {
+    public final IEventListener keyChangedListener = new IEventListener() {
 
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             if (disableEvent) {
                 return;
             }
-            ListModel listModel = (ListModel) sender;
+            ListModel<String> listModel = (ListModel<String>) sender;
             String key = null;
             if (listModel.getSelectedItem() != null) {
-                key = (String) listModel.getSelectedItem();
+                key = listModel.getSelectedItem();
             }
-            boolean keySelected =
-                    key != null &&
-                    !key.equals(KeyValueModel.SELECT_KEY) &&
-                    !key.equals(KeyValueModel.NO_KEYS);
-            List<KeyValueLineModel> list =
-                    new ArrayList<KeyValueLineModel>((List<KeyValueLineModel>) getKeyValueLines().getItems());
-            for (KeyValueLineModel keyValueLineModel : list) {
-                if (((String) keyValueLineModel.getKeys().getSelectedItem()).equals(key)) {
-                    if (keySelected) {
-                        if (allRegExKeys.containsKey(key)) {
-                            keyValueLineModel.getValue().setIsAvailable(false);
-                            keyValueLineModel.getValues().setIsAvailable(true);
-                            keyValueLineModel.getValues().setItems(allRegExKeys.get(key));
-                        } else {
-                            keyValueLineModel.getValue().setIsAvailable(true);
-                            keyValueLineModel.getValues().setIsAvailable(false);
-                        }
-                    } else {
-                        keyValueLineModel.getValue().setIsAvailable(keySelected);
-                        keyValueLineModel.getValues().setIsAvailable(keySelected);
-                        keyValueLineModel.getValue().setEntity("");
-                        keyValueLineModel.getValues().setSelectedItem(null);
-                        keyValueLineModel.getValues().setItems(null);
-                    }
+            for (KeyValueLineModel keyValueLineModel : getItems()) {
+                if (keyValueLineModel.getKeys().getSelectedItem().equals(key)) {
+                    initLineModel(keyValueLineModel, key);
                 }
             }
             updateKeys();
         }
     };
 
-    public ListModel getKeyValueLines() {
-        return keyValueLines;
+    private void initLineModel(KeyValueLineModel keyValueLineModel, String key) {
+        if (isKeyValid(key)) {
+            boolean constrainedValue = allRegExKeys.containsKey(key);
+            keyValueLineModel.getValue().setIsAvailable(!constrainedValue);
+            keyValueLineModel.getValues().setIsAvailable(constrainedValue);
+            if (constrainedValue) {
+                keyValueLineModel.getValues().setItems(allRegExKeys.get(key));
+            }
+        } else {
+            keyValueLineModel.getValue().setIsAvailable(false);
+            keyValueLineModel.getValues().setIsAvailable(false);
+            keyValueLineModel.getValue().setEntity("");
+            keyValueLineModel.getValues().setSelectedItem(null);
+            keyValueLineModel.getValues().setItems(null);
+        }
     }
 
-    public void setKeyValueLines(ListModel keyValueLines) {
-        this.keyValueLines = keyValueLines;
+    private KeyValueLineModel createNewLineModel(String key) {
+        KeyValueLineModel lineModel = new KeyValueLineModel();
+        lineModel.getKeys().setItems(key == null ? getAvailableKeys() : getAvailableKeys(key));
+        lineModel.getKeys().getSelectedItemChangedEvent().addListener(keyChangedListener);
+        initLineModel(lineModel, key);
+        return lineModel;
     }
 
-    public KeyValueModel() {
-        setKeyValueLines(new ListModel());
+    public KeyValueLineModel createNewLineModel() {
+        return createNewLineModel(null);
     }
 
-    @Override
-    public void setEntity(Object value) {
+    public boolean isKeyValid(String key) {
+        return !(key == null || key.equals(SELECT_KEY) || key.equals(NO_KEYS));
+    }
+
+    public void deserialize(String value) {
         if (allKeyValueMap == null) {
             saveEntity = value;
             return;
@@ -96,11 +94,10 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
         KeyValueLineModel lineModel;
 
         if (value != null) {
-            String split = (String) value;
-            if (split.isEmpty()) {
+            if (value.isEmpty()) {
                 return;
             }
-            String[] lines = split.split(PROPERTIES_DELIMETER);
+            String[] lines = value.split(PROPERTIES_DELIMETER);
 
             keyValueMap_used = new HashMap<String, String>();
             String[] splitLine;
@@ -116,30 +113,20 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                 }
             }
 
+            disableEvent = true;
             for (Map.Entry<String, String> entry : keyValueMap_used.entrySet()) {
-                lineModel = new KeyValueLineModel(this);
-                lineModel.getKeys().setItems(getAvailbleKeys(entry.getKey()));
+                lineModel = createNewLineModel(entry.getKey());
                 lineModel.getKeys().setSelectedItem(entry.getKey());
                 if (allRegExKeys.containsKey(entry.getKey())) {
-                    lineModel.getValue().setIsAvailable(false);
-                    lineModel.getValues().setIsAvailable(true);
-                    lineModel.getValues().setItems(allRegExKeys.get(entry.getKey()));
                     lineModel.getValues().setSelectedItem(entry.getValue());
                 } else {
                     lineModel.getValue().setEntity(entry.getValue());
                 }
                 list.add(lineModel);
             }
-        } else {
-            lineModel = new KeyValueLineModel(this);
-            lineModel.getKeys().setItems(getAvailbleKeys());
-            list.add(lineModel);
+            disableEvent = false;
         }
-
-        for (final KeyValueLineModel keyValueLineModel : list) {
-            keyValueLineModel.getKeys().getSelectedItemChangedEvent().addListener(keyChangedListener);
-        }
-        getKeyValueLines().setItems(list);
+        setItems(list);
     }
 
     public void setKeyValueString(List<String> lines) {
@@ -163,16 +150,16 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                 String[] values = allKeyValueMap.get(key)
                         .substring(2, allKeyValueMap.get(key).length() - 2)
                         .split("\\|"); //$NON-NLS-1$
-                allRegExKeys.put(splitLine[0], Arrays.asList(values));
+                allRegExKeys.put(key, Arrays.asList(values));
             }
         }
 
-        setEntity(saveEntity);
+        deserialize(saveEntity);
     }
 
-    public List<String> getAvailbleKeys(String key) {
-        List<String> list = getAvailbleKeys();
-        boolean realKey = !key.equals(SELECT_KEY) && !key.equals(NO_KEYS);
+    public List<String> getAvailableKeys(String key) {
+        List<String> list = getAvailableKeys();
+        boolean realKey = isKeyValid(key);
         if (realKey && !list.contains(key)) {
             list.add(0, key);
         }
@@ -191,11 +178,10 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
         return list;
     }
 
-    public List<String> getAvailbleKeys() {
-        List<String> list = new ArrayList<String>(allKeyValueMap.keySet());
-        for (String key : getUsedKeys()) {
-            list.remove(key);
-        }
+    public List<String> getAvailableKeys() {
+        List<String> list =
+                (allKeyValueMap == null) ? new LinkedList<String>() : new LinkedList<String>(allKeyValueMap.keySet());
+        list.removeAll(getUsedKeys());
         if (list.size() > 0) {
             list.add(0, SELECT_KEY);
         } else {
@@ -213,87 +199,35 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
         }
     }
 
-    public int keysUsedCount() {
-        if (keyValueMap_used == null
-                || keyValueMap_used.containsKey(NO_KEYS)) {
-            return 0;
-        }
-        return keyValueMap_used.size();
-    }
-
     public int possibleKeysCount() {
         return allKeyValueMap == null ? 0 : allKeyValueMap.size();
     }
 
-    @Override
-    public void addLine(KeyValueLineModel lineModel) {
-        List<KeyValueLineModel> list =
-                new ArrayList<KeyValueLineModel>((List<KeyValueLineModel>) getKeyValueLines().getItems());
-        int counter = 0;
-        for (KeyValueLineModel keyValueLineModel : list) {
-            counter++;
-            if (keyValueLineModel.equals(lineModel)) {
-                break;
-            }
-        }
-        KeyValueLineModel keyValueLineModel = new KeyValueLineModel(this);
-        keyValueLineModel.getKeys().getSelectedItemChangedEvent().addListener(keyChangedListener);
-        keyValueLineModel.getKeys().setItems(getAvailbleKeys());
-        keyValueLineModel.getValue().setIsAvailable(false);
-        list.add(counter, keyValueLineModel);
-        getKeyValueLines().setItems(list);
-    }
-
-    @Override
-    public void removeLine(KeyValueLineModel lineModel) {
-        List<KeyValueLineModel> list =
-                new ArrayList<KeyValueLineModel>((List<KeyValueLineModel>) getKeyValueLines().getItems());
-        int counter = 0;
-        for (KeyValueLineModel keyValueLineModel : list) {
-            if (keyValueLineModel.equals(lineModel)) {
-                break;
-            }
-            counter++;
-        }
-        list.remove(counter);
-        getKeyValueLines().setItems(list);
-        updateKeys();
-        if (list.size() == 0) {
-            addLine(new KeyValueLineModel(this));
-        }
-    }
-
-    private void updateKeys() {
-        if (getKeyValueLines().getItems() != null && keyValueMap_used != null) {
+    public void updateKeys() {
+        if (getItems() != null && keyValueMap_used != null) {
             disableEvent = true;
             keyValueMap_used.clear();
-            for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getKeyValueLines().getItems()) {
-                String key = (String) keyValueLineModel.getKeys()
-                        .getSelectedItem();
+            for (KeyValueLineModel keyValueLineModel : getItems()) {
+                String key = (String) keyValueLineModel.getKeys().getSelectedItem();
                 keyValueMap_used.put(key, "");
             }
-            for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getKeyValueLines().getItems()) {
-                String key = (String) keyValueLineModel.getKeys()
-                        .getSelectedItem();
-                keyValueLineModel.getKeys().setItems(getAvailbleKeys(key));
-
-                keyValueLineModel.getKeys()
-                        .setSelectedItem(((List<String>) keyValueLineModel.getKeys().getItems()).iterator().next());
-
+            for (KeyValueLineModel keyValueLineModel : getItems()) {
+                String key = (String) keyValueLineModel.getKeys().getSelectedItem();
+                keyValueLineModel.getKeys().setItems(getAvailableKeys(key));
+                keyValueLineModel.getKeys().setSelectedItem(keyValueLineModel.getKeys().getItems().iterator().next());
             }
             disableEvent = false;
         }
     }
 
-    @Override
-    public String getEntity() {
+    public String serialize() {
         StringBuilder builder = new StringBuilder();
-        if (getKeyValueLines().getItems() == null) {
+        if (getItems() == null) {
             return "";
         }
-        for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getKeyValueLines().getItems()) {
+        for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getItems()) {
             String key = (String) keyValueLineModel.getKeys().getSelectedItem();
-            if (key == null || key.equals(NO_KEYS) || key.equals(SELECT_KEY)) {
+            if (!isKeyValid(key)) {
                 continue;
             }
             builder.append(key);
@@ -310,12 +244,12 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
 
     public boolean validate() {
         boolean isValid = true;
-        if (getKeyValueLines().getItems() == null) {
+        if (getItems() == null) {
             return isValid;
         }
-        for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getKeyValueLines().getItems()) {
+        for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getItems()) {
             String key = (String) keyValueLineModel.getKeys().getSelectedItem();
-            if (key == null || key.equals(NO_KEYS) || key.equals(SELECT_KEY)) {
+            if (!isKeyValid(key)) {
                 continue;
             }
 

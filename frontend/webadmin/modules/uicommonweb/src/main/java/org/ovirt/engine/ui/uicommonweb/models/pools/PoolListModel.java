@@ -497,7 +497,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
                         vm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
-                        vm.setCustomProperties(model.getCustomPropertySheet().getEntity());
+                        vm.setCustomProperties(model.getCustomPropertySheet().serialize());
                         vm.setVmType(model.getVmType().getSelectedItem());
                         vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
 

@@ -1,120 +1,85 @@
 package org.ovirt.engine.ui.common.widget.form.key_value;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
-import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.IndexedPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValueModel>, IndexedPanel {
+public class KeyValueWidget extends AddRemoveRowWidget<KeyValueModel, KeyValueLineModel, KeyValueLineWidget> {
 
     interface WidgetUiBinder extends UiBinder<Widget, KeyValueWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    interface Driver extends SimpleBeanEditorDriver<KeyValueModel, KeyValueWidget> {
-    }
-
-    @UiField
-    VerticalPanel panel;
-
-    private final Driver driver = GWT.create(Driver.class);
-
-    private ArrayList<KeyValueLineWidget> widgetList = new ArrayList<KeyValueLineWidget>();
+    private KeyValueModel model;
+    private final LinkedList<KeyValueLineWidget> widgets = new LinkedList<KeyValueLineWidget>();
     private boolean enabled = true;
 
     KeyValueWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        driver.initialize(this);
     }
 
     @Override
-    public void edit(final KeyValueModel object) {
-        setPanel(object);
-        if (object.getKeyValueLines().getItemsChangedEvent().getListeners().size() == 0) {
-            object.getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
-
-                @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    setPanel(object);
-                }
-            });
-        }
-    }
-
-    private void setPanel(KeyValueModel object) {
-        List<KeyValueLineModel> list = (List<KeyValueLineModel>) object.getKeyValueLines().getItems();
-        panel.clear();
-        widgetList = new ArrayList<KeyValueLineWidget>();
-        //create & edit each row.
-        for (KeyValueLineModel keyValueLineModel : list) {
-            KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget();
-            widgetList.add(keyValueLineWidget);
-            panel.add(keyValueLineWidget);
-            keyValueLineWidget.edit(keyValueLineModel);
-            keyValueLineWidget.setEnabled(enabled);
-
-            if (list.size() == 1 && object.keysUsedCount() == 0) {
-                keyValueLineWidget.setMinusButtonEnabled(false);
-            }
-            if (list.size() >= object.possibleKeysCount()) {
-                keyValueLineWidget.setPlusButtonEnabled(false);
-            }
+    protected void init(KeyValueModel model) {
+        this.model = model;
+        widgets.clear();
+        super.init(model);
+        if (!enabled) {
+            removeWidget(widgets.getLast()); // get rid of ghost entry if widget isn't editable
         }
     }
 
     @Override
     public KeyValueModel flush() {
-        for (KeyValueLineWidget lineWidget : widgetList) {
+        super.flush();
+        for (KeyValueLineWidget lineWidget : widgets) {
             lineWidget.flush();
         }
-        return driver.flush();
-    }
-
-    @Override
-    public Widget getWidget(int index) {
-        return widgetList.get(index);
-    }
-
-    @Override
-    public int getWidgetCount() {
-        return widgetList.size();
-    }
-
-    /**
-     * currently not needed
-     */
-    @Override
-    public int getWidgetIndex(Widget child) {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * currently not needed
-     */
-    @Override
-    public boolean remove(int index) {
-        throw new NotImplementedException();
+        return model;
     }
 
     public void setEnabled(boolean value) {
         enabled = value;
-        for (KeyValueLineWidget widget : widgetList) {
+        for (KeyValueLineWidget widget : widgets) {
             widget.setEnabled(enabled);
         }
     }
+
+    @Override
+    protected KeyValueLineWidget createWidget(KeyValueLineModel value) {
+        KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget();
+        keyValueLineWidget.edit(value);
+        widgets.add(keyValueLineWidget);
+        return keyValueLineWidget;
+    }
+
+    @Override
+    protected KeyValueLineModel createGhostValue() {
+        return model.createNewLineModel();
+    }
+
+    @Override
+    protected boolean isGhost(KeyValueLineModel value) {
+        return !model.isKeyValid(value.getKeys().getSelectedItem());
+    }
+
+    @Override
+    protected void toggleGhost(KeyValueLineModel value, KeyValueLineWidget widget, boolean becomingGhost) {
+        widget.setEnabled(!becomingGhost && enabled);
+        widget.keyField.setEnabled(enabled);
+        setButtonEnabled(widget, !becomingGhost && enabled);
+    }
+
+    @Override
+    protected void onRemove(KeyValueLineModel value, KeyValueLineWidget widget) {
+        super.onRemove(value, widget);
+        model.updateKeys();
+        widgets.remove(widget);
+    }
+
 }

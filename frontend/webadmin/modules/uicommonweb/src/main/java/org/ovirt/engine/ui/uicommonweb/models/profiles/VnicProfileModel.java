@@ -211,7 +211,7 @@ public abstract class VnicProfileModel extends Model {
         vnicProfile.setPortMirroring((Boolean) getPortMirroring().getEntity());
 
         if (customPropertiesVisible) {
-            vnicProfile.setCustomProperties(KeyValueModel.convertProperties(getCustomPropertySheet().getEntity()));
+            vnicProfile.setCustomProperties(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
         } else {
             vnicProfile.setCustomProperties(null);
         }

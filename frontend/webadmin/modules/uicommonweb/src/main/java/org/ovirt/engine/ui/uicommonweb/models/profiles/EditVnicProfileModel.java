@@ -37,7 +37,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
 
     @Override
     protected void initCustomProperties() {
-        getCustomPropertySheet().setEntity(KeyValueModel
+        getCustomPropertySheet().deserialize(KeyValueModel
                 .convertProperties(getProfile().getCustomProperties()));
     }
 

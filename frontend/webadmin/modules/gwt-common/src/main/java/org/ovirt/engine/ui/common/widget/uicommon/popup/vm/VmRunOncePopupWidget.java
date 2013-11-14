@@ -385,14 +385,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Override
     public void edit(final RunOnceModel object) {
         driver.edit(object);
+        customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
         runOnceModel = object;
-
-        object.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
-            }
-        });
 
         // Update Linux options panel
         final EntityModel isLinuxOptionsAvailable = object.getIsLinuxOptionsAvailable();

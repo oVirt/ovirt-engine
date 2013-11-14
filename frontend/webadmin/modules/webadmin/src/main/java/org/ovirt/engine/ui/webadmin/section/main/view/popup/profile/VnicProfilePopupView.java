@@ -128,18 +128,11 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @Override
     public void edit(final VnicProfileModel profile) {
         driver.edit(profile);
+        customPropertiesSheetEditor.edit(profile.getCustomPropertySheet());
     }
 
     @Override
     public void initCustomPropertySheet(final VnicProfileModel profile) {
-        profile.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                customPropertiesSheetEditor.edit(profile.getCustomPropertySheet());
-            }
-        });
-
         profile.getCustomPropertySheet().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {

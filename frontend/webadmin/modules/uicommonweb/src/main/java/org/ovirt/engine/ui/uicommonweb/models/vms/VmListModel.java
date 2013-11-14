@@ -1917,7 +1917,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setKernelUrl(model.getKernel_path().getEntity());
         getcurrentVm().setKernelParams(model.getKernel_parameters().getEntity());
 
-        getcurrentVm().setCustomProperties(model.getCustomPropertySheet().getEntity());
+        getcurrentVm().setCustomProperties(model.getCustomPropertySheet().serialize());
         getcurrentVm().setBalloonEnabled(balloonEnabled(model));
 
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
