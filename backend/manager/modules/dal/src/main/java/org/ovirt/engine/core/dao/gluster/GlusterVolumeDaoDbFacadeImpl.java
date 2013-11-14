@@ -316,7 +316,10 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             volume.setOptions(dbFacade.getGlusterOptionDao().getOptionsOfVolume(volume.getId()));
             volume.setAccessProtocols(new HashSet<AccessProtocol>(getAccessProtocolsOfVolume(volume.getId())));
             volume.setTransportTypes(new HashSet<TransportType>(getTransportTypesOfVolume(volume.getId())));
-            volume.setAsyncTask(getAsyncTaskOfVolume(volume.getId()));
+            GlusterAsyncTask asyncTask = getAsyncTaskOfVolume(volume.getId());
+            if (asyncTask != null) {
+                volume.setAsyncTask(asyncTask);
+            }
             List<GlusterBrickEntity> bricks = dbFacade.getGlusterBrickDao().getBricksOfVolume(volume.getId());
             if (volume.getAsyncTask() != null && volume.getAsyncTask().getTaskId() != null) {
                 for (GlusterBrickEntity brick: bricks) {
@@ -367,7 +370,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         public GlusterAsyncTask mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterAsyncTask asyncTask = new GlusterAsyncTask();
-            asyncTask.setTaskId(getGuidDefaultEmpty(rs, "external_id"));
+            asyncTask.setTaskId(getGuid(rs, "external_id"));
             String jobStatus =rs.getString("status");
             String stepType = rs.getString("step_type");
             if(stepType != null && !stepType.isEmpty()){
