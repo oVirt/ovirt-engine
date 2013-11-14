@@ -109,10 +109,12 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
         getStorageStaticData().setDescription(description);
     }
 
+    @Override
     public String getComment() {
         return getStorageStaticData().getComment();
     }
 
+    @Override
     public void setComment(String value) {
         getStorageStaticData().setComment(value);
     }
@@ -136,9 +138,13 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
     }
 
     private void updateOverCommitPercent() {
-        setStorageDomainOverCommitPercent(getAvailableDiskSize() != null && getAvailableDiskSize() > 0 ? getCommittedDiskSize()
-                * 100 / getAvailableDiskSize()
-                : 0);
+        if (getAvailableDiskSize() == null || getAvailableDiskSize() == 0) {
+            setStorageDomainOverCommitPercent(0);
+        }
+        else {
+            setStorageDomainOverCommitPercent((getCommittedDiskSize() - getActualImagesSize()) * 100
+                    / getAvailableDiskSize());
+        }
     }
 
     private int storageDomainOverCommitPercent;
@@ -159,6 +165,17 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
 
     public void setCommittedDiskSize(int committedDiskSize) {
         this.committedDiskSize = committedDiskSize;
+        updateOverCommitPercent();
+    }
+
+    private int actualImagesSize;
+
+    public int getActualImagesSize() {
+        return actualImagesSize;
+    }
+
+    public void setActualImagesSize(int actualImagesSize) {
+        this.actualImagesSize = actualImagesSize;
         updateOverCommitPercent();
     }
 
