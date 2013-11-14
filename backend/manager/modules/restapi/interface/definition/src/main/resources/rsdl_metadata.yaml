@@ -834,39 +834,6 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/preview|rel=preview
-  description: temporarily restores the virtual machine to the state from a given snapshot
-  request:
-    body:
-      parameterType: Action
-      signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {action.restore_memory: 'xs:boolean'}
-        description: temporarily restores the virtual machine to the state from a given snapshot
-    urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
-      Correlation-Id: {value: 'any string', required: false}
-- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/commit|rel=commit
-  description: commit the virtual machine to the current state which has been restored from a snapshot
-  request:
-    body:
-      parameterType: Action
-      signatures: []
-    urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
-      Correlation-Id: {value: 'any string', required: false}
-- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/undo|rel=undo
-  description: undo a create snapshot operation on a virtual machine
-  request:
-    body:
-      parameterType: Action
-      signatures: []
-    urlparams: {}
-    headers:
-      Content-Type: {value: application/xml|json, required: true}
-      Correlation-Id: {value: 'any string', required: false}
 - name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
   description: get the list of cdroms attached to the virtual machine at the time the snapshot was created
   request:
