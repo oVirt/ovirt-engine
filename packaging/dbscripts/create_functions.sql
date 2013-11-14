@@ -349,11 +349,9 @@ DECLARE
 
 BEGIN
 	mult := ( SELECT
-	    		COALESCE(SUM(images_storage_domain_view.size - disk_image_dynamic.actual_size),0)
-				FROM images_storage_domain_view JOIN
-	    			disk_image_dynamic ON ( images_storage_domain_view.image_guid = disk_image_dynamic.image_id )
-				WHERE
-   					images_storage_domain_view.storage_id = v_storage_domain_id );
+	    		COALESCE(SUM(images_storage_domain_view.size),0)
+				FROM images_storage_domain_view
+				WHERE images_storage_domain_view.storage_id = v_storage_domain_id );
         -- convert to GB from bytes
 	mult := CAST((mult * 0.000000000931322574615478515625) AS bigint);
     result := CAST(mult as integer);
@@ -361,6 +359,30 @@ BEGIN
 	RETURN result;
 END;$function$
 LANGUAGE 'plpgsql';
+
+
+
+
+CREATE OR REPLACE FUNCTION public.fn_get_actual_images_size_by_storage(v_storage_domain_id IN uuid) RETURNS integer STABLE AS
+$function$
+DECLARE
+    result integer;
+    mult bigint;
+
+BEGIN
+	mult := ( SELECT
+	    		COALESCE(SUM(disk_image_dynamic.actual_size),0)
+				FROM images_storage_domain_view JOIN
+	    			disk_image_dynamic ON ( images_storage_domain_view.image_guid = disk_image_dynamic.image_id )
+				WHERE images_storage_domain_view.storage_id = v_storage_domain_id );
+        -- convert to GB from bytes
+	mult := CAST((mult * 0.000000000931322574615478515625) AS bigint);
+    result := CAST(mult as integer);
+
+	RETURN result;
+END;$function$
+LANGUAGE 'plpgsql';
+
 
 
 

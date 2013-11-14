@@ -153,6 +153,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
             entity.setStorageFormat(StorageFormatType.forValue(rs.getString("storage_domain_format_type")));
             entity.setAvailableDiskSize((Integer) rs.getObject("available_disk_size"));
             entity.setUsedDiskSize((Integer) rs.getObject("used_disk_size"));
+            entity.setActualImagesSize(rs.getInt("actual_images_size"));
             entity.setCommittedDiskSize(rs.getInt("commited_disk_size"));
             entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
             entity.setStorageDomainSharedStatus(
