@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -35,8 +34,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -576,30 +573,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.CUSTOM_PROPERTIES);
         }
 
-        if (!unsupportedFeatures.isEmpty()) {
-            reportUnsupportedVnicProfileFeatures(vm, nic, vnicProfile, unsupportedFeatures);
-        }
-
-    }
-
-    private static void reportUnsupportedVnicProfileFeatures(VM vm,
-            VmNic nic,
-            VnicProfile vnicProfile,
-            List<VNIC_PROFILE_PROPERTIES> unsupportedFeatures) {
-        AuditLogableBase event = new AuditLogableBase();
-        event.setVmId(vm.getId());
-        event.setVdsGroupId(vm.getVdsGroupId());
-        event.setCustomId(nic.getId().hashCode());
-        event.setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion().toString());
-        event.addCustomValue("NicName", nic.getName());
-        event.addCustomValue("VnicProfile", vnicProfile == null ? null : vnicProfile.getName());
-        String[] unsupportedFeatureNames = new String[unsupportedFeatures.size()];
-        for (int i = 0; i < unsupportedFeatures.size(); i++) {
-            unsupportedFeatureNames[i] = unsupportedFeatures.get(i).getFeatureName();
-        }
-
-        event.addCustomValue("UnsupportedFeatures", StringUtils.join(unsupportedFeatureNames, ", "));
-        AuditLogDirector.log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
+        reportUnsupportedVnicProfileFeatures(vm, nic, vnicProfile, unsupportedFeatures);
     }
 
     private static boolean addPortMirroringToVmInterface(Map<String, Object> struct,
@@ -939,20 +913,4 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addDevice(struct, vmDevice, null);
         }
     }
-
-    private static enum VNIC_PROFILE_PROPERTIES {
-        PORT_MIRRORING("Port Mirroring"),
-        CUSTOM_PROPERTIES("Custom Properties"),
-        NETWORK_QOS("Network QoS");
-
-        private String featureName;
-
-        private VNIC_PROFILE_PROPERTIES(String featureName) {
-            this.featureName = featureName;
-        }
-
-        public String getFeatureName() {
-            return featureName;
-        }
-    };
 }

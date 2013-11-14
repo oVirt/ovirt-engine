@@ -11,18 +11,23 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -232,6 +237,31 @@ public abstract class VmInfoBuilderBase {
         log.error("Unsupported interface type, ISCSI interface type is not supported.");
     }
 
+    protected static void reportUnsupportedVnicProfileFeatures(VM vm,
+            VmNic nic,
+            VnicProfile vnicProfile,
+            List<VNIC_PROFILE_PROPERTIES> unsupportedFeatures) {
+
+        if (unsupportedFeatures.isEmpty()) {
+            return;
+        }
+
+        AuditLogableBase event = new AuditLogableBase();
+        event.setVmId(vm.getId());
+        event.setVdsGroupId(vm.getVdsGroupId());
+        event.setCustomId(nic.getId().hashCode());
+        event.setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion().toString());
+        event.addCustomValue("NicName", nic.getName());
+        event.addCustomValue("VnicProfile", vnicProfile == null ? null : vnicProfile.getName());
+        String[] unsupportedFeatureNames = new String[unsupportedFeatures.size()];
+        for (int i = 0; i < unsupportedFeatures.size(); i++) {
+            unsupportedFeatureNames[i] = unsupportedFeatures.get(i).getFeatureName();
+        }
+
+        event.addCustomValue("UnsupportedFeatures", StringUtils.join(unsupportedFeatureNames, ", "));
+        AuditLogDirector.log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
+    }
+
     protected abstract void buildVmVideoCards();
 
     protected abstract void buildVmCD();
@@ -262,4 +292,19 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildVmVirtioScsi();
 
+    protected static enum VNIC_PROFILE_PROPERTIES {
+        PORT_MIRRORING("Port Mirroring"),
+        CUSTOM_PROPERTIES("Custom Properties"),
+        NETWORK_QOS("Network QoS");
+
+        private String featureName;
+
+        private VNIC_PROFILE_PROPERTIES(String featureName) {
+            this.featureName = featureName;
+        }
+
+        public String getFeatureName() {
+            return featureName;
+        }
+    };
 }
