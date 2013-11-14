@@ -329,8 +329,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 SyntaxContainer searchObj = curSyntaxChecker.analyzeSyntaxState(searchText, true);
                 // set the case-sensitive flag
                 searchObj.setCaseSensitive(getParameters().getCaseSensitive());
-                searchObj.setMaxCount(getParameters().getMaxCount() == -1 ? Config
-                        .<Integer> GetValue(ConfigValues.SearchResultsLimit) : getParameters().getMaxCount());
+                searchObj.setMaxCount(getParameters().getMaxCount() == -1 ? Integer.MAX_VALUE : getParameters().getMaxCount());
                 // setting FromSearch value
                 searchObj.setSearchFrom(getParameters().getSearchFrom());
 
