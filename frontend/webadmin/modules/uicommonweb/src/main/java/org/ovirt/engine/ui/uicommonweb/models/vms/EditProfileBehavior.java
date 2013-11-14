@@ -27,6 +27,8 @@ public class EditProfileBehavior extends ProfileBehavior {
                 return;
             }
         }
+
+        profileList.setSelectedItem(VnicProfileView.EMPTY);
     }
 
 }

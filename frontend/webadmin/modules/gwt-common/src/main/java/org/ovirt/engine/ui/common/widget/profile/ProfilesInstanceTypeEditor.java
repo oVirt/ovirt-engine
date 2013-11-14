@@ -1,12 +1,5 @@
 package org.ovirt.engine.ui.common.widget.profile;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +11,14 @@ import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, VnicInstanceType, ProfileInstanceTypeEditor> implements HasElementId {
 
@@ -41,11 +39,9 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
 
     private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
-    private ListModel vnicsModel;
     private ListModel profilesModel;
-    private IEventListener vnicsChangedListener;
     private Iterable<VnicProfileView> vnicProfiles;
-    private List<VmNetworkInterface> vnics;
+    private final List<VmNetworkInterface> vnics;
     private int realEntryCount;
 
     public ProfilesInstanceTypeEditor() {
@@ -59,40 +55,30 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
         this.elementId = elementId;
     }
 
-    public void edit(ListModel vnicsModel, ListModel profilesModel) {
-        this.vnicsModel = vnicsModel;
-        this.profilesModel = profilesModel;
-
-        vnicsChangedListener = new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                init();
-            }
-        };
-        vnicsModel.getItemsChangedEvent().addListener(vnicsChangedListener);
-
-        driver.edit(vnicsModel);
-        init();
-    }
-
-    private void init() {
+    @Override
+    protected void init(ListModel model) {
         vnicProfiles = profilesModel.getItems();
         if (vnicProfiles == null) {
             vnicProfiles = new ArrayList<VnicProfileView>();
         }
 
+        Iterable<VnicInstanceType> values = model.getItems();
         vnics.clear();
-        realEntryCount = 0;
-        Iterable<VnicInstanceType> values = vnicsModel.getItems();
         if (values != null) {
             for (VnicInstanceType value : values) {
                 vnics.add(value.getNetworkInterface());
             }
         }
-        updateHeaderLabel();
+        super.init(model);
 
-        super.init(vnicsModel);
+        realEntryCount = vnics.size() - 1; // don't count the ghost entry
+        updateHeaderLabel();
+    }
+
+    public void edit(ListModel vnicsModel, ListModel profilesModel) {
+        this.profilesModel = profilesModel;
+        super.edit(vnicsModel);
+        driver.edit(vnicsModel);
     }
 
     /**
@@ -107,10 +93,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
 
     @Override
     public ListModel flush() {
-        vnicsModel.getItemsChangedEvent().removeListener(vnicsChangedListener); // remove to avoid calling init() here
-        flush(vnicsModel);
-        vnicsModel.getItemsChangedEvent().addListener(vnicsChangedListener); // put back in case dialog wasn't closed
-
+        super.flush();
         return driver.flush();
     }
 
@@ -127,11 +110,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
     @Override
     protected void onAdd(VnicInstanceType value, ProfileInstanceTypeEditor widget) {
         super.onAdd(value, widget);
-        vnics.add(value.getNetworkInterface());
-        if (isGhost(value)) {
-            // this will be offset when the entry is toggled to ghost
-            ++realEntryCount;
-        }
+        ++realEntryCount; // necessarily a ghost entry, but this will be offset when the entry is toggled to ghost
         updateHeaderLabel();
     }
 
@@ -139,7 +118,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
     protected void onRemove(VnicInstanceType value, ProfileInstanceTypeEditor widget) {
         super.onRemove(value, widget);
         vnics.remove(value.getNetworkInterface());
-        --realEntryCount;
+        --realEntryCount; // necessarily a real entry
         updateHeaderLabel();
     }
 
@@ -178,9 +157,6 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
         item.profileEditor.setEnabled(!becomingGhost);
         item.profileEditor.asWidget().setEnabled(true);
 
-        if (!becomingGhost) {
-            vnics.add(value.getNetworkInterface());
-        }
         realEntryCount += (becomingGhost ? -1 : 1);
         updateHeaderLabel();
     }

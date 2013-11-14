@@ -1062,6 +1062,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         priorityEditor.setRowData(new ArrayList<EntityModel>());
         priorityEditor.asEditor().edit(model.getPriority());
         driver.edit(model);
+        profilesInstanceTypeEditor.edit(model.getNicsWithLogicalNetworks(), model.getVnicProfiles());
         initTabAvailabilityListeners(model);
         initListeners(model);
         initCustomPropertySheet(model);
@@ -1181,8 +1182,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 }
             }
         });
-
-        profilesInstanceTypeEditor.edit(object.getNicsWithLogicalNetworks(), object.getVnicProfiles());
     }
 
     /**

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,6 +8,10 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,42 +51,81 @@ public abstract class AddRemoveRowWidget<M extends ListModel, T, V extends Widge
     @UiField
     public WidgetStyle style;
 
-    protected CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    private CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
 
     private final List<Pair<T, V>> items;
+    private final IEventListener itemsChangedListener;
+    private M model;
+    private Collection<T> modelItems;
 
     public AddRemoveRowWidget() {
         items = new LinkedList<Pair<T, V>>();
+        itemsChangedListener = new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                init(model);
+            }
+        };
     }
 
-    protected void init(ListModel model) {
+    /**
+     * This method initializes the entries of the widget, by creating an entry for each value in the backing model and
+     * an additional "ghost" entry. It is called whenever this widget is edited or an ItemsChangedEvent is raised from
+     * the backing model.
+     *
+     * @param model
+     *            the model backing this widget.
+     */
+    protected void init(M model) {
         items.clear();
         contentPanel.clear();
-        Iterable<T> values = model.getItems();
-        if (values != null) {
-            for (T value : values) {
-                addEntry(value);
-            }
+
+        modelItems = (Collection<T>) model.getItems();
+        if (modelItems == null) {
+            modelItems = new LinkedList<T>();
+            model.setItems(modelItems); // this will invoke init() again with the empty list as values instead of null
+            return;
         }
-        addGhostEntry();
+
+        for (T value : modelItems) {
+            addEntry(value);
+        }
+        T additionalValue = addGhostEntry().getFirst();
+        modelItems.add(additionalValue);
     }
 
-    protected void flush(ListModel model) {
-        ArrayList<T> values = new ArrayList<T>();
+    @Override
+    public void edit(final M model) {
+        // guard against multiple calls to edit()
+        if (this.model != null) {
+            this.model.getItemsChangedEvent().removeListener(itemsChangedListener);
+        }
+
+        this.model = model;
+        model.getItemsChangedEvent().addListener(itemsChangedListener);
+        init(model);
+    }
+
+    @Override
+    public M flush() {
+        modelItems.clear();
         for (Pair<T, V> item : items) {
             T value = item.getFirst();
             if (!isGhost(value)) {
-                values.add(value);
+                modelItems.add(value);
             }
         }
-        model.setItems(values);
+        return model;
     }
 
-    private void addGhostEntry() {
-        addEntry(createGhostValue());
+    private Pair<T, V> addGhostEntry() {
+        T value = createGhostValue();
+        V widget = addEntry(value);
+        return new Pair<T, V>(value, widget);
     }
 
-    private void addEntry(T value) {
+    private V addEntry(T value) {
         final V widget = createWidget(value);
         Pair<T, V> item = new Pair<T, V>(value, widget);
         items.add(item);
@@ -108,18 +151,19 @@ public abstract class AddRemoveRowWidget<M extends ListModel, T, V extends Widge
 
         AddRemoveRowPanel entry = new AddRemoveRowPanel(widget, button);
         contentPanel.add(entry);
-
-        onAdd(value, widget);
+        return widget;
     }
 
     private void removeEntry(Pair<T, V> item) {
         items.remove(item);
         contentPanel.remove(item.getSecond().getParent());
-        onRemove(item.getFirst(), item.getSecond());
     }
 
     private PushButton createButton(final Pair<T, V> item) {
-        boolean ghostItem = isGhost(item.getFirst());
+        final T value = item.getFirst();
+        final V widget = item.getSecond();
+
+        boolean ghostItem = isGhost(value);
         final PushButton button =
                 new PushButton(new Image(ghostItem ? resources.increaseIcon() : resources.decreaseIcon()));
         button.addStyleName(style.buttonStyle());
@@ -130,8 +174,9 @@ public abstract class AddRemoveRowWidget<M extends ListModel, T, V extends Widge
 
                     @Override
                     public void onClick(ClickEvent event) {
-                        ((AddRemoveRowPanel) item.getSecond().getParent()).swapButton(createButton(item));
-                        addGhostEntry();
+                        ((AddRemoveRowPanel) widget.getParent()).swapButton(createButton(item));
+                        Pair<T, V> item = addGhostEntry();
+                        onAdd(item.getFirst(), item.getSecond());
                     }
                 } :
                 new ClickHandler() {
@@ -139,6 +184,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel, T, V extends Widge
                     @Override
                     public void onClick(ClickEvent event) {
                         removeEntry(item);
+                        onRemove(value, widget);
                     }
                 });
 
@@ -173,19 +219,9 @@ public abstract class AddRemoveRowWidget<M extends ListModel, T, V extends Widge
     }
 
     /**
-     * This method is called straight after an entry is removed. Override to specify implementation-specific behavior.
-     *
-     * @param value
-     *            the value removed.
-     * @param widget
-     *            the widget removed.
-     */
-    protected void onRemove(T value, V widget) {
-        // do nothing
-    }
-
-    /**
-     * This method is called straight after an entry is added. Override to specify implementation-specific behavior.
+     * This method is called straight after an entry is added by pressing the plus button. Note that this new entry will
+     * necessarily be a "ghost" entry, as the plus button always adds entries that are initially in ghost state.
+     * Override to specify implementation-specific behavior.
      *
      * @param value
      *            the value added.
@@ -193,7 +229,21 @@ public abstract class AddRemoveRowWidget<M extends ListModel, T, V extends Widge
      *            the widget added.
      */
     protected void onAdd(T value, V widget) {
-        // do nothing
+        modelItems.add(value);
+    }
+
+    /**
+     * This method is called straight after an entry is removed by pressing the minues button. Note that this entry will
+     * necessarily be a non-"ghost" entry, as otherwise the minus button would have been disabled. Override to specify
+     * implementation-specific behavior.
+     *
+     * @param value
+     *            the value removed.
+     * @param widget
+     *            the widget removed.
+     */
+    protected void onRemove(T value, V widget) {
+        modelItems.remove(value);
     }
 
     /**

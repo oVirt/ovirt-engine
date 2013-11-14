@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -365,6 +364,17 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     @Override
+    public void edit(T model) {
+        profilesEditor.edit(model.getProfiles(), model.getDefaultProfile());
+    }
+
+    @Override
+    public T flush() {
+        profilesEditor.flush();
+        return null;
+    }
+
+    @Override
     public void updateVisibility() {
         messageLabel.setVisible(false);
     }
@@ -375,12 +385,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     @Override
-    public void editProfiles(ListModel profiles,
-            Version dcCompatibilityVersion,
-            Guid dcId,
-            VnicProfileModel defaultProfile) {
-
-        profilesEditor.edit(profiles, dcCompatibilityVersion, dcId, defaultProfile);
+    public void updateDc(Version dcCompatibilityVersion, Guid dcId) {
+        profilesEditor.updateDc(dcCompatibilityVersion, dcId);
     }
 
     interface WidgetStyle extends CssResource {

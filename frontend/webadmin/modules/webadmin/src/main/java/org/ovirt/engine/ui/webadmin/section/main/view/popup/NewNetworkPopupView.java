@@ -41,11 +41,13 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
 
     @Override
     public void edit(NewNetworkModel object) {
+        super.edit(object);
         driver.edit(object);
     }
 
     @Override
     public NewNetworkModel flush() {
+        super.flush();
         return driver.flush();
     }
 

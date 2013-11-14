@@ -24,7 +24,7 @@ public class NewProfileBehavior extends ProfileBehavior {
                 return;
             }
         }
-        profileList.setSelectedItem(profiles.size() > 0 ? profiles.get(0) : null);
+        profileList.setSelectedItem(profiles.size() > 0 ? profiles.get(0) : VnicProfileView.EMPTY);
     }
 
 }

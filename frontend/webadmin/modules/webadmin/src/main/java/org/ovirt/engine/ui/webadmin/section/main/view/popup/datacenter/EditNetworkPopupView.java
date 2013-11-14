@@ -40,6 +40,7 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
 
     @Override
     public void edit(EditNetworkModel object) {
+        super.edit(object);
         driver.edit(object);
         network = object.getNetwork();
     }
@@ -53,6 +54,7 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
 
     @Override
     public EditNetworkModel flush() {
+        super.flush();
         return driver.flush();
     }
 

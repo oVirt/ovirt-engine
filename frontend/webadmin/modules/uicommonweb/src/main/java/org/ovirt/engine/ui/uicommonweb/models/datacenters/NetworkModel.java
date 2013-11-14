@@ -128,11 +128,44 @@ public abstract class NetworkModel extends Model
         publicUse.setEntity(true);
 
         setProfiles(new ListModel());
+        defaultProfile = createDefaultProfile();
+        List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
+        profiles.add(defaultProfile);
+        getProfiles().setItems(profiles);
 
         // Update changeability according to initial values
         onExportChanged();
         updateVlanTagChangeability();
         updateMtuChangeability();
+    }
+
+    private VnicProfileModel createDefaultProfile() {
+        final VnicProfileModel defaultProfile = new NewVnicProfileModel();
+
+        // make sure default profile's name is in sync with network's name
+        defaultProfile.getName().setEntity(getName().getEntity());
+        final IEventListener networkNameListener = new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                defaultProfile.getName().setEntity(getName().getEntity());
+            }
+        };
+        getName().getEntityChangedEvent().addListener(networkNameListener);
+
+        // if user overrides default name, stop tracking network's name
+        defaultProfile.getName().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!defaultProfile.getName().getEntity().equals(getName().getEntity())) {
+                    getName().getEntityChangedEvent().removeListener(networkNameListener);
+                    defaultProfile.getName().getEntityChangedEvent().removeListener(this);
+                }
+            }
+        });
+
+        return defaultProfile;
     }
 
     private void initExternalProviderList() {
@@ -332,41 +365,7 @@ public abstract class NetworkModel extends Model
     }
 
     public VnicProfileModel getDefaultProfile() {
-        if (defaultProfile == null) {
-            defaultProfile = createDefaultProfile();
-        }
         return defaultProfile;
-    }
-
-    private VnicProfileModel createDefaultProfile() {
-        final NewVnicProfileModel newModel =
-                new NewVnicProfileModel(getSourceListModel(), getSelectedDc().getcompatibility_version(), false,
-                        getSelectedDc().getId());
-
-        // make sure default profile's name is in sync with network's name
-        newModel.getName().setEntity(getName().getEntity());
-        final IEventListener networkNameListener = new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                newModel.getName().setEntity(getName().getEntity());
-            }
-        };
-        getName().getEntityChangedEvent().addListener(networkNameListener);
-
-        // if user overrides default name, stop tracking network's name
-        newModel.getName().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!newModel.getName().getEntity().equals(getName().getEntity())) {
-                    getName().getEntityChangedEvent().removeListener(networkNameListener);
-                    newModel.getName().getEntityChangedEvent().removeListener(this);
-                }
-            }
-        });
-
-        return newModel;
     }
 
     public boolean validate()
@@ -446,17 +445,8 @@ public abstract class NetworkModel extends Model
     }
 
     private void initProfiles() {
-        Iterable<VnicProfileModel> existingProfiles = getProfiles().getItems();
-        if (existingProfiles == null) {
-            // first run (dialog has just been opened and default DC chosen), create default entry
-            List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
-            profiles.add(getDefaultProfile());
-            getProfiles().setItems(profiles);
-        } else {
-            // not first run (user picked different DC), want to keep existing entries and update DC-related properties
-            for (VnicProfileModel profile : existingProfiles) {
-                profile.updateDc(getSelectedDc().getcompatibility_version(), getSelectedDc().getId());
-            }
+        for (VnicProfileModel profile : (Iterable<VnicProfileModel>) getProfiles().getItems()) {
+            profile.updateDc(getSelectedDc().getcompatibility_version(), getSelectedDc().getId());
         }
     }
 

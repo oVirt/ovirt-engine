@@ -25,7 +25,11 @@ public class NewVnicProfileModel extends VnicProfileModel {
     }
 
     public NewVnicProfileModel(Version dcCompatibilityVersion, Guid dcId) {
-        this(null, dcCompatibilityVersion, dcId);
+        this(null, dcCompatibilityVersion, false, dcId);
+    }
+
+    public NewVnicProfileModel() {
+        this(null, null);
     }
 
     @Override
