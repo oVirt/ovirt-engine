@@ -3834,8 +3834,8 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace
-  description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace #deprecated, replaced by 'migrate/delete'
+  description: This is deprecated.Use migrate and delete instead.
   request:
     body:
       parameterType: Action
@@ -3843,6 +3843,7 @@ actions:
       - mandatoryArguments: {action.brick.server_id: 'xs:string', action.brick.brick_dir: 'xs:string'}
         optionalArguments: {action.force: 'xs:boolean'}
         description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
+        deprecated: true
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}

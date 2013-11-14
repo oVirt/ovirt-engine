@@ -13,8 +13,8 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.resource.ActionResource;
-import org.ovirt.engine.api.resource.MeasurableResource;
 import org.ovirt.engine.api.resource.ApiMediaType;
+import org.ovirt.engine.api.resource.MeasurableResource;
 
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes/{volume_id}/bricks/{brick_id}" resource
@@ -35,6 +35,7 @@ public interface GlusterBrickResource extends MeasurableResource{
      * @param action
      * @return
      */
+    @Deprecated
     @POST
     @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
