@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -662,25 +663,44 @@ public final class ImagesHandler {
             final ImageStatus status,
             ImageStatus statusForCompensation,
             final CompensationContext compensationContext) {
+        updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(Collections.singletonList(diskId), status, statusForCompensation, compensationContext);
+    }
 
+    public static void updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(final Collection<Guid> diskIds,
+                                                                         final ImageStatus status,
+                                                                         ImageStatus statusForCompensation,
+                                                                         final CompensationContext compensationContext) {
         if (compensationContext != null) {
-            List<DiskImage> diskSnapshots =
-                    DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
-            for (DiskImage diskSnapshot : diskSnapshots) {
-                diskSnapshot.setImageStatus(statusForCompensation);
-                compensationContext.snapshotEntityStatus(diskSnapshot.getImage());
+            for (Guid diskId : diskIds) {
+                List<DiskImage> diskSnapshots =
+                        DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
+                for (DiskImage diskSnapshot : diskSnapshots) {
+                    diskSnapshot.setImageStatus(statusForCompensation);
+                    compensationContext.snapshotEntityStatus(diskSnapshot.getImage());
+                }
             }
 
             TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
+                    for (Guid diskId : diskIds) {
+                        DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
+                    }
                     compensationContext.stateChanged();
                     return null;
                 }
             });
         } else {
-            updateAllDiskImageSnapshotsStatus(diskId, status);
+
+            TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    for (Guid diskId : diskIds) {
+                        updateAllDiskImageSnapshotsStatus(diskId, status);
+                    }
+                    return null;
+                }
+            });
         }
     }
 

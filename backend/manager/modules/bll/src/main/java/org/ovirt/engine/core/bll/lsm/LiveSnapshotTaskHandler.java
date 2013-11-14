@@ -42,12 +42,11 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void execute() {
-        for (Guid movedDiskId : getMovedDiskIds()) {
-            ImagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(movedDiskId,
-                    ImageStatus.LOCKED,
-                    ImageStatus.OK,
-                    enclosingCommand.getCompensationContext());
-        }
+        ImagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(getMovedDiskIds(),
+                ImageStatus.LOCKED,
+                ImageStatus.OK,
+                enclosingCommand.getCompensationContext());
+
         if (enclosingCommand.getParameters().getTaskGroupSuccess()) {
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
