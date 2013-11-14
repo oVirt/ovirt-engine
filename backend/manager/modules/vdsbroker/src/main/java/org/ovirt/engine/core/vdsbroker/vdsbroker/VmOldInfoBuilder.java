@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -147,13 +149,13 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         StringBuilder nics = new StringBuilder();
         StringBuilder networks = new StringBuilder();
         for (int i = 0; i < vm.getInterfaces().size(); i++) {
-            macs.append(vm.getInterfaces().get(i).getMacAddress());
-            networks.append(vm.getInterfaces().get(i).getNetworkName());
+            VmNetworkInterface nic = vm.getInterfaces().get(i);
+            macs.append(nic.getMacAddress());
+            networks.append(nic.getNetworkName());
 
             VmInterfaceType ifaceType = VmInterfaceType.rtl8139;
-            if (vm.getInterfaces().get(i).getType() != null) {
-                ifaceType = VmInterfaceType.forValue(vm.getInterfaces().get(i)
-                        .getType());
+            if (nic.getType() != null) {
+                ifaceType = VmInterfaceType.forValue(nic.getType());
             }
 
             if (ifaceType == VmInterfaceType.rtl8139_pv) {
@@ -171,7 +173,29 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 nics.append(",");
                 networks.append(",");
             }
+
+            if (nic.getVnicProfileId() != null) {
+                VnicProfile profile = DbFacade.getInstance().getVnicProfileDao().get(nic.getVnicProfileId());
+
+                if (profile != null) {
+                    List<VNIC_PROFILE_PROPERTIES> unsupportedFeatures = new ArrayList<>();
+                    if (profile.isPortMirroring()) {
+                        unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.PORT_MIRRORING);
+                    }
+
+                    if (profile.getNetworkQosId() != null) {
+                        unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.NETWORK_QOS);
+                    }
+
+                    if (profile.getCustomProperties() != null && !profile.getCustomProperties().isEmpty()) {
+                        unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.CUSTOM_PROPERTIES);
+                    }
+
+                    reportUnsupportedVnicProfileFeatures(vm, nic, profile, unsupportedFeatures);
+                }
+            }
         }
+
         if (!StringUtils.isEmpty(macs.toString().trim())) {
             createInfo.put(VdsProperties.MAC_ADDR, macs.toString());
             createInfo.put(VdsProperties.NIC_TYPE, nics.toString());
