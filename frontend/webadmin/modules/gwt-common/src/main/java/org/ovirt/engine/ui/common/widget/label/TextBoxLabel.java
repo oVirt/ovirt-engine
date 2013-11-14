@@ -4,56 +4,24 @@ import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
-public class TextBoxLabel extends TextBox {
+public class TextBoxLabel extends TextBoxLabelBase<String> {
 
-    private boolean handleEmptyValue = false;
-    private String unAvailablePropertyLabel = ""; //$NON-NLS-1$
     private boolean hasFocus = false;
-    private String tooltipCaption = null;
+    private String tooltipCaption;
 
     public TextBoxLabel() {
-        setReadOnly(true);
-        getElement().getStyle().setBorderWidth(0, Unit.PX);
-        getElement().getStyle().setWidth(100, Unit.PCT);
-        addHandlers();
-    }
-
-    protected void addHandlers() {
-        addDomHandler(new MouseDownHandler() {
-
+        super(new EmptyValueRenderer<String>() {
             @Override
-            public void onMouseDown(MouseDownEvent event) {
-                if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
-                    setFocus(true);
-                    selectAll();
-                }
-            }
-
-        }, MouseDownEvent.getType());
-
-        addFocusHandler(new FocusHandler() {
-
-            @Override
-            public void onFocus(FocusEvent event) {
-                hasFocus = true;
-            }
-        });
-
-        addBlurHandler(new BlurHandler() {
-
-            @Override
-            public void onBlur(BlurEvent event) {
-                hasFocus = false;
+            public String render(String value) {
+                String renderedText = super.render(value);
+                renderedText = SafeHtmlUtils.htmlEscape(renderedText);
+                return renderedText;
             }
         });
     }
@@ -63,34 +31,54 @@ public class TextBoxLabel extends TextBox {
         setText(text);
     }
 
-    public TextBoxLabel(boolean handleEmptyValue, String unAvailablePropertyLabel) {
-        this();
-        this.handleEmptyValue = handleEmptyValue;
-        this.unAvailablePropertyLabel = unAvailablePropertyLabel;
+    @Override
+    protected void addHandlers() {
+        super.addHandlers();
+
+        addFocusHandler(new FocusHandler() {
+            @Override
+            public void onFocus(FocusEvent event) {
+                hasFocus = true;
+            }
+        });
+
+        addBlurHandler(new BlurHandler() {
+            @Override
+            public void onBlur(BlurEvent event) {
+                hasFocus = false;
+            }
+        });
+    }
+
+    /**
+     * Overridden to return "" from an empty text box.
+     *
+     * @see com.google.gwt.user.client.ui.TextBoxBase#getValue()
+     */
+    @Override
+    public String getValue() {
+        String raw = super.getValue();
+        return raw == null ? "" : raw; //$NON-NLS-1$
     }
 
     @Override
     public void setText(String text) {
-        String renderedText = new EmptyValueRenderer<String>(
-                handleEmptyValue ? unAvailablePropertyLabel : "").render(text); //$NON-NLS-1$
-        renderedText = unEscapeRenderedText(renderedText);
+        super.setText(text);
 
         final int cursorPosition = getCursorPos();
         final int selectionLength = getSelectionLength();
 
-        super.setText(renderedText);
+        String renderedText = text;
         if (getTooltipCaption() != null) {
             renderedText = getTooltipCaption() + ": " + renderedText; //$NON-NLS-1$
         }
         setTitle(renderedText);
 
         if (hasFocus) {
-
-            // needs to be deferred, because the setSelection works
+            // Needs to be deferred, because the setSelection works
             // only after the element has been attached to the document
             // which is not yet true
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
                 @Override
                 public void execute() {
                     setFocus(true);
@@ -98,11 +86,6 @@ public class TextBoxLabel extends TextBox {
                 }
             });
         }
-    }
-
-    private String unEscapeRenderedText(String renderedText) {
-        renderedText = renderedText.replace("&lt;", "<"); //$NON-NLS-1$ //$NON-NLS-2$
-        return renderedText;
     }
 
     public String getTooltipCaption() {
