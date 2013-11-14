@@ -41,9 +41,7 @@ public class ActivateStorageDomainCommandTest {
 
     @Test
     public void internalLockedAllowed() {
-        testInternalExecution(StorageDomainStatus.Locked);
-        canDoActionSucceeds();
-        noIllegalStatusMessage();
+        internalActionAllowed(StorageDomainStatus.Locked);
     }
 
     @Test
@@ -56,58 +54,44 @@ public class ActivateStorageDomainCommandTest {
 
     @Test
     public void internalInactiveAllowed() {
-        testInternalExecution(StorageDomainStatus.InActive);
-        canDoActionSucceeds();
-        noIllegalStatusMessage();
+        internalActionAllowed(StorageDomainStatus.InActive);
     }
 
     @Test
     public void nonInternalInactiveAllowed() {
-        testExecution(StorageDomainStatus.InActive);
-        canDoActionSucceeds();
-        noIllegalStatusMessage();
+        nonInternalActionAllowed(StorageDomainStatus.InActive);
     }
 
     @Test
     public void activeDisallowed() {
         testExecution(StorageDomainStatus.Active);
-        canDoActionFails();
-        hasIllegalStatusMessage();
+        testActionDisallowed();
     }
 
     @Test
     public void internalActiveDisallowed() {
         testInternalExecution(StorageDomainStatus.Active);
-        canDoActionFails();
-        hasIllegalStatusMessage();
+        testActionDisallowed();
     }
 
     @Test
     public void internalUnknownAllowed() {
-        testInternalExecution(StorageDomainStatus.Unknown);
-        canDoActionSucceeds();
-        noIllegalStatusMessage();
+        internalActionAllowed(StorageDomainStatus.Unknown);
     }
 
     @Test
     public void nonInternalUnknownAllowed() {
-        testExecution(StorageDomainStatus.Unknown);
-        canDoActionSucceeds();
-        noIllegalStatusMessage();
+        nonInternalActionAllowed(StorageDomainStatus.Unknown);
     }
 
     @Test
     public void internalMaintenanceAllowed() {
-        testInternalExecution(StorageDomainStatus.Maintenance);
-        canDoActionSucceeds();
-        noIllegalStatusMessage();
+        internalActionAllowed(StorageDomainStatus.Maintenance);
     }
 
     @Test
     public void nonInternalMaintenanceAllowed() {
-        testExecution(StorageDomainStatus.Maintenance);
-        canDoActionSucceeds();
-        noIllegalStatusMessage();
+        nonInternalActionAllowed(StorageDomainStatus.Maintenance);
     }
 
     @Test
@@ -116,6 +100,26 @@ public class ActivateStorageDomainCommandTest {
         canDoActionFails();
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
                 VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL.name()));
+    }
+
+    private void testActionAllowed() {
+        canDoActionSucceeds();
+        noIllegalStatusMessage();
+    }
+
+    private void testActionDisallowed() {
+        canDoActionFails();
+        hasIllegalStatusMessage();
+    }
+
+    public void internalActionAllowed(StorageDomainStatus status) {
+        testInternalExecution(status);
+        testActionAllowed();
+    }
+
+    public void nonInternalActionAllowed(StorageDomainStatus status) {
+        testExecution(status);
+        testActionAllowed();
     }
 
     private void testNonActiveVdsExecution(StorageDomainStatus status) {
