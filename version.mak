@@ -32,4 +32,4 @@ MILESTONE=
 # RPM_RELEASE=N
 # while N is incremented each re-release
 #
-RPM_RELEASE=1
+RPM_RELEASE=2
