@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 
@@ -33,6 +35,15 @@ public interface NetworkProviderProxy extends ProviderProxy {
      * @return A list of the networks available from the provider.
      */
     List<Network> getAll();
+
+    /**
+     * Retrieve a list of all subnets that are associated with the given network.
+     *
+     * @param network
+     *            The network to get the subnets for.
+     * @return A list of all subnets for the network.
+     */
+    List<ExternalSubnet> getAllSubnets(ProviderNetwork network);
 
     /**
      * Allocate the vNIC on the network in the provider.

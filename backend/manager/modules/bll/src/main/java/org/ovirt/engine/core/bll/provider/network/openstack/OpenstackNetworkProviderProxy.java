@@ -15,6 +15,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -32,6 +34,8 @@ import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.NetworkForCreate;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.Subnet;
+import com.woorea.openstack.quantum.model.Subnets;
 
 public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 
@@ -119,6 +123,31 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         } catch (RuntimeException e) {
             throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
         }
+    }
+
+    @Override
+    public List<ExternalSubnet> getAllSubnets(ProviderNetwork network) {
+        List<ExternalSubnet> result = new ArrayList<>();
+        Subnets subnets = getClient().subnets().list().execute();
+        for (Subnet subnet : subnets.getList()) {
+            if (network.getExternalId().equals(subnet.getNetworkId())) {
+                result.add(map(subnet, network));
+            }
+        }
+
+        return result;
+    }
+
+    private ExternalSubnet map(Subnet subnet, ProviderNetwork network) {
+        ExternalSubnet s = new ExternalSubnet();
+        s.setId(subnet.getId());
+        s.setCidr(subnet.getCidr());
+        s.setIpVersion(Subnet.IpVersion.IPV6.equals(subnet.getIpversion())
+                ? IpVersion.IPV6
+                : IpVersion.IPV4);
+        s.setName(subnet.getName());
+        s.setExternalNetwork(network);
+        return s;
     }
 
     @Override
