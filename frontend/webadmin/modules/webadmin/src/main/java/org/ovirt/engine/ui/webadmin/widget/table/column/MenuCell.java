@@ -1,11 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.MenuPanelPopup;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -15,6 +11,8 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.logical.shared.InitializeEvent;
+import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -69,26 +67,23 @@ public class MenuCell<T> extends AbstractCell<T> {
         }
     }
 
-    public void addMenuItem(String title, final UICommand command) {
-        final MenuItem menuItem = new MenuItem(title, new Command() {
+    public void addMenuItem(final ActionButtonDefinition<T> buttonDef) {
+        final MenuItem menuItem = new MenuItem(buttonDef.getTitle(), new Command() {
             @Override
             public void execute() {
                 menuPanelPopup.asPopupPanel().hide();
-                command.execute();
+                buttonDef.onClick(null);
             }
         });
-        menuItem.setEnabled(command.getIsExecutionAllowed());
+        menuItem.setEnabled(buttonDef.isEnabled(null));
 
-        command.getPropertyChangedEvent().addListener(new IEventListener() {
+        // Update button whenever its definition gets re-initialized
+        buttonDef.addInitializeHandler(new InitializeHandler() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.PropertyName.equals("IsExecutionAllowed")) { //$NON-NLS-1$
-                    menuItem.setEnabled(command.getIsExecutionAllowed());
-                }
+            public void onInitialize(InitializeEvent event) {
+                menuItem.setEnabled(buttonDef.isEnabled(null));
             }
         });
-
         menuPanelPopup.getMenuBar().addItem(menuItem);
     }
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
     Translator transportTypeTranslator = EnumTranslator.Create(TransportType.class);
 
     @Inject
-    public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider, ApplicationConstants constants) {
+    public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider,
+            ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
@@ -88,7 +88,6 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 };
         getTable().addColumn(numOfBricksColumn, constants.numberOfBricksVolume(), "150px"); //$NON-NLS-1$
 
-
         MenuCell<GlusterTaskSupport> rebalanceMenuCell = getRebalanceActivityMenu(constants);
         MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu(constants);
         List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
@@ -113,9 +112,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         });
 
         getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(list),
-                constants.activitiesOnVolume(),
-                "100px"); //$NON-NLS-1$
-
+                constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
@@ -162,8 +159,21 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return value.getAsyncTask() != null && value.getAsyncTask().getType() == GlusterTaskType.REBALANCE;
             }
         };
-        menuCell.addMenuItem(constants.statusRebalance(), getMainModel().getStatusRebalanceCommand());
-        menuCell.addMenuItem(constants.stopRebalance(), getMainModel().getStopRebalanceCommand());
+
+        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.statusRebalance()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getStatusRebalanceCommand();
+            }
+        });
+
+        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.stopRebalance()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getStopRebalanceCommand();
+            }
+        });
+
         return menuCell;
     }
 
@@ -174,14 +184,39 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return value.getAsyncTask() != null && value.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
             }
         };
-        menuCell.addMenuItem(constants.removeBricksStatus(), getMainModel().getBrickListModel()
-                .getStatusRemoveBricksCommand());
-        menuCell.addMenuItem(constants.removeBricksStop(), getMainModel().getBrickListModel()
-                .getStopRemoveBricksCommand());
-        menuCell.addMenuItem(constants.removeBricksCommit(), getMainModel().getBrickListModel()
-                .getCommitRemoveBricksCommand());
-        menuCell.addMenuItem(constants.retainBricks(), getMainModel().getBrickListModel()
-                .getRetainBricksCommand());
+
+        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksStatus()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getBrickListModel()
+                        .getStatusRemoveBricksCommand();
+            }
+        });
+
+        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksStop()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getBrickListModel()
+                        .getStopRemoveBricksCommand();
+            }
+        });
+
+        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksCommit()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getBrickListModel()
+                        .getCommitRemoveBricksCommand();
+            }
+        });
+
+        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.retainBricks()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getBrickListModel()
+                        .getRetainBricksCommand();
+            }
+        });
+
         return menuCell;
     }
 }
