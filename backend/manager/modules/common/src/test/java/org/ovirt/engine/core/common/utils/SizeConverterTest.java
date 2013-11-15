@@ -14,39 +14,42 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 public class SizeConverterTest {
-
     @Test
-    public void testMegasToBytes() {
-        int megabytes = 3;
-        long bytes = SizeConverter.megasToBytes(megabytes);
+    public void testConvertMBToBytes() {
+        long megabytes = 3L;
+        long bytes = SizeConverter.convert(megabytes, SizeConverter.SizeUnit.MB,
+                SizeConverter.SizeUnit.BYTES).longValue();
         assertEquals(bytes, 3145728);
     }
 
     @Test
-    public void testGigasToBytes() {
-        int gigabytes = 3;
-        long bytes = SizeConverter.gigasToBytes(gigabytes);
+    public void testCobvertGBToBytes() {
+        long gigabytes = 3L;
+        long bytes = SizeConverter.convert(gigabytes, SizeConverter.SizeUnit.GB,
+                SizeConverter.SizeUnit.BYTES).longValue();
         assertEquals(bytes, 3221225472L);
     }
 
     @Test
-    public void testBytestoGigas() {
+    public void testConvertBytestoGB() {
         long bytes = 3221228000L;
-        int gigabytes = (int)SizeConverter.bytesToGigas(bytes);
+        int gigabytes = SizeConverter.convert(bytes, SizeConverter.SizeUnit.BYTES,
+                SizeConverter.SizeUnit.GB).intValue();
         assertEquals(gigabytes, 3);
     }
 
     @Test
-    public void testBytestoMegas() {
-        long bytes = 3160000;
-        int megabytes = (int)SizeConverter.bytesToMegas(bytes);
+    public void testConvertBytestoMB() {
+        long bytes = 3160000L;
+        int megabytes = SizeConverter.convert(bytes, SizeConverter.SizeUnit.BYTES,
+                SizeConverter.SizeUnit.MB).intValue();
         assertEquals(megabytes, 3);
     }
 }

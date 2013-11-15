@@ -2,13 +2,13 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.api.common.util.SizeConverter;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LunStatus;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 
 public class StorageLogicalUnitMapper {
 
@@ -40,7 +40,9 @@ public class StorageLogicalUnitMapper {
         if (entity.getStatus() != null) {
             model.setStatus(map(entity.getStatus(), null).value());
         }
-        model.setSize(SizeConverter.gigasToBytes(entity.getDeviceSize()));
+        model.setSize(SizeConverter.convert((long)entity.getDeviceSize(),
+                SizeConverter.SizeUnit.GB, SizeConverter.SizeUnit.BYTES).longValue());
+
         model.setPaths(entity.getPathCount());
         return model;
     }

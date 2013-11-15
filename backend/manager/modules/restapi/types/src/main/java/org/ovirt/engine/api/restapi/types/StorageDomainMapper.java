@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.util.SizeConverter;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.Storage;
@@ -15,6 +14,7 @@ import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 
 public class StorageDomainMapper {
 
@@ -135,12 +135,15 @@ public class StorageDomainMapper {
             model.getStorage().getVolumeGroup().setId(entity.getStorage());
         }
         if (entity.getAvailableDiskSize()!= null) {
-            model.setAvailable(SizeConverter.gigasToBytes(entity.getAvailableDiskSize().longValue()));
+            model.setAvailable(SizeConverter.convert(entity.getAvailableDiskSize().longValue(),
+                    SizeConverter.SizeUnit.GB, SizeConverter.SizeUnit.BYTES).longValue());
         }
         if (entity.getUsedDiskSize()!= null) {
-            model.setUsed(SizeConverter.gigasToBytes(entity.getUsedDiskSize().longValue()));
+            model.setUsed(SizeConverter.convert(entity.getUsedDiskSize().longValue(),
+                    SizeConverter.SizeUnit.GB, SizeConverter.SizeUnit.BYTES).longValue());
         }
-        model.setCommitted(SizeConverter.gigasToBytes(entity.getCommittedDiskSize()));
+        model.setCommitted(SizeConverter.convert(entity.getCommittedDiskSize(),
+                SizeConverter.SizeUnit.GB, SizeConverter.SizeUnit.BYTES).longValue());
         if (entity.getStorageFormat()!= null) {
             String storageFormat = StorageFormatMapper.map(entity.getStorageFormat(), null).value();
             if (storageFormat != null) {
