@@ -1115,7 +1115,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     vnicInstanceTypes.add(vnicInstanceType);
                 }
 
-                getModel().getVnicProfiles().setItems(profiles);
+                getModel().getNicsWithLogicalNetworks().getVnicProfiles().setItems(profiles);
                 getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
                 getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
             }

@@ -9,23 +9,17 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstancesModel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, VnicInstanceType, ProfileInstanceTypeEditor> implements HasElementId {
-
-    interface Driver extends SimpleBeanEditorDriver<ListModel, ProfilesInstanceTypeEditor> {
-    }
-
-    private final Driver driver = GWT.create(Driver.class);
+public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstancesModel, VnicInstanceType, ProfileInstanceTypeEditor> implements HasElementId {
 
     interface WidgetUiBinder extends UiBinder<Widget, ProfilesInstanceTypeEditor> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -39,7 +33,6 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
 
     private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
-    private ListModel profilesModel;
     private Iterable<VnicProfileView> vnicProfiles;
     private final List<VmNetworkInterface> vnics;
     private int realEntryCount;
@@ -47,7 +40,6 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
     public ProfilesInstanceTypeEditor() {
         vnics = new ArrayList<VmNetworkInterface>();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        driver.initialize(this);
     }
 
     @Override
@@ -56,8 +48,8 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
     }
 
     @Override
-    protected void init(ListModel model) {
-        vnicProfiles = profilesModel.getItems();
+    protected void init(VnicInstancesModel model) {
+        vnicProfiles = model.getVnicProfiles().getItems();
         if (vnicProfiles == null) {
             vnicProfiles = new ArrayList<VnicProfileView>();
         }
@@ -73,28 +65,6 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<ListModel, Vn
 
         realEntryCount = vnics.size() - 1; // don't count the ghost entry
         updateHeaderLabel();
-    }
-
-    public void edit(ListModel vnicsModel, ListModel profilesModel) {
-        this.profilesModel = profilesModel;
-        super.edit(vnicsModel);
-        driver.edit(vnicsModel);
-    }
-
-    /**
-     * @deprecated Please use {@link #edit(ListModel, ListModel)} instead.
-     **/
-    @Deprecated
-    @Override
-    public void edit(ListModel model) {
-        edit(model, null);
-    }
-
-
-    @Override
-    public ListModel flush() {
-        super.flush();
-        return driver.flush();
     }
 
     private void updateHeaderLabel() {

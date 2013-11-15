@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -116,23 +115,13 @@ public class UnitVmModel extends Model {
         this.dataCenterWithClustersList = dataCenterWithClustersList;
     }
 
-    private ListModel<VnicProfileView> vnicProfiles;
+    private VnicInstancesModel nicsWithLogicalNetworks;
 
-    public ListModel<VnicProfileView> getVnicProfiles() {
-        return vnicProfiles;
-    }
-
-    private void setVnicProfiles(ListModel<VnicProfileView> vnicProfiles) {
-        this.vnicProfiles = vnicProfiles;
-    }
-
-    private ListModel<VnicInstanceType> nicsWithLogicalNetworks;
-
-    public ListModel<VnicInstanceType> getNicsWithLogicalNetworks() {
+    public VnicInstancesModel getNicsWithLogicalNetworks() {
         return nicsWithLogicalNetworks;
     }
 
-    public void setNicsWithLogicalNetworks(ListModel<VnicInstanceType> nicsWithLogicalNetworks) {
+    public void setNicsWithLogicalNetworks(VnicInstancesModel nicsWithLogicalNetworks) {
         this.nicsWithLogicalNetworks = nicsWithLogicalNetworks;
     }
 
@@ -1167,8 +1156,7 @@ public class UnitVmModel extends Model {
         this.behavior = behavior;
         this.behavior.setModel(this);
 
-        setVnicProfiles(new ListModel<VnicProfileView>());
-        setNicsWithLogicalNetworks(new ListModel<VnicInstanceType>());
+        setNicsWithLogicalNetworks(new VnicInstancesModel());
         setAdvancedMode(new EntityModel<Boolean>(false));
         setStorageDomain(new NotChangableForVmInPoolListModel<StorageDomain>());
         setName(new NotChangableForVmInPoolEntityModel<String>());
