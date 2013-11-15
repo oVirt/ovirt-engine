@@ -51,6 +51,7 @@ public class AboutPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     void localize(ApplicationConstants constants,
             ApplicationDynamicMessages dynamicMessages) {
         closeButton.setText(constants.closeButtonLabel());
+        titleLabel.setText(constants.aboutPopupCaption());
         copyrightNotice.setText(dynamicMessages.copyRightNotice());
     }
 
