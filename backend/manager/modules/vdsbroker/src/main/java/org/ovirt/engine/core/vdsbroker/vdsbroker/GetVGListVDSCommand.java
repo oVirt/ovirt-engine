@@ -5,6 +5,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -43,11 +44,11 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
             sDomain.setStorage(vg.get("vgUUID").toString());
             Long size = IrsBrokerCommand.AssignLongValue(vg, "vgfree");
             if (size != null) {
-                sDomain.setAvailableDiskSize((int) (size / IrsBrokerCommand.BYTES_TO_GB));
+                sDomain.setAvailableDiskSize((int) (size / SizeConverter.BYTES_IN_GB));
             }
             size = IrsBrokerCommand.AssignLongValue(vg, "vgsize");
             if (size != null && sDomain.getAvailableDiskSize() != null) {
-                sDomain.setUsedDiskSize((int) (size / IrsBrokerCommand.BYTES_TO_GB)
+                sDomain.setUsedDiskSize((int) (size / SizeConverter.BYTES_IN_GB)
                         - sDomain.getAvailableDiskSize());
             }
             if (vg.containsKey("vgtype")) {

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.LunStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
@@ -114,7 +115,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             size = IrsBrokerCommand.AssignLongValue(xlun, "capacity");
         }
         if (size != null) {
-            lun.setDeviceSize((int) (size / IrsBrokerCommand.BYTES_TO_GB));
+            lun.setDeviceSize((int) (size / SizeConverter.BYTES_IN_GB));
         }
         if (xlun.containsKey("vendorID")) {
             lun.setVendorName(xlun.get("vendorID").toString());

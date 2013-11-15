@@ -85,7 +85,6 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 @Logged(errorLevel = LogLevel.ERROR)
 public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> extends BrokerCommandBase<P> {
-    public static final long BYTES_TO_GB = 1024 * 1024 * 1024;
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
 
     /**

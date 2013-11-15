@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -49,10 +50,10 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
                 }
             }
             Long size = IrsBrokerCommand.AssignLongValue(xmlRpcStruct, "diskfree");
-            domain.setAvailableDiskSize((size == null) ? null : (int) (size / IrsBrokerCommand.BYTES_TO_GB));
+            domain.setAvailableDiskSize((size == null) ? null : (int) (size / SizeConverter.BYTES_IN_GB));
             size = IrsBrokerCommand.AssignLongValue(xmlRpcStruct, "disktotal");
             domain.setUsedDiskSize((size == null || domain.getAvailableDiskSize() == null) ? null :
-                    (int) (size / IrsBrokerCommand.BYTES_TO_GB) - domain.getAvailableDiskSize());
+                    (int) (size / SizeConverter.BYTES_IN_GB) - domain.getAvailableDiskSize());
             if (xmlRpcStruct.containsKey("alerts")) {
                 Object[] rawAlerts = (Object[]) xmlRpcStruct.get("alerts");
                 Set<VdcBllErrors> alerts = new HashSet<VdcBllErrors>(rawAlerts.length);
