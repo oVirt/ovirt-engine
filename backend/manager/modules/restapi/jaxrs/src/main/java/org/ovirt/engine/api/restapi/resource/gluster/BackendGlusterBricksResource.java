@@ -281,7 +281,25 @@ public class BackendGlusterBricksResource
 
     @Override
     public Response activate(Action action) {
-        return stopMigrate(action);
+        validateParameters(action, "bricks");
+        validateBrickNames(action);
+
+        GlusterVolumeEntity volume =
+                getEntity(GlusterVolumeEntity.class,
+                        VdcQueryType.GetGlusterVolumeById,
+                        new IdQueryParameters(asGuid(getVolumeId())),
+                        "");
+
+        if (volume.getAsyncTask() != null && volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
+                && volume.getAsyncTask().getStatus() == JobExecutionStatus.FINISHED) {
+            return stopMigrate(action);
+        } else {
+            Fault fault = new Fault();
+            fault.setReason(localize(Messages.CANNOT_ACTIVATE_UNLESS_MIGRATION_COMPLETED));
+            throw new WebApplicationException(Response.status(Response.Status.CONFLICT)
+                    .entity(fault)
+                    .build());
+        }
     }
 
     @Override

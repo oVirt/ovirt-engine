@@ -3948,7 +3948,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=activate
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/activate|rel=activate
   description: activates the bricks post migration of data for reuse
   request:
     body:
