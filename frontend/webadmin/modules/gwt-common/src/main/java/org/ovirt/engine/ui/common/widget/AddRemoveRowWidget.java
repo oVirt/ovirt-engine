@@ -39,7 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <V>
  *            the type of widget used to display each value.
  */
-public abstract class AddRemoveRowWidget<M extends ListModel, T, V extends Widget & HasValueChangeHandlers<T>> extends AbstractModelBoundPopupWidget<M> {
+public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Widget & HasValueChangeHandlers<T>> extends AbstractModelBoundPopupWidget<M> {
 
     public interface WidgetStyle extends CssResource {
         String buttonStyle();

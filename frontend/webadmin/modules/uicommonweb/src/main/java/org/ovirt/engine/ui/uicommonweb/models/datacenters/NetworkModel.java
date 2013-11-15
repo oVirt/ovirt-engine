@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -57,10 +58,9 @@ public abstract class NetworkModel extends Model
     private boolean isSupportBridgesReportByVDSM = false;
     private boolean mtuOverrideSupported = false;
     private ListModel privateDataCenters;
-    private ListModel profiles;
+    private NetworkProfilesModel profiles;
     private final Network network;
     private final ListModel sourceListModel;
-    private VnicProfileModel defaultProfile;
 
     public NetworkModel(ListModel sourceListModel)
     {
@@ -127,10 +127,11 @@ public abstract class NetworkModel extends Model
         EntityModel publicUse = new EntityModel();
         publicUse.setEntity(true);
 
-        setProfiles(new ListModel());
-        defaultProfile = createDefaultProfile();
+        setProfiles(new NetworkProfilesModel());
+        VnicProfileModel defaultProfile = createDefaultProfile();
         List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
         profiles.add(defaultProfile);
+        getProfiles().setDefaultProfile(defaultProfile);
         getProfiles().setItems(profiles);
 
         // Update changeability according to initial values
@@ -346,12 +347,12 @@ public abstract class NetworkModel extends Model
         privateDataCenters = value;
     }
 
-    public ListModel getProfiles()
+    public NetworkProfilesModel getProfiles()
     {
         return profiles;
     }
 
-    private void setProfiles(ListModel value)
+    private void setProfiles(NetworkProfilesModel value)
     {
         profiles = value;
     }
@@ -362,10 +363,6 @@ public abstract class NetworkModel extends Model
 
     public ListModel getSourceListModel() {
         return sourceListModel;
-    }
-
-    public VnicProfileModel getDefaultProfile() {
-        return defaultProfile;
     }
 
     public boolean validate()
@@ -441,13 +438,7 @@ public abstract class NetworkModel extends Model
 
         onExportChanged();
 
-        initProfiles();
-    }
-
-    private void initProfiles() {
-        for (VnicProfileModel profile : (Iterable<VnicProfileModel>) getProfiles().getItems()) {
-            profile.updateDc(getSelectedDc().getcompatibility_version(), getSelectedDc().getId());
-        }
+        getProfiles().updateDcId(dc.getId());
     }
 
     protected void addCommands() {
@@ -486,7 +477,7 @@ public abstract class NetworkModel extends Model
             network.setVlanId(Integer.parseInt(getVLanTag().getEntity().toString()));
         }
 
-        for (VnicProfileModel profileModel : (List<VnicProfileModel>) getProfiles().getItems()) {
+        for (VnicProfileModel profileModel : getProfiles().getItems()) {
             profileModel.flush();
         }
     }

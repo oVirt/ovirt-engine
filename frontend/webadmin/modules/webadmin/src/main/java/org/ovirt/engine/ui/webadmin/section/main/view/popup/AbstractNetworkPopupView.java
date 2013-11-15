@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -365,7 +363,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @Override
     public void edit(T model) {
-        profilesEditor.edit(model.getProfiles(), model.getDefaultProfile());
+        profilesEditor.edit(model.getProfiles());
     }
 
     @Override
@@ -382,11 +380,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public void toggleProfilesVisibility(boolean visible) {
         profilesTab.setVisible(visible);
-    }
-
-    @Override
-    public void updateDc(Version dcCompatibilityVersion, Guid dcId) {
-        profilesEditor.updateDc(dcCompatibilityVersion, dcId);
     }
 
     interface WidgetStyle extends CssResource {

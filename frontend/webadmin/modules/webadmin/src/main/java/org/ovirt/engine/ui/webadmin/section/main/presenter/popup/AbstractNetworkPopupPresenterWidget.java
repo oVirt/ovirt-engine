@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -22,8 +19,6 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         void updateVisibility();
 
         void toggleProfilesVisibility(boolean visible);
-
-        void updateDc(Version dcCompatibilityVersion, Guid dcId);
     }
 
     public AbstractNetworkPopupPresenterWidget(EventBus eventBus, V view) {
@@ -53,14 +48,6 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 getView().toggleProfilesVisibility((Boolean) model.getIsVmNetwork().getEntity());
-            }
-        });
-
-        model.getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                StoragePool dc = model.getSelectedDc();
-                getView().updateDc(dc.getcompatibility_version(), dc.getId());
             }
         });
     }

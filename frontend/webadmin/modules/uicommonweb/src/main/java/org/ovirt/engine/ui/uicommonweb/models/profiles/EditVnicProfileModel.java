@@ -31,6 +31,10 @@ public class EditVnicProfileModel extends VnicProfileModel {
         this(sourceModel, dcCompatibilityVersion, profile, dcId, true);
     }
 
+    public EditVnicProfileModel(VnicProfile profile) {
+        this(null, null, profile, null, false);
+    }
+
     @Override
     protected void initCustomProperties() {
         getCustomPropertySheet().setEntity(KeyValueModel

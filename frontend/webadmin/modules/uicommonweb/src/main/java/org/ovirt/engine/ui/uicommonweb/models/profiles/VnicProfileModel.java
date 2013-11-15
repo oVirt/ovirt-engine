@@ -44,12 +44,10 @@ public abstract class VnicProfileModel extends Model {
     private EntityModel publicUse;
     private EntityModel description;
     private final EntityModel sourceModel;
-    private Version dcCompatibilityVersion;
     private ListModel network;
     private ListModel networkQoS;
     private VnicProfile vnicProfile = null;
     private final boolean customPropertiesVisible;
-    private Guid dcId;
     private final Guid defaultQosId;
 
     private static NetworkQoS getEmptyQos() {
@@ -105,20 +103,12 @@ public abstract class VnicProfileModel extends Model {
         this.description = description;
     }
 
-    public Version getDcCompatibilityVersion() {
-        return dcCompatibilityVersion;
-    }
-
     public ListModel getNetwork() {
         return network;
     }
 
     public void setNetwork(ListModel network) {
         this.network = network;
-    }
-
-    public EntityModel getSourceModel() {
-        return sourceModel;
     }
 
     public void setProfile(VnicProfile vnicProfile) {
@@ -135,14 +125,6 @@ public abstract class VnicProfileModel extends Model {
 
     public void setNetworkQoS(ListModel networkQoS) {
         this.networkQoS = networkQoS;
-    }
-
-    public Guid getDcId() {
-        return dcId;
-    }
-
-    public void setDcId(Guid dcId) {
-        this.dcId = dcId;
     }
 
     public VnicProfileModel(EntityModel sourceModel,
@@ -164,16 +146,9 @@ public abstract class VnicProfileModel extends Model {
         setPublicUse(publicUse);
         setDescription(new EntityModel());
 
-        updateDc(dcCompatibilityVersion, dcId);
+        initCustomPropertySheet(dcCompatibilityVersion);
+        initNetworkQoSList(dcId);
         initCommands();
-    }
-
-    public void updateDc(Version dcCompatibilityVersion, Guid dcId) {
-        this.dcCompatibilityVersion = dcCompatibilityVersion;
-        this.dcId = dcId;
-
-        initCustomPropertySheet();
-        initNetworkQoSList();
     }
 
     protected void initCommands() {
@@ -264,13 +239,13 @@ public abstract class VnicProfileModel extends Model {
         }
     }
 
-    private void initCustomPropertySheet() {
+    private void initCustomPropertySheet(Version dcCompatibilityVersion) {
         if (!customPropertiesVisible) {
             return;
         }
 
         GetDeviceCustomPropertiesParameters params = new GetDeviceCustomPropertiesParameters();
-        params.setVersion(getDcCompatibilityVersion());
+        params.setVersion(dcCompatibilityVersion);
         params.setDeviceType(VmDeviceGeneralType.INTERFACE);
         startProgress(null);
         Frontend.getInstance().runQuery(VdcQueryType.GetDeviceCustomProperties,
@@ -298,8 +273,8 @@ public abstract class VnicProfileModel extends Model {
                         }));
     }
 
-    private void initNetworkQoSList() {
-        if (getDcId() == null) {
+    public void initNetworkQoSList(Guid dcId) {
+        if (dcId == null) {
             return;
         }
 
@@ -317,7 +292,7 @@ public abstract class VnicProfileModel extends Model {
             }
         };
 
-        IdQueryParameters queryParams = new IdQueryParameters(getDcId());
+        IdQueryParameters queryParams = new IdQueryParameters(dcId);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, queryParams, _asyncQuery);
     }
 
