@@ -139,10 +139,6 @@ class Plugin(plugin.PluginBase):
                     "\n"
                 ),
             )
-        else:
-            self.dialog.note(
-                text=_('Using existing credentials'),
-            )
 
         connectionValid = False
         while not connectionValid:
