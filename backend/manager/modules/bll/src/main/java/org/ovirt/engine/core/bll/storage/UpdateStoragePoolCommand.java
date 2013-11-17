@@ -93,7 +93,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         final Version spVersion = storagePool.getcompatibility_version();
         final Version oldSpVersion = _oldStoragePool.getcompatibility_version();
 
-        if (Version.OpEquality(spVersion, oldSpVersion)) {
+        if (oldSpVersion.equals(spVersion)) {
             return;
         }
 
@@ -174,7 +174,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         }
         returnValue = returnValue && checkStoragePoolNameLengthValid();
         if (returnValue
-                && Version.OpInequality(_oldStoragePool.getcompatibility_version(), getStoragePool()
+                && !_oldStoragePool.getcompatibility_version().equals(getStoragePool()
                         .getcompatibility_version())) {
             if (!isStoragePoolVersionSupported()) {
                 addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
