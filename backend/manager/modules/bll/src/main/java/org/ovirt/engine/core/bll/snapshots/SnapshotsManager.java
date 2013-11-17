@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -392,10 +394,27 @@ public class SnapshotsManager {
                     vm.setVdsGroupCpuName(vdsGroup.getcpu_name());
                 }
             }
+            validateQuota(vm);
             return true;
         } catch (OvfReaderException e) {
             log.errorFormat("Failed to update VM from the configuration: {0}).", configuration, e);
             return false;
+        }
+    }
+
+    /**
+     * Validate whether the quota supplied in snapshot configuration exists in<br>
+     * current setup, if not reset to null.<br>
+     *
+     * @param vm
+     *            imported vm
+     */
+    private void validateQuota(VM vm) {
+        if (vm.getQuotaId() != null) {
+            Quota quota = getQuotaDao().getById(vm.getQuotaId());
+            if (quota == null) {
+                vm.setQuotaId(null);
+            }
         }
     }
 
@@ -544,5 +563,9 @@ public class SnapshotsManager {
 
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
+    }
+
+    protected QuotaDAO getQuotaDao() {
+        return DbFacade.getInstance().getQuotaDao();
     }
 }
