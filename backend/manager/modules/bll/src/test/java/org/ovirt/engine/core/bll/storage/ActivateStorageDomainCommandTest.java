@@ -63,7 +63,7 @@ public class ActivateStorageDomainCommandTest {
     }
 
     @Test
-    public void activeDisallowed() {
+    public void nonInternalActiveDisallowed() {
         testExecution(StorageDomainStatus.Active);
         testActionDisallowed();
     }
@@ -186,12 +186,12 @@ public class ActivateStorageDomainCommandTest {
 
     private void noIllegalStatusMessage() {
         assertFalse(cmd.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString()));
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
     }
 
     private void hasIllegalStatusMessage() {
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString()));
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString()));
     }
 
     private void setIsInternal() {

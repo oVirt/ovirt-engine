@@ -174,11 +174,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkStorageDomainStatusNotEqual(StorageDomainStatus status) {
         boolean returnValue = false;
-        if (getStorageDomain() != null && getStorageDomain().getStatus() != null) {
-            returnValue = (getStorageDomain().getStatus() != status);
+        if (getStorageDomainStatus() != null) {
+            returnValue = (getStorageDomainStatus() != status);
             if (!returnValue) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
-                addCanDoActionMessage(String.format("$status %1$s", getStorageDomain().getStatus()));
+                addStorageDomainStatusIllegalMessage();
             }
         }
         return returnValue;
@@ -378,8 +377,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return status;
     }
 
-    private void addStorageDomainStatusIllegalMessage() {
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+    protected void addStorageDomainStatusIllegalMessage() {
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
+        addCanDoActionMessage(String.format("$status %1$s", getStorageDomainStatus()));
     }
 
     protected BaseDiskDao getBaseDiskDao() {

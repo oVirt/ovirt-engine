@@ -57,7 +57,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                 return false;
             } else if (getStorageDomain() != null && getStorageDomain().getStatus() != null
                     && getStorageDomain().getStatus() == StorageDomainStatus.Active) {
-                addInvalidSDStatusMessage(getStorageDomain().getStatus());
+                addStorageDomainStatusIllegalMessage();
                 returnValue = false;
             } else if (electNewMaster(false) != null) {
                 getReturnValue().getCanDoActionMessages().add(

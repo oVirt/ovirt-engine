@@ -146,7 +146,7 @@ public class StorageDomainCommandBaseTest {
 
     private boolean commandHasInvalidStatusMessage() {
         return cmd.getReturnValue().getCanDoActionMessages().contains(
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
     }
 
     private void setStorageDomainStatus(StorageDomainStatus status) {
