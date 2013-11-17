@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.HashMap;
 
 public enum StorageType implements Identifiable {
+
     UNKNOWN(0, false),
     NFS(1, true),
     FCP(2, true),
@@ -10,9 +11,7 @@ public enum StorageType implements Identifiable {
     LOCALFS(4, true),
     POSIXFS(6, true),
     GLUSTERFS(7, true),
-    GLANCE(8, true),
-    // CIFS(5)
-    ALL(-1, false);
+    GLANCE(8, true);
 
     private int value;
     // this member is indicating whether then enum value represents an actual storage type

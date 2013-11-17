@@ -54,7 +54,7 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
             if (vg.containsKey("vgtype")) {
                 sDomain.setStorageType(EnumUtils.valueOf(StorageType.class, vg.get("vgtype").toString(), true));
             } else {
-                sDomain.setStorageType(StorageType.ALL);
+                sDomain.setStorageType(StorageType.UNKNOWN);
             }
             result.add(sDomain);
         }

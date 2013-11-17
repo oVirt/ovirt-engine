@@ -30,6 +30,7 @@ public class StorageTypeTest {
 
     @Test
     public void testNewStorageTypes() {
-        Assert.assertTrue("A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain method accordingly", StorageType.values().length == 9);
+        Assert.assertTrue("A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain " +
+                "method accordingly", StorageType.values().length == 8);
     }
 }
