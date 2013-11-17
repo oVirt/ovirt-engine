@@ -52,13 +52,13 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
     }
 
     @Override
-    protected void SortCommands() {
+    protected void sortCommands() {
         Collections.sort(getCommands(), new StorageDomainsByTypeComparer());
     }
 
     @Override
     protected void RunCommands() {
-        SortCommands();
+        sortCommands();
 
         for (final CommandBase<?> command : getCommands()) {
             if (command.getReturnValue().getCanDoAction()) {

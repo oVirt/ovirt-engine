@@ -22,7 +22,7 @@ public class MigrateVMActionRunner extends SortedMultipleActionsRunnerBase {
     }
 
     @Override
-    protected void SortCommands() {
+    protected void sortCommands() {
         ArrayList<CommandBase<?>> commands = getCommands();
         final Map<Guid, VM> vms = new HashMap<Guid, VM>(commands.size());
         for (CommandBase<?> cmd : commands) {

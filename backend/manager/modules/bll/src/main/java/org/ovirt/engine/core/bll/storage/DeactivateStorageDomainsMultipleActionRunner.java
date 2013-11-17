@@ -13,7 +13,7 @@ public class DeactivateStorageDomainsMultipleActionRunner extends SortedMultiple
     }
 
     @Override
-    protected void SortCommands() {
+    protected void sortCommands() {
         Collections.sort(getCommands(), Collections.reverseOrder(new StorageDomainsByTypeComparer()));
     }
 }

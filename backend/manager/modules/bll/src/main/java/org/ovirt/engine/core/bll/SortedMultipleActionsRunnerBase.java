@@ -9,11 +9,11 @@ public abstract class SortedMultipleActionsRunnerBase extends MultipleActionsRun
         super(actionType, parameters, isInternal);
     }
 
-    protected abstract void SortCommands();
+    protected abstract void sortCommands();
 
     @Override
     protected void RunCommands() {
-        SortCommands();
+        sortCommands();
         super.RunCommands();
     }
 }

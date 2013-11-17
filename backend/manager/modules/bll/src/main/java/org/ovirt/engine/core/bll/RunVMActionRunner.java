@@ -16,7 +16,7 @@ public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
     }
 
     @Override
-    protected void SortCommands() {
+    protected void sortCommands() {
 
         ArrayList<CommandBase<?>> commandsList = getCommands();
         HashMap<Guid, RunVmCommandBase<?>> runVmCommandsMap = new HashMap<Guid, RunVmCommandBase<?>>();
