@@ -34,7 +34,9 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -217,20 +219,28 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         StorageDomain masterDomain = getStorageDomainDAO().getStorageDomainByTypeAndPool(storagePoolId, StorageDomainType.Master);
         boolean masterDomainInactiveOrUnknown = masterDomain.getStatus() == StorageDomainStatus.InActive
                 || masterDomain.getStatus() == StorageDomainStatus.Unknown;
+        VDSError error = null;
         try {
-            runVdsCommand(VDSCommandType.ConnectStoragePool,
+            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.ConnectStoragePool,
                     new ConnectStoragePoolVDSCommandParameters(vds.getId(), storagePoolId,
                             vds.getVdsSpmId(), masterDomain.getId(),
                             storagePool.getmaster_domain_version()));
+            if (!vdsReturnValue.getSucceeded()) {
+                error = vdsReturnValue.getVdsError();
+            }
         } catch (VdcBLLException e) {
-            if (masterDomainInactiveOrUnknown) {
+            error = e.getVdsError();
+        }
+
+        if (error != null) {
+            if (error.getCode() != VdcBllErrors.CannotConnectMultiplePools && masterDomainInactiveOrUnknown) {
                 log.infoFormat("Could not connect host {0} to pool {1}, as the master domain is in inactive/unknown status - not failing the operation",
                         vds.getName(),
                         storagePool
                                 .getName());
             } else {
-                log.errorFormat("Could not connect host {0} to pool {1}", vds.getName(), storagePool
-                        .getName());
+                log.errorFormat("Could not connect host {0} to pool {1} with the message: {2}", vds.getName(), storagePool
+                        .getName(), error.getMessage());
                 result.setSuccess(false);
             }
         }
