@@ -1089,6 +1089,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Profiles")
     String networkProfileSubTabLabel();
 
+    @DefaultStringValue("Subnets")
+    String networkExternalSubnetSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String profilePermissions();
 
@@ -1159,6 +1162,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Remove")
     String removeVnicProfile();
+
+    // External Subnet
+    @DefaultStringValue("External ID")
+    String externalIdExternalSubnet();
+
+    @DefaultStringValue("Name")
+    String nameExternalSubnet();
+
+    @DefaultStringValue("CIDR")
+    String cidrExternalSubnet();
+
+    @DefaultStringValue("IP Version")
+    String ipVersionExternalSubnet();
 
     // Cluster
     @DefaultStringValue("Name")

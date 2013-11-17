@@ -292,6 +292,9 @@ public class ApplicationPlaces {
     public static final String networkProfileSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
             + "profiles"; //$NON-NLS-1$
 
+    public static final String networkExternalSubnetSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
+            + "external_subnets"; //$NON-NLS-1$
+
     public static final String networkClusterSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
             + "clusters"; //$NON-NLS-1$
 

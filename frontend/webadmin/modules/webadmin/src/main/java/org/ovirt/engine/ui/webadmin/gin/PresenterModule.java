@@ -155,6 +155,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostPe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkClusterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkExternalSubnetPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkPermissionPresenter;
@@ -367,6 +368,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostPermiss
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.NetworkSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkClusterView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkExternalSubnetView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkHostView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkPermissionView;
@@ -908,6 +910,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabNetworkProfilePresenter.ViewDef.class,
                 SubTabNetworkProfileView.class,
                 SubTabNetworkProfilePresenter.ProxyDef.class);
+        bindPresenter(SubTabNetworkExternalSubnetPresenter.class,
+                SubTabNetworkExternalSubnetPresenter.ViewDef.class,
+                SubTabNetworkExternalSubnetView.class,
+                SubTabNetworkExternalSubnetPresenter.ProxyDef.class);
         bindPresenter(SubTabNetworkClusterPresenter.class,
                 SubTabNetworkClusterPresenter.ViewDef.class,
                 SubTabNetworkClusterView.class,

@@ -354,4 +354,8 @@ public interface Enums extends LocalizedEnums {
     String ServiceType___SHD();
 
     String ServiceType___GLUSTER_SWIFT();
+
+    String ExternalSubnet$IpVersion___IPV4();
+
+    String ExternalSubnet$IpVersion___IPV6();
 }

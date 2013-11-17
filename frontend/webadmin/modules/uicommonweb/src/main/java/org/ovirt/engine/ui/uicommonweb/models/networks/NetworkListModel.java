@@ -47,6 +47,8 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
+    private NetworkExternalSubnetListModel networkExternalSubnetListModel;
+
     public NetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
         setHashName("networks"); //$NON-NLS-1$
@@ -167,10 +169,13 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     protected void initDetailModels() {
         super.initDetailModels();
 
+        networkExternalSubnetListModel = new NetworkExternalSubnetListModel();
+
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
 
         list.add(new NetworkGeneralModel());
         list.add(new NetworkProfileListModel());
+        list.add(networkExternalSubnetListModel);
         list.add(new NetworkClusterListModel());
         list.add(new NetworkHostListModel());
         list.add(new NetworkVmListModel());
@@ -178,6 +183,13 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         list.add(new PermissionListModel());
 
         setDetailModels(list);
+    }
+
+    @Override
+    protected void updateDetailsAvailability() {
+        super.updateDetailsAvailability();
+        NetworkView network = (NetworkView) getSelectedItem();
+        networkExternalSubnetListModel.setIsAvailable(network != null && network.isExternal());
     }
 
     @Override
