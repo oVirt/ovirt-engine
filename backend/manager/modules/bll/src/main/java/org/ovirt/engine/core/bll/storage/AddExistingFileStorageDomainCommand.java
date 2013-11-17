@@ -8,9 +8,14 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainsListVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddExistingFileStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         AddNFSStorageDomainCommand<T> {
@@ -49,7 +54,49 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
         setSucceeded(true);
     }
 
-    @Override
+    protected boolean checkExistingStorageDomain() {
+        boolean returnValue = true;
+        // prevent importing DATA domain
+        if (getParameters().getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DATA_DOMAIN_PROHIBITED);
+            return false;
+        }
+        if (DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            returnValue = false;
+        }
+        if (returnValue) {
+            java.util.ArrayList<Guid> storageIds = (java.util.ArrayList<Guid>) Backend
+                    .getInstance()
+                    .getResourceManager()
+                    .RunVdsCommand(
+                            VDSCommandType.HSMGetStorageDomainsList,
+                            new HSMGetStorageDomainsListVDSCommandParameters(getVdsId(), Guid.Empty, getStorageDomain()
+                                    .getStorageType(), getStorageDomain().getStorageDomainType(), ""))
+                    .getReturnValue();
+            if (!storageIds.contains(getStorageDomain().getId())) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+                returnValue = false;
+            } else {
+                Pair<StorageDomainStatic, SANState> domainFromIrs =
+                        (Pair<StorageDomainStatic, SANState>) Backend
+                                .getInstance()
+                                .getResourceManager()
+                                .RunVdsCommand(VDSCommandType.HSMGetStorageDomainInfo,
+                                        new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(),
+                                                getStorageDomain().getId()))
+                                .getReturnValue();
+                if (domainFromIrs != null
+                        && domainFromIrs.getFirst().getStorageDomainType() != getStorageDomain().getStorageDomainType()) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
+                    returnValue = false;
+                }
+                returnValue = returnValue && concreteCheckExistingStorageDomain(domainFromIrs);
+            }
+        }
+        return returnValue;
+    }
+
     protected boolean concreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domain) {
         boolean returnValue = false;
         StorageDomainStatic domainFromIrs = domain.getFirst();
