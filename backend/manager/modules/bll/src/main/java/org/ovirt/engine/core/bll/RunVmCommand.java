@@ -698,7 +698,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             Version vmToolsClusterVersion = null;
             if (getVm().getHasAgent()) {
                 Version clusterVer = getVm().getPartialVersion();
-                if (Version.OpEquality(clusterVer, new Version("4.4"))) {
+                if (new Version("4.4").equals(clusterVer)) {
                     vmToolsClusterVersion = new Version("2.1");
                 } else {
                     vmToolsClusterVersion = clusterVer;
@@ -724,8 +724,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                 || (clusterVer.compareTo(bestClusterVer) > 0)) {
                             bestToolVer = toolVersion;
                             bestClusterVer = clusterVer;
-                        } else if ((Version.OpEquality(clusterVer, bestClusterVer))
-                                && (toolVersion > bestToolVer)) {
+                        } else if (clusterVer.equals(bestClusterVer) && toolVersion > bestToolVer) {
                             bestToolVer = toolVersion;
                             bestClusterVer = clusterVer;
                         }
@@ -735,8 +734,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             if (bestClusterVer != null
                     && (vmToolsClusterVersion == null
-                            || vmToolsClusterVersion.compareTo(bestClusterVer) < 0 || (Version
-                            .OpEquality(vmToolsClusterVersion, bestClusterVer) && getVm().getHasAgent() &&
+                            || vmToolsClusterVersion.compareTo(bestClusterVer) < 0 || (vmToolsClusterVersion.equals(bestClusterVer)
+                            && getVm().getHasAgent() &&
                     getVm().getGuestAgentVersion().getBuild() < bestToolVer))) {
                 // Vm has no tools or there are new tools
                 selectedToolsVersion = (Integer.toString(bestToolVer));
