@@ -110,7 +110,7 @@
     </init-param>
     <init-param>
       <param-name>uri</param-name>
-      <param-value>/</param-value>
+      <param-value></param-value>
     </init-param>
   </servlet>
   <servlet-mapping>

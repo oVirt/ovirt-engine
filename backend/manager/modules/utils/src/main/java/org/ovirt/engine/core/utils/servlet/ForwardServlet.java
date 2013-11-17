@@ -116,29 +116,35 @@ public class ForwardServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
         ServletException {
-        final ServletContext forwardContext = getServletContext().getContext(targetContext);
-        if (forwardContext != null) {
-            String forwardUri = uri;
-            if (request.getPathInfo() != null) {
-                forwardUri += request.getPathInfo();
+
+        try {
+            if (!request.getRequestURI().startsWith(request.getContextPath() + request.getServletPath())) {
+                throw new RuntimeException("Unexpected request URI " + request.getRequestURI() +
+                    " with servlet path " + request.getContextPath() + request.getServletPath());
             }
+
+            final ServletContext forwardContext = getServletContext().getContext(targetContext);
+            if (forwardContext == null) {
+                throw new RuntimeException("Unable to determine forward context for " + targetContext);
+            }
+
+            final String forwardUri = uri + request.getRequestURI().substring(
+                request.getContextPath().length() + request.getServletPath().length());
             final RequestDispatcher dispatcher = forwardContext.getRequestDispatcher(forwardUri);
-            if (dispatcher != null) {
-                for (String initParam : Collections.list(getInitParameterNames())) {
-                    if (initParam.startsWith(ATTR_PREF)) {
-                        request.setAttribute(initParam.replaceFirst(ATTR_PREF, ""), getInitParameter(initParam));
-                    }
-                }
-                dispatcher.forward(request, response);
-            } else {
-                log.error("Unable to determine dispatcher");
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "unable to determine dispatcher");
+            if (dispatcher == null) {
+                throw new RuntimeException("Unable to determine dispatcher for " + forwardUri);
             }
-        } else {
-            log.error("Unable to determine forwarding context");
+
+            for (String initParam : Collections.list(getInitParameterNames())) {
+                if (initParam.startsWith(ATTR_PREF)) {
+                    request.setAttribute(initParam.replaceFirst(ATTR_PREF, ""), getInitParameter(initParam));
+                }
+            }
+            dispatcher.forward(request, response);
+        } catch(Exception e) {
+            log.error("Forward failed", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "unable to determine forward context");
+                    e.getMessage());
         }
     }
 
