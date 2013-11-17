@@ -4,20 +4,18 @@ import java.util.HashMap;
 
 public enum StorageType implements Identifiable {
 
-    UNKNOWN(0, false),
-    NFS(1, true),
-    FCP(2, true),
-    ISCSI(3, true),
-    LOCALFS(4, true),
-    POSIXFS(6, true),
-    GLUSTERFS(7, true),
-    GLANCE(8, true);
+    UNKNOWN(0),
+    NFS(1),
+    FCP(2),
+    ISCSI(3),
+    LOCALFS(4),
+    POSIXFS(6),
+    GLUSTERFS(7),
+    GLANCE(8);
 
     private int value;
-    // this member is indicating whether then enum value represents an actual storage type
-    private boolean isConcreteStorageType;
 
-    private static final java.util.HashMap<Integer, StorageType> mappings = new HashMap<Integer, StorageType>();
+    private static final HashMap<Integer, StorageType> mappings = new HashMap<Integer, StorageType>();
 
     static {
         for (StorageType storageType : values()) {
@@ -25,9 +23,8 @@ public enum StorageType implements Identifiable {
         }
     }
 
-    private StorageType(int value, boolean isConcreteStorageType) {
+    private StorageType(int value) {
         this.value = value;
-        this.isConcreteStorageType = isConcreteStorageType;
     }
 
     @Override
@@ -36,7 +33,7 @@ public enum StorageType implements Identifiable {
     }
 
     public boolean isConcreteStorageType() {
-        return this.isConcreteStorageType;
+        return this != UNKNOWN;
     }
 
     public static StorageType forValue(int value) {
@@ -50,5 +47,4 @@ public enum StorageType implements Identifiable {
     public boolean isBlockDomain() {
         return this == FCP || this == ISCSI;
     }
-
 }
