@@ -1368,8 +1368,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Host")
     String hostRoleTree();
 
-    @DefaultStringValue("Gluster")
-    String glusterRoleTree();
+    @DefaultStringValue("Volume")
+    String volumeRoleTree();
 
     @DefaultStringValue("Configure Volumes")
     String configureVolumesRoleTree();

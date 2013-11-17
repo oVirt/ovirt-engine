@@ -204,7 +204,7 @@ public class RoleTreeView
     }
 
     protected static RoleNode createGlusterRoleTree() {
-        return new RoleNode(getConstants().glusterRoleTree(), new RoleNode(getConstants().configureVolumesRoleTree(),
+        return new RoleNode(getConstants().volumeRoleTree(), new RoleNode(getConstants().configureVolumesRoleTree(),
                 new RoleNode[] {
                         new RoleNode(ActionGroup.CREATE_GLUSTER_VOLUME,
                                 getConstants().allowToCreateGlusterVolumesRoleTree()),
