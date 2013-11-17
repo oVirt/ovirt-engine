@@ -16,6 +16,7 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,9 +32,17 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
+    interface Style extends CssResource {
+        String labelStyle();
+        String contentStyle();
+    }
+
     @UiField
     @Path(value = "selectedItem")
     ProfileEditor profileEditor;
+
+    @UiField
+    Style style;
 
     private String elementId;
 
@@ -60,6 +69,8 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
         String vnicName = vnic.getName();
 
         profileEditor.setLabel(vnicName);
+        profileEditor.addLabelStyleName(style.labelStyle());
+        profileEditor.addContentWidgetStyleName(style.contentStyle());
         profileEditor.setElementId(ElementIdUtils.createElementId(elementId, vnicName));
         model.getSelectedItemChangedEvent().addListener(new IEventListener() {
 
