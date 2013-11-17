@@ -627,7 +627,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 if (!getVm().isInitialized()) {
                     getVm().setInitializationType(osRepository.isWindows(getVm().getVmOsId()) ?
                             InitializationType.Sysprep :
-                            InitializationType.CloudInit);
+                            // TODO: we should use cloud init automatically only when cloud init configuration will be available
+                            InitializationType.None);
                 }
             } else {
                 getVm().setInitializationType(getParameters().getInitializationType());
