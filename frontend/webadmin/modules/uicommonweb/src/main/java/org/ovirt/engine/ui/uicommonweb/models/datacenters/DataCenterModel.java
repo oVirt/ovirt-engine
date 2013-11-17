@@ -286,7 +286,7 @@ public class DataCenterModel extends Model
             isVersionInit = true;
             for (Version item : getVersion().getItems())
             {
-                if (Version.OpEquality(item, getEntity().getcompatibility_version()))
+                if (item.equals(getEntity().getcompatibility_version()))
                 {
                     getVersion().setSelectedItem(item);
                     break;
