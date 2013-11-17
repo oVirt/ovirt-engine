@@ -59,16 +59,5 @@
      <Bug code="UuF"/>
    </Match>
 
-    <!--
-      findbugs complain of unused field in class.
-      This is a GWT class and use to generate code
-
-      findbugs reason:
-      UuF: Unused field (UUF_UNUSED_FIELD)
-    -->
-   <Match>
-     <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfilePresenter$VnicProfileSelectionChange" />
-     <Bug code="UuF"/>
-   </Match>
 
  </FindBugsFilter>
