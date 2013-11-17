@@ -883,4 +883,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String PolicyUnitType___LoadBalancing();
 
+    String LdapRefStatus___Inactive();
+
+    String LdapRefStatus___Active();
+
 }
