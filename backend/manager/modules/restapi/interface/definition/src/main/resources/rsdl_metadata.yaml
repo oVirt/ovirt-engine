@@ -3,7 +3,7 @@
 
 !!org.ovirt.engine.api.restapi.rsdl.MetaData
 actions:
-- name: /api/vms|rel=get
+- name: /ovirt-engine/api/vms|rel=get
   description: get all the virtual machines in the system
   request:
     body:
@@ -15,7 +15,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/vms/{vm:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}|rel=get
   description: get the virtual machine in the system for the given virtual machine id
   request:
     body:
@@ -24,7 +24,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/vms/{vm:id}|rel=delete
+- name: /ovirt-engine/api/vms/{vm:id}|rel=delete
   description: deletes the virtual machine in the system for the given virtual machine id
   request:
     body:
@@ -39,7 +39,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}|rel=update
+- name: /ovirt-engine/api/vms/{vm:id}|rel=update
   description: update the virtual machine in the system for the given virtual machine id
   request:
     body:
@@ -90,7 +90,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/applications|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/applications|rel=get
   description: get all the applications installed on the vm identified by the given id
   request:
     body:
@@ -99,7 +99,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/vms/{vm:id}/applications/{application:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/applications/{application:id}|rel=get
   description: get the application installed on the specified vm
   request:
     body:
@@ -108,7 +108,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/vms|rel=add
+- name: /ovirt-engine/api/vms|rel=add
   description: add a virtual machine to the system
   request:
     body:
@@ -250,7 +250,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Expect: {value: 201-created, required: false}
-- name: /api/vms/{vm:id}/shutdown|rel=shutdown
+- name: /ovirt-engine/api/vms/{vm:id}/shutdown|rel=shutdown
   description: shutdown a virtual machine in the system identified by the given id
   request:
     body:
@@ -260,7 +260,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/stop|rel=stop
+- name: /ovirt-engine/api/vms/{vm:id}/stop|rel=stop
   description: stop a virtual machine in the system identified by the given id
   request:
     body:
@@ -270,7 +270,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/start|rel=start
+- name: /ovirt-engine/api/vms/{vm:id}/start|rel=start
   description: start a virtual machine in the system identified by the given id
   request:
     body:
@@ -289,7 +289,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-- name: /api/vms/{vm:id}/suspend|rel=suspend
+- name: /ovirt-engine/api/vms/{vm:id}/suspend|rel=suspend
   description: suspend a virtual machine in the system identified by the given id
   request:
     body:
@@ -299,7 +299,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/export|rel=export
+- name: /ovirt-engine/api/vms/{vm:id}/export|rel=export
   description: export a virtual machine in the system identified by the given id to the export domain
   request:
     body:
@@ -314,7 +314,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/detach|rel=detach
+- name: /ovirt-engine/api/vms/{vm:id}/detach|rel=detach
   description: detach a virtual machine in the system identified by the given id from the storage domain
   request:
     body:
@@ -324,7 +324,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/migrate|rel=migrate
+- name: /ovirt-engine/api/vms/{vm:id}/migrate|rel=migrate
   description: migrate a virtual machine in the system identified by the given id to another host
   request:
     body:
@@ -338,7 +338,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/move|rel=move #deprecated, replaced by '/api/vms/{vm:id}/disks/{disk:id}/move|rel=move'
+- name: /ovirt-engine/api/vms/{vm:id}/move|rel=move #deprecated, replaced by '/ovirt-engine/api/vms/{vm:id}/disks/{disk:id}/move|rel=move'
   description: This action is deprecated. Move a virtual machine's disk
   request:
     body:
@@ -351,7 +351,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/ticket|rel=ticket
+- name: /ovirt-engine/api/vms/{vm:id}/ticket|rel=ticket
   description: Create a ticket for connecting to the VM using the display protocol.
   request:
     body:
@@ -363,7 +363,7 @@ actions:
     urlparams: {}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/cdroms|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/cdroms|rel=get
   description: get all the cdroms for a virtual machine
   request:
     body:
@@ -372,7 +372,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vms/{vm:id}/cdroms/{cdrom:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/cdroms/{cdrom:id}|rel=get
   description: get the cdrom for a virtual machine identified by the given id
   request:
     body:
@@ -380,7 +380,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/cdroms/{cdrom:id}|rel=delete
+- name: /ovirt-engine/api/vms/{vm:id}/cdroms/{cdrom:id}|rel=delete
   description: delete the cdrom for a virtual machine identified by the given id
   request:
     body:
@@ -390,7 +390,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/cdroms/{cdrom:id}|rel=update
+- name: /ovirt-engine/api/vms/{vm:id}/cdroms/{cdrom:id}|rel=update
   description: update the cdrom for a virtual machine identified by the given id
   request:
     body:
@@ -405,7 +405,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/cdroms|rel=add
+- name: /ovirt-engine/api/vms/{vm:id}/cdroms|rel=add
   description: add a cdrom to a virtual machine identified by the given id
   request:
     body:
@@ -418,7 +418,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/watchdogs|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/watchdogs|rel=get
   description: get all the watchdogs for the virtual machine identified by the given id
   request:
     body:
@@ -427,7 +427,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vms/{vm:id}/wacthdogs/{watchdog:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/wacthdogs/{watchdog:id}|rel=get
   description: get the watchdog identified by the id for a given virtual machine
   request:
     body:
@@ -435,7 +435,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/watchdogs/{watchdog:id}|rel=delete
+- name: /ovirt-engine/api/vms/{vm:id}/watchdogs/{watchdog:id}|rel=delete
   description: delete the watchdog for the virtual machine identified by the given id
   request:
     body:
@@ -445,7 +445,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/watchdogs/{watchdog:id}|rel=update
+- name: /ovirt-engine/api/vms/{vm:id}/watchdogs/{watchdog:id}|rel=update
   description: update the watchdog for the virtual machine identified by the given id
   request:
     body:
@@ -458,7 +458,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/watchdogs|rel=add
+- name: /ovirt-engine/api/vms/{vm:id}/watchdogs|rel=add
   description: add a watchdog to the virtual machine identified by the given id
   request:
     body:
@@ -471,7 +471,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/disks|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/disks|rel=get
   description: get all disks for a given virtual machine
   request:
     body:
@@ -480,7 +480,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vms/{vm:id}/disks/{disk:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/disks/{disk:id}|rel=get
   description: get the details of a disk for a given virtual machine
   request:
     body:
@@ -488,7 +488,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/disks/{disk:id}|rel=delete
+- name: /ovirt-engine/api/vms/{vm:id}/disks/{disk:id}|rel=delete
   description: delete or detach a disk for a given virtual machine
   request:
     body:
@@ -502,7 +502,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/disks/{disk:id}|rel=update
+- name: /ovirt-engine/api/vms/{vm:id}/disks/{disk:id}|rel=update
   description: update the parameters of the disk attached to the virtual machine
   request:
     body:
@@ -526,7 +526,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/disks|rel=add
+- name: /ovirt-engine/api/vms/{vm:id}/disks|rel=add
   description: add a new or existing disk to the virtual machine
   request:
     body:
@@ -570,7 +570,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/disks/{disk:id}/activate|rel=activate
+- name: /ovirt-engine/api/vms/{vm:id}/disks/{disk:id}/activate|rel=activate
   description: activate a disk attached to a virtual machine
   request:
     body:
@@ -580,7 +580,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/disks/{disk:id}/deactivate|rel=deactivate
+- name: /ovirt-engine/api/vms/{vm:id}/disks/{disk:id}/deactivate|rel=deactivate
   description: deactivate a disk attached to a virtual machine
   request:
     body:
@@ -590,7 +590,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/disks/{disk:id}/move|rel=move
+- name: /ovirt-engine/api/vms/{vm:id}/disks/{disk:id}/move|rel=move
   description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
   request:
     body:
@@ -604,7 +604,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-- name: /api/vms/{vm:id}/disks/{disk:id}/export|rel=export
+- name: /ovirt-engine/api/vms/{vm:id}/disks/{disk:id}/export|rel=export
   request:
     body:
       parameterType: Action
@@ -616,7 +616,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-- name: /api/vms/{vm:id}/nics|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/nics|rel=get
   description: get all the network interfaces for a given virtual machine
   request:
     body:
@@ -625,7 +625,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vms/{vm:id}/nics/{nic:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/nics/{nic:id}|rel=get
   description: get the details of a network interface for a given virtual machine
   request:
     body:
@@ -633,7 +633,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/nics/{nic:id}|rel=delete
+- name: /ovirt-engine/api/vms/{vm:id}/nics/{nic:id}|rel=delete
   description: remove the network interface from the given virtual machine
   request:
     body:
@@ -643,7 +643,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/nics/{nic:id}|rel=update
+- name: /ovirt-engine/api/vms/{vm:id}/nics/{nic:id}|rel=update
   description: update the network interface for the given virtual machine
   request:
     body:
@@ -660,7 +660,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/nics/{nic:id}/activate|rel=activate #deprecated, replaced by 'add/edit'
+- name: /ovirt-engine/api/vms/{vm:id}/nics/{nic:id}/activate|rel=activate #deprecated, replaced by 'add/edit'
   description: Deprecated, replaced by add/edit
   request:
     body:
@@ -670,7 +670,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/nics/{nic:id}/deactivate|rel=deactivate #deprecated, replaced by 'add/edit'
+- name: /ovirt-engine/api/vms/{vm:id}/nics/{nic:id}/deactivate|rel=deactivate #deprecated, replaced by 'add/edit'
   description: Deprecated, replaced by add/edit
   request:
     body:
@@ -680,7 +680,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
     urlparams: {}
-- name: /api/vms/{vm:id}/nics|rel=add
+- name: /ovirt-engine/api/vms/{vm:id}/nics|rel=add
   description: add a new network interface to the given virtual machine
   request:
     body:
@@ -698,7 +698,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/permissions|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/permissions|rel=get
   description: get all the permissions for a given virtual machine
   request:
     body:
@@ -707,7 +707,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vms/{vm:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/permissions/{permission:id}|rel=get
   description: get details of a permission for a given virtual machine
   request:
     body:
@@ -715,7 +715,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/vms/{vm:id}/permissions/{permission:id}|rel=delete
   description: delete a permission for a given virtual machine
   request:
     body:
@@ -725,7 +725,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/permissions|rel=add
+- name: /ovirt-engine/api/vms/{vm:id}/permissions|rel=add
   description: add a new permission for a given virtual machine
   request:
     body:
@@ -742,7 +742,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/statistics|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/statistics|rel=get
   description: get the memory and cpu statistics for a given virtual machine
   request:
     body:
@@ -751,7 +751,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vms/{vm:id}/statistics/{statistic:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/statistics/{statistic:id}|rel=get
   description: get the detail statistics for a given virtual machine
   request:
     body:
@@ -759,7 +759,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/snapshots|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots|rel=get
   description: get all snapshots for a given virtual machine
   request:
     body:
@@ -769,7 +769,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       All-Content: {value: true|false, required: false}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}|rel=get
   description: get the details of a snapshot for a given virtual machine
   request:
     body:
@@ -778,7 +778,7 @@ actions:
     urlparams: {}
     headers:
       All-Content: {value: true|false, required: false}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}|rel=delete
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}|rel=delete
   description: delete the snapshot for a given virtual machine
   request:
     body:
@@ -788,7 +788,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/snapshots|rel=add
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots|rel=add
   description: create a new snapshot for a given virtual machine
   request:
     body:
@@ -803,7 +803,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/restore|rel=restore
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/restore|rel=restore
   description: restore the virtual machine from a given snapshot
   request:
     body:
@@ -816,7 +816,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/preview|rel=preview
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/preview|rel=preview
   description: temporarily restores the virtual machine to the state from a given snapshot
   request:
     body:
@@ -829,7 +829,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/commit|rel=commit
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/commit|rel=commit
   description: commit the virtual machine to the current state which has been restored from a snapshot
   request:
     body:
@@ -839,7 +839,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/undo|rel=undo
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/undo|rel=undo
   description: undo a create snapshot operation on a virtual machine
   request:
     body:
@@ -849,7 +849,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
   description: get the list of cdroms attached to the virtual machine at the time the snapshot was created
   request:
     body:
@@ -857,7 +857,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms/{cdrom:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms/{cdrom:id}|rel=get
   description: get the details of a cdrom attached to the virtual machine at the time the snapshot was created
   request:
     body:
@@ -865,7 +865,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/disks|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/disks|rel=get
   description: get the list of disks attached to the virtual machine at the time the snapshot was created
   request:
     body:
@@ -873,7 +873,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=get
   description: get the details of a disk attached to the virtual machine at the time the snapshot was created
   request:
     body:
@@ -881,7 +881,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/nics|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/nics|rel=get
   description: get the list of network interfaces attached to the virtual machine at the time the snapshot was created
   request:
     body:
@@ -889,7 +889,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/nics/{nic:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/snapshots/{snapshot:id}/nics/{nic:id}|rel=get
   description: get the details of a network interface attached to the virtual machine at the time the snapshot was created
   request:
     body:
@@ -897,7 +897,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/tags|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/tags|rel=get
   description: get the list of tags added to the virtual machine
   request:
     body:
@@ -906,7 +906,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vms/{vm:id}/tags/{tag:id}|rel=get
+- name: /ovirt-engine/api/vms/{vm:id}/tags/{tag:id}|rel=get
   description: get the details of the tag added to the virtual machine
   request:
     body:
@@ -914,7 +914,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vms/{vm:id}/tags/{tag:id}|rel=delete
+- name: /ovirt-engine/api/vms/{vm:id}/tags/{tag:id}|rel=delete
   description: delete a tag added to the virtual machine
   request:
     body:
@@ -924,7 +924,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/tags|rel=add
+- name: /ovirt-engine/api/vms/{vm:id}/tags|rel=add
   description: add a new tag to the virtual machine
   request:
     body:
@@ -937,7 +937,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/disks|rel=get
+- name: /ovirt-engine/api/disks|rel=get
   description: get a list of disks in the system
   request:
     body:
@@ -948,7 +948,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/disks/{disk:id}|rel=get
+- name: /ovirt-engine/api/disks/{disk:id}|rel=get
   description: get the details of a disk in the system
   request:
     body:
@@ -956,7 +956,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/disks/{disk:id}|rel=delete
+- name: /ovirt-engine/api/disks/{disk:id}|rel=delete
   description: delete the specified disk in the system
   request:
     body:
@@ -966,7 +966,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/disks/{disk:id}/export|rel=export
+- name: /ovirt-engine/api/disks/{disk:id}/export|rel=export
   request:
     body:
       parameterType: Action
@@ -978,7 +978,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-- name: /api/disks|rel=add
+- name: /ovirt-engine/api/disks|rel=add
   description: add a new disk the system
   request:
     body:
@@ -1014,7 +1014,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/disks/{disk:id}/statistics|rel=get
+- name: /ovirt-engine/api/disks/{disk:id}/statistics|rel=get
   description: get the disk statistics for the specified disk in the system
   request:
     body:
@@ -1023,7 +1023,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/disks/{disk:id}/statistics/{statistic:id}|rel=get
+- name: /ovirt-engine/api/disks/{disk:id}/statistics/{statistic:id}|rel=get
   description: get the disk statistics for the specified disk in the system
   request:
     body:
@@ -1031,7 +1031,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/disks/{disk:id}/permissions|rel=get
+- name: /ovirt-engine/api/disks/{disk:id}/permissions|rel=get
   description: get the list of permission for the disk in the system. Disk inherits permissions from the VM it is attached to and from the storage domain it resides on (if there is one)
   request:
     body:
@@ -1040,7 +1040,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/disks/{disk:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/disks/{disk:id}/permissions/{permission:id}|rel=get
   description: get the details of the permission for the specified disk in the system
   request:
     body:
@@ -1048,7 +1048,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/capabilities|rel=get
+- name: /ovirt-engine/api/capabilities|rel=get
   description: get the capabilities of the system listing the features that are supported for all versions of cluster/data center
   request:
     body:
@@ -1056,7 +1056,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/capabilities/{version:id}|rel=get
+- name: /ovirt-engine/api/capabilities/{version:id}|rel=get
   description: get the capabilities of the system for the specified version, lists the features that are supported for the provided version of the cluster/data center
   request:
     body:
@@ -1064,7 +1064,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains|rel=get
+- name: /ovirt-engine/api/storagedomains|rel=get
   description: get storage domains in the system
   request:
     body:
@@ -1076,7 +1076,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/storagedomains/{storagedomain:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}|rel=get
   description: get the details of the specified storage domain in the system
   request:
     body:
@@ -1085,7 +1085,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/storagedomains/{storagedomain:id}|rel=delete
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}|rel=delete
   description: delete the specified storage domain in the system
   request:
     body:
@@ -1099,7 +1099,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}|rel=update
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}|rel=update
   description: update the storage domain
   request:
     body:
@@ -1119,7 +1119,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains|rel=add
+- name: /ovirt-engine/api/storagedomains|rel=add
   description: add a new storage domain to the system
   request:
     body:
@@ -1156,7 +1156,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}/files|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/files|rel=get
   description: get the files stored in the iso storage domain
   request:
     body:
@@ -1167,7 +1167,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/files/{file:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/files/{file:id}|rel=get
   description: get the details of the specified file stored in the iso storage domain
   request:
     body:
@@ -1175,7 +1175,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/images|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/images|rel=get
   request:
     body:
       parameterType: null
@@ -1183,14 +1183,14 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/images/{images:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/images/{images:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/images/{images:id}/import|rel=import
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/images/{images:id}/import|rel=import
   request:
     body:
       parameterType: Action
@@ -1201,7 +1201,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}/permissions|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/permissions|rel=get
   description: get the list of permissions for the storage domain
   request:
     body:
@@ -1210,7 +1210,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission for the storage domain
   request:
     body:
@@ -1218,7 +1218,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the storage domain
   request:
     body:
@@ -1228,7 +1228,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}/permissions|rel=add
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/permissions|rel=add
   description: add a new user or group level permission on the storage domain
   request:
     body:
@@ -1245,7 +1245,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
   description: delete the specified template from the export or data domain
   request:
     body:
@@ -1255,7 +1255,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}/templates|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/templates|rel=get
   description: get the list of templates in the export or data domain
   request:
     body:
@@ -1264,7 +1264,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/templates/{template:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/templates/{template:id}|rel=get
   description: get the details of the specified template in the export or data domain
   request:
     body:
@@ -1272,7 +1272,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/templates/{template:id}/import|rel=import
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/templates/{template:id}/import|rel=import
   description: import the template from the export or data domain
   request:
     body:
@@ -1285,7 +1285,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}/templates/{template:id}/disks|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template in the export or data domain
   request:
     body:
@@ -1293,7 +1293,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/templates/{template:id}/disks/{disk:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/templates/{template:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk attached to the template in the export or data domain
   request:
     body:
@@ -1301,7 +1301,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/vms|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/vms|rel=get
   description: get the list of virtual machines in the storage domain
   request:
     body:
@@ -1310,7 +1310,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}|rel=delete
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/vms/{vm:id}|rel=delete
   description: delete the specified virtual machine from the storage domain
   request:
     body:
@@ -1320,7 +1320,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/vms/{vm:id}|rel=get
   description: get the details of the specified virtual machine in the storage domain
   request:
     body:
@@ -1328,7 +1328,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}/import|rel=import
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/vms/{vm:id}/import|rel=import
   description: import the specified virtual machine in the storage domain into the system
   request:
     body:
@@ -1341,7 +1341,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters|rel=get
+- name: /ovirt-engine/api/clusters|rel=get
   description: get the list of clusters in the system
   request:
     body:
@@ -1353,7 +1353,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}/disks|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/vms/{vm:id}/disks|rel=get
   description: get the list of disks attached to the virtual machine in the storage domain
   request:
     body:
@@ -1361,7 +1361,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}/disks/{disk:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/vms/{vm:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk attached to the virtual machine in the storage domain
   request:
     body:
@@ -1369,7 +1369,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/clusters/{cluster:id}|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}|rel=get
   description: get the details of the specified cluster in the system
   request:
     body:
@@ -1378,7 +1378,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/storagedomains/{storagedomain:id}/storageconnections|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/storageconnections|rel=get
   description: get the list of storage connections in the storage domain. allow sediting just the connection details without editing the storage domain itself. multiple storage domains could use a single storage connection in the case of iSCSI.
   request:
     body:
@@ -1387,7 +1387,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=get
   description: get the details of the specified storage connection in the storage domain. allow sediting just the connection details without editing the storage domain itself. multiple storage domains could use a single storage connection in the case of iSCSI.
   request:
     body:
@@ -1395,7 +1395,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=delete
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=delete
   request:
     body:
       parameterType: null
@@ -1403,7 +1403,7 @@ actions:
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/storageconnections|rel=add
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/storageconnections|rel=add
   request:
     body:
       parameterType: StorageConnection
@@ -1415,7 +1415,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}|rel=delete
+- name: /ovirt-engine/api/clusters/{cluster:id}|rel=delete
   description: get the details of the specified cluster in the system
   request:
     body:
@@ -1425,7 +1425,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}|rel=update
+- name: /ovirt-engine/api/clusters/{cluster:id}|rel=update
   description: update the specified cluster in the system
   request:
     body:
@@ -1441,7 +1441,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters|rel=add
+- name: /ovirt-engine/api/clusters|rel=add
   description: add a new cluster to the system
   request:
     body:
@@ -1458,7 +1458,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/networks|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/networks|rel=get
   description: get the list of networks in the cluster
   request:
     body:
@@ -1467,7 +1467,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/clusters/{cluster:id}/networks/{network:id}|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/networks/{network:id}|rel=get
   description: get the detials of the specified network in the cluster
   request:
     body:
@@ -1475,7 +1475,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/clusters/{cluster:id}/networks/{network:id}|rel=delete
+- name: /ovirt-engine/api/clusters/{cluster:id}/networks/{network:id}|rel=delete
   description: delete the specified network in the cluster
   request:
     body:
@@ -1485,7 +1485,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/networks/{network:id}|rel=update
+- name: /ovirt-engine/api/clusters/{cluster:id}/networks/{network:id}|rel=update
   description: update the specified network in the cluster
   request:
     body:
@@ -1498,7 +1498,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/networks|rel=add
+- name: /ovirt-engine/api/clusters/{cluster:id}/networks|rel=add
   description: add a new network to the cluster
   request:
     body:
@@ -1512,7 +1512,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/permissions|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster
   request:
     body:
@@ -1521,7 +1521,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/clusters/{cluster:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/permissions/{permission:id}|rel=get
   description: get the details of the permission on the cluster
   request:
     body:
@@ -1529,7 +1529,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
   description: delete the permission on the cluster
   request:
     body:
@@ -1539,7 +1539,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/permissions|rel=add
+- name: /ovirt-engine/api/clusters/{cluster:id}/permissions|rel=add
   description: add a new permission on the cluster
   request:
     body:
@@ -1556,7 +1556,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}|rel=update
+- name: /ovirt-engine/api/datacenters/{datacenter:id}|rel=update
   description: update the specified data center in the system
   request:
     body:
@@ -1577,7 +1577,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters|rel=get
+- name: /ovirt-engine/api/datacenters|rel=get
   description: get a list of data centers in the system
   request:
     body:
@@ -1589,7 +1589,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/datacenters/{datacenter:id}|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}|rel=get
   description: get the details of the specified data center in the system
   request:
     body:
@@ -1598,7 +1598,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/datacenters/{datacenter:id}|rel=delete
+- name: /ovirt-engine/api/datacenters/{datacenter:id}|rel=delete
   description: delete the specified data center in the system
   request:
     body:
@@ -1613,7 +1613,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters|rel=add
+- name: /ovirt-engine/api/datacenters|rel=add
   description: add a new data center to the system
   request:
     body:
@@ -1630,7 +1630,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/permissions|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/permissions|rel=get
   description: get the list of permissions on the data center
   request:
     body:
@@ -1638,7 +1638,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/permissions/{permission:id}|rel=get
   description: get details of the specified permission on the data center
   request:
     body:
@@ -1646,7 +1646,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the data center
   request:
     body:
@@ -1656,7 +1656,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/permissions|rel=add
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/permissions|rel=add
   description: add a new permission on the data center
   request:
     body:
@@ -1673,7 +1673,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/storagedomains|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains|rel=get
   description: get the list of storage domains in a data center
   request:
     body:
@@ -1682,7 +1682,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=get
   description: get details of the specified storage domain in a data center
   request:
     body:
@@ -1690,7 +1690,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=delete
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=delete
   description: delete the specified storage domain in a data center
   request:
     body:
@@ -1700,7 +1700,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/storagedomains|rel=add
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains|rel=add
   description: add a new storage domain to the data center
   request:
     body:
@@ -1714,7 +1714,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/activate|rel=activate
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/activate|rel=activate
   description: activate the specified storage domain in the data center
   request:
     body:
@@ -1724,7 +1724,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/deactivate|rel=deactivate
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/deactivate|rel=deactivate
   description: deactivate the specified storage domain in the data center
   request:
     body:
@@ -1734,7 +1734,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/clusters|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters|rel=get
   description: get the list of clusters in the data center
   request:
     body:
@@ -1744,7 +1744,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=get
   description: get the details of the specified cluster in the data center
   request:
     body:
@@ -1753,7 +1753,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=delete
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=delete
   description: delete specified cluster from the data center
   request:
     body:
@@ -1763,7 +1763,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=update
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=update
   description: update specified cluster in the data center
   request:
     body:
@@ -1779,7 +1779,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/clusters|rel=add
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters|rel=add
   description: add a new cluster to the data center
   request:
     body:
@@ -1796,7 +1796,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=get
   description: get the list of networks for a cluster in a data center
   request:
     body:
@@ -1805,7 +1805,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=get
   description: get the details of the specified network in a cluster in the specified data center
   request:
     body:
@@ -1813,7 +1813,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=delete
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=delete
   description: delete the specified network in a cluster in the specified data center
   request:
     body:
@@ -1823,7 +1823,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=update
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=update
   description: update the specified network in a cluster in the specified data center
   request:
     body:
@@ -1836,7 +1836,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=add
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=add
   description: add a new network to a cluster in the specified data center.
   request:
     body:
@@ -1850,7 +1850,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=get
   description: get the list of permissions on the cluster in the specified data center.
   request:
     body:
@@ -1859,7 +1859,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission on the cluster in the specified data center.
   request:
     body:
@@ -1867,7 +1867,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the cluster in the specified data center.
   request:
     body:
@@ -1877,7 +1877,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=add
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=add
   description: add a new permission on the cluster in the specified data center.
   request:
     body:
@@ -1894,7 +1894,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/domains|rel=get
+- name: /ovirt-engine/api/domains|rel=get
   description: get a list of domains in the system
   request:
     body:
@@ -1903,7 +1903,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/domains/{domain:id}|rel=get
+- name: /ovirt-engine/api/domains/{domain:id}|rel=get
   description: get the details of the specified domain in the system
   request:
     body:
@@ -1911,7 +1911,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/domains/{domain:id}/groups|rel=get
+- name: /ovirt-engine/api/domains/{domain:id}/groups|rel=get
   description: get the list of groups in the specified domain
   request:
     body:
@@ -1922,7 +1922,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/domains/{domain:id}/groups/{group:id}|rel=get
+- name: /ovirt-engine/api/domains/{domain:id}/groups/{group:id}|rel=get
   description: get the details of the specified group in the domain
   request:
     body:
@@ -1930,7 +1930,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/domains/{domain:id}/users|rel=get
+- name: /ovirt-engine/api/domains/{domain:id}/users|rel=get
   description: get the list of users in the domain
   request:
     body:
@@ -1941,7 +1941,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/domains/{domain:id}/users/{user:id}|rel=get
+- name: /ovirt-engine/api/domains/{domain:id}/users/{user:id}|rel=get
   description: get the details of the specified user in the domain
   request:
     body:
@@ -1949,7 +1949,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/events|rel=get
+- name: /ovirt-engine/api/events|rel=get
   description: get the list of events in the system
   request:
     body:
@@ -1961,7 +1961,7 @@ actions:
       from: {context: matrix, type: 'xs:string', value: event_id, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/events/{event:id}|rel=get
+- name: /ovirt-engine/api/events/{event:id}|rel=get
   description: get the details of the specified event in the system
   request:
     body:
@@ -1969,7 +1969,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/groups|rel=get
+- name: /ovirt-engine/api/groups|rel=get
   description: get the list of groups in the system
   request:
     body:
@@ -1980,7 +1980,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/events/{event:id}|rel=delete
+- name: /ovirt-engine/api/events/{event:id}|rel=delete
   description: delete the specified event from the system
   request:
     body:
@@ -1988,7 +1988,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/events|rel=add
+- name: /ovirt-engine/api/events|rel=add
   description: add a new event to the system
   request:
     body:
@@ -2004,7 +2004,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}|rel=get
+- name: /ovirt-engine/api/groups/{group:id}|rel=get
   description: get the details of the specified group in the system
   request:
     body:
@@ -2012,7 +2012,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/groups/{group:id}|rel=delete
+- name: /ovirt-engine/api/groups/{group:id}|rel=delete
   description: delete the specified group in the system
   request:
     body:
@@ -2022,7 +2022,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups|rel=add
+- name: /ovirt-engine/api/groups|rel=add
   description: add a new group to the system
   request:
     body:
@@ -2034,7 +2034,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}/permissions|rel=get
+- name: /ovirt-engine/api/groups/{group:id}/permissions|rel=get
   description: get list of permissions for the group in the system
   request:
     body:
@@ -2043,7 +2043,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/groups/{group:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/groups/{group:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission for the group in the system
   request:
     body:
@@ -2051,7 +2051,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/groups/{group:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/groups/{group:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission from the group in the system
   request:
     body:
@@ -2061,7 +2061,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}/permissions|rel=add
+- name: /ovirt-engine/api/groups/{group:id}/permissions|rel=add
   description: add a new permission to the group in the system
   request:
     body:
@@ -2093,7 +2093,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}/roles|rel=get
+- name: /ovirt-engine/api/groups/{group:id}/roles|rel=get
   description: get the list of roles assigned to the specified group
   request:
     body:
@@ -2102,7 +2102,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/groups/{group:id}/roles/{role:id}|rel=get
+- name: /ovirt-engine/api/groups/{group:id}/roles/{role:id}|rel=get
   description: get the details of the specified role assigned to a group
   request:
     body:
@@ -2110,7 +2110,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/groups/{group:id}/roles/{role:id}|rel=delete
+- name: /ovirt-engine/api/groups/{group:id}/roles/{role:id}|rel=delete
   description: delete the specified role assigned to a group
   request:
     body:
@@ -2120,7 +2120,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}/roles|rel=add
+- name: /ovirt-engine/api/groups/{group:id}/roles|rel=add
   description: add a new role to the specified group
   request:
     body:
@@ -2132,7 +2132,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}/roles/{role:id}/permits|rel=get
+- name: /ovirt-engine/api/groups/{group:id}/roles/{role:id}/permits|rel=get
   description: get the permits for the specified role in a group
   request:
     body:
@@ -2141,7 +2141,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=get
+- name: /ovirt-engine/api/groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=get
   description: get details of the specified permit for a role in a group
   request:
     body:
@@ -2149,7 +2149,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=delete
+- name: /ovirt-engine/api/groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for a role in a group
   request:
     body:
@@ -2159,7 +2159,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}/roles/{role:id}/permits|rel=add
+- name: /ovirt-engine/api/groups/{group:id}/roles/{role:id}/permits|rel=add
   description: add a new permit for a role in a group
   request:
     body:
@@ -2172,7 +2172,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}/tags|rel=get
+- name: /ovirt-engine/api/groups/{group:id}/tags|rel=get
   description: get the list of tags attached to a given group
   request:
     body:
@@ -2181,7 +2181,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/groups/{group:id}/tags/{tag:id}|rel=get
+- name: /ovirt-engine/api/groups/{group:id}/tags/{tag:id}|rel=get
   description: get details of the specified tag attached to a given group
   request:
     body:
@@ -2189,7 +2189,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/groups/{group:id}/tags/{tag:id}|rel=delete
+- name: /ovirt-engine/api/groups/{group:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag attached to a given group
   request:
     body:
@@ -2199,7 +2199,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/groups/{group:id}/tags|rel=add
+- name: /ovirt-engine/api/groups/{group:id}/tags|rel=add
   description: add a new tag to a given group
   request:
     body:
@@ -2212,7 +2212,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts|rel=get
+- name: /ovirt-engine/api/hosts|rel=get
   description: get the list of hosts in the system
   request:
     body:
@@ -2224,7 +2224,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/hosts/{host:id}|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}|rel=get
   description: get the details of the specified host in the system
   request:
     body:
@@ -2234,7 +2234,7 @@ actions:
       force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/hosts/{host:id}|rel=delete
+- name: /ovirt-engine/api/hosts/{host:id}|rel=delete
   description: delete the specified host in the system
   request:
     body:
@@ -2249,7 +2249,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}|rel=update
+- name: /ovirt-engine/api/hosts/{host:id}|rel=update
   description: update the specified host in the system
   request:
     body:
@@ -2279,7 +2279,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts|rel=add
+- name: /ovirt-engine/api/hosts|rel=add
   description: add a new host to the system
   request:
     body:
@@ -2307,7 +2307,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/activate|rel=activate
+- name: /ovirt-engine/api/hosts/{host:id}/activate|rel=activate
   description: activate the specified host in the system
   request:
     body:
@@ -2317,7 +2317,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/forceselectspm|rel=forceselectspm
+- name: /ovirt-engine/api/hosts/{host:id}/forceselectspm|rel=forceselectspm
   description: force the specified to be selected as storage pool manager
   request:
     body:
@@ -2327,7 +2327,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/approve|rel=approve
+- name: /ovirt-engine/api/hosts/{host:id}/approve|rel=approve
   description: approve specified host to be added to the engine
   request:
     body:
@@ -2341,7 +2341,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/commitnetconfig|rel=commitnetconfig
+- name: /ovirt-engine/api/hosts/{host:id}/commitnetconfig|rel=commitnetconfig
   description: commit the changes made to network configuration of the host
   request:
     body:
@@ -2351,7 +2351,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/deactivate|rel=deactivate
+- name: /ovirt-engine/api/hosts/{host:id}/deactivate|rel=deactivate
   description: deactivate the specified host
   request:
     body:
@@ -2361,7 +2361,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/fence|rel=fence
+- name: /ovirt-engine/api/hosts/{host:id}/fence|rel=fence
   description: initiate the fence operation on the host which has become non-responsive after multiple retries to connect to it
   request:
     body:
@@ -2374,7 +2374,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/install|rel=install
+- name: /ovirt-engine/api/hosts/{host:id}/install|rel=install
   description: install vdsm and other packages required to get the host ready to be used in the engine
   request:
     body:
@@ -2392,7 +2392,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/iscsidiscover|rel=iscsidiscover
+- name: /ovirt-engine/api/hosts/{host:id}/iscsidiscover|rel=iscsidiscover
   description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
   request:
     body:
@@ -2404,7 +2404,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/iscsilogin|rel=iscsilogin
+- name: /ovirt-engine/api/hosts/{host:id}/iscsilogin|rel=iscsilogin
   description: login to the specified iscsi target at the specified address
   request:
     body:
@@ -2416,7 +2416,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/nics|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/nics|rel=get
   description: get the list of network interfaces for the host
   request:
     body:
@@ -2425,7 +2425,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/hosts/{host:id}/nics/{nic:id}|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/nics/{nic:id}|rel=get
   description: get the details of the specified network interface for the host
   request:
     body:
@@ -2433,7 +2433,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/hosts/{host:id}/nics/{nic:id}|rel=delete
+- name: /ovirt-engine/api/hosts/{host:id}/nics/{nic:id}|rel=delete
   description: delete the specified network interface for the host
   request:
     body:
@@ -2443,7 +2443,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/nics/{nic:id}|rel=update
+- name: /ovirt-engine/api/hosts/{host:id}/nics/{nic:id}|rel=update
   description: update the specified network interface for the host
   request:
     body:
@@ -2468,7 +2468,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/nics|rel=add
+- name: /ovirt-engine/api/hosts/{host:id}/nics|rel=add
   description: add a new network interface for the host
   request:
     body:
@@ -2484,7 +2484,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/nics/setupnetworks|rel=setupnetworks
+- name: /ovirt-engine/api/hosts/{host:id}/nics/setupnetworks|rel=setupnetworks
   description: initiate the command to setup networks for the network interface card of the specified host
   request:
     body:
@@ -2505,7 +2505,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/nics/{nic:id}/attach|rel=attach
+- name: /ovirt-engine/api/hosts/{host:id}/nics/{nic:id}/attach|rel=attach
   description: attach the network interface card to the specified host
   request:
     body:
@@ -2518,7 +2518,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/nics/{nic:id}/detach|rel=detach
+- name: /ovirt-engine/api/hosts/{host:id}/nics/{nic:id}/detach|rel=detach
   description: detach the network interface card from the specified host
   request:
     body:
@@ -2531,7 +2531,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/nics/{nic:id}/statistics|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/nics/{nic:id}/statistics|rel=get
   description: get the statistics for the network interface card attached to the specified host
   request:
     body:
@@ -2540,7 +2540,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/hosts/{host:id}/nics/{nic:id}/statistics/{statistic:id}|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/nics/{nic:id}/statistics/{statistic:id}|rel=get
   description: get the details of the specified statistics for the network interface card attached to the specified host
   request:
     body:
@@ -2548,7 +2548,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/hosts/{host:id}/permissions|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/permissions|rel=get
   description: get the list of permissions for the host
   request:
     body:
@@ -2557,7 +2557,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/hosts/{host:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission for the host
   request:
     body:
@@ -2565,7 +2565,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/hosts/{host:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/hosts/{host:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the host
   request:
     body:
@@ -2575,7 +2575,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/permissions|rel=add
+- name: /ovirt-engine/api/hosts/{host:id}/permissions|rel=add
   description: add a new permission for the host
   request:
     body:
@@ -2592,7 +2592,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/statistics|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/statistics|rel=get
   description: get the statistics for the host
   request:
     body:
@@ -2601,7 +2601,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/hosts/{host:id}/statistics/{statistic:id}|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/statistics/{statistic:id}|rel=get
   description: get the details of the specified statistics for the host
   request:
     body:
@@ -2609,7 +2609,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/hosts/{host:id}/storage|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/storage|rel=get
   description: get the list of all logical units and volume groups for the host
   request:
     body:
@@ -2618,7 +2618,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/hosts/{host:id}/storage/{storag:id}|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/storage/{storag:id}|rel=get
   description: get the details of the specified logical unit or volume group for the host
   request:
     body:
@@ -2626,7 +2626,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/hosts/{host:id}/tags|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/tags|rel=get
   description: get the list of all tags added to the host
   request:
     body:
@@ -2635,7 +2635,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/hosts/{host:id}/tags/{tag:id}|rel=get
+- name: /ovirt-engine/api/hosts/{host:id}/tags/{tag:id}|rel=get
   description: get the details of the specified tag added to the host
   request:
     body:
@@ -2643,7 +2643,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/hosts/{host:id}/tags/{tag:id}|rel=delete
+- name: /ovirt-engine/api/hosts/{host:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag added to the host
   request:
     body:
@@ -2653,7 +2653,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/hosts/{host:id}/tags|rel=add
+- name: /ovirt-engine/api/hosts/{host:id}/tags|rel=add
   description: add a new tag to the host
   request:
     body:
@@ -2665,7 +2665,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/networks|rel=get
+- name: /ovirt-engine/api/networks|rel=get
   description: get the list of all networks in the system
   request:
     body:
@@ -2676,7 +2676,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/networks/{network:id}|rel=get
+- name: /ovirt-engine/api/networks/{network:id}|rel=get
   description: get the details of the specified network in the system
   request:
     body:
@@ -2684,7 +2684,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/networks/{network:id}|rel=delete
+- name: /ovirt-engine/api/networks/{network:id}|rel=delete
   description: delete the specified network in the system
   request:
     body:
@@ -2694,7 +2694,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/networks/{network:id}|rel=update
+- name: /ovirt-engine/api/networks/{network:id}|rel=update
   description: update the specified network in the system
   request:
     body:
@@ -2709,7 +2709,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/networks|rel=add
+- name: /ovirt-engine/api/networks|rel=add
   description: add a new network to the system
   request:
     body:
@@ -2725,7 +2725,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/networks/{network:id}/permissions|rel=get
+- name: /ovirt-engine/api/networks/{network:id}/permissions|rel=get
   description: get the list of all permissions on a network in the system
   request:
     body:
@@ -2734,7 +2734,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/networks/{network:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/networks/{network:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission on a network in the system
   request:
     body:
@@ -2742,7 +2742,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/networks/{network:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/networks/{network:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on a network in the system
   request:
     body:
@@ -2752,7 +2752,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/networks/{network:id}/permissions|rel=add
+- name: /ovirt-engine/api/networks/{network:id}/permissions|rel=add
   description: add a new permission on a network in the system
   request:
     body:
@@ -2769,7 +2769,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/networks/{network:id}/vnicprofiles|rel=get
+- name: /ovirt-engine/api/networks/{network:id}/vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles for the network
   request:
     body:
@@ -2778,7 +2778,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=get
+- name: /ovirt-engine/api/networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=get
   description: get the details of the specified virtual network interface card profile for the network
   request:
     body:
@@ -2786,7 +2786,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=delete
+- name: /ovirt-engine/api/networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=delete
   description: delete the specified virtual network interface card profile for the network
   request:
     body:
@@ -2796,7 +2796,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/networks/{network:id}/vnicprofiles|rel=add
+- name: /ovirt-engine/api/networks/{network:id}/vnicprofiles|rel=add
   description: add a new virtual network interface card profile for the network
   request:
     body:
@@ -2811,7 +2811,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vnicprofiles|rel=get
+- name: /ovirt-engine/api/vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles in the system
   request:
     body:
@@ -2820,7 +2820,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vnicprofiles/{vnicprofile:id}|rel=get
+- name: /ovirt-engine/api/vnicprofiles/{vnicprofile:id}|rel=get
   description: get the details of the specified virtual network interface card profile in the system
   request:
     body:
@@ -2828,7 +2828,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vnicprofiles/{vnicprofile:id}|rel=delete
+- name: /ovirt-engine/api/vnicprofiles/{vnicprofile:id}|rel=delete
   description: delete the specified virtual network interface card profile in the system
   request:
     body:
@@ -2838,7 +2838,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vnicprofiles/{vnicprofile:id}|rel=update
+- name: /ovirt-engine/api/vnicprofiles/{vnicprofile:id}|rel=update
   description: update the specified virtual network interface card profile in the system
   request:
     body:
@@ -2852,7 +2852,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vnicprofiles|rel=add
+- name: /ovirt-engine/api/vnicprofiles|rel=add
   description: add a new virtual network interface card profile to the system
   request:
     body:
@@ -2867,7 +2867,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vnicprofiles/{vnicprofile:id}/permissions|rel=get
+- name: /ovirt-engine/api/vnicprofiles/{vnicprofile:id}/permissions|rel=get
   description: get the list of all permissions on the virtual network interface card profile in the system
   request:
     body:
@@ -2876,7 +2876,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=get
   description: get details of the specified permission on the virtual network interface card profile in the system
   request:
     body:
@@ -2884,7 +2884,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the virtual network interface card profile
   request:
     body:
@@ -2894,7 +2894,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vnicprofiles/{vnicprofile:id}/permissions|rel=add
+- name: /ovirt-engine/api/vnicprofiles/{vnicprofile:id}/permissions|rel=add
   description: add a new permission on the virtual network interface card profile in the system
   request:
     body:
@@ -2911,7 +2911,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/roles|rel=get
+- name: /ovirt-engine/api/roles|rel=get
   description: get the list of all roles in the system
   request:
     body:
@@ -2920,7 +2920,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/roles/{role:id}|rel=get
+- name: /ovirt-engine/api/roles/{role:id}|rel=get
   description: get the details of the specified role in the system
   request:
     body:
@@ -2928,7 +2928,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/roles/{role:id}|rel=delete
+- name: /ovirt-engine/api/roles/{role:id}|rel=delete
   description: get the details of the specified role in the system
   request:
     body:
@@ -2938,7 +2938,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/roles|rel=add
+- name: /ovirt-engine/api/roles|rel=add
   description: add a new role to the system
   request:
     body:
@@ -2952,7 +2952,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/roles/{role:id}|rel=update
+- name: /ovirt-engine/api/roles/{role:id}|rel=update
   description: update the specified role in the system
   request:
     body:
@@ -2965,7 +2965,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/roles/{role:id}/permits|rel=get
+- name: /ovirt-engine/api/roles/{role:id}/permits|rel=get
   description: get the list of all permits for the specified role in the system
   request:
     body:
@@ -2974,7 +2974,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/roles/{role:id}/permits/{permit:id}|rel=get
+- name: /ovirt-engine/api/roles/{role:id}/permits/{permit:id}|rel=get
   description: get the details of the specified permit for the role in the system
   request:
     body:
@@ -2982,7 +2982,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/roles/{role:id}/permits/{permit:id}|rel=delete
+- name: /ovirt-engine/api/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for the role in the system
   request:
     body:
@@ -2992,7 +2992,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/roles/{role:id}/permits|rel=add
+- name: /ovirt-engine/api/roles/{role:id}/permits|rel=add
   description: add a new permit for the role in the system
   request:
     body:
@@ -3005,7 +3005,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/tags|rel=get
+- name: /ovirt-engine/api/tags|rel=get
   description: get the list of tags in the system
   request:
     body:
@@ -3014,7 +3014,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/tags/{tag:id}|rel=get
+- name: /ovirt-engine/api/tags/{tag:id}|rel=get
   description: get the details of the specified tag in the system
   request:
     body:
@@ -3022,7 +3022,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/tags/{tag:id}|rel=delete
+- name: /ovirt-engine/api/tags/{tag:id}|rel=delete
   description: delete the specified tag in the system
   request:
     body:
@@ -3032,7 +3032,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/tags/{tag:id}|rel=update
+- name: /ovirt-engine/api/tags/{tag:id}|rel=update
   description: update the specified tag in the system
   request:
     body:
@@ -3045,7 +3045,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/tags|rel=add
+- name: /ovirt-engine/api/tags|rel=add
   description: add a new tag to the system
   request:
     body:
@@ -3057,7 +3057,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates|rel=get
+- name: /ovirt-engine/api/templates|rel=get
   description: get the list of all templates in the system
   request:
     body:
@@ -3069,7 +3069,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/templates/{template:id}|rel=get
+- name: /ovirt-engine/api/templates/{template:id}|rel=get
   description: get the details of the specified template in the system
   request:
     body:
@@ -3078,7 +3078,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/templates/{template:id}|rel=delete
+- name: /ovirt-engine/api/templates/{template:id}|rel=delete
   description: delete the specified template in the system
   request:
     body:
@@ -3088,7 +3088,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates/{template:id}|rel=update
+- name: /ovirt-engine/api/templates/{template:id}|rel=update
   description: update the specified template in the system
   request:
     body:
@@ -3134,7 +3134,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates|rel=add
+- name: /ovirt-engine/api/templates|rel=add
   description: add a new template to the system
   request:
     body:
@@ -3183,7 +3183,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates/{template:id}/export|rel=export
+- name: /ovirt-engine/api/templates/{template:id}/export|rel=export
   description: export the specified template to the export domain
   request:
     body:
@@ -3197,7 +3197,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates/{template:id}/cdroms|rel=get
+- name: /ovirt-engine/api/templates/{template:id}/cdroms|rel=get
   description: get the list of cdroms attached to the specified template
   request:
     body:
@@ -3206,7 +3206,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/templates/{template:id}/cdroms/{cdrom:id}|rel=get
+- name: /ovirt-engine/api/templates/{template:id}/cdroms/{cdrom:id}|rel=get
   description: get the details of the specified cdrom attached to the template
   request:
     body:
@@ -3214,7 +3214,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/templates/{template:id}/disks|rel=get
+- name: /ovirt-engine/api/templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template
   request:
     body:
@@ -3223,7 +3223,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/templates/{template:id}/disks/{disk:id}|rel=get
+- name: /ovirt-engine/api/templates/{template:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk attached to the template
   request:
     body:
@@ -3231,7 +3231,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/templates/{template:id}/disks/{disk:id}|rel=delete
+- name: /ovirt-engine/api/templates/{template:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk attached to the template
   request:
     body:
@@ -3245,7 +3245,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates/{template:id}/disks/{disk:id}/copy|rel=copy
+- name: /ovirt-engine/api/templates/{template:id}/disks/{disk:id}/copy|rel=copy
   description: copy the specified disk attached to the template to a specific storage domain
   request:
     body:
@@ -3259,7 +3259,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-- name:  /api/templates/{template:id}/disks/{disk:id}/export|rel=export
+- name:  /ovirt-engine/api/templates/{template:id}/disks/{disk:id}/export|rel=export
   request:
     body:
       parameterType: Action
@@ -3271,7 +3271,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-- name: /api/templates/{template:id}/nics|rel=get
+- name: /ovirt-engine/api/templates/{template:id}/nics|rel=get
   description: get the list of network interface cards attached to the template
   request:
     body:
@@ -3280,7 +3280,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/templates/{template:id}/nics|rel=add
+- name: /ovirt-engine/api/templates/{template:id}/nics|rel=add
   description: add a new network interface card to the template
   request:
     body:
@@ -3298,7 +3298,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates/{template:id}/nics/{nic:id}|rel=get
+- name: /ovirt-engine/api/templates/{template:id}/nics/{nic:id}|rel=get
   description: get the details of the specified network interface card attached to the template
   request:
     body:
@@ -3306,7 +3306,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/templates/{template:id}/nics/{nic:id}|rel=delete
+- name: /ovirt-engine/api/templates/{template:id}/nics/{nic:id}|rel=delete
   description: delete the specified network interface card attached to the template
   request:
     body:
@@ -3316,7 +3316,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates/{template:id}/nics/{nic:id}|rel=update
+- name: /ovirt-engine/api/templates/{template:id}/nics/{nic:id}|rel=update
   description: update the specified network interface card attached to the template
   request:
     body:
@@ -3331,7 +3331,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates/{template:id}/permissions|rel=get
+- name: /ovirt-engine/api/templates/{template:id}/permissions|rel=get
   description: get the list of all permissions for the specified template
   request:
     body:
@@ -3340,7 +3340,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/templates/{template:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/templates/{template:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission on the template
   request:
     body:
@@ -3348,7 +3348,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/templates/{template:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/templates/{template:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the template
   request:
     body:
@@ -3358,7 +3358,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/templates/{template:id}/permissions|rel=add
+- name: /ovirt-engine/api/templates/{template:id}/permissions|rel=add
   description: add a new permission on the template
   request:
     body:
@@ -3375,7 +3375,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users|rel=get
+- name: /ovirt-engine/api/users|rel=get
   description: get the list of all users registered in the system
   request:
     body:
@@ -3386,7 +3386,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/users/{user:id}|rel=get
+- name: /ovirt-engine/api/users/{user:id}|rel=get
   description: get the details of the specified user registered in the system
   request:
     body:
@@ -3396,7 +3396,7 @@ actions:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
-- name: /api/users|rel=add
+- name: /ovirt-engine/api/users|rel=add
   description: add a new user to the system
   request:
     body:
@@ -3409,7 +3409,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}|rel=delete
+- name: /ovirt-engine/api/users/{user:id}|rel=delete
   description: delete the from the domain
   request:
     body:
@@ -3419,7 +3419,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}/permissions|rel=get
+- name: /ovirt-engine/api/users/{user:id}/permissions|rel=get
   description: get the list of all permissions for the user
   request:
     body:
@@ -3428,7 +3428,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/users/{user:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/users/{user:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission for the user
   request:
     body:
@@ -3436,7 +3436,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/users/{user:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/users/{user:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission for the user
   request:
     body:
@@ -3446,7 +3446,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}/permissions|rel=add
+- name: /ovirt-engine/api/users/{user:id}/permissions|rel=add
   description: add a new permission for the user
   request:
     body:
@@ -3478,7 +3478,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}/roles|rel=get
+- name: /ovirt-engine/api/users/{user:id}/roles|rel=get
   description: get the list of roles assigned to the user
   request:
     body:
@@ -3487,7 +3487,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/users/{user:id}/roles/{role:id}|rel=get
+- name: /ovirt-engine/api/users/{user:id}/roles/{role:id}|rel=get
   description: get the details of the specified role assigned to the user
   request:
     body:
@@ -3495,7 +3495,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/users/{user:id}/roles/{role:id}|rel=delete
+- name: /ovirt-engine/api/users/{user:id}/roles/{role:id}|rel=delete
   description: delete the specified role assigned to the user
   request:
     body:
@@ -3505,7 +3505,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}/roles|rel=add
+- name: /ovirt-engine/api/users/{user:id}/roles|rel=add
   description: add a new role to the user
   request:
     body:
@@ -3518,7 +3518,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}/roles/{role:id}/permits|rel=get
+- name: /ovirt-engine/api/users/{user:id}/roles/{role:id}/permits|rel=get
   description: get the list of permits for the role assigned to the user
   request:
     body:
@@ -3527,7 +3527,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=get
+- name: /ovirt-engine/api/users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=get
   description: get the details of the specified permit for the role assigned to the user
   request:
     body:
@@ -3535,7 +3535,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=delete
+- name: /ovirt-engine/api/users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=delete
   description: delete the specified permit for the role assigned to the user
   request:
     body:
@@ -3545,7 +3545,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}/roles/{role:id}/permits|rel=add
+- name: /ovirt-engine/api/users/{user:id}/roles/{role:id}/permits|rel=add
   description: add a new permit for the role assigned to the user
   request:
     body:
@@ -3559,7 +3559,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}/tags|rel=get
+- name: /ovirt-engine/api/users/{user:id}/tags|rel=get
   description: get the list of tags attached to the user
   request:
     body:
@@ -3568,7 +3568,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/users/{user:id}/tags/{tag:id}|rel=get
+- name: /ovirt-engine/api/users/{user:id}/tags/{tag:id}|rel=get
   description: get the details of the specified tag attached to the user
   request:
     body:
@@ -3576,7 +3576,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/users/{user:id}/tags/{tag:id}|rel=delete
+- name: /ovirt-engine/api/users/{user:id}/tags/{tag:id}|rel=delete
   description: delete the specified tag attached to the user
   request:
     body:
@@ -3586,7 +3586,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/users/{user:id}/tags|rel=add
+- name: /ovirt-engine/api/users/{user:id}/tags|rel=add
   description: add a new tag to the user
   request:
     body:
@@ -3599,7 +3599,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vmpools|rel=get
+- name: /ovirt-engine/api/vmpools|rel=get
   description: get the list of all virtual machine pools in the system
   request:
     body:
@@ -3611,7 +3611,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/vmpools/{vmpool:id}|rel=get
+- name: /ovirt-engine/api/vmpools/{vmpool:id}|rel=get
   description: get the details of the specified virtual machine pool in the system
   request:
     body:
@@ -3620,7 +3620,7 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
-- name: /api/vmpools/{vmpool:id}|rel=delete
+- name: /ovirt-engine/api/vmpools/{vmpool:id}|rel=delete
   description: delete the specified virtual machine pool in the system
   request:
     body:
@@ -3630,7 +3630,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vmpools/{vmpool:id}|rel=update
+- name: /ovirt-engine/api/vmpools/{vmpool:id}|rel=update
   description: update the specified virtual machine pool in the system
   request:
     body:
@@ -3644,7 +3644,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vmpools/{vmpool:id}/allocatevm|rel=allocatevm
+- name: /ovirt-engine/api/vmpools/{vmpool:id}/allocatevm|rel=allocatevm
   description: attach the user to a vm from the vmpool and run the vm
   request:
     body:
@@ -3656,7 +3656,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vmpools|rel=add
+- name: /ovirt-engine/api/vmpools|rel=add
   description: add anew vm pool to the system
   request:
     body:
@@ -3671,7 +3671,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vmpools/{vmpool:id}/permissions|rel=get
+- name: /ovirt-engine/api/vmpools/{vmpool:id}/permissions|rel=get
   description: get the list of permissions for the specified vm pool
   request:
     body:
@@ -3680,7 +3680,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/vmpools/{vmpool:id}/permissions/{permission:id}|rel=get
+- name: /ovirt-engine/api/vmpools/{vmpool:id}/permissions/{permission:id}|rel=get
   description: get the details of the specified permission on the vm pool
   request:
     body:
@@ -3688,7 +3688,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/vmpools/{vmpool:id}/permissions/{permission:id}|rel=delete
+- name: /ovirt-engine/api/vmpools/{vmpool:id}/permissions/{permission:id}|rel=delete
   description: delete the specified permission on the vm pool
   request:
     body:
@@ -3698,7 +3698,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vmpools/{vmpool:id}/permissions|rel=add
+- name: /ovirt-engine/api/vmpools/{vmpool:id}/permissions|rel=add
   description: add a new permission on the vm pool
   request:
     body:
@@ -3715,7 +3715,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes|rel=get
   description: get the list of gluster volumes attached to the cluster
   request:
     body:
@@ -3725,7 +3725,7 @@ actions:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
-- name: /api/clusters/{cluster:id}/glustervolumes|rel=add
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes|rel=add
   description: add a new gluster volume to the cluster
   request:
     body:
@@ -3746,7 +3746,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/start|rel=start
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/start|rel=start
   description: start the gluster volume attached to the cluster
   request:
     body:
@@ -3759,7 +3759,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stop|rel=stop
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stop|rel=stop
   description: stop the gluster volume attached to the cluster
   request:
     body:
@@ -3772,7 +3772,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/rebalance|rel=rebalance
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/rebalance|rel=rebalance
   description: invoke the rebalance command on the gluster volume attached to the
   request:
     body:
@@ -3785,7 +3785,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stoprebalance|rel=stoprebalance
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stoprebalance|rel=stoprebalance
   description: invoke the stop rebalance command on the gluster volume attached to the cluster
   request:
     body:
@@ -3798,7 +3798,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setoption|rel=setoption
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setoption|rel=setoption
   description: set an option for the gluster volume attached to the cluster
   request:
     body:
@@ -3810,7 +3810,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetoption|rel=resetoption
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetoption|rel=resetoption
   description: reset an option for the gluster volume attached to the cluster
   request:
     body:
@@ -3823,7 +3823,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetalloptions|rel=resetalloptions
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetalloptions|rel=resetalloptions
   description: resets all options for the gluster volume attached to the cluster
   request:
     body:
@@ -3836,7 +3836,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=get
   description: get the list of all bricks in the gluster volume attached to the cluster
   request:
     body:
@@ -3845,7 +3845,7 @@ actions:
     urlparams: {}
     headers:
       All-Content: {value: true|false, required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=add
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=add
   description: add a new brick to the gluster volume attached to the cluster
   request:
     body:
@@ -3860,7 +3860,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}|rel=get
   description: get the details of the specified brick in the gluster volume attached to the cluster
   request:
     body:
@@ -3869,7 +3869,7 @@ actions:
     urlparams: {}
     headers:
       All-Content: {value: true|false, required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
   description: get the list of all bricks in the gluster volume attached to the cluster
   request:
     body:
@@ -3883,7 +3883,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/migrate|rel=migrate
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/migrate|rel=migrate
   description: migrate the data from the brick to others and mark for deletion
   request:
     body:
@@ -3897,7 +3897,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=stopmigrate
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=stopmigrate
   description: stops the bricks migration task started on on volume
   request:
     body:
@@ -3911,7 +3911,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=activate
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/stopmigrate|rel=activate
   description: activates the bricks post migration of data for reuse
   request:
     body:
@@ -3925,7 +3925,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace
   description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
   request:
     body:
@@ -3938,7 +3938,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics|rel=get
   description: get the statistics for the specified brick in the gluster volume attached to the cluster
   request:
     body:
@@ -3947,7 +3947,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics/{statistic:id}|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics/{statistic:id}|rel=get
   description: get the details of the specified statistics for the brick in the gluster volume attached to the cluster
   request:
     body:
@@ -3955,7 +3955,7 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/disks|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain
   request:
     body:
@@ -3967,7 +3967,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk in the storage domain
   request:
     body:
@@ -3976,7 +3976,7 @@ actions:
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk in the storage domain
   request:
     body:
@@ -3986,7 +3986,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/storagedomains/{storagedomain:id}/disks|rel=add
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/disks|rel=add
   description: add a new disk to the storage domain
   request:
     body:
@@ -4021,7 +4021,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain in the data center
   request:
     body:
@@ -4033,7 +4033,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
-- name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}/export|rel=export
+- name: /ovirt-engine/api/storagedomains/{storagedomain:id}/disks/{disk:id}/export|rel=export
   request:
     body:
       parameterType: Action
@@ -4045,7 +4045,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   description: get the details of the specified disk in the storage domain in the data center
   request:
     body:
@@ -4054,7 +4054,7 @@ actions:
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}/export|rel=export
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}/export|rel=export
   request:
     body:
       parameterType: Action
@@ -4066,7 +4066,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk from the storage domain in the data center
   request:
     body:
@@ -4076,7 +4076,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=add
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=add
   description: add a new disk to the storage domain in the data center
   request:
     body:
@@ -4112,7 +4112,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/jobs|rel=get
+- name: /ovirt-engine/api/jobs|rel=get
   description: get the list of all external jobs in the system
   request:
     body:
@@ -4122,7 +4122,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 
-- name: /api/jobs/{job:id}|rel=get
+- name: /ovirt-engine/api/jobs/{job:id}|rel=get
   description: get the details of the specified external job in the system
   request:
     body:
@@ -4131,7 +4131,7 @@ actions:
     urlparams: {}
     headers: {}
 
-- name: /api/jobs|rel=add
+- name: /ovirt-engine/api/jobs|rel=add
   description: add a new external job to the system
   request:
     body:
@@ -4146,7 +4146,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/jobs/{job:id}/end|rel=end
+- name: /ovirt-engine/api/jobs/{job:id}/end|rel=end
   description: end the specified external job in the system
   request:
     body:
@@ -4160,7 +4160,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/jobs/{job:id}/clear|rel=clear
+- name: /ovirt-engine/api/jobs/{job:id}/clear|rel=clear
   description: clear the specified external job in the system
   request:
     body:
@@ -4174,7 +4174,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/jobs/{job:id}/steps|rel=get
+- name: /ovirt-engine/api/jobs/{job:id}/steps|rel=get
   description: get the list of all steps for the external job in the system
   request:
     body:
@@ -4184,7 +4184,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 
-- name: /api/jobs/{job:id}/steps/{step:id}|rel=get
+- name: /ovirt-engine/api/jobs/{job:id}/steps/{step:id}|rel=get
   description: get the details of the specified step in the external job
   request:
     body:
@@ -4193,7 +4193,7 @@ actions:
     urlparams: {}
     headers: {}
 
-- name: /api/jobs/{job:id}/steps|rel=add
+- name: /ovirt-engine/api/jobs/{job:id}/steps|rel=add
   description: add a new step to the external job
   request:
     body:
@@ -4208,7 +4208,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/jobs/{job:id}/steps/{step:id}/end|rel=end
+- name: /ovirt-engine/api/jobs/{job:id}/steps/{step:id}/end|rel=end
   description: invoke the command to end the specified step of an external job
   request:
     body:
@@ -4222,7 +4222,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/jobs/{job:id}/steps/{step:id}/statistics|rel=get
+- name: /ovirt-engine/api/jobs/{job:id}/steps/{step:id}/statistics|rel=get
   description: get the detailed step status for monitoring
   request:
     body:
@@ -4232,7 +4232,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 
-- name: /api/jobs/{job:id}/steps/{step:id}/statistics/{statistic:id}|rel=get
+- name: /ovirt-engine/api/jobs/{job:id}/steps/{step:id}/statistics/{statistic:id}|rel=get
   description: get the detail statistic for a given step
   request:
     body:
@@ -4241,7 +4241,7 @@ actions:
     urlparams: {}
     headers: {}
 
-- name: /api/storageconnections|rel=get
+- name: /ovirt-engine/api/storageconnections|rel=get
   description: get the list of all storage connections in the system
   request:
     body:
@@ -4250,7 +4250,7 @@ actions:
     urlparams: {}
     headers: {}
 
-- name: /api/storageconnections/{storageconnection:id}|rel=get
+- name: /ovirt-engine/api/storageconnections/{storageconnection:id}|rel=get
   description: get the details of the specified storage connection in the system
   request:
     body:
@@ -4259,7 +4259,7 @@ actions:
     urlparams: {}
     headers: {}
 
-- name: /api/storageconnections/{storageconnection:id}|rel=delete
+- name: /ovirt-engine/api/storageconnections/{storageconnection:id}|rel=delete
   description: delete the specified storage connection in the system
   request:
     body:
@@ -4274,7 +4274,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/storageconnections/{storageconnection:id}|rel=update
+- name: /ovirt-engine/api/storageconnections/{storageconnection:id}|rel=update
   description: update the specified storage connection in the system
   request:
     body:
@@ -4300,7 +4300,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/storageconnections|rel=add
+- name: /ovirt-engine/api/storageconnections|rel=add
   description: add a new storage connection to the system
   request:
     body:
@@ -4323,21 +4323,21 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 
-- name: /api/clusters/{cluster:id}/glusterhooks|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/glusterhooks|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=get
+- name: /ovirt-engine/api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
     headers: {}
-- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=delete
+- name: /ovirt-engine/api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=delete
   request:
     body:
       parameterType: null
@@ -4346,7 +4346,7 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/enable|rel=enable
+- name: /ovirt-engine/api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/enable|rel=enable
   request:
     body:
       parameterType: Action
@@ -4357,7 +4357,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/disable|rel=disable
+- name: /ovirt-engine/api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/disable|rel=disable
   request:
     body:
       parameterType: Action
@@ -4368,7 +4368,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/resolve|rel=resolve
+- name: /ovirt-engine/api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/resolve|rel=resolve
   request:
     body:
       parameterType: Action
