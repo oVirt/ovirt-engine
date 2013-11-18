@@ -109,8 +109,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             if (action.isSetImage()) {
                 params.setoVirtIsoFile(action.getImage());
             }
-        } else {
-            validateParameters(action, "rootPassword");
         }
         return doAction(VdcActionType.UpdateVds,
                         params,
