@@ -527,19 +527,6 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testIncompleteInstall() throws Exception {
-        setUpGetEntityWithNoCertificateInfoExpectations(1);
-        setUriInfo(setUpBasicUriExpectations());
-        control.replay();
-        try {
-            resource.install(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Action", "install", "rootPassword");
-        }
-    }
-
-    @Test
     public void testIncompleteFence() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
