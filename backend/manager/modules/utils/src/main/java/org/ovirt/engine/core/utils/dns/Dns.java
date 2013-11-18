@@ -7,7 +7,7 @@ import org.ovirt.engine.core.utils.IPAddress;
 
 public class Dns {
 
-    public static IPAddress[] GetHostAddresses(String hostName) {
+    public static IPAddress[] getHostAddresses(String hostName) {
         try {
             InetAddress addr = InetAddress.getLocalHost();
             byte[] ipAddr = addr.getAddress();

@@ -70,7 +70,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         parameters.setConnectionTimeout(Config.<Integer> GetValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds));
         parameters.setCheckConnectivity(getParameters().getCheckConnectivity());
 
-        IPAddress[] adresses = Dns.GetHostAddresses(NetworkUtils.OS_REFERENCE_TO_MACHINE_NAME);
+        IPAddress[] adresses = Dns.getHostAddresses(NetworkUtils.OS_REFERENCE_TO_MACHINE_NAME);
         if (adresses != null && adresses.length > 0) {
             parameters.setHostAddr(adresses[0].toString());
         }
