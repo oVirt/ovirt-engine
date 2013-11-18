@@ -42,11 +42,11 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
                 }
             }
             sDomain.setStorage(vg.get("vgUUID").toString());
-            Long size = IrsBrokerCommand.AssignLongValue(vg, "vgfree");
+            Long size = IrsBrokerCommand.assignLongValue(vg, "vgfree");
             if (size != null) {
                 sDomain.setAvailableDiskSize((int) (size / SizeConverter.BYTES_IN_GB));
             }
-            size = IrsBrokerCommand.AssignLongValue(vg, "vgsize");
+            size = IrsBrokerCommand.assignLongValue(vg, "vgsize");
             if (size != null && sDomain.getAvailableDiskSize() != null) {
                 sDomain.setUsedDiskSize((int) (size / SizeConverter.BYTES_IN_GB)
                         - sDomain.getAvailableDiskSize());

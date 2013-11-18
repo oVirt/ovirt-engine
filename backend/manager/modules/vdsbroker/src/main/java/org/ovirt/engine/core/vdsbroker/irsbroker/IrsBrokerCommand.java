@@ -1636,7 +1636,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         log.errorFormat("IrsBroker::Failed::{0} due to: {1}", getCommandName(), ExceptionUtils.getMessage(ex));
     }
 
-    public static Long AssignLongValue(Map<String, Object> input, String name) {
+    public static Long assignLongValue(Map<String, Object> input, String name) {
         Long returnValue = null;
         if (input.containsKey(name)) {
             String stringValue = null;

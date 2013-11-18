@@ -503,7 +503,7 @@ public class VdsBrokerObjectsBuilder {
         return new RpmVersion(sb.toString());
     }
 
-    public static void UpdateHardwareSystemInformation(Map<String, Object> hwInfo, VDS vds){
+    public static void updateHardwareSystemInformation(Map<String, Object> hwInfo, VDS vds){
         vds.setHardwareManufacturer(AssignStringValue(hwInfo, VdsProperties.hwManufacturer));
         vds.setHardwareProductName(AssignStringValue(hwInfo, VdsProperties.hwProductName));
         vds.setHardwareVersion(AssignStringValue(hwInfo, VdsProperties.hwVersion));

@@ -49,9 +49,9 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
                             .toString(), true));
                 }
             }
-            Long size = IrsBrokerCommand.AssignLongValue(xmlRpcStruct, "diskfree");
+            Long size = IrsBrokerCommand.assignLongValue(xmlRpcStruct, "diskfree");
             domain.setAvailableDiskSize((size == null) ? null : (int) (size / SizeConverter.BYTES_IN_GB));
-            size = IrsBrokerCommand.AssignLongValue(xmlRpcStruct, "disktotal");
+            size = IrsBrokerCommand.assignLongValue(xmlRpcStruct, "disktotal");
             domain.setUsedDiskSize((size == null || domain.getAvailableDiskSize() == null) ? null :
                     (int) (size / SizeConverter.BYTES_IN_GB) - domain.getAvailableDiskSize());
             if (xmlRpcStruct.containsKey("alerts")) {

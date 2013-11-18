@@ -110,9 +110,9 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                 }
             }
         }
-        Long size = IrsBrokerCommand.AssignLongValue(xlun, "devcapacity");
+        Long size = IrsBrokerCommand.assignLongValue(xlun, "devcapacity");
         if (size == null) {
-            size = IrsBrokerCommand.AssignLongValue(xlun, "capacity");
+            size = IrsBrokerCommand.assignLongValue(xlun, "capacity");
         }
         if (size != null) {
             lun.setDeviceSize((int) (size / SizeConverter.BYTES_IN_GB));
