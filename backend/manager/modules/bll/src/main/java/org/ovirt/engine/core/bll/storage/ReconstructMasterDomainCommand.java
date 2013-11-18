@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandPara
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ReconstructMasterVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.RefreshStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -53,7 +52,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     private boolean checkIsDomainLocked(StoragePoolIsoMap domainMap) {
-        if (StorageDomainStatus.Locked == domainMap.getStatus()) {
+        if (domainMap.getStatus() != null && domainMap.getStatus().isStorageDomainInProcess()) {
             addInvalidSDStatusMessage(StorageDomainStatus.Locked);
             return true;
         }
@@ -230,21 +229,19 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                     public Void call() {
                         try {
                             if (isPerformConnectOps && connectVdsToNewMaster(vds)) {
+                                List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDAO()
+                                        .getAllForStoragePool(getStoragePool().getId());
                                 try {
                                     runVdsCommand(
-                                            VDSCommandType.RefreshStoragePool,
-                                            new RefreshStoragePoolVDSCommandParameters(vds.getId(),
-                                                    getStoragePool().getId(),
-                                                    _newMasterStorageDomainId,
-                                                    getStoragePool().getmaster_domain_version()));
+                                            VDSCommandType.ConnectStoragePool,
+                                            new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
+                                                    _newMasterStorageDomainId, storagePoolIsoMap, true));
                                 } catch (VdcBLLException ex) {
                                     if (VdcBllErrors.StoragePoolUnknown == ex.getVdsError().getCode()) {
                                         VDSReturnValue returnVal = runVdsCommand(
                                                 VDSCommandType.ConnectStoragePool,
-                                                new ConnectStoragePoolVDSCommandParameters(vds.getId(),
-                                                        getStoragePool().getId(), vds.getVdsSpmId(),
-                                                        _newMasterStorageDomainId, getStoragePool()
-                                                                .getmaster_domain_version()));
+                                                new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
+                                                        _newMasterStorageDomainId, storagePoolIsoMap));
                                         if (!returnVal.getSucceeded()) {
                                             log.errorFormat("Post reconstruct actions (connectPool) did not complete on host {0} in the pool. error {1}",
                                                     vds.getId(),

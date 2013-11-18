@@ -1743,5 +1743,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     SpiceCopyPasteToggleSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    StoragePoolMemoryBackend,
+
     Invalid
 }

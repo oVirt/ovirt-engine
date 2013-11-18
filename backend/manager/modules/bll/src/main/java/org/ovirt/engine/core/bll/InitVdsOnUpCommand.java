@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -229,14 +230,14 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
         StoragePool storagePool = getStoragePoolDAO().get(storagePoolId);
         StorageDomain masterDomain = getStorageDomainDAO().getStorageDomainByTypeAndPool(storagePoolId, StorageDomainType.Master);
+        List<StoragePoolIsoMap> storagePoolIsoMap = getStoragePoolIsoMapDAO().getAllForStoragePool(storagePoolId);
         boolean masterDomainInactiveOrUnknown = masterDomain.getStatus() == StorageDomainStatus.Inactive
                 || masterDomain.getStatus() == StorageDomainStatus.Unknown;
         VDSError error = null;
         try {
             VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.ConnectStoragePool,
-                    new ConnectStoragePoolVDSCommandParameters(vds.getId(), storagePoolId,
-                            vds.getVdsSpmId(), masterDomain.getId(),
-                            storagePool.getmaster_domain_version()));
+                    new ConnectStoragePoolVDSCommandParameters(
+                            vds, storagePool, masterDomain.getId(), storagePoolIsoMap));
             if (!vdsReturnValue.getSucceeded()) {
                 error = vdsReturnValue.getVdsError();
             }

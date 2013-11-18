@@ -357,4 +357,13 @@ public class FeatureSupported {
     public static boolean isSpiceCopyPasteToggleSupported(Version version) {
         return supportedInConfig(ConfigValues.SpiceCopyPasteToggleSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if the pool memory backend is supported for the given version.
+     */
+    public static boolean storagePoolMemoryBackend(Version version) {
+        return supportedInConfig(ConfigValues.StoragePoolMemoryBackend, version);
+    }
 }

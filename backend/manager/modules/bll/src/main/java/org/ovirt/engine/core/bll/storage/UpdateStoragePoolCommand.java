@@ -132,6 +132,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 AuditLogDirector.log(this, AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
             }
         }
+
+        runSynchronizeOperation(new RefreshPoolSingleAsyncOperationFactory(), new ArrayList<Guid>());
     }
 
     private void updateMemberDomainsFormat(StorageFormatType targetFormat) {

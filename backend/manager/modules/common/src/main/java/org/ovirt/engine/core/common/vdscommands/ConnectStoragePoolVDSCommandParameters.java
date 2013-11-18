@@ -1,44 +1,82 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ConnectStoragePoolVDSCommandParameters extends DisconnectStoragePoolVDSCommandParameters {
-    public ConnectStoragePoolVDSCommandParameters(Guid vdsId, Guid storagePoolId, int vds_spm_id, Guid masterDomainId,
-            int masterVersion) {
-        super(vdsId, storagePoolId, vds_spm_id);
-        setMasterDomainId(masterDomainId);
-        setMasterVersion(masterVersion);
-    }
+import java.util.List;
 
-    private int privateMasterVersion;
 
-    public int getMasterVersion() {
-        return privateMasterVersion;
-    }
+public class ConnectStoragePoolVDSCommandParameters extends VdsIdVDSCommandParametersBase {
 
-    private void setMasterVersion(int value) {
-        privateMasterVersion = value;
-    }
+    private VDS vds;
+
+    private StoragePool storagePool;
+
+    private Guid masterDomainId;
+
+    private List<StoragePoolIsoMap> storageDomains;
+
+    private boolean refreshOnly;
 
     public ConnectStoragePoolVDSCommandParameters() {
-        privateMasterDomainId = Guid.Empty;
     }
 
-    private Guid privateMasterDomainId;
+    public ConnectStoragePoolVDSCommandParameters(VDS vds, StoragePool storagePool, Guid masterDomainId,
+                                                  List<StoragePoolIsoMap> storageDomains) {
+        this(vds, storagePool, masterDomainId, storageDomains, false);
+    }
+
+    public ConnectStoragePoolVDSCommandParameters(VDS vds, StoragePool storagePool, Guid masterDomainId,
+                                                  List<StoragePoolIsoMap> storageDomains, boolean refreshOnly) {
+        this.vds = vds;
+        this.storagePool = storagePool;
+        this.masterDomainId = masterDomainId;
+        this.storageDomains = storageDomains;
+        this.refreshOnly = refreshOnly;
+    }
+
+    public VDS getVds() {
+        return vds;
+    }
+
+    public void setVds(VDS vds) {
+        this.vds = vds;
+    }
+
+    public Guid getVdsId() {
+        return vds.getId();
+    }
+
+    public StoragePool getStoragePool() {
+        return storagePool;
+    }
+
+    public Guid getStoragePoolId() {
+        return storagePool.getId();
+    }
+
+    public void setStoragePool(StoragePool storagePool) {
+        this.storagePool = storagePool;
+    }
 
     public Guid getMasterDomainId() {
-        return privateMasterDomainId;
+        return masterDomainId;
     }
 
-    private void setMasterDomainId(Guid value) {
-        privateMasterDomainId = value;
+    public List<StoragePoolIsoMap> getStorageDomains() {
+        return storageDomains;
+    }
+
+    public boolean isRefreshOnly() {
+        return this.refreshOnly;
     }
 
     @Override
     public String toString() {
-        return String.format("%s, masterDomainId = %s, masterVersion = %s",
-                super.toString(),
-                getMasterDomainId(),
-                getMasterVersion());
+        return String.format("%s, vdsId = %s, storagePoolId = %s, masterVersion = %d",
+                super.toString(), vds.getId().toString(), storagePool.getId().toString(),
+                storagePool.getmaster_domain_version());
     }
 }

@@ -109,7 +109,7 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc formatStorageDomain(String sdUUID);
 
     StatusOnlyReturnForXmlRpc connectStoragePool(String spUUID, int hostSpmId, String SCSIKey, String masterdomainId,
-            int masterVersion);
+                                                 int masterVersion, Map<String, String> storageDomains);
 
     StatusOnlyReturnForXmlRpc disconnectStoragePool(String spUUID, int hostSpmId, String SCSIKey);
 

@@ -697,12 +697,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     log.infoFormat("hostFromVds::selectedVds - {0}, spmStatus {1}, storage pool {2}",
                             selectedVds.getName(), spmStatus.getSpmStatus().toString(), storagePool.getName());
                     if (spmStatus.getSpmStatus() == SpmStatus.Unknown_Pool) {
-                        Guid masterId = DbFacade.getInstance().getStorageDomainDao()
+                        Guid masterDomainId = DbFacade.getInstance().getStorageDomainDao()
                                 .getMasterStorageDomainIdForPool(_storagePoolId);
+                        List<StoragePoolIsoMap> storagePoolIsoMap = DbFacade.getInstance()
+                                .getStoragePoolIsoMapDao().getAllForStoragePool(_storagePoolId);
                         VDSReturnValue connectResult = ResourceManager.getInstance().runVdsCommand(
                                 VDSCommandType.ConnectStoragePool,
-                                new ConnectStoragePoolVDSCommandParameters(selectedVds.getId(), _storagePoolId,
-                                        selectedVds.getVdsSpmId(), masterId, storagePool.getmaster_domain_version()));
+                                new ConnectStoragePoolVDSCommandParameters(selectedVds, storagePool,
+                                        masterDomainId, storagePoolIsoMap));
                         if (!connectResult.getSucceeded()
                                 && connectResult.getExceptionObject() instanceof IRSNoMasterDomainException) {
                             throw connectResult.getExceptionObject();

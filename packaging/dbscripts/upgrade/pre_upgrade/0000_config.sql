@@ -293,6 +293,12 @@ select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.3');
 select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.4');
 select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.5');
 
+select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.0');
+select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.1');
+select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.2');
+select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.3');
+select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.4');
+
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
 

@@ -480,10 +480,16 @@ public class VdsServerWrapper implements IVdsServer {
 
     @Override
     public StatusOnlyReturnForXmlRpc connectStoragePool(String spUUID, int hostSpmId, String SCSIKey,
-            String masterdomainId, int masterVersion) {
+            String masterdomainId, int masterVersion, Map<String, String> storageDomains) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.connectStoragePool(spUUID, hostSpmId, SCSIKey,
-                    masterdomainId, masterVersion);
+            Map<String, Object> xmlRpcReturnValue;
+            if (storageDomains == null) {
+                xmlRpcReturnValue = vdsServer.connectStoragePool(spUUID, hostSpmId, SCSIKey,
+                        masterdomainId, masterVersion);
+            } else {
+                xmlRpcReturnValue = vdsServer.connectStoragePool(spUUID, hostSpmId, SCSIKey,
+                        masterdomainId, masterVersion, storageDomains);
+            }
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

@@ -1,26 +1,73 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
+import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
+
+import java.util.Map;
 
 public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommandParameters>
         extends VdsBrokerCommand<P> {
+
     public ConnectStoragePoolVDSCommand(P parameters) {
         super(parameters);
     }
 
+    private boolean isStoragePoolMemoryBackend() {
+        return FeatureSupported.storagePoolMemoryBackend(
+                getParameters().getStoragePool().getcompatibility_version());
+    }
+
+    public void connectStoragePool() {
+        Map<String, String> storageDomains = null;
+
+        if (isStoragePoolMemoryBackend()) {
+            storageDomains = StoragePoolDomainHelper.buildStoragePoolDomainsMap(
+                    getParameters().getStorageDomains());
+        }
+
+        status = getBroker().connectStoragePool(
+                getParameters().getStoragePoolId().toString(),
+                getParameters().getVds().getVdsSpmId(),
+                getParameters().getStoragePoolId().toString(),
+                getParameters().getMasterDomainId().toString(),
+                getParameters().getStoragePool().getmaster_domain_version(),
+                storageDomains);
+    }
+
+    public void refreshStoragePool() {
+        status = getBroker().refreshStoragePool(
+                getParameters().getStoragePoolId().toString(),
+                getParameters().getMasterDomainId().toString(),
+                getParameters().getStoragePool().getmaster_domain_version());
+    }
+
+    protected boolean isRefreshStoragePool() {
+        return getParameters().isRefreshOnly() && !isStoragePoolMemoryBackend();
+    }
+
     @Override
     protected void executeVdsBrokerCommand() {
-        status = getBroker().connectStoragePool(getParameters().getStoragePoolId().toString(),
-                getParameters().getvds_spm_id(), getParameters().getStoragePoolId().toString(),
-                getParameters().getMasterDomainId().toString(), getParameters().getMasterVersion());
+        if (isRefreshStoragePool()) {
+            refreshStoragePool();
+        } else {
+            connectStoragePool();
+        }
         proceedProxyReturnValue();
     }
 
-    // dont throw exception on errors except StoragePoolMasterNotFound for
-    // master domain failure treatment
-    @Override
     protected void proceedProxyReturnValue() {
+        if (isRefreshStoragePool()) {
+            super.proceedProxyReturnValue();
+        } else {
+            proceedConnectProxyReturnValue();
+        }
+    }
+
+    // Don't throw exception on errors except StoragePoolMasterNotFound for
+    // master domain failure treatment
+    protected void proceedConnectProxyReturnValue() {
         VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:

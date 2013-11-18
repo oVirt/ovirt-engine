@@ -92,6 +92,9 @@ public interface VdsServerConnector {
     public Map<String, Object> connectStoragePool(String spUUID, int hostSpmId, String SCSIKey, String masterdomainId,
             int masterVersion);
 
+    public Map<String, Object> connectStoragePool(String spUUID, int hostSpmId, String SCSIKey, String masterdomainId,
+                                                  int masterVersion, Map<String, String> storageDomains);
+
     public Map<String, Object> disconnectStoragePool(String spUUID, int hostSpmId, String SCSIKey);
 
     public Map<String, Object> createStoragePool(int poolType, String spUUID, String poolName, String msdUUID,
