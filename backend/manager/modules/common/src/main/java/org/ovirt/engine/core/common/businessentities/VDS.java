@@ -206,9 +206,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public void setVdsGroupCompatibilityVersion(Version value) {
-        if (Version.OpInequality(vdsGroupCompatibilityVersion, value)) {
-            this.vdsGroupCompatibilityVersion = value;
-        }
+        this.vdsGroupCompatibilityVersion = value;
     }
 
     public Guid getVdsGroupId() {

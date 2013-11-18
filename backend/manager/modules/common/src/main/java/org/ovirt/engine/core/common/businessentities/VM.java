@@ -840,9 +840,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     }
 
     public void setVdsGroupCompatibilityVersion(Version value) {
-        if (Version.OpInequality(getVdsGroupCompatibilityVersion(), value)) {
-            this.vdsGroupCompatibilityVersion = value;
-        }
+        this.vdsGroupCompatibilityVersion = value;
     }
 
     private String vdsGroupName;
