@@ -345,7 +345,17 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private boolean initGlusterHost() {
         glusterHostUuidFound = true;
         if (GlusterFeatureSupported.glusterHostUuidSupported(getVdsGroup().getcompatibility_version())) {
-            if (!saveGlusterHostUuid()) {
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHostUUID,
+                    new VdsIdVDSCommandParametersBase(getVds().getId()));
+            if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
+                Guid addedServerUuid = Guid.createGuidFromString((String) returnValue.getReturnValue());
+                if (hostUuidExists(addedServerUuid)) {
+                    setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_ALREADY_EXISTS, null);
+                    return false;
+                }
+                saveGlusterHostUuid(addedServerUuid);
+            }
+            else {
                 glusterHostUuidFound = false;
                 setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_NOT_FOUND, null);
             }
@@ -436,23 +446,25 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         return false;
     }
 
-    private boolean saveGlusterHostUuid() {
+    private boolean hostUuidExists(Guid addedServerUuid) {
+        GlusterServerDao glusterServerDao = DbFacade.getInstance().getGlusterServerDao();
+        GlusterServer glusterServer = glusterServerDao.getByGlusterServerUuid(addedServerUuid);
+        if ((glusterServer == null) ||
+                (glusterServer != null && glusterServer.getId().equals(getVds().getId()))) {
+            return false;
+        }
+        return true;
+    }
+
+    private void saveGlusterHostUuid(Guid addedServerUuid) {
         GlusterServerDao glusterServerDao = DbFacade.getInstance().getGlusterServerDao();
         GlusterServer glusterServer = glusterServerDao.getByServerId(getVds().getId());
         if (glusterServer == null) {
-            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHostUUID,
-                    new VdsIdVDSCommandParametersBase(getVds().getId()));
-            if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-                glusterServer = new GlusterServer();
-                glusterServer.setId(getVds().getId());
-                glusterServer.setGlusterServerUuid(Guid.createGuidFromString((String) returnValue.getReturnValue()));
-                glusterServerDao.save(glusterServer);
-            }
-            else {
-                return false;
-            }
+            glusterServer = new GlusterServer();
+            glusterServer.setId(getVds().getId());
+            glusterServer.setGlusterServerUuid(addedServerUuid);
+            glusterServerDao.save(glusterServer);
         }
-        return true;
     }
 
     public InterfaceDao getInterfaceDAO() {

@@ -132,6 +132,8 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             return AuditLogType.GLUSTER_COMMAND_FAILED;
         case GLUSTER_HOST_UUID_NOT_FOUND:
             return AuditLogType.GLUSTER_HOST_UUID_NOT_FOUND;
+        case GLUSTER_HOST_UUID_ALREADY_EXISTS:
+            return AuditLogType.GLUSTER_HOST_UUID_ALREADY_EXISTS;
         case EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER:
             return AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER;
         case UNTRUSTED:

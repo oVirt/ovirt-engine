@@ -30,6 +30,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String NonOperationalReason___GLUSTER_HOST_UUID_NOT_FOUND();
 
+    String NonOperationalReason___GLUSTER_HOST_UUID_ALREADY_EXISTS();
+
     String NonOperationalReason___CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER();
 
     String NonOperationalReason___EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER();
