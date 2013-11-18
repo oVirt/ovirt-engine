@@ -37,8 +37,8 @@ public class HorizontalSplitTable extends Composite {
     private final MultiSelectionModel<EntityModel> topSelectionModel;
     private final MultiSelectionModel<EntityModel> bottomSelectionModel;
 
-    private IEventListener topItemsChangedListener;
-    private IEventListener bottomItemsChangedListener;
+    private final IEventListener topItemsChangedListener;
+    private final IEventListener bottomItemsChangedListener;
 
     private UICommand onDownButtonPressed;
     private UICommand onUpButtonPressed;
@@ -89,6 +89,19 @@ public class HorizontalSplitTable extends Composite {
 
         topSelectionModel = (MultiSelectionModel<EntityModel>) topTable.getSelectionModel();
         bottomSelectionModel = (MultiSelectionModel<EntityModel>) bottomTable.getSelectionModel();
+
+        topItemsChangedListener = new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                topSelectionModel.clear();
+            }
+        };
+        bottomItemsChangedListener = new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                bottomSelectionModel.clear();
+            }
+        };
 
         addSelectionHandler(true);
         addSelectionHandler(false);
@@ -158,17 +171,11 @@ public class HorizontalSplitTable extends Composite {
 
     private void edit(ListModel model, final boolean topTableIsEdited) {
         EntityModelCellTable<ListModel> table = getTable(topTableIsEdited);
+        ListModel oldModel = table.asEditor().flush();
         IEventListener listener = topTableIsEdited ? topItemsChangedListener : bottomItemsChangedListener;
-        if (listener != null) {
-            table.asEditor().flush().getItemsChangedEvent().removeListener(listener);
+        if (oldModel != null) {
+            oldModel.getItemsChangedEvent().removeListener(listener);
         }
-        listener = new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getSelectionModel(topTableIsEdited).clear();
-            }
-        };
         model.getItemsChangedEvent().addListener(listener);
         table.asEditor().edit(model);
     }
