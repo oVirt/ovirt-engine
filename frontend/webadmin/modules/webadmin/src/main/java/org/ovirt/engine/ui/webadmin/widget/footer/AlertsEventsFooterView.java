@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskCountChangeHandler;
+import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskHandler;
 import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -49,7 +49,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AlertsEventsFooterView extends Composite implements AlertCountChangeHandler, TaskCountChangeHandler {
+public class AlertsEventsFooterView extends Composite implements AlertCountChangeHandler, TaskHandler {
 
     interface WidgetUiBinder extends UiBinder<Widget, AlertsEventsFooterView> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -107,6 +107,8 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     private final ApplicationConstants constants;
     private final SafeHtml alertImage;
 
+    private TaskModelProvider taskModelProvider;
+
     public AlertsEventsFooterView(AlertModelProvider alertModelProvider,
             AlertFirstRowModelProvider alertFirstRowModelProvider,
             EventModelProvider eventModelProvider,
@@ -121,10 +123,11 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         this.resources = resources;
         this.templates = templates;
         this.constants = constants;
+        this.taskModelProvider = taskModelProvider;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initButtonHandlers();
         alertModelProvider.setAlertCountChangeHandler(this);
-        taskModelProvider.setTaskCountChangeHandler(this);
+        taskModelProvider.setTaskHandler(this);
 
         alertsTable = createActionTable(alertModelProvider);
         alertsTable.setBarStyle(style.barStyle());
@@ -429,5 +432,10 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     @Override
     public void onTaskCountChange(int count) {
         return;
+    }
+
+    @Override
+    public void updateTree() {
+        tasksTree.updateTree(taskModelProvider.getModel());
     }
 }

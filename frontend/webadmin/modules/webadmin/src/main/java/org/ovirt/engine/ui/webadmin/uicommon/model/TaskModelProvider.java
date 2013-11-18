@@ -14,15 +14,17 @@ import com.google.inject.Provider;
 
 public class TaskModelProvider extends SearchableTabModelProvider<Job, TaskListModel> {
 
-    public interface TaskCountChangeHandler {
+    public interface TaskHandler {
 
         void onTaskCountChange(int count);
 
         void onRunningTasksCountChange(int count);
 
+        void updateTree();
+
     }
 
-    private TaskCountChangeHandler taskCountChangeHandler;
+    private TaskHandler taskHandler;
     private int lastRunningTasksCount = 0;
 
     @Inject
@@ -31,14 +33,14 @@ public class TaskModelProvider extends SearchableTabModelProvider<Job, TaskListM
         super(eventBus, defaultConfirmPopupProvider);
     }
 
-    public void setTaskCountChangeHandler(TaskCountChangeHandler taskCountChangeHandler) {
-        this.taskCountChangeHandler = taskCountChangeHandler;
+    public void setTaskHandler(TaskHandler taskHandler) {
+        this.taskHandler = taskHandler;
     }
 
     @Override
     protected void updateDataProvider(List<Job> items) {
-        if (taskCountChangeHandler != null) {
-            taskCountChangeHandler.onTaskCountChange(items.size());
+        if (taskHandler != null) {
+            taskHandler.onTaskCountChange(items.size());
         }
         int count = 0;
         for (Job job : items) {
@@ -48,8 +50,8 @@ public class TaskModelProvider extends SearchableTabModelProvider<Job, TaskListM
         }
         if (count != lastRunningTasksCount) {
             lastRunningTasksCount = count;
-            if (taskCountChangeHandler != null) {
-                taskCountChangeHandler.onRunningTasksCountChange(count);
+            if (taskHandler != null) {
+                taskHandler.onRunningTasksCountChange(count);
             }
         }
 
@@ -61,4 +63,11 @@ public class TaskModelProvider extends SearchableTabModelProvider<Job, TaskListM
         return getCommonModel().getTaskList();
     }
 
+    @Override
+    protected void onCommonModelChange() {
+        super.onCommonModelChange();
+        if (taskHandler != null) {
+            taskHandler.updateTree();
+        }
+    }
 }
