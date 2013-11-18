@@ -110,11 +110,11 @@ public class GlusterTaskUtils {
     public void endStepJob(Step step) {
         getJobRepository().updateStep(step);
         ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
-        ExecutionHandler.endTaskJob(finalContext, isTaskSuccess(step));
+        ExecutionHandler.endTaskJob(finalContext, isTaskSuccess(step.getStatus()));
     }
 
-    public boolean isTaskSuccess(Step step) {
-        switch (step.getStatus()) {
+    public boolean isTaskSuccess(JobExecutionStatus status) {
+        switch (status) {
         case ABORTED:
         case FAILED:
             return false;

@@ -141,7 +141,6 @@ public class StopRebalanceGlusterVolumeCommandTest {
     }
 
     private void mockBackend(boolean succeeded,
-            JobExecutionStatus rebalanceStatus,
             JobExecutionStatus rebalanceStopStatus,
             boolean isRebalancegTaskCompleted,
             VdcBllErrors errorCode) {
@@ -156,7 +155,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
         doNothing().when(cmd).releaseVolumeLock();
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         GlusterVolumeTaskStatusEntity rebalanceStatusEntity = new GlusterVolumeTaskStatusEntity();
-        rebalanceStatusEntity.getStatusSummary().setStatus(rebalanceStatus);
+        rebalanceStatusEntity.getStatusSummary().setStatus(rebalanceStopStatus);
         vdsReturnValue.setReturnValue(rebalanceStatusEntity);
         vdsReturnValue.setSucceeded(succeeded);
         if (!succeeded) {
@@ -218,7 +217,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
     public void executeCommand() {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
-        mockBackend(true, JobExecutionStatus.STARTED, JobExecutionStatus.ABORTED, false, null);
+        mockBackend(true, JobExecutionStatus.ABORTED, false, null);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
@@ -233,7 +232,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
     public void executeCommandWithRebalanceCompleteInNode() {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
-        mockBackend(true, JobExecutionStatus.FINISHED, JobExecutionStatus.FINISHED, true, null);
+        mockBackend(true, JobExecutionStatus.FINISHED, true, null);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 
@@ -248,7 +247,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
     public void executeCommandWhenFailed() {
         cmd = spy(createTestCommand(volumeWithRebalanceTask));
         prepareMocks(cmd);
-        mockBackend(false, JobExecutionStatus.FAILED, JobExecutionStatus.FINISHED, false, VdcBllErrors.GlusterVolumeRebalanceStopFailed);
+        mockBackend(false, JobExecutionStatus.FAILED, false, VdcBllErrors.GlusterVolumeRebalanceStopFailed);
         assertTrue(cmd.canDoAction());
         cmd.executeCommand();
 

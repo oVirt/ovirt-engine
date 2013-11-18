@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -65,8 +66,11 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
         GlusterVolumeTaskStatusEntity rebalanceStatusEntity =
                 (GlusterVolumeTaskStatusEntity) vdsReturnaValue.getReturnValue();
         JobExecutionStatus stepStatus = rebalanceStatusEntity.getStatusSummary().getStatus();
-        if (stepStatus != null && JobExecutionStatus.FINISHED.equals(stepStatus)) {
-            endStepJob(stepStatus, getStepMessageMap(stepStatus), true);
+        if (stepStatus != null) {
+            endStepJob(stepStatus,
+                    getStepMessageMap(stepStatus),
+                    GlusterTaskUtils.getInstance().isTaskSuccess(stepStatus));
+
         } else {
             endStepJob(JobExecutionStatus.ABORTED, getStepMessageMap(JobExecutionStatus.ABORTED), false);
         }
