@@ -256,7 +256,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                 }
             }
             else
-                // Pool-snapshot is gone (probably due to ProcessVmPoolOnStopVm
+                // Pool-snapshot is gone (probably due to processVmPoolOnStopVm
                 // treatment) ->
                 // no point in running the VM or trying to run again the endAction
                 // method:

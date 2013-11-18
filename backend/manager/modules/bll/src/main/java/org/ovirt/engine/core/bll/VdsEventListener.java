@@ -96,7 +96,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnVmStop(Guid vmId) {
-        VmPoolHandler.ProcessVmPoolOnStopVm(vmId, null);
+        VmPoolHandler.processVmPoolOnStopVm(vmId, null);
     }
 
     @Override

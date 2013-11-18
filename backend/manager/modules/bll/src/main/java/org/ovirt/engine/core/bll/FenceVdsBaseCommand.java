@@ -464,7 +464,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             setVmId(vm.getId());
             setVmName(vm.getName());
             setVm(vm);
-            VmPoolHandler.ProcessVmPoolOnStopVm(vm.getId(),
+            VmPoolHandler.processVmPoolOnStopVm(vm.getId(),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
             // Handle highly available VMs

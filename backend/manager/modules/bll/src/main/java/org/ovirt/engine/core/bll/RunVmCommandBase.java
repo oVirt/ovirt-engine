@@ -147,7 +147,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     private void processVmPoolOnStopVm() {
-        VmPoolHandler.ProcessVmPoolOnStopVm(getVm().getId(),
+        VmPoolHandler.processVmPoolOnStopVm(getVm().getId(),
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
     }
 

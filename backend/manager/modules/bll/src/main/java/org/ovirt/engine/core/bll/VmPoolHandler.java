@@ -29,7 +29,7 @@ public class VmPoolHandler {
      *        must be treated as the real implementor of VdsEventListener.processOnVmStop meanwhile till a better
      *        solution supplied
      */
-    public static void ProcessVmPoolOnStopVm(Guid vmId, CommandContext context) {
+    public static void processVmPoolOnStopVm(Guid vmId, CommandContext context) {
         VmPoolMap map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId);
         List<DbUser> users = DbFacade.getInstance().getDbUserDao().getAllForVm(vmId);
         // Check if this is a Vm from a Vm pool, and is attached to a user
@@ -54,7 +54,7 @@ public class VmPoolHandler {
 
     public static void removeVmStatelessImages(Guid vmId, CommandContext context) {
         if (DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotType.STATELESS)) {
-            log.infoFormat("VdcBll.VmPoolHandler.ProcessVmPoolOnStopVm - Deleting snapshot for stateless vm {0}", vmId);
+            log.infoFormat("VdcBll.VmPoolHandler.processVmPoolOnStopVm - Deleting snapshot for stateless vm {0}", vmId);
             Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(vmId),
                     context);
