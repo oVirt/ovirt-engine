@@ -44,38 +44,38 @@ public class SessionDataContainerTest {
     public void testGetDataAndSetDataWithNullSession() {
         ThreadLocalParamsContainer.setHttpSessionId(null);
         assertFalse("Set should fail with a null session",
-                container.SetData(TEST_KEY, TEST_VALUE));
-        assertNull("Get should return null with a null session", container.GetData(TEST_KEY, false));
+                container.setData(TEST_KEY, TEST_VALUE));
+        assertNull("Get should return null with a null session", container.getData(TEST_KEY, false));
     }
 
     @Test
     public void testGetDataAndSetDataWithEmptySession() {
         ThreadLocalParamsContainer.setHttpSessionId("");
         assertFalse("Set should fail with an empty session",
-                container.SetData(TEST_KEY, TEST_VALUE));
-        assertNull("Get should return null with an empty session", container.GetData(TEST_KEY, false));
+                container.setData(TEST_KEY, TEST_VALUE));
+        assertNull("Get should return null with an empty session", container.getData(TEST_KEY, false));
     }
 
     @Test
     public void testGetDataAndSetDataWithFullSession() {
         ThreadLocalParamsContainer.setHttpSessionId(TEST_SESSION_ID);
         assertTrue("Set should fail with an empty session",
-                container.SetData(TEST_KEY, TEST_VALUE));
+                container.setData(TEST_KEY, TEST_VALUE));
         assertEquals("Get should return null with an empty session",
                 TEST_VALUE,
-                container.GetData(TEST_KEY, false));
+                container.getData(TEST_KEY, false));
         assertEquals("Get should return the value with a given session",
                 TEST_VALUE,
-                container.GetData(TEST_SESSION_ID, TEST_KEY, false));
+                container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }
 
     @Test
     public void testGetDataAndSetDataWithSessionParam() {
-        container.SetData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
-        assertNull("Get should return null with an empty session", container.GetData(TEST_KEY, false));
+        container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
+        assertNull("Get should return null with an empty session", container.getData(TEST_KEY, false));
         assertEquals("Get should return the value with a given session",
                 TEST_VALUE,
-                container.GetData(TEST_SESSION_ID, TEST_KEY, false));
+                container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }
 
     @Test
@@ -102,28 +102,28 @@ public class SessionDataContainerTest {
     @Test
     public void testRemoveWithParam() {
         // Set some data on the test sessions
-        container.SetData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
+        container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
         container.removeSession(TEST_SESSION_ID);
         assertNull("Get should return null since the session was removed",
-                container.GetData(TEST_SESSION_ID, TEST_KEY, false));
+                container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }
 
     @Test
     public void testRemoveWithoutParam() {
         // Set some data on the test sessions
-        container.SetData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
+        container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
 
         // Remove unset session and see it has no effect on the test session
         container.removeSession();
         assertEquals("Get should return the value since the session was not removed",
                 TEST_VALUE,
-                container.GetData(TEST_SESSION_ID, TEST_KEY, false));
+                container.getData(TEST_SESSION_ID, TEST_KEY, false));
 
         // Remove the test session and see it has effect
         ThreadLocalParamsContainer.setHttpSessionId(TEST_SESSION_ID);
         container.removeSession();
         assertNull("Get should return the value since the session was removed",
-                container.GetData(TEST_SESSION_ID, TEST_KEY, false));
+                container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }
 
     /* Tests for clearedExpiredSessions */
@@ -137,7 +137,7 @@ public class SessionDataContainerTest {
         container.cleanExpiredUsersSessions();
 
         assertNotNull("Get should return the value since the session was not removed",
-                container.GetData(TEST_SESSION_ID, TEST_KEY, false));
+                container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class SessionDataContainerTest {
         container.cleanExpiredUsersSessions();
 
         assertNull("Get should return null since the session was removed",
-                container.GetData(TEST_SESSION_ID, TEST_KEY, false));
+                container.getData(TEST_SESSION_ID, TEST_KEY, false));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class SessionDataContainerTest {
         container.cleanExpiredUsersSessions();
 
         assertNotNull("Get should return the value since the session was not removed",
-                container.GetData(TEST_SESSION_ID, USER, false));
+                container.getData(TEST_SESSION_ID, USER, false));
         assertNotNull("Get should return the value since the session was not removed",
                 container.getUser(TEST_SESSION_ID, false));
     }
@@ -175,14 +175,14 @@ public class SessionDataContainerTest {
         container.cleanExpiredUsersSessions();
 
         assertNull("Get should return null since the session was removed",
-                container.GetData(TEST_SESSION_ID, USER, false));
+                container.getData(TEST_SESSION_ID, USER, false));
         assertNull("Get should return null since the session was removed",
                 container.getUser(TEST_SESSION_ID, false));
     }
 
     /** Initializes the {@link #key} data */
     private void initDataForClearTest(String key) {
-        container.SetData(TEST_SESSION_ID, key, mock(DbUser.class));
+        container.setData(TEST_SESSION_ID, key, mock(DbUser.class));
     }
 
     @Test
@@ -193,14 +193,14 @@ public class SessionDataContainerTest {
         container.cleanExpiredUsersSessions();
 
         // refresh the old session (refresh = true)
-        container.GetData(TEST_SESSION_ID, USER, true);
+        container.getData(TEST_SESSION_ID, USER, true);
 
         // cleared expired session
         container.cleanExpiredUsersSessions();
 
         // session should be already refreshed -> not null
         assertNotNull("Get should return null since the session wasn't refresh",
-                container.GetData(TEST_SESSION_ID, USER, false));
+                container.getData(TEST_SESSION_ID, USER, false));
     }
 
     @Test
@@ -213,11 +213,11 @@ public class SessionDataContainerTest {
 
         // refresh the old session (refresh = true)
         // -> the user session is already expired so couldn't refresh it
-        container.GetData(TEST_SESSION_ID, USER, true);
+        container.getData(TEST_SESSION_ID, USER, true);
 
         // no session available
         assertNull("Get should return null since the session wasn't refresh",
-                container.GetData(TEST_SESSION_ID, USER, false));
+                container.getData(TEST_SESSION_ID, USER, false));
     }
 
 }

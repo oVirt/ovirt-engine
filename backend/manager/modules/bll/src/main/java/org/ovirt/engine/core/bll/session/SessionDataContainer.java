@@ -35,12 +35,12 @@ public class SessionDataContainer {
      *            - the internal key
      * @return
      */
-    public final Object GetData(String key, boolean refresh) {
+    public final Object getData(String key, boolean refresh) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
         if (sessionId == null) {
             return null;
         }
-        return GetData(sessionId, key, refresh);
+        return getData(sessionId, key, refresh);
     }
 
     /**
@@ -49,12 +49,12 @@ public class SessionDataContainer {
      * @param value
      * @return At case when session is attached to thread will be return a true value
      */
-    public final boolean SetData(String key, Object value) {
+    public final boolean setData(String key, Object value) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
         if (StringUtils.isEmpty(sessionId)) {
             return false;
         }
-        SetData(sessionId, key, value);
+        setData(sessionId, key, value);
         return true;
     }
 
@@ -69,7 +69,7 @@ public class SessionDataContainer {
      *            - if perform refresh of session
      * @return
      */
-    public final Object GetData(String sessionId, String key, boolean refresh) {
+    public final Object getData(String sessionId, String key, boolean refresh) {
         Map<String, Object> currentContext = null;
         if ((currentContext = newContext.get(sessionId)) != null) {
             return currentContext.get(key);
@@ -87,7 +87,7 @@ public class SessionDataContainer {
         return null;
     }
 
-    public final void SetData(String sessionId, String key, Object value) {
+    public final void setData(String sessionId, String key, Object value) {
         // Try to get value from new generation
         Map<String, Object> context = newContext.get(sessionId);
         if (context == null) {
@@ -185,7 +185,7 @@ public class SessionDataContainer {
      * @param user The user to set
      */
     public final void setUser(String sessionId, DbUser user) {
-        SetData(sessionId, USER_PARAMETER_NAME, user);
+        setData(sessionId, USER_PARAMETER_NAME, user);
     }
 
     /**
@@ -193,7 +193,7 @@ public class SessionDataContainer {
      * @param user The user to set
      */
     public final boolean setUser(DbUser user) {
-        return SetData(USER_PARAMETER_NAME, user);
+        return setData(USER_PARAMETER_NAME, user);
     }
 
     /**
@@ -202,12 +202,12 @@ public class SessionDataContainer {
      * @return The user set for the given {@link #session}
      */
     public DbUser getUser(String sessionId, boolean refresh) {
-        return (DbUser) GetData(sessionId, USER_PARAMETER_NAME, refresh);
+        return (DbUser) getData(sessionId, USER_PARAMETER_NAME, refresh);
     }
 
     /** @return The user set in the current session */
     public DbUser getUser(boolean refresh) {
-        return (DbUser) GetData(USER_PARAMETER_NAME, refresh);
+        return (DbUser) getData(USER_PARAMETER_NAME, refresh);
     }
 
     /**
@@ -216,7 +216,7 @@ public class SessionDataContainer {
      * @param user the password of the user
      */
     public void setPassword(String password) {
-        SetData(PASSWORD_PARAMETER_NAME, password);
+        setData(PASSWORD_PARAMETER_NAME, password);
     }
 
     /**
@@ -226,7 +226,7 @@ public class SessionDataContainer {
      *     <code>null</code> if the password is not available
      */
     public String getPassword(String sessionId) {
-        return (String) GetData(sessionId, PASSWORD_PARAMETER_NAME, false);
+        return (String) getData(sessionId, PASSWORD_PARAMETER_NAME, false);
     }
 
     /**
@@ -236,6 +236,6 @@ public class SessionDataContainer {
      *     <code>null</code> if the password is not available
      */
     public String getPassword() {
-        return (String) GetData(PASSWORD_PARAMETER_NAME, false);
+        return (String) getData(PASSWORD_PARAMETER_NAME, false);
     }
 }
