@@ -102,7 +102,7 @@ public final class StoragePoolStatusHandler {
         }
     }
 
-    public static void Init() {
+    public static void init() {
         List<StoragePool> allPools = DbFacade.getInstance().getStoragePoolDao().getAll();
         for (StoragePool pool : allPools) {
             if (pool.getStatus() == StoragePoolStatus.NotOperational) {

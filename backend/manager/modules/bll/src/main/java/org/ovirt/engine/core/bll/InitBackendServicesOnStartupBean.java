@@ -68,7 +68,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
                 MacPoolManager.getInstance().initialize();
             }
         });
-        StoragePoolStatusHandler.Init();
+        StoragePoolStatusHandler.init();
 
         GlusterJobsManager.init();
 
