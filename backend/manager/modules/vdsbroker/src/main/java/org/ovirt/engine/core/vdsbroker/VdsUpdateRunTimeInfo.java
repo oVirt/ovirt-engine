@@ -128,7 +128,7 @@ public class VdsUpdateRunTimeInfo {
 
     private void saveDataToDb() {
         if (_saveVdsDynamic) {
-            _vdsManager.UpdateDynamicData(_vds.getDynamicData());
+            _vdsManager.updateDynamicData(_vds.getDynamicData());
         }
 
         if (_saveVdsStatistics) {
@@ -423,7 +423,7 @@ public class VdsUpdateRunTimeInfo {
 
             }
             for (Guid vm_guid : _succededToRunVms) {
-                _vdsManager.SuccededToRunVm(vm_guid);
+                _vdsManager.succededToRunVm(vm_guid);
             }
             // run all vms that crushed that marked with auto startup
             for (Guid vm_guid : _autoVmsToRun) {

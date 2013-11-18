@@ -105,7 +105,7 @@ public class ResourceManager {
         getEventListener().removeAsyncRunningCommand(vmId);
     }
 
-    public void SuccededToRunVm(Guid vmId, Guid vdsId) {
+    public void succededToRunVm(Guid vmId, Guid vdsId) {
         if (_asyncRunningVms.containsKey(vmId)) {
             getEventListener().runningSucceded(vmId);
         }
@@ -172,7 +172,7 @@ public class ResourceManager {
 
             // set pending to 0
             vds.setPendingVcpusCount(0);
-            vdsManager.UpdateDynamicData(vds.getDynamicData());
+            vdsManager.updateDynamicData(vds.getDynamicData());
         }
         vdsManager.schedulJobs();
         _vdsManagersDict.put(vds.getId(), vdsManager);

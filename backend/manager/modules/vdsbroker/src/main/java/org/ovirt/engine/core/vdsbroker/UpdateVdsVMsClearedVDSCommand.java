@@ -15,7 +15,7 @@ public class UpdateVdsVMsClearedVDSCommand<P extends UpdateVdsVMsClearedVDSComma
             getVds().setVmsCoresCount(0);
             getVds().setVmActive(0);
             getVds().setVmMigrating(0);
-            _vdsManager.UpdateDynamicData(getVds().getDynamicData());
+            _vdsManager.updateDynamicData(getVds().getDynamicData());
         } else {
             getVDSReturnValue().setSucceeded(false);
         }

@@ -29,7 +29,7 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
                 @Override
                 public Void runInTransaction() {
                     _vdsManager.setStatus(parameters.getStatus(), vds);
-                    _vdsManager.UpdateDynamicData(vds.getDynamicData());
+                    _vdsManager.updateDynamicData(vds.getDynamicData());
                     _vdsManager.updateStatisticsData(vds.getStatisticsData());
                     return null;
                 }

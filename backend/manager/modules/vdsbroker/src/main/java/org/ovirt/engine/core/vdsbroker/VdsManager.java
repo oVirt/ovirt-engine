@@ -153,7 +153,7 @@ public class VdsManager {
                 && !EngineEncryptionUtils.haveKey()) {
             if (_vds.getStatus() != VDSStatus.Maintenance && _vds.getStatus() != VDSStatus.InstallFailed) {
                 setStatus(VDSStatus.NonResponsive, _vds);
-                UpdateDynamicData(_vds.getDynamicData());
+                updateDynamicData(_vds.getDynamicData());
             }
             log.error("Could not find VDC Certificate file.");
             AuditLogableBase logable = new AuditLogableBase(_vdsId);
@@ -369,7 +369,7 @@ public class VdsManager {
      *
      * @param dynamicData
      */
-    public void UpdateDynamicData(VdsDynamic dynamicData) {
+    public void updateDynamicData(VdsDynamic dynamicData) {
         DbFacade.getInstance().getVdsDynamicDao().update(dynamicData);
     }
 
@@ -409,7 +409,7 @@ public class VdsManager {
             }
         } finally {
             if (vds != null) {
-                UpdateDynamicData(vds.getDynamicData());
+                updateDynamicData(vds.getDynamicData());
 
                 // Update VDS after testing special hardware capabilities
                 monitoringStrategy.processHardwareCapabilities(vds);
@@ -523,10 +523,10 @@ public class VdsManager {
 
     /**
      */
-    public void SuccededToRunVm(Guid vmId) {
+    public void succededToRunVm(Guid vmId) {
         mUnrespondedAttempts.set(0);
         sshSoftFencingExecuted.set(false);
-        ResourceManager.getInstance().SuccededToRunVm(vmId, _vds.getId());
+        ResourceManager.getInstance().succededToRunVm(vmId, _vds.getId());
     }
 
     public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
@@ -592,7 +592,7 @@ public class VdsManager {
             if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() instanceof VDSNetworkException
                     && handleNetworkException((VDSNetworkException) vdsBrokerCommand.getVDSReturnValue()
                             .getExceptionObject(), vds)) {
-                UpdateDynamicData(vds.getDynamicData());
+                updateDynamicData(vds.getDynamicData());
                 updateStatisticsData(vds.getStatisticsData());
             }
             throw vdsBrokerCommand.getVDSReturnValue().getExceptionObject();
@@ -741,7 +741,7 @@ public class VdsManager {
         mUnrespondedAttempts.set(0);
         // change VDS state to connecting
         setStatus(VDSStatus.Connecting, vds);
-        UpdateDynamicData(vds.getDynamicData());
+        updateDynamicData(vds.getDynamicData());
     }
 
     public void calculateNextMaintenanceAttemptTime() {
