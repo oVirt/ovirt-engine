@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -14,16 +18,11 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class DataCenterNetworkQoSListModel extends SearchableListModel {
 
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
-    private StoragePool dataCenter;
 
     public DataCenterNetworkQoSListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networkQoSTitle());
