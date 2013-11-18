@@ -73,7 +73,7 @@ public class SearchSuggestModel extends SearchableListModel
     {
         setItems(new ObservableCollection<Object>());
         syntaxChecker =
-                SyntaxCheckerFactory.CreateUISyntaxChecker((String)
+                SyntaxCheckerFactory.createUISyntaxChecker((String)
                         AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
 
         setIsTimerDisabled(true);

@@ -320,11 +320,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     } else {
                         queryDomain = getDefaultDomain();
                     }
-                    curSyntaxChecker = SyntaxCheckerFactory.CreateADSyntaxChecker(Config
-                            .<String> GetValue(ConfigValues.AuthenticationMethod));
+                    curSyntaxChecker = SyntaxCheckerFactory.createADSyntaxChecker(Config
+                            .<String>GetValue(ConfigValues.AuthenticationMethod));
                 } else {
                     curSyntaxChecker = SyntaxCheckerFactory
-                            .CreateBackendSyntaxChecker(Config.<String> GetValue(ConfigValues.AuthenticationMethod));
+                            .createBackendSyntaxChecker(Config.<String>GetValue(ConfigValues.AuthenticationMethod));
                 }
                 SyntaxContainer searchObj = curSyntaxChecker.analyzeSyntaxState(searchText, true);
                 // set the case-sensitive flag
