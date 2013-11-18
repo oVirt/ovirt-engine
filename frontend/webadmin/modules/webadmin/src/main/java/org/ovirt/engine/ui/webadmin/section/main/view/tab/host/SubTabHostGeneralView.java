@@ -146,7 +146,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
         formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported));
         formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, 1, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.cpuNameHostGeneral(), cpuName, 2, 1));
+        formBuilder.addFormItem(new FormItem(constants.cpuNameHostGeneral(), cpuName, 2, 1, virtSupported));
         formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 4, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 5, 1));
