@@ -31,7 +31,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
 
     }
 
-    protected void DetachVmFromUser() {
+    protected void detachVmFromUser() {
         VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId());
 
         if (vm != null && getVmPoolId().equals(vm.getVmPoolId())) {
@@ -64,7 +64,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     @Override
     protected void executeCommand() {
         if (getVmPoolId() != null) {
-            DetachVmFromUser();
+            detachVmFromUser();
         }
         setSucceeded(true);
     }
