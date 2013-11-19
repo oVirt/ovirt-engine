@@ -1603,10 +1603,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 new AsyncTaskParameters(asyncTaskCreationInfo,
                 getAsyncTask(taskId, asyncTaskCreationInfo, parentCommand));
         p.setEntityInfo(getParameters().getEntityInfo());
-        return CreateTask(internalGetTaskType(), p);
+        return createTask(internalGetTaskType(), p);
     }
 
-    public SPMAsyncTask CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
+    public SPMAsyncTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
         return AsyncTaskFactory.construct(taskType, taskParameters, false);
     }
 
