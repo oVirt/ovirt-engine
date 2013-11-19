@@ -46,7 +46,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @PostConstruct
     public void create() {
 
-        AsyncTaskManager.getInstance().InitAsyncTaskManager();
+        AsyncTaskManager.getInstance().initAsyncTaskManager();
         ResourceManager.getInstance().init();
         OvfDataUpdater.getInstance().initOvfDataUpdater();
 

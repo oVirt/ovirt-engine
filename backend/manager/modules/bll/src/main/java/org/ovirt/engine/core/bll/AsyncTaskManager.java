@@ -92,7 +92,7 @@ public final class AsyncTaskManager {
         _cacheTimeInMinutes = Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
     }
 
-    public void InitAsyncTaskManager() {
+    public void initAsyncTaskManager() {
         tasksInDbAfterRestart = new ConcurrentHashMap();
         Map<Guid, List<AsyncTasks>> rootCommandIdToTasksMap = groupTasksByRootCommandId(DbFacade.getInstance().getAsyncTaskDao().getAll());
         int numberOfCommandsWithEmptyVdsmId = 0;
@@ -570,7 +570,7 @@ public final class AsyncTaskManager {
 
                 // Set the indication to true for logging _tasks status on next
                 // quartz execution.
-                AddTaskToMap(task.getVdsmTaskId(), task);
+                addTaskToMap(task.getVdsmTaskId(), task);
             } else {
                 SPMAsyncTask existingTask = _tasks.get(task.getVdsmTaskId());
                 if (existingTask.getParameters().getDbAsyncTask().getaction_type() == VdcActionType.Unknown
@@ -582,7 +582,7 @@ public final class AsyncTaskManager {
 
                     // Set the indication to true for logging _tasks status on
                     // next quartz execution.
-                    AddTaskToMap(task.getVdsmTaskId(), task);
+                    addTaskToMap(task.getVdsmTaskId(), task);
                 }
             }
         }
@@ -595,7 +595,7 @@ public final class AsyncTaskManager {
      * @param guid - Key of the map.
      * @param asyncTask - Value of the map.
      */
-    private void AddTaskToMap(Guid guid, SPMAsyncTask asyncTask) {
+    private void addTaskToMap(Guid guid, SPMAsyncTask asyncTask) {
         _tasks.put(guid, asyncTask);
         logChangedMap = true;
     }
