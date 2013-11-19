@@ -152,7 +152,8 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     protected void fetchDocumentationFile() {
-        fetchFile(getDocumentationBaseURL() + "UserPortalDocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
+        // TODO: don't hardcode userportal application name here
+        fetchFile(getHelpTagMappingBaseURL() + "userportal.json", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 
 }

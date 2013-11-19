@@ -27,6 +27,8 @@ public abstract class Configurator {
     private static final String DOCUMENTATION_LIB_PATH = "html/"; //$NON-NLS-1$
     private static final String DOCUMENTATION_ROOT = BaseContextPathData.getInstance().getRelativePath()
             + "docs/manual"; //$NON-NLS-1$
+    private static final String HELPTAG_MAPPING_ROOT = BaseContextPathData.getInstance().getRelativePath()
+            + "docs/manual/helptag"; //$NON-NLS-1$
 
     private static String documentationLangPath;
 
@@ -180,6 +182,14 @@ public abstract class Configurator {
      */
     public String getDocumentationBaseURL() {
         return FrontendUrlUtils.getRootURL() + DOCUMENTATION_ROOT + "/"; //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the base URL for serving helptag mapping files.
+     * @return helptag mapping base URL, including the trailing slash.
+     */
+    public String getHelpTagMappingBaseURL() {
+        return FrontendUrlUtils.getRootURL() + HELPTAG_MAPPING_ROOT + "/"; //$NON-NLS-1$
     }
 
     /**
