@@ -67,7 +67,7 @@ public class Version implements Comparable<Version>, Serializable {
     private static void appendVersionComponent(StringBuilder val, int versionNumber) {
         if (versionNumber > -1) {
             if (val.length() != 0) {
-                val.append(".");
+                val.append('.');
             }
             val.append(versionNumber);
         }
@@ -95,11 +95,11 @@ public class Version implements Comparable<Version>, Serializable {
         StringBuilder sb = new StringBuilder();
         switch (i) {
         case (4):
-            sb.append(".").append(revision);
+            sb.append('.').append(revision);
         case (3):
-            sb.insert(0, build).insert(0, ".");
+            sb.insert(0, build).insert(0, '.');
         case (2):
-            sb.insert(0, minor).insert(0, ".");
+            sb.insert(0, minor).insert(0, '.');
         case (1):
             sb.insert(0, major);
         }
