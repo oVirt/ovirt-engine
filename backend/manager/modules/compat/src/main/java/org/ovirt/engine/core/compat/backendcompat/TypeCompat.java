@@ -16,7 +16,7 @@ public class TypeCompat {
     private static final String CLASS = "class";
     private static final Log log = LogFactory.getLog(TypeCompat.class);
 
-    public static List<PropertyInfo> GetProperties(Class<?> type) {
+    public static List<PropertyInfo> getProperties(Class<?> type) {
         List<PropertyInfo> returnValue = new ArrayList<PropertyInfo>();
         try {
             PropertyDescriptor[] pds = Introspector.getBeanInfo(type).getPropertyDescriptors();

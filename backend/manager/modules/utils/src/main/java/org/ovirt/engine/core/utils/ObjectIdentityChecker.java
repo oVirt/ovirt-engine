@@ -179,7 +179,7 @@ public class ObjectIdentityChecker {
         final List<String> returnValue = new ArrayList<String>();
         if (source.getClass().isInstance(destination)) {
             Class<?> objectType = source.getClass();
-            List<PropertyInfo> properties = TypeCompat.GetProperties(objectType);
+            List<PropertyInfo> properties = TypeCompat.getProperties(objectType);
             for (PropertyInfo property : properties) {
                 Object sourceValue = property.getValue(source, null);
                 Object destinationValue = property.getValue(destination, null);
