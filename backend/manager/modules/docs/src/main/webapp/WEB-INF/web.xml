@@ -56,6 +56,20 @@
       <url-pattern>/404.html</url-pattern>
   </servlet-mapping>
 
+  <!-- help tag mapping servlet -->
+  <servlet>
+    <servlet-name>HelpTagJsonServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.docs.utils.servlet.HelpTagJsonServlet</servlet-class>
+    <init-param>
+      <param-name>configFile</param-name>
+      <param-value>%{ENGINE_MANUAL}/manual.properties</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>HelpTagJsonServlet</servlet-name>
+      <url-pattern>/manual/helptag/*</url-pattern>
+  </servlet-mapping>
+
   <!-- Filters -->
   <!-- Locale Filter, determines the user locale -->
   <filter>
