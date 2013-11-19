@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -196,7 +197,7 @@ public class HostGeneralModel extends EntityModel
     }
 
     public void setLibvirtVersion(RpmVersion value) {
-        if (Version.OpInequality(libvirtVersion, value)) {
+        if (!ObjectUtils.objectsEqual(libvirtVersion, value)) {
             libvirtVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("LibvirtVersion")); //$NON-NLS-1$
         }
@@ -211,7 +212,7 @@ public class HostGeneralModel extends EntityModel
 
     public void setVdsmVersion(RpmVersion value)
     {
-        if (Version.OpInequality(vdsmVersion, value))
+        if (!ObjectUtils.objectsEqual(vdsmVersion, value))
         {
             vdsmVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("VdsmVersion")); //$NON-NLS-1$
@@ -241,7 +242,7 @@ public class HostGeneralModel extends EntityModel
     }
 
     public void setGlusterVersion(RpmVersion value) {
-        if (Version.OpInequality(glusterVersion, value)) {
+        if (!ObjectUtils.objectsEqual(glusterVersion, value)) {
             glusterVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("glusterVersion")); //$NON-NLS-1$
         }
