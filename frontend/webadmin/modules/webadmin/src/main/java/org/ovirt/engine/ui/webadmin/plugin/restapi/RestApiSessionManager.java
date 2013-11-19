@@ -68,7 +68,10 @@ public class RestApiSessionManager {
     public RestApiSessionManager(EventBus eventBus, ClientStorage clientStorage) {
         this.eventBus = eventBus;
         this.clientStorage = clientStorage;
-        this.restApiBaseUrl = FrontendUrlUtils.getRootURL() + "api"; //$NON-NLS-1$
+        // Note that the slash at the end of the URL is not just a whim. With the trailing slash the browser will only
+        // send authentication headers to URLs ending in api/, otherwise it will send them to URLs ending in /, and
+        // this causes problems in other applications, for example in the reports application.
+        this.restApiBaseUrl = FrontendUrlUtils.getRootURL() + "api/"; //$NON-NLS-1$
     }
 
     void sendRequest(RequestBuilder requestBuilder, RestApiCallback callback) {
