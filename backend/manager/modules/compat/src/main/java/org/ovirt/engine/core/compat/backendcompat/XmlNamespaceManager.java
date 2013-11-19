@@ -16,7 +16,7 @@ public class XmlNamespaceManager implements NamespaceContext {
         prefixToUri = new HashMap<String, String>();
     }
 
-    public void AddNamespace(String prefix, String uri) {
+    public void addNamespace(String prefix, String uri) {
         prefixToUri.put(prefix, uri);
     }
 

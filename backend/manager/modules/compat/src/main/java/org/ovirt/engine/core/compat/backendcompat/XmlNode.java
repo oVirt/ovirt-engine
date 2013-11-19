@@ -10,14 +10,14 @@ import javax.xml.xpath.XPathExpressionException;
 
 public class XmlNode {
 
-    public String InnerText;
-    public XmlAttributeCollection Attributes;
+    public String innerText;
+    public XmlAttributeCollection attributes;
     protected Node node;
 
     public XmlNode(Node node) {
         this.node = node;
-        this.InnerText = node.getTextContent();
-        Attributes = new XmlAttributeCollection(node.getAttributes());
+        this.innerText = node.getTextContent();
+        attributes = new XmlAttributeCollection(node.getAttributes());
 
     }
 

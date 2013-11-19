@@ -16,9 +16,9 @@ import org.xml.sax.InputSource;
 
 public class XmlDocument {
 
-    public Object NameTable;
+    public Object nameTable;
     private String outerXml;
-    public XmlNode[] ChildNodes;
+    public XmlNode[] childNodes;
 
     private Document doc;
 
@@ -32,9 +32,9 @@ public class XmlDocument {
 
             // initialize all the child nodes
             NodeList list = doc.getElementsByTagName("*");
-            ChildNodes = new XmlNode[list.getLength()];
+            childNodes = new XmlNode[list.getLength()];
             for (int i = 0; i < list.getLength(); i++) {
-                ChildNodes[i] = new XmlNode(list.item(i));
+                childNodes[i] = new XmlNode(list.item(i));
             }
 
             outerXml = ovfstring;

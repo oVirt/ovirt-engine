@@ -38,7 +38,7 @@ public class XmlUtils {
     // XmlNode node = doc.SelectSingleNode(xPath);
     // if (node != null)
     // {
-    // value = node.Attributes[attribute].getValue();
+    // value = node.attributes[attribute].getValue();
     // }
     // }
     // catch (RuntimeException ex)
@@ -72,7 +72,7 @@ public class XmlUtils {
     // XmlNode node = doc.SelectSingleNode(xPath);
     // if (node != null)
     // {
-    // node.Attributes[attribute].setValue(value);
+    // node.attributes[attribute].setValue(value);
     // }
     // }
     // catch (RuntimeException ex)

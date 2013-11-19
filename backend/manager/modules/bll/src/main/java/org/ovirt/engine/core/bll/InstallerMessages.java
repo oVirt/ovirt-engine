@@ -87,37 +87,37 @@ public class InstallerMessages {
         boolean error = false;
         XmlDocument doc = new XmlDocument();
         doc.LoadXml(message);
-        XmlNode node = doc.ChildNodes[0];
+        XmlNode node = doc.childNodes[0];
         if (node != null) {
             StringBuilder sb = new StringBuilder();
             // check status
             Severity severity;
-            if (node.Attributes.get("status") == null) {
+            if (node.attributes.get("status") == null) {
                 severity = Severity.WARNING;
-            } else if (node.Attributes.get("status").getValue().equals("OK")) {
+            } else if (node.attributes.get("status").getValue().equals("OK")) {
                 severity = Severity.INFO;
-            } else if (node.Attributes.get("status").getValue().equals("WARN")) {
+            } else if (node.attributes.get("status").getValue().equals("WARN")) {
                 severity = Severity.WARNING;
             } else {
                 error = true;
                 severity = Severity.ERROR;
             }
 
-            if ((node.Attributes.get("component") != null)
-                    && (StringUtils.isNotEmpty(node.Attributes.get("component").getValue()))) {
-                sb.append("Step: " + node.Attributes.get("component").getValue());
+            if ((node.attributes.get("component") != null)
+                    && (StringUtils.isNotEmpty(node.attributes.get("component").getValue()))) {
+                sb.append("Step: " + node.attributes.get("component").getValue());
             }
 
-            if ((node.Attributes.get("message") != null)
-                    && (StringUtils.isNotEmpty(node.Attributes.get("message").getValue()))) {
+            if ((node.attributes.get("message") != null)
+                    && (StringUtils.isNotEmpty(node.attributes.get("message").getValue()))) {
                 sb.append("; ");
-                sb.append("Details: " + node.Attributes.get("message").getValue());
+                sb.append("Details: " + node.attributes.get("message").getValue());
                 sb.append(" ");
             }
 
-            if ((node.Attributes.get("result") != null)
-                    && (StringUtils.isNotEmpty(node.Attributes.get("result").getValue()))) {
-                sb.append(" (" + node.Attributes.get("result").getValue() + ")");
+            if ((node.attributes.get("result") != null)
+                    && (StringUtils.isNotEmpty(node.attributes.get("result").getValue()))) {
+                sb.append(" (" + node.attributes.get("result").getValue() + ")");
             }
             post(severity, sb.toString());
         }

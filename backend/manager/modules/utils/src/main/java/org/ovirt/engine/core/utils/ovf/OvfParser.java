@@ -27,7 +27,7 @@ public class OvfParser {
         _document = new XmlDocument();
         _document.LoadXml(ovfstring);
 
-        _xmlNS = new XmlNamespaceManager(_document.NameTable);
+        _xmlNS = new XmlNamespaceManager(_document.nameTable);
     }
 
     public boolean IsTemplate() {
@@ -35,16 +35,16 @@ public class OvfParser {
         String id2 = "2";
 
         XmlNode node = _document.SelectSingleNode("//*/Content/TemplateId");
-        if (!StringUtils.isBlank(node.InnerText)) {
-            id1 = node.InnerText;
+        if (!StringUtils.isBlank(node.innerText)) {
+            id1 = node.innerText;
         }
 
         XmlNodeList list = _document.SelectNodes("//*/Content/Section");
         for (XmlNode section : list) {
-            String value = section.Attributes.get("xsi:type").getValue();
+            String value = section.attributes.get("xsi:type").getValue();
 
             if (StringUtils.equals(value, "ovf:OperatingSystemSection_Type")) {
-                id2 = section.Attributes.get("ovf:id").getValue();
+                id2 = section.attributes.get("ovf:id").getValue();
             }
         }
 
