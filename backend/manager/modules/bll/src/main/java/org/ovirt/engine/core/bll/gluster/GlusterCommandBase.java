@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -166,6 +167,10 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             }
         }
         return true;
+    }
+
+    protected GlusterVolumeValidator createVolumeValidator() {
+        return new GlusterVolumeValidator();
     }
 
     public VdsStaticDAO getVdsStaticDao() {

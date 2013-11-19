@@ -173,6 +173,13 @@ public interface VdsServerConnector {
             int stripeCount,
             String[] transportList);
 
+    public Map<String, Object> glusterVolumeCreate(String volumeName,
+            String[] brickList,
+            int replicaCount,
+            int stripeCount,
+            String[] transportList,
+            boolean force);
+
     public Map<String, Object> glusterVolumeSet(String volumeName, String key, String value);
 
     public Map<String, Object> glusterVolumeStart(String volumeName, Boolean force);
@@ -205,6 +212,12 @@ public interface VdsServerConnector {
             String[] bricks,
             int replicaCount,
             int stripeCount);
+
+    public Map<String, Object> glusterVolumeBrickAdd(String volumeName,
+            String[] bricks,
+            int replicaCount,
+            int stripeCount,
+            boolean force);
 
     public Map<String, Object> glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
 

@@ -48,6 +48,12 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
+
+        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getVdsGroup().getcompatibility_version(),
+                getParameters().isForce()))) {
+            return false;
+        }
+
         if (getGlusterVolume().getVolumeType().isReplicatedType()) {
             if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount() + 1) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
@@ -79,14 +85,18 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                         public Void runInTransaction() {
                             addGlusterVolumeBricks(bricksList,
                                     getParameters().getReplicaCount(),
-                                    getParameters().getStripeCount());
+                                    getParameters().getStripeCount(),
+                                    getParameters().isForce());
                             return null;
                         }
                     });
         }
     }
 
-    private void addGlusterVolumeBricks(List<GlusterBrickEntity> bricksList, int replicaCount, int stripeCount) {
+    private void addGlusterVolumeBricks(List<GlusterBrickEntity> bricksList,
+            int replicaCount,
+            int stripeCount,
+            boolean force) {
         VDSReturnValue returnValue =
                 Backend.getInstance()
                         .getResourceManager()
@@ -95,7 +105,9 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                                         getGlusterVolumeName(),
                                         bricksList,
                                         replicaCount,
-                                        stripeCount));
+                                        stripeCount,
+                                        upServer.getVdsGroupCompatibilityVersion(),
+                                        force));
 
         setSucceeded(returnValue.getSucceeded());
 

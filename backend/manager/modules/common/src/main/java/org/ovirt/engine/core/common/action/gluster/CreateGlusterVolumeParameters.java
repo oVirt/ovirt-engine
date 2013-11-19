@@ -16,11 +16,18 @@ public class CreateGlusterVolumeParameters extends VdcActionParametersBase {
     @Valid
     private GlusterVolumeEntity volume;
 
+    private boolean force;
+
     public CreateGlusterVolumeParameters() {
     }
 
     public CreateGlusterVolumeParameters(GlusterVolumeEntity volume) {
+        this(volume, false);
+    }
+
+    public CreateGlusterVolumeParameters(GlusterVolumeEntity volume, boolean force) {
         setVolume(volume);
+        setForce(force);
     }
 
     public GlusterVolumeEntity getVolume() {
@@ -29,5 +36,13 @@ public class CreateGlusterVolumeParameters extends VdcActionParametersBase {
 
     public void setVolume(GlusterVolumeEntity volume) {
         this.volume = volume;
+    }
+
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
     }
 }

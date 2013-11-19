@@ -194,6 +194,13 @@ public interface IVdsServer {
             int stripeCount,
             String[] transportList);
 
+    OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
+            String[] brickList,
+            int replicaCount,
+            int stripeCount,
+            String[] transportList,
+            boolean force);
+
     StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value);
 
     StatusOnlyReturnForXmlRpc glusterVolumeStart(String volumeName, Boolean force);
@@ -223,6 +230,12 @@ public interface IVdsServer {
             String[] bricks,
             int replicaCount,
             int stripeCount);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
+            String[] bricks,
+            int replicaCount,
+            int stripeCount,
+            boolean force);
 
     GlusterTaskInfoReturnForXmlRpc glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
 

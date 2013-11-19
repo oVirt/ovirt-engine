@@ -12,6 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -23,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -45,6 +49,9 @@ public class AddBricksToGlusterVolumeCommandTest {
     @Mock
     VdsGroupDAO vdsGroupDao;
 
+    @Mock
+    GlusterVolumeValidator validator;
+
     private String serverName = "myhost";
 
     private Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
@@ -65,11 +72,13 @@ public class AddBricksToGlusterVolumeCommandTest {
     private AddBricksToGlusterVolumeCommand createTestCommand(Guid volumeId,
             List<GlusterBrickEntity> bricks,
             int replicaCount,
-            int stripeCount) {
+            int stripeCount,
+            boolean force) {
         return new AddBricksToGlusterVolumeCommand(new GlusterVolumeBricksActionParameters(volumeId,
                 bricks,
                 replicaCount,
-                stripeCount));
+                stripeCount,
+                force));
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
@@ -118,6 +127,8 @@ public class AddBricksToGlusterVolumeCommandTest {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(brickDao).when(command).getGlusterBrickDao();
+        doReturn(validator).when(command).createVolumeValidator();
+
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);
@@ -125,6 +136,9 @@ public class AddBricksToGlusterVolumeCommandTest {
         doReturn(null).when(volumeDao).getById(null);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getVDsGroup()).when(command).getVdsGroup();
+        doReturn(ValidationResult.VALID).when(validator).isForceCreateVolumeAllowed(Version.v3_1, false);
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
+                .isForceCreateVolumeAllowed(Version.v3_1, true);
     }
 
     private VDSGroup getVDsGroup() {
@@ -172,28 +186,36 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     @Test
     public void canDoActionSucceeds() {
-        cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1), 2, 0));
+        cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1), 2, 0, false));
         prepareMocks(cmd);
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFails() {
-        cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4));
+        cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false));
         prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
+    public void canDoActionFailsWithForceNotSupported() {
+        cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, true));
+        prepareMocks(cmd);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
+    }
+
+    @Test
     public void canDoActionFailsWithDuplicateBricks() {
-        cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1, true), 2, 0));
+        cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1, true), 2, 0, false));
         prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNull() {
-        cmd = spy(createTestCommand(null, null, 0, 0));
+        cmd = spy(createTestCommand(null, null, 0, 0, false));
         prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }

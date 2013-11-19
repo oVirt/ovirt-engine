@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -28,11 +29,22 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
     protected void executeVdsBrokerCommand() {
         GlusterVolumeEntity volume = getParameters().getVolume();
 
-        uuidReturn = getBroker().glusterVolumeCreate(volume.getName(),
-                volume.getBrickDirectories().toArray(new String[0]),
-                volume.getReplicaCount(),
-                volume.getStripeCount(),
-                getTransportTypeArr(volume));
+        boolean isForce = getParameters().isForce();
+        boolean supportForceCreateVolume =
+                GlusterFeatureSupported.glusterForceCreateVolumeSupported(getParameters().getClusterVersion());
+
+        uuidReturn = supportForceCreateVolume ?
+                getBroker().glusterVolumeCreate(volume.getName(),
+                        volume.getBrickDirectories().toArray(new String[0]),
+                        volume.getReplicaCount(),
+                        volume.getStripeCount(),
+                        getTransportTypeArr(volume),
+                        isForce) :
+                getBroker().glusterVolumeCreate(volume.getName(),
+                        volume.getBrickDirectories().toArray(new String[0]),
+                        volume.getReplicaCount(),
+                        volume.getStripeCount(),
+                        getTransportTypeArr(volume));
 
         // Handle errors if any
         proceedProxyReturnValue();

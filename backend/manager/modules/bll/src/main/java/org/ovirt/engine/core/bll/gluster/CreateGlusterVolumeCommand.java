@@ -105,6 +105,11 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
+        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getVdsGroup().getcompatibility_version(),
+                getParameters().isForce()))) {
+            return false;
+        }
+
         return validateBricks(volume);
     }
 
@@ -139,7 +144,10 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
         VDSReturnValue returnValue = runVdsCommand(
                 VDSCommandType.CreateGlusterVolume,
-                new CreateGlusterVolumeVDSParameters(upServer.getId(), volume));
+                        new CreateGlusterVolumeVDSParameters(upServer.getId(),
+                                volume,
+                                upServer.getVdsGroupCompatibilityVersion(),
+                                getParameters().isForce()));
         setSucceeded(returnValue.getSucceeded());
 
         if(!getSucceeded()) {

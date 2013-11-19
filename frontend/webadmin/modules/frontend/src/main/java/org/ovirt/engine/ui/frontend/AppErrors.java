@@ -2492,6 +2492,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Bricks are required.")
     String ACTION_TYPE_FAILED_BRICKS_REQUIRED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Adding bricks with 'Force' option is not supported.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Replica count must be > 2 for a REPLICATE volume.")
     String ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2();
 

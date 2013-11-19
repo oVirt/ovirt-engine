@@ -909,6 +909,25 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
+            String[] brickList,
+            int replicaCount,
+            int stripeCount,
+            String[] transportList,
+            boolean force) {
+        try {
+            return new OneUuidReturnForXmlRpc(vdsServer.glusterVolumeCreate(volumeName,
+                    brickList,
+                    replicaCount,
+                    stripeCount,
+                    transportList,
+                    force));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value) {
         try {
             return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeSet(volumeName, key, value));
@@ -1016,6 +1035,22 @@ public class VdsServerWrapper implements IVdsServer {
         try {
             Map<String, Object> xmlRpcReturnValue =
                     vdsServer.glusterVolumeBrickAdd(volumeName, bricks, replicaCount, stripeCount);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
+            String[] bricks,
+            int replicaCount,
+            int stripeCount,
+            boolean force) {
+        try {
+            Map<String, Object> xmlRpcReturnValue =
+                    vdsServer.glusterVolumeBrickAdd(volumeName, bricks, replicaCount, stripeCount, force);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

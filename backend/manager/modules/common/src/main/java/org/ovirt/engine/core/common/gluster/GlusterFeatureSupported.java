@@ -66,4 +66,18 @@ public class GlusterFeatureSupported {
     public static boolean glusterAsyncTasks(Version version) {
         return supportedInConfig(ConfigValues.GlusterAysncTasksSupport, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if there's support for force option in Create Volume, <code>false</code> if it's not.
+     */
+    public static boolean glusterForceCreateVolumeSupported(Version version) {
+        if (version != null) {
+            return supportedInConfig(ConfigValues.GlusterSupportForceCreateVolume, version);
+        }
+        else {
+            return false;
+        }
+    }
 }

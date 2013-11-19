@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterVolumeValidator;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -44,6 +46,9 @@ public class CreateGlusterVolumeCommandTest {
 
     @Mock
     VdsGroupDAO vdsGroupDao;
+
+    @Mock
+    GlusterVolumeValidator validator;
 
     private String serverName = "myhost";
 
@@ -87,10 +92,14 @@ public class CreateGlusterVolumeCommandTest {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(brickDao).when(command).getGlusterBrickDao();
+        doReturn(validator).when(command).createVolumeValidator();
 
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getVdsGroup(true)).when(vdsGroupDao).get(Mockito.any(Guid.class));
+        doReturn(ValidationResult.VALID).when(validator).isForceCreateVolumeAllowed(Version.v3_1, false);
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED)).when(validator)
+                .isForceCreateVolumeAllowed(Version.v3_1, true);
     }
 
     private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks) {
@@ -156,6 +165,17 @@ public class CreateGlusterVolumeCommandTest {
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+    }
+
+    @Test
+    public void canDoActionFailsWithForceNotSupported() {
+        CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(getVolume(2, true), true);
+        CreateGlusterVolumeCommand command = new CreateGlusterVolumeCommand(parameters);
+        cmd = spy(command);
+        prepareMocks(cmd);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_ADD_BRICK_FORCE_NOT_SUPPORTED);
     }
 
     @Test
