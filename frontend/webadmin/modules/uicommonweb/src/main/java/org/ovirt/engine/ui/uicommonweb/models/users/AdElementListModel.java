@@ -420,7 +420,7 @@ public class AdElementListModel extends SearchableListModel
         model.setMessage(null);
         if (!returnValue.getSucceeded()) {
             model.setMessage(Frontend.getInstance().getAppErrorsTranslator()
-                    .TranslateErrorTextSingle(returnValue.getExceptionString()));
+                    .translateErrorTextSingle(returnValue.getExceptionString()));
             getSearchInProgress().setEntity(false);
 
             return true;

@@ -119,7 +119,7 @@ public class ErrorTranslator {
      *            the message to translate
      * @return the translated message or a beautifed message key
      */
-    public String TranslateErrorTextSingle(String errorMsg) {
+    public String translateErrorTextSingle(String errorMsg) {
         return translateErrorTextSingle(errorMsg, true);
     }
 

@@ -1129,7 +1129,7 @@ public class Frontend {
      * @return A translated string defining the reason for the failure.
      */
     public String translateVdcFault(final VdcFault fault) {
-        return getVdsmErrorsTranslator().TranslateErrorTextSingle(fault.getError() == null
+        return getVdsmErrorsTranslator().translateErrorTextSingle(fault.getError() == null
                 ? fault.getMessage() : fault.getError().toString());
     }
 
