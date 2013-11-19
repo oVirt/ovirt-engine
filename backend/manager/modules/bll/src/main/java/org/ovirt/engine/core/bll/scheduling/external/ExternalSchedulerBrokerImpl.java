@@ -9,10 +9,13 @@ import java.util.Map;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -71,6 +74,11 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             Map<String, String> propertiesMap) {
 
         try {
+            // Do not call the scheduler when there is no operation requested from it
+            if (filterNames.isEmpty()) {
+                return hostIDs;
+            }
+
             XmlRpcClient client = new XmlRpcClient();
             client.setConfig(config);
             Object result = client.execute(FILTER, createFilterArgs(filterNames, hostIDs, vmID, propertiesMap));
@@ -78,8 +86,14 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
         } catch (XmlRpcException e) {
             log.error("Could not communicate with the external scheduler while filtering", e);
+            auditLogFailedToConnect();
             return hostIDs;
         }
+    }
+
+    private void auditLogFailedToConnect() {
+        AuditLogableBase loggable = new AuditLogableBase();
+        AuditLogDirector.log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
     }
 
     private Object[] createFilterArgs(List<String> filterNames,
@@ -121,6 +135,11 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             Guid vmID,
             Map<String, String> propertiesMap) {
         try {
+            // Do not call the scheduler when there is no operation requested from it
+            if (scoreNameAndWeight.isEmpty()) {
+                return null;
+            }
+
             XmlRpcClient client = new XmlRpcClient();
             client.setConfig(config);
             Object result = client.execute(SCORE, createScoreArgs(scoreNameAndWeight, hostIDs, vmID, propertiesMap));
@@ -128,6 +147,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
         } catch (XmlRpcException e) {
             log.error("Could not communicate with the external scheduler while running weight modules", e);
+            auditLogFailedToConnect();
             return null;
         }
     }
@@ -193,6 +213,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
         } catch (XmlRpcException e) {
             log.error("Could not communicate with the external scheduler while balancing", e);
+            auditLogFailedToConnect();
             return null;
         }
     }
