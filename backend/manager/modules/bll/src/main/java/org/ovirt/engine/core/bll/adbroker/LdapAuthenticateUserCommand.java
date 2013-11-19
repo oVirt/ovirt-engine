@@ -41,7 +41,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
             queryData.setLdapQueryType(LdapQueryType.getUserByName);
             queryData.setFilterParameters(new Object[] { getLoginName() });
         }
-        Object searchResult = directorySearcher.FindOne(queryData);
+        Object searchResult = directorySearcher.findOne(queryData);
 
         if (searchResult == null) {
             log.errorFormat("Failed authenticating user: {0} to domain {1}. Ldap Query Type is {2}",

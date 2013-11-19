@@ -19,7 +19,7 @@ public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand
         final List<LdapUser> userList = new ArrayList<LdapUser>();
 
         @SuppressWarnings("unchecked")
-        final List<LdapUser> usersList = (List<LdapUser>) directorySearcher.FindAll(getLdapQueryData());
+        final List<LdapUser> usersList = (List<LdapUser>) directorySearcher.findAll(getLdapQueryData());
         for (final LdapUser searchResult : usersList) {
             {
                 LdapUser user = populateUserData(searchResult, getLdapQueryData().getDomain());

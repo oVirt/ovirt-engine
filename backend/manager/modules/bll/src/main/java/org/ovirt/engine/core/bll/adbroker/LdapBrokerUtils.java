@@ -217,7 +217,7 @@ public class LdapBrokerUtils {
         DirectorySearcher directorySearcher = new DirectorySearcher(ldapCredentials);
 
         try {
-            List<GroupSearchResult> searchResults = (List<GroupSearchResult>) directorySearcher.FindAll(queryData);
+            List<GroupSearchResult> searchResults = (List<GroupSearchResult>) directorySearcher.findAll(queryData);
 
             return searchResults;
         } catch (DomainNotConfiguredException ex) {

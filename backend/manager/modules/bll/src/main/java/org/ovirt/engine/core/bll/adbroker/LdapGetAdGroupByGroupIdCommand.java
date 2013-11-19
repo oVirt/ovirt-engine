@@ -27,7 +27,7 @@ public class LdapGetAdGroupByGroupIdCommand extends LdapWithConfiguredCredential
         queryData.setLdapQueryType(LdapQueryType.getGroupByGuid);
         queryData.setDomain(getDomain());
 
-        Object searchResult = directorySearcher.FindOne(queryData);
+        Object searchResult = directorySearcher.findOne(queryData);
 
         if (searchResult != null) {
             GroupSearchResult result = (GroupSearchResult) searchResult;

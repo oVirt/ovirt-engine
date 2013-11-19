@@ -21,7 +21,7 @@ public class LdapGetAdUserByUserNameCommand extends LdapBrokerCommandBase {
         queryData.setDomain(getDomain());
         queryData.setFilterParameters(new Object[] { getUserName().split("[@]", -1)[0] });
         queryData.setLdapQueryType(LdapQueryType.getUserByName);
-        Object searchResult = directorySearcher.FindOne(queryData);
+        Object searchResult = directorySearcher.findOne(queryData);
 
         setReturnValue(populateUserData((LdapUser) searchResult, getDomain()));
         // if user is not null then action succeeded

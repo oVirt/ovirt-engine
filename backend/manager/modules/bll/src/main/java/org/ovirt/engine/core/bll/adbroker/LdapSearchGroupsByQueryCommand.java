@@ -18,7 +18,7 @@ public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredential
     protected void executeQuery(DirectorySearcher directorySearcher) {
         java.util.ArrayList<LdapGroup> groupList = new java.util.ArrayList<LdapGroup>();
 
-        List<GroupSearchResult> searchResults = (List<GroupSearchResult>)directorySearcher.FindAll(getLdapQueryData());
+        List<GroupSearchResult> searchResults = (List<GroupSearchResult>)directorySearcher.findAll(getLdapQueryData());
         {
             for (GroupSearchResult searchResult : searchResults) {
                 String distinguishedName = searchResult.getDistinguishedName();

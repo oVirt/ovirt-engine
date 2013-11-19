@@ -29,7 +29,7 @@ public class LdapChangeUserPasswordCommand extends LdapBrokerCommandBase {
 //        directorySearcher.searchScope = SearchControls.SUBTREE_SCOPE;
 //        directorySearcher.setFilteredAttributes(UserAttributeMapper.USERS_ATTRIBUTE_FILTER);
         /*
-         * JTODO: SearchResult objResult = directorySearcher.FindOne();
+         * JTODO: SearchResult objResult = directorySearcher.findOne();
          * DirectoryEntry objLoginEntry = (objResult != null) ?
          * objResult.GetDirectoryEntry() : null;
          *

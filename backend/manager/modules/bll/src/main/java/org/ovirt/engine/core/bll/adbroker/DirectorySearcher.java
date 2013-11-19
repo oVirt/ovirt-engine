@@ -37,7 +37,7 @@ public class DirectorySearcher {
         this.ldapCredentials = ldapCredentials;
     }
 
-    public Object FindOne(LdapQueryData ldapQueryData) {
+    public Object findOne(LdapQueryData ldapQueryData) {
         List<?> userObjects = find(ldapQueryData, 1);
 
         if (userObjects == null || userObjects.size() == 0) {
@@ -46,7 +46,7 @@ public class DirectorySearcher {
         return userObjects.get(0);
     }
 
-    public List<?> FindAll(LdapQueryData ldapQueryData) {
+    public List<?> findAll(LdapQueryData ldapQueryData) {
         List<?> returnValue = find(ldapQueryData, 0);
 
         if (returnValue == null) {

@@ -27,7 +27,7 @@ public class LdapGetAdUserByUserIdCommand extends LdapWithConfiguredCredentialsC
         queryData.setLdapQueryType(LdapQueryType.getUserByGuid);
         queryData.setDomain(getDomain());
 
-        Object searchResult = directorySearcher.FindOne(queryData);
+        Object searchResult = directorySearcher.findOne(queryData);
         user = populateUserData((LdapUser) searchResult, getDomain());
 
         if (user != null) {
