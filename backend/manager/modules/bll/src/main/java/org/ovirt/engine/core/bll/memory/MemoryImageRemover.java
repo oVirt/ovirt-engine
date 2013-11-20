@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.memory;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -7,6 +8,7 @@ import org.ovirt.engine.core.bll.AsyncTaskManager;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -14,6 +16,8 @@ import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParame
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -146,5 +150,21 @@ public abstract class MemoryImageRemover {
         vdsRetValue.setSucceeded(false);
         vdsRetValue.setVdsError(new VDSError(VdcBllErrors.ImageDoesNotExistInDomainError, ""));
         return vdsRetValue;
+    }
+
+    /**
+     * @return true IFF one of the given disks is marked with wipe_after_delete
+     */
+    protected static boolean isDiskWithWipeAfterDeleteExist(Collection<Disk> disks) {
+        for (Disk disk : disks) {
+            if (disk.isWipeAfterDelete()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected DiskDao getDiskDao() {
+        return DbFacade.getInstance().getDiskDao();
     }
 }

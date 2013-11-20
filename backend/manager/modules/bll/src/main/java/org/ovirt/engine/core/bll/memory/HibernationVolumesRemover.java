@@ -3,11 +3,9 @@ package org.ovirt.engine.core.bll.memory;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class HibernationVolumesRemover extends MemoryImageRemover {
 
@@ -53,15 +51,7 @@ public class HibernationVolumesRemover extends MemoryImageRemover {
 
     protected boolean isPostZero() {
         if (cachedPostZero == null) {
-            // check if one of the disks is marked with wipe_after_delete
-            cachedPostZero =
-                    DbFacade.getInstance().getDiskDao().getAllForVm(vmId).contains(
-                            new Object() {
-                                @Override
-                                public boolean equals(Object obj) {
-                                    return obj != null && ((Disk) obj).isWipeAfterDelete();
-                                }
-                            });
+            cachedPostZero = isDiskWithWipeAfterDeleteExist(getDiskDao().getAllForVm(vmId));
         }
         return cachedPostZero;
     }

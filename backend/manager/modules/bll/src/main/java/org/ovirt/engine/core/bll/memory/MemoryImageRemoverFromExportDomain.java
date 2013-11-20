@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.memory;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,20 +54,8 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
      */
     protected boolean isPostZero() {
         if (cachedPostZero == null) {
-            cachedPostZero = isVmContainsWipeAfterDeleteDisk();
+            cachedPostZero = isDiskWithWipeAfterDeleteExist(vm.getDiskMap().values());
         }
         return cachedPostZero;
-    }
-
-    /**
-     * @return true IFF one of the disks is marked with wipe_after_delete
-     */
-    private boolean isVmContainsWipeAfterDeleteDisk() {
-        for (Disk disk : vm.getDiskMap().values()) {
-            if (disk.isWipeAfterDelete()) {
-                return true;
-            }
-        }
-        return false;
     }
 }

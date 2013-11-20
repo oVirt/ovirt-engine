@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
 
@@ -38,15 +38,7 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
 
     protected boolean isPostZero() {
         if (cachedPostZero == null) {
-            // check if one of the disks is marked with wipe_after_delete
-            cachedPostZero =
-                    getDbFacade().getDiskDao().getAllForVm(vm.getId()).contains(
-                            new Object() {
-                                @Override
-                                public boolean equals(Object obj) {
-                                    return obj != null && ((Disk) obj).isWipeAfterDelete();
-                                }
-                            });
+            cachedPostZero = isDiskWithWipeAfterDeleteExist(getDiskDao().getAllForVm(vm.getId()));
         }
         return cachedPostZero;
     }
@@ -54,10 +46,10 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
     @Override
     protected boolean isMemoryStateRemovable(String memoryVolume) {
         return !memoryVolume.isEmpty() &&
-                getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 0;
+                getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 0;
     }
 
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
+    protected SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
     }
 }
