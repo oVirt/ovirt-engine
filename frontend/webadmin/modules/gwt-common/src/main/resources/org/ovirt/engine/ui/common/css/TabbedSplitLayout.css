@@ -1,0 +1,10 @@
+.sliderButton {
+    border: 0px;
+    background: transparent;
+    width: 8px;
+    height: 16px;
+    z-index: 2;
+    padding: 0px 0px 0px 0px;
+    margin: 7px 0px 0px 0px;
+    position: absolute;
+}
