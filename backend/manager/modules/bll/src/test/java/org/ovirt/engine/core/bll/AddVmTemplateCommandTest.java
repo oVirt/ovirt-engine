@@ -64,7 +64,6 @@ public class AddVmTemplateCommandTest {
         vdsGroup.setStoragePoolId(spId);
         vdsGroup.setcompatibility_version(Version.v3_2);
         when(vdsGroupDao.get(vdsGroupId)).thenReturn(vdsGroup);
-        when(vdsGroupDao.getFromCache(vdsGroupId)).thenReturn(vdsGroup);
         when(osRepository.getMinimumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(0);
         when(osRepository.getMaximumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(100);
         AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");

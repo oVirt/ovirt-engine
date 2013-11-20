@@ -181,7 +181,6 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     private void mockVdsGroupDAO() {
         doReturn(vdsGroupDAO).when(command).getVdsGroupDAO();
         when(vdsGroupDAO.get(vdsGroupId)).thenReturn(vdsGroup);
-        when(vdsGroupDAO.getFromCache(vdsGroupId)).thenReturn(vdsGroup);
     }
 
     private void mockDiskImageDAO() {
