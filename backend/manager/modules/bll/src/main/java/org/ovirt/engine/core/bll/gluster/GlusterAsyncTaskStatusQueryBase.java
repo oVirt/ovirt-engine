@@ -1,0 +1,94 @@
+package org.ovirt.engine.core.bll.gluster;
+
+import java.util.List;
+
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
+
+public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQueriesParameters> extends GlusterQueriesCommandBase<P> {
+    protected Guid clusterId;
+    protected GlusterVolumeEntity volume;
+
+    public GlusterAsyncTaskStatusQueryBase(P params) {
+        super(params);
+    }
+
+    @Override
+    public void executeQueryCommand() {
+        clusterId = getParameters().getClusterId();
+        volume = getGlusterVolumeDao().getById(getParameters().getVolumeId());
+        if (volume == null) {
+            throw new RuntimeException(VdcBllMessages.GLUSTER_VOLUME_ID_INVALID.toString());
+        }
+
+        if (clusterId == null) {
+            clusterId = volume.getClusterId();
+        }
+
+        getQueryReturnValue().setReturnValue(fetchTaskStatusDetails());
+    }
+
+    protected abstract GlusterVolumeTaskStatusEntity fetchTaskStatusDetails();
+
+    public StepDao getStepDao() {
+        return getDbFacade().getStepDao();
+    }
+
+    public GlusterServerDao getGlusterServerDao() {
+        return getDbFacade().getGlusterServerDao();
+    }
+
+    protected GlusterVolumeTaskStatusEntity updateStatusEntity(GlusterVolumeTaskStatusEntity status) {
+        // Set the volume remove bricks start time
+        setStartTime(status);
+        // Update the host details as required into entity
+        return updateHostDetails(status);
+    }
+
+    private GlusterVolumeTaskStatusEntity updateHostDetails(GlusterVolumeTaskStatusEntity taskStatus) {
+        updateHostIP(taskStatus);
+        taskStatus.sort();
+        return taskStatus;
+    }
+
+    private void updateHostIP(GlusterVolumeTaskStatusEntity taskStatus) {
+        if (taskStatus != null) {
+            for (GlusterVolumeTaskStatusForHost hostStatus : taskStatus.getHostwiseStatusDetails()) {
+                GlusterServer glusterServer = getGlusterServerDao().getByGlusterServerUuid(hostStatus.getHostUuid());
+                if (glusterServer != null) {
+                    VDS host = getVdsDao().get(glusterServer.getId());
+                    if (host != null) {
+                        hostStatus.setHostName(host.getName());
+                        hostStatus.setHostId(host.getId());
+                    }
+                }
+            }
+        }
+    }
+
+    private GlusterVolumeTaskStatusEntity setStartTime(GlusterVolumeTaskStatusEntity status) {
+        if (status == null) {
+            return null;
+        }
+
+        GlusterAsyncTask asyncTask = volume.getAsyncTask();
+        if (asyncTask != null && asyncTask.getTaskId() != null) {
+            List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
+            if (stepsList != null && !stepsList.isEmpty()) {
+                status.setStartTime(stepsList.get(0).getStartTime());
+            }
+        }
+
+        return status;
+    }
+}
