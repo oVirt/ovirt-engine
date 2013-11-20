@@ -300,6 +300,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             List<Step> steps = getStepDao().getStepsByExternalId(taskId);
             for (Step step: steps) {
                 step.markStepEnded(JobExecutionStatus.UNKNOWN);
+                step.setStatus(JobExecutionStatus.UNKNOWN);
                 getGlusterTaskUtils().endStepJob(step);
             }
             getGlusterTaskUtils().releaseVolumeLock(taskId);
