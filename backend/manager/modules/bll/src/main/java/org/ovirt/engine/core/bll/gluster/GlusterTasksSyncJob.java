@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -69,8 +70,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         log.debug("Refreshing gluster tasks list");
         List<VDSGroup> clusters = getClusterDao().getAll();
 
-        List<Guid> tasksFromClusters = new ArrayList<>();
-        boolean cleanOrphanTasks = true;
+        Map<Guid, Set<Guid>> tasksFromClustersMap = new HashMap<>();
         for (VDSGroup cluster : clusters) {
             if (!getGlusterTaskUtils().supportsGlusterAsyncTasksFeature(cluster)) {
                 continue;
@@ -79,16 +79,15 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 Map<Guid, GlusterAsyncTask> runningTasks = getProvider().getTaskListForCluster(cluster.getId());
                 if (runningTasks != null) {
                     updateTasksInCluster(cluster, runningTasks);
-                    tasksFromClusters.addAll(runningTasks.keySet());
                 }
+                tasksFromClustersMap.put(cluster.getId(), runningTasks == null ? null: runningTasks.keySet());
             } catch (VdcBLLException e) {
-                cleanOrphanTasks = false;
+                log.error("Error updating tasks from CLI", e);
             }
         }
 
-        if (cleanOrphanTasks) {
-            cleanUpOrphanTasks(tasksFromClusters);
-        }
+        cleanUpOrphanTasks(tasksFromClustersMap);
+
 
     }
 
@@ -258,21 +257,41 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         return JobRepositoryFactory.getJobRepository();
     }
 
-    private void cleanUpOrphanTasks(List<Guid> runningTasksinCluster) {
-      //Populate the list of tasks that need to be monitored from database
+    /**
+     * This method cleans the tasks in DB which the gluster CLI is no longer
+     * aware of.
+     * @param runningTasksInClusterMap - map of cluster id - task list in cluster
+     */
+    private void cleanUpOrphanTasks(Map<Guid, Set<Guid>> runningTasksInClusterMap) {
+        // if map is empty, no tasks from clusters fetched. so return
+        if (runningTasksInClusterMap.isEmpty()) {
+            log.debug("Clean up of tasks has been skipped");
+            return;
+        }
+        //Populate the list of tasks that need to be monitored from database
         List<Guid> taskListInDB = getProvider().getMonitoredTaskIDsInDB();
         if (taskListInDB == null || taskListInDB.isEmpty()) {
             return;
         }
 
+        Set<Guid> allRunningTasksInCluster = new HashSet<>();
+        for (Set<Guid> taskSet: runningTasksInClusterMap.values()) {
+            if (taskSet != null) {
+                allRunningTasksInCluster.addAll(taskSet);
+            }
+        }
+
         //if task is in DB but not in running task list
         final Set<Guid> tasksNotRunning = new HashSet<Guid>(taskListInDB);
-        tasksNotRunning.removeAll(runningTasksinCluster);
+        tasksNotRunning.removeAll(allRunningTasksInCluster);
+        log.debugFormat("tasks to be cleaned up in db {0}", tasksNotRunning);
 
         for (Guid taskId: tasksNotRunning) {
             GlusterVolumeEntity vol= getVolumeDao().getVolumeByGlusterTask(taskId);
-            if (vol != null && vol.getStatus() != GlusterStatus.UP) {
-                //the volume is not UP. Hence gluster may not have been able to return tasks for the volume
+            if (vol != null && vol.getStatus() != GlusterStatus.UP &&  !runningTasksInClusterMap.keySet().contains((vol.getClusterId()))) {
+                // the volume is not UP. Hence gluster may not have been able to return tasks for the volume
+                // also handling the case where gluster was not able to return any tasks from this cluster - the keyset will not
+                // contain the cluster id in such case
                 continue;
             }
 
