@@ -451,8 +451,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             if (storageDomain == null) {
                 return false;
             }
-            domain2requiredSize.put(storageDomain,
-                    domain2requiredSize.get(storageDomain) + requiredSizeForMemory);
+            int requiredSizeInDomainIncludingMemoryVolumes = domain2requiredSize.containsKey(storageDomain) ?
+                    domain2requiredSize.get(storageDomain) + requiredSizeForMemory : requiredSizeForMemory;
+            domain2requiredSize.put(storageDomain, requiredSizeInDomainIncludingMemoryVolumes);
             String modifiedMemoryVolume = MemoryUtils.changeStorageDomainAndPoolInMemoryState(
                     memoryVolume, storageDomain.getId(), getParameters().getStoragePoolId());
             // replace the volume representation with the one with the correct domain & pool
