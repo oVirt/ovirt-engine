@@ -1373,7 +1373,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private boolean isBalloonActiveOnHost() {
-        VDSGroup cluster = getDbFacade().getVdsGroupDao().getFromCache(_vds.getVdsGroupId());
+        VDSGroup cluster = getDbFacade().getVdsGroupDao().get(_vds.getVdsGroupId());
         return cluster != null && cluster.isEnableBallooning();
     }
 
@@ -1387,6 +1387,13 @@ public class VdsUpdateRunTimeInfo {
                     && balloonInfo.getBalloonTargetMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue(); // ballooning was not requested/enabled on this VM
         }
         return false;
+    }
+
+    private Long toMegaByte(Long kilobytes) {
+        if (kilobytes != null && kilobytes > 0) {
+            return kilobytes / TO_MEGA_BYTES;
+        }
+        return 0L;
     }
 
     protected static boolean isNewWatchdogEvent(VmDynamic vmDynamic, VM vmTo) {
