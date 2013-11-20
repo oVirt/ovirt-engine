@@ -28,7 +28,7 @@ public final class AuditLogDirector {
     private static final Map<AuditLogType, AuditLogSeverity> severities =
             new EnumMap<AuditLogType, AuditLogSeverity>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
-    static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
+    static final String UNKNOWN_VARIABLE_VALUE = "Non interactive user";
     private static final String APP_ERRORS_MESSAGES_FILE_NAME = "bundles/AuditLogMessages";
 
     static {
