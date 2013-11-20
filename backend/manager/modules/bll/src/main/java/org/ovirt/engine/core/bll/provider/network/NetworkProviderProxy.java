@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 
@@ -44,6 +44,14 @@ public interface NetworkProviderProxy extends ProviderProxy {
      * @return A list of all subnets for the network.
      */
     List<ExternalSubnet> getAllSubnets(ProviderNetwork network);
+
+    /**
+     * Remove the subnet from the provider.
+     *
+     * @param id
+     *            The ID of the subnet to remove.
+     */
+    void removeSubnet(String id);
 
     /**
      * Allocate the vNIC on the network in the provider.

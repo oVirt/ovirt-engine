@@ -728,6 +728,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Policy Unit")
     String VAR__TYPE__POLICY_UNIT();
 
+    @DefaultStringValue("$type subnet")
+    String VAR__TYPE__SUBNET();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 

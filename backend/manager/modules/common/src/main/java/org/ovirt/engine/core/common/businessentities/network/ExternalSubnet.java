@@ -2,13 +2,17 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 
 public class ExternalSubnet extends IVdcQueryable implements Serializable, Nameable {
 
     private static final long serialVersionUID = 7357288865938773402L;
 
+    @NotNull(groups = { RemoveEntity.class })
     private String id;
 
     private String name;
@@ -17,6 +21,7 @@ public class ExternalSubnet extends IVdcQueryable implements Serializable, Namea
 
     private IpVersion ipVersion;
 
+    @NotNull(groups = { RemoveEntity.class })
     private ProviderNetwork externalNetwork;
 
     public String getId() {

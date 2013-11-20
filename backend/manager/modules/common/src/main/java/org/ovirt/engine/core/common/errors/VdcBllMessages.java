@@ -34,6 +34,7 @@ public enum VdcBllMessages {
     VAR__TYPE__SPM,
     VAR__TYPE__CLUSTER_POLICY,
     VAR__TYPE__POLICY_UNIT,
+    VAR__TYPE__SUBNET,
 
     // Gluster types
     VAR__TYPE__GLUSTER_VOLUME,

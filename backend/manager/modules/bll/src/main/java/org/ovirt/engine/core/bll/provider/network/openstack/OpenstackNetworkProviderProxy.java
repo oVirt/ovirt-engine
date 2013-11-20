@@ -151,6 +151,15 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
+    public void removeSubnet(String id) {
+        try {
+            getClient().subnets().delete(id).execute();
+        } catch (RuntimeException e) {
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+        }
+    }
+
+    @Override
     public void testConnection() {
         try {
             getClient().execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "", null, ApiRootResponse.class));
