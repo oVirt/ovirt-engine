@@ -23,10 +23,13 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.bookmark.BookmarkList;
 import org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView;
+import org.ovirt.engine.ui.webadmin.widget.main.TabbedSplitLayoutPanel;
 import org.ovirt.engine.ui.webadmin.widget.tags.TagList;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTree;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -45,6 +48,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class MainSectionView extends AbstractView implements MainSectionPresenter.ViewDef {
 
     private static final int BOOKMARK_INDEX = 1;
+    private static final int SPLITTER_THICKNESS = 4;
 
     interface ViewUiBinder extends UiBinder<Widget, MainSectionView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -100,8 +104,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             ClientStorage clientStorage, CommonApplicationConstants commonConstants) {
         westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
 
-        verticalSplitLayoutPanel = new SplitLayoutPanel(4);
-        horizontalSplitLayoutPanel = new SplitLayoutPanel(4);
+        verticalSplitLayoutPanel = new SplitLayoutPanel(SPLITTER_THICKNESS);
+        horizontalSplitLayoutPanel = new TabbedSplitLayoutPanel(SPLITTER_THICKNESS, clientStorage);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initHeaders(constants);
@@ -121,6 +125,17 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 clientStorage,
                 constants);
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
+        //Enable double clicking to collapse/expand the stack panel (with the treeview).
+        horizontalSplitLayoutPanel.setWidgetToggleDisplayAllowed(westStackPanel, true);
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                //Manually call onResize() so the tabs at the top are positioned correctly. For some reason
+                //doing setWidgetSize doesn't trigger the onResize event. Also this need to be deferred
+                //otherwise the handlers haven't been added yet, and the resize won't do anything.
+                westStackPanel.onResize();
+            }
+        });
     }
 
     private void initHeaders(ApplicationConstants constants) {
@@ -135,9 +150,9 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             @Override
             public void onResize() {
                 super.onResize();
-
-                if (uiHandlers != null) {
-                    uiHandlers.setMainTabBarOffset(getOffsetWidth());
+                Double westStackWidth = horizontalSplitLayoutPanel.getWidgetSize(westStackPanel);
+                if (uiHandlers != null && westStackWidth != null) {
+                    uiHandlers.setMainTabBarOffset(westStackWidth.intValue());
                 }
             }
         };
