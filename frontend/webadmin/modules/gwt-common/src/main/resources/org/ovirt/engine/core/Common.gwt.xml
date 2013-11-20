@@ -47,7 +47,6 @@
 		<include name="common/businessentities/DiskAlignment.java" />
 		<include name="common/businessentities/OpenStackImageProviderProperties.java" />
         <include name="common/businessentities/VmBalloonInfo.java" />
-        <include name="common/businessentities/CachedEntity.java" />
 		<include name="common/businessentities/ArchitectureType.java" />
 
 		<!-- Network business entities -->

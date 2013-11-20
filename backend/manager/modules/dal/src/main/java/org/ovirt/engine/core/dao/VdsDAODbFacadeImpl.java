@@ -350,10 +350,12 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     public VDS getPartial(Guid vdsId) {
         VDS vdsPartial = new VDS();
 
-        vdsPartial.setStaticData(DbFacade.getInstance().getVdsStaticDao().getFromCache(vdsId));
-        vdsPartial.setDynamicData(DbFacade.getInstance().getVdsDynamicDao().getFromCache(vdsId));
+        // TODO: From cache
+        vdsPartial.setStaticData(DbFacade.getInstance().getVdsStaticDao().get(vdsId));
+        vdsPartial.setDynamicData(DbFacade.getInstance().getVdsDynamicDao().get(vdsId));
 
-        VDSGroup group = DbFacade.getInstance().getVdsGroupDao().getFromCache(vdsPartial.getVdsGroupId());
+        // TODO: From cache
+        VDSGroup group = DbFacade.getInstance().getVdsGroupDao().get(vdsPartial.getVdsGroupId());
         vdsPartial.setVdsGroupCompatibilityVersion(group.getcompatibility_version());
         vdsPartial.setVdsGroupCpuName(group.getcpu_name());
         vdsPartial.setVdsGroupDescription(group.getdescription());
@@ -368,6 +370,9 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public void reloadPartial(VDS vds) {
         vds.setStatisticsData(DbFacade.getInstance().getVdsStatisticsDao().get(vds.getId()));
-        vds.setVdsSpmId(DbFacade.getInstance().getVdsSpmIdMapDao().getFromCache(vds.getId()).getvds_spm_id());
+
+        // TODO: From cache?!?
+        vds.setVdsSpmId(DbFacade.getInstance().getVdsSpmIdMapDao().get(vds.getId()).getvds_spm_id());
+
     }
 }

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VdsStatic implements BusinessEntity<Guid>, Commented, CachedEntity {
+public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private static final long serialVersionUID = -1425566208615075937L;
     private static final int HOST_DEFAULT_SPM_PRIORITY = 5;
@@ -599,10 +599,5 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented, CachedEntity 
                 && ObjectUtils.objectsEqual(vdsStrength, other.vdsStrength)
                 && vdsType == other.vdsType
                 && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint));
-    }
-
-    @Override
-    public long getExpiration() {
-        return CachedEntity.LONG_LIVED_OBJECT;
     }
 }

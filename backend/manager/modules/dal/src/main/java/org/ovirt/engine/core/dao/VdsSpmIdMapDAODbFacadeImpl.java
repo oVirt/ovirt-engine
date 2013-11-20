@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.EntityCache;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -89,10 +88,5 @@ public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSp
             entity.setvds_spm_id(rs.getInt("vds_spm_id"));
             return entity;
         }
-    }
-
-    @Override
-    public vds_spm_id_map getFromCache(Guid id) {
-        return EntityCache.getInstance().getFromCache(id, this);
     }
 }

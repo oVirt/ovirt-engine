@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.dal.EntityCache;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
@@ -267,10 +266,5 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
 
         getCallsHandler().executeModification("UpdatePartialVdsDynamicCalc", parameterSource);
 
-    }
-
-    @Override
-    public VdsDynamic getFromCache(Guid id) {
-        return EntityCache.getInstance().getFromCache(id, this);
     }
 }

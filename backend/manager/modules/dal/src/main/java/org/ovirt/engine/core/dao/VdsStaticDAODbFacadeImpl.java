@@ -8,7 +8,6 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.EntityCache;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -160,11 +159,6 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
 
             return entity;
         }
-    }
-
-    @Override
-    public VdsStatic getFromCache(Guid id) {
-        return EntityCache.getInstance().getFromCache(id, this);
     }
 
 }

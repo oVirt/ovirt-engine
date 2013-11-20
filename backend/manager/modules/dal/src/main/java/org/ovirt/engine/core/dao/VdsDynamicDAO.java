@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAwareDao<Guid, VDSStatus>, CachedDao<VdsDynamic, Guid> {
+public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAwareDao<Guid, VDSStatus> {
 
    /**
      * Update entity net_config_dirty field

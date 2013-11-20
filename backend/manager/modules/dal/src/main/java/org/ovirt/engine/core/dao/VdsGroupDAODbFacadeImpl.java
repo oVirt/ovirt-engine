@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.EntityCache;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -222,10 +221,5 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 VdsGroupRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("cluster_policy_id", clusterPolicyId));
-    }
-
-    @Override
-    public VDSGroup getFromCache(Guid id) {
-        return EntityCache.getInstance().getFromCache(id, this);
     }
 }

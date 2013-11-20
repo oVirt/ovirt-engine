@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class vds_spm_id_map implements Serializable, BusinessEntity<Guid>, CachedEntity {
+public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = 308472653338744675L;
 
     public vds_spm_id_map() {
@@ -75,10 +75,5 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid>, Cache
         return (ObjectUtils.objectsEqual(storage_pool_idField, other.storage_pool_idField)
                 && ObjectUtils.objectsEqual(vds_idField, other.vds_idField)
                 && vds_spm_idField == other.vds_spm_idField);
-    }
-
-    @Override
-    public long getExpiration() {
-        return CachedEntity.LONG_LIVED_OBJECT;
     }
 }
