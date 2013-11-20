@@ -217,7 +217,7 @@ public class VdsManager {
                 ArrayList<VDSDomainsData> domainsList = null;
                 VDS tmpVds;
                 synchronized (getLockObj()) {
-                    tmpVds = _vds = DbFacade.getInstance().getVdsDao().getPartial(getVdsId());
+                    tmpVds = _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
                     if (_vds == null) {
                         log.errorFormat("VdsManager::refreshVdsRunTimeInfo - OnTimer is NULL for {0}",
                                 getVdsId());
@@ -628,9 +628,6 @@ public class VdsManager {
      */
     public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
         if (vds.getStatus() != VDSStatus.Down) {
-            // For SpmStatus we need to reload VDS
-            vds = DbFacade.getInstance().getVdsDao().get(vds.getId());
-
             long timeoutToFence = calcTimeoutToFence(vds.getVmCount(), vds.getSpmStatus());
             if (mUnrespondedAttempts.get() < Config.<Integer> GetValue(ConfigValues.VDSAttemptsToResetCount)
                     || (lastUpdate + timeoutToFence) > System.currentTimeMillis()) {

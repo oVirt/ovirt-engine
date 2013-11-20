@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -16,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.springframework.jdbc.core.RowMapper;
@@ -344,35 +342,5 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.calculateFreeVirtualMemory();
             return entity;
         }
-    }
-
-    @Override
-    public VDS getPartial(Guid vdsId) {
-        VDS vdsPartial = new VDS();
-
-        // TODO: From cache
-        vdsPartial.setStaticData(DbFacade.getInstance().getVdsStaticDao().get(vdsId));
-        vdsPartial.setDynamicData(DbFacade.getInstance().getVdsDynamicDao().get(vdsId));
-
-        // TODO: From cache
-        VDSGroup group = DbFacade.getInstance().getVdsGroupDao().get(vdsPartial.getVdsGroupId());
-        vdsPartial.setVdsGroupCompatibilityVersion(group.getcompatibility_version());
-        vdsPartial.setVdsGroupCpuName(group.getcpu_name());
-        vdsPartial.setVdsGroupDescription(group.getdescription());
-        vdsPartial.setVdsGroupName(group.getName());
-        vdsPartial.setStoragePoolId(group.getStoragePoolId());
-        vdsPartial.setStoragePoolName(group.getStoragePoolName());
-        vdsPartial.setMaxVdsMemoryOverCommit(group.getmax_vds_memory_over_commit());
-
-        return vdsPartial;
-    }
-
-    @Override
-    public void reloadPartial(VDS vds) {
-        vds.setStatisticsData(DbFacade.getInstance().getVdsStatisticsDao().get(vds.getId()));
-
-        // TODO: From cache?!?
-        vds.setVdsSpmId(DbFacade.getInstance().getVdsSpmIdMapDao().get(vds.getId()).getvds_spm_id());
-
     }
 }
