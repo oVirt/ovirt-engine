@@ -357,7 +357,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         } else {
             for (int i = -2; i > -8; i--) {
                 if (DateUtils.getDayOfWeek(i).equalsIgnoreCase(StringHelper.trim(value, '\''))) {
-                    formatedValue = DateTime.getNow();
+                    formatedValue = DateTime.getNow().AddDays(i);
                     return formatedValue.resetToMidnight();
                 }
             }
