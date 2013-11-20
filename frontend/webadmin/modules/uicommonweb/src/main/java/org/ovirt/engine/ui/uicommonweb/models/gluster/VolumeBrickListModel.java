@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -260,9 +261,19 @@ public class VolumeBrickListModel extends SearchableListModel {
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
+        getSearchCommand().execute();
+    }
+
+    @Override
+    protected void syncSearch() {
         if (getEntity() != null) {
             GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
-            setItems(glusterVolumeEntity.getBricks());
+            // If the items are same, just fire the item changed event to make sure that items are displayed
+            if (getItems() == glusterVolumeEntity.getBricks()) {
+                getItemsChangedEvent().raise(this, EventArgs.Empty);
+            } else {
+                setItems(glusterVolumeEntity.getBricks());
+            }
         }
         else {
             setItems(null);
@@ -969,7 +980,6 @@ public class VolumeBrickListModel extends SearchableListModel {
         cModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksStatusTitle());
         setConfirmWindow(cModel);
 
-
         final UICommand stopRemoveBrickFromStatus = new UICommand("StopRemoveBricksOnStatus", this);//$NON-NLS-1$
         stopRemoveBrickFromStatus.setTitle(ConstantsManager.getInstance().getConstants().stopRemoveBricksButton());
         stopRemoveBrickFromStatus.setIsExecutionAllowed(false);
@@ -1017,14 +1027,16 @@ public class VolumeBrickListModel extends SearchableListModel {
                         removeBrickStatusModel.getCommands().add(cancelCommand);
                     }
                     else {
-                        removeBrickStatusModel = (RemoveBrickStatusModel)getWindow();
+                        removeBrickStatusModel = (RemoveBrickStatusModel) getWindow();
                     }
 
                     removeBrickStatusModel.showStatus(removeBrickStatusEntity);
 
                 }
                 else {
-                    cModel.setMessage(ConstantsManager.getInstance().getMessages().removeBrickStatusFailed(bricks.toString()));
+                    cModel.setMessage(ConstantsManager.getInstance()
+                            .getMessages()
+                            .removeBrickStatusFailed(bricks.toString()));
                 }
             }
         }),
