@@ -57,7 +57,7 @@ public abstract class OvfReader implements IOvfBuilder {
         _document = document;
         this.vmBase = vmBase;
 
-        _xmlNS = new XmlNamespaceManager(_document.nameTable);
+        _xmlNS = new XmlNamespaceManager();
         _xmlNS.addNamespace("ovf", OVF_URI);
         _xmlNS.addNamespace("rasd", RASD_URI);
         _xmlNS.addNamespace("vssd", VSSD_URI);

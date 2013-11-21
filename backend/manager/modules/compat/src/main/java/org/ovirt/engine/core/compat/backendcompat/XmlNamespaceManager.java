@@ -12,7 +12,7 @@ public class XmlNamespaceManager implements NamespaceContext {
 
     private Map<String, String> prefixToUri;
 
-    public XmlNamespaceManager(Object nameTable) {
+    public XmlNamespaceManager() {
         prefixToUri = new HashMap<String, String>();
     }
 

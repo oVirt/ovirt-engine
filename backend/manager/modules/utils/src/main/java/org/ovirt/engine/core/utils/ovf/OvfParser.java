@@ -27,7 +27,7 @@ public class OvfParser {
         _document = new XmlDocument();
         _document.LoadXml(ovfstring);
 
-        _xmlNS = new XmlNamespaceManager(_document.nameTable);
+        _xmlNS = new XmlNamespaceManager();
     }
 
     public boolean IsTemplate() {

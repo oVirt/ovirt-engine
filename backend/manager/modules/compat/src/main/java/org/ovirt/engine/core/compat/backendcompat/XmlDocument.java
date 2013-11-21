@@ -16,7 +16,6 @@ import org.xml.sax.InputSource;
 
 public class XmlDocument {
 
-    public Object nameTable;
     private String outerXml;
     public XmlNode[] childNodes;
 
