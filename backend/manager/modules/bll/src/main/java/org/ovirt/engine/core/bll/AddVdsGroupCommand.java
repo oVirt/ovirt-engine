@@ -34,6 +34,8 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
     @Override
     protected void executeCommand() {
+        getVdsGroup().setArchitecture(getArchitecture());
+
         checkMaxMemoryOverCommitValue();
         getVdsGroup().setDetectEmulatedMachine(true);
         DbFacade.getInstance().getVdsGroupDao().save(getVdsGroup());

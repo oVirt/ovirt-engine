@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -45,6 +46,9 @@ public class OvfVmReader extends OvfReader {
         if (node != null) {
             _vm.getStaticData().setOsId(osRepository.getOsIdByUniqueName(node.innerText));
         }
+
+        // Workaround until the support for OVF on POWER is implemented
+        _vm.setClusterArch(ArchitectureType.x86_64);
     }
 
     @Override

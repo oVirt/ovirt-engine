@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -161,6 +162,7 @@ public class OvfManagerTest {
         vm.setTimeZone("Israel Standard Time");
         vm.setDbGeneration(2L);
         vm.setSingleQxlPci(false);
+        vm.setClusterArch(ArchitectureType.x86_64);
         initInterfaces(vm);
         return vm;
     }

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -354,6 +355,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
         clusterModel.getEnableGlusterService().setIsChangable(true);
         clusterModel.getEnableBallooning().setEntity(cluster.isEnableBallooning());
+        clusterModel.getArchitecture().setSelectedItem(cluster.getArchitecture());
 
         if (cluster.supportsTrustedService())
         {
@@ -694,6 +696,12 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setTrustedService((Boolean) model.getEnableTrustedService().getEntity());
         cluster.setClusterPolicyId(((ClusterPolicy) model.getClusterPolicy().getSelectedItem()).getId());
         cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().getEntity()));
+
+        if (model.getCPU().getSelectedItem() == null) {
+            cluster.setArchitecture((ArchitectureType) model.getArchitecture().getSelectedItem());
+        } else {
+            cluster.setArchitecture(null);
+        }
 
         model.startProgress(null);
 

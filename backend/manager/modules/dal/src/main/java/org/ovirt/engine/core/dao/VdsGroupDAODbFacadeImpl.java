@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -182,8 +183,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("cluster_policy_id", group.getClusterPolicyId())
                 .addValue("cluster_policy_custom_properties",
                                 SerializationFactory.getSerializer().serialize(group.getClusterPolicyProperties()))
+                .addValue("architecture", group.getArchitecture())
                 .addValue("enable_balloon", group.isEnableBallooning());
-
         return parameterSource;
     }
 
@@ -222,7 +223,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("cluster_policy_custom_properties"), LinkedHashMap.class));
             entity.setEnableBallooning(rs.getBoolean("enable_balloon"));
-
+            entity.setArchitecture(ArchitectureType.forValue(rs.getInt("architecture")));
             return entity;
         }
     }

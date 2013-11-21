@@ -592,6 +592,7 @@
         <column>trusted_service</column>
         <column>cluster_policy_id</column>
         <column>cluster_policy_custom_properties</column>
+        <column>architecture</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -612,6 +613,7 @@
             <value>false</value>
             <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
+            <value>1</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -633,6 +635,7 @@
             <value>false</value>
             <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
+            <value>1</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -654,6 +657,7 @@
             <value>false</value>
             <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
+            <value>1</value>
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
@@ -675,6 +679,7 @@
             <value>true</value>
             <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
+            <value>1</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -696,6 +701,7 @@
             <value>true</value>
             <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
+            <value>1</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -717,6 +723,7 @@
             <value>false</value>
             <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
+            <value>1</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -738,6 +745,7 @@
             <value>true</value>
             <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
+            <value>1</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -759,6 +767,7 @@
             <value>true</value>
             <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
+            <value>1</value>
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -780,6 +789,7 @@
             <value>false</value>
             <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
             <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
+            <value>1</value>
         </row>
     </table>
 

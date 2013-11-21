@@ -674,6 +674,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("CPU Name")
     String clusterPopupCPULabel();
 
+    @DefaultStringValue("CPU Architecture")
+    String clusterPopupArchitectureLabel();
+
     @DefaultStringValue("Compatibility Version")
     String clusterPopupVersionLabel();
 

@@ -16,6 +16,7 @@ public class VmValidator implements Validator<VM> {
     private PayloadValidator payloadValidator = new PayloadValidator();
     private ConfigurationValidator configurationValidator = new ConfigurationValidator();
     private CloudInitValidator cloudInitValidator = new CloudInitValidator();
+    private CPUValidator cpuValidator = new CPUValidator();
 
     @Override
     public void validateEnums(VM vm) {
@@ -33,6 +34,9 @@ public class VmValidator implements Validator<VM> {
         }
         if (vm.isSetPlacementPolicy()) {
             placementPolicyValidator.validateEnums(vm.getPlacementPolicy());
+        }
+        if (vm.isSetCpu()) {
+            cpuValidator.validateEnums(vm.getCpu());
         }
         if (vm.isSetPayloads()) {
             for (Payload payload : vm.getPayloads().getPayload()) {

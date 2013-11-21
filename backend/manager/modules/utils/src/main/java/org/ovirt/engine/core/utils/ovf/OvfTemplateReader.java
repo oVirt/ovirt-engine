@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -41,6 +42,9 @@ public class OvfTemplateReader extends OvfReader {
         if (node != null) {
             _vmTemplate.setOsId(osRepository.getOsIdByUniqueName(node.innerText));
         }
+
+        // Workaround until the support for OVF on POWER is implemented
+        _vmTemplate.setClusterArch(ArchitectureType.x86_64);
     }
 
     @Override

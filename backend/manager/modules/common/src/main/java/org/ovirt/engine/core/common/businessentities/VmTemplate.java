@@ -42,6 +42,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private VmEntityType templateType;
 
+    private ArchitectureType clusterArch;
+
     public VmTemplate() {
         setNiceLevel(0);
         setCpuShares(0);
@@ -106,6 +108,14 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         this.setNumOfMonitors(numOfMonitors);
         this.setStatus(VmTemplateStatus.forValue(status));
         setTemplateType(templateType);
+    }
+
+    public ArchitectureType getClusterArch() {
+        return clusterArch;
+    }
+
+    public void setClusterArch(ArchitectureType clusterArch) {
+        this.clusterArch = clusterArch;
     }
 
     public int getChildCount() {

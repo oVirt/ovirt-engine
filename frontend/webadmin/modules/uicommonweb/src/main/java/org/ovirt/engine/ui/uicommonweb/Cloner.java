@@ -209,6 +209,7 @@ public final class Cloner
         vm.setVmtGuid(instance.getVmtGuid());
         vm.setVmtName(instance.getVmtName());
         vm.setCreatedByUserId(instance.getCreatedByUserId());
+        vm.setClusterArch(instance.getClusterArch());
 
         return vm;
     }
@@ -292,6 +293,7 @@ public final class Cloner
         obj.setCountThreadsAsCores(instance.getCountThreadsAsCores());
         obj.setEmulatedMachine(instance.getEmulatedMachine());
         obj.setDetectEmulatedMachine(instance.isDetectEmulatedMachine());
+        obj.setArchitecture(instance.getArchitecture());
 
         return obj;
     }
@@ -417,6 +419,7 @@ public final class Cloner
         obj.setId(instance.getId());
         obj.setDiskList(instance.getDiskList());
         obj.setRunAndPause(instance.isRunAndPause());
+        obj.setClusterArch(instance.getClusterArch());
 
         return obj;
     }

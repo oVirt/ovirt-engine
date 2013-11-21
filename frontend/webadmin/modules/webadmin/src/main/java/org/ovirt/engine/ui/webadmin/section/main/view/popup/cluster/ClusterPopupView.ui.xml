@@ -157,6 +157,7 @@
 								<e:EntityModelTextBoxEditor ui:field="commentEditor" />
 								<e:ListModelListBoxEditor ui:field="cPUEditor" />
 								<e:ListModelListBoxEditor ui:field="versionEditor" />
+								<e:ListModelListBoxEditor ui:field="architectureEditor" />
 								<g:VerticalPanel ui:field="servicesCheckboxPanel">
 									<e:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" />
 									<e:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" />

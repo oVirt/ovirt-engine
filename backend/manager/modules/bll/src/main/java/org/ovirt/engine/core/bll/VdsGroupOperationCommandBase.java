@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -34,6 +36,17 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     @Override
     public VDSGroup getVdsGroup() {
         return getParameters().getVdsGroup();
+    }
+
+    protected ArchitectureType getArchitecture() {
+        if (StringUtils.isNotEmpty(getVdsGroup().getcpu_name())) {
+            return CpuFlagsManagerHandler.getArchitectureByCpuName(getVdsGroup().getcpu_name(),
+                    getVdsGroup().getcompatibility_version());
+        } else if (getVdsGroup().getArchitecture() == null) {
+            return ArchitectureType.undefined;
+        }
+
+        return getVdsGroup().getArchitecture();
     }
 
     protected void checkMaxMemoryOverCommitValue() {

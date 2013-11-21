@@ -75,6 +75,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private Map<String, String> clusterPolicyProperties;
     private boolean detectEmulatedMachine;
 
+    private ArchitectureType architecture;
+
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
         name = "";
@@ -272,6 +274,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public boolean isDetectEmulatedMachine() {
         return detectEmulatedMachine;
+    }
+
+    public ArchitectureType getArchitecture() {
+        return this.architecture;
+    }
+
+    public void setArchitecture (ArchitectureType architecture) {
+        this.architecture = architecture;
     }
 
     @Override

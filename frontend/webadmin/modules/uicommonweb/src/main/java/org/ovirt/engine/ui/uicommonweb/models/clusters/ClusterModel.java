@@ -1,10 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -231,6 +233,18 @@ public class ClusterModel extends EntityModel
     public void setVersion(ListModel value)
     {
         privateVersion = value;
+    }
+
+    private ListModel privateArchitecture;
+
+    public ListModel getArchitecture()
+    {
+        return privateArchitecture;
+    }
+
+    public void setArchitecture(ListModel value)
+    {
+        privateArchitecture = value;
     }
 
     private boolean allowClusterWithVirtGlusterEnabled;
@@ -867,6 +881,10 @@ public class ClusterModel extends EntityModel
         setVersion(new ListModel());
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
+
+        setArchitecture(new ListModel());
+
+        getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(ArchitectureType.values())));
 
         setIsGeneralTabValid(true);
         setIsResiliencePolicyTabAvailable(true);

@@ -358,6 +358,9 @@ public class VmMapper {
         cpu.setCpuTune(stringToCpuTune(entity.getCpuPinning()));
         cpu.setTopology(topology);
         model.setCpuShares(entity.getCpuShares());
+
+        cpu.setArchitecture(CPUMapper.map(entity.getClusterArch(), null));
+
         if (entity.getVmPoolId() != null) {
             VmPool pool = new VmPool();
             pool.setId(entity.getVmPoolId().toString());

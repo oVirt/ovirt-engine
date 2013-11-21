@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -270,6 +271,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
             entity.setTemplateType(VmEntityType.valueOf(rs.getString("entity_type")));
+            entity.setClusterArch(ArchitectureType.forValue(rs.getInt("architecture")));
             return entity;
         }
     }

@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -61,6 +62,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         newGroup.setClusterPolicyProperties(new LinkedHashMap<String, String>());
         newGroup.setDetectEmulatedMachine(true);
         newGroup.setEmulatedMachine("rhel6.4.0");
+        newGroup.setArchitecture(ArchitectureType.x86_64);
 
     }
 

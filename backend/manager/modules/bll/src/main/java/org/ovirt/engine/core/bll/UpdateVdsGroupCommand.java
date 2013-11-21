@@ -53,6 +53,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
     @Override
     protected void executeCommand() {
+        getVdsGroup().setArchitecture(getArchitecture());
+
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();
         if (!ObjectUtils.objectsEqual(oldGroup.getcompatibility_version(), getParameters().getVdsGroup().getcompatibility_version())) {

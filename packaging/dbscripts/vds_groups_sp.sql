@@ -27,15 +27,17 @@ Create or replace FUNCTION InsertVdsGroups(
 	v_trusted_service BOOLEAN,
         v_cluster_policy_id UUID,
         v_cluster_policy_custom_properties text,
-	v_enable_balloon BOOLEAN)
+	v_enable_balloon BOOLEAN,
+	v_architecture INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
       INSERT INTO vds_groups(vds_group_id,description, name, free_text_comment, cpu_name, storage_pool_id,  max_vds_memory_over_commit, count_threads_as_cores, compatibility_version,
         transparent_hugepages, migrate_on_error, virt_service, gluster_service, tunnel_migration, emulated_machine, detect_emulated_machine, trusted_service, cluster_policy_id,
-        cluster_policy_custom_properties, enable_balloon)
+        cluster_policy_custom_properties, enable_balloon, architecture)
 	VALUES(v_vds_group_id,v_description, v_name, v_free_text_comment, v_cpu_name, v_storage_pool_id,  v_max_vds_memory_over_commit, v_count_threads_as_cores, v_compatibility_version,
-    v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration, v_emulated_machine, v_detect_emulated_machine, v_trusted_service, v_cluster_policy_id, v_cluster_policy_custom_properties, v_enable_balloon);
+    v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration, v_emulated_machine, v_detect_emulated_machine, v_trusted_service, v_cluster_policy_id, v_cluster_policy_custom_properties, v_enable_balloon,
+    v_architecture);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -62,7 +64,8 @@ Create or replace FUNCTION UpdateVdsGroup(v_description VARCHAR(4000) ,
 	v_trusted_service BOOLEAN,
         v_cluster_policy_id UUID,
         v_cluster_policy_custom_properties text,
-	v_enable_balloon BOOLEAN)
+	v_enable_balloon BOOLEAN,
+	v_architecture INTEGER)
 RETURNS VOID
 
 	--The [vds_groups] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -77,7 +80,7 @@ BEGIN
       migrate_on_error = v_migrate_on_error,
       virt_service = v_virt_service, gluster_service = v_gluster_service, tunnel_migration = v_tunnel_migration,
       emulated_machine = v_emulated_machine, detect_emulated_machine = v_detect_emulated_machine, trusted_service = v_trusted_service, cluster_policy_id = v_cluster_policy_id,
-      cluster_policy_custom_properties = v_cluster_policy_custom_properties, enable_balloon = v_enable_balloon
+      cluster_policy_custom_properties = v_cluster_policy_custom_properties, enable_balloon = v_enable_balloon, architecture = v_architecture
       WHERE vds_group_id = v_vds_group_id;
 END; $procedure$
 LANGUAGE plpgsql;

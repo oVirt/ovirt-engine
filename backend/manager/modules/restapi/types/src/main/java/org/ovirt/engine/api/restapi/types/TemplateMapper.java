@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
@@ -79,6 +80,13 @@ public class TemplateMapper {
             }
             if (model.getCpu().getTopology().getSockets()!=null) {
                 entity.setNumOfSockets(model.getCpu().getTopology().getSockets());
+            }
+        }
+        if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
+            Architecture archType = Architecture.fromValue(model.getCpu().getArchitecture());
+
+            if (archType != null) {
+                entity.setClusterArch(CPUMapper.map(archType, null));
             }
         }
         if (model.isSetCpuShares()) {
@@ -314,6 +322,9 @@ public class TemplateMapper {
             model.getDisplay().setAllowOverride(entity.isAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
             model.getDisplay().setKeyboardLayout(entity.getVncKeyboardLayout());
+        }
+        if (entity.getClusterArch() != null) {
+            model.getCpu().setArchitecture(CPUMapper.map(entity.getClusterArch(), null));
         }
         if (entity.getCreationDate() != null) {
             model.setCreationTime(DateMapper.map(entity.getCreationDate(), null));

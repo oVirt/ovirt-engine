@@ -16,6 +16,7 @@ import org.apache.commons.collections.Transformer;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -47,6 +48,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         newVmTemplate.setId(Guid.newGuid());
         newVmTemplate.setName("NewVmTemplate");
         newVmTemplate.setVdsGroupId(VDS_GROUP_ID);
+        newVmTemplate.setClusterArch(ArchitectureType.x86_64);
     }
 
     /**

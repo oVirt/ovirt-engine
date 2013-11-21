@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -98,6 +99,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Path(value = "version.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Object> versionEditor;
+
+    @UiField(provided = true)
+    @Path(value = "architecture.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Object> architectureEditor;
 
     @UiField
     @Ignore
@@ -291,6 +297,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         descriptionEditor.setLabel(constants.clusterPopupDescriptionLabel());
         commentEditor.setLabel(constants.commentLabel());
         cPUEditor.setLabel(constants.clusterPopupCPULabel());
+        architectureEditor.setLabel(constants.clusterPopupArchitectureLabel());
         versionEditor.setLabel(constants.clusterPopupVersionLabel());
         enableOvirtServiceEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
         enableGlusterServiceEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
@@ -360,6 +367,13 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             @Override
             public String renderNullSafe(Object object) {
                 return ((Version) object).toString();
+            }
+        });
+
+        architectureEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((ArchitectureType) object).toString();
             }
         });
 
@@ -458,6 +472,14 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         });
         importGlusterExplanationLabel.setVisible((Boolean) object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
+
+        object.getCPU().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean isCpuNameBlank = object.getCPU().getSelectedItem() == null;
+                architectureEditor.setVisible(isCpuNameBlank);
+            }
+        });
 
         object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener() {
             @Override

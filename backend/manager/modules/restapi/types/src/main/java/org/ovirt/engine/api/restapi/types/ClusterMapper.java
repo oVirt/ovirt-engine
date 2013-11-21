@@ -4,6 +4,7 @@ import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
 import java.util.LinkedHashMap;
 
+import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
@@ -44,6 +45,13 @@ public class ClusterMapper {
         }
         if (model.isSetCpu() && model.getCpu().isSetId()) {
             entity.setcpu_name(model.getCpu().getId());
+        }
+        if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
+            Architecture archType = Architecture.fromValue(model.getCpu().getArchitecture());
+
+            if (archType != null) {
+                entity.setArchitecture(CPUMapper.map(archType, null));
+            }
         }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
             entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter().getId()));
@@ -95,6 +103,9 @@ public class ClusterMapper {
         if (entity.getcpu_name() != null) {
             CPU cpu = new CPU();
             cpu.setId(entity.getcpu_name());
+
+            cpu.setArchitecture(CPUMapper.map(entity.getArchitecture(), null));
+
             model.setCpu(cpu);
         }
         if (entity.getStoragePoolId() != null) {

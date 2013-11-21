@@ -11,6 +11,7 @@ public class TemplateValidator implements Validator<Template> {
     private UsbValidator usbValidator = new UsbValidator();
     private OsValidator osValidator = new OsValidator();
     private DisplayValidator displayValidator = new DisplayValidator();
+    private CPUValidator cpuValidator = new CPUValidator();
 
     @Override
     public void validateEnums(Template template) {
@@ -25,6 +26,9 @@ public class TemplateValidator implements Validator<Template> {
         }
         if (template.isSetDisplay()) {
             displayValidator.validateEnums(template.getDisplay());
+        }
+        if (template.isSetCpu()) {
+            cpuValidator.validateEnums(template.getCpu());
         }
     }
 

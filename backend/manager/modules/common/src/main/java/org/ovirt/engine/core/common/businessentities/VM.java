@@ -38,6 +38,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     private Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties;
 
+    private ArchitectureType clusterArch;
+
     public String getUserDefinedProperties() {
         return vmStatic.getUserDefinedProperties();
     }
@@ -138,6 +140,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public int getOs() {
         return this.getVmOsId();
+    }
+
+    public ArchitectureType getClusterArch() {
+        return this.clusterArch;
+    }
+
+    public void setClusterArch(ArchitectureType clusterArch) {
+        this.clusterArch = clusterArch;
     }
 
     public int getVmOsId() {
