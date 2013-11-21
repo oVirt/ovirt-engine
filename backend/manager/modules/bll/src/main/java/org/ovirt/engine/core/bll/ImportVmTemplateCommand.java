@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -82,6 +83,14 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
         // check that the storage pool is valid
         retVal = retVal && checkStoragePool();
+
+        if(retVal) {
+            retVal = validateTemplateArchitecture();
+        }
+
+        if (retVal) {
+            retVal = isVDSGroupCompatible();
+        }
 
         if (retVal) {
             // set the source domain and check that it is ImportExport type and active
@@ -196,6 +205,22 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
         }
         return retVal;
+    }
+
+    protected boolean isVDSGroupCompatible () {
+        if (getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean validateTemplateArchitecture () {
+        if (getVmTemplate().getClusterArch() == ArchitectureType.undefined) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE);
+            return false;
+        }
+        return true;
     }
 
     protected boolean isVmTemplateWithSameNameExist() {

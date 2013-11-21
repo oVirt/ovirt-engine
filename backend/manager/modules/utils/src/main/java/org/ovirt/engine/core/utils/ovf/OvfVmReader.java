@@ -44,11 +44,13 @@ public class OvfVmReader extends OvfReader {
         _vm.getStaticData().setId(new Guid(section.attributes.get("ovf:id").getValue()));
         XmlNode node = section.SelectSingleNode("Description");
         if (node != null) {
-            _vm.getStaticData().setOsId(osRepository.getOsIdByUniqueName(node.innerText));
+            int osId = osRepository.getOsIdByUniqueName(node.innerText);
+            _vm.getStaticData().setOsId(osId);
+            _vm.setClusterArch(osRepository.getArchitectureFromOS(osId));
         }
-
-        // Workaround until the support for OVF on POWER is implemented
-        _vm.setClusterArch(ArchitectureType.x86_64);
+        else {
+            _vm.setClusterArch(ArchitectureType.undefined);
+        }
     }
 
     @Override

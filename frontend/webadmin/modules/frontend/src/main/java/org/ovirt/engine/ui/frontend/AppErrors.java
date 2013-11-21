@@ -1564,6 +1564,18 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Selected Power Management Agent is not supported.")
     String ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The selected cluster doesn't support VM's architecture")
+    String ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The selected cluster doesn't support Template's architecture")
+    String ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The selected VM has undefined architecture")
+    String ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_WITH_NOT_SUPPORTED_ARCHITECTURE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The selected Template has undefined architecture")
+    String ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE();
+
     @DefaultStringValue("Cannot ${action} ${type}. The cluster's compatibility version doesn't support MoM Policy update.")
     String ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION();
 

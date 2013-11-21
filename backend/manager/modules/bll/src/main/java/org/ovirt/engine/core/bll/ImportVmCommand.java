@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -259,6 +260,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             // At this point we should work with the VM that was read from
             // the OVF
             setVm(vm);
+
             // Iterate over all the VM images (active image and snapshots)
             for (DiskImage image : getVm().getImages()) {
                 if (Guid.Empty.equals(image.getVmSnapshotId())) {
@@ -388,6 +390,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                             getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getStorageName()));
         }
 
+        if (!validateVmArchitecture()){
+            return false;
+        }
+
         if (!validateVdsCluster()) {
             return false;
         }
@@ -497,17 +503,32 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     /**
-     * Validates that that the required cluster exists.
+     * Validates that that the required cluster exists and is compatible
      * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
      */
     protected boolean validateVdsCluster() {
         List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId());
         for (VDSGroup group : groups) {
             if (group.getId().equals(getParameters().getVdsGroupId())) {
+                if (group.getArchitecture() != getVm().getClusterArch())
+                {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
+                }
                 return true;
             }
         }
         return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+    }
+
+    /**
+     * Validates if the VM being imported has a valid architecture.
+     * @return
+     */
+    protected boolean validateVmArchitecture () {
+        if (getVm().getClusterArch() == ArchitectureType.undefined) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_WITH_NOT_SUPPORTED_ARCHITECTURE);
+        }
+        return true;
     }
 
     /**

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.ovf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class OvfManagerTest {
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         HashMap<Integer, String> osIdsToNames = new HashMap<>();
 
+        when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
     }
 
@@ -198,6 +200,7 @@ public class OvfManagerTest {
         template.setId(Guid.newGuid());
         template.setDescription("test-description");
         template.setDbGeneration(2L);
+        template.setClusterArch(ArchitectureType.x86_64);
         return template;
     }
 }
