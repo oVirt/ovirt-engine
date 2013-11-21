@@ -57,6 +57,7 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
 
     @Override
     public void markAsValid() {
+        getValidatedWidgetStyle().clearBorderColor();
         tabContainer.getElement().addClassName(isActive ? style.obrand_active() : style.inactive());
     }
 
