@@ -478,7 +478,10 @@ public class VolumeBrickListModel extends SearchableListModel {
         volumeBrickModel.startProgress(null);
 
         GlusterVolumeBricksActionParameters parameter = new GlusterVolumeBricksActionParameters(volumeEntity.getId(),
-                brickList, volumeBrickModel.getReplicaCountValue(), volumeBrickModel.getStripeCountValue());
+                        brickList,
+                        volumeBrickModel.getReplicaCountValue(),
+                        volumeBrickModel.getStripeCountValue(),
+                        (Boolean) volumeBrickModel.getForce().getEntity());
 
         Frontend.getInstance().runAction(VdcActionType.AddBricksToGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
 

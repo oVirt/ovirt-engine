@@ -2731,6 +2731,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("NOTE: Stripe groups will be created based on the order of the bricks.")
     String distributedStripeVolumeBrickInfoLabel();
 
+    @DefaultStringValue("Allow bricks in root partition and re-use the bricks by clearing xattrs")
+    String allowBricksInRootPartition();
+
+    @DefaultStringValue("WARNING: This might cause the root partition to be filled up and non-operational")
+    String allowBricksInRootPartitionWarning();
+
     @DefaultStringValue("Migrate Data from the bricks")
     String removeBricksMigrateData();
 

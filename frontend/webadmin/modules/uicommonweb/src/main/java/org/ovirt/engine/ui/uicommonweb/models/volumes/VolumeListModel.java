@@ -861,7 +861,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         volumeModel.startProgress(null);
 
-        CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(volume);
+        CreateGlusterVolumeParameters parameter =
+                new CreateGlusterVolumeParameters(volume, volumeModel.isForceAddBricks());
 
         Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
 

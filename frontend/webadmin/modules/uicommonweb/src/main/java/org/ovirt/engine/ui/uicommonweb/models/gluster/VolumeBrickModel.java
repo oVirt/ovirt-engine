@@ -33,6 +33,8 @@ public class VolumeBrickModel extends Model {
 
     ListModel bricks;
 
+    EntityModel force;
+
     private UICommand addBrickCommand;
     private UICommand removeBricksCommand;
     private UICommand removeAllBricksCommand;
@@ -56,6 +58,9 @@ public class VolumeBrickModel extends Model {
         setBrickDirectory(new EntityModel());
 
         setBricks(new ListModel());
+
+        setForce(new EntityModel<Boolean>());
+        getForce().setEntity(false);
 
         setAddBrickCommand(new UICommand("AddBrick", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("RemoveBricks", this)); //$NON-NLS-1$
@@ -258,6 +263,14 @@ public class VolumeBrickModel extends Model {
 
     public void setBricks(ListModel selectedBricks) {
         this.bricks = selectedBricks;
+    }
+
+    public EntityModel getForce() {
+        return force;
+    }
+
+    public void setForce(EntityModel force) {
+        this.force = force;
     }
 
     public boolean validateAddBricks(GlusterVolumeType selectedVolumeType)

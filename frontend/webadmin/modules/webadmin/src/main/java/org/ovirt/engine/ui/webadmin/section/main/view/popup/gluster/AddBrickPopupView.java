@@ -6,9 +6,11 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -18,6 +20,9 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
@@ -66,6 +71,11 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     EntityModelTextBoxEditor stripeCountEditor;
 
     @UiField(provided = true)
+    @Path(value = "force.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor forceEditor;
+
+    @UiField(provided = true)
     @Path(value = "servers.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Object> serverEditor;
@@ -111,6 +121,10 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     @UiField
     @Ignore
+    Label forceWarningLabel;
+
+    @UiField
+    @Ignore
     Label messageLabel;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -122,7 +136,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         super(eventBus, resources);
         this.constants = constants;
         bricksTable = new EntityModelCellTable<ListModel>(true);
-        initListBoxEditors();
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
@@ -132,8 +146,9 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         driver.initialize(this);
     }
 
-    private void initListBoxEditors() {
+    private void initEditors() {
         volumeTypeEditor = new EntityModelLabelEditor(new EnumRenderer(), new EntityModelParser());
+        forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         serverEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
@@ -148,6 +163,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         volumeTypeEditor.addContentWidgetStyleName(style.editorContentWidget());
         replicaCountEditor.addContentWidgetStyleName(style.editorContentWidget());
         stripeCountEditor.addContentWidgetStyleName(style.editorContentWidget());
+        forceEditor.addContentWidgetStyleName(style.forceEditorWidget());
     }
 
     protected void initTableColumns(ApplicationConstants constants){
@@ -239,10 +255,12 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         removeAllBricksButton.setLabel(constants.removeAllBricksButtonLabel());
         moveBricksUpButton.setLabel(constants.moveBricksUpButtonLabel());
         moveBricksDownButton.setLabel(constants.moveBricksDownButtonLabel());
+        forceEditor.setLabel(constants.allowBricksInRootPartition());
+        forceWarningLabel.setText(constants.allowBricksInRootPartitionWarning());
     }
 
     @Override
-    public void edit(VolumeBrickModel object) {
+    public void edit(final VolumeBrickModel object) {
         bricksTable.asEditor().edit(object.getBricks());
         driver.edit(object);
 
@@ -263,6 +281,15 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         else {
             infoLabel.setText(null);
         }
+
+        forceWarningLabel.setVisible((Boolean) object.getForce().getEntity());
+
+        object.getForce().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                forceWarningLabel.setVisible((Boolean) object.getForce().getEntity());
+            }
+        });
     }
 
     @Override
@@ -279,6 +306,8 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     interface WidgetStyle extends CssResource {
         String editorContentWidget();
+
+        String forceEditorWidget();
     }
 
 }

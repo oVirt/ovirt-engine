@@ -48,6 +48,8 @@ public class VolumeModel extends Model {
     EntityModel allowAccess;
     EntityModel optimizeForVirtStore;
 
+    private boolean forceAddBricks;
+
     private UICommand addBricksCommand;
 
     public UICommand getAddBricksCommand()
@@ -282,6 +284,14 @@ public class VolumeModel extends Model {
         this.optimizeForVirtStore = optimizeForVirtStore;
     }
 
+    public boolean isForceAddBricks() {
+        return this.forceAddBricks;
+    }
+
+    public void setForceAddBricks(boolean forceAddBricks) {
+        this.forceAddBricks = forceAddBricks;
+    }
+
     public void addBricks(){
         if (getWindow() != null || getCluster().getSelectedItem() == null)
         {
@@ -299,6 +309,8 @@ public class VolumeModel extends Model {
         volumeBrickModel.getStripeCount().setEntity(getStripeCount().getEntity());
         volumeBrickModel.getStripeCount().setIsChangable(true);
         volumeBrickModel.getStripeCount().setIsAvailable(getStripeCount().getIsAvailable());
+
+        volumeBrickModel.getForce().setEntity(isForceAddBricks());
 
         setWindow(volumeBrickModel);
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
@@ -422,6 +434,9 @@ public class VolumeModel extends Model {
         brickListModel.setSelectedItems(brickList);
 
         setBricks(brickListModel);
+
+        setForceAddBricks((Boolean) volumeBrickModel.getForce().getEntity());
+
         setWindow(null);
     }
 
