@@ -1,15 +1,14 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.annotation.ValidUri;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -58,6 +57,10 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable, Com
     private int maxAssignedVmsPerUser;
 
     public static final char MASK_CHARACTER = '?';
+
+    @ValidUri(message = "VALIDATION.VDS_GROUP.SPICE_PROXY.HOSTNAME_OR_IP", groups = { CreateEntity.class, UpdateEntity.class })
+    @Size(max = BusinessEntitiesDefinitions.SPICE_PROXY_ADDR_SIZE)
+    private String spiceProxy;
 
     public VmPool() {
         parameters = "";
@@ -237,5 +240,13 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable, Com
     @Override
     public Object getQueryableId() {
         return getVmPoolId();
+    }
+
+    public void setSpiceProxy(String spiceProxy) {
+        this.spiceProxy = spiceProxy;
+    }
+
+    public String getSpiceProxy() {
+        return spiceProxy;
     }
 }

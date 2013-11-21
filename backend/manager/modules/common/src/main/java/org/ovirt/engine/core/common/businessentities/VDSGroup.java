@@ -2,13 +2,12 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.Map;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
+import org.ovirt.engine.core.common.validation.annotation.ValidUri;
 import org.ovirt.engine.core.common.validation.annotation.ValidVdsGroup;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -72,6 +71,11 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private Guid clusterPolicyId;
 
     private String clusterPolicyName;
+
+    @ValidUri(message = "VALIDATION.VDS_GROUP.SPICE_PROXY.HOSTNAME_OR_IP",
+            groups = { CreateEntity.class, UpdateEntity.class })
+    @Size(max = BusinessEntitiesDefinitions.SPICE_PROXY_ADDR_SIZE)
+    private String spiceProxy;
 
     private Map<String, String> clusterPolicyProperties;
     private boolean detectEmulatedMachine;
@@ -293,6 +297,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public void setOptimizationType(OptimizationType optimizationType) {
         this.optimizationType = optimizationType;
+    }
+
+    public String getSpiceProxy() {
+        return spiceProxy;
+    }
+
+    public void setSpiceProxy(String spiceProxy) {
+        this.spiceProxy = spiceProxy;
     }
 
     @Override

@@ -92,4 +92,6 @@ public final class BusinessEntitiesDefinitions {
     // Jobs
     public static final int CORRELATION_ID_SIZE = 50;
 
+    // SPICE
+    public static final int SPICE_PROXY_ADDR_SIZE = 255;
 }

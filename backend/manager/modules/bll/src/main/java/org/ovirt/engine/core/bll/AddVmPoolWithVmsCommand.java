@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -111,4 +112,9 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
         return list;
     }
 
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(CreateEntity.class);
+        return super.getValidationGroups();
+    }
 }

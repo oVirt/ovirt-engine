@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.regex.Pattern;
 
@@ -50,5 +51,17 @@ public class ValidationUtilsTest {
             assertTrue("Invalid strings (trimming whitespaces)",
                     !Pattern.matches(ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, s));
         }
+    }
+
+    @Test
+    public void validUri() {
+        assertTrue(ValidationUtils.validUri("a://asdasd:21"));
+        assertTrue(ValidationUtils.validUri("a://asdasd"));
+        assertTrue(ValidationUtils.validUri("asdasd:21"));
+        assertTrue(ValidationUtils.validUri("asdasd"));
+        assertTrue(ValidationUtils.validUri("1.2.3.4"));
+
+        assertFalse(ValidationUtils.validUri("://asdasd:12"));
+        assertFalse(ValidationUtils.validUri("asd asd"));
     }
 }

@@ -84,7 +84,8 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 .addValue("parameters", pool.getParameters())
                 .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("vds_group_id", pool.getVdsGroupId())
-                .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser());
+                .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
+                .addValue("spice_proxy", pool.getSpiceProxy());
 
         getCallsHandler().executeModification("InsertVm_pools", parameterSource);
     }
@@ -100,7 +101,8 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 .addValue("parameters", pool.getParameters())
                 .addValue("prestarted_vms", pool.getPrestartedVms())
                 .addValue("vds_group_id", pool.getVdsGroupId())
-                .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser());
+                .addValue("max_assigned_vms_per_user", pool.getMaxAssignedVmsPerUser())
+                .addValue("spice_proxy", pool.getSpiceProxy());
 
         getCallsHandler().executeModification("UpdateVm_pools", parameterSource);
     }
@@ -165,6 +167,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             entity.setAssignedVmsCount(rs.getInt("assigned_vm_count"));
             entity.setRunningVmsCount(rs.getInt("vm_running_count"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
+            entity.setSpiceProxy(rs.getString("spice_proxy"));
             return entity;
         }
     }
@@ -187,6 +190,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
+            entity.setSpiceProxy(rs.getString("spice_proxy"));
             return entity;
         }
     }

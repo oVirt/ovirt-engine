@@ -46,6 +46,15 @@ public class ValidationUtils {
         }
     }
 
+    public static boolean validUri(String addr) {
+        try {
+            new URI(addr);
+            return true;
+        } catch (URISyntaxException use) {
+            return false;
+        }
+    }
+
     public static Validator getValidator() {
         return validator;
 

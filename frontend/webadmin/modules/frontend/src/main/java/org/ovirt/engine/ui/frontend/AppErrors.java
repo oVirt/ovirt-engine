@@ -1879,6 +1879,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Pool name is required")
     String VALIDATION_VM_POOLS_NAME_NOT_NULL();
 
+    @DefaultStringValue("SPICE proxy address must be in form [protocol://]hostname or ip[:port]")
+    String VALIDATION_VM_POOLS_SPICE_PROXY_HOSTNAME_OR_IP();
+
     @DefaultStringValue("Role name is required")
     String VALIDATION_ROLES_NAME_NOT_NULL();
 
@@ -1893,6 +1896,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cluster migrate on error option is required")
     String VALIDATION_VDS_GROUP_MigrateOnError_NOT_NULL();
+
+    @DefaultStringValue("SPICE proxy address must be in form [protocol://]hostname or ip[:port]")
+    String VALIDATION_VDS_GROUP_SPICE_PROXY_HOSTNAME_OR_IP();
 
     @DefaultStringValue("Data Center ID is required")
     String VALIDATION_STORAGE_POOL_ID_NOT_NULL();

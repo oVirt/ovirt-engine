@@ -34,6 +34,10 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     private List<Snapshot> snapshots;
     private boolean runOnce;
 
+    private String vdsGroupSpiceProxy;
+
+    private String vmPoolSpiceProxy;
+
     private InitializationType initializationType;
 
     private Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties;
@@ -1640,6 +1644,22 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public void setOriginalTemplateGuid(Guid originalTemplateGuid) {
         vmStatic.setOriginalTemplateGuid(originalTemplateGuid);
+    }
+
+    public String getVmPoolSpiceProxy() {
+        return vmPoolSpiceProxy;
+    }
+
+    public void setVmPoolSpiceProxy(String vmPoolSpiceProxy) {
+        this.vmPoolSpiceProxy = vmPoolSpiceProxy;
+    }
+
+    public String getVdsGroupSpiceProxy() {
+        return vdsGroupSpiceProxy;
+    }
+
+    public void setVdsGroupSpiceProxy(String vdsGroupSpiceProxy) {
+        this.vdsGroupSpiceProxy = vdsGroupSpiceProxy;
     }
 
     public void clearDisks() {

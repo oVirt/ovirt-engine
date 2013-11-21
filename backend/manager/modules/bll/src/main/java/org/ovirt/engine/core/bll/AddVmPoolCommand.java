@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmPoolOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -36,4 +38,12 @@ public class AddVmPoolCommand<T extends VmPoolOperationParameters> extends VmPoo
         return getSucceeded() ? AuditLogType.USER_ADD_VM_POOL
                 : AuditLogType.USER_ADD_VM_POOL_FAILED;
     }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(CreateEntity.class);
+        return super.getValidationGroups();
+    }
+
+
 }

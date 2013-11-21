@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
@@ -81,5 +83,11 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
 
     @Override
     public void setEntityId(AuditLogableBase logable) {
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(UpdateEntity.class);
+        return super.getValidationGroups();
     }
 }

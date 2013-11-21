@@ -492,7 +492,8 @@ AS
 SELECT
 vm_pool_map.vm_guid as vm_guid,
 vm_pool_map.vm_pool_id as vm_pool_id,
-vm_pools.vm_pool_name as vm_pool_name
+vm_pools.vm_pool_name as vm_pool_name,
+vm_pools.spice_proxy as vm_pool_spice_proxy
 from vm_pool_map
 INNER JOIN vm_pools
 ON vm_pool_map.vm_pool_id = vm_pools.vm_pool_id;
@@ -573,10 +574,10 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_static.vmt_guid as vmt_guid, vm_static.os as vm_os, vm_static.description as vm_description, vm_static.free_text_comment as vm_comment, vm_static.vds_group_id as vds_group_id,
                       vm_static.domain as vm_domain, vm_static.creation_date as vm_creation_date, vm_static.auto_startup as auto_startup, vm_static.is_stateless as is_stateless,
                       vm_static.is_smartcard_enabled as is_smartcard_enabled, vm_static.is_delete_protected as is_delete_protected, vm_static.sso_method as sso_method, vm_static.dedicated_vm_for_vds as dedicated_vm_for_vds,
-                      vm_static.fail_back as fail_back, vm_static.default_boot_sequence as default_boot_sequence, vm_static.vm_type as vm_type,
+                      vm_static.fail_back as fail_back, vm_static.default_boot_sequence as default_boot_sequence, vm_static.vm_type as vm_type, vm_pool_map_view.vm_pool_spice_proxy as vm_pool_spice_proxy,
                       vds_groups.name as vds_group_name, vds_groups.transparent_hugepages as transparent_hugepages, vds_groups.trusted_service as trusted_service,
                       storage_pool.id as storage_pool_id, storage_pool.name as storage_pool_name,
-                      vds_groups.description as vds_group_description, vm_templates.vm_name as vmt_name,
+                      vds_groups.description as vds_group_description, vds_groups.spice_proxy as vds_group_spice_proxy, vm_templates.vm_name as vmt_name,
                       vm_templates.mem_size_mb as vmt_mem_size_mb, vm_templates.os as vmt_os, vm_templates.creation_date as vmt_creation_date,
                       vm_templates.child_count as vmt_child_count, vm_templates.num_of_sockets as vmt_num_of_sockets,
                       vm_templates.cpu_per_socket as vmt_cpu_per_socket, vm_templates.num_of_sockets*vm_templates.cpu_per_socket as vmt_num_of_cpus,
@@ -636,6 +637,7 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.cpu_shares, vms
             vms.exit_status, vms.exit_message, vms.min_allocated_mem, storage_domain_static.id AS storage_id,
             vms.quota_id as quota_id, vms.quota_name as quota_name, vms.tunnel_migration as tunnel_migration,
             vms.vnc_keyboard_layout as vnc_keyboard_layout, vms.is_run_and_pause as is_run_and_pause, vms.created_by_user_id as created_by_user_id, vms.vm_fqdn, vms.cpu_name as cpu_name,
+            vms.vm_pool_spice_proxy as vm_pool_spice_proxy, vms.vds_group_spice_proxy as vds_group_spice_proxy,
             vms.instance_type_id as instance_type_id, vms.image_type_id as image_type_id, vms.architecture as architecture, vms.original_template_id as original_template_id, vms.original_template_name as original_template_name
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
@@ -812,7 +814,8 @@ WHERE     (users_2.user_group = 'group');
 
 
 CREATE OR REPLACE VIEW vm_pools_view AS
- SELECT vm_pools.vm_pool_id, vm_pools.vm_pool_name, vm_pools.vm_pool_description, vm_pools.vm_pool_comment, vm_pools.vm_pool_type, vm_pools.parameters, vm_pools.prestarted_vms, vm_pools.vds_group_id, vds_groups.name AS vds_group_name, vds_groups.architecture AS architecture, storage_pool.name as storage_pool_name, storage_pool.id as storage_pool_id, vm_pools.max_assigned_vms_per_user as max_assigned_vms_per_user
+ SELECT vm_pools.vm_pool_id, vm_pools.vm_pool_name, vm_pools.vm_pool_description, vm_pools.vm_pool_comment, vm_pools.vm_pool_type, vm_pools.parameters, vm_pools.prestarted_vms, vm_pools.vds_group_id, vds_groups.name AS vds_group_name, vds_groups.architecture AS architecture, storage_pool.name as storage_pool_name, storage_pool.id as storage_pool_id, vm_pools.max_assigned_vms_per_user as max_assigned_vms_per_user,
+ vm_pools.spice_proxy as spice_proxy
    FROM vm_pools
    JOIN vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id
    JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
@@ -820,7 +823,7 @@ CREATE OR REPLACE VIEW vm_pools_view AS
 
 
 CREATE OR REPLACE VIEW vm_pools_full_view AS
- SELECT vmp.vm_pool_id, vmp.vm_pool_name, vmp.vm_pool_description, vmp.vm_pool_comment, vmp.vm_pool_type, vmp.parameters, vmp.prestarted_vms, vmp.vds_group_id, vmp.vds_group_name, vmp.architecture, vmp.max_assigned_vms_per_user, ( SELECT count(vm_pool_map.vm_pool_id) AS expr1
+ SELECT vmp.vm_pool_id, vmp.vm_pool_name, vmp.vm_pool_description, vmp.vm_pool_comment, vmp.vm_pool_type, vmp.parameters, vmp.prestarted_vms, vmp.vds_group_id, vmp.vds_group_name, vmp.architecture, vmp.max_assigned_vms_per_user, vmp.spice_proxy as spice_proxy, ( SELECT count(vm_pool_map.vm_pool_id) AS expr1
            FROM vm_pools_view v1
       LEFT JOIN vm_pool_map ON v1.vm_pool_id = vm_pool_map.vm_pool_id AND v1.vm_pool_id = vmp.vm_pool_id) AS assigned_vm_count, ( SELECT count(v2.vm_pool_id) AS expr1
            FROM vm_pools v2
