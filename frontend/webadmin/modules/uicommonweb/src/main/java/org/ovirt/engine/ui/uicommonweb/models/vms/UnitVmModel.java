@@ -69,6 +69,26 @@ public class UnitVmModel extends Model {
 
     private boolean privateIsNew;
 
+    private EntityModel<String> spiceProxy;
+
+    public EntityModel<String> getSpiceProxy() {
+        return spiceProxy;
+    }
+
+    public void setSpiceProxy(EntityModel<String> spiceProxy) {
+        this.spiceProxy = spiceProxy;
+    }
+
+    private EntityModel<Boolean> spiceProxyEnabled;
+
+    public EntityModel<Boolean> getSpiceProxyEnabled() {
+        return spiceProxyEnabled;
+    }
+
+    public void setSpiceProxyEnabled(EntityModel<Boolean> spiceProxyEnabled) {
+        this.spiceProxyEnabled = spiceProxyEnabled;
+    }
+
     private EntityModel<Boolean> editingEnabled;
 
     public EntityModel<Boolean> getEditingEnabled() {
@@ -1192,6 +1212,8 @@ public class UnitVmModel extends Model {
         getMemoryBalloonDeviceEnabled().setEntity(true);
         getMemoryBalloonDeviceEnabled().setIsAvailable(false);
 
+        setSpiceProxyEnabled(new EntityModel<Boolean>());
+        setSpiceProxy(new EntityModel<String>());
 
         setCdAttached(new NotChangableForVmInPoolEntityModel<Boolean>());
         getCdAttached().getEntityChangedEvent().addListener(new IEventListener() {
@@ -2266,13 +2288,14 @@ public class UnitVmModel extends Model {
         setIsFirstRunTabValid(getIsDisplayTabValid());
         setIsGeneralTabValid(getIsFirstRunTabValid());
 
+        boolean behaviorValid = behavior.validate();
         setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
                 && getDataCenterWithClustersList().getIsValid()
                 && getTemplate().getIsValid() && getMemSize().getIsValid()
                 && getMinAllocatedMemory().getIsValid());
 
         setIsFirstRunTabValid(getDomain().getIsValid() && getTimeZone().getIsValid());
-        setIsDisplayTabValid(getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid());
+        setIsDisplayTabValid(getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
         setIsHostTabValid(getDefaultHost().getIsValid());
         setIsAllocationTabValid(getDisksAllocationModel().getIsValid() && getMinAllocatedMemory().getIsValid()
                 && getCpuSharesAmount().getIsValid());
@@ -2288,7 +2311,7 @@ public class UnitVmModel extends Model {
                 && getInitrd_path().getIsValid()
                 && getKernel_parameters().getIsValid()
                 && getCpuSharesAmount().getIsValid()
-                && behavior.validate()
+                && behaviorValid
                 && customPropertySheetValid && getQuota().getIsValid();
 
     }

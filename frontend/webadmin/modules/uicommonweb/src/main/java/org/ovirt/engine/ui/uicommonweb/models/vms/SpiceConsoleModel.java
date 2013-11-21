@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -137,8 +138,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (!getspice().getConnectedEvent().getListeners().contains(this)) {
             getspice().getConnectedEvent().addListener(this);
         }
-    }
 
+        if (getEntity() != null) {
+            ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
+            boolean isSpiceProxyDefined = consoleUtils.isSpiceProxyDefined(getEntity());
+            getspice().setSpiceProxyEnabled(isSpiceProxyDefined);
+        }
+    }
 
     @Override
     protected void connect() {
@@ -404,11 +410,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                 .getMessages()
                                 .pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
 
-        String spiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
-        boolean spiceProxyGloballyConfigured = spiceProxy != null && !"".equals(spiceProxy);
-        boolean spiceProxyEnabledForThisVm = getspice().isSpiceProxyEnabled();
-        spiceProxy = spiceProxyGloballyConfigured && spiceProxyEnabledForThisVm  ? spiceProxy : null; //$NON-NLS-1$
-        getspice().setSpiceProxy(spiceProxy);
+        getspice().setSpiceProxy(determineSpiceProxy());
 
         // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver
         // installed.
@@ -493,6 +495,27 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             // Try to connect.
             spiceConnect();
         }
+    }
+
+    private String determineSpiceProxy() {
+        if (!getspice().isSpiceProxyEnabled()) {
+            return null;
+        }
+
+        if (!StringHelper.isNullOrEmpty(getEntity().getVmPoolSpiceProxy())) {
+            return getEntity().getVmPoolSpiceProxy();
+        }
+
+        if (!StringHelper.isNullOrEmpty(getEntity().getVdsGroupSpiceProxy())) {
+            return getEntity().getVdsGroupSpiceProxy();
+        }
+
+        String globalSpiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+        if (!StringHelper.isNullOrEmpty(globalSpiceProxy)) {
+            return globalSpiceProxy;
+        }
+
+        return null;
     }
 
     private void determineIpAndConnect(Guid vmId) {

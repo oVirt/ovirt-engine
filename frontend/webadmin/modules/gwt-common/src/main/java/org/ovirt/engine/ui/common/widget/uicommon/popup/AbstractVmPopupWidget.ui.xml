@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
@@ -468,6 +469,9 @@
 						</g:FlowPanel>
                         <ge:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" addStyleNames="{style.checkbox}" />
 						<ge:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" addStyleNames="{style.checkbox}" />
+
+                        <w:EntityModelWidgetWithInfo ui:field="spiceProxyEnabledCheckboxWithInfoIcon" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor"/>
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

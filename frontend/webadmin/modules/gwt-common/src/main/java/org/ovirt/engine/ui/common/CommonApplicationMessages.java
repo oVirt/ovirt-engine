@@ -131,4 +131,20 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Map control-alt-del shortcut to {0}")
     String remapCtrlAltDelete(String hotkey);
+
+    @DefaultMessage("This will override the SPICE proxy defined in {0}. Current configuration: {1}.")
+    String consoleOverrideSpiceProxyMessage(String parentConfiguration, String parentSpiceProxy);
+
+    @DefaultMessage("cluster")
+    String consoleOverrideDefinedOnCluster();
+
+    @DefaultMessage("global configuration")
+    String consoleOverrideDefinedInGlobalConfig();
+
+    @DefaultMessage("No SPICE proxy defined")
+    String noSpiceProxyDefined();
+
+    @DefaultMessage("{0} or {1}")
+    String or(String a, String b);
+
 }

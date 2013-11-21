@@ -13,11 +13,13 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.validation.ExistingPoolNameLengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -28,6 +30,17 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     public ExistingPoolModelBehavior(VM pool) {
         this.pool = pool;
+    }
+
+    @Override
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
+        super.initialize(systemTreeSelectedItem);
+
+        if (!StringHelper.isNullOrEmpty(pool.getVmPoolSpiceProxy())) {
+            getModel().getSpiceProxyEnabled().setEntity(true);
+            getModel().getSpiceProxy().setEntity(pool.getVmPoolSpiceProxy());
+            getModel().getSpiceProxy().setIsChangable(true);
+        }
     }
 
     @Override

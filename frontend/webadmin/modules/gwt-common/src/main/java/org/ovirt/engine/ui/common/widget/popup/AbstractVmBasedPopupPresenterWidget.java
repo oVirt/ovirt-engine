@@ -12,6 +12,8 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UnitVmModel> {
         void switchMode(boolean isAdvanced);
+
+        void setSpiceProxyOverrideExplanation(String explanation);
     }
 
     @Inject

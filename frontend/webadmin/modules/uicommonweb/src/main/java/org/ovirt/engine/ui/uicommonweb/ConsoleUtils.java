@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 
 /**
@@ -9,7 +10,7 @@ public interface ConsoleUtils {
 
     public boolean isBrowserPluginSupported(ConsoleProtocol protocol);
 
-    public boolean isSpiceProxyDefined();
+    public boolean isSpiceProxyDefined(VM vm);
 
     public boolean isWebSocketProxyDefined();
 

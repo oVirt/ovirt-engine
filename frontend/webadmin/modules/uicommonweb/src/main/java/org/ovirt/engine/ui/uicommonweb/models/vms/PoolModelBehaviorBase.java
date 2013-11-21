@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
+import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolModel> {
 
@@ -70,6 +72,16 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             }
         }, getModel().getHash()), true, false);
+
+        getModel().getSpiceProxyEnabled().setEntity(false);
+        getModel().getSpiceProxy().setIsChangable(false);
+
+        getModel().getSpiceProxyEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getModel().getSpiceProxy().setIsChangable(getModel().getSpiceProxyEnabled().getEntity());
+            }
+        });
     }
 
     protected void postDataCentersLoaded(final List<StoragePool> dataCenters) {
@@ -322,10 +334,17 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().setIsPoolTabValid(true);
 
+        if (getModel().getSpiceProxyEnabled().getEntity()) {
+            getModel().getSpiceProxy().validateEntity(new IValidation[]{ new HostWithProtocolAndPortAddressValidation()});
+        } else {
+            getModel().getSpiceProxy().setIsValid(true);
+        }
+
         return super.validate()
                 && getModel().getName().getIsValid()
                 && getModel().getNumOfDesktops().getIsValid()
                 && getModel().getPrestartedVms().getIsValid()
-                && getModel().getMaxAssignedVmsPerUser().getIsValid();
+                && getModel().getMaxAssignedVmsPerUser().getIsValid()
+                && getModel().getSpiceProxy().getIsValid();
     }
 }

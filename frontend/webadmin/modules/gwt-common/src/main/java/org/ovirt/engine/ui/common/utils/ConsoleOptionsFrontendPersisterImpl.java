@@ -165,7 +165,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
             spice.setWanOptionsEnabled(readBool(keyMaker.make(WAN_OPTIONS)));
         }
 
-        if (consoleUtils.isSpiceProxyDefined()) {
+        if (consoleUtils.isSpiceProxyDefined(vmConsoles.getVm())) {
             spice.setSpiceProxyEnabled(readBool(keyMaker.make(SPICE_PROXY_ENABLED)));
         }
 

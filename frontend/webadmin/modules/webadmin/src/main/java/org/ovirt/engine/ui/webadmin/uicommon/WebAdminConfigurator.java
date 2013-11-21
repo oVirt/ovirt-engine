@@ -65,8 +65,6 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         super.configure(spice);
         spice.setWANDisableEffects(new ArrayList<WANDisableEffects>());
         spice.setWanOptionsEnabled(false);
-
-        spice.setSpiceProxyEnabled(isSpiceProxyDefined());
     }
 
     @Override

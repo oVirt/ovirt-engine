@@ -335,9 +335,4 @@ public abstract class Configurator {
 
     public abstract Float clientBrowserVersion();
 
-    public boolean isSpiceProxyDefined() {
-        String spiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
-        return spiceProxy != null && !"".equals(spiceProxy); //$NON-NLS-1$
-    }
-
 }

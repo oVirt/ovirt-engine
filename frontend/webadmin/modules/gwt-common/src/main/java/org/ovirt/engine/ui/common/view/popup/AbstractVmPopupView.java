@@ -32,6 +32,14 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     }
 
     @Override
+    public void setSpiceProxyOverrideExplanation(String explanation) {
+        if (getContentWidget() instanceof AbstractVmPopupWidget) {
+            ((AbstractVmPopupWidget) getContentWidget()).setSpiceProxyOverrideExplanation(explanation);
+        }
+
+    }
+
+    @Override
     protected AbstractUiCommandButton createCommandButton(String label, String uniqueId) {
         if (VmBasedWidgetSwitchModeCommand.NAME.equals(uniqueId)) {
             return new LeftAlignedUiCommandButton(label);

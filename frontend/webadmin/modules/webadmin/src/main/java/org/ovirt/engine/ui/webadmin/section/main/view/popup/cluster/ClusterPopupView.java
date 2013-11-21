@@ -10,12 +10,15 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
@@ -288,6 +291,23 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelRadioButtonEditor allowOverbookingEditor;
 
+    @UiField
+    @Ignore
+    DialogTab consoleTab;
+
+    @UiField
+    @Path(value = "spiceProxy.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor spiceProxyEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    EntityModelWidgetWithInfo spiceProxyEnabledCheckboxWithInfoIcon;
+
+    @Path(value = "spiceProxyEnabled.entity")
+    @WithElementId
+    EntityModelCheckBoxOnlyEditor spiceProxyOverrideEnabled;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final ApplicationMessages messages;
@@ -372,6 +392,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         optimizeForSpeedEditor.setLabel(constants.optimizeForSpeedLabel());
         guarantyResourcesEditor.setLabel(constants.guarantyResourcesLabel());
         allowOverbookingEditor.setLabel(constants.allowOverbookingLabel());
+
+        spiceProxyEditor.setLabel(constants.overriddenSpiceProxyAddress());
+
+        consoleTab.setLabel(constants.consoleTabLabel());
     }
 
     private void initRadioButtonEditors() {
@@ -442,15 +466,26 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         enableBallooning = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableBallooning.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
+
     }
 
-    private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates)
-    {
+    private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
         memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", constants.clusterPopupMemoryOptimizationInfo()), resources); //$NON-NLS-1$
 
         cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo()), resources); //$NON-NLS-1$
+
         schedulerOptimizationInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
         allowOverbookingInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
+
+        EntityModelLabel label = new EntityModelLabel();
+        label.setText(constants.clusterSpiceProxyEnable());
+        spiceProxyOverrideEnabled = new EntityModelCheckBoxOnlyEditor();
+        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabled);
+    }
+
+    @Override
+    public void setSpiceProxyOverrideExplanation(String explanation) {
+        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(templates.italicText(explanation));
     }
 
     private void applyModeCustomizations() {

@@ -242,7 +242,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().setAdditionalConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.RDP));
         getView().setSpiceConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.SPICE));
 
-        boolean spiceProxyEnabled = consoleUtils.isSpiceProxyDefined();
+        boolean spiceProxyEnabled = consoleUtils.isSpiceProxyDefined(vmConsoles.getVm());
+
         getView().setSpiceProxyEnabled(spiceProxyEnabled, constants.spiceProxyCanBeEnabledOnlyWhenDefined());
 
         registerHandler(getView().getConsoleClientResourcesAnchor().addClickHandler(new ClickHandler() {

@@ -45,7 +45,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (object.getProgress() == null) {
                     disableAllTabs();
-                    enableEditPoolFields();
+                    enableEditPoolFields(object);
                 }
             }
 
@@ -72,13 +72,15 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         descriptionEditor.setFocus(true);
     }
 
-    private void enableEditPoolFields() {
+    private void enableEditPoolFields(UnitVmModel model) {
         descriptionEditor.setEnabled(true);
         prestartedVmsEditor.setEnabled(true);
 
         editPrestartedVmsEditor.setEnabled(true);
         incraseNumOfVmsEditor.setEnabled(true);
         editMaxAssignedVmsPerUserEditor.setEnabled(true);
+
+        spiceProxyEditor.setEnabled(model.getSpiceProxyEnabled().getEntity());
     }
 
     @Override
@@ -109,6 +111,9 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     @Override
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         return super.createWidgetConfiguration().
+                update(spiceProxyEditor, simpleField().visibleInAdvancedModeOnly()).
+                update(spiceProxyEnabledCheckboxWithInfoIcon, simpleField().visibleInAdvancedModeOnly()).
+                update(spiceProxyOverrideEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 update(numOfVmsEditor, hiddenField()).
                 update(newPoolEditVmsPanel, hiddenField()).
                 update(newPoolEditMaxAssignedVmsPerUserPanel, hiddenField()).

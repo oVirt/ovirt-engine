@@ -719,6 +719,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Do Not Migrate Virtual Machines")
     String clusterPopupMigrateOnError_NoLabel();
 
+    @DefaultStringValue("Override the default SPICE proxy value")
+    String clusterSpiceProxyInfo();
+
+    @DefaultStringValue("Define SPICE proxy for Cluster")
+    String clusterSpiceProxyEnable();
+
     @DefaultStringValue("Name")
     String bookmarkPopupNameLabel();
 
@@ -3412,4 +3418,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Reports Webapp not deployed, please try later.")
     String reportsWebAppNotDeployedMsg();
+
+    @DefaultStringValue("Console")
+    String consoleTabLabel();
 }

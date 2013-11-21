@@ -451,6 +451,10 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         EntityModel<VmPoolType> poolTypeSelectedItem = model.getPoolType().getSelectedItem();
                         pool.setVmPoolType(poolTypeSelectedItem.getEntity());
 
+                        if (model.getSpiceProxyEnabled().getEntity()) {
+                            pool.setSpiceProxy(model.getSpiceProxy().getEntity());
+                        }
+
                         Guid default_host;
                         VDS defaultHost = model.getDefaultHost().getSelectedItem();
                         if (model.getIsAutoAssign().getEntity())

@@ -3,9 +3,13 @@ package org.ovirt.engine.ui.common.utils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.inject.Inject;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 
 public class ConsoleUtilsImpl implements ConsoleUtils {
@@ -21,11 +25,6 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
         this.clientAgentType = new ClientAgentType();
     }
 
-    @Override
-    public boolean isSpiceProxyDefined() {
-        return configurator.isSpiceProxyDefined();
-    }
-
     private float extractNtVersion(String userAgentType) {
         RegExp pattern = RegExp.compile(".*windows nt (\\d+\\.\\d+).*"); //$NON-NLS-1$
         MatchResult matcher = pattern.exec(userAgentType.toLowerCase());
@@ -37,6 +36,12 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
         return -1;
     }
 
+    @Override
+    public boolean isSpiceProxyDefined(VM vm) {
+        return !StringHelper.isNullOrEmpty((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault)) ||
+            !StringHelper.isNullOrEmpty(vm.getVdsGroupSpiceProxy()) ||
+            !StringHelper.isNullOrEmpty(vm.getVmPoolSpiceProxy());
+    }
 
     @Override
     public boolean isWebSocketProxyDefined() {

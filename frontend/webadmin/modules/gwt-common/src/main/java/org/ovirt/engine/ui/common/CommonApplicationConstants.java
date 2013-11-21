@@ -390,6 +390,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Disable strict user checking")
     String allowConsoleReconnect();
 
+    @DefaultStringValue("Overridden SPICE proxy address")
+    String overriddenSpiceProxyAddress();
+
     @DefaultStringValue("USB Policy")
     String usbPolicyVm();
 
@@ -1596,4 +1599,8 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Use Guest Agent")
     String guestAgent();
+
+    @DefaultStringValue("Override SPICE proxy")
+    String defineSpiceProxyEnable();
+
 }

@@ -77,8 +77,6 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
         updateWanColorDepthOptions(spice);
         updateWANDisableEffects(spice);
-
-        spice.setSpiceProxyEnabled(isSpiceProxyDefined());
     }
 
     private void updateWANDisableEffects(final ISpice spice) {

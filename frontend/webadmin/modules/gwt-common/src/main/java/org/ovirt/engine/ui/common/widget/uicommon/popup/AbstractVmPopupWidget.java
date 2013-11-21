@@ -48,15 +48,18 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
@@ -409,6 +412,19 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("isConsoleDeviceEnabled")
     public EntityModelCheckBoxEditor isConsoleDeviceEnabledEditor;
 
+    @UiField
+    @Path(value = "spiceProxy.entity")
+    @WithElementId
+    public StringEntityModelTextBoxEditor spiceProxyEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo spiceProxyEnabledCheckboxWithInfoIcon;
+
+    @Path(value = "spiceProxyEnabled.entity")
+    @WithElementId
+    public EntityModelCheckBoxOnlyEditor spiceProxyOverrideEnabledEditor;
+
     // ==Host Tab==
     @UiField
     protected DialogTab hostTab;
@@ -674,6 +690,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         initPoolSpecificWidgets(resources, messages);
         initTextBoxEditors();
+        initSpiceProxy();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
@@ -697,6 +714,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, ""); //$NON-NLS-1$
 
         driver.initialize(this);
+    }
+
+    protected void initSpiceProxy() {
+        EntityModelLabel label = new EntityModelLabel();
+        label.setText(constants.defineSpiceProxyEnable());
+        spiceProxyOverrideEnabledEditor = new EntityModelCheckBoxOnlyEditor();
+        spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo(label, spiceProxyOverrideEnabledEditor);
+    }
+
+    public void setSpiceProxyOverrideExplanation(String explanation) {
+        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(applicationTemplates.italicText(explanation));
     }
 
     private void initTextBoxEditors() {
@@ -1004,6 +1032,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isSingleQxlEnabledEditor.setLabel(constants.singleQxlEnabled());
         ssoMethodNone.setLabel(constants.none());
         ssoMethodGuestAgent.setLabel(constants.guestAgent());
+        spiceProxyEditor.setLabel(constants.overriddenSpiceProxyAddress());
 
         // Host Tab
         hostTab.setLabel(constants.hostVmPopup());
@@ -1420,6 +1449,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         allowConsoleReconnectEditor.setTabIndex(nextTabIndex++);
         isSoundcardEnabledEditor.setTabIndex(nextTabIndex++);
         isConsoleDeviceEnabledEditor.setTabIndex(nextTabIndex++);
+        spiceProxyOverrideEnabledEditor.setTabIndex(nextTabIndex++);
+        spiceProxyEditor.setTabIndex(nextTabIndex++);
 
         // ==Host Tab==
         nextTabIndex = hostTab.setTabIndexes(nextTabIndex);
@@ -1500,7 +1531,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 prestartedVmsEditor,
                 poolNameIcon,
                 newPoolEditMaxAssignedVmsPerUserPanel,
-                editPoolEditMaxAssignedVmsPerUserPanel);
+                editPoolEditMaxAssignedVmsPerUserPanel,
+                spiceProxyEditor,
+                spiceProxyEnabledCheckboxWithInfoIcon,
+                spiceProxyOverrideEnabledEditor);
     }
 
     protected List<Widget> allTabs() {

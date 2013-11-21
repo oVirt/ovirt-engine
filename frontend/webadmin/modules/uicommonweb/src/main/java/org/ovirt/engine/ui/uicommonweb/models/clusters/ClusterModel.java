@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -557,6 +558,26 @@ public class ClusterModel extends EntityModel
         }
     }
 
+    private EntityModel<String> spiceProxy;
+
+    public EntityModel<String> getSpiceProxy() {
+        return spiceProxy;
+    }
+
+    public void setSpiceProxy(EntityModel<String> spiceProxy) {
+        this.spiceProxy = spiceProxy;
+    }
+
+    private EntityModel<Boolean> spiceProxyEnabled;
+
+    public EntityModel<Boolean> getSpiceProxyEnabled() {
+        return spiceProxyEnabled;
+    }
+
+    public void setSpiceProxyEnabled(EntityModel<Boolean> spiceProxyEnabled) {
+        this.spiceProxyEnabled = spiceProxyEnabled;
+    }
+
     private MigrateOnErrorOptions migrateOnErrorOption = MigrateOnErrorOptions.values()[0];
 
     public MigrateOnErrorOptions getMigrateOnErrorOption()
@@ -719,6 +740,17 @@ public class ClusterModel extends EntityModel
 
         setEnableOvirtService(new EntityModel<Boolean>());
         setEnableGlusterService(new EntityModel<Boolean>());
+
+        setSpiceProxyEnabled(new EntityModel<Boolean>());
+        getSpiceProxyEnabled().setEntity(false);
+        getSpiceProxyEnabled().getEntityChangedEvent().addListener(this);
+
+        setSpiceProxy(new EntityModel<String>());
+        getSpiceProxy().setIsChangable(false);
+
+
+        setEnableOvirtService(new EntityModel());
+        setEnableGlusterService(new EntityModel());
 
         getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
@@ -1009,7 +1041,7 @@ public class ClusterModel extends EntityModel
                                                 for (ClusterPolicy clusterPolicy : list) {
                                                     if (clusterModel.getIsEdit() && getEntity() != null
                                                             && clusterPolicy.getId()
-                                                                    .equals(getEntity().getClusterPolicyId())) {
+                                                            .equals(getEntity().getClusterPolicyId())) {
                                                         selectedClusterPolicy = clusterPolicy;
                                                     }
                                                     if (clusterPolicy.isDefaultPolicy()) {
@@ -1028,6 +1060,14 @@ public class ClusterModel extends EntityModel
                                         }));
                     }
                 }));
+    }
+
+    private void initSpiceProxy() {
+        String proxy = getEntity().getSpiceProxy();
+        boolean isProxyAvailable = !StringHelper.isNullOrEmpty(proxy);
+        getSpiceProxyEnabled().setEntity(isProxyAvailable);
+        getSpiceProxy().setIsChangable(isProxyAvailable);
+        getSpiceProxy().setEntity(proxy);
     }
 
     private void initImportCluster(boolean isEdit)
@@ -1108,6 +1148,9 @@ public class ClusterModel extends EntityModel
     {
         getDescription().setEntity(getEntity().getdescription());
         getComment().setEntity(getEntity().getComment());
+
+        initSpiceProxy();
+
         setMemoryOverCommit(getEntity().getmax_vds_memory_over_commit());
 
         getCountThreadsAsCores().setEntity(getEntity().getCountThreadsAsCores());
@@ -1165,8 +1208,10 @@ public class ClusterModel extends EntityModel
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
         {
             EntityModel senderEntityModel = (EntityModel) sender;
-            if ((Boolean) senderEntityModel.getEntity())
-            {
+
+            if (senderEntityModel == getSpiceProxyEnabled()) {
+                getSpiceProxy().setIsChangable(getSpiceProxyEnabled().getEntity());
+            } else if ((Boolean) senderEntityModel.getEntity()) {
                 if (senderEntityModel == getOptimizationNone_IsSelected())
                 {
                     getOptimizationForServer_IsSelected().setEntity(false);
@@ -1421,6 +1466,12 @@ public class ClusterModel extends EntityModel
             setMessage(null);
         }
 
+        if (getSpiceProxyEnabled().getEntity()) {
+            getSpiceProxy().validateEntity(new IValidation[] { new HostWithProtocolAndPortAddressValidation() });
+        } else {
+            getSpiceProxy().setIsValid(true);
+        }
+
         setIsGeneralTabValid(getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
@@ -1428,7 +1479,7 @@ public class ClusterModel extends EntityModel
                         && getGlusterHostPassword().getIsValid()
                         && isFingerprintVerified()) : true));
 
-        return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
+        return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid() && getSpiceProxy().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && (getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()

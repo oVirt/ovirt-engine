@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
@@ -81,6 +82,9 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         return super.createWidgetConfiguration().
                 update(highAvailabilityTab, hiddenField()).
+                update(spiceProxyEditor, simpleField().visibleInAdvancedModeOnly()).
+                update(spiceProxyEnabledCheckboxWithInfoIcon, simpleField().visibleInAdvancedModeOnly()).
+                update(spiceProxyOverrideEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 putOne(isStatelessEditor, hiddenField()).
                 putOne(isRunAndPauseEditor, hiddenField()).
                 putOne(editPoolEditVmsPanel, hiddenField()).

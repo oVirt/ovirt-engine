@@ -711,6 +711,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             cluster.setArchitecture(null);
         }
 
+        if (model.getSpiceProxyEnabled().getEntity()) {
+            cluster.setSpiceProxy(model.getSpiceProxy().getEntity());
+        }
+
         model.startProgress(null);
 
         Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddVdsGroup : VdcActionType.UpdateVdsGroup,
