@@ -247,6 +247,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     private void updateTemplate()
     {
+        final DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool dataCenter = getModel().getSelectedDataCenter();
         if (dataCenter == null) {
             return;
@@ -264,8 +266,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         templates.add(template);
                     }
                 }
-                getModel().getTemplate().setItems(templates);
-                setupSelectedTemplate(getModel().getTemplate(), templates);
+
+                ArrayList<VmTemplate> filteredTemplates = AsyncDataProvider.filterTemplatesByArchitecture(templates,
+                                dataCenterWithCluster.getCluster().getArchitecture());
+
+                getModel().getTemplate().setItems(filteredTemplates);
+                setupSelectedTemplate(getModel().getTemplate(), filteredTemplates);
             }
         }), dataCenter.getId());
 

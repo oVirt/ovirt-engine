@@ -147,12 +147,15 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
             templatesList.add(0, blankTemplate);
         }
 
+        ArrayList<VmTemplate> filteredTemplates = AsyncDataProvider.filterTemplatesByArchitecture(templatesList,
+                dataCenterWithCluster.getCluster().getArchitecture());
+
         // If there was some template selected before, try select it again.
         VmTemplate oldTemplate = getModel().getTemplate().getSelectedItem();
 
-        getModel().getTemplate().setItems(templatesList);
+        getModel().getTemplate().setItems(filteredTemplates);
 
-        getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(templatesList,
+        getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(filteredTemplates,
                 oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
                         : new Linq.TemplatePredicate(Guid.Empty)));
 

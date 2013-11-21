@@ -870,6 +870,20 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static ArrayList<VmTemplate> filterTemplatesByArchitecture(List<VmTemplate> list,
+            ArchitectureType architecture) {
+        ArrayList<VmTemplate> filteredList = new ArrayList<VmTemplate>();
+
+        for (VmTemplate template : list) {
+            if (template.getId().equals(Guid.Empty) ||
+                    template.getClusterArch().equals(architecture)) {
+                filteredList.add(template);
+            }
+        }
+
+        return filteredList;
+    }
+
     public static void getNumOfMonitorList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

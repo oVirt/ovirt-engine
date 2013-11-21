@@ -272,7 +272,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
     private void updateTemplate()
     {
-        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
+        final DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool dataCenter = dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
         if (dataCenter == null) {
             return;
@@ -310,7 +311,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                             {
                                                 templatesByStorage.add(0, blankTemplate);
                                             }
-                                            behavior2.postInitTemplate((ArrayList<VmTemplate>) returnValue2);
+
+                                            ArrayList<VmTemplate> templateList = AsyncDataProvider.filterTemplatesByArchitecture(templatesByStorage,
+                                                            dataCenterWithCluster.getCluster().getArchitecture());
+
+                                            behavior2.postInitTemplate(templateList);
 
                                         }
                                     }),
@@ -328,7 +333,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                         public void onSuccess(Object target, Object returnValue) {
 
                             NewVmModelBehavior behavior = (NewVmModelBehavior) target;
-                            behavior.postInitTemplate((ArrayList<VmTemplate>) returnValue);
+
+                            ArrayList<VmTemplate> templates = (ArrayList<VmTemplate>) returnValue;
+
+                            behavior.postInitTemplate(AsyncDataProvider.filterTemplatesByArchitecture(templates,
+                                    dataCenterWithCluster.getCluster().getArchitecture()));
 
                         }
                     }, getModel().getHash()), dataCenter.getId());
