@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
@@ -12,7 +13,9 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StepDao;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 
 public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQueriesParameters> extends GlusterQueriesCommandBase<P> {
@@ -51,6 +54,8 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
     protected GlusterVolumeTaskStatusEntity updateStatusEntity(GlusterVolumeTaskStatusEntity status) {
         // Set the volume remove bricks start time
         setStartTime(status);
+        // update the latest status
+        updateLatestStatus(status);
         // Update the host details as required into entity
         return updateHostDetails(status);
     }
@@ -59,6 +64,14 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
         updateHostIP(taskStatus);
         taskStatus.sort();
         return taskStatus;
+    }
+
+    public GlusterTaskUtils getGlusterTaskUtils() {
+        return GlusterTaskUtils.getInstance();
+    }
+
+    public VdsGroupDAO getClusterDao() {
+        return DbFacade.getInstance().getVdsGroupDao();
     }
 
     private void updateHostIP(GlusterVolumeTaskStatusEntity taskStatus) {
@@ -90,5 +103,21 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
         }
 
         return status;
+    }
+
+    private void updateLatestStatus(GlusterVolumeTaskStatusEntity status) {
+        GlusterAsyncTask asyncTask = volume.getAsyncTask();
+        if (asyncTask != null && asyncTask.getTaskId() != null) {
+            List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
+
+            asyncTask.setStatus(status.getStatusSummary().getStatus());
+            asyncTask.setMessage(status.getSummaryMessage());
+            getGlusterTaskUtils().updateSteps(getClusterDao().get(clusterId), asyncTask, stepsList);
+
+            // release the volume lock if the task is completed
+            if (getGlusterTaskUtils().hasTaskCompleted(asyncTask)) {
+                getGlusterTaskUtils().releaseLock(volume.getId());
+            }
+        }
     }
 }
