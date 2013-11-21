@@ -9,37 +9,37 @@ import java.util.regex.MatchResult;
  */
 @Deprecated
 public class Match {
-    private String Value;
-    private boolean Success;
-    private ArrayList<Match> Groups;
+    private String value;
+    private boolean success;
+    private ArrayList<Match> groups;
 
     public Match(MatchResult mr, boolean success) {
-        Groups = new ArrayList<Match>();
+        groups = new ArrayList<Match>();
         if (success) {
-            this.Success = success;
+            this.success = success;
             for (int x = 1; x <= mr.groupCount(); x++) {
-                Groups.add(new Match(mr.group(x)));
+                groups.add(new Match(mr.group(x)));
             }
-            Value = mr.group();
+            value = mr.group();
         } else {
-            Value = null;
+            value = null;
         }
     }
 
     public Match(String value) {
-        this.Value = value;
-        this.Success = true;
+        this.value = value;
+        this.success = true;
     }
 
     public String getValue() {
-        return Value;
+        return value;
     }
 
     public ArrayList<Match> groups() {
-        return Groups;
+        return groups;
     }
 
     public boolean success() {
-        return Success;
+        return success;
     }
 }
