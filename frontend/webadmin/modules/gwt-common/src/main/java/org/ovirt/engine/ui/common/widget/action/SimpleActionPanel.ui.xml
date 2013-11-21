@@ -11,7 +11,7 @@
 			height: 14px;
 			line-height: 14px;
 			width: 12px;
-			margin-right: 5px;
+			padding-right: 5px;
 			padding: 2px;
 			background: transparent;
 			border: 1px solid transparent;

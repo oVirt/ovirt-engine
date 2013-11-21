@@ -2,20 +2,18 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.AbstractSingleSlotView;
+import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -24,7 +22,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class HeaderView extends AbstractSingleSlotView implements HeaderPresenterWidget.ViewDef {
+public class HeaderView extends AbstractView implements HeaderPresenterWidget.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, HeaderView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -34,7 +32,12 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static final int mainTabBarInitialOffset = 240;
+    interface Style extends CssResource {
+        String mainTabBar();
+    }
+
+    @UiField
+    Style style;
 
     @UiField
     @WithElementId("userName")
@@ -64,10 +67,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     SimplePanel searchPanelContainer;
 
     @UiField
-    HTMLPanel mainTabBarPanel;
-
-    @UiField
-    FlowPanel mainTabContainer;
+    SimplePanel mainTabContainer;
 
     @UiField
     HTMLPanel feedbackImagePanel;
@@ -84,13 +84,8 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         this.guideLink = new Anchor(dynamicMessages.guideLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        mainTabBarPanel.getElement().getStyle().setZIndex(1);
 
-        // Ensure proper main tab bar position
-        setMainTabBarOffset(mainTabBarInitialOffset);
         localize(dynamicMessages);
-
-        feedbackImagePanel.setVisible(false);
     }
 
     private void localize(ApplicationDynamicMessages dynamicMessages) {
@@ -98,29 +93,15 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     }
 
     @Override
-    protected Object getContentSlot() {
-        return HeaderPresenterWidget.TYPE_SetSearchPanel;
-    }
-
-    @Override
-    protected void setContent(IsWidget content) {
-        setPanelContent(searchPanelContainer, content);
-    }
-
-    @Override
-    public void addTabWidget(Widget tabWidget, int index) {
-        mainTabContainer.insert(tabWidget, index);
-    }
-
-    @Override
-    public void removeTabWidget(Widget tabWidget) {
-        mainTabContainer.getElement().removeChild(tabWidget.getElement());
-    }
-
-    @Override
-    public void setMainTabBarOffset(int left) {
-        mainTabBarPanel.getElement().getStyle().setLeft(left, Unit.PX);
-        mainTabBarPanel.getElement().getStyle().setWidth(Window.getClientWidth() - left, Unit.PX);
+    public void setInSlot(Object slot, IsWidget content) {
+        if (slot == HeaderPresenterWidget.TYPE_SetSearchPanel) {
+            setPanelContent(searchPanelContainer, content);
+        } else if (slot == HeaderPresenterWidget.TYPE_SetTabBar) {
+            setPanelContent(mainTabContainer, content);
+            content.asWidget().addStyleName(style.mainTabBar());
+        } else {
+            super.setInSlot(slot, content);
+        }
     }
 
     @Override

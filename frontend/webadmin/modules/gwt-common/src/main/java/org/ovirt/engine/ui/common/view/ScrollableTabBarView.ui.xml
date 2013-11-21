@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:ovirt="urn:import:org.ovirt.engine.ui.common.widget.tab">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+    <ui:style type="org.ovirt.engine.ui.common.view.ScrollableTabBarView.Style">
+        .scrollButton {
+            float: left;
+            border: 0px;
+            background: transparent;
+        }
+
+        .scrollPanel {
+            float: left;
+            overflow: hidden;
+        }
+
+        .scrollContainer {
+            z-index: 1;
+        }
+
+        .clearBoth {
+            clear: both;
+        }
+
+        .dropdownItemContainer {
+            text-align: left;
+            font-size: 12.5px;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            padding-left: 5px;
+            padding-right: 5px;
+            border: 1px solid #D0D0D0;
+            line-height: 24px;
+            background-image: url("images/dropdown_item_bg.png");
+        }
+
+        .dropdownItem {
+            width: 100%;
+            text-decoration: none;
+            color: #666;
+        }
+
+        a.dropdownItems, a.dropdownItems:visited, a.dropdownItems:hover {
+            color: transparent;
+        }
+    </ui:style>
+
+    <g:HTMLPanel addStyleNames="{style.scrollContainer}">
+        <ovirt:RepeatingPushButton ui:field="scrollLeftButton" repeatInterval="125" visible="false" addStyleNames="{style.scrollButton}">
+            <ovirt:upFace image='{resources.leftScrollArrow}' />
+            <ovirt:upDisabledFace image='{resources.leftScrollArrowDisabled}' />
+        </ovirt:RepeatingPushButton>
+        <g:FlowPanel ui:field="scrollPanel" addStyleNames="{style.scrollPanel}">
+            <g:FlowPanel ui:field="widgetBar">
+            </g:FlowPanel>
+        </g:FlowPanel>
+        <ovirt:RepeatingPushButton ui:field="scrollRightButton" repeatInterval="125" visible="false" addStyleNames="{style.scrollButton}">
+            <ovirt:upFace image='{resources.rightScrollArrow}' />
+            <ovirt:upDisabledFace image='{resources.rightScrollArrowDisabled}' />
+        </ovirt:RepeatingPushButton>
+        <g:PushButton ui:field="dropdownButton" addStyleNames="{style.scrollButton}" visible="false">
+            <g:upFace image='{resources.dropdownArrow}' />
+        </g:PushButton>
+        <g:PopupPanel ui:field="dropdownPopupPanel" autoHideEnabled="true" modal="false" glassEnabled="false">
+            <g:FlowPanel ui:field="dropdownPanel" visible="false"/>
+        </g:PopupPanel>
+        <g:SimplePanel addStyleNames="{style.clearBoth}" />
+    </g:HTMLPanel>
+
+</ui:UiBinder>

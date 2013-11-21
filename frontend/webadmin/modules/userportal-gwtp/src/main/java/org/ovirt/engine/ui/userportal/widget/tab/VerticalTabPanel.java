@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.TabData;
 
@@ -24,13 +25,13 @@ public class VerticalTabPanel extends AbstractTabPanel {
     }
 
     @Override
-    public void addTabWidget(Widget tabWidget, int index) {
+    public void addTabWidget(IsWidget tabWidget, int index) {
         tabContainer.insert(tabWidget, index);
     }
 
     @Override
-    protected void removeTabWidget(Widget tabWidget) {
-        tabContainer.getElement().removeChild(tabWidget.getElement());
+    public void removeTabWidget(IsWidget tabWidget) {
+        tabContainer.getElement().removeChild(tabWidget.asWidget().getElement());
     }
 
     @Override

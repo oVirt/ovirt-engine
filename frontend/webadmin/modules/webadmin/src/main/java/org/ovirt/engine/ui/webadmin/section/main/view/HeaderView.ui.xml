@@ -4,7 +4,7 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    <ui:style>
+    <ui:style type='org.ovirt.engine.ui.webadmin.section.main.view.HeaderView.Style'>
         @external obrand_wrapperOuter;
         .obrand_wrapperOuter {
         }
@@ -52,10 +52,6 @@
             height: 28px;
         }
 
-        .mainTabContainer {
-            min-width: 800px;
-        }
-
         .headerLabelStyle {
             font-weight: bold;
             color: white;
@@ -84,7 +80,7 @@
                 <g:HTML addStyleNames="{style.obrand_logo}" />
                 <g:Label ui:field="headerLabel" addStyleNames="{style.headerLabelStyle}"/>
 
-                <g:HTMLPanel  ui:field="feedbackImagePanel" addStyleNames="{style.feedbackImagePanel}">
+                <g:HTMLPanel  ui:field="feedbackImagePanel" visible="false" addStyleNames="{style.feedbackImagePanel}">
                     <g:HTMLPanel addStyleNames="{style.obrand_feedbackImageLeft}" />
                     <g:Label ui:field="feedbackImageLabel" addStyleNames="{style.obrand_feedbackImageLabel}" />
                 </g:HTMLPanel>
@@ -102,11 +98,7 @@
 
             <g:HTMLPanel addStyleNames="{style.lowerPanel}">
                 <g:SimplePanel ui:field="searchPanelContainer" addStyleNames="{style.searchPanel}" />
-
-                <g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabBar}">
-                    <g:FlowPanel ui:field="mainTabContainer" addStyleNames="{style.mainTabContainer}"/>
-                    <div style="clear: both;" />
-                </g:HTMLPanel>
+                <g:SimplePanel ui:field="mainTabContainer" />
             </g:HTMLPanel>
 
         </g:HTMLPanel>

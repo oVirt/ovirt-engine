@@ -10,13 +10,17 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HasHandlers;
 
-public class ModelBoundTab extends SimpleTab {
+public class ModelBoundTab extends SimpleTab implements HasHandlers {
+    private final EventBus eventBus;
 
     public ModelBoundTab(final ModelBoundTabData tabData, AbstractTabPanel tabPanel, EventBus eventBus) {
         super(tabData, tabPanel);
         setAlign(tabData.getAlign());
 
+        this.eventBus = eventBus;
         // Update tab accessibility
         setAccessible(tabData.getModelProvider().getModel().getIsAvailable());
 
@@ -45,8 +49,13 @@ public class ModelBoundTab extends SimpleTab {
                     boolean isAvailable = modelProvider.getModel().getIsAvailable();
                     setAccessible(isAvailable);
                 }
+                TabAccessibleChangeEvent.fire(ModelBoundTab.this, ModelBoundTab.this);
             }
         });
     }
 
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        eventBus.fireEvent(event);
+    }
 }

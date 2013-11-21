@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
-import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
+import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
 
@@ -10,7 +10,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
@@ -37,12 +37,12 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     }
 
     @Override
-    public void addTabWidget(Widget tabWidget, int index) {
+    public void addTabWidget(IsWidget tabWidget, int index) {
         getView().addTabWidget(tabWidget, index);
     }
 
     @Override
-    public void removeTabWidget(Widget tabWidget) {
+    public void removeTabWidget(IsWidget tabWidget) {
         getView().removeTabWidget(tabWidget);
     }
 

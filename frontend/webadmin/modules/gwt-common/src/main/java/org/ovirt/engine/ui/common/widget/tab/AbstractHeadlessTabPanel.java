@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.tab;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * An {@link AbstractTabPanel} whose tab widgets should be rendered outside the tab panel.
@@ -10,14 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class AbstractHeadlessTabPanel extends AbstractTabPanel {
 
-    public interface TabWidgetHandler {
-
-        void addTabWidget(Widget tabWidget, int index);
-
-        void removeTabWidget(Widget tabWidget);
-
-    }
-
     private TabWidgetHandler tabWidgetHandler;
 
     public void setTabWidgetHandler(TabWidgetHandler tabWidgetHandler) {
@@ -25,14 +17,14 @@ public abstract class AbstractHeadlessTabPanel extends AbstractTabPanel {
     }
 
     @Override
-    public void addTabWidget(Widget tabWidget, int index) {
+    public void addTabWidget(IsWidget tabWidget, int index) {
         if (tabWidgetHandler != null) {
             tabWidgetHandler.addTabWidget(tabWidget, index);
         }
     }
 
     @Override
-    protected void removeTabWidget(Widget tabWidget) {
+    public void removeTabWidget(IsWidget tabWidget) {
         if (tabWidgetHandler != null) {
             tabWidgetHandler.removeTabWidget(tabWidget);
         }

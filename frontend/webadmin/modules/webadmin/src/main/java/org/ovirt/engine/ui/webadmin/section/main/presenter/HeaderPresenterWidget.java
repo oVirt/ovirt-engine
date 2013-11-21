@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
+import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.utils.WebUtils;
-import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
+import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -15,15 +17,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
-public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderPresenterWidget.ViewDef> implements TabWidgetHandler, MainTabBarOffsetUiHandlers {
+public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderPresenterWidget.ViewDef> implements
+    TabWidgetHandler, MainTabBarOffsetUiHandlers {
 
-    public interface ViewDef extends AbstractHeaderPresenterWidget.ViewDef, TabWidgetHandler, MainTabBarOffsetUiHandlers {
+    public interface ViewDef extends AbstractHeaderPresenterWidget.ViewDef {
 
         HasClickHandlers getConfigureLink();
 
@@ -37,7 +40,13 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetSearchPanel = new Type<RevealContentHandler<?>>();
 
+    @ContentSlot
+    public static final Type<RevealContentHandler<?>> TYPE_SetTabBar = new Type<RevealContentHandler<?>>();
+
+    private static final int MAIN_TABBAR_INITIAL_OFFSET = 240; //pixels.
+
     private final SearchPanelPresenterWidget searchPanel;
+    private final ScrollableTabBarPresenterWidget tabBar;
     private final AboutPopupPresenterWidget aboutPopup;
     private final ConfigurePopupPresenterWidget configurePopup;
     private String feedbackUrl;
@@ -47,11 +56,13 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     @Inject
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
             SearchPanelPresenterWidget searchPanel,
+            ScrollableTabBarPresenterWidget tabBar,
             AboutPopupPresenterWidget aboutPopup,
             ConfigurePopupPresenterWidget configurePopup,
             ApplicationDynamicMessages dynamicMessages) {
         super(eventBus, view, user, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.searchPanel = searchPanel;
+        this.tabBar = tabBar;
         this.aboutPopup = aboutPopup;
         this.configurePopup = configurePopup;
         this.feedbackLinkLabel = dynamicMessages.feedbackLinkLabel();
@@ -59,18 +70,22 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     }
 
     @Override
-    public void addTabWidget(Widget tabWidget, int index) {
-        getView().addTabWidget(tabWidget, index);
+    public void addTabWidget(IsWidget tabWidget, int index) {
+        tabBar.addTabWidget(tabWidget, index);
     }
 
     @Override
-    public void removeTabWidget(Widget tabWidget) {
-        getView().removeTabWidget(tabWidget);
+    public void removeTabWidget(IsWidget tabWidget) {
+        tabBar.removeTabWidget(tabWidget);
     }
 
     @Override
     public void setMainTabBarOffset(int left) {
-        getView().setMainTabBarOffset(left);
+        HeaderOffsetChangeEvent.fire(this, left);
+    }
+
+    private void setScrollDistance(int scrollDistance) {
+        tabBar.setScrollDistance(scrollDistance);
     }
 
     @Override
@@ -97,7 +112,10 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         super.onReveal();
 
         setInSlot(TYPE_SetSearchPanel, searchPanel);
+        setInSlot(TYPE_SetTabBar, tabBar);
         configureFeedbackUrl();
+        // Ensure proper main tab bar position
+        setMainTabBarOffset(MAIN_TABBAR_INITIAL_OFFSET);
     }
 
     private void configureFeedbackUrl() {

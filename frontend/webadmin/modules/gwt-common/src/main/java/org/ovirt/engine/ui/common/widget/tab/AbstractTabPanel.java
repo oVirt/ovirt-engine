@@ -9,7 +9,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.Tab;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.TabPanel;
@@ -44,11 +43,11 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
             }
         }
 
+        newTab.setTargetHistoryToken(historyToken);
+        newTab.setText(tabData.getLabel());
         addTabWidget(newTab.asWidget(), beforeIndex);
         tabList.add(beforeIndex, newTab);
 
-        newTab.setTargetHistoryToken(historyToken);
-        newTab.setText(tabData.getLabel());
         updateTab(newTab);
 
         // Try to retain active tab by its history token
@@ -119,12 +118,12 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
     /**
      * Adds a tab widget to this tab panel at the given position.
      */
-    public abstract void addTabWidget(Widget tabWidget, int index);
+    public abstract void addTabWidget(IsWidget tabWidget, int index);
 
     /**
      * Removes a tab widget from this tab panel.
      */
-    protected abstract void removeTabWidget(Widget tabWidget);
+    public abstract void removeTabWidget(IsWidget tabWidget);
 
     /**
      * Returns a new tab widget based on the given data.

@@ -247,4 +247,19 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/comboBoxDropDownIcon.png")
     ImageResource comboBoxDropDownIcon();
+
+    @Source("images/left_scroll_arrow.png")
+    ImageResource leftScrollArrow();
+
+    @Source("images/left_scroll_arrow_disabled.png")
+    ImageResource leftScrollArrowDisabled();
+
+    @Source("images/right_scroll_arrow.png")
+    ImageResource rightScrollArrow();
+
+    @Source("images/right_scroll_arrow_disabled.png")
+    ImageResource rightScrollArrowDisabled();
+
+    @Source("images/dropdown_arrow.png")
+    ImageResource dropdownArrow();
 }

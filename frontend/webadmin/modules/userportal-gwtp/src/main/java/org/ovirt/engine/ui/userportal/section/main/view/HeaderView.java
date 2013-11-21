@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -62,13 +63,13 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     }
 
     @Override
-    public void addTabWidget(Widget tabWidget, int index) {
+    public void addTabWidget(IsWidget tabWidget, int index) {
         mainTabContainer.insert(tabWidget, index);
     }
 
     @Override
-    public void removeTabWidget(Widget tabWidget) {
-        mainTabContainer.getElement().removeChild(tabWidget.getElement());
+    public void removeTabWidget(IsWidget tabWidget) {
+        mainTabContainer.getElement().removeChild(tabWidget.asWidget().getElement());
     }
 
     @Override

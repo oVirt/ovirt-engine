@@ -34,6 +34,18 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     boolean isVisible(List<T> selectedItems);
 
     /**
+     * Indicates if this button is in the cascade menu or not.
+     * @return
+     */
+    boolean isCascaded();
+
+    /**
+     * Set if this button is cascaded or not.
+     * @param cascade true if cascaded, false otherwise.
+     */
+    void setCascaded(boolean cascade);
+
+    /**
      * Returns the content to show when this button is enabled.
      */
     SafeHtml getEnabledHtml();
