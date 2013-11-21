@@ -2761,4 +2761,16 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot perform ${action}. Another power management action is already in progress.")
     String POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS();
+
+    @DefaultStringValue("$filterType external")
+    String VAR__FILTERTYPE__INTERNAL();
+
+    @DefaultStringValue("$filterType internal")
+    String VAR__FILTERTYPE__EXTERNAL();
+
+    @DefaultStringValue("The host ${hostName} did not satisfy ${filterType} filter ${filterName}.")
+    String SCHEDULING_HOST_FILTERED_REASON();
+
+    @DefaultStringValue("Cannot ${action} ${type}. There is no host that satisfies current scheduling constraints. See bellow for details:")
+    String SCHEDULING_ALL_HOSTS_FILTERED_OUT();
 }

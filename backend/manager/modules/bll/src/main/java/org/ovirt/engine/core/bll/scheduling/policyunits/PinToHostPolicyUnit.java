@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 
 public class PinToHostPolicyUnit extends PolicyUnitImpl {
@@ -36,9 +35,9 @@ public class PinToHostPolicyUnit extends PolicyUnitImpl {
             }
 
             // if flow reaches here, the VM is pinned but there is no dedicated host.
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST.toString());
             return new ArrayList<>();
         }
+
         return hosts;
     }
 }

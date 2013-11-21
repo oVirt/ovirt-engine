@@ -665,11 +665,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getVdsWhiteList(),
                         destinationVds == null ? null : destinationVds.getId(),
                         new ArrayList<String>(),
-                        new VdsFreeMemoryChecker(this));
+                        new VdsFreeMemoryChecker(this),
+                        getCorrelationId());
         setVdsId(vdsToRunOn);
         if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
             getRunVdssList().add(vdsToRunOn);
         }
+
         VmHandler.updateVmGuestAgentVersion(getVm());
         setVds(null);
         setVdsName(null);

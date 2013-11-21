@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -22,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -163,13 +167,64 @@ public class SchedulingManager {
         }
     }
 
+    private static class SchedulingResult {
+        Map<Guid, Pair<VdcBllMessages, String>> filteredOutReasons;
+        Map<Guid, String> hostNames;
+        String message;
+        Guid vdsSelected = null;
+
+        public SchedulingResult() {
+            filteredOutReasons = new HashMap<Guid, Pair<VdcBllMessages, String>>();
+            hostNames = new HashMap<>();
+        }
+
+        public Guid getVdsSelected() {
+            return vdsSelected;
+        }
+
+        public void setVdsSelected(Guid vdsSelected) {
+            this.vdsSelected = vdsSelected;
+        }
+
+        public void addReason(Guid id, String hostName, VdcBllMessages filterType, String filterName) {
+            filteredOutReasons.put(id, new Pair<VdcBllMessages, String>(filterType, filterName));
+            hostNames.put(id, hostName);
+        }
+
+        public Set<Entry<Guid, Pair<VdcBllMessages, String>>> getReasons() {
+            return filteredOutReasons.entrySet();
+        }
+
+        public Collection<String> getReasonMessages() {
+            List<String> lines = new ArrayList<>();
+
+            for (Entry<Guid, Pair<VdcBllMessages, String>> line: filteredOutReasons.entrySet()) {
+                lines.add(line.getValue().getFirst().name());
+                lines.add(String.format("$%1$s %2$s", "hostName", hostNames.get(line.getKey())));
+                lines.add(String.format("$%1$s %2$s", "filterName", line.getValue().getSecond()));
+                lines.add(VdcBllMessages.SCHEDULING_HOST_FILTERED_REASON.name());
+            }
+
+            return lines;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
     public Guid schedule(VDSGroup cluster,
             VM vm,
             List<Guid> hostBlackList,
             List<Guid> hostWhiteList,
             Guid destHostId,
             List<String> messages,
-            VdsFreeMemoryChecker memoryChecker) {
+            VdsFreeMemoryChecker memoryChecker,
+            String correlationId) {
         clusterLockMap.putIfAbsent(cluster.getId(), new Object());
         synchronized (clusterLockMap.get(cluster.getId())) {
             List<VDS> vdsList = getVdsDAO()
@@ -187,7 +242,8 @@ public class SchedulingManager {
                             policy.getFilterPositionMap(),
                             messages,
                             memoryChecker,
-                            true);
+                            true,
+                            correlationId);
 
             if (vdsList == null || vdsList.size() == 0) {
                 return null;
@@ -242,7 +298,8 @@ public class SchedulingManager {
                         policy.getFilterPositionMap(),
                         messages,
                         noWaitingMemoryChecker,
-                        false);
+                        false,
+                        null);
 
         if (vdsList == null || vdsList.size() == 0) {
             return false;
@@ -284,8 +341,11 @@ public class SchedulingManager {
             VM vm,
             Map<String, String> parameters,
             Map<Guid, Integer> filterPositionMap,
-            List<String> messages, VdsFreeMemoryChecker memoryChecker,
-            boolean shouldRunExternalFilters) {
+            List<String> messages,
+            VdsFreeMemoryChecker memoryChecker,
+            boolean shouldRunExternalFilters,
+            String correlationId) {
+        SchedulingResult result = new SchedulingResult();
         ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<PolicyUnitImpl>();
         ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<PolicyUnitImpl>();
         sortFilters(filters, filterPositionMap);
@@ -303,16 +363,21 @@ public class SchedulingManager {
         }
 
         hostList =
-                runInternalFilters(internalFilters, hostList, vm, parameters, filterPositionMap, messages, memoryChecker);
+                runInternalFilters(internalFilters, hostList, vm, parameters, filterPositionMap, messages,
+                        memoryChecker, correlationId, result);
 
         if (shouldRunExternalFilters
                 && Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled)
                 && externalFilters.size() > 0
                 && hostList != null
                 && hostList.size() > 0) {
-            hostList = runExternalFilters(externalFilters, hostList, vm, parameters, messages);
+            hostList = runExternalFilters(externalFilters, hostList, vm, parameters, messages, correlationId, result);
         }
 
+        if (hostList == null || hostList.size() == 0) {
+            messages.add(VdcBllMessages.SCHEDULING_ALL_HOSTS_FILTERED_OUT.name());
+            messages.addAll(result.getReasonMessages());
+        }
         return hostList;
     }
 
@@ -321,24 +386,66 @@ public class SchedulingManager {
             VM vm,
             Map<String, String> parameters,
             Map<Guid, Integer> filterPositionMap,
-            List<String> messages, VdsFreeMemoryChecker memoryChecker) {
+            List<String> messages, VdsFreeMemoryChecker memoryChecker,
+            String correlationId, SchedulingResult result) {
         if (filters != null) {
             for (PolicyUnitImpl filterPolicyUnit : filters) {
                 if (hostList == null || hostList.isEmpty()) {
                     break;
                 }
                 filterPolicyUnit.setMemoryChecker(memoryChecker);
+                List<VDS> currentHostList = new ArrayList<VDS>(hostList);
                 hostList = filterPolicyUnit.filter(hostList, vm, parameters, messages);
+                logFilterActions(currentHostList,
+                        toIdSet(hostList),
+                        VdcBllMessages.VAR__FILTERTYPE__INTERNAL,
+                        filterPolicyUnit.getName(),
+                        result,
+                        correlationId);
             }
         }
         return hostList;
+    }
+
+    private Set<Guid> toIdSet(List<VDS> hostList) {
+        Set<Guid> set = new HashSet<Guid>();
+        if (hostList != null) {
+            for (VDS vds : hostList) {
+                set.add(vds.getId());
+            }
+        }
+        return set;
+    }
+
+    private void logFilterActions(List<VDS> oldList,
+            Set<Guid> newSet,
+            VdcBllMessages actionName,
+            String filterName,
+            SchedulingResult result,
+            String correlationId) {
+        for (VDS host: oldList) {
+            if (!newSet.contains(host.getId())) {
+                String reason =
+                        String.format("Candidate host %s (%s) was filtered out by %s filter %s",
+                                host.getName(),
+                                host.getId().toString(),
+                                actionName.name(),
+                                filterName);
+                if (!StringUtils.isEmpty(correlationId)) {
+                    reason = String.format("%s (correlation id: %s)", reason, correlationId);
+                }
+                log.info(reason);
+                result.addReason(host.getId(), host.getName(), actionName, filterName);
+            }
+        }
     }
 
     private List<VDS> runExternalFilters(ArrayList<PolicyUnitImpl> filters,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters,
-            List<String> messages) {
+            List<String> messages,
+            String correlationId, SchedulingResult result) {
         List<Guid> filteredIDs = null;
         if (filters != null) {
             List<String> filterNames = new ArrayList<String>();
@@ -349,8 +456,17 @@ public class SchedulingManager {
             for (VDS host : hostList) {
                 hostIDs.add(host.getId());
             }
+
             filteredIDs =
                     ExternalSchedulerFactory.getInstance().runFilters(filterNames, hostIDs, vm.getId(), parameters);
+            if (filteredIDs != null) {
+                logFilterActions(hostList,
+                        new HashSet<Guid>(filteredIDs),
+                        VdcBllMessages.VAR__FILTERTYPE__EXTERNAL,
+                        Arrays.toString(filterNames.toArray()),
+                        result,
+                        correlationId);
+            }
         }
 
         return intersectHosts(hostList, filteredIDs);
