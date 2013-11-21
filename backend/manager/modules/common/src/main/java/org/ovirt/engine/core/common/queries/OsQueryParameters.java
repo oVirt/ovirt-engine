@@ -51,6 +51,7 @@ public class OsQueryParameters extends VdcQueryParametersBase {
         GetDiskHotpluggableInterfaces,
         GetWindowsOss,
         GetUniqueOsNames,
-        GetOsNames
+        GetOsNames,
+        GetOsArchitectures
     }
 }

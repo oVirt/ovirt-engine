@@ -120,6 +120,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public abstract void updateMinAllocatedMemory();
 
+    protected void postOsItemChanged() {
+
+    }
+
     protected void postInitTemplate() {
 
     }
@@ -1026,6 +1030,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateHostPinning(MigrationSupport migrationSupport) {
         getModel().getMigrationMode().setSelectedItem(migrationSupport);
+    }
+
+    protected void updateOSValues() {
+
+        List<Integer> vmOsValues;
+        VDSGroup cluster = getModel().getSelectedCluster();
+
+        if (cluster != null) {
+            vmOsValues = AsyncDataProvider.getOsIds(cluster.getArchitecture());
+            getModel().getOSType().setItems(vmOsValues);
+            postOsItemChanged();
+        }
+
     }
 
     protected void updateSelectedCdImage(VmBase vmBase) {

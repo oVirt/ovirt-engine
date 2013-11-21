@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -177,6 +179,9 @@ public final class AsyncDataProvider {
 
     // cached windows OS
     private static List<Integer> windowsOsIds;
+    // cached OS Architecture
+    private static HashMap<Integer, ArchitectureType> osArchitectures;
+
 
     // cached os's support for display types (given compatibility version)
     private static Map<Integer, Map<Version, List<DisplayType>>> displayTypes;
@@ -220,6 +225,7 @@ public final class AsyncDataProvider {
         initDisplayTypes();
         initNicHotplugSupportMap();
         initDiskHotpluggableInterfacesMap();
+        initOsArchitecture();
     }
 
     public static void initNicHotplugSupportMap() {
@@ -3199,6 +3205,17 @@ public final class AsyncDataProvider {
         });
     }
 
+    public static void initOsArchitecture() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                osArchitectures = (HashMap<Integer, ArchitectureType>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsArchitectures), callback);
+    }
+
     public static String getOsName(Integer osId) {
         // can be null as a consequence of setItems on ListModel
         if (osId == null) {
@@ -3227,7 +3244,23 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes), callback);
     }
 
-    public static List<Integer> getOsIds() {
+    public static List<Integer> getOsIds(ArchitectureType architectureType) {
+
+        List<Integer> osIds = new ArrayList<Integer>();
+
+        for (Entry<Integer, ArchitectureType> entry : osArchitectures.entrySet()) {
+            if (entry.getValue() == architectureType) {
+                osIds.add(entry.getKey());
+            }
+        }
+
+        Collections.sort(osIds, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return osNames.get(o1).compareTo(osNames.get(o2));
+            }
+        });
+
         return osIds;
     }
 
@@ -3235,6 +3268,16 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetMaxOsRam, osId, version),
                 asyncQuery);
+    }
+
+    public static ArchitectureType getArchitectureTypeByOsId(Integer osId) {
+        if ((osId != null)
+                && (osArchitectures != null)
+                && (!osArchitectures.isEmpty())) {
+            return osArchitectures.get(osId);
+        } else {
+            return ArchitectureType.undefined;
+        }
     }
 
     public static ArrayList<Map.Entry<String, EntityModel>> getBondingOptionList(RefObject<Map.Entry<String, EntityModel>> defaultItem)

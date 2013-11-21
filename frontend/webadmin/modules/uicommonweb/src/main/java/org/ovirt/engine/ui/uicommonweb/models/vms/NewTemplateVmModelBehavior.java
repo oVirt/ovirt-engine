@@ -175,6 +175,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateMemoryBalloon();
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
+        updateOSValues();
     }
 
     @Override
@@ -339,5 +340,12 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public boolean validate()
     {
         return super.validate();
+    }
+
+    @Override
+    public void postOsItemChanged() {
+        if (vm != null) {
+            getModel().getOSType().setSelectedItem(vm.getOs());
+        }
     }
 }

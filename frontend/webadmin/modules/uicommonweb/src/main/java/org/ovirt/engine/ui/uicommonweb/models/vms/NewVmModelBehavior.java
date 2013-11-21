@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -81,7 +82,18 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         if (template != null)
         {
             // Copy VM parameters from template.
-            getModel().getOSType().setSelectedItem(template.getOsId());
+
+            // If this a blank template, use the proper value for the default OS
+            if (template.getId().equals(Guid.Empty))
+            {
+                List<Integer> osIds = (List<Integer>) getModel().getOSType().getItems();
+
+                if (!osIds.isEmpty()) {
+                    getModel().getOSType().setSelectedItem(Collections.min(osIds));
+                }
+            } else {
+                getModel().getOSType().setSelectedItem(template.getOsId());
+            }
             getModel().getTotalCPUCores().setEntity(Integer.toString(template.getNumOfCpus()));
             getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
             getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
@@ -193,6 +205,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         updateCpuPinningVisibility();
         updateTemplate();
         updateNetworkInterfaces(networkBehavior, null);
+        updateOSValues();
         updateMemoryBalloon();
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
@@ -361,4 +374,5 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             getModel().getProvisioning().setEntity(vmType == VmType.Server);
         }
     }
+
 }

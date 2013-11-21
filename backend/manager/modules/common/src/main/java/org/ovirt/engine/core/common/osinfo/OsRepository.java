@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -60,6 +61,18 @@ public interface OsRepository {
      * @return a list of OSs who's {@link OsRepository#getOsFamily(int)} returns "windows"
      */
     public ArrayList<Integer> getWindowsOss();
+
+    /**
+     * @return map of osId to the the os architecture
+     */
+    public HashMap<Integer, ArchitectureType> getOsArchitectures();
+
+    /**
+     * Get the architecture from OS
+     * @param osId - OS id
+     * @return
+     */
+    public ArchitectureType getArchitectureFromOS(int osId);
 
     /**
      * @return minimum RAM in mb

@@ -270,6 +270,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         updateCpuSharesAvailability();
         updateNetworkInterfaces(networkBehavior, networkInerfaces);
         updateVirtioScsiAvailability();
+        updateOSValues();
     }
 
     @Override

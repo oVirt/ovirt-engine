@@ -36,6 +36,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetDiskHotpluggableInterfacesMap:
                 setReturnValue(osRepository.getDiskHotpluggableInterfacesMap());
                 break;
+            case GetOsArchitectures:
+                setReturnValue(osRepository.getOsArchitectures());
+                break;
             case GetMaxOsRam:
                 setReturnValue(osRepository.getMaximumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;

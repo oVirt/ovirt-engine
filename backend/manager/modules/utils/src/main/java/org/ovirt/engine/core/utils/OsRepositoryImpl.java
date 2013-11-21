@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -200,6 +201,25 @@ public enum OsRepositoryImpl implements OsRepository {
             }
         }
         return oss;
+    }
+
+    @Override
+    public HashMap<Integer, ArchitectureType> getOsArchitectures() {
+        HashMap<Integer, ArchitectureType> osArchitectures = new HashMap<Integer, ArchitectureType>();
+        for (int osId : getOsIds()) {
+            String architecture = getValueByVersion(idToUnameLookup.get(osId), "cpuArchitecture", null);
+
+            if (architecture != null) {
+                osArchitectures.put(osId, ArchitectureType.valueOf(architecture));
+            }
+        }
+        return osArchitectures;
+    }
+
+    @Override
+    public ArchitectureType getArchitectureFromOS(int osId) {
+        String architecture = getValueByVersion(idToUnameLookup.get(osId), "cpuArchitecture", null);
+        return ArchitectureType.valueOf(architecture);
     }
 
     @Override

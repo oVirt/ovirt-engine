@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1382,7 +1381,6 @@ public class UnitVmModel extends Model {
 
         getCdImage().setIsChangable(false);
 
-        initOSType();
         initDisplayProtocol();
         initFirstBootDevice();
         initNumOfMonitors();
@@ -1565,11 +1563,6 @@ public class UnitVmModel extends Model {
 
     protected void initAllowConsoleReconnect() {
         getAllowConsoleReconnect().setEntity(getVmType().getSelectedItem() == VmType.Server);
-    }
-
-    private void initOSType() {
-        getOSType().setItems(AsyncDataProvider.getOsIds());
-        getOSType().setSelectedItem(OsRepository.DEFAULT_OS);
     }
 
     private void initUsbPolicy() {
