@@ -57,7 +57,13 @@ public enum AuthenticationResult {
     CLIENT_NOT_FOUND_IN_KERBEROS_DATABASE(
             "Authentication Failed. Client not found in kerberos database.",
             "USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD",
-            24);
+            24),
+    INTERNAL_KERBEROS_ERROR(
+            "An internal error has ocurred in the Kerberos implementation of the Java virtual machine. This usually " +
+            "means that the LDAP server is configured with a minimum security strength factor (minssf) of 0. Change " +
+            "it to 1 and try again.",
+            "INTERNAL_KERBEROS_ERROR",
+            25);
 
     private String vdcBllMessage;
     private String detailedMessage;

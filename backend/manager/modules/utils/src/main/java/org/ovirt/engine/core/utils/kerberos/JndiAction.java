@@ -126,6 +126,9 @@ public class JndiAction implements PrivilegedAction {
                 handleCommunicationException(currentLdapServer, address);
             } catch (AuthenticationException ex) {
                 handleAuthenticationException(ex);
+            } catch (NegativeArraySizeException ex) {
+                log.error("Internal Kerberos error.", ex);
+                return AuthenticationResult.INTERNAL_KERBEROS_ERROR;
             } catch (Exception ex) {
                 handleGeneralException(ex);
                 break;
@@ -133,9 +136,8 @@ public class JndiAction implements PrivilegedAction {
                 if (ctx != null) {
                     try {
                         ctx.close();
-                    } catch (NamingException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                    } catch (Exception exception) {
+                        log.warn("Unexpected exception while closing LDAP context.", exception);
                     }
                 }
 
