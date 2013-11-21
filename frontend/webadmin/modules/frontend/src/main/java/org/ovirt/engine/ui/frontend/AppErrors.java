@@ -2528,7 +2528,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be reduced by more than one.")
     String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE();
 
-    @DefaultStringValue("Cannot ${action} from ${type}. Data migration is not needed while reducing the replica count.")
+    @DefaultStringValue("Cannot ${action} ${type}. Data migration is not needed while reducing the replica count.")
     String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_WITH_DATA_MIGRATION();
 
     @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be increased when removing bricks.")
