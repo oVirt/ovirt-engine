@@ -40,8 +40,11 @@ public class FileServletTest {
     @Mock
     HttpServletResponse mockResponse;
 
+    File file;
+
     @Before
     public void setUp() throws Exception {
+        file = new File(this.getClass().getResource("small_file.txt").toURI());
         testServlet = new FileServlet();
         ServletContext mockContext = mock(ServletContext.class);
         when(mockConfig.getServletContext()).thenReturn(mockContext);
@@ -63,10 +66,10 @@ public class FileServletTest {
      */
     @Test
     public void testInitServletConfig_BaseSet() throws ServletException {
-        when(mockConfig.getInitParameter("file")).thenReturn("/home");
+        when(mockConfig.getInitParameter("file")).thenReturn(file.getParent());
         testServlet.init(mockConfig);
         assertNull("Type should be null", testServlet.type);
-        assertEquals("base should be /home", new File("/home"), testServlet.base);
+        assertEquals("base should be " + file.getParent(), file.getParentFile(), testServlet.base);
     }
 
     /**
@@ -87,9 +90,9 @@ public class FileServletTest {
      */
     @Test
     public void testDoGet1() throws ServletException, IOException {
-        when(mockConfig.getInitParameter("file")).thenReturn("/etc");
+        when(mockConfig.getInitParameter("file")).thenReturn(file.getParent());
         testServlet.init(mockConfig);
-        when(mockRequest.getPathInfo()).thenReturn("hosts");
+        when(mockRequest.getPathInfo()).thenReturn(file.getName());
         ServletOutputStream responseOut = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(responseOut);
         testServlet.doGet(mockRequest, mockResponse);
@@ -105,7 +108,7 @@ public class FileServletTest {
     @Test
     public void testCheckForIndex_BadParams() throws IOException, URISyntaxException {
         assertNull("no index file", testServlet.checkForIndex(mockRequest, mockResponse, null, null));
-        assertNull("no index file", testServlet.checkForIndex(mockRequest, mockResponse, new File("/etc"), null));
+        assertNull("no index file", testServlet.checkForIndex(mockRequest, mockResponse, file.getParentFile(), null));
     }
 
     /**
