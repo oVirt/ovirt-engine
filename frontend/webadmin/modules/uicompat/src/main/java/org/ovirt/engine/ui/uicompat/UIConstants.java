@@ -323,6 +323,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Template Import")
     String templateImportTitle();
 
+    @DefaultStringValue("Invalid Import Configuration")
+    String invalidImportTitle();
+
     @DefaultStringValue("Remove Backed up Template(s)")
     String removeBackedUpTemplatesTitle();
 
@@ -741,6 +744,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("There is no Data Storage Domain to import the Template into. Please attach a Data Storage Domain to the Template's Data Center.")
     String thereIsNoDataStorageDomainToImportTemplateIntoMsg();
+
+    @DefaultStringValue("There are selected items with non-matching architectures. Please select only items with the same architecture to proceed the import process.")
+    String invalidImportMsg();
 
     @DefaultStringValue("The Export Domain is inactive. Data can be retrieved only when the Domain is activated")
     String theExportDomainIsInactiveMsg();

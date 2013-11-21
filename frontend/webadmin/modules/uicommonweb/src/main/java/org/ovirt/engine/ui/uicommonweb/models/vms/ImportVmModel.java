@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -51,6 +53,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class ImportVmModel extends ListWithDetailsModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
 
+    ArchitectureType targetArchitecture;
     private VmImportDiskListModel importDiskListModel;
     private StoragePool storagePool;
     private boolean hasQuota;
@@ -66,6 +69,14 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     public void setStoragePool(StoragePool storagePool) {
         this.storagePool = storagePool;
+    }
+
+    public ArchitectureType getTargetArchitecture() {
+        return targetArchitecture;
+    }
+
+    public void setTargetArchitecture(ArchitectureType targetArchitecture) {
+        this.targetArchitecture = targetArchitecture;
     }
 
     private ListModel storage;
@@ -189,8 +200,20 @@ public class ImportVmModel extends ListWithDetailsModel {
                        @Override
                        public void onSuccess(Object model, Object returnValue) {
                            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                           getCluster().setItems(clusters);
-                           getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+
+                           ImportVmModel importModel = (ImportVmModel) model;
+                           ArchitectureType targetArch = importModel.getTargetArchitecture();
+
+                           if (targetArch != null) {
+                               List<VDSGroup> filteredClusters = AsyncDataProvider.filterByArchitecture(clusters,
+                                       targetArch);
+                               getCluster().setItems(filteredClusters);
+                               getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
+                           } else {
+                               getCluster().setItems(clusters);
+                               getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+                           }
+
                            // get storage domains
                            AsyncDataProvider.getStorageDomainList(new AsyncQuery(ImportVmModel.this,
                                    new INewAsyncCallback() {

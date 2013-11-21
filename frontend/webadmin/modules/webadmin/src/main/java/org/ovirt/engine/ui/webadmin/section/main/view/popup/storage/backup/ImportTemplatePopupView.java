@@ -89,6 +89,14 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
         };
         table.addColumn(cpuColumn, constants.cpusTemplate(), "50px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<Object> archColumn = new TextColumnWithTooltip<Object>() {
+            @Override
+            public String getValue(Object object) {
+                return String.valueOf(((ImportTemplateData) object).getTemplate().getClusterArch());
+            }
+        };
+        table.addColumn(archColumn, constants.architectureTemplate(), "50px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<Object> diskColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {

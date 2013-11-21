@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -121,6 +122,13 @@ public class TemplateBackupModel extends VmBackupModel
         model.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
         model.setHashName("import_template"); //$NON-NLS-1$
         return model;
+    }
+
+    @Override
+    protected ArchitectureType getArchitectureFromItem(Object item) {
+        VmTemplate template = (VmTemplate) item;
+
+        return template.getClusterArch();
     }
 
     @Override

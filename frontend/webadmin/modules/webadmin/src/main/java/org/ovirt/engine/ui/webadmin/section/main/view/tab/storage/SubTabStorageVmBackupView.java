@@ -113,6 +113,14 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         };
         getTable().addColumn(cpuColumn, constants.cpusVm(), "95px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VM> archColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return String.valueOf(object.getClusterArch());
+            }
+        };
+        getTable().addColumn(archColumn, constants.architectureVm(), "95px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VM> diskColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {

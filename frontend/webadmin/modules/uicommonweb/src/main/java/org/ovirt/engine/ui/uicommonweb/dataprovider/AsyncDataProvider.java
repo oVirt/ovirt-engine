@@ -691,6 +691,17 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static List<VDSGroup> filterByArchitecture(List<VDSGroup> clusters, ArchitectureType targetArchitecture) {
+        List<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
+
+        for (VDSGroup cluster : clusters) {
+            if (cluster.getArchitecture().equals(targetArchitecture)) {
+                filteredClusters.add(cluster);
+            }
+        }
+        return filteredClusters;
+    }
+
     public static void getClusterByServiceList(AsyncQuery aQuery, Guid dataCenterId,
             final boolean supportsVirtService, final boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {

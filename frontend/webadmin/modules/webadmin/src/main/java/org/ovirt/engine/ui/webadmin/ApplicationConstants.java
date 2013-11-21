@@ -1502,6 +1502,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("CPUs")
     String cpusVm();
 
+    @DefaultStringValue("Architecture")
+    String architectureVm();
+
     @DefaultStringValue("Network")
     String networkVm();
 
@@ -1665,6 +1668,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("CPUs")
     String cpusTemplate();
+
+    @DefaultStringValue("Architecture")
+    String architectureTemplate();
 
     @DefaultStringValue("Import")
     String restoreTemplate();

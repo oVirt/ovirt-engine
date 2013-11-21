@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -165,11 +166,51 @@ public class VmBackupModel extends ManageBackupModel {
                 getEntity().getId());
     }
 
+    protected ArchitectureType getArchitectureFromItem(Object item) {
+        VM vm = (VM) item;
+
+        return vm.getClusterArch();
+    }
+
     @Override
     protected void restore() {
         super.restore();
 
         if (getWindow() != null) {
+            return;
+        }
+
+        // Checks if there are selected VMs of multiple architectures
+        ArchitectureType firstArch = null;
+        boolean multipleArchs = false;
+
+        for (Object item : getSelectedItems()) {
+            ArchitectureType arch = getArchitectureFromItem(item);
+
+            if (firstArch == null) {
+                firstArch = arch;
+            } else {
+                if (!firstArch.equals(arch)) {
+                    multipleArchs = true;
+                    break;
+                }
+            }
+        }
+
+        if (multipleArchs) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().invalidImportTitle());
+            confirmModel.setHashName("multiple_archs_dialog"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance().getConstants().invalidImportMsg());
+
+            UICommand command = new UICommand("multipleArchsOK", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            command.setIsDefault(true);
+            confirmModel.getCommands().add(command);
+
+            setConfirmWindow(confirmModel);
+
             return;
         }
 
@@ -186,6 +227,7 @@ public class VmBackupModel extends ManageBackupModel {
         tempVar3.setIsCancel(true);
         model.getCommands().add(tempVar3);
         model.init(getSelectedItems(), getEntity().getId());
+        model.setTargetArchitecture(firstArch);
 
         // Add 'Close' command
         UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
@@ -535,6 +577,10 @@ public class VmBackupModel extends ManageBackupModel {
         }
     }
 
+    private void multipleArchsOK() {
+        setConfirmWindow(null);
+    }
+
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
@@ -547,6 +593,8 @@ public class VmBackupModel extends ManageBackupModel {
             onClone();
         } else if (command.getName().equals("closeClone")) { //$NON-NLS-1$
             closeClone();
+        } else if (command.getName().equals("multipleArchsOK")) { //$NON-NLS-1$
+            multipleArchsOK();
         }
     }
 

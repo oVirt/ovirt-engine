@@ -319,6 +319,14 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         };
         table.addColumn(cpuColumn, constants.cpusVm(), "50px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<Object> archColumn = new TextColumnWithTooltip<Object>() {
+            @Override
+            public String getValue(Object object) {
+                return String.valueOf(((ImportVmData) object).getVm().getClusterArch());
+            }
+        };
+        table.addColumn(archColumn, constants.architectureVm(), "50px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<Object> diskColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
