@@ -36,7 +36,7 @@
        -->
      <Match>
        <Class name="org.ovirt.engine.core.compat.backendcompat.XmlNode" />
-       <Field name="InnerText"/>
+       <Field name="innerText"/>
        <Bug code="UrF"/>
      </Match>
 
