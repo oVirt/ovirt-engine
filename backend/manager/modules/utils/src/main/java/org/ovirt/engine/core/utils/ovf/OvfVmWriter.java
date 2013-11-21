@@ -105,10 +105,10 @@ public class OvfVmWriter extends OvfWriter {
                 Match match = Regex.Match(app, "(.*) ([0-9.]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
                 if (match.groups().size() > 1) {
-                    product = match.groups().get(1).getValue(); // match.Groups[1].getValue();
+                    product = match.groups().get(1).getValue();
                 }
                 if (match.groups().size() > 2) {
-                    version = match.groups().get(2).getValue(); // match.Groups[2].getValue();
+                    version = match.groups().get(2).getValue();
                 }
 
                 _writer.WriteStartElement("ProductSection");
