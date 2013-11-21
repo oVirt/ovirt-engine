@@ -1,19 +1,20 @@
 package org.ovirt.engine.core.compat;
 
+import java.util.ArrayList;
 import com.google.gwt.regexp.shared.MatchResult;
 
 /**
- * 
+ *
  * Replacement for System.Text.RegularExpressions.Match
- * 
+ *
  * @author drankevi
- * 
+ *
  */
 public class Match {
 
     private final boolean success;
     private final String value;
-    private final MatchGroups groups = new MatchGroups();
+    private final ArrayList<Match> groups = new ArrayList<Match>();
 
     public Match(MatchResult matchResult) {
         if (matchResult != null) {
@@ -33,7 +34,7 @@ public class Match {
         this.success = true;
     }
 
-    public MatchGroups groups() {
+    public ArrayList<Match> groups() {
         return groups;
     }
 

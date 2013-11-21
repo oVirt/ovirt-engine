@@ -22,7 +22,6 @@
 		<include name="compat/DateTime.java" />
 		<include name="compat/DayOfWeek.java" />
 		<include name="compat/RegEx.java" />
-		<include name="compat/MatchGroups.java" />
 
 		<!-- Required by common->action->VdcActionParametersBase.java -->
 		<include name="compat/TransactionScopeOption.java" />

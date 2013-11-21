@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.compat;
 
+import java.util.ArrayList;
 import java.util.regex.MatchResult;
 
 // I believe this is a wrapper for java.util.regex.MatchResult
@@ -10,10 +11,10 @@ import java.util.regex.MatchResult;
 public class Match {
     private String Value;
     private boolean Success;
-    private MatchGroups Groups;
+    private ArrayList<Match> Groups;
 
     public Match(MatchResult mr, boolean success) {
-        Groups = new MatchGroups();
+        Groups = new ArrayList<Match>();
         if (success) {
             this.Success = success;
             for (int x = 1; x <= mr.groupCount(); x++) {
@@ -34,7 +35,7 @@ public class Match {
         return Value;
     }
 
-    public MatchGroups groups() {
+    public ArrayList<Match> groups() {
         return Groups;
     }
 
