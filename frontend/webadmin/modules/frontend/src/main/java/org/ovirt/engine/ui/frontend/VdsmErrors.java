@@ -795,7 +795,4 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to get status of gluster volume remove bricks")
     String GlusterVolumeRemoveBrickStatusFailed();
-
-    @DefaultStringValue("Scheduling failed no host satisfies the conditions")
-    String SCHEDULING_ALL_HOSTS_FILTERED_OUT();
 }

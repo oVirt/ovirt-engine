@@ -559,6 +559,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The relevant Template doesn't exist.")
     String ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The relevant Instance Type doesn't exist.")
+    String ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The relevant Image Type doesn't exist.")
+    String ACTION_TYPE_FAILED_IMAGE_TYPE_DOES_NOT_EXIST();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Template is disabled, please try to enable the template first and try again.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED();
 
@@ -697,6 +703,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Cluster Policy")
     String VAR__TYPE__CLUSTER_POLICY();
 
+    @DefaultStringValue("$type Policy Unit")
+    String VAR__TYPE__POLICY_UNIT();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -826,11 +835,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action rebalance")
     String VAR__ACTION__REBALANCE_START();
 
-    @DefaultStringValue("$action start remove")
-    String VAR__ACTION__REMOVE_BRICKS_START();
-
     @DefaultStringValue("$action stop rebalance")
     String VAR__ACTION__REBALANCE_STOP();
+
+    @DefaultStringValue("$action start removing")
+    String VAR__ACTION__REMOVE_BRICKS_START();
+
+    @DefaultStringValue("$action stop remove bricks")
+    String VAR__ACTION__REMOVE_BRICKS_STOP();
 
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();
@@ -1362,9 +1374,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("MAC Address is already in use.")
     String NETWORK_MAC_ADDRESS_IN_USE();
-
-    @DefaultStringValue("The specified MAC Address cannot be set.\n-Please check MAC Address validity.")
-    String NETWORK_INVALID_MAC_ADDRESS();
 
     @DefaultStringValue("Cannot ${action} ${type}. There is at least one running VM that uses this Network.")
     String NETWORK_INTERFACE_IN_USE_BY_VM();
@@ -2501,11 +2510,20 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cannot remove all the bricks from a Volume.")
     String ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Remove brick not started.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_STARTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Remove brick not finished.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_FINISHED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume should be started.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume bricks are not distributed.")
-    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_BRICKS_ARE_NOT_DISTRIBUTED();
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is not distributed.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_NOT_DISTRIBUTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume has a single brick.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_DISTRIBUTED_AND_HAS_SINGLE_BRICK();
 
     @DefaultStringValue("Cannot ${action} ${type}. Replacing brick is not a Gluster volume brick.")
     String ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK();
@@ -2569,6 +2587,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Rebalance is not running on the volume ${volumeName} in cluster ${vdsGroup}.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REBALANCE_NOT_STARTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Rebalance is running on the volume ${volumeName} in cluster ${vdsGroup}.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REBALANCE_IN_PROGRESS();
 
     @DefaultStringValue("Cannot ${action} ${type}. The Network Interface ${IfaceName} has an invalid MAC address ${MacAddress}. MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
     String ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID();
@@ -2653,6 +2674,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster service is not supported in compatibility version ${compatibilityVersion}.")
     String GLUSTER_NOT_SUPPORTED();
+
+    @DefaultStringValue("Volume id is invalid.")
+    String GLUSTER_VOLUME_ID_INVALID();
 
     @Constants.DefaultStringValue("Failed to run LDAP query, please check server logs for more info.")
     String FAILED_TO_RUN_LDAP_QUERY();
@@ -2746,6 +2770,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Function factor cannot be negative.")
     String ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_FACTOR_NEGATIVE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Policy unit is attached to the following cluster policies: ${cpNames}.")
+    String ACTION_TYPE_FAILED_CANNOT_REMOVE_POLICY_UNIT_ATTACHED_TO_CLUSTER_POLICY();
 
     @DefaultStringValue("Cannot ${action} ${type}. Cloud-Init is only supported on cluster compatibility version 3.3 and higher.")
     String ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED();

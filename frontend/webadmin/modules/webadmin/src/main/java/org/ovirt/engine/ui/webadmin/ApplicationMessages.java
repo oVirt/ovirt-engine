@@ -101,7 +101,4 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("{0} GB")
     String rebalanceFileSizeGb(String size);
-
-    @DefaultMessage("Host {0} was filtered out by {1} filter {2}")
-    String schedulingHostFilteredOutReason(String host, String filterLocation, String filterName);
 }
