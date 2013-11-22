@@ -132,10 +132,10 @@ public class VolumeRebalanceStatusModel extends Model {
                 refresh.cancel();
                 if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED) {
                     getStopTime().setEntity(rebalanceStatusEntity.getStopTime());
-                    setStopTimeVisible(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED);
                 }
             }
         }
+        setStopTimeVisible(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED);
         if (GlusterTaskType.REBALANCE == getEntity().getAsyncTask().getType()) {
             getStopReblanceFromStatus().setIsExecutionAllowed(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.STARTED);
         }
