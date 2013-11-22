@@ -59,7 +59,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                     }
                 }
 
-                postDataCentersLoaded(dataCenters);
+                if (!dataCenters.isEmpty()) {
+                    postDataCentersLoaded(dataCenters);
+                } else {
+                    getModel().disableEditing();
+                }
+
 
             }
         }, getModel().getHash()), true, false);

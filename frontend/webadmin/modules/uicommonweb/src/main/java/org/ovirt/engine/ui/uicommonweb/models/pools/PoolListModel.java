@@ -289,20 +289,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                                 model.getProvisioning().setIsChangable(false);
                                 model.getStorageDomain().setIsChangable(false);
-
-                                VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
-                                switchModeCommand.init(model);
-                                model.getCommands().add(switchModeCommand);
-
-                                UICommand command = new UICommand("OnSave", poolListModel); //$NON-NLS-1$
-                                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                                command.setIsDefault(true);
-                                model.getCommands().add(command);
-
-                                command = new UICommand("Cancel", poolListModel); //$NON-NLS-1$
-                                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                                command.setIsCancel(true);
-                                model.getCommands().add(command);
                             }
                         });
 
@@ -310,6 +296,21 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
                         model.startProgress("");
                         setWindow(model);
+
+                        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+                        switchModeCommand.init(model);
+                        model.getCommands().add(switchModeCommand);
+
+                        UICommand command = new UICommand("OnSave", poolListModel); //$NON-NLS-1$
+                        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                        command.setIsDefault(true);
+                        model.getCommands().add(command);
+
+                        command = new UICommand("Cancel", poolListModel); //$NON-NLS-1$
+                        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                        command.setIsCancel(true);
+                        model.getCommands().add(command);
+
                         model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
                         model.initialize(getSystemTreeSelectedItem());
                         model.getName().setEntity(pool.getName());
