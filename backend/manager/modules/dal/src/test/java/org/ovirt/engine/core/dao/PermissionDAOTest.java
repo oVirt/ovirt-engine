@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 
 public class PermissionDAOTest extends BaseDAOTestCase {
     private static final Guid STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
@@ -221,7 +222,6 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         List<permissions> result = dao.getAllForEntity(VM_ENTITY_ID);
         assertGetAllForEntityResult(result);
     }
-
     /**
      * Ensures that the right permissions are returned for the specified id., for a user with permissions.
      */
@@ -465,7 +465,17 @@ public class PermissionDAOTest extends BaseDAOTestCase {
                 dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, UNPRIVILEGED_USER_ID, true);
         assertInvalidGetPermissionList(result);
     }
+    @Test
+    public void testGetTreeForEntityWithAppMode() {
+        List<permissions> result = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_ID, true, ApplicationMode.AllModes.getValue());
+        assertEquals(1, result.size());
 
+        List<permissions> result2 = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_ID, true, ApplicationMode.VirtOnly.getValue());
+        assertEquals(1, result2.size());
+
+        List<permissions> result3 = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_ID, true, ApplicationMode.GlusterOnly.getValue());
+        assertEquals(1, result3.size());
+    }
     /**
      * Tests {@link PermissionDAO#getTreeForEntity(Guid, VdcObjectType)}
      * @param entityID The object to retrieve tree for

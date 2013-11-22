@@ -454,7 +454,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+Create or replace FUNCTION GetPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN, v_app_mode INTEGER)
 RETURNS SETOF permissions_view STABLE
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
@@ -462,20 +462,22 @@ RETURNS SETOF permissions_view STABLE
 BEGIN
    RETURN QUERY SELECT *
    FROM permissions_view
-   WHERE object_id = v_id
+   WHERE  (permissions_view.app_mode & v_app_mode) > 0
+   AND object_id = v_id
    AND   (NOT v_is_filtered OR EXISTS (SELECT 1
                                        FROM   GetUserPermissionsByEntityId(v_id, v_user_id, v_is_filtered)));
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllUsersWithPermissionsOnEntityByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+Create or replace FUNCTION GetAllUsersWithPermissionsOnEntityByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN,  v_app_mode INTEGER)
 RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM permissions_view
-   WHERE object_id = v_id
+   WHERE (permissions_view.app_mode & v_app_mode) > 0
+   AND object_id = v_id
    AND   (NOT v_is_filtered OR EXISTS (SELECT 1
                                        FROM   GetAllUsersWithPermissionsByEntityId(v_id, v_user_id, v_is_filtered)));
 END; $procedure$
@@ -553,7 +555,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsTreeByEntityId
-(v_id UUID, v_object_type_id INTEGER, v_user_id UUID, v_is_filtered BOOLEAN)
+(v_id UUID, v_object_type_id INTEGER, v_user_id UUID, v_is_filtered BOOLEAN, v_app_mode INTEGER)
 RETURNS SETOF permissions_view STABLE
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
@@ -561,7 +563,8 @@ RETURNS SETOF permissions_view STABLE
 BEGIN
    RETURN QUERY SELECT *
    FROM   permissions_view p
-   WHERE  object_id in(select id from  fn_get_entity_parents(v_id,v_object_type_id))
+   WHERE  (p.app_mode & v_app_mode) > 0
+   AND  object_id in(select id from  fn_get_entity_parents(v_id,v_object_type_id))
    AND    (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_flat_groups u
                                         WHERE  p.ad_element_id = u.granted_id

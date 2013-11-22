@@ -138,8 +138,15 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered, boolean allUsersWithPermission) {
+        int appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        return getAllForEntity(id, userID, isFiltered, allUsersWithPermission, appMode);
+    }
+
+    @Override
+    public List<permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered, boolean allUsersWithPermission, int appMode) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+                .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered)
+                .addValue("app_mode", appMode);
         String functionName = "GetPermissionsByEntityId";
         if (allUsersWithPermission) {
             functionName = "GetAllUsersWithPermissionsOnEntityByEntityId";
@@ -156,12 +163,19 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered) {
+        int appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        return getTreeForEntity(id, type, userID, isFiltered, appMode);
+    }
+
+    @Override
+    public List<permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered, int appMode) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource()
                         .addValue("id", id)
                         .addValue("object_type_id", type.getValue())
                         .addValue("user_id", userID)
-                        .addValue("is_filtered", isFiltered);
+                        .addValue("is_filtered", isFiltered)
+                        .addValue("app_mode", appMode);
         return getCallsHandler().executeReadList("GetPermissionsTreeByEntityId",
                 PermissionRowMapper.instance,
                 parameterSource);
