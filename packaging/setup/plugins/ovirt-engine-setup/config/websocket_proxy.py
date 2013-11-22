@@ -135,7 +135,7 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
 
-        self.logger.info(_('Configurating WebSocket Proxy'))
+        self.logger.info(_('Configuring WebSocket Proxy'))
 
         self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
             options=(

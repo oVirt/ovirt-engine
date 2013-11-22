@@ -592,7 +592,7 @@ class Plugin(plugin.PluginBase):
             # restore everything
             localtransaction.abort()
 
-        self.logger.info(_('Configurating PostgreSQL'))
+        self.logger.info(_('Configuring PostgreSQL'))
         localtransaction = transaction.Transaction()
         with localtransaction:
             self._addPgHbaDatabaseAccess(
