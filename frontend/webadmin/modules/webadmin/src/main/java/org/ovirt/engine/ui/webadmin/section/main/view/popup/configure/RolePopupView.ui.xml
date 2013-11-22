@@ -4,8 +4,37 @@
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
 	xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
 
-<ui:style>
-		
+	<ui:style>
+		.titleLabel {
+			padding-top: 5px;
+		}
+
+		.explanationLabel {
+			padding-top: 5px;
+			padding-left: 5px;
+			padding-bottom: 5px;
+		}
+
+		.treePanel {
+			margin-top: 5px;
+		}
+
+		.buttonPanel {
+			padding-left: 5px;
+			vertical-align: middle;
+		}
+
+		.radioButton {
+			vertical-align: middle;
+		}
+
+		.radioButton label {
+			vertical-align: middle;
+			position: relative;
+			padding-bottom: 7px;
+			padding-left: 1px;
+			padding-right: 2px;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="650px" height="500px">
@@ -14,18 +43,20 @@
 				<g:FlowPanel>
 					<g:HorizontalPanel>
 						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+						<e:EntityModelTextBoxEditor ui:field="descriptionEditor"/>
 					</g:HorizontalPanel>
-					<g:HorizontalPanel>
-						<g:Label ui:field="accountTypeLabel"/>
-						<g:RadioButton name="accountTypeRadioButton" ui:field="userRadioButtonEditor"/>
-						<g:RadioButton name="accountTypeRadioButton" ui:field="adminRadioButtonEditor"/>
+					<g:HorizontalPanel addStyleNames="{style.buttonPanel}">
+						<g:Label ui:field="accountTypeLabel" addStyleNames="{style.titleLabel}"/>
+						<g:RadioButton name="accountTypeRadioButton" ui:field="userRadioButtonEditor" addStyleNames="{style.radioButton}"/>
+						<g:RadioButton name="accountTypeRadioButton" ui:field="adminRadioButtonEditor" addStyleNames="{style.radioButton}"/>
 					</g:HorizontalPanel>
 					<g:HTML><hr style="width:100%;" /></g:HTML>
-					<g:Label ui:field="explainationLabel"/>
-					<g:Button ui:field="expandAllButton"/>
-					<g:Button ui:field="collapseAllButton"/>
-					<g:ScrollPanel height="250px">
+					<g:Label ui:field="explainationLabel" addStyleNames="{style.explanationLabel}"/>
+                    <g:HorizontalPanel addStyleNames="{style.buttonPanel}">
+                        <g:Button ui:field="expandAllButton"/>
+					    <g:Button ui:field="collapseAllButton"/>
+                    </g:HorizontalPanel>
+					<g:ScrollPanel height="300px" addStyleNames="{style.treePanel}">
 						<we:EntityModelCellTree ui:field="tree"/>
 					</g:ScrollPanel>
 				</g:FlowPanel>
