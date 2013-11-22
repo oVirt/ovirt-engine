@@ -166,7 +166,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "80px"); //$NON-NLS-1$
+        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "120px"); //$NON-NLS-1$
 
         getTable().addColumn(new CommentColumn<VM>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
