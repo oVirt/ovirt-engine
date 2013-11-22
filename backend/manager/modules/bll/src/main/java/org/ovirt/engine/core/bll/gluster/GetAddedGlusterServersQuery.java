@@ -63,10 +63,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
                         fingerprint = returnValue.getReturnValue().toString();
                     }
                 }
-                // Keep server details in the map only for the servers which are reachable
-                if (fingerprint != null && !(fingerprint.isEmpty())) {
-                    serversAndFingerprint.put(server.getHostnameOrIp(), fingerprint);
-                }
+                serversAndFingerprint.put(server.getHostnameOrIp(), fingerprint == null ? "" : fingerprint);
             }
         }
         return serversAndFingerprint;
