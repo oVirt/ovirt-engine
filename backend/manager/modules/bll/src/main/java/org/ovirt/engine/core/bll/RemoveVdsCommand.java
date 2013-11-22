@@ -52,11 +52,14 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         }
 
         /**
-         * If the removing server is the last server in the cluster and the force action is true, then clear the gluster
-         * volumes from the database
+         * If the removing server is the last server in the cluster , then clear the gluster
+         * volumes and hooks from the database
+         * if not force, host remove would have failed if there were volumes, so safe to
+         * clean up volumes in DB.
          */
-        if (!clusterHasMultipleHosts() && getParameters().isForceAction()) {
+        if (!clusterHasMultipleHosts()) {
             removeGlusterVolumesFromDb();
+            removeGlusterHooksFromDb();
         }
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -190,6 +193,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     private void removeGlusterVolumesFromDb() {
         getGlusterVolumeDao().removeByClusterId(getVdsGroupId());
+    }
+
+    private void removeGlusterHooksFromDb() {
+        getGlusterHooksDao().removeAllInCluster(getVdsGroupId());
     }
 
     public ClusterUtils getClusterUtils() {

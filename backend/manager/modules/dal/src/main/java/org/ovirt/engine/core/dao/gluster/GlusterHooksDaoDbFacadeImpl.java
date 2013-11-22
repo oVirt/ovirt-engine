@@ -307,4 +307,11 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         // TODO: Implement this
         throw new NotImplementedException("Unsupported operation");
     }
+
+    @Override
+    public void removeAllInCluster(Guid clusterId) {
+        getCallsHandler().executeModification("DeleteAllGlusterHooks",
+                getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId));
+    }
 }

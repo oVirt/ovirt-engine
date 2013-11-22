@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao.gluster;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -136,6 +137,16 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
         hookIds.add(FixturesTool.HOOK_ID);
         hookIds.add(FixturesTool.HOOK_ID2);
         dao.removeAll(hookIds);
+        List<GlusterHookEntity> hooks = dao.getByClusterId(FixturesTool.GLUSTER_CLUSTER_ID);
+        assertNotNull(hooks);
+        assertTrue(hooks.isEmpty());
+    }
+
+    @Test
+    public void testRemoveAllInCluster() {
+        List<GlusterHookEntity> originalHookList = dao.getByClusterId(FixturesTool.GLUSTER_CLUSTER_ID);
+        assertFalse(originalHookList.isEmpty());
+        dao.removeAllInCluster(FixturesTool.GLUSTER_CLUSTER_ID);
         List<GlusterHookEntity> hooks = dao.getByClusterId(FixturesTool.GLUSTER_CLUSTER_ID);
         assertNotNull(hooks);
         assertTrue(hooks.isEmpty());
