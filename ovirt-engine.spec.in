@@ -709,6 +709,7 @@ fi
 %dir %{engine_data}/bin
 %dir %{engine_data}/branding
 %dir %{engine_data}/conf
+%dir %{engine_data}/empty
 %dir %{engine_data}/engine.ear
 %dir %{engine_data}/services
 %dir %{engine_etc}

@@ -25,5 +25,8 @@
 
   <session-config>
     <session-timeout>180</session-timeout>
+    <cookie-config>
+      <path>/</path>
+    </cookie-config>
   </session-config>
 </web-app>

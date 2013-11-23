@@ -100,24 +100,6 @@
     <url-pattern>/OvirtEngineWeb/HealthStatus.aspx</url-pattern>
   </servlet-mapping>
 
-  <!-- Legacy api URI -->
-  <servlet>
-    <servlet-name>API</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
-    <init-param>
-      <param-name>targetContext</param-name>
-      <param-value>%{ENGINE_URI}/api/</param-value>
-    </init-param>
-    <init-param>
-      <param-name>uri</param-name>
-      <param-value></param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>API</servlet-name>
-    <url-pattern>/api/*</url-pattern>
-  </servlet-mapping>
-
   <servlet>
     <servlet-name>index</servlet-name>
     <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>

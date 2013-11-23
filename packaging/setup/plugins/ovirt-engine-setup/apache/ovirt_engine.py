@@ -68,6 +68,9 @@ class Plugin(plugin.PluginBase):
                         HTTPD_CONF_OVIRT_ENGINE_TEMPLATE
                     ),
                     subst={
+                        '@OVIRT_ENGINE_DATADIR@': (
+                            osetupcons.FileLocations.OVIRT_ENGINE_DATADIR
+                        ),
                         '@JBOSS_AJP_PORT@': self.environment[
                             osetupcons.ConfigEnv.JBOSS_AJP_PORT
                         ],
