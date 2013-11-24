@@ -232,8 +232,8 @@
 		}
 
 		.vmTablePanel {
-			height: 40%;
-			width: 99%;
+			height: 230px;
+			width: 98%;
 			visibility: visible;
 		}
 
