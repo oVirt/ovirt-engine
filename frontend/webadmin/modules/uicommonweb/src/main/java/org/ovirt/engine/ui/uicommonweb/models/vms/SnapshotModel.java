@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -228,7 +230,10 @@ public class SnapshotModel extends EntityModel
                     snapshotModel.setDisks(vm.getDiskList());
                     snapshotModel.setNics(vm.getInterfaces());
                     snapshotModel.setApps(Arrays.asList(snapshot.getAppList() != null ?
-                            snapshot.getAppList().split(",") : new String[] {})); //$NON-NLS-1$
+                            snapshot.getAppList().split(",") : new String[]{})); //$NON-NLS-1$
+
+                    Collections.sort(snapshotModel.getDisks(), new Linq.DiskByAliasComparer());
+                    Collections.sort(snapshotModel.getNics(), new Linq.VmInterfaceComparer());
                 }
 
                 onUpdateAsyncCallback.onSuccess(snapshotModel, null);

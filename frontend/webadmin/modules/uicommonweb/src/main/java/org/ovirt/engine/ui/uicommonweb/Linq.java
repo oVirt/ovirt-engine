@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -1124,6 +1125,17 @@ public final class Linq
         @Override
         public int compare(Role left, Role right) {
             return left.getname().compareTo(right.getname());
+        }
+    }
+
+
+
+    public final static class VmInterfaceComparer implements Comparator<VmNetworkInterface>, Serializable {
+        LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(VmNetworkInterface nic1, VmNetworkInterface nic2) {
+            return lexoNumeric.compare(nic1.getName(), nic2.getName());
         }
     }
 
