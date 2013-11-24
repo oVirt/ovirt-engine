@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -127,8 +126,11 @@ public class DisksViewColumns {
         @Override
         public ImageResource getValue(Disk object) {
             setEnumTitle(object.getVmEntityType());
-            return object.getVmEntityType() == VmEntityType.VM ? resources.vmsImage() :
-                    object.getVmEntityType() == VmEntityType.TEMPLATE ? resources.templatesImage() : null;
+            if (object.getVmEntityType() == null) {
+                return null;
+            }
+            return object.getVmEntityType().isVmType() ? resources.vmsImage() :
+                    object.getVmEntityType().isTemplateType() ? resources.templatesImage() : null;
         }
     };
 

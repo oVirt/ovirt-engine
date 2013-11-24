@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -249,8 +248,8 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         {
             Disk disk = (Disk) getSelectedItem();
 
-            diskVmListModel.setIsAvailable(disk.getVmEntityType() != VmEntityType.TEMPLATE);
-            diskTemplateListModel.setIsAvailable(disk.getVmEntityType() == VmEntityType.TEMPLATE);
+            diskVmListModel.setIsAvailable(disk.getVmEntityType() == null || !disk.getVmEntityType().isTemplateType());
+            diskTemplateListModel.setIsAvailable(disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType());
             diskStorageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE);
         }
     }
@@ -543,7 +542,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
                 return;
             }
 
-            if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
+            if (disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType()) {
                 isMoveAllowed = false;
             }
             else {
@@ -566,7 +565,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
         for (Disk disk : disks)
         {
-            boolean isTemplateDisk = disk.getVmEntityType() == VmEntityType.TEMPLATE;
+            boolean isTemplateDisk = disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType();
             boolean isImageLocked = disk.getDiskStorageType() == DiskStorageType.IMAGE
                     && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
 

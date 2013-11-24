@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -126,12 +125,12 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      */
     protected boolean checkOperationIsCorrect() {
         if (getParameters().getOperation() == ImageOperation.Copy
-                && getImage().getVmEntityType() != VmEntityType.TEMPLATE) {
+                && (getImage().getVmEntityType() == null || !getImage().getVmEntityType().isTemplateType())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_TEMPLATE_DISK);
         }
 
         if (getParameters().getOperation() == ImageOperation.Move
-                && getImage().getVmEntityType() == VmEntityType.TEMPLATE) {
+                && getImage().getVmEntityType() != null && getImage().getVmEntityType().isTemplateType()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
         }
         return true;

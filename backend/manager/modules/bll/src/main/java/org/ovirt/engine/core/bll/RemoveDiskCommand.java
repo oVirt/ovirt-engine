@@ -36,11 +36,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -84,7 +83,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private boolean validateAllVmsForDiskAreDown() {
-        if (getDisk().getVmEntityType() == VmEntityType.VM) {
+        if (getDisk().getVmEntityType() != null && getDisk().getVmEntityType().isVmType()) {
             for (VM vm : getVmsForDiskId()) {
                 if (vm.getStatus() != VMStatus.Down) {
                     VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(getDisk().getId(), vm.getId()));
@@ -113,7 +112,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveDiskBasedOnImageStorageCheck() {
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
-        if (diskImage.getVmEntityType() == VmEntityType.TEMPLATE) {
+        if (diskImage.getVmEntityType() != null && diskImage.getVmEntityType().isTemplateType()) {
             // Temporary fix until re factoring vm_images_view and image_storage_domain_view
             diskImage.setStorageIds(getDiskImageDao().get(diskImage.getImageId()).getStorageIds());
         } else if ((getParameters().getStorageDomainId() == null) || (Guid.Empty.equals(getParameters().getStorageDomainId()))) {
@@ -135,10 +134,10 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
         }
-        if (retValue) {
-            if (getDisk().getVmEntityType() == VmEntityType.VM) {
+        if (retValue && getDisk().getVmEntityType() != null) {
+            if (getDisk().getVmEntityType().isVmType()) {
                 retValue = canRemoveVmImageDisk();
-            } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
+            } else if (getDisk().getVmEntityType().isTemplateType()) {
                 retValue = canRemoveTemplateDisk();
             }
         }
@@ -358,16 +357,17 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return null;
         }
 
-        switch (getDisk().getVmEntityType()) {
-        case VM:
+        if (getDisk().getVmEntityType().isVmType()) {
             return createSharedLocksForVmDisk();
-        case TEMPLATE:
-            return createSharedLocksForTemplateDisk();
-        default:
-            log.warnFormat("No shared locks are taken while removing disk of entity: {0}",
-                    getDisk().getVmEntityType());
-            return null;
         }
+
+        if (getDisk().getVmEntityType().isTemplateType()) {
+            return createSharedLocksForTemplateDisk();
+        }
+
+        log.warnFormat("No shared locks are taken while removing disk of entity: {0}",
+                getDisk().getVmEntityType());
+        return null;
     }
 
     private Map<String, Pair<String, String>> createSharedLocksForVmDisk() {
