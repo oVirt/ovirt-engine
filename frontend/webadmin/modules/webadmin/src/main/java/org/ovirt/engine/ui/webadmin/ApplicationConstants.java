@@ -1899,6 +1899,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remove")
     String removeNetworkProfile();
 
+    @DefaultStringValue("Remove")
+    String removeNetworkExternalSubnet();
+
     // Cluster host
     @DefaultStringValue("Name")
     String nameClusterHost();

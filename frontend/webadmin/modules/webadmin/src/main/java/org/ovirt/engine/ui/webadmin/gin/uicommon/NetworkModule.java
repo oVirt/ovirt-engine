@@ -150,11 +150,22 @@ public class NetworkModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<ExternalSubnet, NetworkListModel, NetworkExternalSubnetListModel> getExternalSubnetListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<ExternalSubnet, NetworkListModel, NetworkExternalSubnetListModel>(eventBus,
                 defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 NetworkExternalSubnetListModel.class) {
+
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(NetworkExternalSubnetListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
         };
     }
 

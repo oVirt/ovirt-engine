@@ -4,14 +4,40 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveExternalSubnetModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class NetworkExternalSubnetListModel extends SearchableListModel
 {
 
+    private UICommand removeCommand;
+
     public NetworkExternalSubnetListModel() {
         setHashName("external_subnets"); //$NON-NLS-1$
         setComparator(new NameableComparator());
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+
+        updateActionAvailability();
+    }
+
+    public UICommand getRemoveCommand() {
+        return removeCommand;
+    }
+
+    private void setRemoveCommand(UICommand value) {
+        removeCommand = value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void remove() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        RemoveExternalSubnetModel model = new RemoveExternalSubnetModel(this, getSelectedItems());
+        setWindow(model);
     }
 
     @Override
@@ -35,6 +61,40 @@ public class NetworkExternalSubnetListModel extends SearchableListModel
         }
 
         super.syncSearch(VdcQueryType.GetExternalSubnetsOnProviderByNetwork, new IdQueryParameters(getEntity().getId()));
+    }
+
+    @Override
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
+        super.entityPropertyChanged(sender, e);
+
+        if (e.propertyName.equals("name")) { //$NON-NLS-1$
+            getSearchCommand().execute();
+        }
+    }
+
+    private void updateActionAvailability() {
+        getRemoveCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() > 0));
+    }
+
+    @Override
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
+
+        if (command == getRemoveCommand()) {
+            remove();
+        }
     }
 
     @Override

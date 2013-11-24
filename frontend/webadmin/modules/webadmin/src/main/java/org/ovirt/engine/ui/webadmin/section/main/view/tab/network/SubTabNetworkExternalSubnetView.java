@@ -6,11 +6,13 @@ import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVe
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkExternalSubnetListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkExternalSubnetPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.inject.Inject;
 
@@ -64,5 +66,12 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         };
 
         getTable().addColumn(externalIdColumn, constants.externalIdExternalSubnet(), "300px"); //$NON-NLS-1$
+
+        getTable().addActionButton(new WebAdminButtonDefinition<ExternalSubnet>(constants.removeNetworkExternalSubnet()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 }
