@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -660,28 +659,6 @@ public class VmSnapshotListModel extends SearchableListModel
 
     protected void setupAddVmFromSnapshotParameters(AddVmFromSnapshotParameters parameters) {
         // do nothing - no additional setup needed
-    }
-
-    private ArrayList<DiskImage> createDiskInfoList()
-    {
-        UnitVmModel model = (UnitVmModel) getWindow();
-        ArrayList<DiskImage> diskInfoList = new ArrayList<DiskImage>();
-
-        for (DiskImage diskImage : getcurrentVm().getDiskList()) {
-            for (DiskModel diskModel : model.getDisks()) {
-                DiskImage image = (DiskImage) diskModel.getDisk();
-                if (diskImage.getImageId().equals(image.getImageId())) {
-                    if (!diskImage.getVolumeType().equals(diskModel.getVolumeType().getSelectedItem())) {
-                        image.setVolumeType(
-                                (VolumeType) diskModel.getVolumeType().getSelectedItem());
-
-                        diskInfoList.add(image);
-                    }
-                }
-            }
-        }
-
-        return diskInfoList;
     }
 
     public void updateActionAvailability()
