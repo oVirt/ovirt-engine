@@ -42,10 +42,6 @@ class DateUtils {
         return DateFormat.getDateTimeInstance(dateStyle, timeStyle);
     }
 
-    public static String getDayOfWeek() {
-        return getDayOfWeek(0);
-    }
-
     public static String getDayOfWeek(int addDays) {
         Calendar date = Calendar.getInstance();
         date.add(Calendar.DATE, addDays);
