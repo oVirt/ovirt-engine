@@ -68,7 +68,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteAttributeString(OVF_URI, "version", Config.<String> GetValue(ConfigValues.VdcVersion));
     }
 
-    protected long BytesToGigabyte(long bytes) {
+    protected long bytesToGigabyte(long bytes) {
         return bytes / 1024 / 1024 / 1024;
     }
 
@@ -115,10 +115,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (DiskImage image : _images) {
             _writer.WriteStartElement("Disk");
             _writer.WriteAttributeString(OVF_URI, "diskId", image.getImageId().toString());
-            _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(BytesToGigabyte(image.getSize())));
+            _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(bytesToGigabyte(image.getSize())));
             _writer.WriteAttributeString(OVF_URI,
                     "actual_size",
-                    String.valueOf(BytesToGigabyte(image.getActualSizeInBytes())));
+                    String.valueOf(bytesToGigabyte(image.getActualSizeInBytes())));
             _writer.WriteAttributeString(OVF_URI, "vm_snapshot_id", (image.getVmSnapshotId() != null) ? image
                     .getVmSnapshotId().toString() : "");
 
