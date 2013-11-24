@@ -30,33 +30,33 @@ public class TimeSpanTest {
 
     @Test
     public void testParsing() {
-        TimeSpan span = TimeSpan.Parse("1");
+        TimeSpan span = TimeSpan.parse("1");
         assertEquals("days1", 1, span.Days);
-        span = TimeSpan.Parse("-1");
+        span = TimeSpan.parse("-1");
         assertEquals("days2", -1, span.Days);
-        span = TimeSpan.Parse("1.02:03");
+        span = TimeSpan.parse("1.02:03");
         assertEquals("days3", 1, span.Days);
         assertEquals("hours3", 2, span.Hours);
         assertEquals("min3", 3, span.Minutes);
-        span = TimeSpan.Parse("1.02:03:04.05");
+        span = TimeSpan.parse("1.02:03:04.05");
         assertEquals("days4", 1, span.Days);
         assertEquals("hours4", 2, span.Hours);
         assertEquals("min4", 3, span.Minutes);
         assertEquals("sec4", 4, span.Seconds);
         assertEquals("ms4", 5, span.Milliseconds);
-        span = TimeSpan.Parse("-1.02:03:04.05");
+        span = TimeSpan.parse("-1.02:03:04.05");
         assertEquals("days5", -1, span.Days);
         assertEquals("hours5", -2, span.Hours);
         assertEquals("min5", -3, span.Minutes);
         assertEquals("sec5", -4, span.Seconds);
         assertEquals("ms5", -5, span.Milliseconds);
-        span = TimeSpan.Parse("02:03:04.05");
+        span = TimeSpan.parse("02:03:04.05");
         assertEquals("days6", 0, span.Days);
         assertEquals("hours6", 2, span.Hours);
         assertEquals("min6", 3, span.Minutes);
         assertEquals("sec6", 4, span.Seconds);
         assertEquals("ms6", 5, span.Milliseconds);
-        span = TimeSpan.Parse("-02:03:04.05");
+        span = TimeSpan.parse("-02:03:04.05");
         assertEquals("days7", 0, span.Days);
         assertEquals("hours7", -2, span.Hours);
         assertEquals("min7", -3, span.Minutes);
@@ -66,7 +66,7 @@ public class TimeSpanTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidParse() {
-        TimeSpan.Parse("1.02.03");
+        TimeSpan.parse("1.02.03");
     }
 
     @Test

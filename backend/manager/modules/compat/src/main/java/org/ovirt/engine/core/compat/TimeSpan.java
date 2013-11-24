@@ -126,7 +126,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
 
     // The format for a timespan is:
     // [ws][-]{ d | d.hh:mm[:ss[.ff]] | hh:mm[:ss[.ff]] }[ws]
-    public static TimeSpan Parse(String argvalue) {
+    public static TimeSpan parse(String argvalue) {
         String cleaned = argvalue.trim();
         int multiplier = 1;
         if (cleaned.contains("-")) {
@@ -178,7 +178,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
 
     public static TimeSpan tryParse(String string) {
         try {
-            return TimeSpan.Parse(string);
+            return TimeSpan.parse(string);
         } catch (IllegalArgumentException e) {
             // eat it, return null
             return null;

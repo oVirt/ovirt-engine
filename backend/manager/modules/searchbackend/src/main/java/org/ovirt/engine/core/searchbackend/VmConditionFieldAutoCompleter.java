@@ -145,7 +145,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         }
         else if ("UPTIME".equals(fieldName)) {
             pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
-            TimeSpan ts = TimeSpan.Parse(pair.getSecond());
+            TimeSpan ts = TimeSpan.parse(pair.getSecond());
             pair.setSecond(StringFormat.format("'%1$s'", ts.TotalSeconds));
         }
         else if ("CREATIONDATE".equals(fieldName)) {
