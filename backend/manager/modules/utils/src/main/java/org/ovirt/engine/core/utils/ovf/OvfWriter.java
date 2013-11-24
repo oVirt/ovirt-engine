@@ -181,10 +181,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         writeGeneralData();
 
         // Application List
-        WriteAppList();
+        writeAppList();
 
         // Content Items
-        WriteContentItems();
+        writeContentItems();
 
         _writer.WriteEndElement(); // End Content tag
     }
@@ -277,9 +277,9 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    protected abstract void WriteAppList();
+    protected abstract void writeAppList();
 
-    protected abstract void WriteContentItems();
+    protected abstract void writeContentItems();
 
     protected void writeManagedDeviceInfo(VmBase vmBase, XmlTextWriter writer, Guid deviceId) {
         VmDevice vmDevice = vmBase.getManagedDeviceMap().get(deviceId);

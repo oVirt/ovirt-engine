@@ -92,7 +92,7 @@ public class OvfVmWriter extends OvfWriter {
     }
 
     @Override
-    protected void WriteAppList() {
+    protected void writeAppList() {
         if (_images.size() > 0) {
             if (StringUtils.isBlank(_images.get(0).getAppList())) {
                 return;
@@ -128,7 +128,7 @@ public class OvfVmWriter extends OvfWriter {
     }
 
     @Override
-    protected void WriteContentItems() {
+    protected void writeContentItems() {
         // os
         _writer.WriteStartElement("Section");
         _writer.WriteAttributeString(OVF_URI, "id", vmBase.getId().toString());

@@ -49,11 +49,11 @@ public class OvfTemplateWriter extends OvfWriter {
     }
 
     @Override
-    protected void WriteAppList() {
+    protected void writeAppList() {
     }
 
     @Override
-    protected void WriteContentItems() {
+    protected void writeContentItems() {
         // os
         _writer.WriteStartElement("Section");
         _writer.WriteAttributeString(OVF_URI, "id", _vmTemplate.getId().toString());
