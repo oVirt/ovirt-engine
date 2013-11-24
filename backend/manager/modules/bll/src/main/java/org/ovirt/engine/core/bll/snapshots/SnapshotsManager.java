@@ -345,7 +345,13 @@ public class SnapshotsManager {
         if (!vmDevice.getDevice().equals(VmDeviceType.DISK.getName())) {
             return true;
         }
-        return vmDevice.getSnapshotId() == null && getDiskDao().get(vmDevice.getDeviceId()).isAllowSnapshot();
+
+        if (vmDevice.getSnapshotId() == null) {
+           Disk disk = getDiskDao().get(vmDevice.getDeviceId());
+           return disk != null && disk.isAllowSnapshot();
+        }
+
+        return false;
     }
 
     /**
@@ -513,7 +519,7 @@ public class SnapshotsManager {
                 vmId, VmDeviceGeneralType.DISK, VmDeviceType.DISK.getName())) {
             if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId()) && vmDevice.getSnapshotId() == null) {
                 Disk disk = getDiskDao().get(vmDevice.getDeviceId());
-                if (disk.isAllowSnapshot()) {
+                if (disk != null && disk.isAllowSnapshot()) {
                     getBaseDiskDao().remove(vmDevice.getDeviceId());
                     getVmDeviceDao().remove(vmDevice.getId());
                 }
