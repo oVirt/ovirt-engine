@@ -2382,8 +2382,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Size")
     String sizeStorageTree();
 
-    @DefaultStringValue("Type")
-    String typeStorageTree();
+    @DefaultStringValue("Status")
+    String statusStorageTree();
 
     @DefaultStringValue("Allocation")
     String allocationStorageTree();

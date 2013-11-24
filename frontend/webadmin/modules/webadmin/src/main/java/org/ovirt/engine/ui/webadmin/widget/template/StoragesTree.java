@@ -89,7 +89,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         table.addColumn(new EmptyColumn(), constants.empty(), "25px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.nameStorageTree(), ""); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.sizeStorageTree(), "120px"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.typeStorageTree(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.statusStorageTree(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.allocationStorageTree(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.interfaceStorageTree(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.creationDateStorageTree(), "100px"); //$NON-NLS-1$
