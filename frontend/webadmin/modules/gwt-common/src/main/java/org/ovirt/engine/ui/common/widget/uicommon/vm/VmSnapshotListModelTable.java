@@ -1,38 +1,36 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.snapshot.SnapshotsViewColumns;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
-import com.google.gwt.view.client.DefaultSelectionEventManager.EventTranslator;
-import com.google.gwt.view.client.DefaultSelectionEventManager.SelectAction;
+import java.util.HashMap;
 
 public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends AbstractModelBoundTableWidget<Snapshot, L> {
 
@@ -66,7 +64,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
         snapshotsTableContainer.add(table);
 
         // Create Snapshot information tab panel
-        vmSnapshotInfoPanel = new VmSnapshotInfoPanel(getModel(), constants, messages, templates);
+        vmSnapshotInfoPanel = new VmSnapshotInfoPanel(constants, messages, templates);
         snapshotInfoContainer.add(vmSnapshotInfoPanel);
     }
 
@@ -78,9 +76,9 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     @Override
     public void initTable(final CommonApplicationConstants constants) {
         getTable().enableColumnResizing();
+        getTable().setMultiSelectionDisabled(true);
 
         initActionButtons(constants);
-        disableActiveSnapshotRow();
         getModel().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -92,13 +90,30 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
         getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                Snapshot snapshot = (Snapshot) getModel().getSelectedItem();
-                if (snapshot != null && !getTable().getSelectionModel().isSelected(snapshot)) {
-                    getTable().getSelectionModel().setSelected(snapshot, true);
-                }
-                vmSnapshotInfoPanel.updatePanel(snapshot);
+                updateSnapshotInfo();
             }
         });
+    }
+
+    private void updateSnapshotInfo() {
+        final Snapshot snapshot = (Snapshot) getModel().getSelectedItem();
+        if (snapshot == null) {
+            return;
+        }
+
+        HashMap<Guid, SnapshotModel> snapshotsMap = getModel().getSnapshotsMap();
+        SnapshotModel snapshotModel = snapshotsMap.get(snapshot.getId());
+        vmSnapshotInfoPanel.updatePanel(snapshotModel != null ? snapshotModel : new SnapshotModel());
+
+        if (!getTable().getSelectionModel().isSelected(snapshot)) {
+            // first let list of items get updated, only then select item
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    getTable().getSelectionModel().setSelected(snapshot, true);
+                }
+            });
+        }
     }
 
     private void updateMemoryColumnVisibility() {
@@ -175,32 +190,6 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 }
             }
         });
-    }
-
-    private void disableActiveSnapshotRow() {
-        // Create a selection event manager (to disable 'current' snapshot selection)
-        DefaultSelectionEventManager<Snapshot> selectionEventManager =
-                DefaultSelectionEventManager.createCustomManager(new EventTranslator<Snapshot>() {
-                    @Override
-                    public boolean clearCurrentSelection(CellPreviewEvent<Snapshot> event) {
-                        return true;
-                    }
-
-                    @Override
-                    public SelectAction translateSelectionEvent(CellPreviewEvent<Snapshot> event) {
-                        if (event.getValue().getType() == SnapshotType.ACTIVE) {
-                            return SelectAction.IGNORE;
-                        }
-
-                        return SelectAction.DEFAULT;
-                    }
-                });
-
-        // Set selection mode, disable multiselection and first row ('current' snapshot)
-        OrderedMultiSelectionModel<Snapshot> selectionModel = getTable().getSelectionModel();
-        selectionModel.setDisabledRows(0);
-        getTable().setTableSelectionModel(selectionModel, selectionEventManager);
-        getTable().setMultiSelectionDisabled(true);
     }
 
 }

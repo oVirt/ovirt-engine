@@ -1,17 +1,15 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.view.client.NoSelectionModel;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -23,19 +21,14 @@ import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.view.client.NoSelectionModel;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
@@ -43,20 +36,16 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     private final CommonApplicationMessages messages;
     private final CommonApplicationTemplates templates;
 
-    private VmSnapshotListModel vmSnapshotListModel;
-
     private VmSnapshotInfoGeneral generalForm;
     private EntityModelCellTable<ListModel> disksTable;
     private EntityModelCellTable<ListModel> nicsTable;
     private EntityModelCellTable<ListModel> appsTable;
 
-    public VmSnapshotInfoPanel(VmSnapshotListModel vmSnapshotListModel,
-            CommonApplicationConstants constants,
+    public VmSnapshotInfoPanel(CommonApplicationConstants constants,
             CommonApplicationMessages messages,
             CommonApplicationTemplates templates) {
         super(20, Unit.PX);
 
-        this.vmSnapshotListModel = vmSnapshotListModel;
         this.constants = constants;
         this.messages = messages;
         this.templates = templates;
@@ -80,21 +69,13 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         add(new ScrollPanel(appsTable), constants.applicationsLabel());
     }
 
-    public void updatePanel(Snapshot snapshot) {
-        HashMap<Guid, SnapshotModel> snapshotsMap = vmSnapshotListModel.getSnapshotsMap();
-        Guid snapshotId = snapshot != null ? snapshot.getId() : null;
-        final SnapshotModel snapshotModel = snapshotsMap.get(snapshotId);
-
-        updateTabsData(snapshotModel);
-
-        if (!(Boolean) snapshotModel.getIsPropertiesUpdated().getEntity()) {
-            snapshotModel.getIsPropertiesUpdated().getEntityChangedEvent().addListener(new IEventListener() {
-                @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    updateTabsData(snapshotModel);
-                }
-            });
-        }
+    public void updatePanel(final SnapshotModel snapshotModel) {
+        snapshotModel.updateVmConfiguration(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                updateTabsData(snapshotModel);
+            }
+        });
     }
 
     private void addStyle() {

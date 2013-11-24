@@ -196,8 +196,6 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
-    private boolean isEntityChanged;
-
     public VmSnapshotListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
@@ -214,7 +212,6 @@ public class VmSnapshotListModel extends SearchableListModel
         getCanSelectSnapshot().setEntity(true);
 
         setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
-        getSnapshotsMap().put(null, new SnapshotModel());
 
         if (getCustomPropertiesKeysList() == null) {
             AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
@@ -258,10 +255,10 @@ public class VmSnapshotListModel extends SearchableListModel
 
         super.setItems(sortedSnapshots);
 
-        if (isEntityChanged && sortedSnapshots.size() > 1) {
-            setSelectedItem(sortedSnapshots.get(1));
+        // Try to select the last created snapshot (fallback to active snapshot)
+        if (getSelectedItem() == null) {
+            setSelectedItem(sortedSnapshots.size() > 1 ? sortedSnapshots.get(1) : sortedSnapshots.get(0));
         }
-        isEntityChanged = false;
 
         updateActionAvailability();
     }
@@ -281,7 +278,6 @@ public class VmSnapshotListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            isEntityChanged = true;
             getSearchCommand().execute();
         }
     }
@@ -303,11 +299,6 @@ public class VmSnapshotListModel extends SearchableListModel
     {
         super.onSelectedItemChanged();
         updateActionAvailability();
-
-        if (getSelectedItem() != null) {
-            Snapshot snapshot = ((Snapshot) getSelectedItem());
-            updateVmConfigurationBySnapshot(snapshot.getId());
-        }
     }
 
     @Override
@@ -742,12 +733,6 @@ public class VmSnapshotListModel extends SearchableListModel
             }
         }
         return null;
-    }
-
-    public void updateVmConfigurationBySnapshot(Guid snapshotId)
-    {
-        SnapshotModel snapshotModel = snapshotsMap.get(snapshotId);
-        snapshotModel.updateVmConfiguration();
     }
 
     protected void updateIsCloneVmSupported()

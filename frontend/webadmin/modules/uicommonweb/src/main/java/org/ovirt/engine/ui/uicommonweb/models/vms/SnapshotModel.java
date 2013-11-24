@@ -121,18 +121,6 @@ public class SnapshotModel extends EntityModel
         memory = value;
     }
 
-    private EntityModel isPropertiesUpdated;
-
-    public EntityModel getIsPropertiesUpdated()
-    {
-        return isPropertiesUpdated;
-    }
-
-    public void setIsPropertiesUpdated(EntityModel value)
-    {
-        isPropertiesUpdated = value;
-    }
-
     private boolean validateByVmSnapshots;
 
     public boolean isValidateByVmSnapshots() {
@@ -171,9 +159,6 @@ public class SnapshotModel extends EntityModel
         setDisks(new ArrayList<DiskImage>());
         setNics(new ArrayList<VmNetworkInterface>());
         setApps(new ArrayList<String>());
-
-        setIsPropertiesUpdated(new EntityModel());
-        getIsPropertiesUpdated().setEntity(false);
     }
 
     @Override
@@ -227,7 +212,7 @@ public class SnapshotModel extends EntityModel
         }), vm.getId());
     }
 
-    public void updateVmConfiguration()
+    public void updateVmConfiguration(final INewAsyncCallback onUpdateAsyncCallback)
     {
         Snapshot snapshot = ((Snapshot) getEntity());
 
@@ -244,9 +229,9 @@ public class SnapshotModel extends EntityModel
                     snapshotModel.setNics(vm.getInterfaces());
                     snapshotModel.setApps(Arrays.asList(snapshot.getAppList() != null ?
                             snapshot.getAppList().split(",") : new String[] {})); //$NON-NLS-1$
-
-                    snapshotModel.getIsPropertiesUpdated().setEntity(true);
                 }
+
+                onUpdateAsyncCallback.onSuccess(snapshotModel, null);
             }
         }), snapshot.getId());
     }
