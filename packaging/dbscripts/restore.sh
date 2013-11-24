@@ -13,23 +13,23 @@ source ./dbcustomfunctions.sh
 set_defaults
 
 usage() {
-	printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] -u USERNAME -d DATABASE -f FILE [-o] \n"
-        printf "This script must run with a DB engine user credentials"
-	printf "\n"
-	printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
-	printf "\t-p PORT       - The database port for the database       (def. ${PORT})\n"
-	printf "\t-u USERNAME   - The username for the database            (def. engine)\n"
-	printf "\t-d DATABASE   - The database name, this must match the db name recorded in the backup file.\n"
-	printf "\t-f File       - Backup file name to restore from. ${FILE}\n"
-	printf "\t-o            - Omit upgrade step\n"
-	printf "\t-h            - This help text.\n"
-	printf "\n"
-	printf "for more options please run pg_restore --help\n"
-	printf "\nThe recommended way for restoring your database is.\n"
-	printf "\t1) Backup current database with backup.sh\n"
-	printf "\t2) Drop existing from root user by : su - postgres -c \"psql -d template1 -c \"drop database <db>;\"\" \n"
-	printf "\t3) Create a new blank db with the same name by:  su - postgres -c \"psql -d template1 -c \"create database <db> owner engine;\"\".\n"
-	printf "\t4) Run restore.sh and give new database instance name as the target\n"
+    cat << __EOF__
+Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] -u USERNAME -d DATABASE -f FILE [-o]
+    This script must run with a DB engine user credentials.
+    -s SERVERNAME - The database servername for the database (def. ${SERVERNAME}).
+    -p PORT       - The database port for the database       (def. ${PORT}).
+    -u USERNAME   - The username for the database            (def. engine).
+    -d DATABASE   - The database name, this must match the db name recorded in the backup file.
+    -f File       - Backup file name to restore from ${FILE}.
+    -o            - Omit upgrade step.
+    -h            - This help text.
+    for more options please run pg_restore --help
+    The recommended way for restoring your database is.
+    1) Backup current database with backup.sh.
+    2) Drop existing from root user by : su - postgres -c "psql -d template1 -c 'drop database engine;'"
+    3) Create a new blank db with the same name by:  su - postgres -c "psql -d template1 -c 'create database engine owner engine;'"
+    4) Run restore.sh and give new database instance name as the target.
+__EOF__
 	popd > /dev/null
         exit $ret
 }
