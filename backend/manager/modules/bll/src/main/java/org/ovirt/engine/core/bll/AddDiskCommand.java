@@ -153,6 +153,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         // vm agnostic checks
         returnValue =
                 validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive()) &&
+                !isShareableDiskOnGlusterDomain() &&
                 checkImageConfiguration() &&
                 hasFreeSpace(getStorageDomain()) &&
                 checkExceedingMaxBlockDiskSize() &&
@@ -169,6 +170,15 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         return returnValue;
+    }
+
+    private boolean isShareableDiskOnGlusterDomain() {
+        if (getParameters().getDiskInfo().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
+            return true;
+        }
+
+        return false;
     }
 
     private boolean canAddShareableDisk() {

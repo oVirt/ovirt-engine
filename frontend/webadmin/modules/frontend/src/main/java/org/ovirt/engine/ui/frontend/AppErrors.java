@@ -355,6 +355,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following VM's activated disks are disk snapshots: \n ${disksInfo}. \nPlease deactivate them and try again.")
     String ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Shareable disks are not supported on Gluster domains.")
+    String ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN();
+
     @DefaultStringValue("Cannot ${action} ${type}: The following disks are locked: ${diskAliases}. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_DISKS_LOCKED();
 

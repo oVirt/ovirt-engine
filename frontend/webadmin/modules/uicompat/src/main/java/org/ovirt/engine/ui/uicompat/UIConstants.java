@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
 
+import com.google.gwt.i18n.client.Constants;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
@@ -2075,5 +2076,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Manage Policy Units")
     String managePolicyUnits();
+
+    @Constants.DefaultStringValue("For data integrity make sure that the server is configured with Quorum (both client and server Quorum)")
+    String glusterDomainConfigurationMessage();
 }
 

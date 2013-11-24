@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class GlusterStorageModel extends Model implements IStorageModel {
@@ -74,6 +75,10 @@ public class GlusterStorageModel extends Model implements IStorageModel {
 
     private void setMountOptions(EntityModel value) {
         mountOptions = value;
+    }
+
+    public String getConfigurationMessage() {
+        return ConstantsManager.getInstance().getConstants().glusterDomainConfigurationMessage();
     }
 
 
