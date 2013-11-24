@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -315,6 +316,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     tempVar.setForceOverride(getParameters().getForceOverride());
                     tempVar.setImportEntity(true);
                     tempVar.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, containerID));
+                    tempVar.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
                     for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
                         if (diskGuidList.get(i).equals(diskImage.getId())) {
                             tempVar.setQuotaId(diskImage.getQuotaId());
