@@ -32,6 +32,7 @@ import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder.Notif
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
 import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
+import org.ovirt.engine.core.notifier.utils.sender.mail.MessageHelper;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.db.DbUtils;
 
@@ -408,7 +409,7 @@ public class NotificationService implements Runnable {
         List<EventAuditLogSubscriber> failedQueriesEventSubscribers = new LinkedList<>();
         for (String email:emailRecipients.split(",")){
             EventAuditLogSubscriber eals = new EventAuditLogSubscriber();
-            eals.setevent_type(0);
+            eals.setevent_type(MessageHelper.MessageType.alertMessage.getEventType());
             eals.setevent_up_name("DATABASE_UNREACHABLE");
             eals.setmethod_id(EventNotificationMethods.EMAIL.getValue());
             eals.setmethod_address(StringUtils.strip(email));
