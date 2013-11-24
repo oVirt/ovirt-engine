@@ -344,7 +344,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     public void setPmOptions(String value) {
         pmOptions = value;
         // set pmOptionsMap value content to match the given string.
-        pmOptionsMap = PmOptionsStringToMap(value);
+        pmOptionsMap = pmOptionsStringToMap(value);
     }
 
     public HashMap<String, String> getPmOptionsMap() {
@@ -353,7 +353,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setPmOptionsMap(HashMap<String, String> value) {
         pmOptionsMap = value;
-        pmOptions = PmOptionsMapToString(value);
+        pmOptions = pmOptionsMapToString(value);
     }
 
     public boolean isPmEnabled() {
@@ -418,7 +418,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     public void setPmSecondaryOptions(String value) {
         pmSecondaryOptions = value;
         // set pmSecondaryOptionsMap value content to match the given string.
-        pmSecondaryOptionsMap = PmOptionsStringToMap(value);
+        pmSecondaryOptionsMap = pmOptionsStringToMap(value);
     }
 
     public boolean isPmSecondaryConcurrent() {
@@ -435,7 +435,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setPmSecondaryOptionsMap(HashMap<String, String> value) {
         pmSecondaryOptionsMap = value;
-        pmSecondaryOptions = PmOptionsMapToString(value);
+        pmSecondaryOptions = pmOptionsMapToString(value);
     }
 
     public long getOtpValidity() {
@@ -476,7 +476,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
      * @param map
      * @return
      */
-    public static String PmOptionsMapToString(HashMap<String, String> map) {
+    public static String pmOptionsMapToString(HashMap<String, String> map) {
         String result = "";
         String seperator = "";
         Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
@@ -501,7 +501,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
      * @param pmOptions String representation of the map
      * @return A parsed map
      */
-    public static HashMap<String, String> PmOptionsStringToMap(String pmOptions) {
+    public static HashMap<String, String> pmOptionsStringToMap(String pmOptions) {
         HashMap<String, String> map = new HashMap<String, String>();
         if (pmOptions == null || pmOptions.equals("")) {
             return map;

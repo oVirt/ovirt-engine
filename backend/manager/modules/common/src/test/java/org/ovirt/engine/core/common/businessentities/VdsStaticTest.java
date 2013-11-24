@@ -10,7 +10,7 @@ public class VdsStaticTest {
     @Test
     public void emptyStringMakesEmptyMap() {
         final String empty = "";
-        Map<String, String> map = VdsStatic.PmOptionsStringToMap(empty);
+        Map<String, String> map = VdsStatic.pmOptionsStringToMap(empty);
         mapIsEmpty(map);
     }
 

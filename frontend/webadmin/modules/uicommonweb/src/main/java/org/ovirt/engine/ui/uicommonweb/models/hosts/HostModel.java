@@ -1616,7 +1616,7 @@ public abstract class HostModel extends Model
         getPmUserName().setEntity(vds.getPmUser());
         getPmPassword().setEntity(vds.getPmPassword());
         getPmType().setSelectedItem(vds.getPmType());
-        setPmOptionsMap(VdsStatic.PmOptionsStringToMap(vds.getPmOptions()));
+        setPmOptionsMap(VdsStatic.pmOptionsStringToMap(vds.getPmOptions()));
 
         // Set secondary PM parameters.
         getPmSecondaryIp().setEntity(vds.getPmSecondaryIp());
