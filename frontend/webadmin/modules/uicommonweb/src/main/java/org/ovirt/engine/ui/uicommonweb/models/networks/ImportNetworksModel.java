@@ -131,13 +131,15 @@ public class ImportNetworksModel extends Model {
             public void onSuccess(Object model, Object returnValue) {
                 Map<Network, Set<Guid>> externalNetworkToDataCenters = (Map<Network, Set<Guid>>) returnValue;
                 List<ExternalNetwork> items = new LinkedList<ExternalNetwork>();
-                for (Network network : externalNetworkToDataCenters.keySet()) {
+                for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
+                    Network network = entry.getKey();
+                    Set<Guid> attachedDataCenters = entry.getValue();
+
                     ExternalNetwork externalNetwork = new ExternalNetwork();
                     externalNetwork.setNetwork(network);
                     externalNetwork.setDisplayName(network.getName());
                     externalNetwork.setPublicUse(true);
 
-                    Set<Guid> attachedDataCenters = externalNetworkToDataCenters.get(network);
                     List<StoragePool> availableDataCenters = new LinkedList<StoragePool>();
                     for (StoragePool dc : dataCenters) {
                         if (!attachedDataCenters.contains(dc.getId())) {
