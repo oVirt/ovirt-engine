@@ -45,12 +45,12 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         updateParameters();
 
         if (!moveDiskParametersList.isEmpty()) {
-            vdcReturnValues.addAll(Backend.getInstance().RunMultipleActions(VdcActionType.MoveOrCopyDisk,
+            vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(VdcActionType.MoveOrCopyDisk,
                     getParametersArrayList(moveDiskParametersList), false));
         }
 
         if (!liveMigrateVmDisksParametersList.isEmpty()) {
-            vdcReturnValues.addAll(Backend.getInstance().RunMultipleActions(VdcActionType.LiveMigrateVmDisks,
+            vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(VdcActionType.LiveMigrateVmDisks,
                     getParametersArrayList(liveMigrateVmDisksParametersList), false));
         }
 

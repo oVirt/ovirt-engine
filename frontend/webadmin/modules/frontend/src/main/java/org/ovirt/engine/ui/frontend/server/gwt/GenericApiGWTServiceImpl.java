@@ -110,7 +110,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         }
 
         ArrayList<VdcReturnValueBase> returnValues =
-                getBackend().RunMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass);
+                getBackend().runMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass);
 
         return returnValues;
     }

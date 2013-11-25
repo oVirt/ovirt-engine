@@ -40,7 +40,7 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
                     return Backend.getInstance().runInternalMultipleActions(VdcActionType.AddStoragePoolWithStorages,
                             parameters);
                 } else {
-                    return Backend.getInstance().RunMultipleActions(VdcActionType.AddStoragePoolWithStorages,
+                    return Backend.getInstance().runMultipleActions(VdcActionType.AddStoragePoolWithStorages,
                             parameters, false);
                 }
             } else {

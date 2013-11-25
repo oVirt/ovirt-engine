@@ -503,7 +503,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
+    public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
