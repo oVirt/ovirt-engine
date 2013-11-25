@@ -38,7 +38,7 @@ public class OsValueAutoCompleter implements IConditionValueAutoCompleter {
 
     @Override
     public boolean validate(String text) {
-        text = text.trim().toLowerCase();
+        text = text.trim();
         for (String os : map.values()) {
             if (os.equals(text)) {
                 return true;
