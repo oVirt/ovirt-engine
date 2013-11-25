@@ -64,7 +64,7 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
     }
 
     protected VdcQueryReturnValue getAllDisksByStorageDomain(Guid domainId) {
-        return getBackend().RunQuery(VdcQueryType.GetAllDisksByStorageDomainId,
+        return getBackend().runQuery(VdcQueryType.GetAllDisksByStorageDomainId,
                 new IdQueryParameters(domainId));
     }
 

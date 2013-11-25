@@ -154,12 +154,12 @@ public class BackendExportDomainDiskResourceTest
             }
         }
         if(queryClass == GetPermissionsForObjectParameters.class) {
-            expect(backend.RunQuery(eq(query),
+            expect(backend.runQuery(eq(query),
                 eqQueryParams(queryClass,
                         addSession(queryNames),
                         addSession(queryValues)))).andReturn(queryResult).anyTimes();
         } else {
-            expect(backend.RunQuery(eq(query),
+            expect(backend.runQuery(eq(query),
                 eqQueryParams(queryClass,
                         addSession(queryNames),
                         addSession(queryValues)))).andReturn(queryResult).anyTimes();

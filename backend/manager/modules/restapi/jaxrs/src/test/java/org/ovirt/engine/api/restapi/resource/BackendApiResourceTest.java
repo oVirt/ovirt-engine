@@ -416,8 +416,8 @@ public class BackendApiResourceTest extends Assert {
     protected void setUpGetSystemVersionExpectations() {
         VdcQueryReturnValue queryResult = createMock(VdcQueryReturnValue.class);
 
-        expect(backend.RunQuery(eq(VdcQueryType.GetConfigurationValue), queryVdcVersionParams())).andReturn(queryResult);
-        expect(backend.RunQuery(eq(VdcQueryType.GetConfigurationValue),
+        expect(backend.runQuery(eq(VdcQueryType.GetConfigurationValue), queryVdcVersionParams())).andReturn(queryResult);
+        expect(backend.runQuery(eq(VdcQueryType.GetConfigurationValue),
                 queryProductRPMVersionParams())).andReturn(queryResult);
 
         expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
@@ -427,7 +427,7 @@ public class BackendApiResourceTest extends Assert {
     protected void setUpGetSystemStatisticsExpectations() {
         VdcQueryReturnValue queryResult = createMock(VdcQueryReturnValue.class);
 
-        expect(backend.RunQuery(eq(VdcQueryType.GetSystemStatistics), queryParams())).andReturn(queryResult);
+        expect(backend.runQuery(eq(VdcQueryType.GetSystemStatistics), queryParams())).andReturn(queryResult);
 
         expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
         expect(queryResult.getReturnValue()).andReturn(setUpStats()).anyTimes();

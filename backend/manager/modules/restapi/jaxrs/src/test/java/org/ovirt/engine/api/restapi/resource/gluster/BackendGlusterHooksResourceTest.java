@@ -184,11 +184,11 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
                 expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
                 setUpL10nExpectations((String)failure);
             } else if (failure instanceof Exception) {
-                expect(backend.RunQuery(eq(VdcQueryType.GetGlusterHooks), anyObject(GlusterParameters.class))).andThrow((Exception) failure).anyTimes();
+                expect(backend.runQuery(eq(VdcQueryType.GetGlusterHooks), anyObject(GlusterParameters.class))).andThrow((Exception) failure).anyTimes();
                 return;
             }
         }
-        expect(backend.RunQuery(eq(VdcQueryType.GetGlusterHooks), anyObject(GlusterParameters.class))).andReturn(
+        expect(backend.runQuery(eq(VdcQueryType.GetGlusterHooks), anyObject(GlusterParameters.class))).andReturn(
                 queryResult).anyTimes();
 
     }

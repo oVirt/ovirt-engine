@@ -422,7 +422,7 @@ public class BackendHostResourceTest
         VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
         queryResult.setSucceeded(true);
 
-        expect(backend.RunQuery(eq(VdcQueryType.DiscoverSendTargets),
+        expect(backend.runQuery(eq(VdcQueryType.DiscoverSendTargets),
                                 eqQueryParams(DiscoverSendTargetsQueryParameters.class,
                                               addSession("VdsId", "Connection.connection", "Connection.port", "Connection.user_name", "Connection.password"),
                                               addSession(GUIDS[0], ISCSI_SERVER_ADDRESS, ISCSI_PORT_STRING, ISCSI_USER_NAME, ISCSI_USER_PASS)

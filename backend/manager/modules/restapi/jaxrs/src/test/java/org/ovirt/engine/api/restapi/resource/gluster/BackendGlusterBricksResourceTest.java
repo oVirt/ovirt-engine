@@ -395,12 +395,12 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                expect(backend.RunQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andThrow((Exception) failure)
+                expect(backend.runQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andThrow((Exception) failure)
                         .anyTimes();
                 return;
             }
         }
-        expect(backend.RunQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andReturn(
+        expect(backend.runQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andReturn(
                 queryResult);
     }
 

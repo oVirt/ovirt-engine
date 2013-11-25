@@ -207,7 +207,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      */
     protected Object runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
         initQueryParams(queryParams, sessionId);
-        VdcQueryReturnValue result = backend.RunQuery(queryType, queryParams);
+        VdcQueryReturnValue result = backend.runQuery(queryType, queryParams);
         return result.getSucceeded() ? result.getReturnValue() : null;
     }
 

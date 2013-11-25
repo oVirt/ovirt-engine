@@ -270,12 +270,12 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
                 expect(queryResult.getExceptionString()).andReturn((String) failure).anyTimes();
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                expect(backend.RunQuery(eq(listQueryType),
+                expect(backend.runQuery(eq(listQueryType),
                         anyObject(listQueryParamsClass))).andThrow((Exception) failure).anyTimes();
                 return;
             }
         }
-        expect(backend.RunQuery(eq(listQueryType), anyObject(listQueryParamsClass))).andReturn(
+        expect(backend.runQuery(eq(listQueryType), anyObject(listQueryParamsClass))).andReturn(
                 queryResult);
     }
 

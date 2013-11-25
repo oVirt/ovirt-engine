@@ -78,7 +78,7 @@ public class BackendResource extends BaseBackendResource {
 
     protected VdcQueryReturnValue runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams) {
         queryParams.setFiltered(isFiltered());
-        return backend.RunQuery(queryType, sessionize(queryParams));
+        return backend.runQuery(queryType, sessionize(queryParams));
     }
 
     protected <T> T getEntity(Class<T> clz, VdcQueryType query, VdcQueryParametersBase queryParams, String identifier) {

@@ -65,9 +65,9 @@ public abstract class AbstractBackendWatchdogsResourceTest<R extends AbstractBac
                 expect(queryResult.getExceptionString()).andThrow((Exception) failure).anyTimes();
             }
         }
-        expect(backend.RunQuery(eq(VdcQueryType.Search), eqSearchParams(params))).andReturn(
+        expect(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).andReturn(
                 queryResult).anyTimes();
-        expect(backend.RunQuery(eq(VdcQueryType.GetWatchdog), EasyMock.anyObject(IdQueryParameters.class))).andReturn(
+        expect(backend.runQuery(eq(VdcQueryType.GetWatchdog), EasyMock.anyObject(IdQueryParameters.class))).andReturn(
                 queryResult).anyTimes();
 
         control.replay();

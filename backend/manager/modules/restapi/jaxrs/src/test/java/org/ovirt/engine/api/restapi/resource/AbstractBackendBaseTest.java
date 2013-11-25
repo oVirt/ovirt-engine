@@ -174,7 +174,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Class<? extends VdcQueryParametersBase> clz, String[] names, Object[] values, E entity)
             throws Exception {
         VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(backend.RunQuery(eq(query), eqQueryParams(clz, addSession(names), addSession(values)))).andReturn(
+        expect(backend.runQuery(eq(query), eqQueryParams(clz, addSession(names), addSession(values)))).andReturn(
                 queryResult);
         expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
         expect(queryResult.getReturnValue()).andReturn(entity).anyTimes();
@@ -185,7 +185,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             E entity) throws Exception {
         VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
         SearchParameters params = new SearchParameters(query, type);
-        expect(backend.RunQuery(eq(VdcQueryType.Search),
+        expect(backend.runQuery(eq(VdcQueryType.Search),
                 eqSearchParams(params))).andReturn(queryResult);
         expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
         List<E> entities = new ArrayList<E>();
@@ -220,12 +220,12 @@ public abstract class AbstractBackendBaseTest extends Assert {
             }
         }
         if(queryClass == GetPermissionsForObjectParameters.class) {
-            expect(backend.RunQuery(eq(query),
+            expect(backend.runQuery(eq(query),
                 eqQueryParams(queryClass,
                         addSession(queryNames),
                         addSession(queryValues)))).andReturn(queryResult).anyTimes();
         } else {
-            expect(backend.RunQuery(eq(query),
+            expect(backend.runQuery(eq(query),
                 eqQueryParams(queryClass,
                         addSession(queryNames),
                         addSession(queryValues)))).andReturn(queryResult);
@@ -543,7 +543,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         if (asyncTasks != null) {
             expect(result.getVdsmTaskIdList()).andReturn(asyncTasks).anyTimes();
             expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
-            expect(backend.RunQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+            expect(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                     eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
                             addSession(new String[]{}),
                             addSession(new Object[]{})))).andReturn(monitorResult);
@@ -559,7 +559,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Job jobMock = control.createMock(org.ovirt.engine.core.common.job.Job.class);
             expect(jobMock.getStatus()).andReturn(jobStatus);
             expect(monitorResult.getReturnValue()).andReturn(jobMock).anyTimes();
-            expect(backend.RunQuery(eq(VdcQueryType.GetJobByJobId),
+            expect(backend.runQuery(eq(VdcQueryType.GetJobByJobId),
                     eqQueryParams(IdQueryParameters.class,
                             addSession(new String[]{"Id"}),
                             addSession(new Object[]{jobId})))).andReturn(monitorResult);

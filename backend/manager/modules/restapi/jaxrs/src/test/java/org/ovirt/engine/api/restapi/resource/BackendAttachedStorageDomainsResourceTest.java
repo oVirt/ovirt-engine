@@ -232,7 +232,7 @@ public class BackendAttachedStorageDomainsResourceTest
         String[] paramNames = new String[] { "ServerConnectionId" };
         Object[] paramValues = new Object[] { GUIDS[0].toString() };
         VdcQueryReturnValue queryResult = control.createMock(VdcQueryReturnValue.class);
-        expect(backend.RunQuery(eq(VdcQueryType.GetStorageServerConnectionById), eqQueryParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
+        expect(backend.runQuery(eq(VdcQueryType.GetStorageServerConnectionById), eqQueryParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
         .andReturn(queryResult).anyTimes();
         expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
         expect(queryResult.getReturnValue()).andReturn(setUpStorageServerConnection()).anyTimes();

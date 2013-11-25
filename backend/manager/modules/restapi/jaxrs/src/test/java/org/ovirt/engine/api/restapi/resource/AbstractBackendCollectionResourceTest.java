@@ -192,7 +192,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                 expect(queryResult.getExceptionString()).andThrow((Exception) failure).anyTimes();
             }
         }
-        expect(backend.RunQuery(eq(VdcQueryType.Search), eqSearchParams(params))).andReturn(
+        expect(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).andReturn(
                 queryResult);
         control.replay();
     }
@@ -259,7 +259,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
             VdcQueryReturnValue monitorResult = control.createMock(VdcQueryReturnValue.class);
             expect(monitorResult.getSucceeded()).andReturn(success).anyTimes();
             expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
-            expect(backend.RunQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+            expect(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                                     eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
                                                   addSession(new String[]{}),
                                                   addSession(new Object[]{})))).andReturn(monitorResult);

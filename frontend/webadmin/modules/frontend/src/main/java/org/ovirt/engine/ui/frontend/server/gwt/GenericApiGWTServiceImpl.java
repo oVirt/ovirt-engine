@@ -56,7 +56,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
         debugQuery(search, searchParameters);
         searchParameters.setSessionId(getSessionId());
-        return getBackend().RunQuery(search, searchParameters);
+        return getBackend().runQuery(search, searchParameters);
     }
 
     @Override

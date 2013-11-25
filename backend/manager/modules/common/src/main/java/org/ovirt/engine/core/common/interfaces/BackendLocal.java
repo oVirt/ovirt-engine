@@ -14,7 +14,7 @@ public interface BackendLocal {
 
     VDSBrokerFrontend getResourceManager();
 
-    VdcQueryReturnValue RunQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
+    VdcQueryReturnValue runQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 
     public VdcReturnValueBase endAction(VdcActionType actionType, VdcActionParametersBase parameters);
 
