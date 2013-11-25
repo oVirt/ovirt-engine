@@ -46,8 +46,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> extends CommandBase<T> {
-    private static final long serialVersionUID = -7266894047095142486L;
-
     private Disk diskToScan;
     private Guid vdsInPool, storagePoolId;
     private VM diskVm;
