@@ -28,7 +28,7 @@ public interface BackendLocal {
 
     void initialize();
 
-    VdcQueryReturnValue RunPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
+    VdcQueryReturnValue runPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 
     VdcReturnValueBase login(LoginUserParameters parameters);
 

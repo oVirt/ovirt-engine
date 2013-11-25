@@ -137,7 +137,7 @@ public class LoginValidatorTest extends Assert {
             VdcQueryReturnValue appModeResult = new VdcQueryReturnValue();
             appModeResult.setReturnValue(255);
             appModeResult.setSucceeded(true);
-            expect(backend.RunPublicQuery(eq(VdcQueryType.GetConfigurationValue),
+            expect(backend.runPublicQuery(eq(VdcQueryType.GetConfigurationValue),
                     eqQueryParams(GetConfigurationValueParameters.class, new String[] { "ConfigValue" },
                             new Object[] { ConfigurationValues.ApplicationMode }))).andReturn(appModeResult);
             current.set(user);
@@ -151,7 +151,7 @@ public class LoginValidatorTest extends Assert {
         VdcQueryReturnValue queryReturnValue = control.createMock(VdcQueryReturnValue.class);
         Principal principal = new Principal(USER, SECRET, DOMAIN);
         DbUser user = control.createMock(DbUser.class);
-        expect(backend.RunPublicQuery(eq(VdcQueryType.ValidateSession), eqQueryParams(VdcQueryParametersBase.class,
+        expect(backend.runPublicQuery(eq(VdcQueryType.ValidateSession), eqQueryParams(VdcQueryParametersBase.class,
                 new String[] { "SessionId" },
                 new Object[] { sessionId }) )).andReturn(queryReturnValue);
         expect(queryReturnValue.getSucceeded()).andReturn(success).anyTimes();

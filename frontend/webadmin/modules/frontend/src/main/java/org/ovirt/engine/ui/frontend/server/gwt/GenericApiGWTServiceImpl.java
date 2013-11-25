@@ -62,9 +62,9 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     @Override
     public VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType,
             VdcQueryParametersBase params) {
-        log.debug("Server: RunPublicQuery invoked! " + queryType); //$NON-NLS-1$
+        log.debug("Server: runPublicQuery invoked! " + queryType); //$NON-NLS-1$
         debugQuery(queryType, params);
-        return getBackend().RunPublicQuery(queryType, params);
+        return getBackend().runPublicQuery(queryType, params);
     }
 
     @Override

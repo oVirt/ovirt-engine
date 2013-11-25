@@ -79,7 +79,7 @@ public class WelcomeServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
         ServletException {
         request.setAttribute(LOCALE_KEYS, LocaleFilter.getLocaleKeys());
-        String oVirtVersion = backend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
+        String oVirtVersion = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
                         ConfigCommon.defaultConfigurationVersion)).getReturnValue();
         request.setAttribute(VERSION, oVirtVersion != null ? oVirtVersion : "myVersion");

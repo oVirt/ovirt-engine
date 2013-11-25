@@ -91,7 +91,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         Principal principal = null;
         VdcQueryParametersBase params = new VdcQueryParametersBase();
         params.setSessionId(sessionId);
-        VdcQueryReturnValue queryReturnValue = backend.RunPublicQuery(VdcQueryType.ValidateSession, params);
+        VdcQueryReturnValue queryReturnValue = backend.runPublicQuery(VdcQueryType.ValidateSession, params);
         if (queryReturnValue != null) {
             DbUser user = queryReturnValue.getReturnValue();
             if (user != null) {
@@ -118,7 +118,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
     }
 
     private ApplicationMode getApplicationMode() {
-        VdcQueryReturnValue result = backend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
+        VdcQueryReturnValue result = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode, ConfigCommon.defaultConfigurationVersion));
         ApplicationMode appMode = null;
         if (result.getSucceeded())

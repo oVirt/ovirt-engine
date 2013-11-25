@@ -190,7 +190,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         verify(mockConfigQueryParams).setSessionId(sessionId);
         verify(mockConfigQueryParams).setHttpSessionId(sessionId);
         verify(mockConfigQueryParams).setFiltered(testServlet.filterQueries());
-        verify(mockBackend).RunPublicQuery(queryType, mockConfigQueryParams);
+        verify(mockBackend).runPublicQuery(queryType, mockConfigQueryParams);
     }
 
     @Test
@@ -235,7 +235,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(Integer.valueOf(255));
-        when(mockBackend.RunPublicQuery(eq(VdcQueryType.GetConfigurationValue),
+        when(mockBackend.runPublicQuery(eq(VdcQueryType.GetConfigurationValue),
                 isA(GetConfigurationValueParameters.class))).thenReturn(returnValue);
     }
 
