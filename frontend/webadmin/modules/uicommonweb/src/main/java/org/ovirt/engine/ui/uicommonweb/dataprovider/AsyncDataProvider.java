@@ -3420,11 +3420,17 @@ public final class AsyncDataProvider {
 
     public static Integer getMaxVmNameLengthWin() {
         Integer maxVmNameLengthWindows = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthWindows);
-        return maxVmNameLengthWindows == null ? 15 : maxVmNameLengthWindows;
+        if (maxVmNameLengthWindows == null) {
+            return 15;
+        }
+        return maxVmNameLengthWindows;
     }
 
     public static Integer getMaxVmNameLengthNonWin() {
         Integer maxVmNameLengthNonWindows = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthNonWindows);
-        return maxVmNameLengthNonWindows == null ? 64 : maxVmNameLengthNonWindows;
+        if (maxVmNameLengthNonWindows == null) {
+            return 64;
+        }
+        return maxVmNameLengthNonWindows;
     }
 }
