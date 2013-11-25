@@ -75,7 +75,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -86,7 +85,6 @@ import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
-import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -304,12 +302,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected BusinessEntitySnapshotDAO getBusinessEntitySnapshotDAO() {
         return DbFacade.getInstance().getBusinessEntitySnapshotDao();
     }
-
-
-    protected VmAndTemplatesGenerationsDAO getVmAndTemplatesGenerationsDAO() {
-        return DbFacade.getInstance().getVmAndTemplatesGenerationsDao();
-    }
-
 
     protected VdsSpmIdMapDAO getVdsSpmIdMapDAO() {
         return DbFacade.getInstance().getVdsSpmIdMapDao();
@@ -1090,10 +1082,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected Object getActionReturnValue() {
         return getReturnValue().getActionReturnValue();
-    }
-
-    public TimeSpan getTransactionTimeout() {
-        return new TimeSpan(1, 1, 0);
     }
 
     /**
