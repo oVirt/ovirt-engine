@@ -227,6 +227,16 @@ public abstract class AbstractDiskModel extends DiskModel
         this.sizeExtend = sizeExtend;
     }
 
+    private EntityModel<Boolean> isVirtioScsiEnabled;
+
+    public EntityModel<Boolean> getIsVirtioScsiEnabled() {
+        return isVirtioScsiEnabled;
+    }
+
+    public void setIsVirtioScsiEnabled(EntityModel<Boolean> virtioScsiEnabled) {
+        this.isVirtioScsiEnabled = virtioScsiEnabled;
+    }
+
     public String getHash() {
         return hash;
     }
@@ -297,6 +307,8 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setInternalAttachableDisks(new ListModel());
         setExternalAttachableDisks(new ListModel());
+
+        setIsVirtioScsiEnabled(new EntityModel<Boolean>());
     }
 
     public abstract boolean getIsNew();
@@ -525,14 +537,14 @@ public abstract class AbstractDiskModel extends DiskModel
             AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue1) {
-                    final boolean isVirtioScsiDisabled = Boolean.FALSE.equals(returnValue1);
+                    getIsVirtioScsiEnabled().setEntity(Boolean.TRUE.equals(returnValue1));
 
                     AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue2) {
                             ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) returnValue2;
 
-                            if (isVirtioScsiDisabled) {
+                            if (Boolean.FALSE.equals(getIsVirtioScsiEnabled().getEntity())) {
                                 diskInterfaces.remove(DiskInterface.VirtIO_SCSI);
                             }
 

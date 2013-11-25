@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -34,6 +35,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -170,6 +172,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @WithElementId("attachDisk")
     EntityModelCheckBoxEditor attachEditor;
 
+    @UiField(provided = true)
+    @Ignore
+    InfoIcon interfaceInfoIcon;
+
     @UiField
     @Ignore
     @WithElementId
@@ -235,7 +241,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                              boolean isLunDiskEnabled) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
         this.progressContent = createProgressContentWidget();
-        initManualWidgets();
+        initManualWidgets(constants, resources, templates);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -267,7 +273,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void initManualWidgets() {
+    private void initManualWidgets(CommonApplicationConstants constants,
+                                   CommonApplicationResources resources,
+                                   CommonApplicationTemplates templates) {
         storageDomainEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
 
         hostListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
@@ -306,6 +314,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         internalDiskTable = new EntityModelCellTable<ListModel>(true);
         externalDiskTable = new EntityModelCellTable<ListModel>(true);
+
+        interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()), resources);
     }
 
     private void initAttachPanelWidget() {
@@ -569,6 +579,22 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean isDirectLunDiskAvaialable = (Boolean) ((EntityModel) sender).getEntity();
                 externalDiskPanel.setVisible(isDirectLunDiskAvaialable);
+            }
+        });
+
+        disk.getIsVirtioScsiEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (disk.getVm() == null) {
+                    // not relevant for floating disks
+                    return;
+                }
+
+                boolean isVirtioScsiEnabled = Boolean.TRUE.equals(((EntityModel) sender).getEntity());
+                Version clusterVersion = disk.getVm().getVdsGroupCompatibilityVersion();
+
+                // Show the info icon if VirtIO-SCSI is supported by the cluster but disabled for the VM
+                interfaceInfoIcon.setVisible(clusterVersion.compareTo(Version.v3_3) >= 0 && !isVirtioScsiEnabled);
             }
         });
 
