@@ -60,7 +60,6 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.Snap
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -1040,11 +1039,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 }
             }
         }
-    }
-
-    protected List<tags> getTagsAttachedToObject() {
-        // tags_permissions_map
-        return new ArrayList<tags>();
     }
 
     protected boolean canDoAction() {

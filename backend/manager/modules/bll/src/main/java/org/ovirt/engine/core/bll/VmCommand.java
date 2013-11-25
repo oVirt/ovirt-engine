@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
@@ -95,11 +94,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Override
     protected String getDescription() {
         return getVmName();
-    }
-
-    @Override
-    protected List<tags> getTagsAttachedToObject() {
-        return getTagDao().getAllForVm((getParameters()).getVmId().toString());
     }
 
     // 26 PCI slots: 31 total minus 5 saved for qemu (Host Bridge, ISA Bridge,

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
@@ -236,12 +235,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     private static StoragePool fetchStoragePool(Guid storagePoolId) {
         return DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
-    }
-
-    @Override
-    protected List<tags> getTagsAttachedToObject() {
-        return DbFacade.getInstance().getTagDao()
-                .getAllForVmPools((getParameters().getVmPoolId()).toString());
     }
 
     @Override
