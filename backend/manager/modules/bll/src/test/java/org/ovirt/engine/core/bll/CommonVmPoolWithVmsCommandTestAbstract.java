@@ -223,14 +223,6 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         return storageDomain;
     }
 
-    private static List<Guid> mockStorageGuidList(List<StorageDomain> storageDomains) {
-        List<Guid> storageGuidList = new ArrayList<Guid>();
-        for (StorageDomain storageDomain : storageDomains) {
-            storageGuidList.add(storageDomain.getId());
-        }
-        return storageGuidList;
-    }
-
     protected List<StorageDomain> getStorageDomainList(int availableDiskSizeFirstDomain,
             int availableDiskSizeSecondDomain) {
         List<StorageDomain> storageDomainList = new ArrayList<StorageDomain>();
