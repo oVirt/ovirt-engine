@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -40,6 +42,9 @@ public class VmPoolMapper {
         if (model.isSetMaxUserVms()) {
             entity.setMaxAssignedVmsPerUser(model.getMaxUserVms());
         }
+        if (model.isSetDisplay() && model.getDisplay().isSetProxy()) {
+            entity.setSpiceProxy("".equals(model.getDisplay().getProxy()) ? null : model.getDisplay().getProxy());
+        }
         return entity;
     }
 
@@ -74,6 +79,12 @@ public class VmPoolMapper {
             model.getCluster().setId(entity.getVdsGroupId().toString());
         }
         model.setMaxUserVms(entity.getMaxAssignedVmsPerUser());
+        if (StringUtils.isNotBlank(entity.getSpiceProxy())) {
+            Display display = new Display();
+            display.setProxy(entity.getSpiceProxy());
+            model.setDisplay(display);
+        }
+
         return model;
     }
 }

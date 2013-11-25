@@ -1256,6 +1256,7 @@
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="trusted_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="ballooning_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>
@@ -2319,6 +2320,7 @@
       <xs:element ref="certificate" minOccurs="0" maxOccurs="1"/>
       <xs:element name="smartcard_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element name="keyboard_layout" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="proxy" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -2670,6 +2672,7 @@
           <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
           <xs:element name="prestarted_vms" type="xs:int" minOccurs="0"/>
           <xs:element name="max_user_vms" type="xs:int" minOccurs="0"/>
+          <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

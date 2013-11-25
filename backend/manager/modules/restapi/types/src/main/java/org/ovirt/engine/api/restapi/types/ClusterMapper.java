@@ -4,10 +4,12 @@ import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
 import java.util.LinkedHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.MemoryOverCommit;
 import org.ovirt.engine.api.model.MemoryPolicy;
@@ -90,6 +92,10 @@ public class ClusterMapper {
         if (model.isSetBallooningEnabled()) {
             entity.setEnableBallooning(model.isBallooningEnabled());
         }
+        if (model.isSetDisplay() && model.getDisplay().isSetProxy()) {
+            entity.setSpiceProxy("".equals(model.getDisplay().getProxy()) ? null : model.getDisplay().getProxy());
+        }
+
         return entity;
     }
 
@@ -127,6 +133,11 @@ public class ClusterMapper {
         model.setTunnelMigration(entity.isTunnelMigration());
         model.setTrustedService(entity.supportsTrustedService());
         model.setBallooningEnabled(entity.isEnableBallooning());
+        if (StringUtils.isNotBlank(entity.getSpiceProxy())) {
+            Display display = new Display();
+            display.setProxy(entity.getSpiceProxy());
+            model.setDisplay(display);
+        }
 
         return model;
     }
