@@ -833,6 +833,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.UNLABEL_NIC_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.SUBNET_REMOVED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.SUBNET_REMOVAL_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.SUBNET_ADDED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.SUBNET_ADDITION_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initExtrnalEvents() {

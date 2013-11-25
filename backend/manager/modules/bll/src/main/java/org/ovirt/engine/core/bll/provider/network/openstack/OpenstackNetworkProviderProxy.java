@@ -35,6 +35,7 @@ import com.woorea.openstack.quantum.model.NetworkForCreate;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
 import com.woorea.openstack.quantum.model.Subnet;
+import com.woorea.openstack.quantum.model.SubnetForCreate;
 import com.woorea.openstack.quantum.model.Subnets;
 
 public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
@@ -151,6 +152,23 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
+    public void addSubnet(ExternalSubnet subnet) {
+        com.woorea.openstack.quantum.model.Network externalNetwork = getExternalNetwork(subnet.getExternalNetwork());
+        SubnetForCreate subnetForCreate = new SubnetForCreate();
+        subnetForCreate.setCidr(subnet.getCidr());
+        subnetForCreate.setIpVersion(subnet.getIpVersion() == IpVersion.IPV6 ? 6 : 4);
+        subnetForCreate.setName(subnet.getName());
+        subnetForCreate.setNetworkId(externalNetwork.getId());
+        subnetForCreate.setTenantId(externalNetwork.getTenantId());
+
+        try {
+            getClient().subnets().create(subnetForCreate).execute();
+        } catch (RuntimeException e) {
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+        }
+    }
+
+    @Override
     public void removeSubnet(String id) {
         try {
             getClient().subnets().delete(id).execute();
@@ -214,7 +232,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             List<String> securityGroups = getSecurityGroups(vnicProfile);
             if (port == null) {
                 com.woorea.openstack.quantum.model.Network externalNetwork =
-                        getClient().networks().show(network.getProvidedBy().getExternalId()).execute();
+                        getExternalNetwork(network.getProvidedBy());
                 Port portForCreate = new Port();
                 portForCreate.setAdminStateUp(true);
                 portForCreate.setName(nic.getName());
@@ -244,6 +262,10 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         } catch (RuntimeException e) {
             throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
         }
+    }
+
+    private com.woorea.openstack.quantum.model.Network getExternalNetwork(ProviderNetwork providerNetwork) {
+        return getClient().networks().show(providerNetwork.getExternalId()).execute();
     }
 
     private boolean securityGroupsChanged(List<String> existingSecurityGroups, List<String> desiredSecurityGroups) {

@@ -46,6 +46,14 @@ public interface NetworkProviderProxy extends ProviderProxy {
     List<ExternalSubnet> getAllSubnets(ProviderNetwork network);
 
     /**
+     * Add the subnet to be managed by the provider.
+     *
+     * @param subnet
+     *            The subnet to add.
+     */
+    void addSubnet(ExternalSubnet subnet);
+
+    /**
      * Remove the subnet from the provider.
      *
      * @param id
