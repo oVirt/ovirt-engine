@@ -49,12 +49,12 @@ import org.ovirt.engine.core.dao.VmDAO;
 public class LiveMigrateVmDisksCommandTest {
 
     private final Guid diskImageId = Guid.newGuid();
+    private final Guid diskImageGroupId = Guid.newGuid();
     private final Guid srcStorageId = Guid.newGuid();
     private final Guid dstStorageId = Guid.newGuid();
     private final Guid vmId = Guid.newGuid();
     private final Guid quotaId = Guid.newGuid();
     private final Guid storagePoolId = Guid.newGuid();
-    private final Guid templateDiskId = Guid.newGuid();
 
     @Mock
     private DiskImageDAO diskImageDao;
@@ -101,7 +101,7 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters() {
-        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId, srcStorageId, dstStorageId, vmId, quotaId, diskImageId));
+        return Arrays.asList(new LiveMigrateDiskParameters(diskImageId, srcStorageId, dstStorageId, vmId, quotaId, diskImageGroupId));
     }
 
     private void createParameters() {
@@ -122,10 +122,10 @@ public class LiveMigrateVmDisksCommandTest {
     public void canDoActionVmShareableDisk() {
         createParameters();
 
-        DiskImage diskImage = initDiskImage(diskImageId);
+        DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
         diskImage.setShareable(true);
 
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -137,11 +137,12 @@ public class LiveMigrateVmDisksCommandTest {
     public void canDoActionMissingTemplateDisk() {
         createParameters();
 
-        DiskImage diskImage = initDiskImage(diskImageId);
-        diskImage.setImageTemplateId(templateDiskId);
+        DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
+        Guid templateImageId = Guid.newGuid();
+        diskImage.setImageTemplateId(templateImageId);
 
-        initDiskImage(templateDiskId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
+        initDiskImage(Guid.newGuid(), templateImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -156,8 +157,8 @@ public class LiveMigrateVmDisksCommandTest {
         StorageDomain storageDomain = initStorageDomain(srcStorageId);
         storageDomain.setStatus(StorageDomainStatus.Locked);
 
-        initDiskImage(diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -176,8 +177,8 @@ public class LiveMigrateVmDisksCommandTest {
         dstStorageDomain.setStatus(StorageDomainStatus.Active);
         dstStorageDomain.setStorageDomainType(StorageDomainType.ISO);
 
-        initDiskImage(diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -188,8 +189,8 @@ public class LiveMigrateVmDisksCommandTest {
     @Test
     public void canDoActionVmRunningStateless() {
         createParameters();
-        initDiskImage(diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS)).when(vmValidator)
                 .vmNotRunningStateless();
@@ -203,7 +204,7 @@ public class LiveMigrateVmDisksCommandTest {
     @Test
     public void canDoActionVmInPreview() {
         createParameters();
-        initDiskImage(diskImageId);
+        initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, null, diskImageId);
         setVmInPreview(true);
 
@@ -217,8 +218,8 @@ public class LiveMigrateVmDisksCommandTest {
     @Test
     public void canDoActionVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
         createParameters();
-        initDiskImage(diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN)).when(diskValidator)
                 .isDiskPluggedToVmsThatAreNotDown(anyBoolean(), anyList());
@@ -242,9 +243,10 @@ public class LiveMigrateVmDisksCommandTest {
         when(vmDao.getVmsListForDisk(diskImageId, Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
     }
 
-    private DiskImage initDiskImage(Guid diskImageId) {
+    private DiskImage initDiskImage(Guid diskImageGroupId, Guid diskImageId) {
         DiskImage diskImage = new DiskImage();
-        diskImage.setId(diskImageId);
+        diskImage.setId(diskImageGroupId);
+        diskImage.getImage().setId(diskImageId);
         diskImage.setStoragePoolId(storagePoolId);
         diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(srcStorageId)));
 
