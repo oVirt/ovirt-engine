@@ -26,7 +26,7 @@ public interface BackendLocal {
             java.util.ArrayList<VdcActionParametersBase> parameters,
             boolean isRunOnlyIfAllCanDoPass);
 
-    void Initialize();
+    void initialize();
 
     VdcQueryReturnValue RunPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 

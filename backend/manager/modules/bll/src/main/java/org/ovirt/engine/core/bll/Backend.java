@@ -126,7 +126,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @PostConstruct
     public void create() {
         checkDBConnectivity();
-        Initialize();
+        initialize();
     }
 
     private static void checkDBConnectivity() {
@@ -167,7 +167,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
      * <exception>VdcBLL.VdcBLLException
      */
     @Override
-    public void Initialize() {
+    public void initialize() {
         log.info("Start initializing " + getClass().getSimpleName());
         // When getting a proxy to this bean using JBoss embedded, the initialize method is called for each method
         // invocation on the proxy, as it is called by setup method which is @PostConstruct - the initialized flag
