@@ -617,11 +617,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcQueryReturnValue RunAutoQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        return runInternalQuery(actionType, parameters);
-    }
-
-    @Override
     @ExcludeClassInterceptors
     public VdcReturnValueBase runInternalAction(VdcActionType actionType,
             VdcActionParametersBase parameters,

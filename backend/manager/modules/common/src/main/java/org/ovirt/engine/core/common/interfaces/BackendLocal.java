@@ -33,6 +33,4 @@ public interface BackendLocal {
     VdcReturnValueBase login(LoginUserParameters parameters);
 
     VdcReturnValueBase logoff(LogoutUserParameters parameters);
-
-    VdcQueryReturnValue RunAutoQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 }
