@@ -572,6 +572,7 @@ done << __EOF__
 %{engine_ear}/bll.jar
 %{engine_ear}/lib/vdsbroker.jar
 %{engine_ear}/scheduler.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/authentication/main/authentication.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/common/main/common.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/compat/main/compat.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/dal/main/dal.jar
@@ -769,6 +770,7 @@ fi
 %{engine_data}/branding/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
+%{engine_java}/authentication.jar
 %{engine_java}/common.jar
 %{engine_java}/compat.jar
 %{engine_java}/utils.jar

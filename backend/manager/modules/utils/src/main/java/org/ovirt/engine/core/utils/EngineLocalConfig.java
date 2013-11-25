@@ -217,4 +217,13 @@ public class EngineLocalConfig extends LocalConfig {
     public String getEngineURI(){
         return getProperty("ENGINE_URI");
     }
+
+    /**
+     * Gets the directory where the configuration files of the authentication profiles are stored.
+     *
+     * @return a reference to the directory containing the configuration files of the authentication profiles
+     */
+    public File getAuthDir() {
+        return new File(getEtcDir(), "auth.conf.d");
+    }
 }

@@ -28,6 +28,7 @@
     <module>services</module>
     <module>docs</module>
     <module>welcome</module>
+    <module>authentication</module>
   </modules>
 
   <dependencies>

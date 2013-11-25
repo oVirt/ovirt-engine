@@ -1,0 +1,5 @@
+#
+# This file contains one line per each directory factory to be
+# automatically registered with the directory manager:
+#
+org.ovirt.engine.core.authentication.nop.NopDirectoryFactory

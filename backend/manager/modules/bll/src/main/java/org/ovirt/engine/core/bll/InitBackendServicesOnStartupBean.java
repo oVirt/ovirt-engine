@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
@@ -66,6 +68,12 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             AuthenticatorManager.getInstance().registerAuthenticator(domain, authenticator);
             DirectoryManager.getInstance().registerDirectory(domain, directory);
             AuthenticationProfileManager.getInstance().registerProfile(domain, profile);
+        }
+
+        // Load authentication profiles:
+        File authDir = EngineLocalConfig.getInstance().getAuthDir();
+        if (authDir.exists() && authDir.isDirectory()) {
+            AuthenticationProfileManager.getInstance().loadFiles(authDir);
         }
 
         AsyncTaskManager.getInstance().initAsyncTaskManager();
