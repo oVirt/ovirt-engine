@@ -360,7 +360,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // An expression is considered safe if matches a trivial search.
                 data =
                         new QueryData(curSyntaxChecker.generateQueryFromSyntaxContainer(searchObj, isSafe),
-                                searchObj.getSearchObjectStr(),
                                 new Date(),
                                 queryDomain);
                 // when looking for tags , the query contains all parent children tag id's
