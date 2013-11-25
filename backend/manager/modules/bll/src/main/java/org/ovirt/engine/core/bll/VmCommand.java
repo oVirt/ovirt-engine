@@ -7,6 +7,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.springframework.util.CollectionUtils;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
@@ -381,8 +383,55 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
+    protected boolean canPerformDiskHotPlug(Disk disk) {
+        return isHotPlugSupported()
+                && isDiskSupportedForPlugUnPlug(disk);
+    }
+
     protected boolean canPerformNicHotPlug() {
-        return osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getVdsGroupCompatibilityVersion());
+        return isHotPlugSupported()
+                && isNicSupportedForPlugUnPlug();
+    }
+
+    /**
+     * check that hotplug is enabled via the 3.1 config paramter {@literal ConfigValues.HotPlugEnabled,
+     * @return
+     */
+    protected boolean isHotPlugSupported() {
+        if (FeatureSupported.hotPlug(getVm().getVdsGroupCompatibilityVersion())) {
+            return true;
+        }
+
+        return failCanDoAction(VdcBllMessages.HOT_PLUG_IS_NOT_SUPPORTED);
+    }
+
+    /**
+     * The following method should check if os of guest is supported for nic hot plug/unplug operation
+     * @return
+     */
+    protected boolean isNicSupportedForPlugUnPlug() {
+        if (osRepository.hasNicHotplugSupport(getVm().getOs(), getVm().getVdsGroupCompatibilityVersion())) {
+            return true;
+        }
+
+        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+    }
+
+    /**
+     * The following method should check if os of guest is supported for disk hot plug/unplug operation
+     * @param disk
+     * @return
+     */
+    protected boolean isDiskSupportedForPlugUnPlug(Disk disk) {
+        Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
+                getVm().getVdsGroupCompatibilityVersion());
+
+        if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
+                || !diskHotpluggableInterfaces.contains(disk.getDiskInterface().name())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+        }
+
+        return true;
     }
 
     protected VmDeviceDAO getVmDeviceDao() {

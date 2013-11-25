@@ -90,6 +90,15 @@ public class FeatureSupported {
     /**
      * @param version
      *            Compatibility version to check for.
+     * @return <code>true</code> if hot plug is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean hotPlug(Version version) {
+        return supportedInConfig(ConfigValues.HotPlugEnabled, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
      * @return <code>true</code> if migration network is supported for the version, <code>false</code> if it's not.
      */
     public static boolean migrationNetwork(Version version) {

@@ -7,6 +7,7 @@ import javax.transaction.Transaction;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -57,7 +58,8 @@ public class VmInterfaceManager {
 
         if (allocateMac) {
             iface.setMacAddress(getMacPoolManager().allocateNewMac());
-        } else if (getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
+        } else if (FeatureSupported.hotPlug(clusterCompatibilityVersion)
+                && getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
             getMacPoolManager().forceAddMac(iface.getMacAddress());
         } else if (!getMacPoolManager().addMac(iface.getMacAddress())) {
             auditLogMacInUse(iface);

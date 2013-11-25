@@ -66,6 +66,7 @@ public enum ConfigurationValues {
     OvfItemsCountPerUpdate,
     ProductRPMVersion(ConfigAuthType.User),
     RhevhLocalFSPath,
+    HotPlugEnabled(ConfigAuthType.User),
     NetworkLinkingSupported(ConfigAuthType.User),
     SupportBridgesReportByVDSM(ConfigAuthType.User),
     ManagementNetwork,

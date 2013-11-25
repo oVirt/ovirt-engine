@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.IStorageHelper;
@@ -13,6 +12,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -38,7 +38,6 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.springframework.util.CollectionUtils;
 
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBase> extends VmCommand<T> {
 
@@ -193,18 +192,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return true;
     }
 
-    protected boolean isInterfaceSupportedForPlugUnPlug(Disk disk) {
-        Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
-                getVm().getVdsGroupCompatibilityVersion());
-
-        if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
-                || !diskHotpluggableInterfaces.contains(disk.getDiskInterface().toString())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
-        }
-
-        return true;
-    }
-
     private boolean isDiskExistInVm(Disk disk) {
         List<VM> listVms = getVmDAO().getVmsListForDisk(disk.getId(), true);
         for (VM vm : listVms) {
@@ -213,6 +200,23 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             }
         }
         return false;
+    }
+
+    @Override
+    protected boolean isHotPlugSupported() {
+        if (getParameters().getSnapshotId() == null) {
+            return super.isHotPlugSupported();
+        }
+
+        return isHotPlugDiskSnapshotSupported();
+    }
+
+    protected boolean isHotPlugDiskSnapshotSupported() {
+        if (!FeatureSupported.hotPlugDiskSnapshot(getVds().getVdsGroupCompatibilityVersion())) {
+            return failCanDoAction(VdcBllMessages.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
+        }
+
+        return true;
     }
 
     protected ImageDao getImageDao() {

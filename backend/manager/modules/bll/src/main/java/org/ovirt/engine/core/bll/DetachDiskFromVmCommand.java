@@ -52,7 +52,7 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
         }
 
         if (retValue && vmDevice.getIsPlugged() && getVm().getStatus() != VMStatus.Down) {
-            retValue = isInterfaceSupportedForPlugUnPlug(disk);
+            retValue = canPerformDiskHotPlug(disk);
         }
 
         // Check if disk has no snapshots before detaching it.

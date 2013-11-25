@@ -132,7 +132,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
         if (getParameters().isPlugUnPlug()
                 && getVm().getStatus() != VMStatus.Down) {
-            return isInterfaceSupportedForPlugUnPlug(disk);
+            return canPerformDiskHotPlug(disk);
         }
         return true;
     }

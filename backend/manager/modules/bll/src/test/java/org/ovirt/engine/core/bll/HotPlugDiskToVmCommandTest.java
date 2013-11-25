@@ -8,7 +8,10 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -37,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
@@ -48,6 +53,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HotPlugDiskToVmCommandTest {
@@ -57,6 +63,11 @@ public class HotPlugDiskToVmCommandTest {
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid storageDomainId = Guid.newGuid();
     protected static final List<String> DISK_HOTPLUGGABLE_INTERFACES = Arrays.asList("VirtIO_SCSI", "VirtIO");
+
+    @ClassRule
+    public static final MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.HotPlugEnabled, Version.v3_1.getValue(), true),
+            mockConfig(ConfigValues.HotPlugDiskSnapshotSupported, Version.v3_1.getValue(), true));
 
     @Mock
     private VmDAO vmDAO;
@@ -70,6 +81,7 @@ public class HotPlugDiskToVmCommandTest {
     private StorageDomainDAO storageDomainDao;
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
     @Mock
     OsRepository osRepository;
 
@@ -137,6 +149,16 @@ public class HotPlugDiskToVmCommandTest {
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED.toString()));
+    }
+
+    @Test
+    public void canDoActionChecksIfHotPlugDiskSnapshotIsSupported() throws Exception {
+        mockVmStatusUp();
+        cretaeVirtIODisk();
+        initStorageDomain();
+        command.getParameters().setSnapshotId(Guid.newGuid());
+        command.canDoAction();
+        verify(command, times(1)).isHotPlugDiskSnapshotSupported();
     }
 
     @Test
@@ -221,6 +243,7 @@ public class HotPlugDiskToVmCommandTest {
         vm.setStatus(VMStatus.Up);
         vm.setVmOs(8);
         vm.setId(vmId);
+        vm.setVdsGroupCompatibilityVersion(Version.v3_1);
         vm.setRunOnVds(Guid.newGuid());
         doReturn(vmDAO).when(command).getVmDAO();
         mockVMDAO(vm);

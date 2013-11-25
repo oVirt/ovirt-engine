@@ -2311,6 +2311,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following VMs are set to run specifically only on this Host: ${VmNames}.\nIn order to ${action} ${type}, you need to remove the association between the VMs and the Host (Using Edit VM properties).")
     String ACTION_TYPE_FAILED_DETECTED_PINNED_VMS();
 
+    @DefaultStringValue("Activate/Deactivate while VM is running, is only supported for Clusters of version 3.1 and above.")
+    String HOT_PLUG_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Activation/Deactivation of Disk Snapshot is not supported for clusters of version ${clusterVersion}.")
+    String HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Link state is set to 'Down' on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
     String UNLINKING_IS_NOT_SUPPORTED();
 
