@@ -38,6 +38,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String NFS_KEY = "nfs";
     private static final String SHD_KEY = "shd";
     private static final String HOSTNAME = "hostname";
+    private static final String HOST_UUID = "hostuuid";
 
     private static final String DETAIL_SIZE_TOTAL = "sizeTotal";
     private static final String DETAIL_SIZE_FREE = "sizeFree";
@@ -116,6 +117,10 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
 
         if (volumeServiceInfo.containsKey(HOSTNAME)) {
             serviceInfo.setHostName((String) volumeServiceInfo.get(HOSTNAME));
+        }
+
+        if (volumeServiceInfo.containsKey(HOST_UUID)) {
+            serviceInfo.setGlusterHostUuid(Guid.createGuidFromString((String) volumeServiceInfo.get(HOST_UUID)));
         }
 
         if (volumeServiceInfo.containsKey(STATUS)) {

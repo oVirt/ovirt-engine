@@ -151,4 +151,18 @@ public class GlusterDBUtils {
             getGlusterVolumeDao().updateGlusterVolume(volume);
         }
     }
+
+    public String getHostNameOrIP(Guid glusterHostUuid) {
+        String hostName = null;
+        if (glusterHostUuid != null) {
+            GlusterServer glusterServer = getGlusterServerDao().getByGlusterServerUuid(glusterHostUuid);
+            if(glusterServer != null) {
+                VdsStatic vds = getVdsStaticDao().get(glusterServer.getId());
+                if(vds != null) {
+                    hostName = vds.getHostName();
+                }
+            }
+        }
+        return hostName;
+    }
 }

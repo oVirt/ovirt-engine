@@ -6,15 +6,18 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDetailsVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
  * Query to get volume advanced details
@@ -43,13 +46,25 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
         if (volumeId != null) {
             GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
             if (volume == null) {
-                throw new RuntimeException(String.format("Invalid volume id %s", volumeId));
+                throw new RuntimeException(VdcBllMessages.GLUSTER_VOLUME_ID_INVALID.toString());
             }
 
             brick = getBrick(getParameters().getBrickId());
             getQueryReturnValue().setReturnValue(fetchAdvancedDetails(volume.getName()));
         } else {
-            getQueryReturnValue().setReturnValue(getServiceInfo());
+            GlusterVolumeAdvancedDetails advancedDetails = getServiceInfo();
+            if (advancedDetails != null) {
+                List<GlusterServerService> serviceList = advancedDetails.getServiceInfo();
+                if (serviceList != null) {
+                    for (GlusterServerService service : serviceList) {
+                        String hostName = GlusterDBUtils.getInstance().getHostNameOrIP(service.getGlusterHostUuid());
+                        if (hostName != null) {
+                            service.setHostName(hostName);
+                        }
+                    }
+                }
+            }
+            getQueryReturnValue().setReturnValue(advancedDetails);
         }
     }
 

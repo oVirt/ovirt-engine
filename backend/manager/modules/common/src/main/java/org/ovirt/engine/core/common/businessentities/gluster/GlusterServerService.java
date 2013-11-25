@@ -16,6 +16,7 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
     private Guid serviceId;
     private ServiceType serviceType;
     private String serviceName;
+    private Guid glusterHostUuid;
     private Guid serverId;
     private String hostName;
     private Integer port;
@@ -77,6 +78,14 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Guid getGlusterHostUuid() {
+        return glusterHostUuid;
+    }
+
+    public void setGlusterHostUuid(Guid glusterHostUuid) {
+        this.glusterHostUuid = glusterHostUuid;
     }
 
     public Guid getServerId() {
