@@ -28,6 +28,7 @@ public class GroupMapper {
         Group model = template != null ? template : new Group();
         model.setName(entity.getname());
         model.setId(entity.getid().toString());
+        model.setExternalId(entity.getid().toString());
         if (!StringUtils.isEmpty(entity.getdomain())) {
             Domain dom = new Domain();
             dom.setId(new Guid(entity.getdomain().getBytes(), true).toString());

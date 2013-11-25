@@ -16,4 +16,9 @@
     <suppress checks="LeftCurly" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]uicommonweb[\\/]models"/>
     <suppress checks="LeftCurly" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]uicommonweb[\\/]validation"/>
     <suppress checks="LeftCurly" files="org[\\/]ovirt[\\/]engine[\\/]ui[\\/]uicommonweb"/>
+    <!-- Most of the classes in the authentication package aren't used in the
+         GWT client, and those that are used have special versions or custom
+         field serializers to overcome the GWT serialization limitations. All
+         in all they don't need to have a no args constructor: -->
+    <suppress checks="checks.NoArgConstructorCheck" files="org/ovirt/engine/core/authentication/.*"/>
 </suppressions>

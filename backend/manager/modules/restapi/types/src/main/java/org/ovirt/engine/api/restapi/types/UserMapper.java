@@ -41,6 +41,7 @@ public class UserMapper {
     public static User map(LdapUser entity, User template) {
         User model = template != null ? template : new User();
         model.setName(entity.getName());
+        model.setExternalId(entity.getUserId().toString());
         model.setUserName(entity.getUserName());
         model.setId(entity.getUserId().toString());
         model.setLastName(entity.getSurName());
