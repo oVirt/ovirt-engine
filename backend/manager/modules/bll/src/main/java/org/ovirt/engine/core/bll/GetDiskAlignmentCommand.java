@@ -37,7 +37,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -247,10 +246,6 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
     protected BaseDiskDao getBaseDiskDao() {
         return getDbFacade().getBaseDiskDao();
-    }
-
-    protected StorageDomainDAO getStorageDomainDao() {
-        return getDbFacade().getStorageDomainDao();
     }
 
     protected StoragePoolDAO getStoragePoolDao() {
