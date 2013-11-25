@@ -1988,7 +1988,7 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
-          <xs:element ref="network" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
           <xs:element name="port_mirroring" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="custom_properties" minOccurs="0"/>
         </xs:sequence>
