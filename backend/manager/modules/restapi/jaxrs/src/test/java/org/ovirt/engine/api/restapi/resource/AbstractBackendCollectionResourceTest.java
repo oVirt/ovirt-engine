@@ -264,7 +264,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                                   addSession(new String[]{}),
                                                   addSession(new Object[]{})))).andReturn(monitorResult);
         }
-        expect(backend.RunAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))))
+        expect(backend.runAction(eq(task), eqActionParams(taskClass, addSession(taskNames), addSession(taskValues))))
                 .andReturn(taskResult);
 
         if (canDo && success && query != null) {

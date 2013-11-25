@@ -128,7 +128,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
             return rValue;
         }
 
-        return getBackend().RunAction(actionType, params);
+        return getBackend().runAction(actionType, params);
     }
 
     @Override

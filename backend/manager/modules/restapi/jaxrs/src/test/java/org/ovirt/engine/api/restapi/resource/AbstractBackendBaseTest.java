@@ -390,7 +390,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             expect(result.getCanDoActionMessages()).andReturn(asList(errorMessage)).anyTimes();
             setUpL10nExpectations(asList(errorMessage));
         }
-        expect(backend.RunAction(eq(task), eqActionParams(clz, addSession(names), addSession(values)))).andReturn(result);
+        expect(backend.runAction(eq(task), eqActionParams(clz, addSession(names), addSession(values)))).andReturn(result);
 
         VdcQueryReturnValue monitorResult = control.createMock(VdcQueryReturnValue.class);
         expect(monitorResult.getSucceeded()).andReturn(success).anyTimes();

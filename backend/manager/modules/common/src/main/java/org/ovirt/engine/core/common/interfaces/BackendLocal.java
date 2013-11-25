@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public interface BackendLocal {
-    VdcReturnValueBase RunAction(VdcActionType actionType, VdcActionParametersBase parameters);
+    VdcReturnValueBase runAction(VdcActionType actionType, VdcActionParametersBase parameters);
 
     VDSBrokerFrontend getResourceManager();
 

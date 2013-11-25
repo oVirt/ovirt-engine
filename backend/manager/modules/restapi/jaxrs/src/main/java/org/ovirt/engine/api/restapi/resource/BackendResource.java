@@ -251,7 +251,7 @@ public class BackendResource extends BaseBackendResource {
                                           VdcActionParametersBase params) throws BackendFailureException {
         setJobOrStepId(params);
         setCorrelationId(params);
-        VdcReturnValueBase result = backend.RunAction(task, sessionize(params));
+        VdcReturnValueBase result = backend.runAction(task, sessionize(params));
         if (result != null && !result.getCanDoAction()) {
             backendFailure(result.getCanDoActionMessages());
         } else if (result != null && !result.getSucceeded()) {
@@ -272,7 +272,7 @@ public class BackendResource extends BaseBackendResource {
             @Override
             public void run() {
                 try {
-                    backend.RunAction(task, sp);
+                    backend.runAction(task, sp);
                 } finally {
                     if (user != null) {
                         backend.logoff(sh.sessionize(new LogoutUserParameters(user.getId())));

@@ -343,7 +343,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcReturnValueBase RunAction(VdcActionType actionType, VdcActionParametersBase parameters) {
+    public VdcReturnValueBase runAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
             return returnValue;
@@ -590,7 +590,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     public VdcReturnValueBase logoff(LogoutUserParameters parameters) {
-        return RunAction(VdcActionType.LogoutUser, parameters);
+        return runAction(VdcActionType.LogoutUser, parameters);
     }
 
     @Override
@@ -618,7 +618,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     public VdcReturnValueBase RunAutoAction(VdcActionType actionType, VdcActionParametersBase parameters) {
-        return RunAction(actionType, parameters);
+        return runAction(actionType, parameters);
     }
 
     @Override
