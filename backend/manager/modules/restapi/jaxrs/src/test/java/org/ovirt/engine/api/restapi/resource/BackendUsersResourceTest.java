@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendUsersResourceTest
@@ -207,6 +208,7 @@ public class BackendUsersResourceTest
     protected DbUser getEntity(int index) {
         DbUser entity = new DbUser();
         entity.setId(GUIDS[index]);
+        entity.setExternalId(new ExternalId(GUIDS[index].toByteArray()));
         entity.setLoginName(NAMES[index]);
         entity.setGroupNames(GROUPS);
         entity.setDomain(DOMAIN);

@@ -14,6 +14,7 @@ public class UserMapper {
     @Mapping(from = DbUser.class, to = User.class)
     public static User map(DbUser entity, User template) {
         User model = template != null ? template : new User();
+        model.setExternalId(entity.getExternalId().toString());
         model.setName(entity.getFirstName());
         model.setUserName(entity.getLoginName());
         model.setId(entity.getId().toString());

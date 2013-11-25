@@ -12,6 +12,7 @@ public class GroupMapper {
     @Mapping(from = DbGroup.class, to = Group.class)
     public static Group map(DbGroup entity, Group template) {
         Group model = template != null ? template : new Group();
+        model.setExternalId(entity.getExternalId().toString());
         model.setName(entity.getName());
         model.setId(entity.getId().toString());
         if (!StringUtils.isEmpty(entity.getDomain())) {

@@ -71,7 +71,6 @@ public class DbUser extends IVdcQueryable {
     private String groupIds;
 
     public DbUser() {
-        id = Guid.Empty;
         loginName = "";
         firstName = "";
         lastName = "";

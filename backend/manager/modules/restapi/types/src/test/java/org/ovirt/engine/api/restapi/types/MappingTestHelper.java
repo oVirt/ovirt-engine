@@ -92,8 +92,8 @@ public class MappingTestHelper {
 
     private static void populateXmlGregorianCalendar(Method method, Object model) throws Exception {
         method.invoke(model, DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar(1111, 10, 29)));
-
     }
+
     private static Object instantiate(Class<?> clz) throws Exception {
         Object model = null;
         model = clz.newInstance();

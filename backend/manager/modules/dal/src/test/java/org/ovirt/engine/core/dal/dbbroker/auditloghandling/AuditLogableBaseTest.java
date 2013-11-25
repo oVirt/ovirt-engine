@@ -108,7 +108,7 @@ public class AuditLogableBaseTest {
         final DbUser u = new DbUser();
         b.setCurrentUser(u);
         final Guid g = b.getUserId();
-        assertEquals(Guid.Empty, g);
+        assertEquals(null, g);
     }
 
     @Test

@@ -365,10 +365,9 @@ public class BackendGroupsResourceTest
     protected DbGroup getEntity(int index) {
         DbGroup entity = new DbGroup();
         entity.setId(GUIDS[index]);
+        entity.setExternalId(new ExternalId(GUIDS[index].toByteArray()));
         entity.setName(GROUP_NAMES[index]);
         entity.setDomain(DOMAIN);
-        entity.setExternalId(new ExternalId(GUIDS[index].toByteArray()));
-
         return entity;
     }
 

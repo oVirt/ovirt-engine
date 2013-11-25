@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class BackendUserResourceTest
         extends AbstractBackendSubResourceTest<User, DbUser, BackendUserResource> {
@@ -73,10 +74,10 @@ public class BackendUserResourceTest
     protected DbUser getEntity(int index) {
         DbUser entity = new DbUser();
         entity.setId(GUIDS[index]);
+        entity.setExternalId(new ExternalId(GUIDS[index].toByteArray()));
         entity.setFirstName(NAMES[index]);
         entity.setGroupNames(GROUPS);
         entity.setDomain(DOMAIN);
-
         return entity;
     }
 
