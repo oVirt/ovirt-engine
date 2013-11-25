@@ -6,11 +6,15 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NewPoolNameLengthValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewPoolModelBehavior extends PoolModelBehaviorBase {
 
@@ -19,6 +23,8 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         super.initialize(systemTreeSelectedItem);
 
         getModel().getVmType().setIsChangable(true);
+
+        templateValidate();
     }
 
     @Override
@@ -26,7 +32,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         if (!dataCenters.isEmpty()) {
             super.postDataCentersLoaded(dataCenters);
         } else {
-            getModel().disableEditing();
+            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
         }
     }
 
@@ -72,5 +78,18 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         }
 
         return parentValidation;
+    }
+
+    private void templateValidate() {
+         AsyncDataProvider.countAllTemplates(new AsyncQuery(getModel(), new INewAsyncCallback() {
+             @Override
+             public void onSuccess(Object model, Object returnValue) {
+                 int count = (Integer) returnValue;
+                 if(count <= 1) {
+                     getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoTemplates());
+                 }
+             }
+         }));
+
     }
 }

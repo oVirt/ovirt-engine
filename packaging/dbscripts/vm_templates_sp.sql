@@ -293,6 +293,19 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetTemplateCount() RETURNS SETOF BIGINT STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT count (vm_templates.*)
+      FROM vm_templates_view vm_templates;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
 Create or replace FUNCTION GetVmTemplatesByIds(v_vm_templates_ids VARCHAR(5000)) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN

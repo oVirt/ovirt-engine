@@ -427,9 +427,6 @@ public interface CommonApplicationConstants extends Constants {
     String loggedInUserVm();
 
     // VM popup
-    @DefaultStringValue("Not available when no Data Center is up.")
-    String notAvailableWithNoUpDC();
-
     @DefaultStringValue("High Availability")
     String highAvailVmPopup();
 

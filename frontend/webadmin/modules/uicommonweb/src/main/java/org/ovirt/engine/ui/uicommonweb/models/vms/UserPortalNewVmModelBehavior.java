@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
@@ -71,7 +72,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                                     }, getModel().getHash()),
                                     CREATE_VM, true, false);
                         } else {
-                            getModel().disableEditing();
+                            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
                         }
                     }
                 }, getModel().getHash()), CREATE_VM, true, false);

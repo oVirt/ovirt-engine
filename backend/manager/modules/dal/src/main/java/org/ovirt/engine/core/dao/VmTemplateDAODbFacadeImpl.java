@@ -222,6 +222,13 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     }
 
     @Override
+    public int getCount() {
+        return getCallsHandler().executeRead("GetTemplateCount",
+                getIntegerMapper(),
+                getCustomMapSqlParameterSource());
+    }
+
+    @Override
     public List<VmTemplate> getAllForNetwork(Guid id) {
         return getCallsHandler().executeReadList("GetVmTemplatesByNetworkId",
                 VMTemplateRowMapper.instance,

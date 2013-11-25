@@ -4,6 +4,8 @@ package org.ovirt.engine.ui.uicompat;
 import com.google.gwt.i18n.client.Constants;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
+
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("OK")
@@ -2082,5 +2084,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @Constants.DefaultStringValue("For data integrity make sure that the server is configured with Quorum (both client and server Quorum)")
     String glusterDomainConfigurationMessage();
+
+    @DefaultStringValue("Not available when no Data Center is up.")
+    String notAvailableWithNoUpDC();
+
+    @DefaultStringValue("Not available when Templates are not configured.")
+    String notAvailableWithNoTemplates();
 }
 

@@ -152,4 +152,6 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      * @return the image type
      */
     ImageType getImageType(Guid id);
+
+    int getCount();
 }

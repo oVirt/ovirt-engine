@@ -1159,7 +1159,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 Boolean enabled = object.getEditingEnabled().getEntity();
                 if (Boolean.FALSE.equals(enabled)) {
                     disableAllTabs();
-                    generalWarningMessage.setText(constants.notAvailableWithNoUpDC());
+                    generalWarningMessage.setText(object.getEditingEnabled().getMessage());
                 }
             }
         });

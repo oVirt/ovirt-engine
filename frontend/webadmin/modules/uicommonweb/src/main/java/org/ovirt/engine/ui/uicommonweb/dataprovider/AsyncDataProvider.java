@@ -1203,6 +1203,17 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(templateId), aQuery);
     }
 
+    public static void countAllTemplates(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplateCount, new VdcQueryParametersBase(), aQuery);
+    }
+
     public static void getHostList(AsyncQuery aQuery) {
         getHostListByStatus(aQuery, null);
     }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVmModelBehavior extends VmModelBehaviorBase {
 
@@ -64,7 +66,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                     }, getModel().getHash()),
                                     true, false);
                         } else {
-                            getModel().disableEditing();
+                            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
                         }
                     }
                 }, getModel().getHash()),

@@ -2505,8 +2505,9 @@ public class UnitVmModel extends Model {
         return dataCenterWithCluster.getCluster();
     }
 
-    public void disableEditing() {
+    public void disableEditing(String msg) {
         getDefaultCommand().setIsExecutionAllowed(false);
+        getEditingEnabled().setMessage(msg);
         getEditingEnabled().setEntity(false);
     }
 
