@@ -32,6 +32,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -213,6 +215,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
 
         if (isUpdatedToShareable(getOldDisk(), getNewDisk())) {
+
+            StorageDomainStatic sds = getStorageDomainStaticDAO().get(((DiskImage)getNewDisk()).getStorageIds().get(0));
+            if (sds.getStorageType() == StorageType.GLUSTERFS) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
+            }
+
             List<DiskImage> diskImageList =
                     getDiskImageDao().getAllSnapshotsForImageGroup(getOldDisk().getId());
 

@@ -300,6 +300,26 @@ public class AddDiskToVmCommandTest {
                 .contains(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT.toString()));
     }
 
+    @Test
+    public void canDoActionShareableDiskOnGlusterFails() {
+        DiskImage image = createShareableDiskImage();
+        image.setvolumeFormat(VolumeFormat.RAW);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(image);
+
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId, parameters);
+        mockVm();
+        mockStorageDomain(storageId, StorageType.GLUSTERFS, Version.v3_1);
+        mockStoragePoolIsoMap();
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue().
+                getCanDoActionMessages().
+                contains(VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN.toString()));
+    }
+
     /**
      * Initialize the command for testing, using the given storage domain id for the parameters.
      *
@@ -415,6 +435,10 @@ public class AddDiskToVmCommandTest {
 
     private StorageDomain mockStorageDomain(Guid storageId, int availableSize, int usedSize) {
         return mockStorageDomain(storageId, availableSize, usedSize, StorageType.UNKNOWN, new Version());
+    }
+
+    private StorageDomain mockStorageDomain(Guid storageId, StorageType storageType, Version version) {
+        return mockStorageDomain(storageId, 6, 4, storageType, version);
     }
 
     private StorageDomain mockStorageDomain(Guid storageId, Version version) {

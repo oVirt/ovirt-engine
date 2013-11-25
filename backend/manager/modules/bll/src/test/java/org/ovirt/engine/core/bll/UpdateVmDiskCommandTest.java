@@ -34,7 +34,9 @@ import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -55,6 +57,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -91,6 +94,8 @@ public class UpdateVmDiskCommandTest {
     private VmDeviceDAO vmDeviceDAO;
     @Mock
     private StoragePoolDAO storagePoolDao;
+    @Mock
+    private StorageDomainStaticDAO storageDomainStaticDao;
     @Mock
     private DbFacade dbFacade;
 
@@ -149,9 +154,12 @@ public class UpdateVmDiskCommandTest {
     @Test
     public void canDoActionFailedShareableDiskVolumeFormatUnsupported() throws Exception {
         UpdateVmDiskParameters parameters = createParameters();
-        parameters.setDiskInfo(createShareableDisk(VolumeFormat.COW));
+        DiskImage disk = createShareableDisk(VolumeFormat.COW);
+        StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.NFS);
+        parameters.setDiskInfo(disk);
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
         initializeCommand(parameters);
 
         assertFalse(command.canDoAction());
@@ -161,14 +169,35 @@ public class UpdateVmDiskCommandTest {
     }
 
     @Test
+    public void canDoActionFailedShareableDiskOnGlusterDomain() throws Exception {
+        UpdateVmDiskParameters parameters = createParameters();
+        DiskImage disk = createShareableDisk(VolumeFormat.RAW);
+        StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.GLUSTERFS);
+        parameters.setDiskInfo(disk);
+
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
+        initializeCommand(parameters);
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN.toString()));
+    }
+
+
+    @Test
     public void nullifiedSnapshotOnUpdateDiskToShareable() {
         UpdateVmDiskParameters parameters = createParameters();
-        parameters.setDiskInfo(createShareableDisk(VolumeFormat.RAW));
+        DiskImage disk = createShareableDisk(VolumeFormat.RAW);
+        parameters.setDiskInfo(disk);
+        StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.NFS);
+        parameters.setDiskInfo(disk);
 
         DiskImage oldDisk = createDiskImage();
         oldDisk.setVmSnapshotId(Guid.newGuid());
 
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
+        when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
+
         initializeCommand(parameters);
 
         assertTrue(command.canDoAction());
@@ -297,6 +326,7 @@ public class UpdateVmDiskCommandTest {
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDAO();
+        doReturn(storageDomainStaticDao).when(command).getStorageDomainStaticDAO();
         doReturn(vmStaticDAO).when(command).getVmStaticDAO();
         doReturn(baseDiskDao).when(command).getBaseDiskDao();
         doReturn(imageDao).when(command).getImageDao();
@@ -345,7 +375,6 @@ public class UpdateVmDiskCommandTest {
     private void mockCtorRelatedDaoCalls(List<VM> vms) {
         mockGetForDisk(vms);
         mockGetVmsListForDisk(vms);
-
     }
 
     private void mockVmsStoragePoolInfo(List<VM> vms) {
@@ -451,5 +480,13 @@ public class UpdateVmDiskCommandTest {
         disk.setvolumeFormat(volumeFormat);
         disk.setShareable(true);
         return disk;
+    }
+
+    private StorageDomain addNewStorageDomainToDisk(DiskImage diskImage, StorageType storageType) {
+        StorageDomain storage = new StorageDomain();
+        storage.setId(Guid.newGuid());
+        storage.setStorageType(storageType);
+        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storage.getId())));
+        return storage;
     }
 }

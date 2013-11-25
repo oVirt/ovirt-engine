@@ -70,6 +70,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     Label mountOptionsLabel;
 
     @UiField
+    @Path(value = "configurationMessage")
     Label message;
 
 
