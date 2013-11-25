@@ -151,6 +151,7 @@
             <share-prepared-statements/>
           </statement>
           <validation>
+            <validate-on-match>true</validate-on-match>
             <check-valid-connection-sql>select 1</check-valid-connection-sql>
           </validation>
         </datasource>
