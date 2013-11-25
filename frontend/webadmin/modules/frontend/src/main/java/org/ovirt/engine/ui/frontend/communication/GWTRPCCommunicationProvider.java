@@ -174,11 +174,11 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 @Override
                 public void onFailure(final Throwable exception) {
                     Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap = getCallbackMap(queriesList);
-                    for (VdcOperationCallback<?, ?> callback: callbackMap.keySet()) {
-                        if (callback instanceof VdcOperationCallbackList) {
-                            ((VdcOperationCallbackList) callback).onFailure(callbackMap.get(callback), exception);
+                    for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
+                        if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                            ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
                         } else {
-                            ((VdcOperationCallback) callback).onFailure(callbackMap.get(callback).get(0), exception);
+                            ((VdcOperationCallback) callbackEntry.getKey()).onFailure(callbackEntry.getValue().get(0), exception);
                         }
                     }
                 }
@@ -186,13 +186,13 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 @Override
                 public void onSuccess(final ArrayList<VdcQueryReturnValue> result) {
                     Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap = getCallbackMap(queriesList);
-                    for (VdcOperationCallback<?, ?> callback: callbackMap.keySet()) {
+                    for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
                         List<VdcQueryReturnValue> queryResult = (List<VdcQueryReturnValue>) getOperationResult(
-                                callbackMap.get(callback), queriesList, result);
-                        if (callback instanceof VdcOperationCallbackList) {
-                            ((VdcOperationCallbackList) callback).onSuccess(callbackMap.get(callback), queryResult);
+                                callbackEntry.getValue(), queriesList, result);
+                        if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                            ((VdcOperationCallbackList) callbackEntry.getKey()).onSuccess(callbackEntry.getValue(), queryResult);
                         } else {
-                            ((VdcOperationCallback) callback).onSuccess(callbackMap.get(callback).get(0),
+                            ((VdcOperationCallback) callbackEntry.getKey()).onSuccess(callbackEntry.getValue().get(0),
                                     queryResult.get(0));
                         }
                     }
@@ -227,11 +227,11 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     public void onFailure(final Throwable exception) {
                         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
                                 getCallbackMap(actions.get(actionType));
-                        for (VdcOperationCallback<?, ?> callback: callbackMap.keySet()) {
-                            if (callback instanceof VdcOperationCallbackList) {
-                                ((VdcOperationCallbackList) callback).onFailure(callbackMap.get(callback), exception);
+                        for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
+                            if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                                ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
                             } else {
-                                ((VdcOperationCallback) callback).onFailure(callbackMap.get(callback).get(0),
+                                ((VdcOperationCallback) callbackEntry.getKey()).onFailure(callbackEntry.getValue().get(0),
                                         exception);
                             }
                         }
@@ -241,14 +241,14 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     public void onSuccess(final ArrayList<VdcReturnValueBase> result) {
                         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
                                 getCallbackMap(actions.get(actionType));
-                        for (VdcOperationCallback<?, ?> callback: callbackMap.keySet()) {
+                        for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
                             List<VdcReturnValueBase> actionResult = (List<VdcReturnValueBase>)
-                                    getOperationResult(callbackMap.get(callback), allActionOperations, result);
-                            if (callback instanceof VdcOperationCallbackList) {
-                                ((VdcOperationCallbackList) callback).onSuccess(callbackMap.get(callback),
+                                    getOperationResult(callbackEntry.getValue(), allActionOperations, result);
+                            if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                                ((VdcOperationCallbackList) callbackEntry.getKey()).onSuccess(callbackEntry.getValue(),
                                         actionResult);
                             } else {
-                                ((VdcOperationCallback) callback).onSuccess(callbackMap.get(callback).get(0),
+                                ((VdcOperationCallback) callbackEntry.getKey()).onSuccess(callbackEntry.getValue().get(0),
                                         actionResult.get(0));
                             }
                         }
