@@ -548,10 +548,10 @@ public class LinkHelper {
             }
         }
 
-        for (Class<? extends BaseResource> parentType : collections.keySet()) {
-            if (parentType != NO_PARENT &&
-                getParentModel(model, parentType) != null) {
-                return collections.get(parentType);
+        for (Entry<Class<? extends BaseResource>, Collection> parentTypeEntry : collections.entrySet()) {
+            if (parentTypeEntry.getKey() != NO_PARENT &&
+                getParentModel(model, parentTypeEntry.getKey()) != null) {
+                return parentTypeEntry.getValue();
             }
         }
 
