@@ -20,6 +20,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         mVerbs.add("CLUSTER");
         mVerbs.add("DATACENTER");
         mVerbs.add("QUOTA");
+        mVerbs.add("DESCRIPTION");
 
         buildCompletions();
         mVerbs.add("_VMT_ID");
@@ -37,6 +38,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put("DATACENTER", String.class);
         getTypeDictionary().put("QUOTA", String.class);
         getTypeDictionary().put("_VMT_ID", UUID.class);
+        getTypeDictionary().put("DESCRIPTION", String.class);
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "name");
@@ -52,6 +54,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         columnNameDict.put("DATACENTER", "storage_pool_name");
         columnNameDict.put("QUOTA", "quota_name");
         columnNameDict.put("_VMT_ID", "vmt_guid");
+        columnNameDict.put("DESCRIPTION", "description");
         // Building the validation dict
         buildBasicValidationTable();
     }

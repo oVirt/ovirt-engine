@@ -20,4 +20,11 @@ public class VmConditionFieldAutoCompleterTest {
         assertFalse("Fer Ever", comp.validateFieldValue("UPTIME", "FerEver"));
     }
 
+    @Test
+    public void testDescriptionField() {
+        VmConditionFieldAutoCompleter comp = new VmConditionFieldAutoCompleter();
+        assertTrue(comp.validationDict.containsKey("DESCRIPTION"));
+        assertTrue(comp.validateFieldValue("DESCRIPTION", "bar"));
+    }
+
 }

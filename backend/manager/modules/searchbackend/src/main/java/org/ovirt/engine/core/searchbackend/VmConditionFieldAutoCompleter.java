@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.TimeSpan;
 
 public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VmConditionFieldAutoCompleter() {
-        // Building the basic vervs Dict
+        // Building the basic verbs Dict
         mVerbs.add("NAME");
         mVerbs.add("COMMENT");
         mVerbs.add("STATUS");
@@ -37,6 +37,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add("QUOTA");
         mVerbs.add("HOST");
         mVerbs.add("ID");
+        mVerbs.add("DESCRIPTION");
         // Building the autoCompletion Dict
         buildCompletions();
 
@@ -64,6 +65,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("QUOTA", String.class);
         getTypeDictionary().put("HOST", String.class);
         getTypeDictionary().put("ID", UUID.class);
+        getTypeDictionary().put("DESCRIPTION", String.class);
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "vm_name");
@@ -90,6 +92,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put("QUOTA", "quota_name");
         columnNameDict.put("HOST", "run_on_vds_name");
         columnNameDict.put("ID", "vm_guid");
+        columnNameDict.put("DESCRIPTION", "vm_description");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put("IP", StringFormat.format("fn_get_comparable_ip_list(%s)", getDbFieldName("IP")));
