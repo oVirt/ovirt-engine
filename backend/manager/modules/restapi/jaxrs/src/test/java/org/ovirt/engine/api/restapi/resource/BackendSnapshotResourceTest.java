@@ -6,21 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.ConfigurationType;
-import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -119,64 +114,6 @@ public class BackendSnapshotResourceTest extends AbstractBackendSubResourceTest<
         resource.restore(new Action());
     }
 
-    @Test
-    public void testPreview() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.TryBackToAllSnapshotsOfVm,
-                                           TryBackToAllSnapshotsOfVmParameters.class,
-                                           new String[] { "VmId", "DstSnapshotId" },
-                                           new Object[] { VM_ID, SNAPSHOT_ID },
-                                           asList(GUIDS[1]),
-                                           asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished))));
-        Response response = resource.preview(new Action());
-        verifyActionResponse(response);
-        Action action = (Action)response.getEntity();
-        assertTrue(action.isSetStatus());
-        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus().getState());
-    }
-
-    @Test
-    public void testUndo() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RestoreAllSnapshots,
-                                           RestoreAllSnapshotsParameters.class,
-                                           new String[] { "VmId", "DstSnapshotId" },
-                                           new Object[] { VM_ID, SNAPSHOT_ID },
-                                           asList(GUIDS[1]),
-                                           asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished))));
-        Response response = resource.undo(new Action());
-        verifyActionResponse(response);
-        Action action = (Action)response.getEntity();
-        assertTrue(action.isSetStatus());
-        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus().getState());
-    }
-
-    @Test
-    public void testCommit() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RestoreAllSnapshots,
-                                           RestoreAllSnapshotsParameters.class,
-                                           new String[] { "VmId", "DstSnapshotId" },
-                                           new Object[] { VM_ID, SNAPSHOT_ID },
-                                           asList(GUIDS[1]),
-                                           asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished))));
-        Response response = resource.commit(new Action());
-        verifyActionResponse(response);
-        Action action = (Action)response.getEntity();
-        assertTrue(action.isSetStatus());
-        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus().getState());
-    }
-
-    protected UriInfo setUpActionExpectations(VdcActionType task,
-                                              Class<? extends VdcActionParametersBase> clz,
-                                              String[] names,
-                                              Object[] values,
-                                              ArrayList<Guid> asyncTasks,
-                                              ArrayList<AsyncTaskStatus> asyncStatuses) {
-        String uri = "snapshots/" + GUIDS[0] + "/action";
-        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
-    }
-
-    private void verifyActionResponse(Response r) throws Exception {
-        verifyActionResponse(r, "snapshots/" + GUIDS[0], true);
-    }
 
     protected UriInfo setUpTryBackExpectations() {
         return setUpActionExpectations(
