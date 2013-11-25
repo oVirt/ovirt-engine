@@ -65,7 +65,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     }
 
-    public static ITagsHandler TagsHandler = null;
+    public static ITagsHandler tagsHandler = null;
 
     public Map<String, Class<?>> getTypeDictionary() {
         return typeDict;
@@ -316,10 +316,10 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             if (pair.getFirst() != null && pair.getFirst().equals("=")) {
                 pair.setFirst("IN");
                 pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
-                tags tag = TagsHandler.GetTagByTagName(pair.getSecond());
+                tags tag = tagsHandler.GetTagByTagName(pair.getSecond());
                 if (tag != null) {
                     pair.setSecond(
-                            StringFormat.format("(%1$s)", TagsHandler.GetTagNameAndChildrenNames(tag.gettag_id())));
+                            StringFormat.format("(%1$s)", tagsHandler.GetTagNameAndChildrenNames(tag.gettag_id())));
                 } else {
                     pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
                 }
@@ -327,7 +327,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 pair.setFirst("IN");
                 pair.setSecond(StringHelper.trim(pair.getSecond(), '\'').replace("%", "*"));
 
-                String IDs = TagsHandler.GetTagNamesAndChildrenNamesByRegExp(pair.getSecond());
+                String IDs = tagsHandler.GetTagNamesAndChildrenNamesByRegExp(pair.getSecond());
                 if (StringHelper.isNullOrEmpty(IDs)) {
                     pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
                 } else {

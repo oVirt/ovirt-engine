@@ -105,7 +105,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     private void initHandlers() {
         mTagsHandler = HandlersFactory.createTagsHandler();
-        BaseConditionFieldAutoCompleter.TagsHandler = mTagsHandler;
+        BaseConditionFieldAutoCompleter.tagsHandler = mTagsHandler;
         VmHandler.init();
         VdsHandler.Init();
         VmTemplateHandler.Init();
