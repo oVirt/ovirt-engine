@@ -31,8 +31,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -56,7 +54,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     private boolean _addVmsSucceded = true;
-    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -335,36 +332,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected boolean getAddVmsSucceded() {
         return _addVmsSucceded;
-    }
-
-    /**
-     * Check if the name of the VM-Pool has valid length, meaning it's not too long.
-     * Since VMs in a pool are named like: 'SomePool_22', the max length allowed for the name is the max VM-name length
-     * + room for the suffix: <Max Length of VM name> - (length(<MaxVmsInPool>) + 1)
-     * In deciding the max length for a VM name, take into consideration if it's a Windows or non-Windows VM
-     * @param vmPoolName
-     *            name of pool
-     * @return true if name has valid length; false if the name is too long
-     */
-    protected boolean isVmPoolNameValidLength(String vmPoolName) {
-
-        // get VM-pool OS type
-        int osId = getParameters().getVmStaticData().getOsId();
-
-        // determine the max length considering the OS and the max-VMs-in-pool
-        // get the max VM name (configuration parameter)
-        int maxVmNameLengthWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthWindows);
-        int maxVmNameLengthNonWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthNonWindows);
-
-        int maxLength = osRepository.isWindows(osId) ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
-        Integer maxVmsInPool = Config.GetValue(ConfigValues.MaxVmsInPool);
-        maxLength -= (String.valueOf(maxVmsInPool).length() + 1);
-
-        // check if name is valid
-        boolean nameLengthValid = (vmPoolName.length() <= maxLength);
-
-        // return the result
-        return nameLengthValid;
     }
 
     public String getVmsCount() {
