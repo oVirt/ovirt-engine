@@ -53,7 +53,7 @@ public class SchedulingManager {
             synchronized (SchedulingManager.class) {
                 if (instance == null) {
                     instance = new SchedulingManager();
-                    EnableLoadBalancer();
+                    enableLoadBalancer();
                 }
             }
         }
@@ -658,7 +658,7 @@ public class SchedulingManager {
         return DbFacade.getInstance().getClusterPolicyDao();
     }
 
-    public static void EnableLoadBalancer() {
+    public static void enableLoadBalancer() {
         if (Config.<Boolean> GetValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start scheduling to enable vds load balancer");
             SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance,
