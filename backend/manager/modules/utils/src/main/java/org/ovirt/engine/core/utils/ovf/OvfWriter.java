@@ -210,6 +210,12 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(String.valueOf(vmBase.isDeleteProtected()));
         _writer.WriteEndElement();
 
+        if (vmBase.getSsoMethod() != null) {
+            _writer.WriteStartElement("SsoMethod");
+            _writer.WriteRaw(vmBase.getSsoMethod().toString());
+            _writer.WriteEndElement();
+        }
+
         _writer.WriteStartElement("IsSmartcardEnabled");
         _writer.WriteRaw(String.valueOf(vmBase.isSmartcardEnabled()));
         _writer.WriteEndElement();

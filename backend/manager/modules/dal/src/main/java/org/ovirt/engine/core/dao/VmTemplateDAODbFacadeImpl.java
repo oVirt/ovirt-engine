@@ -176,6 +176,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("is_stateless", template.isStateless())
                 .addValue("is_smartcard_enabled", template.isSmartcardEnabled())
                 .addValue("is_delete_protected", template.isDeleteProtected())
+                .addValue("sso_method", template.getSsoMethod().toString())
                 .addValue("iso_path", template.getIsoPath())
                 .addValue("origin", template.getOrigin())
                 .addValue("initrd_url", template.getInitrdUrl())

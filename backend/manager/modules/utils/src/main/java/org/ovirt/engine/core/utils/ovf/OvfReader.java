@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -436,6 +437,13 @@ public abstract class OvfReader implements IOvfBuilder {
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
                 vmBase.setDeleteProtected(Boolean.parseBoolean(node.innerText));
+            }
+        }
+
+        node = content.SelectSingleNode("SsoMethod");
+        if (node != null) {
+            if (!StringUtils.isEmpty(node.innerText)) {
+                vmBase.setSsoMethod(SsoMethod.fromString(node.innerText));
             }
         }
 

@@ -62,6 +62,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("is_stateless", vm.isStateless())
                 .addValue("is_smartcard_enabled", vm.isSmartcardEnabled())
                 .addValue("is_delete_protected", vm.isDeleteProtected())
+                .addValue("sso_method", vm.getSsoMethod().toString())
                 .addValue("dedicated_vm_for_vds", vm.getDedicatedVmForVds())
                 .addValue("fail_back", vm.isFailBack())
                 .addValue("vm_type", vm.getVmType())

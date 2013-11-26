@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.SessionState;
+import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -328,6 +329,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setStateless(rs.getBoolean("is_stateless"));
             entity.setSmartcardEnabled(rs.getBoolean("is_smartcard_enabled"));
             entity.setDeleteProtected(rs.getBoolean("is_delete_protected"));
+            entity.setSsoMethod(SsoMethod.fromString(rs.getString("sso_method")));
             entity.setDedicatedVmForVds(getGuid(rs, "dedicated_vm_for_vds"));
             entity.setFailBack(rs.getBoolean("fail_back"));
             entity.setLastVdsRunOn(getGuid(rs, "last_vds_run_on"));

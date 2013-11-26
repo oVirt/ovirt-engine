@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -42,6 +43,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
         entity.setInitrdUrl(rs.getString("initrd_url"));
         entity.setSmartcardEnabled(rs.getBoolean("is_smartcard_enabled"));
         entity.setDeleteProtected(rs.getBoolean("is_delete_protected"));
+        entity.setSsoMethod(SsoMethod.fromString(rs.getString("sso_method")));
         entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
         entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
         entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));

@@ -335,6 +335,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         return vmStatic.isDeleteProtected();
     }
 
+    public void setSsoMethod(SsoMethod ssoMethod) {
+        vmStatic.setSsoMethod(ssoMethod);
+    }
+
+    public SsoMethod getSsoMethod() {
+        return vmStatic.getSsoMethod();
+    }
+
     public String getVncKeyboardLayout() {
         return vmStatic.getVncKeyboardLayout();
     }

@@ -125,6 +125,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private boolean deleteProtected;
 
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private SsoMethod ssoMethod;
+
     @EditableField
     private long dbGeneration;
 
@@ -193,6 +197,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         migrationSupport = MigrationSupport.MIGRATABLE;
         vmType = VmType.Desktop;
         defaultDisplayType = DisplayType.qxl;
+        ssoMethod = SsoMethod.GUEST_AGENT;
         singleQxlPci = true;
     }
 
@@ -268,6 +273,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             Guid quotaId,
             boolean smartcardEnabled,
             boolean deleteProtected,
+            SsoMethod ssoMethod,
             Boolean tunnelMigration,
             String vncKeyboardLayout,
             int minAllocatedMem,
@@ -303,6 +309,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.initrdUrl = initrdUrl;
         this.smartcardEnabled = smartcardEnabled;
         this.deleteProtected = deleteProtected;
+        this.ssoMethod = ssoMethod;
         this.tunnelMigration = tunnelMigration;
         this.vncKeyboardLayout = vncKeyboardLayout;
         this.minAllocatedMem = minAllocatedMem;
@@ -815,5 +822,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setCpuShares(int cpuShares) {
         this.cpuShares = cpuShares;
+    }
+
+    public SsoMethod getSsoMethod() {
+        return ssoMethod;
+    }
+
+    public void setSsoMethod(SsoMethod ssoMethod) {
+        this.ssoMethod = ssoMethod;
     }
 }

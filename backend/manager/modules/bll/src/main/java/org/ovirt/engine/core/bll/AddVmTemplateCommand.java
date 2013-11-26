@@ -411,6 +411,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getVmType(),
                         getParameters().getMasterVm().isSmartcardEnabled(),
                         getParameters().getMasterVm().isDeleteProtected(),
+                        getParameters().getMasterVm().getSsoMethod(),
                         getParameters().getMasterVm().getTunnelMigration(),
                         getParameters().getMasterVm().getVncKeyboardLayout(),
                         getParameters().getMasterVm().getMinAllocatedMem(),
