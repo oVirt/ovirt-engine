@@ -78,7 +78,7 @@ public class DbUserCacheManager {
 
     @Override
     protected void finalize() throws Throwable {
-        Dispose();
+        dispose();
     }
 
     /**
@@ -297,7 +297,7 @@ public class DbUserCacheManager {
 
     }
 
-    public void Dispose() {
+    public void dispose() {
         if (jobId != null) {
             SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
         }
