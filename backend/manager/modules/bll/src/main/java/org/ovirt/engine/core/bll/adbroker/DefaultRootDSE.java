@@ -4,17 +4,9 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-
 public class DefaultRootDSE implements RootDSE {
 
     private String defaultNamingContext;
-
-    public DefaultRootDSE() {
-    }
-
-    public DefaultRootDSE(String defaultNamingContext) {
-        this.defaultNamingContext = defaultNamingContext;
-    }
 
     public DefaultRootDSE(Attributes rootDseRecords) throws NamingException {
         Attribute namingContexts = rootDseRecords.get(DefaultRootDSEAttributes.namingContexts.name());
