@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.log.Log;
@@ -59,10 +58,6 @@ public class VdsHandler extends BaseHandler {
 
     public static boolean IsFieldsUpdated(VdsStatic source, VdsStatic destination, Iterable<String> list) {
         return mUpdateVdsStatic.IsFieldsUpdated(source, destination, list);
-    }
-
-    public static void HandleVdsCpuFlagsOrClusterChanged(Guid vdsId) {
-
     }
 
     static private boolean isPendingOvirt(VDSType type, VDSStatus status) {
