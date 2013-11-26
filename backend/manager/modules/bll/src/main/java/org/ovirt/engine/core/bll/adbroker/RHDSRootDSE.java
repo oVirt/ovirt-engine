@@ -8,13 +8,6 @@ public class RHDSRootDSE implements RootDSE {
 
     private String defaultNamingContext;
 
-    public RHDSRootDSE() {
-    }
-
-    public RHDSRootDSE(String defaultNamingContext) {
-        this.defaultNamingContext = defaultNamingContext;
-    }
-
     public RHDSRootDSE(Attributes rootDseRecords) throws NamingException {
         Attribute namingContexts = rootDseRecords.get(RHDSRootDSEAttributes.namingContexts.name());
         if (namingContexts != null) {
