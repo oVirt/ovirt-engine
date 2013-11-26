@@ -106,13 +106,4 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
             break;
         }
     }
-
-    private void handleTimeout(LdapSearchExceptionHandlingResponse response) {
-        response.setTryNextServer(true)
-                .setTranslatedException(
-                        new AuthenticationResultException(AuthenticationResult.CONNECTION_TIMED_OUT,
-                                "Connection to to server has timed out."))
-                .setOrderingAlgorithm(OrderingAlgorithmType.PUT_LAST);
-    }
-
 }
