@@ -4,6 +4,9 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
 import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 
@@ -37,8 +40,9 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     private final SearchPanelPresenterWidget searchPanel;
     private final AboutPopupPresenterWidget aboutPopup;
     private final ConfigurePopupPresenterWidget configurePopup;
-    private final String feedbackUrl;
+    private String feedbackUrl;
     private final String feedbackLinkLabel;
+    private final ApplicationDynamicMessages dynamicMessages;
 
     @Inject
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
@@ -50,8 +54,8 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         this.searchPanel = searchPanel;
         this.aboutPopup = aboutPopup;
         this.configurePopup = configurePopup;
-        this.feedbackUrl = dynamicMessages.feedbackUrl();
         this.feedbackLinkLabel = dynamicMessages.feedbackLinkLabel();
+        this.dynamicMessages = dynamicMessages;
     }
 
     @Override
@@ -86,16 +90,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                 RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopup);
             }
         }));
-
-        if (feedbackUrl != null && feedbackUrl.length() > 0) {
-            getView().setFeedbackText(feedbackLinkLabel);
-            registerHandler(getView().getFeedbackLink().addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    WebUtils.openUrlInNewWindow(feedbackLinkLabel, feedbackUrl);
-                }
-            }));
-        }
     }
 
     @Override
@@ -103,6 +97,28 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         super.onReveal();
 
         setInSlot(TYPE_SetSearchPanel, searchPanel);
+        configureFeedbackUrl();
     }
 
+    private void configureFeedbackUrl() {
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                String version = (String) result;
+                feedbackUrl = dynamicMessages.feedbackUrl(version);
+                if (feedbackUrl != null && feedbackUrl.length() > 0) {
+                    getView().setFeedbackText(feedbackLinkLabel);
+                    registerHandler(getView().getFeedbackLink().addClickHandler(new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            WebUtils.openUrlInNewWindow(feedbackLinkLabel, feedbackUrl);
+                        }
+                    }));
+                }
+            }
+        };
+        AsyncDataProvider.getRpmVersion(_asyncQuery);
+    }
 }
