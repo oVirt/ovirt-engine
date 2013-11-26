@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.job;
 
-import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -38,24 +37,6 @@ public interface JobRepository {
      *            The {@link Job} entity to persist (can't be <code>null</code>).
      */
     void saveJob(Job job);
-
-    /**
-     * Updates an existing {@link Job} entity with data from the given instance.
-     *
-     * @param step
-     *            The {@link Job} instance, containing data to update (can't be <code>null</code>).
-     */
-    void updateJob(final Job job);
-
-    /**
-     * Updates {@link Job} entity with the last update time of a given instance
-     *
-     * @param jobId
-     *            the id of the job instance which should be updated
-     * @param lastUpdateTime
-     *            the last date when the Job was modified
-     */
-    void updateJobLastUpdateTime(Guid jobId, Date lastUpdateTime);
 
     /**
      * Retrieves the {@link Job} entity with the given id.

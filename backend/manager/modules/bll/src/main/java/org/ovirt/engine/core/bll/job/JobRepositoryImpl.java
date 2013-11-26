@@ -95,30 +95,6 @@ public class JobRepositoryImpl implements JobRepository {
     }
 
     @Override
-    public void updateJob(final Job job) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                jobDao.update(job);
-                return null;
-            }
-        });
-    }
-
-    @Override
-    public void updateJobLastUpdateTime(final Guid jobId, final Date lastUpdateTime) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                jobDao.updateJobLastUpdateTime(jobId, lastUpdateTime);
-                return null;
-            }
-        });
-    }
-
-    @Override
     public Job getJob(final Guid jobId) {
         Job job = jobDao.get(jobId);
         if (job != null) {
