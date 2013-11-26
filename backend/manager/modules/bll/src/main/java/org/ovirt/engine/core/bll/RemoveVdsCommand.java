@@ -21,8 +21,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
+import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -123,7 +124,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     protected VdsDynamicDAO getVdsDynamicDAO() {
-        return DbFacade.getInstance().getVdsDynamicDao();
+        return getDbFacade().getVdsDynamicDao();
     }
 
     private boolean statusLegalForRemove(VDS vds) {
@@ -135,12 +136,12 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     private void RemoveVdsFromCollection() {
         // ResourceManager.Instance.removeVds(VdsId);
-        Backend.getInstance().getResourceManager()
+        getBackend().getResourceManager()
                 .RunVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(getVdsId()));
     }
 
     private void RemoveVdsStaticFromDb() {
-        DbFacade.getInstance().getVdsStaticDao().remove(getVdsId());
+        getVdsStaticDao().remove(getVdsId());
     }
 
     private void RemoveVdsDynamicFromDb() {
@@ -148,7 +149,15 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void RemoveVdsStatisticsFromDb() {
-        DbFacade.getInstance().getVdsStatisticsDao().remove(getVdsId());
+        getVdsStatisticsDao().remove(getVdsId());
+    }
+
+    protected VdsStatisticsDAO getVdsStatisticsDao() {
+        return getDbFacade().getVdsStatisticsDao();
+    }
+
+    protected VdsStaticDAO getVdsStaticDao() {
+        return getDbFacade().getVdsStaticDao();
     }
 
     private boolean canRemoveVds(Guid vdsId, List<String> text) {
