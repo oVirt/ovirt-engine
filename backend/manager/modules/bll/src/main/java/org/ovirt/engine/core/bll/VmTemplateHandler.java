@@ -90,10 +90,6 @@ public class VmTemplateHandler {
         SetVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.OK, null);
     }
 
-    public static void MarkVmTemplateAsIllegal(Guid vmTemplateGuid) {
-        SetVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.Illegal, null);
-    }
-
     /**
      * Set the status of the VM template with the given id to the desired status, saving the old status if necessary.
      *
