@@ -124,6 +124,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected void executeVmCommand() {
         if (getVm().getStatus().isUpOrPaused()) {
+            updateDisksFromDb();
             performPlugCommand(getPlugAction(), getDisk(), oldVmDevice);
         }
 
