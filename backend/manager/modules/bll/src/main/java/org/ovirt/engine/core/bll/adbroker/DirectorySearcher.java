@@ -13,7 +13,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class DirectorySearcher {
 
-    private static final Object DC_PREFIX = "DC=";
     private boolean baseDNExist = true;
     private boolean explicitAuth = false;
     private String explicitBaseDN;
@@ -146,25 +145,6 @@ public class DirectorySearcher {
 
     public Exception getException() {
         return ex;
-    }
-
-    protected String getBaseDNForDomainForSimpleAuth(String domainName) {
-        if (domainName == null) {
-            return null;
-        }
-
-        StringBuilder dnSb = new StringBuilder();
-        String[] parts = domainName.split("\\.");
-        // format should be dc=part0,dc=part1,dc=part2,.....dc=part-(n-1)
-
-        for (int counter = 0; counter < parts.length; counter++) {
-            dnSb.append(DC_PREFIX).append(parts[counter]);
-            if (counter < parts.length - 1) {
-                dnSb.append(",");
-            }
-        }
-        return dnSb.toString();
-
     }
 
     public void setExplicitBaseDN(String explicitBaseDN) {
