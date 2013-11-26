@@ -95,6 +95,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             doChangeDefautlHost(template.getDedicatedVmForVds());
 
             getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
+            getModel().selectSsoMethod(template.getSsoMethod());
 
             getModel().getIsStateless().setEntity(template.isStateless());
 

@@ -207,6 +207,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getIsStateless().setEntity(this.vm.isStateless());
         getModel().getIsRunAndPause().setEntity(this.vm.isRunAndPause());
         getModel().getIsDeleteProtected().setEntity(this.vm.isDeleteProtected());
+        getModel().selectSsoMethod(this.vm.getSsoMethod());
 
         updateSelectedCdImage(this.vm.getStaticData());
         updateTimeZone(this.vm.getTimeZone());

@@ -468,6 +468,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setName(name);
                         vm.setVmOs(model.getOSType().getSelectedItem());
                         vm.setDeleteProtected(model.getIsDeleteProtected().getEntity());
+                        vm.setSsoMethod(model.extractSelectedSsoMethod());
                         vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
                         vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
                         vm.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());

@@ -341,6 +341,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private VM privatecurrentVm;
 
     public VM getcurrentVm()
+
     {
         return privatecurrentVm;
     }
@@ -1317,6 +1318,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setRunAndPause(model.getIsRunAndPause().getEntity());
         tempVar.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
         tempVar.setDeleteProtected(model.getIsDeleteProtected().getEntity());
+        tempVar.setSsoMethod(model.extractSelectedSsoMethod());
         tempVar.setDefaultBootSequence(model.getBootSequence());
         tempVar.setAutoStartup(model.getIsHighlyAvailable().getEntity());
         tempVar.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
@@ -1904,6 +1906,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setRunAndPause(model.getIsRunAndPause().getEntity());
         getcurrentVm().setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
         getcurrentVm().setDeleteProtected(model.getIsDeleteProtected().getEntity());
+        getcurrentVm().setSsoMethod(model.extractSelectedSsoMethod());
         getcurrentVm().setDefaultBootSequence(model.getBootSequence());
         getcurrentVm().setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem()
                 : ""); //$NON-NLS-1$

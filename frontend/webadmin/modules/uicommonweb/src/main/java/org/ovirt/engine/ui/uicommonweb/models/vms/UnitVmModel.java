@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -174,6 +175,8 @@ public class UnitVmModel extends Model {
             getIsSmartcardEnabled().setIsChangable(false);
             getAllowConsoleReconnect().setIsChangable(false);
             getVncKeyboardLayout().setIsChangable(false);
+            getSsoMethodNone().setIsChangable(false);
+            getSsoMethodGuestAgent().setIsChangable(false);
 
             // ==Host Tab==
             getIsAutoAssign().setIsChangable(false);
@@ -704,6 +707,26 @@ public class UnitVmModel extends Model {
         this.privateIsDeleteProtected = deleteProtected;
     }
 
+    private NotChangableForVmInPoolEntityModel<Boolean> ssoMethodNone;
+
+    public EntityModel<Boolean> getSsoMethodNone() {
+        return ssoMethodNone;
+    }
+
+    public void setSsoMethodNone(NotChangableForVmInPoolEntityModel<Boolean> ssoMethodNone) {
+        this.ssoMethodNone = ssoMethodNone;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Boolean> ssoMethodGuestAgent;
+
+    public EntityModel<Boolean> getSsoMethodGuestAgent() {
+        return ssoMethodGuestAgent;
+    }
+
+    public void setSsoMethodGuestAgent(NotChangableForVmInPoolEntityModel<Boolean> ssoMethodGuestAgent) {
+        this.ssoMethodGuestAgent = ssoMethodGuestAgent;
+    }
+
     private NotChangableForVmInPoolEntityModel<Boolean> copyPermissions;
 
     public EntityModel<Boolean> getCopyPermissions() {
@@ -1122,8 +1145,7 @@ public class UnitVmModel extends Model {
         this.vncKeyboardLayout = vncKeyboardLayout;
     }
 
-    public UnitVmModel(VmModelBehaviorBase behavior)
-    {
+    public UnitVmModel(VmModelBehaviorBase behavior) {
         Frontend.getInstance().getQueryStartedEvent().addListener(this);
         Frontend.getInstance().getQueryCompleteEvent().addListener(this);
 
@@ -1159,6 +1181,8 @@ public class UnitVmModel extends Model {
         setIsRunAndPause(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsDeleteProtected(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setSsoMethodNone(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setSsoMethodGuestAgent(new NotChangableForVmInPoolEntityModel<Boolean>());
         setConsoleDeviceEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setCopyPermissions(new NotChangableForVmInPoolEntityModel<Boolean>());
         // by default not available - only for new VM
@@ -1329,6 +1353,8 @@ public class UnitVmModel extends Model {
 
         setIsSingleQxlEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         getBehavior().enableSinglePCI(false);
+
+        selectSsoMethod(SsoMethod.GUEST_AGENT);
 
         setEditingEnabled(new EntityModel<Boolean>());
         getEditingEnabled().setEntity(true);
@@ -2222,6 +2248,17 @@ public class UnitVmModel extends Model {
                 && behavior.validate()
                 && customPropertySheetValid && getQuota().getIsValid();
 
+    }
+
+    public SsoMethod extractSelectedSsoMethod() {
+        return Boolean.TRUE.equals(getSsoMethodGuestAgent().getEntity())
+                ? SsoMethod.GUEST_AGENT
+                : SsoMethod.NONE;
+    }
+
+    public void selectSsoMethod(SsoMethod ssoMethod) {
+        getSsoMethodNone().setEntity(SsoMethod.NONE.equals(ssoMethod));
+        getSsoMethodGuestAgent().setEntity(SsoMethod.GUEST_AGENT.equals(ssoMethod));
     }
 
     class TotalCpuCoresComposableValidation implements IValidation {

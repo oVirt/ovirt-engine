@@ -101,6 +101,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().setBootSequence(vmBase.getDefaultBootSequence());
             getModel().getIsHighlyAvailable().setEntity(vmBase.isAutoStartup());
             getModel().getIsDeleteProtected().setEntity(vmBase.isDeleteProtected());
+            getModel().selectSsoMethod(vmBase.getSsoMethod());
             getModel().getIsRunAndPause().setEntity(false);
 
             boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());

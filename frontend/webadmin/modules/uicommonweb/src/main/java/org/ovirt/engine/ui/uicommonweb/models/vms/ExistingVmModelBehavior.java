@@ -170,6 +170,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getIsSmartcardEnabled().setEntity(vm.isSmartcardEnabled());
         getModel().getIsDeleteProtected().setEntity(vm.isDeleteProtected());
+        getModel().selectSsoMethod(vm.getSsoMethod());
 
         getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
         getModel().getNumOfSockets().setIsChangable(!vm.isRunning());

@@ -106,6 +106,7 @@
 		<include name="common/businessentities/TagsType.java" />
 		<include name="common/EventNotificationMethods.java" />
 		<include name="common/businessentities/UsbPolicy.java" />
+        <include name="common/businessentities/SsoMethod.java" />
 		<include name="common/businessentities/VDS.java" />
 		<include name="common/businessentities/VDSDomainsData.java" />
 		<include name="common/businessentities/VdsDynamic.java" />

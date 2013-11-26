@@ -225,6 +225,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("coresPerSocket")
     public ListModelListBoxEditor<Integer> corePerSocketEditor;
 
+    @UiField
+    @Ignore
+    public Label ssoMethodLabel;
+
+    @UiField(provided = true)
+    @Path(value = "ssoMethodNone.entity")
+    @WithElementId("ssoMethodNone")
+    public EntityModelRadioButtonEditor ssoMethodNone;
+
+    @UiField(provided = true)
+    @Path(value = "ssoMethodGuestAgent.entity")
+    @WithElementId("ssoMethodGuestAgent")
+    public EntityModelRadioButtonEditor ssoMethodGuestAgent;
+
     @UiField(provided = true)
     @Path(value = "isSoundcardEnabled.entity")
     @WithElementId("isSoundcardEnabled")
@@ -638,6 +652,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        ssoMethodNone = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
+        ssoMethodGuestAgent = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer());//$NON-NLS-1$
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -984,6 +1000,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         usbSupportEditor.setLabel(constants.usbPolicyVmPopup());
         numOfMonitorsEditor.setLabel(constants.monitorsVmPopup());
         allowConsoleReconnectEditor.setLabel(constants.allowConsoleReconnect());
+        isSoundcardEnabledEditor.setLabel(constants.soundcardEnabled());
+        isSingleQxlEnabledEditor.setLabel(constants.singleQxlEnabled());
+        ssoMethodNone.setLabel(constants.none());
+        ssoMethodGuestAgent.setLabel(constants.guestAgent());
 
         // Host Tab
         hostTab.setLabel(constants.hostVmPopup());
@@ -1017,8 +1037,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         totalvCPUsEditor.setLabel(constants.numOfVCPUs());
         corePerSocketEditor.setLabel(constants.coresPerSocket());
         numOfSocketsEditor.setLabel(constants.numOfSockets());
-        isSoundcardEnabledEditor.setLabel(constants.soundcardEnabled());
-        isSingleQxlEnabledEditor.setLabel(constants.singleQxlEnabled());
     }
 
     protected void applyStyles() {
@@ -1287,6 +1305,24 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     specificHost.setValue(true, true);
             }
         });
+
+        ssoMethodGuestAgent.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (Boolean.TRUE.equals(event.getValue())) {
+                    ValueChangeEvent.fire(ssoMethodNone.asRadioButton(), false);
+                }
+            }
+        });
+
+        ssoMethodNone.asRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (Boolean.TRUE.equals(event.getValue())) {
+                    ValueChangeEvent.fire(ssoMethodGuestAgent.asRadioButton(), false);
+                }
+            }
+        });
     }
 
     private void updateDisksWarningByImageStatus(List<DiskModel> disks, ImageStatus imageStatus) {
@@ -1389,6 +1425,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isSingleQxlEnabledEditor.setTabIndex(nextTabIndex++);
         numOfMonitorsEditor.setTabIndex(nextTabIndex++);
         isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);
+        ssoMethodNone.setTabIndex(nextTabIndex++);
+        ssoMethodGuestAgent.setTabIndex(nextTabIndex++);
         nextTabIndex = expander.setTabIndexes(nextTabIndex);
         allowConsoleReconnectEditor.setTabIndex(nextTabIndex++);
         isSoundcardEnabledEditor.setTabIndex(nextTabIndex++);
@@ -1457,7 +1495,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 nativeUsbWarningMessage,
                 expander,
                 numOfMonitorsEditor,
-                vncKeyboardLayoutEditor
+                vncKeyboardLayoutEditor,
+                ssoMethodLabel,
+                ssoMethodNone,
+                ssoMethodGuestAgent
         );
     }
 

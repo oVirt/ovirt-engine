@@ -1593,4 +1593,13 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Waiting ...")
     String waitForGlusterTask();
+
+    @DefaultStringValue("Single Sign On method")
+    String ssoMethod();
+
+    @DefaultStringValue("Disable Single Sign On")
+    String none();
+
+    @DefaultStringValue("Use Guest Agent")
+    String guestAgent();
 }

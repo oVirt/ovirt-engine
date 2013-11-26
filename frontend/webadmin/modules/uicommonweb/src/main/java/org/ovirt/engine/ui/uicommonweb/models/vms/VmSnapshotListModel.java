@@ -600,6 +600,7 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setStateless(model.getIsStateless().getEntity());
         getcurrentVm().setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
         getcurrentVm().setDeleteProtected(model.getIsDeleteProtected().getEntity());
+        getcurrentVm().setSsoMethod(model.extractSelectedSsoMethod());
         getcurrentVm().setDefaultBootSequence(model.getBootSequence());
         getcurrentVm().setIsoPath(model.getCdImage().getIsChangable() ?
                 model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$

@@ -450,6 +450,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setStateless(model.getIsStateless().getEntity());
         template.setRunAndPause(model.getIsRunAndPause().getEntity());
         template.setDeleteProtected(model.getIsDeleteProtected().getEntity());
+        template.setSsoMethod(model.extractSelectedSsoMethod());
         template.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
         template.setDefaultBootSequence(model.getBootSequence());
         template.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$

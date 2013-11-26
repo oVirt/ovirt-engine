@@ -608,6 +608,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
                 / model.getNumOfSockets().getSelectedItem());
         tempVar.setDeleteProtected(model.getIsDeleteProtected().getEntity());
+        tempVar.setSsoMethod(model.extractSelectedSsoMethod());
         tempVar.setStateless(model.getIsStateless().getEntity());
         tempVar.setRunAndPause(model.getIsRunAndPause().getEntity());
         tempVar.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
@@ -1039,6 +1040,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         gettempVm().setStateless(model.getIsStateless().getEntity());
         gettempVm().setRunAndPause(model.getIsRunAndPause().getEntity());
         gettempVm().setDeleteProtected(model.getIsDeleteProtected().getEntity());
+        gettempVm().setSsoMethod(model.extractSelectedSsoMethod());
         gettempVm().setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
         gettempVm().setDefaultBootSequence(model.getBootSequence());
         gettempVm().setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage()
