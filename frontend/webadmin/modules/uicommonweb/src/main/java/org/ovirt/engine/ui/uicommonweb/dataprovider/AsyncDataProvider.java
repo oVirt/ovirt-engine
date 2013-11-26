@@ -1449,7 +1449,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeRemoveBricksStatus, parameters, aQuery);
     }
 
-    public static void getRpmVersionViaPublic(AsyncQuery aQuery) {
+    public static void getRpmVersion(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1457,10 +1457,10 @@ public final class AsyncDataProvider {
                 return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
-        Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
-                        getDefaultConfigurationVersion()),
-                aQuery);
+        GetConfigurationValueParameters tempVar =
+                new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion);
+        tempVar.setVersion(getDefaultConfigurationVersion());
+        getConfigFromCache(tempVar, aQuery);
     }
 
     public static void getUserMessageOfTheDayViaPublic(AsyncQuery aQuery) {

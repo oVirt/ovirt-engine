@@ -251,8 +251,8 @@ public class DynamicMessages {
      *
      * @return The feedback URL.
      */
-    public final String feedbackUrl() {
-        return getString(DynamicMessageKey.FEEDBACK_URL);
+    public final String feedbackUrl(final String version) {
+        return formatString(DynamicMessageKey.FEEDBACK_URL, version);
     }
 
     /**

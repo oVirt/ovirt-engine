@@ -39,7 +39,7 @@ public class AboutPopupPresenterWidget extends AbstractPopupPresenterWidget<Abou
             }
         };
 
-        AsyncDataProvider.getRpmVersionViaPublic(_asyncQuery);
+        AsyncDataProvider.getRpmVersion(_asyncQuery);
     }
 
 }
