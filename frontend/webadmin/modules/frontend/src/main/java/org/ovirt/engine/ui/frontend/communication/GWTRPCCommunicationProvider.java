@@ -212,21 +212,21 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      * type
      */
     private void transmitMultipleActions(final Map<VdcActionType, List<VdcOperation<?, ?>>> actions) {
-        for (final VdcActionType actionType: actions.keySet()) {
+        for (final Map.Entry<VdcActionType, List<VdcOperation<?, ?>>> actionEntry: actions.entrySet()) {
             List<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-            final List<VdcOperation<?, ?>> allActionOperations = actions.get(actionType);
+            final List<VdcOperation<?, ?>> allActionOperations = actionEntry.getValue();
             for (VdcOperation<?, ?> operation: allActionOperations) {
                 parameters.add((VdcActionParametersBase) operation.getParameter());
             }
             if (parameters.size() > 1 || (allActionOperations.size() == 1
                     && allActionOperations.get(0).getCallback() instanceof VdcOperationCallbackList)) {
-                getService().RunMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters, false,
+                getService().RunMultipleActions(actionEntry.getKey(), (ArrayList<VdcActionParametersBase>) parameters, false,
                         new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
 
                     @Override
                     public void onFailure(final Throwable exception) {
                         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
-                                getCallbackMap(actions.get(actionType));
+                                getCallbackMap(actionEntry.getValue());
                         for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
                             if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
                                 ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
@@ -240,7 +240,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     @Override
                     public void onSuccess(final ArrayList<VdcReturnValueBase> result) {
                         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
-                                getCallbackMap(actions.get(actionType));
+                                getCallbackMap(actionEntry.getValue());
                         for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
                             List<VdcReturnValueBase> actionResult = (List<VdcReturnValueBase>)
                                     getOperationResult(callbackEntry.getValue(), allActionOperations, result);
@@ -256,7 +256,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
                 });
             } else {
-                transmitOperation(actions.get(actionType).get(0));
+                transmitOperation(actionEntry.getValue().get(0));
             }
         }
     }
