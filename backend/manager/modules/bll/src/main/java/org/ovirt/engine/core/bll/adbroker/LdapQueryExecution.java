@@ -34,56 +34,27 @@ public class LdapQueryExecution {
         return filter;
     }
 
-    public void setFilter(String filter) {
-        this.filter = filter;
-    }
-
     public String getDisplayFilter() {
         return displayFilter;
-    }
-
-    public void setDisplayFilter(String displayFilter) {
-        this.displayFilter = displayFilter;
     }
 
     public String getBaseDN() {
         return baseDN;
     }
 
-    public void setBaseDN(String baseDN) {
-        this.baseDN = baseDN;
-    }
-
     public ContextMapper getContextMapper() {
         return contextMapper;
-    }
-
-    public void setContextMapper(ContextMapper contextMapper) {
-        this.contextMapper = contextMapper;
     }
 
     public int getSearchScope() {
         return searchScope;
     }
 
-    public void setSearchScope(int searchScope) {
-        this.searchScope = searchScope;
-    }
-
     public String[] getReturningAttributes() {
         return returningAttributes;
-    }
-
-    public void setReturningAttributes(String[] returningAttributes) {
-        this.returningAttributes = returningAttributes;
     }
 
     public String getDomain() {
         return domain;
     }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
 }
