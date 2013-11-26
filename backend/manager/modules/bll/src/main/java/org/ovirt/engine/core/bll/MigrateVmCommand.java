@@ -247,15 +247,28 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return getSucceeded() ?
                 getActionReturnValue() == VMStatus.Up ?
                         AuditLogType.VM_MIGRATION_DONE
-                        : isInternalExecution() ?
-                                AuditLogType.VM_MIGRATION_START_SYSTEM_INITIATED
-                                : AuditLogType.VM_MIGRATION_START
+                        : getAuditLogForMigrationStarted()
                 : _isRerun ?
                         AuditLogType.VM_MIGRATION_TRYING_RERUN
-                        : getVds().getStatus() == VDSStatus.PreparingForMaintenance ?
-                                AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTENANCE
-                                : getDestinationVds() == null ? AuditLogType.VM_MIGRATION_FAILED_NO_VDS_TO_RUN_ON :
-                                    AuditLogType.VM_MIGRATION_FAILED;
+                        : getAuditLogForMigrationFailure();
+    }
+
+    private AuditLogType getAuditLogForMigrationStarted() {
+        return isInternalExecution() ?
+                AuditLogType.VM_MIGRATION_START_SYSTEM_INITIATED
+                : AuditLogType.VM_MIGRATION_START;
+    }
+
+    private AuditLogType getAuditLogForMigrationFailure() {
+        if (getVds().getStatus() == VDSStatus.PreparingForMaintenance) {
+            return AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTENANCE;
+        }
+
+        if (getDestinationVds() == null) {
+            return AuditLogType.VM_MIGRATION_FAILED_NO_VDS_TO_RUN_ON;
+        }
+
+        return AuditLogType.VM_MIGRATION_FAILED;
     }
 
     protected Guid getVdsDestinationId() {
