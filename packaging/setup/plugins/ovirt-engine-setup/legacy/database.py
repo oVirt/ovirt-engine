@@ -82,6 +82,13 @@ class Plugin(plugin.PluginBase):
                                 osetupcons.CoreEnv.LEGACY_PG_CREDS_FOUND
                             ] = True
 
+                            # In legacy we always have engine user defined
+                            # before the rhevm user, as that's how we
+                            # upgraded from 3.0; in other installations
+                            # we will not have more than 1 user (engine)
+                            # As such, we should use the first user we find.
+                            break
+
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         before=(
