@@ -7,9 +7,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -148,12 +145,6 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     private VDSGroup getExistingVdsGroupId() {
         return existingGroup;
-    }
-
-    private List<Network> getNetworkList() {
-        ArrayList<Network> list = new ArrayList<Network>();
-        list.add(network);
-        return list;
     }
 
     private void assertCanDoActionFailure(final String messageToVerify) {
