@@ -438,13 +438,13 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setDefinedMemory(getvm().getVmMemSizeMb() + " MB"); //$NON-NLS-1$
                     poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
-                    Translator translator = EnumTranslator.Create(DisplayType.class);
+                    Translator translator = EnumTranslator.create(DisplayType.class);
                     poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getDefaultDisplayType()));
 
-                    translator = EnumTranslator.Create(OriginType.class);
+                    translator = EnumTranslator.create(OriginType.class);
                     poolGeneralModel.setOrigin(translator.get(getvm().getOrigin()));
 
-                    translator = EnumTranslator.Create(UsbPolicy.class);
+                    translator = EnumTranslator.create(UsbPolicy.class);
                     poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
 
                     setHasDomain(AsyncDataProvider.isWindowsOsType(getvm().getVmOsId()));

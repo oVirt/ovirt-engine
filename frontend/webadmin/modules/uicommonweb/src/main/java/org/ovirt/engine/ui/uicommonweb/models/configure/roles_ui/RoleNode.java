@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicompat.Translator;
 @SuppressWarnings("unused")
 public class RoleNode
 {
-    private static Translator actionGroupTranslator = EnumTranslator.Create(ActionGroup.class);
+    private static Translator actionGroupTranslator = EnumTranslator.create(ActionGroup.class);
 
     public RoleNode(String name, RoleNode[] leafs)
     {

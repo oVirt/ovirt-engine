@@ -108,8 +108,8 @@ public class UserEventNotifierListModel extends SearchableListModel
         Map<EventNotificationEntity, HashSet<AuditLogType>> availableEvents =
                 AsyncDataProvider.getAvailableNotificationEvents();
 
-        Translator eventNotificationEntityTranslator = EnumTranslator.Create(EventNotificationEntity.class);
-        Translator auditLogTypeTranslator = EnumTranslator.Create(AuditLogType.class);
+        Translator eventNotificationEntityTranslator = EnumTranslator.create(EventNotificationEntity.class);
+        Translator auditLogTypeTranslator = EnumTranslator.create(AuditLogType.class);
 
         ArrayList<SelectionTreeNodeModel> list = new ArrayList<SelectionTreeNodeModel>();
 

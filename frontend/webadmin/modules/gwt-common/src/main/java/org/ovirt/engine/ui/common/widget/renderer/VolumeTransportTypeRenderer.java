@@ -17,7 +17,7 @@ public class VolumeTransportTypeRenderer extends AbstractRenderer<Set<TransportT
 
     @Override
     public String render(Set<TransportType> transportTypes) {
-        Translator transportTypeTranslator = EnumTranslator.Create(TransportType.class);
+        Translator transportTypeTranslator = EnumTranslator.create(TransportType.class);
         StringBuilder transportTypesBuilder = new StringBuilder();
         Iterator<TransportType> iterator = transportTypes.iterator();
         while (iterator.hasNext())

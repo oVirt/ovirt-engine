@@ -39,7 +39,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    Translator transportTypeTranslator = EnumTranslator.Create(TransportType.class);
+    Translator transportTypeTranslator = EnumTranslator.create(TransportType.class);
 
     @Inject
     public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider,

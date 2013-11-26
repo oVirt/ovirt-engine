@@ -20,7 +20,7 @@ public class EnumTranslator<T> extends Translator {
         this.type = type;
     }
 
-    public static <T> Translator Create(T type) {
+    public static <T> Translator create(T type) {
         EnumTranslator translator = translatorsMap.get(type);
         if (translator == null) {
             translator = new EnumTranslator(type);
@@ -34,7 +34,7 @@ public class EnumTranslator<T> extends Translator {
         String title = constants.notAvailableLabel();
 
         if (enumObj != null) {
-            Translator translator = EnumTranslator.Create(enumObj.getDeclaringClass());
+            Translator translator = EnumTranslator.create(enumObj.getDeclaringClass());
             title = enumObj.name();
 
             try {

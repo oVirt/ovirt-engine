@@ -427,10 +427,10 @@ public class TemplateGeneralModel extends EntityModel
 
         setOS(AsyncDataProvider.getOsName(template.getOsId()));
 
-        Translator translator = EnumTranslator.Create(DisplayType.class);
+        Translator translator = EnumTranslator.create(DisplayType.class);
         setDefaultDisplayType(translator.get(template.getDefaultDisplayType()));
 
-        translator = EnumTranslator.Create(OriginType.class);
+        translator = EnumTranslator.create(OriginType.class);
         setOrigin(translator.get(template.getOrigin()));
 
         setHasDomain(AsyncDataProvider.isWindowsOsType(template.getOsId()));
@@ -440,7 +440,7 @@ public class TemplateGeneralModel extends EntityModel
         setTimeZone(template.getTimeZone());
 
         setHasUsbPolicy(true);
-        translator = EnumTranslator.Create(UsbPolicy.class);
+        translator = EnumTranslator.create(UsbPolicy.class);
         setUsbPolicy(translator.get(template.getUsbPolicy()));
 
         setIsStateless(template.isStateless());
