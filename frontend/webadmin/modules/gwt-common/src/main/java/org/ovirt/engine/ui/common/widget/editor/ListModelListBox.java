@@ -1,7 +1,13 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -27,6 +33,25 @@ public class ListModelListBox<T> extends ValueListBox<T> implements EditorWidget
      */
     public ListModelListBox(Renderer<T> renderer) {
         super(renderer);
+        addKeyPressHandler(new KeyPressHandler() {
+
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                int keyCode = event.getNativeEvent().getKeyCode();
+                if (keyCode == KeyCodes.KEY_DOWN || keyCode == KeyCodes.KEY_UP
+                        || keyCode == KeyCodes.KEY_RIGHT || keyCode == KeyCodes.KEY_LEFT) {
+
+                    // deferring is required to allow the ListBox's selected index to update first
+                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                        @Override
+                        public void execute() {
+                            DomEvent.fireNativeEvent(Document.get().createChangeEvent(), asListBox());
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
