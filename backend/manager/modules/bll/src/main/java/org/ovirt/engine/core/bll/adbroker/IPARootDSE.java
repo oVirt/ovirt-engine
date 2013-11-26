@@ -9,13 +9,6 @@ public class IPARootDSE implements RootDSE {
 
     private String defaultNamingContext;
 
-    public IPARootDSE() {
-    }
-
-    public IPARootDSE(String defaultNamingContext) {
-        this.defaultNamingContext = defaultNamingContext;
-    }
-
     public IPARootDSE(Attributes rootDseRecords) throws NamingException {
         Attribute namingContexts = rootDseRecords.get(IPARootDSEAttributes.namingContexts.name());
         if ( namingContexts != null ) {
