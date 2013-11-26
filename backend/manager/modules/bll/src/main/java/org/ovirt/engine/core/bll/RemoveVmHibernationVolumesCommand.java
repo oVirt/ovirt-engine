@@ -19,9 +19,6 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 @InternalCommandAttribute
 public class RemoveVmHibernationVolumesCommand<T extends RemoveVmHibernationVolumesParameters> extends CommandBase<T> implements TaskHandlerCommand<T> {
 
-    public static final String DELETE_PRIMARY_IMAGE_TASK_KEY = "DELETE_PRIMARY_IMAGE_TASK_KEY";
-    public static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
-
     public RemoveVmHibernationVolumesCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getVmId());
