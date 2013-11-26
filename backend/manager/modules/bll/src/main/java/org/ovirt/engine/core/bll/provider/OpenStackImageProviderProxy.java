@@ -246,12 +246,6 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         return repoImages;
     }
 
-    public RepoImage getImageAsRepoImage(String id) {
-        RepoImage repoImage = imageToRepoImage(getClient().images().show(id).execute());
-        repoImage.setLastRefreshed(System.currentTimeMillis());
-        return repoImage;
-    }
-
     public DiskImage getImageAsDiskImage(String id) {
         DiskImage diskImage = new DiskImage();
         Image glanceImage = getClient().images().show(id).execute();
@@ -355,11 +349,6 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         throw new OpenStackImageException(
                 OpenStackImageException.ErrorType.UNSUPPORTED_DISK_FORMAT,
                 "Unknown disk format: " + glanceImage.getDiskFormat());
-    }
-
-    public long getImageVirtualSize(String id) {
-        Image glanceImage = getClient().images().show(id).execute();
-        return getImageVirtualSize(glanceImage);
     }
 
     public Map<String, String> getDownloadHeaders() {
