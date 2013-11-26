@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
@@ -140,6 +141,13 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
+
+        // Hide add/remove commands if a specific provider is chosen in the system tree
+        boolean isAvailable =
+                getSystemTreeSelectedItem() == null
+                        || getSystemTreeSelectedItem().getType() != SystemTreeItemType.Provider;
+        getAddCommand().setIsAvailable(isAvailable);
+        getRemoveCommand().setIsAvailable(isAvailable);
     }
 
     @Override
