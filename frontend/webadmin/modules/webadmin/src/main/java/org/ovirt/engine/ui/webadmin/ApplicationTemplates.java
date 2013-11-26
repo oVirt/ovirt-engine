@@ -127,6 +127,14 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml image(SafeHtml statusImage);
 
+    @Template("<table> <tr> " +
+            "<td> <div style='padding-top: 6px;'>{0}</div> </td>" +
+            "<td> {1} </td>" +
+            "<td> <div style='padding-top: 6px;'> {2} </div> </td>" +
+            "<td> {3} </td>" +
+            "</tr> </table>")
+    SafeHtml volumeBrickStatusTemplate(SafeHtml upImage, int upCount, SafeHtml downImage, int downCount);
+
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle; border: solid 1px transparent; '>{0}</div>")
     SafeHtml volumeActivityMenu(SafeHtml statusImage);
 

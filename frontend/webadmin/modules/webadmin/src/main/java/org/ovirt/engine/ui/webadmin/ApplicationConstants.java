@@ -2531,6 +2531,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Volume Type")
     String volumeTypeVolume();
 
+    @DefaultStringValue("Bricks")
+    String bricksStatusVolume();
+
     @DefaultStringValue("Number of Bricks")
     String numberOfBricksVolume();
 

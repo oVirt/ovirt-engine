@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivitySeperatorCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeBrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeTaskWaitingCell;
 
@@ -81,14 +82,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 };
         getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<GlusterVolumeEntity> numOfBricksColumn =
-                new TextColumnWithTooltip<GlusterVolumeEntity>() {
-                    @Override
-                    public String getValue(GlusterVolumeEntity object) {
-                        return Integer.toString(object.getBricks().size());
-                    }
-                };
-        getTable().addColumn(numOfBricksColumn, constants.numberOfBricksVolume(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(new VolumeBrickStatusColumn(), constants.bricksStatusVolume(), "150px"); //$NON-NLS-1$
 
         MenuCell<GlusterTaskSupport> rebalanceMenuCell = getRebalanceActivityMenu(constants);
         MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu(constants);
