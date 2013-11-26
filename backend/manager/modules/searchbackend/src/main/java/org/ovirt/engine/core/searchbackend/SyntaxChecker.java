@@ -923,6 +923,13 @@ public class SyntaxChecker implements ISyntaxChecker {
                                     tableNameWithOutTags, primeryKey,
                                     syntax.getSearchFrom(), innerQuery);
                 }
+            }
+            if (primeryKey.equals("vmt_guid") && wherePhrase.length() > 0
+                    && wherePhrase.toString().contains("storage_pool_name") && whereBuilder.size() == 1) {
+                inQuery = StringFormat
+                        .format("(SELECT * FROM %1$s %2$s",
+                                tableNameWithOutTags, wherePhrase.toString().replace(tableName, tableNameWithOutTags));
+
             } else {
                 inQuery = StringFormat.format(
                         "SELECT * FROM %1$s WHERE ( %2$s IN (%3$s)",
