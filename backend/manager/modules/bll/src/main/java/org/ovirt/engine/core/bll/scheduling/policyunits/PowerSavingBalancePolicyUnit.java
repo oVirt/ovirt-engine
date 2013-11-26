@@ -86,7 +86,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
         List<VDS> underUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return (p.getUsageCpuPercent() + CalcSpmCpuConsumption(p)) < highVdsCount
+                return (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < highVdsCount
                         && (p.getUsageCpuPercent() > lowUtilization);
             }
         });

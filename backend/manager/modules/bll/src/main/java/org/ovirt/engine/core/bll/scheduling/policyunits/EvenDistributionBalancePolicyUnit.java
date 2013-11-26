@@ -141,14 +141,14 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
         List<VDS> underUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return (p.getUsageCpuPercent() + CalcSpmCpuConsumption(p)) < highVdsCount;
+                return (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < highVdsCount;
             }
         });
         Collections.sort(underUtilizedHosts, new VdsCpuUsageComparator());
         return underUtilizedHosts;
     }
 
-    protected int CalcSpmCpuConsumption(VDS vds) {
+    protected int calcSpmCpuConsumption(VDS vds) {
         return ((vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
                 .<Integer> GetValue(ConfigValues.SpmVCpuConsumption)
                 * Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores());
