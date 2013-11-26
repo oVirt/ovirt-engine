@@ -59,7 +59,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
                 if (generator.getHasValues()) {
                     List<LdapQueryData> partialQueries = generator.getLdapQueriesData();
                     for (LdapQueryData currQueryData : partialQueries) {
-                        PopulateGroup(currQueryData,
+                        populateGroup(currQueryData,
                                 getAuthenticationDomain(),
                                 user.getGroups(),
                                 getLoginName(),

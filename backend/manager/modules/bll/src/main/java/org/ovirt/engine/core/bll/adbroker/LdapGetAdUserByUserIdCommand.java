@@ -34,7 +34,7 @@ public class LdapGetAdUserByUserIdCommand extends LdapWithConfiguredCredentialsC
             GroupsDNQueryGenerator generator = createGroupsGeneratorForUser(user);
             List<LdapQueryData> partialQueries = generator.getLdapQueriesData();
             for (LdapQueryData partialQuery : partialQueries) {
-                PopulateGroup(partialQuery, getDomain(), user.getGroups(), getLoginName(), getPassword());
+                populateGroup(partialQuery, getDomain(), user.getGroups(), getLoginName(), getPassword());
             }
         }
         setReturnValue(user);

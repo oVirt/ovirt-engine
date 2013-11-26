@@ -112,11 +112,11 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         return user;
     }
 
-    protected void PopulateGroup(LdapQueryData queryData,
-            String domain,
-            java.util.Map<String, LdapGroup> groupsDict,
-            String loginName,
-            String password) {
+    protected void populateGroup(LdapQueryData queryData,
+                                 String domain,
+                                 java.util.Map<String, LdapGroup> groupsDict,
+                                 String loginName,
+                                 String password) {
         try {
             GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator();
             List<GroupSearchResult> searchResultCollection =
@@ -130,11 +130,11 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
             if (generator.getHasValues()) {
                 List<LdapQueryData> partialQueries = generator.getLdapQueriesData();
                 for (LdapQueryData partialQuery : partialQueries) {
-                    PopulateGroup(partialQuery, domain, groupsDict, loginName, password);
+                    populateGroup(partialQuery, domain, groupsDict, loginName, password);
                 }
             }
         } catch (RuntimeException e) {
-            log.infoFormat("PopulateGroup failed. Exception: {0}", e);
+            log.infoFormat("populateGroup failed. Exception: {0}", e);
         }
     }
 
