@@ -358,10 +358,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         } else {
             // vm went down on the destination and source, migration failed.
             decreasePendingVms(getDestinationVds().getId());
-            _isRerun = true;
+            _isRerun = false;
             setSucceeded(false);
             log();
             failedToRunVm();
+            // signal the caller that a rerun was made so that it won't log
+            // the failure message again
+            _isRerun = true;
         }
     }
 
