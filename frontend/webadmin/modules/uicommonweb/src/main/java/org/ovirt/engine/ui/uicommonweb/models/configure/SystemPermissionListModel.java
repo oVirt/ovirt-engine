@@ -249,7 +249,7 @@ public class SystemPermissionListModel extends SearchableListModel
 
             model.startProgress(null);
 
-            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemoveSystemPermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {

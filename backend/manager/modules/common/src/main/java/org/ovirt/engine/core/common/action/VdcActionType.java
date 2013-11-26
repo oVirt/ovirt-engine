@@ -189,6 +189,7 @@ public enum VdcActionType {
     DetachActionGroupsFromRole(806, ActionGroup.MANIPULATE_ROLES, false, QuotaDependency.NONE),
     AddRoleWithActionGroups(809, ActionGroup.MANIPULATE_ROLES, false, QuotaDependency.NONE),
     AddSystemPermission(811, ActionGroup.MANIPULATE_PERMISSIONS, false, QuotaDependency.NONE),
+    RemoveSystemPermission(812, ActionGroup.MANIPULATE_PERMISSIONS, false, QuotaDependency.NONE),
 
     /**
      * Storages handling

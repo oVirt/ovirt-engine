@@ -246,6 +246,11 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_REMOVE_ADUSER, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ADD, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_ADD_ADUSER, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_ADD_SYSTEM_PERMISSION, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_ADD_SYSTEM_PERMISSION_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_REMOVE_SYSTEM_PERMISSION, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_REMOVE_SYSTEM_PERMISSION_FAILED, AuditLogSeverity.ERROR);
+
     }
 
     private static void initHostSeverities() {
