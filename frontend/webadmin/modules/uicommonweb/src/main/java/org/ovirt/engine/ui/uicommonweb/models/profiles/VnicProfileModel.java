@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,7 +21,9 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -36,7 +37,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class VnicProfileModel extends Model {
 
-    private static NetworkQoS emptyQos;
 
     private EntityModel name;
     private EntityModel portMirroring;
@@ -49,15 +49,6 @@ public abstract class VnicProfileModel extends Model {
     private VnicProfile vnicProfile = null;
     private final boolean customPropertiesVisible;
     private final Guid defaultQosId;
-
-    private static NetworkQoS getEmptyQos() {
-        if (emptyQos == null) {
-            emptyQos = new NetworkQoS();
-            emptyQos.setName(ConstantsManager.getInstance().getConstants().unlimitedQoSTitle());
-            emptyQos.setId(Guid.Empty);
-        }
-        return emptyQos;
-    }
 
     public EntityModel getName()
     {
@@ -284,16 +275,13 @@ public abstract class VnicProfileModel extends Model {
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                ArrayList<NetworkQoS> networkQoSes =
-                        (ArrayList<NetworkQoS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                networkQoSes.add(0, getEmptyQos());
+                List<NetworkQoS> networkQoSes = (List<NetworkQoS>) ReturnValue;
                 getNetworkQoS().setItems(networkQoSes);
-                setSelectedNetworkQoSId(defaultQosId);
+                getNetworkQoS().setSelectedItem(Linq.findNetworkQosById(networkQoSes, defaultQosId));
             }
         };
 
-        IdQueryParameters queryParams = new IdQueryParameters(dcId);
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, queryParams, _asyncQuery);
+        AsyncDataProvider.getAllNetworkQos(dcId, _asyncQuery);
     }
 
     public boolean validate()
@@ -309,15 +297,5 @@ public abstract class VnicProfileModel extends Model {
 
     protected VdcActionParametersBase getActionParameters() {
         return new VnicProfileParameters(vnicProfile);
-    }
-
-    private void setSelectedNetworkQoSId(Guid networkQoSId) {
-        for (Object item : getNetworkQoS().getItems()) {
-            if (((NetworkQoS) item).getId().equals(networkQoSId)) {
-                getNetworkQoS().setSelectedItem(item);
-                return;
-            }
-        }
-        getNetworkQoS().setSelectedItem(getEmptyQos());
     }
 }

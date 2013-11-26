@@ -66,6 +66,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -139,6 +140,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -1190,6 +1192,19 @@ public final class AsyncDataProvider {
         }
 
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(clusterId), aQuery);
+    }
+
+    public static void getAllNetworkQos(Guid dcId, AsyncQuery query) {
+        query.converterCallback = new IAsyncConverter<List<NetworkQoS>>() {
+
+            @Override
+            public List<NetworkQoS> Convert(Object returnValue, AsyncQuery asyncQuery) {
+                List<NetworkQoS> qosList = returnValue == null ? new ArrayList<NetworkQoS>() : (List<NetworkQoS>) returnValue;
+                qosList.add(0, NetworkQoSModel.EMPTY_QOS);
+                return qosList;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, new IdQueryParameters(dcId), query);
     }
 
     public static void getDataCenterById(AsyncQuery aQuery, Guid dataCenterId) {

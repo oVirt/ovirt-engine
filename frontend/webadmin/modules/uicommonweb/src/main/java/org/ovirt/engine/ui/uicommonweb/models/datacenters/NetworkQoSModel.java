@@ -4,6 +4,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -20,6 +21,13 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public abstract class NetworkQoSModel extends Model {
 
+    public static NetworkQoS EMPTY_QOS;
+
+    static {
+        EMPTY_QOS = new NetworkQoS();
+        EMPTY_QOS.setName(ConstantsManager.getInstance().getConstants().unlimitedQoSTitle());
+        EMPTY_QOS.setId(Guid.Empty);
+    }
 
     private final ListModel sourceListModel;
     private ListModel dataCenters;
