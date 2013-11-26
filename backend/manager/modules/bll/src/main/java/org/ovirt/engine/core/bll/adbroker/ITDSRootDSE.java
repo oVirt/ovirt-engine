@@ -9,13 +9,6 @@ public class ITDSRootDSE implements RootDSE {
 
     private String defaultNamingContext;
 
-    public ITDSRootDSE() {
-    }
-
-    public ITDSRootDSE(String defaultNamingContext) {
-        this.defaultNamingContext = defaultNamingContext;
-    }
-
     public ITDSRootDSE(Attributes rootDseRecords) throws NamingException {
         Attribute namingContexts = rootDseRecords.get(ITDSRootDSEAttributes.namingContexts.name());
         if ( namingContexts != null ) {
@@ -33,4 +26,3 @@ public class ITDSRootDSE implements RootDSE {
         return defaultNamingContext;
     }
 }
-
