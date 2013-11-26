@@ -277,6 +277,9 @@ public class GlusterHookResolveConflictsModel extends Model {
                 }
             }), getGlusterHookEntity().getId(), selectedServer.getServerId());
         }
+        else {
+            getContentModel().getContent().setEntity(null);
+        }
     }
 
     public boolean isAnyResolveActionSelected() {
