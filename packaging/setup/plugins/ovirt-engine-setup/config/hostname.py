@@ -185,7 +185,9 @@ class Plugin(plugin.PluginBase):
                 address[0] for __, __, __, __, address in
                 socket.getaddrinfo(
                     fqdn,
-                    None
+                    None,
+                    # Currently we need an IPv4 address and ignore the rest.
+                    socket.AF_INET,
                 )
             ])
             self.logger.debug(
