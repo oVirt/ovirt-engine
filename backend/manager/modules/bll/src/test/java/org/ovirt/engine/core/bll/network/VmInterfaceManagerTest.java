@@ -24,7 +24,6 @@ import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -196,13 +195,6 @@ public class VmInterfaceManagerTest {
         iface.setId(Guid.newGuid());
         iface.setMacAddress(RandomUtils.instance().nextString(10));
         return iface;
-    }
-
-    private Network createNewNetwork(boolean isVmNetwork, String networkName) {
-        Network network = new Network();
-        network.setVmNetwork(isVmNetwork);
-        network.setName(networkName);
-        return network;
     }
 
     /**
