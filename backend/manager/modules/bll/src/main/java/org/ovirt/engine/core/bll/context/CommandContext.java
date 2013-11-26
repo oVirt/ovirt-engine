@@ -7,12 +7,6 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
  * Holds the context for execution of the command.
  */
 public class CommandContext {
-
-    /**
-     * Automatic generated serial version ID
-     */
-    private static final long serialVersionUID = 5108503477534376493L;
-
     /**
      * The compensation context holds the required information for compensating the failed command.
      */
