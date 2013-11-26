@@ -130,14 +130,6 @@ public class SessionDataContainer {
         }
     }
 
-    public boolean containsKey(String key) {
-        String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
-        if (sessionId != null) {
-            return oldContext.containsKey(key) || newContext.containsKey(key);
-        }
-        return false;
-    }
-
     /**
      * Remove the cached data of current session
      *
