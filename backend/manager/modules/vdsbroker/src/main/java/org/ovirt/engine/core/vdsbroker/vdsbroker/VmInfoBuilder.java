@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
@@ -249,13 +250,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmDrives() {
         boolean bootDiskFound = false;
         List<Disk> disks = getSortedDisks();
+        Map<VmDevice, Integer> vmDeviceUnitMap = getVmDeviceUnitMapForVirtioScsiDisks(vm);
         for (Disk disk : disks) {
             Map<String, Object> struct = new HashMap<String, Object>();
             // get vm device for this disk from DB
-            VmDevice vmDevice =
-                    DbFacade.getInstance()
-                            .getVmDeviceDao()
-                            .get(new VmDeviceId(disk.getId(), vm.getId()));
+            VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
             // skip unamanged devices (handled separtely)
             if (!vmDevice.getIsManaged()) {
                 continue;
@@ -275,6 +274,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     if (disk.getDiskStorageType() == DiskStorageType.LUN) {
                         struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
                         struct.put(VdsProperties.Sgio, disk.getSgio().toString().toLowerCase());
+                    }
+                    if (StringUtils.isEmpty(vmDevice.getAddress())) {
+                        // Explicitly define device's address if missing
+                        int unit = vmDeviceUnitMap.get(vmDevice);
+                        vmDevice.setAddress(createAddressForVirtioScsiDisk(unit).toString());
                     }
                     break;
                 default:
@@ -918,5 +922,56 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addAddress(vmDevice, struct);
             addDevice(struct, vmDevice, null);
         }
+    }
+
+    /**
+     * @return a map containing an appropriate unit (disk's index in VirtIO-SCSI controller) for each vm device.
+     */
+    public static Map<VmDevice, Integer> getVmDeviceUnitMapForVirtioScsiDisks(VM vm) {
+        List<Disk> disks = new ArrayList<Disk>(vm.getDiskMap().values());
+        Map<VmDevice, Integer> vmDeviceUnitMap = new HashMap<>();
+        Map<VmDevice, Disk> vmDeviceDiskMap = new HashMap<>();
+
+        for (Disk disk : disks) {
+            if (disk.getDiskInterface() == DiskInterface.VirtIO_SCSI) {
+                VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
+                Map<String, String> address = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
+                String unitStr = address.get(VdsProperties.Unit);
+
+                // If unit property is available adding to 'vmDeviceUnitMap';
+                // Otherwise, adding to 'vmDeviceDiskMap' for setting the unit property later.
+                if (StringUtils.isNotEmpty(unitStr)) {
+                    vmDeviceUnitMap.put(vmDevice, Integer.valueOf(unitStr));
+                }
+                else {
+                    vmDeviceDiskMap.put(vmDevice, disk);
+                }
+            }
+        }
+
+        // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address
+        for (Entry<VmDevice, Disk> entry : vmDeviceDiskMap.entrySet()) {
+            int unit = getAvailableUnitForVirtioScsiDisk(vmDeviceUnitMap);
+            vmDeviceUnitMap.put(entry.getKey(), unit);
+        }
+
+        return vmDeviceUnitMap;
+    }
+
+    public static int getAvailableUnitForVirtioScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap) {
+        int unit = 0;
+        while (vmDeviceUnitMap.containsValue(unit)) {
+            unit++;
+        }
+        return unit;
+    }
+
+    public static Map<String, String> createAddressForVirtioScsiDisk(int unit) {
+        Map<String, String> addressMap = new HashMap<>();
+        addressMap.put(VdsProperties.Type, "drive");
+        addressMap.put(VdsProperties.Bus, "0");
+        addressMap.put(VdsProperties.target, "0");
+        addressMap.put(VdsProperties.Unit, String.valueOf(unit));
+        return addressMap;
     }
 }

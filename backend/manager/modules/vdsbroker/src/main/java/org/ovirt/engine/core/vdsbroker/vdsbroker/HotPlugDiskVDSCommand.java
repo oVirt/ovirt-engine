@@ -3,10 +3,12 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -73,8 +75,30 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
     }
 
     private void addAddress(Map<String, Object> map, String address) {
-        if (org.apache.commons.lang.StringUtils.isNotBlank(address)) {
-            map.put("address", XmlRpcStringUtils.string2Map(getParameters().getVmDevice().getAddress()));
+        if (getParameters().getDisk().getDiskInterface() != DiskInterface.VirtIO_SCSI) {
+            if (StringUtils.isNotBlank(address)) {
+                map.put("address", XmlRpcStringUtils.string2Map(address));
+            }
+        }
+        else {
+            Map<VmDevice, Integer> vmDeviceUnitMap = VmInfoBuilder.getVmDeviceUnitMapForVirtioScsiDisks(getParameters().getVm());
+            int availableUnit = VmInfoBuilder.getAvailableUnitForVirtioScsiDisk(vmDeviceUnitMap);
+
+            // If address has been already set before, verify its uniqueness;
+            // Otherwise, set address according to the next available unit.
+            if (StringUtils.isNotBlank(address)) {
+                Map<String, String> addressMap = XmlRpcStringUtils.string2Map(address);
+                int unit = Integer.valueOf(addressMap.get(VdsProperties.Unit));
+                if (!vmDeviceUnitMap.containsValue(unit)) {
+                    map.put(VdsProperties.Address, addressMap);
+                }
+                else {
+                    map.put(VdsProperties.Address, VmInfoBuilder.createAddressForVirtioScsiDisk(availableUnit));
+                }
+            }
+            else {
+                map.put(VdsProperties.Address, VmInfoBuilder.createAddressForVirtioScsiDisk(availableUnit));
+            }
         }
     }
 }
