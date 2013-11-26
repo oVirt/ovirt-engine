@@ -77,10 +77,21 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void failedToRunVm() {
+        // In case the migration failed and the VM turned back to Up in the
+        // source, we don't need to handle it as a VM that failed to run
+        if (getVm().getStatus() != VMStatus.Up) {
+            super.failedToRunVm();
+        }
+    }
+
+    protected void failedToMigrate() {
         try {
-            if (getVm().getStatus() != VMStatus.Up) {
-                super.failedToRunVm();
-            }
+            determineMigrationFailureForAuditLog();
+            decreasePendingVms(getDestinationVds().getId());
+            _isRerun = false;
+            setSucceeded(false);
+            log();
+            failedToRunVm();
         }
         finally {
             freeLock();
@@ -336,18 +347,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public void rerun() {
          // make Vm property to null in order to refresh it from db
         setVm(null);
-        determineMigrationFailureForAuditLog();
+
         // if vm is up and rerun is called then it got up on the source, try to rerun
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
+            determineMigrationFailureForAuditLog();
             setVdsDestinationId(null);
             super.rerun();
         } else {
             // vm went down on the destination and source, migration failed.
-            decreasePendingVms(getDestinationVds().getId());
-            _isRerun = false;
-            setSucceeded(false);
-            log();
-            failedToRunVm();
+            failedToMigrate();
             // signal the caller that a rerun was made so that it won't log
             // the failure message again
             _isRerun = true;

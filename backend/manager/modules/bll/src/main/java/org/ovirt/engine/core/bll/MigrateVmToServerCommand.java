@@ -47,12 +47,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
      */
     @Override
     public void rerun() {
-        decreasePendingVms(getDestinationVds().getId());
-        _isRerun = false;
-        setSucceeded(false);
-
-        determineMigrationFailureForAuditLog();
-        log();
+        failedToMigrate();
     }
 
     @Override
