@@ -953,6 +953,9 @@ public class VolumeBrickListModel extends SearchableListModel {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.stopProgress();
                         setConfirmWindow(null);
+                        if (result.getReturnValue().getSucceeded()) {
+                            disableRemoveBrickStatusPopUpActions();
+                        }
                     }
                 },
                 model);
@@ -1116,11 +1119,22 @@ public class VolumeBrickListModel extends SearchableListModel {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.stopProgress();
                         setConfirmWindow(null);
+                        if (result.getReturnValue().getSucceeded()) {
+                            disableRemoveBrickStatusPopUpActions();
+                        }
                     }
                 },
                 model);
     }
 
+    private void disableRemoveBrickStatusPopUpActions() {
+        if (getWindow() != null && getWindow() instanceof RemoveBrickStatusModel) {
+            RemoveBrickStatusModel statusModel = (RemoveBrickStatusModel) getWindow();
+            statusModel.getCommitRemoveBricksCommand().setIsExecutionAllowed(false);
+            statusModel.getRetainBricksCommand().setIsExecutionAllowed(false);
+            statusModel.getStopRemoveBricksCommand().setIsExecutionAllowed(false);
+        }
+    }
     private void replaceBrick()
     {
         if (getWindow() != null)
