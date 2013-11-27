@@ -24,6 +24,9 @@ public class GlusterBrickValidator {
     public ValidationResult canRemoveBrick(List<GlusterBrickEntity> bricks,
             GlusterVolumeEntity volumeEntity,
             int replicaCount, boolean forceRemove) {
+        if (replicaCount == 0) {
+            replicaCount = volumeEntity.getReplicaCount();
+        }
         if (bricks.isEmpty()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
         }
