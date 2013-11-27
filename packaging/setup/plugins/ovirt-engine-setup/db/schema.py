@@ -112,7 +112,7 @@ class Plugin(plugin.PluginBase):
                     pg_namespace nsp on nsp.oid = cls.relnamespace
                 where
                     nsp.nspname not in ('information_schema', 'pg_catalog') and
-                    nsp.nspname not like 'pg_toast%%' and
+                    nsp.nspname not like 'pg_%%' and
                     rol.rolname != %(user)s
                 order by
                     nsp.nspname,
