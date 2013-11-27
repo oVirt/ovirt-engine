@@ -222,10 +222,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 } else {
                     // set the executor to perform the action
                     executor = new FenceExecutor(getVds(), getParameters().getAction());
-                    tryOtherSequentialAgent(lastStatus);
+                    tryOtherSequentialAgent(lastStatus, vdsReturnValue);
                 }
             } else {
-                tryOtherSequentialAgent(lastStatus);
+                tryOtherSequentialAgent(lastStatus, vdsReturnValue);
             }
         }
         else {
@@ -238,25 +238,32 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * fence the Host via the secondary agent if primary fails
      * @param lastStatus
      */
-    private void tryOtherSequentialAgent(VDSStatus lastStatus) {
-        VDSReturnValue vdsReturnValue = executor.fence(FenceAgentOrder.Secondary);
-        setFenceSucceeded(vdsReturnValue.getSucceeded());
-        if (getFenceSucceeded()) {
-            executor = new FenceExecutor(getVds(), FenceActionType.Status);
-            if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Secondary)) {
-                // raise an alert that secondary agent was used
-                AuditLogableBase logable = new AuditLogableBase();
-                logable.setVdsId(getVds().getId());
-                logable.addCustomValue("Operation", getParameters().getAction().name());
-                AuditLogDirector.log(logable, AuditLogType.VDS_ALERT_SECONDARY_AGENT_USED_FOR_FENCE_OPERATION);
-                handleSpecificCommandActions();
+    private void tryOtherSequentialAgent(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
+        executor = new FenceExecutor(getVds(), getParameters().getAction());
+        if (executor.findProxyHost()) {
+            vdsReturnValue = executor.fence(FenceAgentOrder.Secondary);
+            setFenceSucceeded(vdsReturnValue.getSucceeded());
+            if (getFenceSucceeded()) {
+                executor = new FenceExecutor(getVds(), FenceActionType.Status);
+                if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Secondary)) {
+                    // raise an alert that secondary agent was used
+                    AuditLogableBase logable = new AuditLogableBase();
+                    logable.setVdsId(getVds().getId());
+                    logable.addCustomValue("Operation", getParameters().getAction().name());
+                    AuditLogDirector.log(logable, AuditLogType.VDS_ALERT_SECONDARY_AGENT_USED_FOR_FENCE_OPERATION);
+                    handleSpecificCommandActions();
+                }
+                else {
+                    handleWaitFailure(lastStatus, FenceAgentOrder.Secondary);
+                }
             }
             else {
-                handleWaitFailure(lastStatus, FenceAgentOrder.Secondary);
+                handleError(lastStatus, vdsReturnValue, FenceAgentOrder.Secondary);
             }
         }
         else {
-            handleError(lastStatus, vdsReturnValue, FenceAgentOrder.Secondary);
+            setFenceSucceeded(false);
+            vdsReturnValue.setSucceeded(false);
         }
     }
 
