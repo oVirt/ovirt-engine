@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -1294,8 +1295,8 @@ public class VdsUpdateRunTimeInfo {
                 }
 
                 if (isBalloonDeviceActiveOnVm(vmInternalData)
-                        && (balloonInfo.getCurrentMemory().intValue() == balloonInfo.getBalloonMaxMemory().intValue()
-                || balloonInfo.getCurrentMemory().intValue() != balloonInfo.getBalloonTargetMemory().intValue())) {
+                        && (Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())
+                || !Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonTargetMemory()))) {
                     vmBalloonDriverIsRequestedAndUnavailable(vmId);
                 } else {
                     vmBalloonDriverIsNotRequestedOrAvailable(vmId);
@@ -1304,7 +1305,7 @@ public class VdsUpdateRunTimeInfo {
                 if (vmInternalData.getVmStatistics().getusage_mem_percent() != null
                     && vmInternalData.getVmStatistics().getusage_mem_percent() == 0  // guest agent is down
                         && balloonInfo.isBalloonDeviceEnabled() // check if the device is present
-                        && balloonInfo.getCurrentMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue()) {
+                        && !Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())) {
                     guestAgentIsDownAndBalloonInfalted(vmId);
                 } else {
                     guestAgentIsUpOrBalloonDeflated(vmId);
