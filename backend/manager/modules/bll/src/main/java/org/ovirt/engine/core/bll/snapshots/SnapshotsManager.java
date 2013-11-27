@@ -342,16 +342,11 @@ public class SnapshotsManager {
      * of the snapshot. Other disks shouldn't be removed as they are not part of the snapshot).
      */
     private boolean deviceCanBeRemoved(VmDevice vmDevice) {
-        if (!vmDevice.getDevice().equals(VmDeviceType.DISK.getName())) {
+        if (!vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) || !vmDevice.getIsManaged()) {
             return true;
         }
 
-        if (vmDevice.getSnapshotId() == null) {
-           Disk disk = getDiskDao().get(vmDevice.getDeviceId());
-           return disk != null && disk.isAllowSnapshot();
-        }
-
-        return false;
+        return vmDevice.getSnapshotId() == null && getDiskDao().get(vmDevice.getDeviceId()).isAllowSnapshot();
     }
 
     /**
