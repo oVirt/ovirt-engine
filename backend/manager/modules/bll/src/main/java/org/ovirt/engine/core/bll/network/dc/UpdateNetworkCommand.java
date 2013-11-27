@@ -411,7 +411,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
             Set<Guid> hostIdsToSync = new HashSet<>();
             for (VdsNetworkInterface nic : nics) {
-                if (!NetworkUtils.isNetworkInSync(nic, getNetwork())) {
+                if (!NetworkUtils.isNetworkInSync(nic,
+                        getNetwork(),
+                        getDbFacade().getQosDao().get(getNetwork().getQosId()))) {
                     hostIdsToSync.add(nic.getVdsId());
                 }
             }

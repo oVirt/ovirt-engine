@@ -38,6 +38,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -61,6 +62,9 @@ public class SetupNetworksHelperTest {
 
     @Mock
     private InterfaceDao interfaceDAO;
+
+    @Mock
+    private NetworkQoSDao qosDao;
 
     /* --- Tests for networks functionality --- */
 
@@ -1683,6 +1687,7 @@ public class SetupNetworksHelperTest {
         doReturn(interfaceDAO).when(dbFacade).getInterfaceDao();
         doReturn(mock(VdsDAO.class)).when(dbFacade).getVdsDao();
         doReturn(networkDAO).when(dbFacade).getNetworkDao();
+        doReturn(qosDao).when(dbFacade).getQosDao();
 
         return helper;
     }

@@ -306,6 +306,8 @@ public final class VdsProperties {
     public static final String action = "action";
 
     // Network QoS
+    public static final String HOST_QOS_INBOUND = "qosInbound";
+    public static final String HOST_QOS_OUTBOUND = "qosOutbound";
     public static final String QOS_INBOUND = "inbound";
     public static final String QOS_OUTBOUND = "outbound";
     public static final String QOS_AVERAGE = "average";

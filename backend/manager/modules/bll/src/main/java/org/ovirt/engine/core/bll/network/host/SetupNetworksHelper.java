@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class SetupNetworksHelper {
@@ -281,10 +282,13 @@ public class SetupNetworksHelper {
         if (existingIfaces == null) {
             List<VdsNetworkInterface> ifaces =
                     getDbFacade().getInterfaceDao().getAllInterfacesForVds(params.getVdsId());
+            NetworkQoSDao qosDao = getDbFacade().getQosDao();
 
             for (VdsNetworkInterface iface : ifaces) {
-                iface.setNetworkImplementationDetails(
-                        NetworkUtils.calculateNetworkImplementationDetails(getExistingClusterNetworks(), iface));
+                Network network = getExistingClusterNetworks().get(iface.getNetworkName());
+                iface.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(network,
+                        network == null ? null : qosDao.get(network.getQosId()),
+                        iface));
             }
 
             existingIfaces = Entities.entitiesByName(ifaces);

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -47,6 +48,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
 
         if (!list.isEmpty()) {
             VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getId());
+            NetworkQoSDao qosDao = getDbFacade().getQosDao();
             Map<String, Network> networks = Entities.entitiesByName(
                     getDbFacade().getNetworkDao().getAllForCluster(vdsStatic.getVdsGroupId()));
             for (final VdsNetworkInterface i : list) {
@@ -58,7 +60,10 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
                                 }
                             }).size() > 0) {
                     interfaces.add(i);
-                    i.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(networks, i));
+                    Network network = networks.get(i.getNetworkName());
+                    i.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(network,
+                            network == null ? null : qosDao.get(network.getQosId()),
+                            i));
                 }
             }
         }

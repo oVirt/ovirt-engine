@@ -15,19 +15,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,6 +43,15 @@ public class SetupNetworksVDSCommandTest {
 
     @Mock
     private IVdsServer server;
+
+    @Mock
+    private NetworkQoSDao qosDao;
+
+    @Mock
+    private VDS host;
+
+    @Rule
+    public MockConfigRule configRule = new MockConfigRule();
 
     @Captor
     private ArgumentCaptor<Map> bondingCaptor;
@@ -60,7 +76,7 @@ public class SetupNetworksVDSCommandTest {
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
 
-        Map<String, String> networkStruct = assertNeworkWasSent(net);
+        Map<String, Object> networkStruct = assertNeworkWasSent(net);
         assertEquals(nic.getName(), networkStruct.get("nic"));
     }
 
@@ -87,7 +103,7 @@ public class SetupNetworksVDSCommandTest {
         verifyMethodPassedToHost();
 
         assertBondWasSent(bond, slaves);
-        Map<String, String> networkStruct = assertNeworkWasSent(net);
+        Map<String, Object> networkStruct = assertNeworkWasSent(net);
         assertEquals(bond.getName(), networkStruct.get("bonding"));
     }
 
@@ -107,7 +123,7 @@ public class SetupNetworksVDSCommandTest {
         createCommand(parameters).execute();
         verifyMethodPassedToHost();
 
-        Map<String, String> networkStruct = assertNeworkWasSent(net);
+        Map<String, Object> networkStruct = assertNeworkWasSent(net);
         assertEquals(nic.getName(), networkStruct.get("nic"));
         assertEquals(SetupNetworksVDSCommand.DHCP_BOOT_PROTOCOL,
                 networkStruct.get(SetupNetworksVDSCommand.BOOT_PROTOCOL));
@@ -133,6 +149,56 @@ public class SetupNetworksVDSCommandTest {
 
         Map<String, Object> bondMap = assertBondWasSent(bond, slaves);
         assertEquals(bond.getBondOptions(), bondMap.get(SetupNetworksVDSCommand.BONDING_OPTIONS));
+    }
+
+    private void qos(Network network,
+            VdsNetworkInterface iface,
+            NetworkQoS expectedQos,
+            boolean hostNetworkQosSupported) {
+
+        Version version = mock(Version.class);
+        when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
+        configRule.mockConfigValue(ConfigValues.HostNetworkQosSupported, version, hostNetworkQosSupported);
+
+        SetupNetworksVdsCommandParameters parameters =
+                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
+                        Collections.singletonList(network),
+                        Collections.<String> emptyList(),
+                        Collections.<VdsNetworkInterface> emptyList(),
+                        Collections.<String> emptySet(),
+                        Collections.singletonList(iface));
+
+        createCommand(parameters).execute();
+
+        verifyMethodPassedToHost();
+        Map<String, Object> networkStruct = assertNeworkWasSent(network);
+        NetworkQosMapper qosMapper =
+                new NetworkQosMapper(networkStruct, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
+        assertEquals(expectedQos, qosMapper.deserialize());
+    }
+
+    @Test
+    public void qosNotSupported() {
+        Network network = createNetwork(null);
+        VdsNetworkInterface iface = createNic("eth0", null, null, network.getName());
+
+        when(qosDao.get(any(Guid.class))).thenReturn(createQos());
+
+        qos(network, iface, null, false);
+    }
+
+    @Test
+    public void qosOnNetwork() {
+        Network network = createNetwork(null);
+        VdsNetworkInterface iface = createNic("eth0", null, null, network.getName());
+
+        Guid qosId = Guid.newGuid();
+        network.setQosId(qosId);
+        NetworkQoS qos = createQos();
+        qos.setId(qosId);
+        when(qosDao.get(qosId)).thenReturn(qos);
+
+        qos(network, iface, qos, true);
     }
 
     /**
@@ -172,9 +238,9 @@ public class SetupNetworksVDSCommandTest {
      *            The network expected to be sent.
      * @return The network's XML/RPC struct for further testing.
      */
-    private Map<String, String> assertNeworkWasSent(Network net) {
+    private Map<String, Object> assertNeworkWasSent(Network net) {
         Map networksStruct = networksCaptor.getValue();
-        Map<String, String> networkStruct = (Map<String, String>) networksStruct.get(net.getName());
+        Map<String, Object> networkStruct = (Map<String, Object>) networksStruct.get(net.getName());
         assertNotNull("Network " + net.getName() + " should've been sent but wasn't.", networkStruct);
         return networkStruct;
     }
@@ -195,6 +261,7 @@ public class SetupNetworksVDSCommandTest {
         final VdsStaticDAO vdsStaticDao = mock(VdsStaticDAO.class);
 
         when(dbFacade.getVdsStaticDao()).thenReturn(vdsStaticDao);
+        when(dbFacade.getQosDao()).thenReturn(qosDao);
 
         // No way to avoid these calls by regular mocking, so must implement anonymously.
         return new SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters>(parameters) {
@@ -207,6 +274,11 @@ public class SetupNetworksVDSCommandTest {
             @Override
             protected DbFacade getDbFacade() {
                 return dbFacade;
+            }
+
+            @Override
+            protected VDS getVds() {
+                return host;
             }
         };
     }
@@ -263,5 +335,16 @@ public class SetupNetworksVDSCommandTest {
                 false,
                 0,
                 true);
+    }
+
+    private NetworkQoS createQos() {
+        NetworkQoS qos = new NetworkQoS();
+        qos.setInboundAverage(RandomUtils.instance().nextInt(0, 1000000));
+        qos.setInboundPeak(RandomUtils.instance().nextInt(0, 1000000));
+        qos.setInboundBurst(RandomUtils.instance().nextInt(0, 1000000));
+        qos.setOutboundAverage(RandomUtils.instance().nextInt(0, 1000000));
+        qos.setOutboundPeak(RandomUtils.instance().nextInt(0, 1000000));
+        qos.setOutboundBurst(RandomUtils.instance().nextInt(0, 1000000));
+        return qos;
     }
 }

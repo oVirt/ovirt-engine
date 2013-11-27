@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -149,15 +150,15 @@ public final class NetworkUtils {
      *            The network devices to update.
      */
     public static VdsNetworkInterface.NetworkImplementationDetails calculateNetworkImplementationDetails(
-            Map<String, Network> networks,
+            Network network,
+            NetworkQoS qos,
             VdsNetworkInterface iface) {
         if (StringUtils.isEmpty(iface.getNetworkName())) {
             return null;
         }
 
-        if (networks.containsKey(iface.getNetworkName())) {
-            Network network = networks.get(iface.getNetworkName());
-            if (isNetworkInSync(iface, network)) {
+        if (network != null) {
+            if (isNetworkInSync(iface, network, qos)) {
                 return new VdsNetworkInterface.NetworkImplementationDetails(true, true);
             } else {
                 return new VdsNetworkInterface.NetworkImplementationDetails(false, true);
@@ -167,10 +168,22 @@ public final class NetworkUtils {
         }
     }
 
-    public static boolean isNetworkInSync(VdsNetworkInterface iface, Network network) {
+    public static boolean isNetworkInSync(VdsNetworkInterface iface, Network network, NetworkQoS qos) {
         return (network.getMtu() == 0 || iface.getMtu() == network.getMtu())
                 && Objects.equals(iface.getVlanId(), network.getVlanId())
-                && iface.isBridged() == network.isVmNetwork();
+                && iface.isBridged() == network.isVmNetwork()
+                && isQosInSync(iface, qos);
+    }
+
+    private static boolean isQosInSync(VdsNetworkInterface iface, NetworkQoS networkQos) {
+        NetworkQoS ifaceQos = iface.getQos();
+        if (ifaceQos == networkQos) {
+            return true;
+        } else if (ifaceQos == null || networkQos == null) {
+            return false;
+        } else {
+            return ifaceQos.equalValues(networkQos);
+        }
     }
 
     /**

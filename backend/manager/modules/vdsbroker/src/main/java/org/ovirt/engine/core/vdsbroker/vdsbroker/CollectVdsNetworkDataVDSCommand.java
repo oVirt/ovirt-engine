@@ -23,6 +23,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -150,10 +151,14 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
 
     private static void logUnsynchronizedNetworks(VDS vds, Map<String, Network> networks) {
         List<String> networkNames = new ArrayList<String>();
+        NetworkQoSDao qosDao = DbFacade.getInstance().getQosDao();
 
         for (VdsNetworkInterface iface : vds.getInterfaces()) {
+            Network network = networks.get(iface.getNetworkName());
             NetworkImplementationDetails networkImplementationDetails =
-                    NetworkUtils.calculateNetworkImplementationDetails(networks, iface);
+                    NetworkUtils.calculateNetworkImplementationDetails(network,
+                            network == null ? null : qosDao.get(network.getQosId()),
+                            iface);
 
             if (networkImplementationDetails != null
                     && !networkImplementationDetails.isInSync()

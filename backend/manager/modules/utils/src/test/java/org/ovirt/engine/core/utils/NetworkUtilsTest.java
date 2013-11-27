@@ -6,12 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -35,7 +33,7 @@ public class NetworkUtilsTest {
         iface.setNetworkName(null);
 
         assertNull("Network implementation details should not be filled.",
-                NetworkUtils.calculateNetworkImplementationDetails(Collections.<String, Network> emptyMap(), iface));
+                NetworkUtils.calculateNetworkImplementationDetails(null, null, iface));
     }
 
     @Test
@@ -44,13 +42,13 @@ public class NetworkUtilsTest {
         iface.setNetworkName("");
 
         assertNull("Network implementation details should not be filled.",
-                NetworkUtils.calculateNetworkImplementationDetails(Collections.<String, Network> emptyMap(), iface));
+                NetworkUtils.calculateNetworkImplementationDetails(null, null, iface));
     }
 
     @Test
     public void calculateNetworkImplementationDetailsUnmanagedNetwork() throws Exception {
         VdsNetworkInterface iface = createNetworkDevice();
-        calculateNetworkImplementationDetailsAndAssertManaged(iface, false, Collections.<String, Network> emptyMap());
+        calculateNetworkImplementationDetailsAndAssertManaged(iface, false, null);
     }
 
     @Test
@@ -58,7 +56,7 @@ public class NetworkUtilsTest {
         VdsNetworkInterface iface = createNetworkDevice();
         calculateNetworkImplementationDetailsAndAssertManaged(iface,
                 true,
-                createNetworksMap(iface.getNetworkName(), iface.isBridged(), iface.getMtu(), iface.getVlanId()));
+                createNetwork(iface.getNetworkName(), iface.isBridged(), iface.getMtu(), iface.getVlanId()));
     }
 
     @Test
@@ -69,7 +67,8 @@ public class NetworkUtilsTest {
                 iface.getNetworkName(),
                 iface.isBridged(),
                 iface.getMtu(),
-                iface.getVlanId());
+                iface.getVlanId(),
+                createQos());
     }
 
     @Test
@@ -80,7 +79,8 @@ public class NetworkUtilsTest {
                 iface.getNetworkName(),
                 iface.isBridged(),
                 0,
-                iface.getVlanId());
+                iface.getVlanId(),
+                createQos());
     }
 
     /**
@@ -94,7 +94,21 @@ public class NetworkUtilsTest {
                 iface.getNetworkName(),
                 !iface.isBridged(),
                 0,
-                RandomUtils.instance().nextInt());
+                RandomUtils.instance().nextInt(),
+                createQos());
+    }
+
+    @Test
+    public void caluculateNetworkImplementationDetailsNetworkInSyncWithoutQos() throws Exception {
+        VdsNetworkInterface iface = createNetworkDevice();
+        iface.setQos(null);
+        calculateNetworkImplementationDetailsAndAssertSync(iface,
+                true,
+                iface.getNetworkName(),
+                iface.isBridged(),
+                iface.getMtu(),
+                iface.getVlanId(),
+                null);
     }
 
     @Test
@@ -105,7 +119,8 @@ public class NetworkUtilsTest {
                 iface.getNetworkName(),
                 iface.isBridged(),
                 iface.getMtu() + 1,
-                iface.getVlanId());
+                iface.getVlanId(),
+                createQos());
     }
 
     @Test
@@ -116,7 +131,8 @@ public class NetworkUtilsTest {
                 iface.getNetworkName(),
                 !iface.isBridged(),
                 iface.getMtu(),
-                iface.getVlanId());
+                iface.getVlanId(),
+                createQos());
     }
 
     @Test
@@ -127,7 +143,49 @@ public class NetworkUtilsTest {
                 iface.getNetworkName(),
                 iface.isBridged(),
                 iface.getMtu(),
-                iface.getVlanId() + 1);
+                iface.getVlanId() + 1,
+                createQos());
+    }
+
+    @Test
+    public void calculateNetworkImplementationDetailsInterfaceQosMissing() throws Exception {
+        VdsNetworkInterface iface = createNetworkDevice();
+        iface.setQos(null);
+        calculateNetworkImplementationDetailsAndAssertSync(iface,
+                false,
+                iface.getNetworkName(),
+                iface.isBridged(),
+                iface.getMtu(),
+                iface.getVlanId(),
+                createQos());
+    }
+
+    @Test
+    public void calculateNetworkImplementationDetailsNetworkQosMissing() throws Exception {
+        VdsNetworkInterface iface = createNetworkDevice();
+        calculateNetworkImplementationDetailsAndAssertSync(iface,
+                false,
+                iface.getNetworkName(),
+                iface.isBridged(),
+                iface.getMtu(),
+                iface.getVlanId(),
+                null);
+    }
+
+    @Test
+    public void calculateNetworkImplementationDetailsNetworkQosOutOfSync() throws Exception {
+        VdsNetworkInterface iface = createNetworkDevice();
+        NetworkQoS qos = createQos();
+        qos.setOutboundAverage(30);
+        qos.setOutboundPeak(30);
+        qos.setOutboundBurst(30);
+        calculateNetworkImplementationDetailsAndAssertSync(iface,
+                false,
+                iface.getNetworkName(),
+                iface.isBridged(),
+                iface.getMtu(),
+                iface.getVlanId(),
+                qos);
     }
 
     @Test
@@ -197,9 +255,9 @@ public class NetworkUtilsTest {
 
     private void calculateNetworkImplementationDetailsAndAssertManaged(VdsNetworkInterface iface,
             boolean expectManaged,
-            Map<String, Network> networks) {
+            Network network) {
         NetworkImplementationDetails networkImplementationDetails =
-                NetworkUtils.calculateNetworkImplementationDetails(networks, iface);
+                NetworkUtils.calculateNetworkImplementationDetails(network, null, iface);
 
         assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
         assertEquals("Network implementation details should be " + (expectManaged ? "" : "un") + "managed.",
@@ -211,11 +269,13 @@ public class NetworkUtilsTest {
             boolean expectSync,
             String networkName,
             boolean vmNet,
-            int mtu, int vlanId) {
-        Map<String, Network> networks = createNetworksMap(networkName, vmNet, mtu, vlanId);
+            int mtu,
+            int vlanId,
+            NetworkQoS qos) {
+        Network network = createNetwork(networkName, vmNet, mtu, vlanId);
 
         NetworkImplementationDetails networkImplementationDetails =
-                NetworkUtils.calculateNetworkImplementationDetails(networks, iface);
+                NetworkUtils.calculateNetworkImplementationDetails(network, qos, iface);
 
         assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
         assertEquals("Network implementation details should be " + (expectSync ? "in" : "out of") + " sync.",
@@ -223,7 +283,7 @@ public class NetworkUtilsTest {
                 networkImplementationDetails.isInSync());
     }
 
-    private Map<String, Network> createNetworksMap(String networkName,
+    private Network createNetwork(String networkName,
             boolean vmNetwork,
             int mtu,
             Integer vlanId) {
@@ -232,7 +292,7 @@ public class NetworkUtilsTest {
         network.setMtu(mtu);
         network.setVlanId(vlanId);
 
-        return Collections.singletonMap(networkName, network);
+        return network;
     }
 
     private VdsNetworkInterface createNetworkDevice() {
@@ -241,6 +301,15 @@ public class NetworkUtilsTest {
         iface.setBridged(RandomUtils.instance().nextBoolean());
         iface.setMtu(100);
         iface.setVlanId(100);
+        iface.setQos(createQos());
         return iface;
+    }
+
+    private NetworkQoS createQos() {
+        NetworkQoS qos = new NetworkQoS();
+        qos.setInboundAverage(30);
+        qos.setInboundPeak(30);
+        qos.setInboundBurst(30);
+        return qos;
     }
 }

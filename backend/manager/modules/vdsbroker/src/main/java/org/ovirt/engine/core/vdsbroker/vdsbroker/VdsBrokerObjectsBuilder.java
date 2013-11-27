@@ -1254,6 +1254,10 @@ public class VdsBrokerObjectsBuilder {
                 Map<String, Object> networkConfig = (Map<String, Object>) network.get("cfg");
                 addBootProtocol(networkConfig, host, iface);
             }
+
+            NetworkQosMapper qosMapper =
+                    new NetworkQosMapper(network, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
+            iface.setQos(qosMapper.deserialize());
         }
     }
 

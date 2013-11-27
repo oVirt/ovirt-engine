@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
@@ -31,8 +33,9 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
     private Map<String, Object> generateNetworks() {
         Map<String, Object> networks = new HashMap<String, Object>();
+        NetworkQoSDao qosDao = getDbFacade().getQosDao();
         for (Network network : getParameters().getNetworks()) {
-            Map<String, String> opts = new HashMap<String, String>();
+            Map<String, Object> opts = new HashMap<String, Object>();
             VdsNetworkInterface iface =
                     findNetworkInterface(network.getName(), getParameters().getInterfaces(), getParameters().getBonds());
             String ifaceNameWithoutVlan = NetworkUtils.stripVlan(iface.getName());
@@ -56,6 +59,13 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.STP, network.getStp() ? "yes" : "no");
             }
 
+            if (network.getQosId() != null
+                    && FeatureSupported.hostNetworkQos(getVds().getVdsGroupCompatibilityVersion())) {
+                NetworkQosMapper qosMapper =
+                        new NetworkQosMapper(opts, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
+                qosMapper.serialize(qosDao.get(network.getQosId()));
+            }
+
             networks.put(network.getName(), opts);
         }
 
@@ -66,7 +76,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         return networks;
     }
 
-    private void addBootProtocol(Map<String, String> opts, VdsNetworkInterface iface) {
+    private void addBootProtocol(Map<String, Object> opts, VdsNetworkInterface iface) {
         switch (iface.getBootProtocol()) {
         case DHCP:
             opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
@@ -113,7 +123,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         return options;
     }
 
-    private static void putIfNotEmpty(Map<String, String> map, String key, String value) {
+    private static void putIfNotEmpty(Map<String, Object> map, String key, String value) {
         if (!StringUtils.isEmpty(value)) {
             map.put(key, value);
         }
