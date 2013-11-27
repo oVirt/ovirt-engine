@@ -1,9 +1,9 @@
 package java.text;
 
 public class DateFormat {
-   
+
     /** DateFormat styling constants */
-    
+
     /**
      * Constant for full style pattern.
      */

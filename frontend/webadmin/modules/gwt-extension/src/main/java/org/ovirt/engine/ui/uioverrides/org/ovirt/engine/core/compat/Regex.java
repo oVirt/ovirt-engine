@@ -6,9 +6,9 @@ import org.ovirt.engine.core.compat.Match;
 
 /**
  * Replacement for System.Text.RegularExpressions.Regex
- * 
+ *
  * @author drankevi
- * 
+ *
  */
 public class Regex {
 

@@ -10,9 +10,9 @@ public class DateTime extends Date {
 
     //public static Date Now = new DateTime();
 //    public static DateTime Now2 = new DateTime();
-    
+
     private static final String dayNames[] = EnumCompat.GetNames(DayOfWeek.class);
-    
+
     public DateTime(int year, int month, int date) {
         this(new Date(year, month, date));
     }
@@ -24,7 +24,7 @@ public class DateTime extends Date {
     public DateTime(Date argvalue) {
         super(argvalue.getTime());
     }
-    
+
     public DateTime(long millis) {
         super(millis);
     }
@@ -53,7 +53,7 @@ public class DateTime extends Date {
             formatString = "yyyy-MM-ddHH:mm:ss";
             compat = true;
         }
-        
+
         //TODO: GWT-TODO should be replaced
         /*
         SimpleDateFormat fmt = new SimpleDateFormat(formatString) ;
@@ -81,7 +81,7 @@ public class DateTime extends Date {
         // not pass GWT compilitation
         return new Date(-7200000);
     }
-    
+
     public DateTime AddDays(int i) {
         Date date = new Date();
         CalendarUtil.addDaysToDate(date, i);

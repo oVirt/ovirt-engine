@@ -3,9 +3,9 @@ package org.ovirt.engine.core.compat;
 /**
  * copied from .NET enum: System.Text.RegularExpressions.RegexOptions
  * Provides enumerated values to use to set regular expression options.
- * 
+ *
  * @author drankevi
- * 
+ *
  */
 public class RegexOptions {
 
@@ -47,7 +47,7 @@ public class RegexOptions {
      * character except \n).
      */
     public static final int Singleline = 16;
-    
+
     /**
      * Eliminates unescaped white space from the pattern and enables comments marked with #. However, the
      * System.Text.RegularExpressions.RegexOptions.IgnorePatternWhitespace value does not affect or eliminate white

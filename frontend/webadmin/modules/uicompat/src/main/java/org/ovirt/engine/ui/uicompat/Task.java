@@ -8,11 +8,11 @@ public class Task {
 
     private ITaskTarget target;
     private TaskContext context;
-    
+
     private Task(ITaskTarget target, Object state)
     {
         this.target = target;
-        
+
         context = new TaskContext(Dispatcher.CurrentDispatcher, state);
     }
 

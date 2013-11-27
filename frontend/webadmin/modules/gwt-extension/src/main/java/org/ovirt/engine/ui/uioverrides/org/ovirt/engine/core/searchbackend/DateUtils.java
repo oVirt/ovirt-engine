@@ -9,20 +9,20 @@ import java.text.DateFormat;
 import java.util.Date;
 
 class DateUtils {
-    
-    static Date parse(String str) {        
+
+    static Date parse(String str) {
         try {
             return DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).parse(str);
-        } catch (IllegalArgumentException iae) {            
+        } catch (IllegalArgumentException iae) {
         }
         return null;
     }
-    
+
     public static DateTimeFormat getFormat(int dateStyle) {
         switch (dateStyle)
         {
             case DateFormat.FULL:
-                return DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);               
+                return DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);
             case DateFormat.LONG:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG);
             case DateFormat.SHORT:
@@ -36,7 +36,7 @@ class DateUtils {
         switch (timeStyle)
         {
             case DateFormat.FULL:
-                return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);               
+                return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);
             case DateFormat.LONG:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_LONG);
             case DateFormat.SHORT:
@@ -45,7 +45,7 @@ class DateUtils {
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM);
         }
     }
-    
+
     public static String getDayOfWeek(int addDays) {
         Date date = new Date();
         return DateTime.getDayOfTheWeekAsString(date.getDay()).toUpperCase();

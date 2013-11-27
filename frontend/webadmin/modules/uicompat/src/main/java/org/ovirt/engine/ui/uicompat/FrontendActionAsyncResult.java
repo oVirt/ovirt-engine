@@ -49,7 +49,7 @@ public final class FrontendActionAsyncResult
         setParameters(parameters);
         setReturnValue(returnValue);
     }
-    
+
     public FrontendActionAsyncResult(VdcActionType actionType, VdcActionParametersBase parameters, VdcReturnValueBase returnValue, Object state)
     {
         setActionType(actionType);

@@ -7,9 +7,9 @@ package org.ovirt.engine.ui.uicompat.external;
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Converts String to and from bytes using the encodings required by the Java specification. These encodings are specified in <a
  * href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
- * 
+ *
  * @see CharEncoding
  * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
  * @author <a href="mailto:ggregory@seagullsw.com">Gary Gregory</a>
@@ -40,7 +40,7 @@ public class StringUtils {
     /**
      * Encodes the given string into a sequence of bytes using the ISO-8859-1 charset, storing the result into a new
      * byte array.
-     * 
+     *
      * @param string
      *            the String to encode
      * @return encoded bytes
@@ -56,7 +56,7 @@ public class StringUtils {
     /**
      * Encodes the given string into a sequence of bytes using the US-ASCII charset, storing the result into a new byte
      * array.
-     * 
+     *
      * @param string
      *            the String to encode
      * @return encoded bytes
@@ -72,7 +72,7 @@ public class StringUtils {
     /**
      * Encodes the given string into a sequence of bytes using the UTF-16 charset, storing the result into a new byte
      * array.
-     * 
+     *
      * @param string
      *            the String to encode
      * @return encoded bytes
@@ -88,7 +88,7 @@ public class StringUtils {
     /**
      * Encodes the given string into a sequence of bytes using the UTF-16BE charset, storing the result into a new byte
      * array.
-     * 
+     *
      * @param string
      *            the String to encode
      * @return encoded bytes
@@ -104,7 +104,7 @@ public class StringUtils {
     /**
      * Encodes the given string into a sequence of bytes using the UTF-16LE charset, storing the result into a new byte
      * array.
-     * 
+     *
      * @param string
      *            the String to encode
      * @return encoded bytes
@@ -120,7 +120,7 @@ public class StringUtils {
     /**
      * Encodes the given string into a sequence of bytes using the UTF-8 charset, storing the result into a new byte
      * array.
-     * 
+     *
      * @param string
      *            the String to encode
      * @return encoded bytes
@@ -140,7 +140,7 @@ public class StringUtils {
      * This method catches {@link UnsupportedEncodingException} and rethrows it as {@link IllegalStateException}, which
      * should never happen for a required charset name. Use this method when the encoding is required to be in the JRE.
      * </p>
-     * 
+     *
      * @param string
      *            the String to encode
      * @param charsetName
@@ -173,7 +173,7 @@ public class StringUtils {
      * This method catches {@link UnsupportedEncodingException} and re-throws it as {@link IllegalStateException}, which
      * should never happen for a required charset name. Use this method when the encoding is required to be in the JRE.
      * </p>
-     * 
+     *
      * @param bytes
      *            The bytes to be decoded into characters
      * @param charsetName
@@ -198,7 +198,7 @@ public class StringUtils {
 
     /**
      * Constructs a new <code>String</code> by decoding the specified array of bytes using the ISO-8859-1 charset.
-     * 
+     *
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset.
@@ -212,7 +212,7 @@ public class StringUtils {
 
     /**
      * Constructs a new <code>String</code> by decoding the specified array of bytes using the US-ASCII charset.
-     * 
+     *
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset.
@@ -226,7 +226,7 @@ public class StringUtils {
 
     /**
      * Constructs a new <code>String</code> by decoding the specified array of bytes using the UTF-16 charset.
-     * 
+     *
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset.
@@ -240,7 +240,7 @@ public class StringUtils {
 
     /**
      * Constructs a new <code>String</code> by decoding the specified array of bytes using the UTF-16BE charset.
-     * 
+     *
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset.
@@ -254,7 +254,7 @@ public class StringUtils {
 
     /**
      * Constructs a new <code>String</code> by decoding the specified array of bytes using the UTF-16LE charset.
-     * 
+     *
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset.
@@ -268,7 +268,7 @@ public class StringUtils {
 
     /**
      * Constructs a new <code>String</code> by decoding the specified array of bytes using the UTF-8 charset.
-     * 
+     *
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset.
