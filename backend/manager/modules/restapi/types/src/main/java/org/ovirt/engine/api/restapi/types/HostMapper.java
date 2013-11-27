@@ -490,6 +490,10 @@ public class HostMapper {
             }
             // Set Secondary Agent
             if (!StringUtils.isEmpty(entity.getPmSecondaryIp())) {
+                boolean concurrent = entity.isPmSecondaryConcurrent();
+                // When a second agent exists, 'concurrent' field is relevant for both agents, so here we
+                // set it retroactively in the first agent.
+                model.getAgents().getAgents().get(0).setConcurrent(concurrent);
                 agent = new Agent();
                 agent.setType(entity.getPmSecondaryType());
                 agent.setAddress(entity.getPmSecondaryIp());
@@ -498,7 +502,7 @@ public class HostMapper {
                     agent.setOptions(map(entity.getPmSecondaryOptionsMap(), null));
                 }
                 agent.setOrder(2);
-                agent.setConcurrent(entity.isPmSecondaryConcurrent());
+                agent.setConcurrent(concurrent);
                 model.getAgents().getAgents().add(agent);
             }
         }

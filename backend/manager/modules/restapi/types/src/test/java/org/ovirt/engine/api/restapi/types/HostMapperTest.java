@@ -182,6 +182,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
             assertEquals(agent.getAddress(), ip[i]);
             assertEquals(agent.getType(), "apc");
             assertEquals(agent.getUsername(), "user");
+            assertTrue(agent.isConcurrent());
             assertEquals(agent.getOptions().getOptions().get(0).getName(), "secure");
             assertEquals(agent.getOptions().getOptions().get(0).getValue(), "true");
             if (i > 0) {
