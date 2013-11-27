@@ -1313,6 +1313,7 @@ public class VdsUpdateRunTimeInfo {
 
                 if (vmInternalData.getVmStatistics().getusage_mem_percent() != null
                     && vmInternalData.getVmStatistics().getusage_mem_percent() == 0  // guest agent is down
+                        && balloonInfo.isBalloonDeviceEnabled() // check if the device is present
                         && balloonInfo.getCurrentMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue()) {
                     guestAgentIsDownAndBalloonInfalted(vmId);
                 } else {
