@@ -578,7 +578,6 @@ org/apache/commons/configuration/main/commons-configuration.jar commons-configur
 org/apache/commons/httpclient/main/commons-httpclient.jar
 org/apache/commons/jxpath/main/commons-jxpath.jar commons-jxpath.jar
 org/apache/mina/main/mina-core.jar apache-mina/mina-core.jar
-org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 org/apache/xmlrpc/main/xmlrpc-client.jar
 org/apache/xmlrpc/main/xmlrpc-common.jar
 org/postgresql/main/postgresql.jar postgresql-jdbc.jar
