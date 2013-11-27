@@ -1020,6 +1020,9 @@ class RPMDistroEnv(object):
     def REQUIRE_ROLLBACK(self):
         return 'OSETUP_RPMDISTRO/requireRollback'
 
+    VERSION_LOCK_FILTER = 'OSETUP_RPMDISTRO/versionLockFilter'
+    VERSION_LOCK_APPLY = 'OSETUP_RPMDISTRO/versionLockApply'
+
 
 @util.export
 @util.codegen
