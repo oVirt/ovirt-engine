@@ -435,7 +435,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         if (bootProtocol != other.bootProtocol) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(other.networkName, other.networkName)) {
+        if (!ObjectUtils.objectsEqual(networkName, other.networkName)) {
             return false;
         }
         if (bridged != other.bridged) {
