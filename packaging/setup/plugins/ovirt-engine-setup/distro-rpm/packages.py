@@ -64,9 +64,14 @@ class Plugin(plugin.PluginBase):
                     osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
                 ) as f:
                     for line in f.read().splitlines():
-                        if line.find(
-                            osetupcons.Const.ENGINE_PACKAGE_NAME
-                        ) == -1:
+                        found = False
+                        for pattern in self.environment[
+                            osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
+                        ]:
+                            if line.find(pattern) != -1:
+                                found = True
+                                break
+                        if not found:
                             content.append(line)
                         else:
                             modified = True
@@ -124,7 +129,11 @@ class Plugin(plugin.PluginBase):
                 args=(
                     self._parent.command.get('rpm'),
                     '-q',
-                ) + osetupcons.Const.RPM_LOCK_LIST,
+                ) + tuple(
+                    self.environment[
+                        osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
+                    ]
+                ),
             )
             changes = []
             for line in out:
@@ -263,6 +272,19 @@ class Plugin(plugin.PluginBase):
         )[0]
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY,
+            []
+        )
+        self.environment.setdefault(
+            osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER,
+            []
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         condition=lambda self: (
             not self.environment[
@@ -282,6 +304,12 @@ class Plugin(plugin.PluginBase):
             osetupcons.RPMDistroEnv.REQUIRE_ROLLBACK,
             None
         )
+        self.environment[
+            osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
+        ].append(osetupcons.Const.ENGINE_PACKAGE_NAME)
+        self.environment[
+            osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
+        ].extend(osetupcons.Const.RPM_LOCK_LIST)
         if self._distribution in ('redhat', 'fedora', 'centos'):
             self.command.detect('rpm')
 
