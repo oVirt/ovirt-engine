@@ -178,6 +178,10 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.NetworkQosSupported, version);
     }
 
+    public static boolean hostNetworkQos(Version version) {
+        return supportedInConfig(ConfigValues.HostNetworkQosSupported, version);
+    }
+
     /**
      * @param version
      *            Compatibility version to check for.
