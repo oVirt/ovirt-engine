@@ -86,7 +86,7 @@ public class BackendGlusterHookResource
     private Response copy(Action action) {
         GlusterHookManageParameters params = new GlusterHookManageParameters(guid);
         if (action.isSetHost()) {
-            validateParameters(action.getHost(), "host.id|name");
+            validateParameters(action.getHost(), "id|name");
             Guid hostId = getHostId(action);
             params.setSourceServerId(hostId);
         }
