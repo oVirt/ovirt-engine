@@ -306,7 +306,9 @@ dorestore() {
 	verifyConnection
 	log "Restoring database backup at ${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
 	restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
-	changeDBConf
+	if [ -n "${CHANGE_DB_CREDENTIALS}" ]; then
+		changeDBConf
+	fi
 	output "Note: you might need to manually fix:"
 	output "- iptables/firewalld configuration"
 	output "- autostart of ovirt-engine service"
