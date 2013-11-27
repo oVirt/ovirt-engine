@@ -10,7 +10,7 @@ public class DateTime extends Date {
 
     //public static Date Now = new DateTime();
 //    public static DateTime Now2 = new DateTime();
-	
+    
     private static final String dayNames[] = EnumCompat.GetNames(DayOfWeek.class);
     
     public DateTime(int year, int month, int date) {
@@ -41,35 +41,35 @@ public class DateTime extends Date {
         return this.getTime();
     }
 
-	public DateTime(int i) {
-		super(i);
-	}
+    public DateTime(int i) {
+        super(i);
+    }
 
     public String toString(String formatString) {
-    	//c# compatibility
-    	boolean compat = false;
-    	if(formatString.equals("yyyy-MM-ddTHH:mm:ss"))
-    	{
-    		formatString = "yyyy-MM-ddHH:mm:ss";
-    		compat = true;
-    	}
+        //c# compatibility
+        boolean compat = false;
+        if(formatString.equals("yyyy-MM-ddTHH:mm:ss"))
+        {
+            formatString = "yyyy-MM-ddHH:mm:ss";
+            compat = true;
+        }
         
-    	//TODO: GWT-TODO should be replaced
-    	/*
-    	SimpleDateFormat fmt = new SimpleDateFormat(formatString) ;
+        //TODO: GWT-TODO should be replaced
+        /*
+        SimpleDateFormat fmt = new SimpleDateFormat(formatString) ;
         String returnedValue = fmt.format(this);
         if(compat)
         {
-        	returnedValue = returnedValue.substring(0,10)+"T"+returnedValue.substring(10);
+            returnedValue = returnedValue.substring(0,10)+"T"+returnedValue.substring(10);
         }
         return  returnedValue;*/
-    	return null;
+        return null;
     }
 
     //TODO: GWT-TODO public String toString(DateFormat dateFormat) {
     public String toString(Object dateFormat) {
         //TODO: GWT-TODO return  dateFormat.format(this);
-    	return null;
+        return null;
     }
 
     /**
@@ -77,9 +77,9 @@ public class DateTime extends Date {
      * @return - a date representing - Thu Jan 01 00:00:00 IST 1970
      */
     public static Date getMinValue() {
-    	// Return the static milliseconds representation of the min. date to avoid using GregorianCalendar which does
-    	// not pass GWT compilitation
-    	return new Date(-7200000);
+        // Return the static milliseconds representation of the min. date to avoid using GregorianCalendar which does
+        // not pass GWT compilitation
+        return new Date(-7200000);
     }
     
     public DateTime AddDays(int i) {

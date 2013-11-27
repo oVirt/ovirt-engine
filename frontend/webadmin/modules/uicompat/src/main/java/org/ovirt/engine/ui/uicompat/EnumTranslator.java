@@ -20,7 +20,7 @@ public class EnumTranslator<T> extends Translator {
         this.type = type;
     }
 
-	public static <T> Translator Create(T type) {
+    public static <T> Translator Create(T type) {
         EnumTranslator translator = translatorsMap.get(type);
         if (translator == null) {
             translator = new EnumTranslator(type);
@@ -28,7 +28,7 @@ public class EnumTranslator<T> extends Translator {
         }
 
         return translator;
-	}
+    }
 
     public static String createAndTranslate(Enum<?> enumObj) {
         String title = constants.notAvailableLabel();
@@ -48,16 +48,16 @@ public class EnumTranslator<T> extends Translator {
         return title;
     }
 
-	@Override
-	public String get(Object key) {
-	    //FIXME: hack: due to java restriction for method names with chars that are not letters, digits, and underscores, replace . with 0
-	    if(key == null){
-	        return null;
-	    }
-	    String enumName = type.toString();
-	    enumName = enumName.substring(enumName.lastIndexOf(".")+1,enumName.length()); //$NON-NLS-1$
-	    String trasnlatedEnum = enums.getString(enumName + "___" + key.toString()); //$NON-NLS-1$
+    @Override
+    public String get(Object key) {
+        //FIXME: hack: due to java restriction for method names with chars that are not letters, digits, and underscores, replace . with 0
+        if(key == null){
+            return null;
+        }
+        String enumName = type.toString();
+        enumName = enumName.substring(enumName.lastIndexOf(".")+1,enumName.length()); //$NON-NLS-1$
+        String trasnlatedEnum = enums.getString(enumName + "___" + key.toString()); //$NON-NLS-1$
 
-	    return trasnlatedEnum;
-	}
+        return trasnlatedEnum;
+    }
 }

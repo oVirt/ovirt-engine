@@ -4,26 +4,26 @@ import java.util.Iterator;
 
 public class IteratorUtils {
 
-	/// <summary>
+    /// <summary>
 
-	/// Advances to the next item in the specified enumerator and returns true.
+    /// Advances to the next item in the specified enumerator and returns true.
 
-	/// If no item has left to advance to - return false
+    /// If no item has left to advance to - return false
 
-	/// </summary>
+    /// </summary>
 
-	/// <param name="enumerator">specified enumerator</param>
+    /// <param name="enumerator">specified enumerator</param>
 
-	/// <returns>true if advanced to next item, false otherwise</returns>
+    /// <returns>true if advanced to next item, false otherwise</returns>
 
-	@SuppressWarnings("rawtypes")
-	public static boolean moveNext(Iterator iterator) {
-		if (iterator.hasNext()) {
-			iterator.next();
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+    @SuppressWarnings("rawtypes")
+    public static boolean moveNext(Iterator iterator) {
+        if (iterator.hasNext()) {
+            iterator.next();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

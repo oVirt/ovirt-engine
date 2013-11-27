@@ -6,11 +6,11 @@ import org.ovirt.engine.core.compat.TimeSpan;
 
 public class DateTimeUtils {
 
-	/**
-	 * @param source
-	 * @return Object of type TimeSpan containing the time part of date.
-	 */
-	public static TimeSpan getTimeOfDay(Date source) {
-		return new TimeSpan(source.getHours(), source.getMinutes(), source.getSeconds());
-	}
+    /**
+     * @param source
+     * @return Object of type TimeSpan containing the time part of date.
+     */
+    public static TimeSpan getTimeOfDay(Date source) {
+        return new TimeSpan(source.getHours(), source.getMinutes(), source.getSeconds());
+    }
 }

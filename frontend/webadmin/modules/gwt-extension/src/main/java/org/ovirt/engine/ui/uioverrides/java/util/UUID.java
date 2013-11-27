@@ -158,7 +158,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      * @return  a randomly generated <tt>UUID</tt>.
      */
     public static UUID randomUUID() {
-    	//Not implemented.
+        //Not implemented.
         return null;
     }
 
@@ -171,8 +171,8 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      * @return  a <tt>UUID</tt> generated from the specified array.
      */
     public static UUID nameUUIDFromBytes(byte[] name) {
-    	//Not implemented.
-    	return null;
+        //Not implemented.
+        return null;
     }
 
     /**

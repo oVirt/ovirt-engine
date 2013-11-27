@@ -79,15 +79,15 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable
 
     // The format for a timespan is:
     // [ws][-]{ d | d.hh:mm[:ss[.ff]] | hh:mm[:ss[.ff]] }[ws]
-	public static TimeSpan parse(String argvalue) {
-	    String cleaned = argvalue.trim() ;
-	    int multiplier = 1 ;
-	    if (cleaned.contains("-")) {
-	        multiplier = -1 ;
-	        cleaned = cleaned.replace("-", "").trim() ;
-	    }
-	    
-	    RegExp r = RegExp.compile("^[0-9]+$");
+    public static TimeSpan parse(String argvalue) {
+        String cleaned = argvalue.trim() ;
+        int multiplier = 1 ;
+        if (cleaned.contains("-")) {
+            multiplier = -1 ;
+            cleaned = cleaned.replace("-", "").trim() ;
+        }
+        
+        RegExp r = RegExp.compile("^[0-9]+$");
         if (r.test(cleaned)) {
             int days = Integer.parseInt(cleaned) ;
             return new TimeSpan(days * multiplier, 0, 0, 0) ;
@@ -119,8 +119,8 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable
             return new TimeSpan(data) ;
         }     
         // If we get to here, it is invalid
-	    throw new IllegalArgumentException("Invalid TimeSpan") ;
-	}
+        throw new IllegalArgumentException("Invalid TimeSpan") ;
+    }
 
     public String toString() {
         String prefix = "" ;
@@ -128,7 +128,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable
             prefix = "-" ;
         }
         //GWT-TODO return String.format("%s%d.%02d:%02d:%02d.%03d", prefix, Days, Hours, Minutes, Seconds, Milliseconds) ;
-		return null;
+        return null;
     }
     
     public static TimeSpan tryParse(String string) {
@@ -141,9 +141,9 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable
     }
 
 
-	@Override
-	public int compareTo(TimeSpan o) {
-		int result;
+    @Override
+    public int compareTo(TimeSpan o) {
+        int result;
         if (TotalMilliseconds < o.TotalMilliseconds) {
             result = -1;
         } else if (TotalMilliseconds > o.TotalMilliseconds) {
@@ -152,6 +152,6 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable
             result = 0;
         }
         return result;
-	}
-	
+    }
+    
 }

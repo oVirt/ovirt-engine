@@ -1,5 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
 public interface ITaskTarget {
-	void run(TaskContext context);
+    void run(TaskContext context);
 }
