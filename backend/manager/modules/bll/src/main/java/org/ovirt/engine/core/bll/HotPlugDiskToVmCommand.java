@@ -157,15 +157,22 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        Map<String, Pair<String, String>> exclusiveLock = new HashMap<>();
-        exclusiveLock.put(getDisk().getId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
-                        VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED));
-        if (getDisk().isBoot()) {
-            exclusiveLock.put(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        Map<String, Pair<String, String>> exclusiveLock = null;
 
+        if (getDisk() != null) {
+            exclusiveLock = new HashMap<>();
+
+            exclusiveLock.put(getDisk().getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                            VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.name() +
+                                    String.format("$diskAliases %1$s", getDiskAlias())));
+
+            if (getDisk().isBoot()) {
+                exclusiveLock.put(getVmId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT,
+                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+
+            }
         }
         return exclusiveLock;
     }
@@ -177,7 +184,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     public String getDiskAlias() {
-        return disk.getDiskAlias();
+        return getDisk().getDiskAlias();
     }
 
     protected Disk getDisk() {
