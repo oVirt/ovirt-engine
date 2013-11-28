@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpgradeStoragePoolVDSCommandParameters;
@@ -230,12 +228,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected boolean isStoragePoolVersionSupported() {
         return VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version());
-    }
-
-    /* Getters for external resources and handlers */
-
-    protected VDSBrokerFrontend getResourceManager() {
-        return Backend.getInstance().getResourceManager();
     }
 
     /**
