@@ -25,7 +25,6 @@ import re
 import random
 import datetime
 import time
-import string
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -46,6 +45,12 @@ from ovirt_engine_setup import util as osetuputil
 @util.export
 class Plugin(plugin.PluginBase):
     """Local Postgres plugin."""
+
+    _PASSWORD_CHARS = (
+        '0123456789' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+        'abcdefghijklmnopqrstuvwxyz'
+    )
 
     _RE_POSTGRES_PGHBA_LOCAL = re.compile(
         flags=re.VERBOSE,
@@ -71,10 +76,7 @@ class Plugin(plugin.PluginBase):
             os.seteuid(os.getuid())
 
     def _generatePassword(self):
-        return '%s%s' % (
-            ''.join([random.choice(string.digits) for i in range(4)]),
-            ''.join([random.choice(string.letters) for i in range(4)]),
-        )
+        return ''.join([random.choice(self._PASSWORD_CHARS) for i in range(8)])
 
     def _initDB(self):
         self.logger.info(_('Initializing PostgreSQL'))
