@@ -97,6 +97,8 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
         }
         endCreateAllSnapshots();
 
+        unlockAllDiskSnapshots();
+
         ExecutionHandler.endJob(enclosingCommand.getExecutionContext(), false);
         enclosingCommand.setExecutionContext(null);
         enclosingCommand.getReturnValue().setSucceeded(true);
@@ -104,6 +106,10 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void compensate() {
+        unlockAllDiskSnapshots();
+    }
+
+    private void unlockAllDiskSnapshots() {
         // Unlock the image we left locked
         for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
             ImagesHandler.updateAllDiskImageSnapshotsStatus(parameters.getImageGroupID(), ImageStatus.OK);

@@ -352,7 +352,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             removeSnapshot(getDestinationDiskImage());
         }
 
-        unLockImage();
+        if (!getParameters().isLeaveLocked()) {
+            unLockImage();
+        }
     }
 
     /**
