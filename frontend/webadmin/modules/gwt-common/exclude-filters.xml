@@ -163,7 +163,7 @@
     </Match>
 
     <Match>
-       <Class name="org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider$1" />
+       <Class name="org.ovirt.engine.ui.common.widget.form.FormBuilder$1" />
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
@@ -219,6 +219,36 @@
 
     <Match>
       <Class name="org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter$3" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.pool.PoolNewPopupWidget$2" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget$31" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget$32" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmMakeTemplatePopupWidget$4" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmSnapshotCreatePopupWidget$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.vm.VmDiskListModelTable$9" />
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
