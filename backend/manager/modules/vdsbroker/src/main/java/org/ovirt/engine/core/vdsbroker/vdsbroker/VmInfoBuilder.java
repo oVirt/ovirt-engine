@@ -50,8 +50,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static final String USB_BUS = "usb";
     private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
     private static final String CLOUD_INIT_VOL_ID = "config-2";
-    private static final int MEGABITS_TO_KILOBYTES = 128;
-    private static final int MEGABYTES_TO_KILOBYTES = 1024;
 
     private final List<Map<String, Object>> devices = new ArrayList<Map<String, Object>>();
     private List<VmDevice> managedDevices = null;
@@ -630,45 +628,24 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             VnicProfile vnicProfile,
             Version vdsGroupCompatibilityVersion) {
 
-        if (vnicProfile.getNetworkQosId() != null) {
+        Guid qosId = vnicProfile.getNetworkQosId();
+        if (qosId != null) {
             if (!FeatureSupported.networkQoS(vdsGroupCompatibilityVersion)) {
                 return false;
             }
 
-            NetworkQoS networkQoS = DbFacade.getInstance().getQosDao().get(vnicProfile.getNetworkQosId());
-            if (networkQoS != null) {
-                Map<String, Object> specParams = (Map<String, Object>) struct.get(VdsProperties.SpecParams);
-                if (specParams == null) {
-                    specParams = new HashMap<>();
-                    struct.put(VdsProperties.SpecParams, specParams);
-                }
-
-                addQosData(specParams, VdsProperties.QOS_INBOUND,
-                        networkQoS.getInboundAverage(),
-                        networkQoS.getInboundPeak(),
-                        networkQoS.getInboundBurst());
-                addQosData(specParams, VdsProperties.QOS_OUTBOUND,
-                        networkQoS.getOutboundAverage(),
-                        networkQoS.getOutboundPeak(),
-                        networkQoS.getOutboundBurst());
+            Map<String, Object> specParams = (Map<String, Object>) struct.get(VdsProperties.SpecParams);
+            if (specParams == null) {
+                specParams = new HashMap<>();
+                struct.put(VdsProperties.SpecParams, specParams);
             }
+            NetworkQoS networkQoS = DbFacade.getInstance().getQosDao().get(qosId);
+            NetworkQosMapper qosMapper =
+                    new NetworkQosMapper(specParams, VdsProperties.QOS_INBOUND, VdsProperties.QOS_OUTBOUND);
+            qosMapper.serialize(networkQoS);
         }
 
         return true;
-    }
-
-    private static void addQosData(Map<String, Object> specParams,
-            String containerName,
-            Integer average,
-            Integer peak,
-            Integer burst) {
-        if (average != null && average > 0) {
-            Map<String, String> qosData = new HashMap<>();
-            qosData.put(VdsProperties.QOS_AVERAGE, String.valueOf(average * MEGABITS_TO_KILOBYTES));
-            qosData.put(VdsProperties.QOS_PEAK, String.valueOf(peak * MEGABITS_TO_KILOBYTES));
-            qosData.put(VdsProperties.QOS_BURST, String.valueOf(burst * MEGABYTES_TO_KILOBYTES));
-            specParams.put(containerName, qosData);
-        }
     }
 
     public static Map<String, String> getVnicCustomProperties(VnicProfile vnicProfile) {
