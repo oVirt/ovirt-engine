@@ -218,6 +218,11 @@
     </Match>
 
     <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$26" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
       <Class name="org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter$3" />
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
@@ -249,6 +254,26 @@
 
     <Match>
       <Class name="org.ovirt.engine.ui.common.widget.uicommon.vm.VmDiskListModelTable$9" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiTargetToLunView$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiDiscoverTargetsView$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.storage.SanStorageLunToTargetList$6" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractSanStorageView$1" />
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
