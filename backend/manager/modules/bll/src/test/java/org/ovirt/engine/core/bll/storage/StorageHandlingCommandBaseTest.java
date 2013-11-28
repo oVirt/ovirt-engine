@@ -106,8 +106,6 @@ public class StorageHandlingCommandBaseTest {
     }
 
     private class TestStorageHandlingCommandBase extends StorageHandlingCommandBase<StoragePoolManagementParameter> {
-        private static final long serialVersionUID = 261663274282182312L;
-
         public TestStorageHandlingCommandBase(StoragePoolManagementParameter parameters) {
             super(parameters);
         }
