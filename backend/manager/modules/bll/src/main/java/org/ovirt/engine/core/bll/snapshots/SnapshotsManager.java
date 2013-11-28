@@ -40,7 +40,6 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
@@ -528,10 +527,6 @@ public class SnapshotsManager {
 
     protected BaseDiskDao getBaseDiskDao() {
         return DbFacade.getInstance().getBaseDiskDao();
-    }
-
-    protected VmDAO getVmDao() {
-        return DbFacade.getInstance().getVmDao();
     }
 
     protected SnapshotDao getSnapshotDao() {
