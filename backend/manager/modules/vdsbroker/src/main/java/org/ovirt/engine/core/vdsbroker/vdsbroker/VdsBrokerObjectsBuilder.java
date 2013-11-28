@@ -901,6 +901,10 @@ public class VdsBrokerObjectsBuilder {
 
     private static VMStatus convertToVmStatus(String statusName) {
         VMStatus status = VMStatus.Unassigned;
+
+        // TODO: The following condition should deleted as soon as we drop compatibility with 3.3 since "Running" state
+        // will be replaced "Up" state and "Unknown" will exist no more. The "Up" state will be processed by
+        // EnumUtils as other states below.
         if ("Running".equals(statusName) || "Unknown".equals(statusName)) {
             status = VMStatus.Up;
         }
