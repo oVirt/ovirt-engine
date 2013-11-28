@@ -3897,7 +3897,7 @@ actions:
       signatures:
       - mandatoryArguments:
           bricks--COLLECTION: {brick.id: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {replica_count: 'xs:unsignedShort'}
         description: delete bricks in the gluster volume attached to the cluster
     urlparams: {}
     headers:
