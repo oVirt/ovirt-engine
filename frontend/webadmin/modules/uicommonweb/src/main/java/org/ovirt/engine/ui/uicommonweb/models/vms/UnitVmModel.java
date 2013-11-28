@@ -1021,22 +1021,6 @@ public class UnitVmModel extends Model {
         onPropertyChanged(new PropertyChangedEventArgs("IsDisksAvailable")); //$NON-NLS-1$
     }
 
-    private boolean isHostAvailable;
-
-    public boolean getIsHostAvailable()
-    {
-        return isHostAvailable;
-    }
-
-    public void setIsHostAvailable(boolean value)
-    {
-        if (isHostAvailable != value)
-        {
-            isHostAvailable = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsHostAvailable")); //$NON-NLS-1$
-        }
-    }
-
     private boolean isCustomPropertiesTabAvailable;
 
     public boolean getIsCustomPropertiesTabAvailable()
@@ -1742,6 +1726,7 @@ public class UnitVmModel extends Model {
     private void template_SelectedItemChanged(Object sender, EventArgs args)
     {
         behavior.template_SelectedItemChanged();
+        behavior.updateMigrationForLocalSD();
     }
 
     private void timeZone_SelectedItemChanged(Object sender, EventArgs args)

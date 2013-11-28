@@ -1065,10 +1065,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
     }
 
-    protected void setupHostTabAvailability(UnitVmModel model) {
-        changeApplicationLevelVisibility(hostTab, model.getIsHostAvailable());
-    }
-
     protected void setupCustomPropertiesAvailability(UnitVmModel model) {
         changeApplicationLevelVisibility(customPropertiesTab, model.getIsCustomPropertiesTabAvailable());
     }
@@ -1079,9 +1075,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("IsHostAvailable".equals(propName)) { //$NON-NLS-1$
-                    setupHostTabAvailability(object);
-                } else if ("IsHostTabValid".equals(propName)) { //$NON-NLS-1$
+                if ("IsHostTabValid".equals(propName)) { //$NON-NLS-1$
                     if (object.getIsHostTabValid()) {
                         hostTab.markAsValid();
                     } else {
@@ -1105,9 +1099,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 specificHost.setValue(!isAutoAssign);
             }
         });
-
-        // only for non local storage available
-        setupHostTabAvailability(object);
 
         object.getProvisioning().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
