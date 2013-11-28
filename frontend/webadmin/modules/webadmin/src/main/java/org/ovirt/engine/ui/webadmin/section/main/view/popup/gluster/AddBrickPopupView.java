@@ -185,6 +185,8 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
             public void onClick(ClickEvent event) {
                 removeBricksButton.getCommand().execute();
                 clearSelections();
+                bricksTable.flush();
+                bricksTable.redraw();
             }
         });
 
@@ -195,6 +197,8 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
             public void onClick(ClickEvent event) {
                 removeAllBricksButton.getCommand().execute();
                 clearSelections();
+                bricksTable.flush();
+                bricksTable.redraw();
             }
         });
 
