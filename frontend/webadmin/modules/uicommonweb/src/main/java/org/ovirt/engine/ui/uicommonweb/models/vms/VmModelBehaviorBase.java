@@ -88,8 +88,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        getModel().setIsHostAvailable(dataCenter.getStorageType() != StorageType.LOCALFS);
-
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);
         } else {
@@ -97,6 +95,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         postDataCenterWithClusterSelectedItemChanged();
+    }
+
+    protected void updateMigrationForLocalSD() {
+        boolean isLocalSD =
+                getModel().getSelectedDataCenter() != null
+                        && StorageType.LOCALFS.equals(getModel().getSelectedDataCenter().getStorageType());
+        if(isLocalSD) {
+            getModel().getIsAutoAssign().setEntity(false);
+            getModel().getMigrationMode().setSelectedItem(MigrationSupport.PINNED_TO_HOST);
+        }
+        getModel().getIsAutoAssign().setIsChangable(!isLocalSD);
+        getModel().getMigrationMode().setIsChangable(!isLocalSD);
+        getModel().getDefaultHost().setIsChangable(!isLocalSD);
     }
 
     public abstract void template_SelectedItemChanged();

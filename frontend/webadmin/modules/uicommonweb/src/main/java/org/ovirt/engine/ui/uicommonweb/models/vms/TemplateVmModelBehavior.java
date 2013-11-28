@@ -114,6 +114,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         updateMemoryBalloon();
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
+        updateMigrationForLocalSD();
     }
 
     @Override
