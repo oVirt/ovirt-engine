@@ -145,7 +145,7 @@ public class GlusterTasksSyncJobTest {
 
     @Test
     public void cleanOrphanTasksWhenNoVolume() {
-        doReturn(null).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
+        doReturn(new HashMap<>()).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         doReturn(Arrays.asList(TASK_GUIDS[2])).when(provider).getMonitoredTaskIDsInDB();
         doReturn(null).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[2]);
         doReturn(getSteps()).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);

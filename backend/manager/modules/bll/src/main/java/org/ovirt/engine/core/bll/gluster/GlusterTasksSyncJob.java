@@ -79,16 +79,14 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 Map<Guid, GlusterAsyncTask> runningTasks = getProvider().getTaskListForCluster(cluster.getId());
                 if (runningTasks != null) {
                     updateTasksInCluster(cluster, runningTasks);
+                    tasksFromClustersMap.put(cluster.getId(), runningTasks.keySet());
                 }
-                tasksFromClustersMap.put(cluster.getId(), runningTasks == null ? null: runningTasks.keySet());
             } catch (VdcBLLException e) {
                 log.error("Error updating tasks from CLI", e);
             }
         }
 
         cleanUpOrphanTasks(tasksFromClustersMap);
-
-
     }
 
     private void updateTasksInCluster(final VDSGroup cluster, final Map<Guid, GlusterAsyncTask> runningTasks) {
