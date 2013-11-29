@@ -171,6 +171,7 @@ class Plugin(plugin.PluginBase):
         ],
         after=(
             osetupcons.Stages.AIO_CONFIG_STORAGE,
+            osetupcons.Stages.AIO_CONFIG_SSH,
             osetupcons.Stages.CORE_ENGINE_START,
             osetupcons.Stages.APACHE_RESTART,
         ),

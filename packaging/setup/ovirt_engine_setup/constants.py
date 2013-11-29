@@ -571,6 +571,7 @@ class Stages(object):
     AIO_CONFIG_AVAILABLE = 'osetup.aio.config.available'
     AIO_CONFIG_NOT_AVAILABLE = 'osetup.aio.config.not.available'
     AIO_CONFIG_STORAGE = 'osetup.aio.config.storage'
+    AIO_CONFIG_SSH = 'osetup.aio.config.ssh'
     AIO_CONFIG_VDSM = 'osetup.aio.config.vdsm'
 
     UPGRADE_FROM_LEGACY_CONFIG = 'osetup.legacy.upgrade'
