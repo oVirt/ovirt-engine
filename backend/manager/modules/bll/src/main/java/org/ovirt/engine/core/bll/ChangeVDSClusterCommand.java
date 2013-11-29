@@ -135,6 +135,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 staticData.setVdsGroupId(targetClusterId);
                 DbFacade.getInstance().getVdsStaticDao().update(staticData);
                 getCompensationContext().stateChanged();
+                // remove the server from resource manager and add it back
+                initializeVds();
                 return null;
             }
         });
