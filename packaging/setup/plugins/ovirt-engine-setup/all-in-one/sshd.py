@@ -22,6 +22,7 @@ sshd service handler plugin.
 
 
 import os
+import re
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -40,6 +41,19 @@ class Plugin(plugin.PluginBase):
     """
     sshd service handler plugin.
     """
+
+    _PERMIT_ROOT_LOGIN_RE = re.compile(
+        flags=re.VERBOSE,
+        pattern=r"""
+            ^
+            \s*
+            PermitRootLogin
+            \s+
+            no
+            [\s#]*
+            $
+        """
+    )
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -62,6 +76,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]
         self.command.detect('sshd')
+        self.command.detect('restorecon')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -104,6 +119,26 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: (
+            self._enabled and
+            self.environment[osetupcons.AIOEnv.CONFIGURE]
+        ),
+    )
+    def _validation(self):
+        with open('/etc/ssh/sshd_config') as f:
+            for l in f.read().splitlines():
+                if self._PERMIT_ROOT_LOGIN_RE.match(l):
+                    raise RuntimeError(
+                        _(
+                            'Your sshd configuration does not permit root '
+                            'login, please enable PermitRootLogin to at '
+                            'least without-password at /etc/ssh/sshd_config, '
+                            'and restart sshd'
+                        )
+                    )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             self._enabled and
@@ -140,6 +175,7 @@ class Plugin(plugin.PluginBase):
                     name=authorized_keys_file,
                     content=content,
                     mode=0o600,
+                    dmode=0o700,
                     owner='root',
                     enforcePermissions=True,
                     modifiedList=self.environment[
@@ -150,6 +186,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
+        name=osetupcons.Stages.AIO_CONFIG_SSH,
         condition=lambda self: (
             self._enabled and
             self.environment[osetupcons.AIOEnv.CONFIGURE]
@@ -160,6 +197,24 @@ class Plugin(plugin.PluginBase):
             name='sshd',
             state=True
         )
+
+        if self.command.get('restorecon', optional=True) is not None:
+            rc, stdout, stderr = self.execute(
+                (
+                    self.command.get('restorecon'),
+                    '-r',
+                    os.path.join(
+                        os.path.expanduser('~root'),
+                        '.ssh',
+                    ),
+                ),
+                raiseOnError=False,
+            )
+
+            if rc != 0:
+                self.logger.warning(
+                    _('Cannot set SELinux properties on SSH directory')
+                )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
