@@ -197,7 +197,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
-        return item.getVM() != null && item.getVM().isRunningOrPaused();
+        return item != null && item.getVM() != null && item.getVM().isRunningOrPaused();
     }
 
 }

@@ -45,13 +45,15 @@ public class ConsoleModelsCache {
     public void updateCache(Iterable<VM> newItems) {
         Set<Guid> vmIds = new HashSet<Guid>();
 
-        for (VM vm : newItems) {
-            if (vmConsoles.containsKey(vm.getId())) {
-                vmConsoles.get(vm.getId()).setVm(vm); // only update vm
-            } else {
-                vmConsoles.put(vm.getId(), new VmConsolesImpl(vm, parentModel, consoleContext));
+        if (newItems != null) {
+            for (VM vm : newItems) {
+                if (vmConsoles.containsKey(vm.getId())) {
+                    vmConsoles.get(vm.getId()).setVm(vm); // only update vm
+                } else {
+                    vmConsoles.put(vm.getId(), new VmConsolesImpl(vm, parentModel, consoleContext));
+                }
+                vmIds.add(vm.getId());
             }
-            vmIds.add(vm.getId());
         }
 
         vmConsoles.keySet().retainAll(vmIds);
