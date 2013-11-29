@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumesListVDSPar
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -150,7 +151,7 @@ public class GlusterSyncJob extends GlusterJob {
                 log.infoFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
                         server.getName());
                 logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
-                try {
+                try (EngineLock lock = getGlusterUtil().acquireGlusterLockWait(server.getId())) {
                     removeServerFromDb(server);
                     // remove the server from resource manager
                     runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));

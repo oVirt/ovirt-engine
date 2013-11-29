@@ -27,6 +27,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -75,6 +76,9 @@ public class GlusterSyncJobTest {
 
     @Mock
     private ClusterUtils clusterUtils;
+
+    @Mock
+    private GlusterUtil glusterUtil;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -253,6 +257,7 @@ public class GlusterSyncJobTest {
                 argThat(isRemovedServer()));
         doNothing().when(glusterManager).acquireLock(CLUSTER_ID);
         doNothing().when(glusterManager).releaseLock(CLUSTER_ID);
+        doReturn(glusterUtil).when(glusterManager).getGlusterUtil();
     }
 
     private ArgumentMatcher<VDSParametersBase> isRemovedServer() {

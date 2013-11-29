@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -160,4 +161,7 @@ public abstract class GlusterJob {
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS)), null);
     }
 
+    protected GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
+    }
 }

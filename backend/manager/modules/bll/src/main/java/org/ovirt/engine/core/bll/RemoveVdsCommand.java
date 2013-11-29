@@ -6,12 +6,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -25,6 +25,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -214,18 +215,20 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     private void glusterHostRemove() {
         if (clusterHasMultipleHosts() && !hasVolumeBricksOnServer()) {
-            VDSReturnValue returnValue =
-                    runVdsCommand(
-                            VDSCommandType.RemoveGlusterServer,
-                            new RemoveGlusterServerVDSParameters(upServer.getId(),
-                                    getVds().getHostName(),
-                                    getParameters().isForceAction()));
-            setSucceeded(returnValue.getSucceeded());
-            if (!getSucceeded()) {
-                getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
-                getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
-                errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
-                return;
+            try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(getVdsGroupId())) {
+                VDSReturnValue returnValue =
+                        runVdsCommand(
+                                VDSCommandType.RemoveGlusterServer,
+                                new RemoveGlusterServerVDSParameters(upServer.getId(),
+                                        getVds().getHostName(),
+                                        getParameters().isForceAction()));
+                setSucceeded(returnValue.getSucceeded());
+                if (!getSucceeded()) {
+                    getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
+                    getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
+                    errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
+                    return;
+                }
             }
         }
     }
@@ -237,21 +240,9 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
-
-        VDSGroup cluster = getVdsGroup();
-        if (cluster == null || cluster.supportsVirtService()) {
-            locks.put(getParameters().getVdsId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        }
-
-        // Need to acquire lock on cluster if the host belongs to a gluster cluster
-        if (cluster != null && cluster.supportsGlusterService()) {
-            locks.put(cluster.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
-                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        }
-
+        locks.put(getParameters().getVdsId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
     }
 }
