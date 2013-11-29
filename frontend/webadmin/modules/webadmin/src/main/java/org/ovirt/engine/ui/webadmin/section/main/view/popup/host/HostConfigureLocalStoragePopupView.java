@@ -1,29 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import org.ovirt.engine.core.common.businessentities.ServerCpu;
-import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.ConfigureLocalStorageModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,6 +13,30 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.ConfigureLocalStorageModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 
 public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupView<ConfigureLocalStorageModel> implements ConfigureLocalStoragePopupPresenterWidget.ViewDef {
 
@@ -81,16 +81,16 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
     @UiField
     @Path(value = "dataCenter.name.entity")
-    EntityModelTextBoxEditor dataCenterNameEditor;
+    StringEntityModelTextBoxEditor dataCenterNameEditor;
 
     @UiField
     @Path(value = "dataCenter.description.entity")
-    EntityModelTextBoxEditor dataCenterDescriptionEditor;
+    StringEntityModelTextBoxEditor dataCenterDescriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.version.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> dataCenterVersionEditor;
+    ListModelListBoxEditor<Version> dataCenterVersionEditor;
 
     @UiField
     VerticalPanel clusterPanel;
@@ -100,16 +100,16 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
     @UiField
     @Path(value = "cluster.name.entity")
-    EntityModelTextBoxEditor clusterNameEditor;
+    StringEntityModelTextBoxEditor clusterNameEditor;
 
     @UiField
     @Path(value = "cluster.description.entity")
-    EntityModelTextBoxEditor clusterDescriptionEditor;
+    StringEntityModelTextBoxEditor clusterDescriptionEditor;
 
     @UiField(provided = true)
     @Path(value = "cluster.CPU.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> clusterCpuNameEditor;
+    ListModelListBoxEditor<ServerCpu> clusterCpuNameEditor;
 
     @UiField
     Anchor storageButton;
@@ -229,17 +229,17 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
     private void initialize(ApplicationResources resources, ApplicationTemplates templates) {
 
-        dataCenterVersionEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        dataCenterVersionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Version) object).getValue();
+            public String renderNullSafe(Version object) {
+                return object.getValue();
             }
         });
 
-        clusterCpuNameEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        clusterCpuNameEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((ServerCpu) object).getCpuName();
+            public String renderNullSafe(ServerCpu object) {
+                return object.getCpuName();
             }
         });
 
@@ -325,7 +325,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         model.getCluster().getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) model.getCluster().getOptimizationCustom_IsSelected().getEntity()) {
+                if (model.getCluster().getOptimizationCustom_IsSelected().getEntity()) {
                     optimizationCustomFormatter(model);
                     optimizationCustomEditor.setVisible(true);
                 }
@@ -335,7 +335,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         model.getCluster().getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                cpuThreadsPanel.setVisible((Boolean) model.getCluster().getVersionSupportsCpuThreads().getEntity());
+                cpuThreadsPanel.setVisible(model.getCluster().getVersionSupportsCpuThreads().getEntity());
             }
         });
     }

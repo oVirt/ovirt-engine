@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
-import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -43,7 +42,7 @@ public class AddClusterRM extends IEnlistmentNotification {
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         ClusterModel clusterModel = configureModel.getCluster();
-        String clusterName = (String) clusterModel.getName().getEntity();
+        String clusterName = clusterModel.getName().getEntity();
 
         if (!StringHelper.isNullOrEmpty(clusterName)) {
 
@@ -71,7 +70,7 @@ public class AddClusterRM extends IEnlistmentNotification {
 
         VDSGroup candidate = configureModel.getCandidateCluster();
         ClusterModel clusterModel = configureModel.getCluster();
-        String clusterName = (String) clusterModel.getName().getEntity();
+        String clusterName = clusterModel.getName().getEntity();
 
         if (candidate == null || !StringHelper.stringsEqual(candidate.getName(), clusterName)) {
 
@@ -86,13 +85,13 @@ public class AddClusterRM extends IEnlistmentNotification {
                 enlistment.prepared();
             } else {
 
-                Version version = (Version) clusterModel.getVersion().getSelectedItem();
+                Version version = clusterModel.getVersion().getSelectedItem();
 
                 cluster = new VDSGroup();
                 cluster.setName(clusterName);
-                cluster.setdescription((String) clusterModel.getDescription().getEntity());
+                cluster.setdescription(clusterModel.getDescription().getEntity());
                 cluster.setStoragePoolId(enlistmentContext.getDataCenterId());
-                cluster.setcpu_name(((ServerCpu) clusterModel.getCPU().getSelectedItem()).getCpuName());
+                cluster.setcpu_name(clusterModel.getCPU().getSelectedItem().getCpuName());
                 cluster.setmax_vds_memory_over_commit(clusterModel.getMemoryOverCommit());
                 cluster.setCountThreadsAsCores(Boolean.TRUE.equals(clusterModel.getVersionSupportsCpuThreads().getEntity())
                         && Boolean.TRUE.equals(clusterModel.getCountThreadsAsCores().getEntity()));

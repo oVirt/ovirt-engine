@@ -175,7 +175,7 @@ public class ConfigureLocalStorageModel extends Model {
     }
 
     private void dataCenterVersion_SelectedItemChanged() {
-        Version version = (Version) getDataCenter().getVersion().getSelectedItem();
+        Version version = getDataCenter().getVersion().getSelectedItem();
 
         // Keep in sync version for data center and cluster.
         getCluster().getVersion().setSelectedItem(version);

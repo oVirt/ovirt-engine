@@ -2,6 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
              <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
@@ -82,9 +83,9 @@
                                     <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
                                         <g:Label addStyleNames="{style.titleLabelStyle}" text="{constants.dcLocalStorage}" />
                                         <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
-                                            <e:EntityModelTextBoxEditor ui:field="dataCenterNameEditor" />
+                                            <ge:StringEntityModelTextBoxEditor ui:field="dataCenterNameEditor" />
                                             <g:VerticalPanel ui:field="dataCenterPanel" addStyleNames="{style.verticalPanelStyle}">
-                                                <e:EntityModelTextBoxEditor ui:field="dataCenterDescriptionEditor" />
+                                                <ge:StringEntityModelTextBoxEditor ui:field="dataCenterDescriptionEditor" />
                                                 <e:ListModelListBoxEditor ui:field="dataCenterVersionEditor" />
                                             </g:VerticalPanel>
                                         </g:VerticalPanel>
@@ -96,9 +97,9 @@
                                     <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
                                         <g:Label addStyleNames="{style.titleLabelStyle}" text="{constants.clusterLocalStorage}" />
                                         <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
-                                            <e:EntityModelTextBoxEditor ui:field="clusterNameEditor" />
+                                            <ge:StringEntityModelTextBoxEditor ui:field="clusterNameEditor" />
                                             <g:VerticalPanel ui:field="clusterPanel" addStyleNames="{style.verticalPanelStyle}">
-                                                <e:EntityModelTextBoxEditor ui:field="clusterDescriptionEditor" />
+                                                <ge:StringEntityModelTextBoxEditor ui:field="clusterDescriptionEditor" />
                                                 <e:ListModelListBoxEditor ui:field="clusterCpuNameEditor" />
                                             </g:VerticalPanel>
                                         </g:VerticalPanel>
@@ -127,15 +128,15 @@
 								<g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
 									<g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
 									<d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo}" />
-									<e:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" />
-									<e:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" />
-									<e:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" />
-									<e:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" />
+									<ge:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" />
+									<ge:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" />
+									<ge:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" />
+									<ge:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" />
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="cpuThreadsPanel" addStyleNames="{style.nestedSubsequentPanel}">
 									<g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.panelTitle}" />
 									<d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
-									<e:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" />
+									<ge:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" />
 								</g:FlowPanel>
 							</g:FlowPanel>
 						</t:content>

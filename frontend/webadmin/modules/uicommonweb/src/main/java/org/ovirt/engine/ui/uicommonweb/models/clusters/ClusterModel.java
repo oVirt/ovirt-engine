@@ -44,13 +44,13 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class ClusterModel extends EntityModel
 {
     private Map<Guid, PolicyUnit> policyUnitMap;
-    private ListModel clusterPolicy;
+    private ListModel<ClusterPolicy> clusterPolicy;
 
-    public ListModel getClusterPolicy() {
+    public ListModel<ClusterPolicy> getClusterPolicy() {
         return clusterPolicy;
     }
 
-    public void setClusterPolicy(ListModel clusterPolicy) {
+    public void setClusterPolicy(ListModel<ClusterPolicy> clusterPolicy) {
         this.clusterPolicy = clusterPolicy;
     }
 
@@ -163,86 +163,86 @@ public class ClusterModel extends EntityModel
         privateClusterId = value;
     }
 
-    private EntityModel privateName;
+    private EntityModel<String> privateName;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return privateName;
     }
 
-    public void setName(EntityModel value)
+    public void setName(EntityModel<String> value)
     {
         privateName = value;
     }
 
-    private EntityModel privateDescription;
+    private EntityModel<String> privateDescription;
 
-    public EntityModel getDescription()
+    public EntityModel<String> getDescription()
     {
         return privateDescription;
     }
 
-    public void setDescription(EntityModel value)
+    public void setDescription(EntityModel<String> value)
     {
         privateDescription = value;
     }
 
-    private EntityModel privateComment;
+    private EntityModel<String> privateComment;
 
-    public EntityModel getComment()
+    public EntityModel<String> getComment()
     {
         return privateComment;
     }
 
-    public void setComment(EntityModel value)
+    public void setComment(EntityModel<String> value)
     {
         privateComment = value;
     }
 
-    private ListModel privateDataCenter;
+    private ListModel<StoragePool> privateDataCenter;
 
-    public ListModel getDataCenter()
+    public ListModel<StoragePool> getDataCenter()
     {
         return privateDataCenter;
     }
 
-    public void setDataCenter(ListModel value)
+    public void setDataCenter(ListModel<StoragePool> value)
     {
         privateDataCenter = value;
     }
 
-    private ListModel privateCPU;
+    private ListModel<ServerCpu> privateCPU;
 
-    public ListModel getCPU()
+    public ListModel<ServerCpu> getCPU()
     {
         return privateCPU;
     }
 
-    public void setCPU(ListModel value)
+    public void setCPU(ListModel<ServerCpu> value)
     {
         privateCPU = value;
     }
 
-    private ListModel privateVersion;
+    private ListModel<Version> privateVersion;
 
-    public ListModel getVersion()
+    public ListModel<Version> getVersion()
     {
         return privateVersion;
     }
 
-    public void setVersion(ListModel value)
+    public void setVersion(ListModel<Version> value)
     {
         privateVersion = value;
     }
 
-    private ListModel privateArchitecture;
+    private ListModel<ArchitectureType> privateArchitecture;
 
-    public ListModel getArchitecture()
+    public ListModel<ArchitectureType> getArchitecture()
     {
         return privateArchitecture;
     }
 
-    public void setArchitecture(ListModel value)
+    public void setArchitecture(ListModel<ArchitectureType> value)
     {
         privateArchitecture = value;
     }
@@ -264,55 +264,55 @@ public class ClusterModel extends EntityModel
         }
     }
 
-    private EntityModel privateEnableOvirtService;
+    private EntityModel<Boolean> privateEnableOvirtService;
 
-    public EntityModel getEnableOvirtService()
+    public EntityModel<Boolean> getEnableOvirtService()
     {
         return privateEnableOvirtService;
     }
 
-    public void setEnableOvirtService(EntityModel value)
+    public void setEnableOvirtService(EntityModel<Boolean> value)
     {
         this.privateEnableOvirtService = value;
     }
 
-    private EntityModel privateEnableGlusterService;
+    private EntityModel<Boolean> privateEnableGlusterService;
 
-    public EntityModel getEnableGlusterService() {
+    public EntityModel<Boolean> getEnableGlusterService() {
         return privateEnableGlusterService;
     }
 
-    public void setEnableGlusterService(EntityModel value) {
+    public void setEnableGlusterService(EntityModel<Boolean> value) {
         this.privateEnableGlusterService = value;
     }
 
-    private EntityModel isImportGlusterConfiguration;
+    private EntityModel<Boolean> isImportGlusterConfiguration;
 
-    public EntityModel getIsImportGlusterConfiguration() {
+    public EntityModel<Boolean> getIsImportGlusterConfiguration() {
         return isImportGlusterConfiguration;
     }
 
-    public void setIsImportGlusterConfiguration(EntityModel value) {
+    public void setIsImportGlusterConfiguration(EntityModel<Boolean> value) {
         this.isImportGlusterConfiguration = value;
     }
 
-    private EntityModel glusterHostAddress;
+    private EntityModel<String> glusterHostAddress;
 
-    public EntityModel getGlusterHostAddress() {
+    public EntityModel<String> getGlusterHostAddress() {
         return glusterHostAddress;
     }
 
-    public void setGlusterHostAddress(EntityModel glusterHostAddress) {
+    public void setGlusterHostAddress(EntityModel<String> glusterHostAddress) {
         this.glusterHostAddress = glusterHostAddress;
     }
 
-    private EntityModel glusterHostFingerprint;
+    private EntityModel<String> glusterHostFingerprint;
 
-    public EntityModel getGlusterHostFingerprint() {
+    public EntityModel<String> getGlusterHostFingerprint() {
         return glusterHostFingerprint;
     }
 
-    public void setGlusterHostFingerprint(EntityModel glusterHostFingerprint) {
+    public void setGlusterHostFingerprint(EntityModel<String> glusterHostFingerprint) {
         this.glusterHostFingerprint = glusterHostFingerprint;
     }
 
@@ -326,179 +326,179 @@ public class ClusterModel extends EntityModel
         this.isFingerprintVerified = value;
     }
 
-    private EntityModel glusterHostPassword;
+    private EntityModel<String> glusterHostPassword;
 
-    public EntityModel getGlusterHostPassword() {
+    public EntityModel<String> getGlusterHostPassword() {
         return glusterHostPassword;
     }
 
-    public void setGlusterHostPassword(EntityModel glusterHostPassword) {
+    public void setGlusterHostPassword(EntityModel<String> glusterHostPassword) {
         this.glusterHostPassword = glusterHostPassword;
     }
 
-    private EntityModel privateOptimizationNone;
+    private EntityModel<Integer> privateOptimizationNone;
 
-    public EntityModel getOptimizationNone()
+    public EntityModel<Integer> getOptimizationNone()
     {
         return privateOptimizationNone;
     }
 
-    public void setOptimizationNone(EntityModel value)
+    public void setOptimizationNone(EntityModel<Integer> value)
     {
         privateOptimizationNone = value;
     }
 
-    private EntityModel privateOptimizationForServer;
+    private EntityModel<Integer> privateOptimizationForServer;
 
-    public EntityModel getOptimizationForServer()
+    public EntityModel<Integer> getOptimizationForServer()
     {
         return privateOptimizationForServer;
     }
 
-    public void setOptimizationForServer(EntityModel value)
+    public void setOptimizationForServer(EntityModel<Integer> value)
     {
         privateOptimizationForServer = value;
     }
 
-    private EntityModel privateOptimizationForDesktop;
+    private EntityModel<Integer> privateOptimizationForDesktop;
 
-    public EntityModel getOptimizationForDesktop()
+    public EntityModel<Integer> getOptimizationForDesktop()
     {
         return privateOptimizationForDesktop;
     }
 
-    public void setOptimizationForDesktop(EntityModel value)
+    public void setOptimizationForDesktop(EntityModel<Integer> value)
     {
         privateOptimizationForDesktop = value;
     }
 
-    private EntityModel privateOptimizationCustom;
+    private EntityModel<Integer> privateOptimizationCustom;
 
-    public EntityModel getOptimizationCustom()
+    public EntityModel<Integer> getOptimizationCustom()
     {
         return privateOptimizationCustom;
     }
 
-    public void setOptimizationCustom(EntityModel value)
+    public void setOptimizationCustom(EntityModel<Integer> value)
     {
         privateOptimizationCustom = value;
     }
 
-    private EntityModel privateOptimizationNone_IsSelected;
+    private EntityModel<Boolean> privateOptimizationNone_IsSelected;
 
-    public EntityModel getOptimizationNone_IsSelected()
+    public EntityModel<Boolean> getOptimizationNone_IsSelected()
     {
         return privateOptimizationNone_IsSelected;
     }
 
-    public void setOptimizationNone_IsSelected(EntityModel value)
+    public void setOptimizationNone_IsSelected(EntityModel<Boolean> value)
     {
         privateOptimizationNone_IsSelected = value;
     }
 
-    private EntityModel privateOptimizationForServer_IsSelected;
+    private EntityModel<Boolean> privateOptimizationForServer_IsSelected;
 
-    public EntityModel getOptimizationForServer_IsSelected()
+    public EntityModel<Boolean> getOptimizationForServer_IsSelected()
     {
         return privateOptimizationForServer_IsSelected;
     }
 
-    public void setOptimizationForServer_IsSelected(EntityModel value)
+    public void setOptimizationForServer_IsSelected(EntityModel<Boolean> value)
     {
         privateOptimizationForServer_IsSelected = value;
     }
 
-    private EntityModel privateOptimizationForDesktop_IsSelected;
+    private EntityModel<Boolean> privateOptimizationForDesktop_IsSelected;
 
-    public EntityModel getOptimizationForDesktop_IsSelected()
+    public EntityModel<Boolean> getOptimizationForDesktop_IsSelected()
     {
         return privateOptimizationForDesktop_IsSelected;
     }
 
-    public void setOptimizationForDesktop_IsSelected(EntityModel value)
+    public void setOptimizationForDesktop_IsSelected(EntityModel<Boolean> value)
     {
         privateOptimizationForDesktop_IsSelected = value;
     }
 
-    private EntityModel privateOptimizationCustom_IsSelected;
+    private EntityModel<Boolean> privateOptimizationCustom_IsSelected;
 
-    public EntityModel getOptimizationCustom_IsSelected()
+    public EntityModel<Boolean> getOptimizationCustom_IsSelected()
     {
         return privateOptimizationCustom_IsSelected;
     }
 
-    public void setOptimizationCustom_IsSelected(EntityModel value)
+    public void setOptimizationCustom_IsSelected(EntityModel<Boolean> value)
     {
         privateOptimizationCustom_IsSelected = value;
     }
 
-    private EntityModel privateCountThreadsAsCores;
+    private EntityModel<Boolean> privateCountThreadsAsCores;
 
-    public EntityModel getCountThreadsAsCores()
+    public EntityModel<Boolean> getCountThreadsAsCores()
     {
         return privateCountThreadsAsCores;
     }
 
-    public void setCountThreadsAsCores(EntityModel value)
+    public void setCountThreadsAsCores(EntityModel<Boolean> value)
     {
         privateCountThreadsAsCores = value;
     }
 
-    private EntityModel privateVersionSupportsCpuThreads;
+    private EntityModel<Boolean> privateVersionSupportsCpuThreads;
 
-    public EntityModel getVersionSupportsCpuThreads()
+    public EntityModel<Boolean> getVersionSupportsCpuThreads()
     {
         return privateVersionSupportsCpuThreads;
     }
 
-    public void setVersionSupportsCpuThreads(EntityModel value)
+    public void setVersionSupportsCpuThreads(EntityModel<Boolean> value)
     {
         privateVersionSupportsCpuThreads = value;
     }
 
-    private EntityModel privateMigrateOnErrorOption_NO;
+    private EntityModel<Boolean> privateMigrateOnErrorOption_NO;
 
-    public EntityModel getMigrateOnErrorOption_NO()
+    public EntityModel<Boolean> getMigrateOnErrorOption_NO()
     {
         return privateMigrateOnErrorOption_NO;
     }
 
-    public void setMigrateOnErrorOption_NO(EntityModel value)
+    public void setMigrateOnErrorOption_NO(EntityModel<Boolean> value)
     {
         privateMigrateOnErrorOption_NO = value;
     }
 
-    private EntityModel privateMigrateOnErrorOption_YES;
+    private EntityModel<Boolean> privateMigrateOnErrorOption_YES;
 
-    public EntityModel getMigrateOnErrorOption_YES()
+    public EntityModel<Boolean> getMigrateOnErrorOption_YES()
     {
         return privateMigrateOnErrorOption_YES;
     }
 
-    public void setMigrateOnErrorOption_YES(EntityModel value)
+    public void setMigrateOnErrorOption_YES(EntityModel<Boolean> value)
     {
         privateMigrateOnErrorOption_YES = value;
     }
 
-    private EntityModel privateMigrateOnErrorOption_HA_ONLY;
+    private EntityModel<Boolean> privateMigrateOnErrorOption_HA_ONLY;
 
-    public EntityModel getMigrateOnErrorOption_HA_ONLY()
+    public EntityModel<Boolean> getMigrateOnErrorOption_HA_ONLY()
     {
         return privateMigrateOnErrorOption_HA_ONLY;
     }
 
-    public void setMigrateOnErrorOption_HA_ONLY(EntityModel value)
+    public void setMigrateOnErrorOption_HA_ONLY(EntityModel<Boolean> value)
     {
         privateMigrateOnErrorOption_HA_ONLY = value;
     }
 
-    private EntityModel enableBallooning;
+    private EntityModel<Boolean> enableBallooning;
 
-    public EntityModel getEnableBallooning() {
+    public EntityModel<Boolean> getEnableBallooning() {
         return enableBallooning;
     }
 
-    public void setEnableBallooning(EntityModel enableBallooning) {
+    public void setEnableBallooning(EntityModel<Boolean> enableBallooning) {
         this.enableBallooning = enableBallooning;
     }
 
@@ -522,15 +522,15 @@ public class ClusterModel extends EntityModel
 
     public MigrateOnErrorOptions getMigrateOnErrorOption()
     {
-        if ((Boolean) getMigrateOnErrorOption_NO().getEntity() == true)
+        if (getMigrateOnErrorOption_NO().getEntity() == true)
         {
             return MigrateOnErrorOptions.NO;
         }
-        else if ((Boolean) getMigrateOnErrorOption_YES().getEntity() == true)
+        else if (getMigrateOnErrorOption_YES().getEntity() == true)
         {
             return MigrateOnErrorOptions.YES;
         }
-        else if ((Boolean) getMigrateOnErrorOption_HA_ONLY().getEntity() == true)
+        else if (getMigrateOnErrorOption_HA_ONLY().getEntity() == true)
         {
             return MigrateOnErrorOptions.HA_ONLY;
         }
@@ -594,36 +594,36 @@ public class ClusterModel extends EntityModel
         }
     }
 
-    private EntityModel privateEnableTrustedService;
+    private EntityModel<Boolean> privateEnableTrustedService;
 
-    public EntityModel getEnableTrustedService() {
+    public EntityModel<Boolean> getEnableTrustedService() {
         return privateEnableTrustedService;
     }
 
-    public void setEnableTrustedService(EntityModel value) {
+    public void setEnableTrustedService(EntityModel<Boolean> value) {
         this.privateEnableTrustedService = value;
     }
 
     public int getMemoryOverCommit()
     {
-        if ((Boolean) getOptimizationNone_IsSelected().getEntity())
+        if (getOptimizationNone_IsSelected().getEntity())
         {
-            return (Integer) getOptimizationNone().getEntity();
+            return getOptimizationNone().getEntity();
         }
 
-        if ((Boolean) getOptimizationForServer_IsSelected().getEntity())
+        if (getOptimizationForServer_IsSelected().getEntity())
         {
-            return (Integer) getOptimizationForServer().getEntity();
+            return getOptimizationForServer().getEntity();
         }
 
-        if ((Boolean) getOptimizationForDesktop_IsSelected().getEntity())
+        if (getOptimizationForDesktop_IsSelected().getEntity())
         {
-            return (Integer) getOptimizationForDesktop().getEntity();
+            return getOptimizationForDesktop().getEntity();
         }
 
-        if ((Boolean) getOptimizationCustom_IsSelected().getEntity())
+        if (getOptimizationCustom_IsSelected().getEntity())
         {
-            return (Integer) getOptimizationCustom().getEntity();
+            return getOptimizationCustom().getEntity();
         }
 
         return AsyncDataProvider.getClusterDefaultMemoryOverCommit();
@@ -631,13 +631,13 @@ public class ClusterModel extends EntityModel
 
     public void setMemoryOverCommit(int value)
     {
-        getOptimizationNone_IsSelected().setEntity(value == (Integer) getOptimizationNone().getEntity());
-        getOptimizationForServer_IsSelected().setEntity(value == (Integer) getOptimizationForServer().getEntity());
-        getOptimizationForDesktop_IsSelected().setEntity(value == (Integer) getOptimizationForDesktop().getEntity());
+        getOptimizationNone_IsSelected().setEntity(value == getOptimizationNone().getEntity());
+        getOptimizationForServer_IsSelected().setEntity(value == getOptimizationForServer().getEntity());
+        getOptimizationForDesktop_IsSelected().setEntity(value == getOptimizationForDesktop().getEntity());
 
-        if (!(Boolean) getOptimizationNone_IsSelected().getEntity()
-                && !(Boolean) getOptimizationForServer_IsSelected().getEntity()
-                && !(Boolean) getOptimizationForDesktop_IsSelected().getEntity())
+        if (!getOptimizationNone_IsSelected().getEntity()
+                && !getOptimizationForServer_IsSelected().getEntity()
+                && !getOptimizationForDesktop_IsSelected().getEntity())
         {
             getOptimizationCustom().setIsAvailable(true);
             getOptimizationCustom().setEntity(value);
@@ -654,10 +654,10 @@ public class ClusterModel extends EntityModel
     public void init(final boolean isEdit)
     {
         setIsEdit(isEdit);
-        setName(new EntityModel());
-        setDescription(new EntityModel());
-        setComment(new EntityModel());
-        setEnableTrustedService(new EntityModel(false));
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
+        setComment(new EntityModel<String>());
+        setEnableTrustedService(new EntityModel<Boolean>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -666,22 +666,22 @@ public class ClusterModel extends EntityModel
             }
         }));
 
-        setEnableOvirtService(new EntityModel());
-        setEnableGlusterService(new EntityModel());
+        setEnableOvirtService(new EntityModel<Boolean>());
+        setEnableGlusterService(new EntityModel<Boolean>());
 
         getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!getAllowClusterWithVirtGlusterEnabled() && (Boolean) getEnableOvirtService().getEntity()) {
+                if (!getAllowClusterWithVirtGlusterEnabled() && getEnableOvirtService().getEntity()) {
                     getEnableGlusterService().setEntity(Boolean.FALSE);
                 }
                 getEnableGlusterService().setIsChangable(true);
                 getEnableTrustedService().setEntity(false);
                 if (getEnableOvirtService().getEntity() != null
-                        && (Boolean)getEnableOvirtService().getEntity())
+                        && getEnableOvirtService().getEntity())
                 {
                     if (getEnableGlusterService().getEntity() != null
-                            && !(Boolean)getEnableGlusterService().getEntity())
+                            && !getEnableGlusterService().getEntity())
                     {
                         getEnableTrustedService().setIsChangable(true);
                     }
@@ -707,13 +707,13 @@ public class ClusterModel extends EntityModel
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!getAllowClusterWithVirtGlusterEnabled() && (Boolean) getEnableGlusterService().getEntity()) {
+                if (!getAllowClusterWithVirtGlusterEnabled() && getEnableGlusterService().getEntity()) {
                     getEnableOvirtService().setEntity(Boolean.FALSE);
                 }
 
                 if (!isEdit
                         && getEnableGlusterService().getEntity() != null
-                        && (Boolean) getEnableGlusterService().getEntity())
+                        && getEnableGlusterService().getEntity())
                 {
                     getIsImportGlusterConfiguration().setIsAvailable(true);
 
@@ -731,7 +731,7 @@ public class ClusterModel extends EntityModel
                     getGlusterHostPassword().setIsAvailable(false);
                 }
                 if (getEnableGlusterService().getEntity() != null
-                        && (Boolean) getEnableGlusterService().getEntity())
+                        && getEnableGlusterService().getEntity())
                 {
                     getEnableTrustedService().setEntity(false);
                     getEnableTrustedService().setIsChangable(false);
@@ -739,7 +739,7 @@ public class ClusterModel extends EntityModel
                 else
                 {
                     if (getEnableOvirtService().getEntity() != null
-                            && (Boolean)getEnableOvirtService().getEntity())
+                            && getEnableOvirtService().getEntity())
                     {
                         getEnableTrustedService().setIsChangable(true);
                     }
@@ -756,7 +756,7 @@ public class ClusterModel extends EntityModel
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (getEnableTrustedService().getEntity() != null
-                        && (Boolean) getEnableTrustedService().getEntity())
+                        && getEnableTrustedService().getEntity())
                 {
                     getEnableGlusterService().setEntity(false);
                     getEnableGlusterService().setIsChangable(false);
@@ -772,42 +772,42 @@ public class ClusterModel extends EntityModel
         getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
 
-        setOptimizationNone(new EntityModel());
-        setOptimizationForServer(new EntityModel());
-        setOptimizationForDesktop(new EntityModel());
-        setOptimizationCustom(new EntityModel());
+        setOptimizationNone(new EntityModel<Integer>());
+        setOptimizationForServer(new EntityModel<Integer>());
+        setOptimizationForDesktop(new EntityModel<Integer>());
+        setOptimizationCustom(new EntityModel<Integer>());
 
-        EntityModel tempVar = new EntityModel();
+        EntityModel tempVar = new EntityModel<Boolean>();
         tempVar.setEntity(false);
         setOptimizationNone_IsSelected(tempVar);
         getOptimizationNone_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar2 = new EntityModel();
+        EntityModel tempVar2 = new EntityModel<Boolean>();
         tempVar2.setEntity(false);
         setOptimizationForServer_IsSelected(tempVar2);
         getOptimizationForServer_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar3 = new EntityModel();
+        EntityModel tempVar3 = new EntityModel<Boolean>();
         tempVar3.setEntity(false);
         setOptimizationForDesktop_IsSelected(tempVar3);
         getOptimizationForDesktop_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar4 = new EntityModel();
+        EntityModel tempVar4 = new EntityModel<Boolean>();
         tempVar4.setEntity(false);
         tempVar4.setIsAvailable(false);
         setOptimizationCustom_IsSelected(tempVar4);
         getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(this);
 
-        EntityModel tempVar5 = new EntityModel();
+        EntityModel tempVar5 = new EntityModel<Boolean>();
         tempVar5.setEntity(false);
         setMigrateOnErrorOption_YES(tempVar5);
         getMigrateOnErrorOption_YES().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar6 = new EntityModel();
+        EntityModel tempVar6 = new EntityModel<Boolean>();
         tempVar6.setEntity(false);
         setMigrateOnErrorOption_NO(tempVar6);
         getMigrateOnErrorOption_NO().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar7 = new EntityModel();
+        EntityModel tempVar7 = new EntityModel<Boolean>();
         tempVar7.setEntity(false);
         setMigrateOnErrorOption_HA_ONLY(tempVar7);
         getMigrateOnErrorOption_HA_ONLY().getEntityChangedEvent().addListener(this);
-        setEnableBallooning(new EntityModel());
+        setEnableBallooning(new EntityModel<Boolean>());
         getEnableBallooning().setEntity(false);
         // Optimization methods:
         // default value =100;
@@ -815,7 +815,7 @@ public class ClusterModel extends EntityModel
 
         setCountThreadsAsCores(new EntityModel(AsyncDataProvider.getClusterDefaultCountThreadsAsCores()));
 
-        setVersionSupportsCpuThreads(new EntityModel(true));
+        setVersionSupportsCpuThreads(new EntityModel<Boolean>(true));
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -872,24 +872,24 @@ public class ClusterModel extends EntityModel
         };
         AsyncDataProvider.getClusterDesktopMemoryOverCommit(_asyncQuery);
 
-        setDataCenter(new ListModel());
+        setDataCenter(new ListModel<StoragePool>());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
-        setCPU(new ListModel());
+        setCPU(new ListModel<ServerCpu>());
         getCPU().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
-        setVersion(new ListModel());
+        setVersion(new ListModel<Version>());
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
 
-        setArchitecture(new ListModel());
+        setArchitecture(new ListModel<ArchitectureType>());
 
         getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(ArchitectureType.values())));
 
         setIsGeneralTabValid(true);
         setIsResiliencePolicyTabAvailable(true);
 
-        setClusterPolicy(new ListModel());
+        setClusterPolicy(new ListModel<ClusterPolicy>());
         setCustomPropertySheet(new KeyValueModel());
         getClusterPolicy().getSelectedItemChangedEvent().addListener(this);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery(this,
@@ -898,7 +898,7 @@ public class ClusterModel extends EntityModel
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         ArrayList<PolicyUnit> policyUnits =
-                                (ArrayList<PolicyUnit>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                ((VdcQueryReturnValue) returnValue).getReturnValue();
                         policyUnitMap = new LinkedHashMap<Guid, PolicyUnit>();
                         for (PolicyUnit policyUnit : policyUnits) {
                             policyUnitMap.put(policyUnit.getId(), policyUnit);
@@ -912,7 +912,7 @@ public class ClusterModel extends EntityModel
                                             public void onSuccess(Object model, Object returnValue) {
                                                 ClusterModel clusterModel = (ClusterModel) model;
                                                 ArrayList<ClusterPolicy> list =
-                                                        (ArrayList<ClusterPolicy>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                                       ((VdcQueryReturnValue) returnValue).getReturnValue();
                                                 clusterModel.getClusterPolicy().setItems(list);
                                                 ClusterPolicy defaultClusterPolicy = null;
                                                 ClusterPolicy selectedClusterPolicy = null;
@@ -942,32 +942,32 @@ public class ClusterModel extends EntityModel
 
     private void initImportCluster(boolean isEdit)
     {
-        setGlusterHostAddress(new EntityModel());
+        setGlusterHostAddress(new EntityModel<String>());
         getGlusterHostAddress().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 setIsFingerprintVerified(false);
                 if (getGlusterHostAddress().getEntity() == null
-                        || ((String) getGlusterHostAddress().getEntity()).trim().length() == 0) {
+                        || (getGlusterHostAddress().getEntity()).trim().length() == 0) {
                     getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
                     return;
                 }
-                fetchFingerprint((String) getGlusterHostAddress().getEntity());
+                fetchFingerprint(getGlusterHostAddress().getEntity());
             }
         });
 
-        setGlusterHostFingerprint(new EntityModel());
+        setGlusterHostFingerprint(new EntityModel<String>());
         getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
         setIsFingerprintVerified(false);
-        setGlusterHostPassword(new EntityModel());
+        setGlusterHostPassword(new EntityModel<String>());
 
-        setIsImportGlusterConfiguration(new EntityModel());
+        setIsImportGlusterConfiguration(new EntityModel<Boolean>());
         getIsImportGlusterConfiguration().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (getIsImportGlusterConfiguration().getEntity() != null
-                        && (Boolean) getIsImportGlusterConfiguration().getEntity())
+                        && getIsImportGlusterConfiguration().getEntity())
                 {
                     getGlusterHostAddress().setIsChangable(true);
                     getGlusterHostPassword().setIsChangable(true);
@@ -998,7 +998,7 @@ public class ClusterModel extends EntityModel
                 String fingerprint = (String) result;
                 if (fingerprint != null && fingerprint.length() > 0)
                 {
-                    getGlusterHostFingerprint().setEntity(result);
+                    getGlusterHostFingerprint().setEntity((String) result);
                     setIsFingerprintVerified(true);
                 }
                 else
@@ -1125,11 +1125,11 @@ public class ClusterModel extends EntityModel
         Version version;
         if (getVersion().getSelectedItem() != null)
         {
-            version = (Version) getVersion().getSelectedItem();
+            version = getVersion().getSelectedItem();
         }
         else
         {
-            version = ((StoragePool) getDataCenter().getSelectedItem()).getcompatibility_version();
+            version = getDataCenter().getSelectedItem().getcompatibility_version();
         }
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1140,7 +1140,7 @@ public class ClusterModel extends EntityModel
                 ClusterModel clusterModel = (ClusterModel) model;
                 ArrayList<ServerCpu> cpus = (ArrayList<ServerCpu>) result;
 
-                ServerCpu oldSelectedCpu = (ServerCpu) clusterModel.getCPU().getSelectedItem();
+                ServerCpu oldSelectedCpu = clusterModel.getCPU().getSelectedItem();
                 clusterModel.getCPU().setItems(cpus);
 
                 clusterModel.getCPU().setSelectedItem(oldSelectedCpu != null ?
@@ -1166,7 +1166,7 @@ public class ClusterModel extends EntityModel
         {
             isCPUinitialized = true;
             getCPU().setSelectedItem(null);
-            for (ServerCpu a : (ArrayList<ServerCpu>) getCPU().getItems())
+            for (ServerCpu a : getCPU().getItems())
             {
                 if (StringHelper.stringsEqual(a.getCpuName(), getEntity().getcpu_name()))
                 {
@@ -1182,7 +1182,7 @@ public class ClusterModel extends EntityModel
         // possible versions for new cluster (when editing cluster, this event won't occur)
         // are actually the possible versions for the data-center that the cluster is going
         // to be attached to.
-        StoragePool selectedDataCenter = (StoragePool) getDataCenter().getSelectedItem();
+        StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
         if (selectedDataCenter == null)
         {
             return;
@@ -1204,7 +1204,7 @@ public class ClusterModel extends EntityModel
             {
                 ClusterModel clusterModel = (ClusterModel) model;
                 ArrayList<Version> versions = (ArrayList<Version>) result;
-                Version selectedVersion = (Version) clusterModel.getVersion().getSelectedItem();
+                Version selectedVersion = clusterModel.getVersion().getSelectedItem();
                 clusterModel.getVersion().setItems(versions);
                 if (selectedVersion == null || !versions.contains(selectedVersion))
                 {
@@ -1223,7 +1223,7 @@ public class ClusterModel extends EntityModel
     }
 
     private void clusterPolicyChanged() {
-        ClusterPolicy clusterPolicy = (ClusterPolicy) getClusterPolicy().getSelectedItem();
+        ClusterPolicy clusterPolicy = getClusterPolicy().getSelectedItem();
         ArrayList<String> lines = new ArrayList<String>();
         Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<Guid, PolicyUnit>();
         if (clusterPolicy.getFilters() != null) {
@@ -1301,8 +1301,8 @@ public class ClusterModel extends EntityModel
         boolean validService = true;
         if (getEnableOvirtService().getIsAvailable() && getEnableGlusterService().getIsAvailable())
         {
-            validService = ((Boolean) getEnableOvirtService().getEntity())
-                            || ((Boolean) getEnableGlusterService().getEntity());
+            validService = getEnableOvirtService().getEntity()
+                            || getEnableGlusterService().getEntity();
         }
 
         getGlusterHostAddress().validateEntity(new IValidation[] { new NotEmptyValidation() });
@@ -1312,7 +1312,7 @@ public class ClusterModel extends EntityModel
         {
             setMessage(ConstantsManager.getInstance().getConstants().clusterServiceValidationMsg());
         }
-        else if (((Boolean) getIsImportGlusterConfiguration().getEntity()) && getGlusterHostAddress().getIsValid()
+        else if (getIsImportGlusterConfiguration().getEntity() && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && !isFingerprintVerified())
         {
@@ -1326,14 +1326,14 @@ public class ClusterModel extends EntityModel
         setIsGeneralTabValid(getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
-                && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
+                && (getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
                         && getGlusterHostPassword().getIsValid()
                         && isFingerprintVerified()) : true));
 
         return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
-                && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
+                && (getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
                         && getGlusterHostPassword().getIsValid()
                         && isFingerprintVerified()) : true) && getCustomPropertySheet().getIsValid();
     }

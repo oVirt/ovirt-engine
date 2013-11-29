@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
-import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -229,7 +227,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<VDS> hosts =
-                                (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                ((VdcQueryReturnValue) returnValue).getReturnValue();
                         if (hosts == null) {
                             hosts = new ArrayList<VDS>();
                         }
@@ -1367,30 +1365,30 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        if (!model.validate((Boolean) model.getEnableOvirtService().getEntity())) // CPU is mandatory only if the
+        if (!model.validate(model.getEnableOvirtService().getEntity())) // CPU is mandatory only if the
                                                                                   // cluster is virt enabled
         {
             return;
         }
 
         // Save changes.
-        Version version = (Version) model.getVersion().getSelectedItem();
+        Version version = model.getVersion().getSelectedItem();
 
-        cluster.setName((String) model.getName().getEntity());
-        cluster.setdescription((String) model.getDescription().getEntity());
-        cluster.setComment((String) model.getComment().getEntity());
-        cluster.setStoragePoolId(((StoragePool) model.getDataCenter().getSelectedItem()).getId());
+        cluster.setName(model.getName().getEntity());
+        cluster.setdescription(model.getDescription().getEntity());
+        cluster.setComment(model.getComment().getEntity());
+        cluster.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
         if (model.getCPU().getSelectedItem() != null)
         {
-            cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
+            cluster.setcpu_name(model.getCPU().getSelectedItem().getCpuName());
         }
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
-        cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
-        cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
+        cluster.setVirtService(model.getEnableOvirtService().getEntity());
+        cluster.setGlusterService(model.getEnableGlusterService().getEntity());
         if (model.getClusterPolicy().getSelectedItem() != null) {
-            ClusterPolicy selectedPolicy = (ClusterPolicy) model.getClusterPolicy().getSelectedItem();
+            ClusterPolicy selectedPolicy = model.getClusterPolicy().getSelectedItem();
             cluster.setClusterPolicyId(selectedPolicy.getId());
             cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet()
                     .getEntity()));

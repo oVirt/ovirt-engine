@@ -2,14 +2,12 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
 import java.util.Map;
-
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -22,7 +20,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -120,8 +117,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         privateAddMultipleHostsCommand = value;
     }
 
-    // get { return SelectedItems == null ? new object[0] : SelectedItems.Cast<VDSGroup>().Select(a =>
-    // a.ID).Cast<object>().ToArray(); }
     protected Object[] getSelectedKeys()
     {
         if (getSelectedItems() == null)
@@ -512,7 +507,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         ClusterModel model = (ClusterModel) getWindow();
 
         boolean validateCpu =
-                (model.getIsNew() && (Boolean) model.getEnableOvirtService().getEntity())
+                (model.getIsNew() && model.getEnableOvirtService().getEntity())
                         || (model.getIsEdit() && ((VDSGroup) getSelectedItem()).getcpu_name() != null);
 
         if (!model.validate(validateCpu))
@@ -530,7 +525,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     private void onSaveConfirmCV(ClusterModel model) {
-        if (!((Version) model.getVersion().getSelectedItem()).equals(((VDSGroup) getSelectedItem()).getcompatibility_version())) {
+        if (!model.getVersion().getSelectedItem().equals(((VDSGroup) getSelectedItem()).getcompatibility_version())) {
             final ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -559,7 +554,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cancelConfirmation();
 
         // CPU thread support is being turned off either explicitly or via version change
-        if (!((Boolean) model.getVersionSupportsCpuThreads().getEntity() && (Boolean) model.getCountThreadsAsCores().getEntity())
+        if (!model.getVersionSupportsCpuThreads().getEntity() && model.getCountThreadsAsCores().getEntity()
                 && ((VDSGroup) getSelectedItem()).getCountThreadsAsCores()) {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
@@ -586,7 +581,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
     private ServerCpu getVdsGroupServerCpu(ClusterModel model, VDSGroup vdsGroup) {
         ServerCpu retVal = null;
-        for (ServerCpu cpu : (ArrayList<ServerCpu>) model.getCPU().getItems()) {
+        for (ServerCpu cpu : model.getCPU().getItems()) {
             if (StringHelper.stringsEqual(cpu.getCpuName(), vdsGroup.getcpu_name())) {
                 retVal = cpu;
                 break;
@@ -613,7 +608,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 Integer activeVms = (Integer) result;
 
                 ServerCpu vdsCpu = getVdsGroupServerCpu(clusterModel, (VDSGroup) getSelectedItem());
-                if (activeVms > 0 && vdsCpu != null && ((ServerCpu) clusterModel.getCPU().getSelectedItem()).getLevel() < vdsCpu.getLevel()) {
+                if (activeVms > 0 && vdsCpu != null && clusterModel.getCPU().getSelectedItem().getLevel() < vdsCpu.getLevel()) {
                     cpuLevelConfirmationWindow();
                 } else {
                     onSaveInternal();
@@ -645,7 +640,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     }
     public void onPreSaveInternal(ClusterModel model)
     {
-        if ((Boolean) model.getIsImportGlusterConfiguration().getEntity())
+        if (model.getIsImportGlusterConfiguration().getEntity())
         {
             fetchAndImportClusterHosts(model);
         }
@@ -673,15 +668,15 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     private void onSaveInternalWithModel(final ClusterModel model) {
         VDSGroup cluster = model.getIsNew() ? new VDSGroup() : (VDSGroup) Cloner.clone(getSelectedItem());
 
-        Version version = (Version) model.getVersion().getSelectedItem();
+        Version version = model.getVersion().getSelectedItem();
 
-        cluster.setName((String) model.getName().getEntity());
-        cluster.setdescription((String) model.getDescription().getEntity());
-        cluster.setComment((String) model.getComment().getEntity());
-        cluster.setStoragePoolId(((StoragePool) model.getDataCenter().getSelectedItem()).getId());
+        cluster.setName(model.getName().getEntity());
+        cluster.setdescription(model.getDescription().getEntity());
+        cluster.setComment(model.getComment().getEntity());
+        cluster.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
         if (model.getCPU().getSelectedItem() != null)
         {
-            cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
+            cluster.setcpu_name(model.getCPU().getSelectedItem().getCpuName());
         }
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
         cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())
@@ -691,14 +686,14 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
-        cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
-        cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
-        cluster.setTrustedService((Boolean) model.getEnableTrustedService().getEntity());
-        cluster.setClusterPolicyId(((ClusterPolicy) model.getClusterPolicy().getSelectedItem()).getId());
+        cluster.setVirtService(model.getEnableOvirtService().getEntity());
+        cluster.setGlusterService(model.getEnableGlusterService().getEntity());
+        cluster.setTrustedService(model.getEnableTrustedService().getEntity());
+        cluster.setClusterPolicyId(model.getClusterPolicy().getSelectedItem().getId());
         cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().getEntity()));
 
         if (model.getCPU().getSelectedItem() == null) {
-            cluster.setArchitecture((ArchitectureType) model.getArchitecture().getSelectedItem());
+            cluster.setArchitecture(model.getArchitecture().getSelectedItem());
         } else {
             cluster.setArchitecture(null);
         }
@@ -712,7 +707,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     public void executed(FrontendActionAsyncResult result) {
 
                         ClusterListModel localModel = (ClusterListModel) result.getState();
-                        if ((Boolean) model.getIsImportGlusterConfiguration().getEntity()) {
+                        if (model.getIsImportGlusterConfiguration().getEntity()) {
                             localModel.postOnSaveInternalWithImport(result.getReturnValue());
                         }
                         else {
@@ -746,7 +741,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     return;
                 }
 
-                Map<String, String> hostMap = (Map<String, String>) returnValue.getReturnValue();
+                Map<String, String> hostMap = returnValue.getReturnValue();
                 if (hostMap == null)
                 {
                     onEmptyGlusterHosts(clusterModel);
@@ -770,9 +765,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             }
         };
         AsyncDataProvider.getGlusterHosts(aQuery,
-                (String) clusterModel.getGlusterHostAddress().getEntity(),
-                (String) clusterModel.getGlusterHostPassword().getEntity(),
-                (String) clusterModel.getGlusterHostFingerprint().getEntity());
+                clusterModel.getGlusterHostAddress().getEntity(),
+                clusterModel.getGlusterHostPassword().getEntity(),
+                clusterModel.getGlusterHostFingerprint().getEntity());
     }
 
     private void onEmptyGlusterHosts(ClusterModel clusterModel)
@@ -1092,7 +1087,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                             hosts = (ArrayList<VDS>) returnValue;
                         } else if (returnValue instanceof VdcQueryReturnValue
                                 && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof ArrayList) {
-                            hosts = (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         }
 
                         boolean foundNRHosts = false;

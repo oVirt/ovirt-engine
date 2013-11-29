@@ -1,5 +1,15 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.inject.Inject;
+import com.google.gwt.event.shared.EventBus;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -14,12 +24,12 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -32,17 +42,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.inject.Inject;
 
 public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
 
@@ -73,37 +72,37 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> dataCenterEditor;
+    ListModelListBoxEditor<StoragePool> dataCenterEditor;
 
     @UiField
     @Path(value = "name.entity")
     @WithElementId
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
     @WithElementId
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Path(value = "comment.entity")
     @WithElementId
-    EntityModelTextBoxEditor commentEditor;
+    StringEntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
     @Path(value = "CPU.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> cPUEditor;
+    ListModelListBoxEditor<ServerCpu> cPUEditor;
 
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> versionEditor;
+    ListModelListBoxEditor<Version> versionEditor;
 
     @UiField(provided = true)
     @Path(value = "architecture.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> architectureEditor;
+    ListModelListBoxEditor<ArchitectureType> architectureEditor;
 
     @UiField
     @Ignore
@@ -145,17 +144,17 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @UiField
     @Path(value = "glusterHostAddress.entity")
     @WithElementId
-    EntityModelTextBoxEditor glusterHostAddressEditor;
+    StringEntityModelTextBoxEditor glusterHostAddressEditor;
 
     @UiField
     @Path(value = "glusterHostFingerprint.entity")
     @WithElementId
-    EntityModelTextAreaLabelEditor glusterHostFingerprintEditor;
+    StringEntityModelTextAreaLabelEditor glusterHostFingerprintEditor;
 
     @UiField
     @Path(value = "glusterHostPassword.entity")
     @WithElementId
-    EntityModelPasswordBoxEditor glusterHostPasswordEditor;
+    StringEntityModelPasswordBoxEditor glusterHostPasswordEditor;
 
     @UiField
     @Ignore
@@ -242,7 +241,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @UiField(provided = true)
     @Path(value = "clusterPolicy.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> clusterPolicyEditor;
+    ListModelListBoxEditor<ClusterPolicy> clusterPolicyEditor;
 
     @UiField
     @Ignore
@@ -349,38 +348,38 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     }
 
     private void initListBoxEditors() {
-        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getName();
+            public String renderNullSafe(StoragePool object) {
+                return object.getName();
             }
         });
 
-        cPUEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        cPUEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((ServerCpu) object).getCpuName();
+            public String renderNullSafe(ServerCpu object) {
+                return object.getCpuName();
             }
         });
 
-        versionEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        versionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Version) object).toString();
+            public String renderNullSafe(Version object) {
+                return object.toString();
             }
         });
 
-        architectureEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        architectureEditor = new ListModelListBoxEditor<ArchitectureType>(new NullSafeRenderer<ArchitectureType>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((ArchitectureType) object).toString();
+            public String renderNullSafe(ArchitectureType object) {
+                return object.toString();
             }
         });
 
-        clusterPolicyEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        clusterPolicyEditor = new ListModelListBoxEditor<ClusterPolicy>(new NullSafeRenderer<ClusterPolicy>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((ClusterPolicy) object).getName();
+            public String renderNullSafe(ClusterPolicy object) {
+                return object.getName();
             }
         });
 
@@ -448,7 +447,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         object.getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ((Boolean) object.getOptimizationCustom_IsSelected().getEntity()) {
+                if (object.getOptimizationCustom_IsSelected().getEntity()) {
                     optimizationCustomFormatter(object);
                     optimizationCustomEditor.setVisible(true);
                 }
@@ -466,11 +465,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         object.getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                importGlusterExplanationLabel.setVisible((Boolean) object.getEnableGlusterService().getEntity()
+                importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                         && object.getIsNew());
             }
         });
-        importGlusterExplanationLabel.setVisible((Boolean) object.getEnableGlusterService().getEntity()
+        importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
 
         object.getCPU().getSelectedItemChangedEvent().addListener(new IEventListener() {
@@ -484,7 +483,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                cpuThreadsPanel.setVisible((Boolean) object.getVersionSupportsCpuThreads().getEntity());
+                cpuThreadsPanel.setVisible(object.getVersionSupportsCpuThreads().getEntity());
             }
         });
 
