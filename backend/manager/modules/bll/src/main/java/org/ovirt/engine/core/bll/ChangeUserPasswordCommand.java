@@ -29,7 +29,7 @@ public class ChangeUserPasswordCommand<T extends ChangeUserPasswordParameters> e
     protected void executeCommand() {
         setSucceeded(LdapFactory
                 .getInstance(getParameters().getDomain())
-                .RunAdAction(
+                .runAdAction(
                         AdActionType.ChangeUserPassword,
                         new LdapChangeUserPasswordParameters(getParameters().getDomain(), getUserName(), getParameters()
                                 .getUserPassword(), getParameters().getNewPassword())).getSucceeded());

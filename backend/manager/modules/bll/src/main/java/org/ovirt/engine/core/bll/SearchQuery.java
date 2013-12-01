@@ -195,7 +195,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
 
         LdapReturnValueBase returnValue =
-                getLdapFactory(data.getDomain()).RunAdAction(adActionType,
+                getLdapFactory(data.getDomain()).runAdAction(adActionType,
                         new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData));
         getQueryReturnValue().setSucceeded(returnValue.getSucceeded());
         getQueryReturnValue().setExceptionString(returnValue.getExceptionString());

@@ -62,7 +62,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             // local user
             Object tempVar = null;
             Object execResult =
-                    adFactory.RunAdAction(
+                    adFactory.runAdAction(
                             AdActionType.GetAdUserByUserName,
                             new LdapSearchByUserNameParameters(getParameters().getSessionId(),
                                     getDomain(),

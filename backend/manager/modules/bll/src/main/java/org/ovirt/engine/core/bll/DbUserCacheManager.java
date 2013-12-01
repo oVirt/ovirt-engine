@@ -182,11 +182,11 @@ public class DbUserCacheManager {
                     String domain = entry.getKey();
                     List<LdapUser> adUsers =
                             (List<LdapUser>) LdapFactory.getInstance(domain)
-                            .RunAdAction(
+                            .runAdAction(
                                     AdActionType.GetAdUserByUserIdList,
-                                            new LdapSearchByUserIdListParameters(domain,
-                                                    new ArrayList<Guid>(entry.getValue().keySet()),
-                                                    false))
+                                    new LdapSearchByUserIdListParameters(domain,
+                                            new ArrayList<Guid>(entry.getValue().keySet()),
+                                            false))
                                     .getReturnValue();
                     HashSet<Guid> updatedUsers = new HashSet<Guid>();
                     if (adUsers == null) {
@@ -271,7 +271,7 @@ public class DbUserCacheManager {
                     LdapGroup groupFromAD =
                             (LdapGroup) LdapFactory
                                     .getInstance(group.getdomain())
-                                    .RunAdAction(AdActionType.GetAdGroupByGroupId,
+                                    .runAdAction(AdActionType.GetAdGroupByGroupId,
                                             new LdapSearchByIdParameters(group.getdomain(), group.getid()))
                                     .getReturnValue();
 

@@ -60,7 +60,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
         if (dbUser == null) {
             LdapUser adUser = (LdapUser) LdapFactory
                     .getInstance(domain)
-                    .RunAdAction(AdActionType.GetAdUserByUserId,
+                    .runAdAction(AdActionType.GetAdUserByUserId,
                             new LdapSearchByIdParameters(sessionId, domain, id))
                     .getReturnValue();
             if (adUser == null) {

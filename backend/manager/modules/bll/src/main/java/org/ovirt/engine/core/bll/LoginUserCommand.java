@@ -28,7 +28,7 @@ public class LoginUserCommand<T extends LoginUserParameters> extends LoginBaseCo
             log.error("No LdapBrokerImpl can be retrieved.");
             return new UserAuthenticationResult(VdcBllMessages.USER_FAILED_TO_AUTHENTICATION_WRONG_AUTHENTICATION_METHOD);
         }
-        LdapReturnValueBase adReturnValue = adFactory.RunAdAction(AdActionType.AuthenticateUser,
+        LdapReturnValueBase adReturnValue = adFactory.runAdAction(AdActionType.AuthenticateUser,
                 new LdapUserPasswordBaseParameters(loginDomain, getParameters().getUserName(), getUserPassword()));
         UserAuthenticationResult authResult = (UserAuthenticationResult) adReturnValue.getReturnValue();
         return authResult;

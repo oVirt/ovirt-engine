@@ -19,9 +19,9 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
         String domain = getParameters().getDomain();
         Guid id = getParameters().getId();
         LdapBroker broker = LdapFactory.getInstance(domain);
-        LdapUser user = (LdapUser) broker.RunAdAction(
-            AdActionType.GetAdUserByUserId,
-            new LdapSearchByIdParameters(domain, id)
+        LdapUser user = (LdapUser) broker.runAdAction(
+                AdActionType.GetAdUserByUserId,
+                new LdapSearchByIdParameters(domain, id)
         ).getReturnValue();
         getQueryReturnValue().setReturnValue(user);
     }

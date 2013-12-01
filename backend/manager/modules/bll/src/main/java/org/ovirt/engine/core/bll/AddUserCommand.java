@@ -34,7 +34,7 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
             addCustomValue("NewUserName", getParameters().getUser().getLoginName());
             userId = getParameters().getUser().getId();
             domain = getParameters().getUser().getDomain();
-            LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).RunAdAction(AdActionType.GetAdUserByUserId,
+            LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).runAdAction(AdActionType.GetAdUserByUserId,
                     new LdapSearchByIdParameters(domain, userId)).getReturnValue();
             if (adUser == null) {
                 addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
@@ -47,7 +47,7 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
             addCustomValue("NewUserName", getParameters().getAdUser().getUserName());
             userId = getParameters().getAdUser().getUserId();
             domain = getParameters().getAdUser().getDomainControler();
-            LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).RunAdAction(AdActionType.GetAdUserByUserId,
+            LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).runAdAction(AdActionType.GetAdUserByUserId,
                     new LdapSearchByIdParameters(domain, userId)).getReturnValue();
             if (adUser == null) {
                 addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
@@ -59,8 +59,8 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
             userId = getParameters().getAdGroup().getid();
             domain = getParameters().getAdGroup().getdomain();
             LdapGroup adGroup =
-                    (LdapGroup) LdapFactory.getInstance(domain).RunAdAction(AdActionType.GetAdGroupByGroupId,
-                    new LdapSearchByIdParameters(domain, userId)).getReturnValue();
+                    (LdapGroup) LdapFactory.getInstance(domain).runAdAction(AdActionType.GetAdGroupByGroupId,
+                            new LdapSearchByIdParameters(domain, userId)).getReturnValue();
             if (adGroup == null) {
                 addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
                 return false;

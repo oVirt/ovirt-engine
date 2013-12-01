@@ -90,7 +90,7 @@ public abstract class LdapSearchQueryTestBase extends AbstractQueryTest<SearchPa
         LdapReturnValueBase ldapRerunValue = new LdapReturnValueBase();
         ldapRerunValue.setSucceeded(true);
         ldapRerunValue.setReturnValue(Collections.singletonList(result));
-        when(ldapFactoryMock.RunAdAction(eq(getAdActionType()),
+        when(ldapFactoryMock.runAdAction(eq(getAdActionType()),
                 argThat(new LdapParametersMatcher()))).
                 thenReturn(ldapRerunValue);
 
