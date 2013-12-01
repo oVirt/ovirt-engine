@@ -13,17 +13,6 @@ public class event_subscriber_id implements Serializable {
     int methodId;
     String tagName;
 
-    public event_subscriber_id() {
-    }
-
-    public event_subscriber_id(Guid subscriberId, String eventUpName, int methodId, String tagName) {
-        super();
-        this.subscriberId = subscriberId;
-        this.eventUpName = eventUpName;
-        this.methodId = methodId;
-        this.tagName = tagName;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
