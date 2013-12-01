@@ -250,4 +250,35 @@
      <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfilePresenter$VnicProfileSelectionChange" />
      <Bug code="UuF"/>
    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.RolePopupView$5" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.RecoveryStorageConfirmationPopupView$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget$4" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
 </FindBugsFilter>
