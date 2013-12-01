@@ -11,18 +11,4 @@ public class EndedTasksInfo implements java.io.Serializable {
     public void setTasksInfo(java.util.ArrayList<EndedTaskInfo> value) {
         privateTasksInfo = value;
     }
-
-    private boolean _commandShouldBeLogged;
-
-    public boolean getCommandShouldBeLogged() {
-        return _commandShouldBeLogged;
-    }
-
-    public void setCommandShouldBeLogged(boolean value) {
-        _commandShouldBeLogged = value;
-    }
-
-    public EndedTasksInfo() {
-        _commandShouldBeLogged = true;
-    }
 }
