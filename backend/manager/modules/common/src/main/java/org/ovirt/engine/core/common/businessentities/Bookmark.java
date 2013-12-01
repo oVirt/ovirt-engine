@@ -36,22 +36,6 @@ public class Bookmark extends IVdcQueryable implements Serializable {
         this.name = name;
     }
 
-
-    public Bookmark() {
-    }
-
-    public Bookmark(String bookmark_name, String bookmark_value) {
-        this.name = bookmark_name;
-        this.value = bookmark_value;
-
-    }
-
-    public Bookmark(String bookmark_name, String bookmark_value, Guid bookmark_id) {
-        this.name = bookmark_name;
-        this.value = bookmark_value;
-        this.id = bookmark_id;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
