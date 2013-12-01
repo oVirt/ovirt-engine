@@ -477,7 +477,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             return mTriedVdssList;
         }
 
-        public void Init(VDS vds) {
+        public void init(VDS vds) {
             mCurrentVdsId = vds.getId();
             setmIrsPort(vds.getPort());
             privatemCurrentIrsHost = vds.getHostName();
@@ -738,7 +738,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         "spm start treatment ended and status is not SPM!!! status: {0} - setting selectedVds to null!",
                         spmStatus.argvalue.getSpmStatus().toString());
             } else {
-                Init(selectedVds.argvalue);
+                init(selectedVds.argvalue);
                 storagePool.setLVER(spmStatus.argvalue.getSpmLVER());
                 storagePool.setspm_vds_id(selectedVds.argvalue.getId());
                 // if were problemtaic or not operational and succeeded to find
