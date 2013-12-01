@@ -222,7 +222,7 @@ public class VdsEventListener implements IVdsEventListener {
             command.onPowerringUp();
             if (command.getAutoStart() && command.getAutoStartVdsId() != null) {
                 try {
-                    String otp64 = Ticketing.GenerateOTP();
+                    String otp64 = Ticketing.generateOTP();
                     Backend.getInstance()
                             .getResourceManager()
                             .RunVdsCommand(VDSCommandType.SetVmTicket,

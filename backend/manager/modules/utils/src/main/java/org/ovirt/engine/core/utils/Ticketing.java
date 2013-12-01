@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 import org.apache.commons.codec.binary.Base64;
 
 public final class Ticketing {
-    public static String GenerateOTP() {
+    public static String generateOTP() {
         SecureRandom secr = new SecureRandom();
         byte[] arrRandom = new byte[9];
         secr.nextBytes(arrRandom);

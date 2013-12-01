@@ -130,7 +130,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // Generate the ticket if needed (in some situations the client will not send
         // a ticket):
         if (StringUtils.isEmpty(mTicket)) {
-            mTicket = Ticketing.GenerateOTP();
+            mTicket = Ticketing.generateOTP();
         }
 
         // Update the dynamic information of the virtual machine in memory (we need it

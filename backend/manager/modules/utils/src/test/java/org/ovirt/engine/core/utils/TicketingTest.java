@@ -7,9 +7,9 @@ import org.junit.Test;
 public class TicketingTest {
     @Test
     public void testNoRepeats() {
-        String sample = Ticketing.GenerateOTP();
+        String sample = Ticketing.generateOTP();
         for (int x = 0; x < 1000; x++) {
-            String other = Ticketing.GenerateOTP();
+            String other = Ticketing.generateOTP();
             assertNotSame(sample, other);
         }
     }

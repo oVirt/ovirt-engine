@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
-import static org.ovirt.engine.core.utils.Ticketing.GenerateOTP;
+import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
 
 import java.util.List;
 import java.util.Set;
@@ -334,7 +334,7 @@ public class BackendVmResource extends
 
     protected String getTicketValue(Action action) {
         if (!ensureTicket(action).isSetValue()) {
-            action.getTicket().setValue(GenerateOTP());
+            action.getTicket().setValue(generateOTP());
         }
         return action.getTicket().getValue();
     }
