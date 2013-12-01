@@ -240,26 +240,6 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         return sb.toString();
     }
 
-    public String ToStringBr() {
-        StringBuilder sb = new StringBuilder("---------------- SyntaxContainer ---------------------");
-        sb.append("<BR>mOrigText       = ");
-        sb.append(mOrigText);
-        sb.append("<BR>Valid           = ");
-        sb.append(mValid);
-        sb.append("<BR>Error           = ");
-        sb.append(mError);
-        sb.append("<BR>Syntax object list:");
-        sb.append("<BR>CrossRefObjlist = ");
-        for (String cro : getCrossRefObjList()) {
-            sb.append(cro).append(", ");
-        }
-        for (SyntaxObject obj : mObjList) {
-            sb.append("<BR>    ");
-            sb.append(obj.toString());
-        }
-        return sb.toString();
-    }
-
     public boolean contains(SyntaxObjectType type, String val) {
         boolean retval = false;
         for (SyntaxObject obj : mObjList) {
