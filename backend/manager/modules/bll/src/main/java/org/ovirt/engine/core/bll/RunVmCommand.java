@@ -201,7 +201,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         setVdsId(new Guid(getVm().getRunOnVds().toString()));
         if (getVds() != null) {
             try {
-                incrementVdsPendingVmsCount();
                 VDSReturnValue result = getBackend()
                         .getResourceManager()
                         .RunAsyncVdsCommand(VDSCommandType.Resume,
@@ -211,7 +210,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
             } finally {
                 freeLock();
-                decrementVdsPendingVmsCount();
             }
         } else {
             setActionReturnValue(getVm().getStatus());
@@ -224,7 +222,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             VMStatus status = null;
             try {
                 VmHandler.updateVmGuestAgentVersion(getVm());
-                incrementVdsPendingVmsCount();
                 if (connectLunDisks(getVdsId())) {
                     status = createVm();
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
@@ -246,7 +243,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             } finally {
                 freeLock();
-                decrementVdsPendingVmsCount();
             }
             setActionReturnValue(status);
 
@@ -423,24 +419,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // setting lock to null in order not to release lock twice
         setLock(null);
         setSucceeded(true);
-    }
-
-    private void decrementVdsPendingVmsCount() {
-        synchronized (_vds_pending_vm_count) {
-            int i = _vds_pending_vm_count.get(getVdsId());
-            _vds_pending_vm_count.put(getVdsId(), i - 1);
-        }
-    }
-
-    private void incrementVdsPendingVmsCount() {
-        synchronized (_vds_pending_vm_count) {
-            if (!_vds_pending_vm_count.containsKey(getVdsId())) {
-                _vds_pending_vm_count.put(getVdsId(), 1);
-            } else {
-                int i = _vds_pending_vm_count.get(getVdsId());
-                _vds_pending_vm_count.put(getVdsId(), i + 1);
-            }
-        }
     }
 
     protected VMStatus createVm() {

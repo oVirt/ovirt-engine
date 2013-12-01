@@ -4,7 +4,6 @@ import static org.ovirt.engine.core.common.config.ConfigValues.VdsRefreshRate;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -56,7 +55,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         IVdsAsyncCommand, RunVmDelayer {
 
     private static Log log = LogFactory.getLog(RunVmCommandBase.class);
-    protected static final HashMap<Guid, Integer> _vds_pending_vm_count = new HashMap<Guid, Integer>();
     protected boolean _isRerun = false;
     protected VDS _destinationVds;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
