@@ -54,7 +54,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         if (_oldVds != null && getParameters().getVdsStaticData() != null) {
             String compatibilityVersion = _oldVds.getVdsGroupCompatibilityVersion().toString();
 
-            if (VdsHandler.IsUpdateValid(getParameters().getVdsStaticData(), _oldVds.getStaticData(),
+            if (VdsHandler.isUpdateValid(getParameters().getVdsStaticData(), _oldVds.getStaticData(),
                     _oldVds.getStatus())) {
                 if ("".equals(getParameters().getVdsStaticData().getName())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
@@ -218,7 +218,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     }
 
     private boolean NeedToUpdateVdsBroker() {
-        return VdsHandler.IsFieldsUpdated(getParameters().getVdsStaticData(), _oldVds.getStaticData(),
+        return VdsHandler.isFieldsUpdated(getParameters().getVdsStaticData(), _oldVds.getStaticData(),
                 UPDATE_FIELDS_VDS_BROKER);
     }
 

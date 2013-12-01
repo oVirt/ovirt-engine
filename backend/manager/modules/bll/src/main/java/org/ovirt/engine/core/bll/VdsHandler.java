@@ -51,12 +51,12 @@ public class VdsHandler extends BaseHandler {
         mUpdateVdsStatic.setContainer(this);
     }
 
-    public static boolean IsUpdateValid(VdsStatic source, VdsStatic distination, VDSStatus status) {
+    public static boolean isUpdateValid(VdsStatic source, VdsStatic distination, VDSStatus status) {
 
         return mUpdateVdsStatic.IsUpdateValid(source, distination, status);
     }
 
-    public static boolean IsFieldsUpdated(VdsStatic source, VdsStatic destination, Iterable<String> list) {
+    public static boolean isFieldsUpdated(VdsStatic source, VdsStatic destination, Iterable<String> list) {
         return mUpdateVdsStatic.IsFieldsUpdated(source, destination, list);
     }
 
