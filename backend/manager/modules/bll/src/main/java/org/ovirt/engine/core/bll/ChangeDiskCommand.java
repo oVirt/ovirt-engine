@@ -23,6 +23,12 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+    }
+
+    @Override
     protected boolean canDoAction() {
         boolean retValue = true;
         if (getVm() == null) {
