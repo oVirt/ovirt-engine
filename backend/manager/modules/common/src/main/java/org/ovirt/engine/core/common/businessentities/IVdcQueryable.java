@@ -10,7 +10,4 @@ public class IVdcQueryable implements Serializable {
     public Object getQueryableId() {
         throw new NotImplementedException("QueryableId not overridden in type");
     }
-
-    public IVdcQueryable() {
-    }
 }
