@@ -13,8 +13,6 @@ public class GlusterConstants {
     public static final String OPTION_USER_CIFS = "user.cifs";
     public static final String OPTION_GROUP = "group";
 
-    public static final int DEFAULT_REPLICA_COUNT = 2;
-    public static final int DEFAULT_STRIPE_COUNT = 4;
     public static final String NO_OF_BRICKS = "NoOfBricks";
     public static final String BRICK_PATH = "brickpath";
     public static final String SERVER_NAME = "servername";
@@ -33,7 +31,6 @@ public class GlusterConstants {
     public static final String NEW_STATUS = "newstatus";
     public static final String SERVICE_TYPE = "servicetype";
     public static final String SERVICE_NAME = "servicename";
-    public static final String SERVER = "server";
     public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START = "start";
     public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP = "stop";
     public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART = "restart";
