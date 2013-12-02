@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
@@ -17,7 +18,10 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> implements RenamedEntityInfoProvider{
     private Network oldNetwork;
 
@@ -27,15 +31,23 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
-        getNetworkDAO().update(getNetwork());
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-        for (NetworkCluster clusterAttachment : getNetworkClusterDAO().getAllForNetwork(getNetwork().getId())) {
-            NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
-        }
+            @Override
+            public Void runInTransaction() {
+                getNetworkDAO().update(getNetwork());
 
-        if (networkChangedToNonVmNetwork()) {
-            removeVnicProfiles();
-        }
+                for (NetworkCluster clusterAttachment : getNetworkClusterDAO().getAllForNetwork(getNetwork().getId())) {
+                    NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
+                }
+
+                if (networkChangedToNonVmNetwork()) {
+                    removeVnicProfiles();
+                }
+
+                return null;
+            }
+        });
 
         setSucceeded(true);
     }
