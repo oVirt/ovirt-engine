@@ -54,7 +54,7 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
                     });
         } else {
             context.enlistment = null;
-            enlistment.Prepared();
+            enlistment.prepared();
         }
     }
 
@@ -67,31 +67,11 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
 
         if (returnValue != null && returnValue.getSucceeded()) {
 
-            enlistment.Prepared();
+            enlistment.prepared();
         } else {
-            enlistment.ForceRollback();
+            enlistment.forceRollback();
         }
     }
-
-    // @Override
-    // public void Prepare(PreparingEnlistment enlistment) {
-    //
-    // ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
-    // if (!model.getDontChangeHostCluster()) {
-    // VDS host = (VDS) getModel().getSelectedItem();
-    // VdcReturnValueBase returnValue =
-    // Frontend.RunAction(VdcActionType.ChangeVDSCluster,
-    // new ChangeVDSClusterParameters(getData().getClusterId(), host.getvds_id()));
-    //
-    // if (returnValue != null && returnValue.getSucceeded()) {
-    // enlistment.Prepared();
-    // } else {
-    // enlistment.ForceRollback();
-    // }
-    // } else {
-    // enlistment.Prepared();
-    // }
-    // }
 
     @Override
     public void commit(Enlistment enlistment) {

@@ -87,7 +87,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                 enlistmentContext.setDataCenterId(dataCenter.getId());
 
                 context.enlistment = null;
-                enlistment.Prepared();
+                enlistment.prepared();
             } else {
 
                 dataCenter = new StoragePool();
@@ -113,7 +113,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             enlistmentContext.setDataCenterId(configureModel.getDataCenter().getDataCenterId());
 
             context.enlistment = null;
-            enlistment.Prepared();
+            enlistment.prepared();
         }
     }
 
@@ -128,10 +128,10 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         if (returnValue != null && returnValue.getSucceeded()) {
 
             enlistmentContext.setDataCenterId((Guid) returnValue.getActionReturnValue());
-            enlistment.Prepared();
+            enlistment.prepared();
 
         } else {
-            enlistment.ForceRollback();
+            enlistment.forceRollback();
         }
     }
 

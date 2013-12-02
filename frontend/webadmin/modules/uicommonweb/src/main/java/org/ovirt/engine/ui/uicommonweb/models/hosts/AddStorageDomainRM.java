@@ -71,7 +71,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         if (returnValue == null || !returnValue.getSucceeded()) {
 
             context.enlistment = null;
-            enlistment.ForceRollback();
+            enlistment.forceRollback();
         } else {
             prepare3();
         }
@@ -109,7 +109,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         } else {
 
             context.enlistment = null;
-            enlistment.ForceRollback();
+            enlistment.forceRollback();
         }
     }
 
@@ -228,7 +228,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             // Don't rollback.
             enlistment.Done();
         } else {
-            enlistment.Prepared();
+            enlistment.prepared();
         }
     }
 

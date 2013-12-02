@@ -31,11 +31,11 @@ public class PreparingEnlistment extends Enlistment {
         rollbackEvent = new Event(RollbackEventDefinition);
     }
 
-    public void Prepared() {
+    public void prepared() {
         getPreparedEvent().raise(this, EventArgs.Empty);
     }
 
-    public void ForceRollback() {
+    public void forceRollback() {
         getRollbackEvent().raise(this, EventArgs.Empty);
     }
 }

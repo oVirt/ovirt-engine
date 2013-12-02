@@ -83,7 +83,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 enlistmentContext.setClusterId(cluster.getId());
 
                 context.enlistment = null;
-                enlistment.Prepared();
+                enlistment.prepared();
             } else {
 
                 Version version = (Version) clusterModel.getVersion().getSelectedItem();
@@ -118,7 +118,7 @@ public class AddClusterRM extends IEnlistmentNotification {
             enlistmentContext.setClusterId(configureModel.getCluster().getClusterId());
 
             context.enlistment = null;
-            enlistment.Prepared();
+            enlistment.prepared();
         }
     }
 
@@ -135,63 +135,12 @@ public class AddClusterRM extends IEnlistmentNotification {
             enlistmentContext.setClusterId((Guid) returnValue.getActionReturnValue());
 
             context.enlistment = null;
-            enlistment.Prepared();
+            enlistment.prepared();
 
         } else {
-            enlistment.ForceRollback();
+            enlistment.forceRollback();
         }
     }
-
-    // @Override
-    // public void Prepare(PreparingEnlistment enlistment)
-    // {
-    // ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
-    // if (!model.getDontCreateCluster())
-    // {
-    // ClusterModel m = model.getCluster();
-    //
-    // String name = (String) m.getName().getEntity();
-    //
-    // // Try to find existing cluster with the specified name.
-    // VDSGroup cluster = DataProvider.GetClusterByName(name);
-    // if (cluster != null)
-    // {
-    // getData().setClusterId(cluster.getID());
-    // enlistment.Prepared();
-    // }
-    // else
-    // {
-    // Version version = (Version) m.getVersion().getSelectedItem();
-    //
-    // cluster = new VDSGroup();
-    // cluster.setname(name);
-    // cluster.setdescription((String) m.getDescription().getEntity());
-    // cluster.setstorage_pool_id(getData().getDataCenterId());
-    // cluster.setcpu_name(((ServerCpu) m.getCPU().getSelectedItem()).getCpuName());
-    // cluster.setmax_vds_memory_over_commit(m.getMemoryOverCommit());
-    // cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0);
-    // cluster.setcompatibility_version(version);
-    // cluster.setMigrateOnError(m.getMigrateOnErrorOption());
-    //
-    // VdcReturnValueBase returnValue =
-    // Frontend.RunAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster));
-    //
-    // if (returnValue != null && returnValue.getSucceeded())
-    // {
-    // getData().setClusterId((Guid) returnValue.getActionReturnValue());
-    // enlistment.Prepared();
-    // }
-    // else
-    // {
-    // enlistment.ForceRollback();
-    // }
-    // }
-    // }
-    // else
-    // {
-    // enlistment.Prepared();
-    // }
-    // }
 
     @Override
     public void commit(Enlistment enlistment) {
