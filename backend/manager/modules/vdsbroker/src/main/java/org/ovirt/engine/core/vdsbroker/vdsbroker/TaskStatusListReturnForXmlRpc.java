@@ -17,7 +17,7 @@ public final class TaskStatusListReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(TaskStatusList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(TaskStatusList, builder);
         return builder.toString();
     }
 

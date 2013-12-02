@@ -16,7 +16,7 @@ public final class GetVmsInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(vmlist, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(vmlist, builder);
         return builder.toString();
     }
 

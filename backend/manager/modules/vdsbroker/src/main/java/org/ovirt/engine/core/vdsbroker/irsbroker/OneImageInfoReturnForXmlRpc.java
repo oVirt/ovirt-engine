@@ -22,7 +22,7 @@ public final class OneImageInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(mInfo, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(mInfo, builder);
         return builder.toString();
     }
 

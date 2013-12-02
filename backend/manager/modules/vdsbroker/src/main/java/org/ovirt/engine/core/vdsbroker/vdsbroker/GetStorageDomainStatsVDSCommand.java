@@ -64,7 +64,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
                     if (alertCode == null || VdcBllErrors.forValue(alertCode) == null) {
                         log.warnFormat("Unrecognized alert code: {0}.", alertCode);
                         StringBuilder alertStringBuilder = new StringBuilder();
-                        XmlRpcObjectDescriptor.ToStringBuilder(alert, alertStringBuilder);
+                        XmlRpcObjectDescriptor.toStringBuilder(alert, alertStringBuilder);
                         log.infoFormat("The received alert is: {0}", alertStringBuilder.toString());
                     } else {
                         alerts.add(VdcBllErrors.forValue(alertCode));

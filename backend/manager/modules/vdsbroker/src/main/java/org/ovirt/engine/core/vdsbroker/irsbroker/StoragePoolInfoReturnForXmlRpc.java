@@ -20,8 +20,8 @@ public final class StoragePoolInfoReturnForXmlRpc extends StatusReturnForXmlRpc 
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(mStoragePoolInfo, builder);
-        XmlRpcObjectDescriptor.ToStringBuilder(mDomainsList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(mStoragePoolInfo, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(mDomainsList, builder);
         return builder.toString();
     }
 

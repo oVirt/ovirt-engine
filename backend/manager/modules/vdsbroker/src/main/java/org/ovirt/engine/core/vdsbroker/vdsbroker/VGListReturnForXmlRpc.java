@@ -19,7 +19,7 @@ public final class VGListReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(vgList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(vgList, builder);
         return builder.toString();
     }
 

@@ -19,7 +19,7 @@ public final class OneStorageDomainStatsReturnForXmlRpc extends StatusReturnForX
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(mStorageStats, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(mStorageStats, builder);
         return builder.toString();
     }
 

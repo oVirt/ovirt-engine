@@ -19,7 +19,7 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(mStatusList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(mStatusList, builder);
         return builder.toString();
     }
 

@@ -17,7 +17,7 @@ public final class OneVGReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(vgInfo, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(vgInfo, builder);
         return builder.toString();
     }
 

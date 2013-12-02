@@ -18,7 +18,7 @@ public final class LUNListReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(lunList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(lunList, builder);
         return builder.toString();
     }
 

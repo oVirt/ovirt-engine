@@ -25,7 +25,7 @@ public final class OneStorageDomainInfoReturnForXmlRpc extends StatusReturnForXm
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(mStorageInfo, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(mStorageInfo, builder);
         return builder.toString();
     }
 }

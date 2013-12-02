@@ -26,7 +26,7 @@ public class DevicesVisibilityMapReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(devicesVisibilityResult, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(devicesVisibilityResult, builder);
         return builder.toString();
     }
 

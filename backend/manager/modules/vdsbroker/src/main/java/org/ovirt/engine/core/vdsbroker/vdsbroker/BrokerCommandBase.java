@@ -231,7 +231,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
             String returnValue;
             StringBuilder builder = new StringBuilder();
             if (getReturnValueFromBroker() instanceof Map) {
-                XmlRpcObjectDescriptor.ToStringBuilder((Map<String, ?>) getReturnValueFromBroker(), builder);
+                XmlRpcObjectDescriptor.toStringBuilder((Map<String, ?>) getReturnValueFromBroker(), builder);
                 returnValue = builder.toString();
             } else {
                 returnValue = getReturnValueFromBroker().toString();

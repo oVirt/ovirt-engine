@@ -19,7 +19,7 @@ public final class TaskInfoListReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.ToStringBuilder(TaskInfoList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(TaskInfoList, builder);
         return builder.toString();
     }
 
