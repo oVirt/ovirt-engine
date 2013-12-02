@@ -161,16 +161,4 @@ public class Tags implements Serializable {
             tag.getTagIdAndChildrenIdsAsList(tagIds);
         }
     }
-
-    public void getTagIdAndChildrenNamesAsList(java.util.HashSet<String> tagIds) {
-        tagIds.add(gettag_name());
-        for (Tags tag : _children) {
-            tag.getTagIdAndChildrenNamesAsList(tagIds);
-        }
-    }
-
-    public void updateTag(Tags from) {
-        setdescription(from.getdescription());
-        settag_name(from.gettag_name());
-    }
 }
