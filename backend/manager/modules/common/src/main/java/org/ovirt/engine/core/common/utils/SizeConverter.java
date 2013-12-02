@@ -35,7 +35,13 @@ public class SizeConverter {
             for (SizeUnit unit : SizeUnit.values()) {
                 weightToUnit.add(new Pair<Long, SizeConverter.SizeUnit>(unit.getUnitWeight(), unit));
             }
-            Collections.sort(weightToUnit, Collections.reverseOrder(new CompareUnits()));
+            Collections.sort(weightToUnit, Collections.reverseOrder(new Comparator<Pair <Long, SizeUnit>>() {
+
+                @Override
+                public int compare(Pair<Long, SizeUnit> unit1, Pair<Long, SizeUnit> unit2) {
+                    return unit1.getFirst().compareTo(unit2.getFirst());
+                }
+            }));
         }
 
         public long getUnitWeight() {
@@ -57,17 +63,9 @@ public class SizeConverter {
         for (Pair<Long, SizeUnit> currentUnitPair : SizeUnit.weightToUnit) {
             if (size / Math.pow(CONVERT_FACTOR, currentUnitPair.getFirst() - inUnit.getUnitWeight()) >= 1) {
                 return new Pair<SizeConverter.SizeUnit, Double>(currentUnitPair.getSecond(),
-                        Double.valueOf(SizeConverter.convert(size, inUnit, currentUnitPair.getSecond()).doubleValue()));
+                        SizeConverter.convert(size, inUnit, currentUnitPair.getSecond()).doubleValue());
             }
         }
-        return new Pair<SizeConverter.SizeUnit, Double>(SizeUnit.BYTES, new Double(new Long(size)));
-    }
-
-    private static class CompareUnits implements Comparator<Pair<Long, SizeUnit>> {
-
-        @Override
-        public int compare(Pair<Long, SizeUnit> unit1, Pair<Long, SizeUnit> unit2) {
-            return unit1.getFirst().compareTo(unit2.getFirst());
-        }
+        return new Pair<SizeConverter.SizeUnit, Double>(SizeUnit.BYTES, (double)size);
     }
 }
