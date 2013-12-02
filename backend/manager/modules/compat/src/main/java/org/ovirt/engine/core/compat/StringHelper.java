@@ -123,38 +123,6 @@ public final class StringHelper {
         return trim(s, chars);
     }
 
-    public static String padLeft(String value, int length, char c) {
-        StringBuilder builder = new StringBuilder(value);
-        while (builder.length() < length) {
-            builder.insert(0, c);
-        }
-
-        return builder.toString();
-    }
-
-    /**
-     * Aggregate String using the given char separator
-     *
-     * @param messgaes
-     *            - the string to aggregate
-     * @param seperator
-     *            - the separator to use between 2 strings
-     * @return the string separated by the give separator
-     */
-    public static String aggregate(java.util.List<String> messages, char separator) {
-        if (messages == null) {
-            throw new IllegalArgumentException("The messages parameter can not be null");
-        }
-        StringBuffer fullString = new StringBuffer();
-        if (messages.size() > 0) {
-            for (String msg : messages) {
-                fullString.append(msg).append(separator);
-            }
-            fullString.deleteCharAt(fullString.length() - 1);
-        }
-        return fullString.toString();
-    }
-
     // ------------------------------------------------------------------------------------
     // This method is used for string equality comparisons when the option
     // 'Use helper 'stringsEqual' method to handle null strings' is selected

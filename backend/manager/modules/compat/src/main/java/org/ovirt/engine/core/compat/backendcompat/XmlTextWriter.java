@@ -122,10 +122,6 @@ public class XmlTextWriter {
         WriteEndElement();
     }
 
-    public void WriteAttributeString(String namespaceURI, String localName, int value) {
-        WriteAttributeString(namespaceURI, localName, Integer.toString(value));
-    }
-
     public String getStringXML() {
         try {
             writer.writeEndElement();

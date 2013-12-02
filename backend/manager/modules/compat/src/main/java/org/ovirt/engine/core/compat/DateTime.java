@@ -44,14 +44,6 @@ public class DateTime extends Date {
         return DayOfWeek.forValue(this.getDay());
     }
 
-    public long getTicks() {
-        return this.getTime();
-    }
-
-    public long getTotalMilliseconds() {
-        return this.getTime();
-    }
-
     public String toString(String formatString) {
         // c# compatibility
         boolean compat = false;
@@ -90,13 +82,6 @@ public class DateTime extends Date {
         return new TimeSpan(span);
     }
 
-    public DateTime AddSeconds(double secsSinceEpoch) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(this);
-        cal.add(Calendar.SECOND, (int) secsSinceEpoch);
-        return new DateTime(cal.getTime());
-    }
-
     /**
      * The Min Date in java
      *
@@ -112,39 +97,11 @@ public class DateTime extends Date {
         return new DateTime(System.currentTimeMillis());
     }
 
-    public Date AddHours(int graceTime) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(this);
-        cal.add(Calendar.HOUR, graceTime);
-        return new DateTime(cal.getTime());
-    }
-
-    public DateTime AddMilliseconds(int interval) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(this);
-        cal.add(Calendar.MILLISECOND, interval);
-        return new DateTime(cal.getTime());
-    }
-
     public Date AddMinutes(int i) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(this);
         cal.add(Calendar.MINUTE, i);
         return new DateTime(cal.getTime());
-    }
-
-    public Date AddMinutes(double i) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(this);
-        cal.add(Calendar.MINUTE, (int) i);
-        return new DateTime(cal.getTime());
-    }
-
-    public static DateTime getUtcNow() {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MILLISECOND, -cal.get(Calendar.DST_OFFSET) - cal.get(Calendar.ZONE_OFFSET));
-        return new DateTime(cal.getTime());
-
     }
 
     public static String getDayOfTheWeekAsString(int dayOfTheWeek) {

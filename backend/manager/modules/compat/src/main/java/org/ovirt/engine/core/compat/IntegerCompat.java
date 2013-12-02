@@ -20,15 +20,4 @@ public class IntegerCompat {
         }
     }
 
-    /**
-     * Compare two integers safely even if one or both are nulls
-     */
-    public static boolean equalsWithNulls(Integer i1, Integer i2) {
-        if (i1 == null && i2 == null)
-            return true; // both nulls
-        if (i1 == null || i2 == null)
-            return false; // one is null the other is not
-        return i1.equals(i2); // both are not nulls
-    }
-
 }

@@ -34,7 +34,4 @@ public class PropertyInfo {
         return pd.getWriteMethod() != null;
     }
 
-    public boolean isPropertyInstanceOf(Class<?> clazz) {
-        return this.pd.getPropertyType().equals(clazz);
-    }
 }
