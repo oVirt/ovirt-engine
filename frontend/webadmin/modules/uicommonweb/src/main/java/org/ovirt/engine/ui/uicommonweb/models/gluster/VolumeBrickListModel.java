@@ -1039,7 +1039,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 else {
                     cModel.setMessage(ConstantsManager.getInstance()
                             .getMessages()
-                            .removeBrickStatusFailed(bricks.toString()));
+                            .removeBrickStatusFailed(volumeEntity.getName()));
                 }
             }
         }),
