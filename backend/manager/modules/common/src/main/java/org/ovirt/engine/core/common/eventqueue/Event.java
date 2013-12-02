@@ -22,40 +22,20 @@ public class Event {
         return storagePoolId;
     }
 
-    public void setStoragePoolId(Guid storagePoolId) {
-        this.storagePoolId = storagePoolId;
-    }
-
     public EventType getEventType() {
         return eventType;
-    }
-
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Guid getDomainId() {
         return domainId;
     }
 
-    public void setDomainId(Guid domainId) {
-        this.domainId = domainId;
-    }
-
     public Guid getVdsId() {
         return vdsId;
-    }
-
-    public void setVdsId(Guid vdsId) {
-        this.vdsId = vdsId;
     }
 
     @Override
