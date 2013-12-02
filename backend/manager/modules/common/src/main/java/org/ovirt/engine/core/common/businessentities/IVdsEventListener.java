@@ -23,7 +23,7 @@ public interface IVdsEventListener {
 
     EventResult storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
 
-    EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId, boolean isReconstructToInactiveDomains); // BLL
+    EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId, boolean isReconstructToInactiveDomains, boolean canReconstructToCurrentMaster); // BLL
 
     void processOnVmStop(Guid vmId);
 
