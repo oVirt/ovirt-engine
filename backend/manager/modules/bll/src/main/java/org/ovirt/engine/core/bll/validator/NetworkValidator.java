@@ -179,6 +179,16 @@ public class NetworkValidator {
                 VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
     }
 
+    /**
+     * @return An error iff the QoS entity attached to the network isn't null, but doesn't exist in the database or
+     *         belongs to the wrong DC.
+     */
+    public ValidationResult qosExistsInDc() {
+        NetworkQosValidator qosValidator = new NetworkQosValidator(getDbFacade().getQosDao().get(network.getQosId()));
+        ValidationResult res = qosValidator.qosExists();
+        return (res == ValidationResult.VALID) ? qosValidator.consistentDataCenter() : res;
+    }
+
     public ValidationResult notLabeled() {
         return network.getLabel() == null ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED);

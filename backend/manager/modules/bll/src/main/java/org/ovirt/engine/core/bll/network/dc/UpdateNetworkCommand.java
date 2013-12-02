@@ -112,6 +112,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorNew.mtuValid())
                 && validate(validatorNew.networkPrefixValid())
                 && validate(validatorNew.vlanIdNotUsed())
+                && validate(validatorNew.qosExistsInDc())
                 && validate(validatorOld.networkIsSet())
                 && validate(validatorOld.notRenamingManagementNetwork(getNetwork()))
                 && validate(validatorNew.networkNameNotUsed())

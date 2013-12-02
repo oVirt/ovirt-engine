@@ -71,6 +71,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
                 && validate(validator.networkPrefixValid())
                 && validate(validator.networkNameNotUsed())
                 && validate(validator.vlanIdNotUsed())
+                && validate(validator.qosExistsInDc())
                 && (!getNetwork().isExternal() || externalNetworkValid(validator));
     }
 
