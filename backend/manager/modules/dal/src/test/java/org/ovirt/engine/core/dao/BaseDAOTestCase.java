@@ -79,10 +79,6 @@ public abstract class BaseDAOTestCase {
                 "/fixtures.xml"));
     }
 
-    protected void setUpDatabaseConfig(DatabaseConfig config) {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataFactory);
-    }
-
     protected static IDatabaseConnection getConnection() throws Exception {
         // get connection and setup it's meta data
         Connection con = dataSource.getConnection();
