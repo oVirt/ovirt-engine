@@ -2,17 +2,12 @@ package org.ovirt.engine.core.compat;
 
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateTime extends Date {
     private static final String dayNames[] = new DateFormatSymbols().getWeekdays();
-
-    public DateTime(int year, int month, int date) {
-        this(new Date(year, month, date));
-    }
 
     public DateTime() {
         this(getMinValue());
@@ -42,21 +37,6 @@ public class DateTime extends Date {
 
     public DayOfWeek getDayOfWeek() {
         return DayOfWeek.forValue(this.getDay());
-    }
-
-    public String toString(String formatString) {
-        // c# compatibility
-        boolean compat = false;
-        if (formatString.equals("yyyy-MM-ddTHH:mm:ss")) {
-            formatString = "yyyy-MM-ddHH:mm:ss";
-            compat = true;
-        }
-        SimpleDateFormat fmt = new SimpleDateFormat(formatString);
-        String returnedValue = fmt.format(this);
-        if (compat) {
-            returnedValue = returnedValue.substring(0, 10) + "T" + returnedValue.substring(10);
-        }
-        return returnedValue;
     }
 
     public String toString(DateFormat dateFormat) {
