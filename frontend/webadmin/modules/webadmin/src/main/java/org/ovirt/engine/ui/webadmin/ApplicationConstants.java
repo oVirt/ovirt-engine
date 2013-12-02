@@ -3304,6 +3304,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster :")
     String rebalanceClusterVolume();
 
+    @DefaultStringValue("Rebalance in progress but status unknown. Unable to fetch the status at the moment.")
+    String rebalanceStatusUnknown();
+
     @DefaultStringValue("Brick removal in progress")
     String removeBrickInProgress();
 
@@ -3315,6 +3318,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Migration completed, pending commit")
     String removeBrickCommitRequired();
+
+    @DefaultStringValue("Remove brick in progress but status unknown. Unable to fetch the status at the moment.")
+    String removeBrickStatusUnknown();
 
     //Volume Rebalance Status Table Columns
     @DefaultStringValue("Host")

@@ -53,6 +53,10 @@ public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends Abst
                 taskImage = resources.rebalanceCompleted();
                 tooltip = constants.rebalanceCompleted();
                 break;
+            case UNKNOWN:
+                taskImage = resources.questionMarkImage();
+                tooltip = constants.rebalanceStatusUnknown();
+                break;
             default:
                 taskImage = null;
                 tooltip = ""; //$NON-NLS-1$
@@ -75,6 +79,10 @@ public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends Abst
             case FINISHED:
                 taskImage = resources.removeBrickCommitRequired();
                 tooltip = constants.removeBrickCommitRequired();
+                break;
+            case UNKNOWN:
+                taskImage = resources.questionMarkImage();
+                tooltip = constants.removeBrickStatusUnknown();
                 break;
             default:
                 taskImage = null;
