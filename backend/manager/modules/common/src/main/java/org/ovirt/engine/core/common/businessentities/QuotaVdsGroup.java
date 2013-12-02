@@ -84,16 +84,6 @@ public class QuotaVdsGroup extends IVdcQueryable implements Serializable {
         this.memSizeMBUsage = memSizeMBUsage;
     }
 
-    public QuotaVdsGroup(QuotaVdsGroup quotaVdsGroup) {
-        this.quotaVdsGroupId = quotaVdsGroup.getVdsGroupId();
-        this.quotaId = quotaVdsGroup.getQuotaId();
-        this.vdsGroupId = quotaVdsGroup.getVdsGroupId();
-        this.virtualCpu = quotaVdsGroup.getVirtualCpu();
-        this.virtualCpuUsage = quotaVdsGroup.getVirtualCpuUsage();
-        this.memSizeMB = quotaVdsGroup.getMemSizeMB();
-        this.memSizeMBUsage = quotaVdsGroup.getMemSizeMBUsage();
-    }
-
     /**
      * @return the quotaId
      */
