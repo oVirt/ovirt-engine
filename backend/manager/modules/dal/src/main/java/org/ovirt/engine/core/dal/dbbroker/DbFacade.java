@@ -251,27 +251,6 @@ public class DbFacade {
         return dbResults.get(resultKey) != null ? dbResults.get(resultKey).toString() : null;
     }
 
-    /**
-     * Get the column size as defined in database for char/varchar colmuns
-     *
-     * @param table
-     *            table name
-     * @param column
-     *            column name
-     * @return the column size (number of characters allowed)
-     */
-    public int getColumnSize(String table, String column) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("table", table)
-                .addValue("column", column);
-
-        Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withFunctionName("fn_get_column_size").execute(
-                        parameterSource);
-
-        String resultKey = dbEngineDialect.getFunctionReturnKey();
-        return dbResults.get(resultKey) != null ? ((Integer) dbResults.get(resultKey)).intValue() : -1;
-    }
-
     public boolean isStoragePoolMasterUp(Guid storagePoolId) {
         List<StorageDomain> domains = getStorageDomainDao().getAllForStoragePool(storagePoolId);
         StorageDomain master = LinqUtils.firstOrNull(domains, new Predicate<StorageDomain>() {
