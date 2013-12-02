@@ -28,6 +28,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     // Score 0 means no HA agents are on this host
     // Positive score means there is an agent
     private Integer highlyAvailableScore;
+    private int anonymousHugePages;
 
     public VdsStatistics() {
         this.cpu_idle = BigDecimal.ZERO;
@@ -41,6 +42,14 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         swap_total = 0L;
         ksm_pages = 0L;
         highlyAvailableScore = 0;
+    }
+
+    public int getAnonymousHugePages() {
+        return this.anonymousHugePages;
+    }
+
+    public void setAnonymousHugePages(int value) {
+        this.anonymousHugePages = value;
     }
 
     @Override
@@ -63,6 +72,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         result = prime * result + ((swap_total == null) ? 0 : swap_total.hashCode());
         result = prime * result + ((swap_free == null) ? 0 : swap_free.hashCode());
         result = prime * result + ((highlyAvailableScore == null) ? 0 : highlyAvailableScore.hashCode());
+        result = prime * result + anonymousHugePages;
         return result;
     }
 
@@ -93,7 +103,8 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(ksm_cpu_percent, other.ksm_cpu_percent)
                 && ObjectUtils.objectsEqual(swap_total, other.swap_total)
                 && ObjectUtils.objectsEqual(swap_free, other.swap_free)
-                && ObjectUtils.objectsEqual(highlyAvailableScore, other.highlyAvailableScore));
+                && ObjectUtils.objectsEqual(highlyAvailableScore, other.highlyAvailableScore)
+                && (anonymousHugePages == other.anonymousHugePages));
     }
 
     public Double getcpu_idle() {

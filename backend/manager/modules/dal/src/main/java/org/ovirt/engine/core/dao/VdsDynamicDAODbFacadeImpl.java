@@ -77,7 +77,6 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                     .getString("iscsi_initiator_name"));
             entity.setTransparentHugePagesState(VdsTransparentHugePagesState
                     .forValue(rs.getInt("transparent_hugepages_state")));
-            entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
             entity.setHooksStr(rs.getString("hooks"));
             entity.setNonOperationalReason(NonOperationalReason.forValue(rs
                     .getInt("non_operational_reason")));
@@ -143,7 +142,6 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
                 .addValue("transparent_hugepages_state",
                         vds.getTransparentHugePagesState().getValue())
-                .addValue("anonymous_hugepages", vds.getAnonymousHugePages())
                 .addValue("hooks", vds.getHooksStr())
                 .addValue("non_operational_reason",
                         vds.getNonOperationalReason().getValue())
@@ -202,7 +200,6 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
                 .addValue("transparent_hugepages_state",
                         vds.getTransparentHugePagesState().getValue())
-                .addValue("anonymous_hugepages", vds.getAnonymousHugePages())
                 .addValue("hooks", vds.getHooksStr())
                 .addValue("non_operational_reason",
                         vds.getNonOperationalReason().getValue())

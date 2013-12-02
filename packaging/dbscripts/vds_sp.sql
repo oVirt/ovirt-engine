@@ -24,14 +24,15 @@ Create or replace FUNCTION InsertVdsStatistics(v_cpu_idle DECIMAL(18,0) ,
  v_ksm_cpu_percent INTEGER ,
  v_ksm_pages BIGINT ,
  v_ksm_state BOOLEAN,
- v_ha_score INTEGER)
+ v_ha_score INTEGER,
+ v_anonymous_hugepages INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
 
    BEGIN
-INSERT INTO vds_statistics(cpu_idle, cpu_load, cpu_sys, cpu_user, usage_cpu_percent, usage_mem_percent, usage_network_percent, vds_id, mem_available, mem_free, mem_shared,swap_free,swap_total,ksm_cpu_percent,ksm_pages,ksm_state, ha_score)
-	VALUES(v_cpu_idle, v_cpu_load, v_cpu_sys, v_cpu_user, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_vds_id, v_mem_available, v_mem_free, v_mem_shared,v_swap_free,v_swap_total,v_ksm_cpu_percent,v_ksm_pages,v_ksm_state, v_ha_score);
+INSERT INTO vds_statistics(cpu_idle, cpu_load, cpu_sys, cpu_user, usage_cpu_percent, usage_mem_percent, usage_network_percent, vds_id, mem_available, mem_free, mem_shared,swap_free,swap_total,ksm_cpu_percent,ksm_pages,ksm_state, ha_score,anonymous_hugepages)
+	VALUES(v_cpu_idle, v_cpu_load, v_cpu_sys, v_cpu_user, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_vds_id, v_mem_available, v_mem_free, v_mem_shared,v_swap_free,v_swap_total,v_ksm_cpu_percent,v_ksm_pages,v_ksm_state, v_ha_score,v_anonymous_hugepages);
    END;
 
    RETURN;
@@ -53,12 +54,13 @@ Create or replace FUNCTION UpdateVdsStatistics(v_cpu_idle DECIMAL(18,0) ,
  v_mem_available BIGINT ,
  v_mem_free BIGINT,
  v_mem_shared BIGINT ,
-    v_swap_free BIGINT ,
+ v_swap_free BIGINT ,
  v_swap_total BIGINT ,
  v_ksm_cpu_percent INTEGER ,
  v_ksm_pages BIGINT ,
  v_ksm_state BOOLEAN,
- v_ha_score INTEGER)
+ v_ha_score INTEGER,
+ v_anonymous_hugepages INTEGER)
 RETURNS VOID
 
 	--The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -72,7 +74,8 @@ BEGIN
       usage_network_percent = v_usage_network_percent,
       mem_available = v_mem_available, mem_free = v_mem_free, mem_shared = v_mem_shared,
       swap_free = v_swap_free,swap_total = v_swap_total,ksm_cpu_percent = v_ksm_cpu_percent,
-      ksm_pages = v_ksm_pages,ksm_state = v_ksm_state, ha_score = v_ha_score, _update_date = LOCALTIMESTAMP
+      ksm_pages = v_ksm_pages,ksm_state = v_ksm_state, ha_score = v_ha_score, _update_date = LOCALTIMESTAMP,
+      anonymous_hugepages = v_anonymous_hugepages
       WHERE vds_id = v_vds_id;
    END;
 
@@ -176,7 +179,6 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_kernel_version VARCHAR(4000) ,
  v_iscsi_initiator_name VARCHAR(4000) ,
  v_transparent_hugepages_state INTEGER ,
- v_anonymous_hugepages INTEGER ,
  v_hooks VARCHAR(4000),
  v_hw_manufacturer VARCHAR(255),
  v_hw_product_name VARCHAR(255),
@@ -191,8 +193,8 @@ RETURNS VOID
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, anonymous_hugepages,hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines)
-	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_anonymous_hugepages,v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines);
+INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines)
+	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines);
    END;
 
    RETURN;
@@ -240,7 +242,6 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_kernel_version VARCHAR(4000) ,
  v_iscsi_initiator_name VARCHAR(4000) ,
  v_transparent_hugepages_state INTEGER ,
- v_anonymous_hugepages INTEGER ,
  v_hooks VARCHAR(4000),
  v_non_operational_reason INTEGER,
  v_hw_manufacturer VARCHAR(255),
@@ -277,7 +278,7 @@ BEGIN
       gluster_version = v_gluster_version,
       kernel_version = v_kernel_version,iscsi_initiator_name = v_iscsi_initiator_name,
       transparent_hugepages_state = v_transparent_hugepages_state,
-      anonymous_hugepages = v_anonymous_hugepages,hooks = v_hooks,
+      hooks = v_hooks,
       _update_date = LOCALTIMESTAMP,non_operational_reason = v_non_operational_reason,
       hw_manufacturer = v_hw_manufacturer, hw_product_name = v_hw_product_name,
       hw_version = v_hw_version, hw_serial_number = v_hw_serial_number,

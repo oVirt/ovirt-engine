@@ -98,8 +98,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.HBAs = HBAs;
     }
 
-    private int anonymousHugePages;
-
     private String hooksStr;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
@@ -549,14 +547,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.transparentHugePagesState = value;
     }
 
-    public int getAnonymousHugePages() {
-        return this.anonymousHugePages;
-    }
-
-    public void setAnonymousHugePages(int value) {
-        this.anonymousHugePages = value;
-    }
-
     public void setHooksStr(String hooksStr) {
         this.hooksStr = hooksStr;
     }
@@ -580,7 +570,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((_supportedClusterVersionsSet == null) ? 0 : _supportedClusterVersionsSet.hashCode());
         result = prime * result + ((_supportedENGINESVersionsSet == null) ? 0 : _supportedENGINESVersionsSet.hashCode());
-        result = prime * result + anonymousHugePages;
         result = prime * result + ((buildName == null) ? 0 : buildName.hashCode());
         result = prime * result + ((cpu_cores == null) ? 0 : cpu_cores.hashCode());
         result = prime * result + ((cpuThreads == null) ? 0 : cpuThreads.hashCode());
@@ -644,7 +633,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(_supportedClusterVersionsSet, other._supportedClusterVersionsSet)
                 && ObjectUtils.objectsEqual(_supportedENGINESVersionsSet, other._supportedENGINESVersionsSet)
-                && anonymousHugePages == other.anonymousHugePages
                 && ObjectUtils.objectsEqual(buildName, other.buildName)
                 && ObjectUtils.objectsEqual(cpu_cores, other.cpu_cores)
                 && ObjectUtils.objectsEqual(cpuThreads, other.cpuThreads)

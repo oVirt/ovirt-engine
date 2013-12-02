@@ -1090,11 +1090,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public int getAnonymousHugePages() {
-        return this.mVdsDynamic.getAnonymousHugePages();
+        return this.mVdsStatistics.getAnonymousHugePages();
     }
 
     public void setAnonymousHugePages(int value) {
-        this.mVdsDynamic.setAnonymousHugePages(value);
+        this.mVdsStatistics.setAnonymousHugePages(value);
     }
 
     public VdsStatic getStaticData() {

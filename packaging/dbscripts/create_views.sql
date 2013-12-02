@@ -701,7 +701,7 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       CASE WHEN storage_pool.spm_vds_id = vds_static.vds_id THEN CASE WHEN storage_pool.status = 5 THEN 1 ELSE 2 END ELSE 0 END as spm_status, vds_dynamic.supported_cluster_levels as supported_cluster_levels, vds_dynamic.supported_engines as supported_engines, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vds_groups.virt_service as vds_group_virt_service, vds_groups.gluster_service as vds_group_gluster_service,
                       vds_dynamic.host_os as host_os, vds_dynamic.kvm_version as kvm_version, vds_dynamic.libvirt_version as libvirt_version, vds_dynamic.spice_version as spice_version, vds_dynamic.gluster_version as gluster_version, vds_dynamic.kernel_version as kernel_version, vds_dynamic.iscsi_initiator_name as iscsi_initiator_name,
-                      vds_dynamic.transparent_hugepages_state as transparent_hugepages_state, vds_dynamic.anonymous_hugepages as anonymous_hugepages, vds_dynamic.non_operational_reason as non_operational_reason,
+                      vds_dynamic.transparent_hugepages_state as transparent_hugepages_state, vds_statistics.anonymous_hugepages as anonymous_hugepages, vds_dynamic.non_operational_reason as non_operational_reason,
 			vds_static.recoverable as recoverable, vds_static.sshKeyFingerprint as sshKeyFingerprint, vds_dynamic.hw_manufacturer as hw_manufacturer, vds_dynamic.hw_product_name as hw_product_name, vds_dynamic.hw_version as hw_version,
                       vds_dynamic.hw_serial_number as hw_serial_number, vds_dynamic.hw_uuid as hw_uuid, vds_dynamic.hw_family as hw_family, vds_static.console_address as console_address,
                       vds_dynamic.hbas as hbas, vds_dynamic.supported_emulated_machines as supported_emulated_machines, vds_static.ssh_port as ssh_port, vds_static.ssh_username as ssh_username, vds_statistics.ha_score as ha_score
@@ -744,7 +744,7 @@ SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_group
 spm_status, vds_dynamic.supported_cluster_levels, vds_dynamic.supported_engines,
                       vds_groups.compatibility_version AS vds_group_compatibility_version, vds_dynamic.host_os, vds_dynamic.kvm_version, vds_dynamic.libvirt_version,
                       vds_dynamic.spice_version, vds_dynamic.gluster_version, vds_dynamic.kernel_version, vds_dynamic.iscsi_initiator_name,
-                      vds_dynamic.transparent_hugepages_state, vds_dynamic.anonymous_hugepages, vds_dynamic.non_operational_reason,
+                      vds_dynamic.transparent_hugepages_state, vds_statistics.anonymous_hugepages, vds_dynamic.non_operational_reason,
                       storage_pool_iso_map.storage_id, vds_static.ssh_port, vds_static.ssh_username, vds_statistics.ha_score as ha_score
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN

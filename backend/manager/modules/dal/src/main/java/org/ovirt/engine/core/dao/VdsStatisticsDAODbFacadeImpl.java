@@ -45,6 +45,7 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                     .getObject("ksm_cpu_percent"));
             entity.setksm_pages(rs.getLong("ksm_pages"));
             entity.setksm_state((Boolean) rs.getObject("ksm_state"));
+            entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
             return entity;
         }
     }
@@ -79,7 +80,8 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                 .addValue("ksm_cpu_percent", stats.getksm_cpu_percent())
                 .addValue("ksm_pages", stats.getksm_pages())
                 .addValue("ksm_state", stats.getksm_state())
-                .addValue("ha_score", stats.getHighlyAvailableScore());
+                .addValue("ha_score", stats.getHighlyAvailableScore())
+                .addValue("anonymous_hugepages", stats.getAnonymousHugePages());
 
         getCallsHandler().executeModification("InsertVdsStatistics", parameterSource);
     }
@@ -104,7 +106,8 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                 .addValue("ksm_cpu_percent", stats.getksm_cpu_percent())
                 .addValue("ksm_pages", stats.getksm_pages())
                 .addValue("ksm_state", stats.getksm_state())
-                .addValue("ha_score", stats.getHighlyAvailableScore());
+                .addValue("ha_score", stats.getHighlyAvailableScore())
+                .addValue("anonymous_hugepages", stats.getAnonymousHugePages());
 
         getCallsHandler().executeModification("UpdateVdsStatistics", parameterSource);
     }
