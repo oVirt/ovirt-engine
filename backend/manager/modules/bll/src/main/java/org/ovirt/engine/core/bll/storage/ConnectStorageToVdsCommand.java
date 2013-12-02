@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -21,7 +24,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
     @Override
     protected void executeCommand() {
-        Pair<Boolean, Integer> result = connect(getVds().getId());
+        Pair<Boolean, Integer> result = connectHostToStorage();
         setSucceeded(result.getFirst());
         if (!result.getFirst()) {
             setErrorMessageAtReturn(result);
@@ -41,22 +44,16 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     }
 
     protected Pair<Boolean, Integer> connectHostToStorage() {
-            Guid vdsId = getVds().getId();
-            Pair<Boolean, Integer> result = connect(vdsId);
-            return result;
-    }
+        List<StorageServerConnections> connections = Arrays.asList(getConnection());
 
-    protected Pair<Boolean, Integer> connect(Guid vdsId) {
-        java.util.HashMap<String, String> result = (java.util.HashMap<String, String>) runVdsCommand(
-                        VDSCommandType.ConnectStorageServer,
-                        new StorageServerConnectionManagementVDSParameters(vdsId, Guid.Empty,
-                                getParameters().getStorageServerConnection().getstorage_type(),
-                                new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
-                                        .asList(new StorageServerConnections[] { getConnection() }))))
-                .getReturnValue();
-        return new Pair<Boolean, Integer>(StorageHelperDirector.getInstance()
-                .getItem(getParameters().getStorageServerConnection().getstorage_type())
-                .isConnectSucceeded(result, Arrays.asList(getConnection())),
+        Map<String, String> result = (HashMap<String, String>) runVdsCommand(
+                VDSCommandType.ConnectStorageServer,
+                new StorageServerConnectionManagementVDSParameters(getVds().getId(), Guid.Empty,
+                        getConnection().getstorage_type(), connections)).getReturnValue();
+
+        return new Pair<>(StorageHelperDirector.getInstance()
+                .getItem(getConnection().getstorage_type())
+                .isConnectSucceeded(result, connections),
                 Integer.parseInt(result.values().iterator().next()));
     }
 }
