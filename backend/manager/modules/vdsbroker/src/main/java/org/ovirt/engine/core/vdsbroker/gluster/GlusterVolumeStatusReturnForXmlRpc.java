@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
@@ -15,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.MallInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.MemoryStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.compat.Guid;
@@ -121,12 +122,12 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             String brickStatus = (String) volumeServiceInfo.get(STATUS);
             if (brickStatus.toUpperCase().equals(ONLINE)) {
                 serviceInfo.setStatus(GlusterServiceStatus.RUNNING);
-                // parse the port and pid only if the brick is online.
-                if (volumeServiceInfo.containsKey(PORT)) {
+                // parse the port and pid only if the service is running.
+                if (volumeServiceInfo.containsKey(PORT) && StringUtils.isNumeric((String)volumeServiceInfo.get(PORT))) {
                     serviceInfo.setPort(Integer.parseInt((String) volumeServiceInfo.get(PORT)));
                 }
 
-                if (volumeServiceInfo.containsKey(PID)) {
+                if (volumeServiceInfo.containsKey(PID) && StringUtils.isNumeric((String)volumeServiceInfo.get(PID))) {
                     serviceInfo.setPid(Integer.parseInt((String) volumeServiceInfo.get(PID)));
                 }
             } else {
@@ -176,9 +177,14 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
                 brickProperties.setStatus(GlusterStatus.UP);
 
                 if (brick.containsKey(PORT)) {
-                    brickProperties.setPort(Integer.parseInt((String) brick.get(PORT)));
+                    if (StringUtils.isNumeric((String)brick.get(PORT))) {
+                        brickProperties.setPort(Integer.parseInt((String) brick.get(PORT)));
+                    } else {
+                        //if there's no port registered, then the brick status is down.
+                        brickProperties.setStatus(GlusterStatus.DOWN);
+                    }
                 }
-                if (brick.containsKey(PID)) {
+                if (brick.containsKey(PID) && StringUtils.isNumeric((String)brick.get(PID))) {
                     brickProperties.setPid(Integer.parseInt((String) brick.get(PID)));
                 }
             } else {
