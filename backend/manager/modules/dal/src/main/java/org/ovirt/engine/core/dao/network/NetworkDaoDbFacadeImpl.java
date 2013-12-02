@@ -155,6 +155,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
                         network.getProvidedBy() == null ? null : network.getProvidedBy().getProviderId())
                 .addValue("provider_network_external_id",
                         network.getProvidedBy() == null ? null : network.getProvidedBy().getExternalId())
+                .addValue("qos_id", network.getQosId())
                 .addValue("label", network.getLabel());
     }
 
@@ -204,6 +205,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
                         providerId,
                         rs.getString("provider_network_external_id")));
             }
+            entity.setQosId(getGuid(rs, "qos_id"));
 
             entity.setLabel(rs.getString("label"));
             return entity;

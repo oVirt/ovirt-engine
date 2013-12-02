@@ -43,6 +43,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private int mtu;
     private boolean bridged;
     private NetworkImplementationDetails networkImplementationDetails;
+    private NetworkQoS qos;
 
     @ValidNetworkLabelFormat(message = "NETWORK_LABEL_FORMAT_INVALID")
     private Set<String> labels;
@@ -326,6 +327,20 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.networkImplementationDetails = networkImplementationDetails;
     }
 
+    /**
+     * Gets the QoS reported by VDSM.
+     */
+    public NetworkQoS getQos() {
+        return qos;
+    }
+
+    /**
+     * Sets the QoS reported by VDSM.
+     */
+    public void setQos(NetworkQoS qos) {
+        this.qos = qos;
+    }
+
     public Set<String> getLabels() {
         return labels;
     }
@@ -372,6 +387,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append(getType())
                 .append(", networkImplementationDetails=")
                 .append(getNetworkImplementationDetails())
+                .append(", qos=")
+                .append(getQos())
                 .append(", labels=")
                 .append(getLabels())
                 .append("}");
@@ -395,6 +412,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
         result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
         result = prime * result + ((vlanId == null) ? 0 : vlanId.hashCode());
+        result = prime * result + ((qos == null) ? 0 : qos.hashCode());
         result = prime * result + ((labels == null) ? 0 : labels.hashCode());
         return result;
     }
@@ -484,6 +502,9 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 return false;
             }
         } else if (!vlanId.equals(other.vlanId)) {
+            return false;
+        }
+        if (!ObjectUtils.objectsEqual(qos, other.qos)) {
             return false;
         }
         if (!ObjectUtils.objectsEqual(labels, other.labels)) {

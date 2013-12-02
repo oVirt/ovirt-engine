@@ -15,6 +15,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,6 +33,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
     private VdsNetworkInterface existingVdsInterface;
     private VdsNetworkInterface newVdsInterface;
     private VdsNetworkStatistics newVdsStatistics;
+    private NetworkQoS newQos;
 
     @Override
     public void setUp() throws Exception {
@@ -39,6 +41,11 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
 
         dao = dbFacade.getInterfaceDao();
         existingVdsInterface = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
+
+        newQos = new NetworkQoS();
+        newQos.setInboundAverage(30);
+        newQos.setInboundPeak(30);
+        newQos.setInboundBurst(30);
 
         newVdsInterface = new VdsNetworkInterface();
         newVdsInterface.setStatistics(new VdsNetworkStatistics());
@@ -53,6 +60,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         newVdsInterface.setMacAddress("01:C0:81:21:71:17");
         newVdsInterface.setGateway("192.168.122.1");
         newVdsInterface.setMtu(1500);
+        newVdsInterface.setQos(newQos);
 
         newVdsStatistics = newVdsInterface.getStatistics();
     }
@@ -92,8 +100,9 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         boolean found = false;
 
         for (VdsNetworkInterface iface : result) {
-            found |= iface.getName()
-                    .equals(newVdsInterface.getName());
+            found |=
+                    iface.getName().equals(newVdsInterface.getName())
+                            && iface.getQos().equals(newVdsInterface.getQos());
         }
 
         assertTrue(found);
@@ -112,6 +121,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
             found |= (FixturesTool.VDS_NETWORK_INTERFACE.equals(iface.getId()));
         }
         assertTrue(found);
+        assertNotNull(dbFacade.getQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));
 
         dao.removeInterfaceFromVds(FixturesTool.VDS_NETWORK_INTERFACE);
 
@@ -120,6 +130,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         for (VdsNetworkInterface iface : after) {
             assertNotSame(FixturesTool.VDS_NETWORK_INTERFACE, iface.getId());
         }
+        assertNull(dbFacade.getQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));
     }
 
     /**
@@ -147,26 +158,33 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         }
     }
 
-    /**
-     * Ensures updating an interface works for VDS.
-     */
-    @Test
-    public void testUpdateInterfaceForVds() {
-        List<VdsNetworkInterface> before = dao.getAllInterfacesForVds(VDS_ID);
-        VdsNetworkInterface iface = before.get(0);
+    private void testUpdateInterface(Guid interface_id) {
+        VdsNetworkInterface iface = dao.get(interface_id);
 
         iface.setName(iface.getName().toUpperCase());
+        iface.setQos(newQos);
 
         dao.updateInterfaceForVds(iface);
 
-        List<VdsNetworkInterface> after = dao.getAllInterfacesForVds(VDS_ID);
-        boolean found = false;
+        VdsNetworkInterface ifaced = dao.get(interface_id);
+        assertEquals(iface.getName(), ifaced.getName());
+        assertEquals(iface.getQos(), ifaced.getQos());
+    }
 
-        for (VdsNetworkInterface ifaced : after) {
-            found |= ifaced.getName().equals(iface.getName());
-        }
+    /**
+     * Ensures updating an interface works, while also updating its previous QoS configuration.
+     */
+    @Test
+    public void testUpdateInterfaceWithQos() {
+        testUpdateInterface(FixturesTool.VDS_NETWORK_INTERFACE);
+    }
 
-        assertTrue(found);
+    /**
+     * Ensures updating an interface works, including a newly-reported QoS configuration.
+     */
+    @Test
+    public void testUpdateInterfaceWithoutQos() {
+        testUpdateInterface(FixturesTool.VDS_NETWORK_INTERFACE_WITHOUT_QOS);
     }
 
     /**

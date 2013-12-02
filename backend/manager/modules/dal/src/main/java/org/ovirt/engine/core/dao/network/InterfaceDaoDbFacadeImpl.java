@@ -11,11 +11,13 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -43,11 +45,15 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     public void updateAllInBatch(String procedureName,
             Collection<VdsNetworkInterface> paramValues,
             MapSqlParameterMapper<VdsNetworkInterface> mapper) {
+        for (VdsNetworkInterface entity : paramValues) {
+            persistQosChanges(entity);
+        }
         getCallsHandler().executeStoredProcAsBatch(procedureName, paramValues, mapper);
     }
 
     @Override
     public void saveInterfaceForVds(VdsNetworkInterface nic) {
+        persistQosChanges(nic);
         MapSqlParameterSource parameterSource = createInterfaceParametersMapper(nic);
         getCallsHandler().executeModification("Insertvds_interface", parameterSource);
     }
@@ -92,6 +98,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
 
     @Override
     public void updateInterfaceForVds(VdsNetworkInterface nic) {
+        persistQosChanges(nic);
         getCallsHandler().executeModification("Updatevds_interface", createInterfaceParametersMapper(nic));
     }
 
@@ -116,6 +123,25 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("mtu", nic.getMtu())
                 .addValue("bridged", nic.isBridged())
                 .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()));
+    }
+
+    private void persistQosChanges(VdsNetworkInterface entity) {
+        NetworkQoSDao qosDao = DbFacade.getInstance().getQosDao();
+        Guid id = entity.getId();
+        NetworkQoS oldQos = qosDao.get(id);
+        NetworkQoS qos = entity.getQos();
+        if (qos == null) {
+            if (oldQos != null) {
+                qosDao.remove(id);
+            }
+        } else {
+            qos.setId(id);
+            if (oldQos == null) {
+                qosDao.save(qos);
+            } else if (!qos.equals(oldQos)) {
+                qosDao.update(qos);
+            }
+        }
     }
 
     @Override
@@ -165,6 +191,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
+        DbFacade.getInstance().getQosDao().remove(id);
         getCallsHandler().executeModification("Deletevds_interface", parameterSource);
     }
 
@@ -246,6 +273,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
+                    entity.setQos(DbFacade.getInstance().getQosDao().get(entity.getId()));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                             HashSet.class));
                     return entity;

@@ -1004,6 +1004,17 @@
             <value>1400</value>
             <value>500</value>
         </row>
+        <row>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
+            <null />
+            <null />
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
+        </row>
     </table>
 
     <table name="vnic_profiles">
@@ -4025,6 +4036,27 @@
             <value>[ "aaa", "bbb", "abc" ]</value>
         </row>
         <row>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9df</value>
+            <value>eth1</value>
+            <value>engine3</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>78:E7:D1:E4:8C:73</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>1000</value>
+            <value>10.35.110.13</value>
+            <value>255.255.255.0</value>
+            <null />
+            <value>1</value>
+            <value>2</value>
+            <value>2010-11-12 10:12:41</value>
+            <value>2010-11-12 15:57:01</value>
+            <null />
+            <null />
+        </row>
+        <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
             <value>eth0</value>
             <value>engine2</value>
@@ -4079,6 +4111,16 @@
         <column>_update_date</column>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
+            <null />
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+        </row>
+        <row>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9df</value>
             <null />
             <value>0</value>
             <value>0</value>

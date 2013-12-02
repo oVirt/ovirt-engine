@@ -56,7 +56,7 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllNetworkQos() {
-        assertTrue(dao.getAll().size() == 3);
+        assertTrue(dao.getAll().size() == 4);
     }
 
     /**

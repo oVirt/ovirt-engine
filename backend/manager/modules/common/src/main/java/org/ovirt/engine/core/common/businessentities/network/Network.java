@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Commented;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
@@ -69,6 +70,8 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     @MTU
     private int mtu;
+
+    private Guid qosId;
 
     public Network() {
         vmNetwork = true;
@@ -246,6 +249,8 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
                 .append(getProvidedBy())
                 .append(", label=")
                 .append(getLabel())
+                .append(", qosId=")
+                .append(getQosId())
                 .append("}");
         return builder.toString();
     }
@@ -272,6 +277,7 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
         result = prime * result + ((vmNetwork) ? 11 : 13);
         result = prime * result + ((providedBy == null) ? 0 : providedBy.hashCode());
         result = prime * result + ((label == null) ? 0 : label.hashCode());
+        result = prime * result + ((qosId == null) ? 0 : qosId.hashCode());
         return result;
     }
 
@@ -354,6 +360,9 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
                 return false;
         } else if (!label.equals(other.label))
             return false;
+        if (!ObjectUtils.objectsEqual(qosId, other.qosId)) {
+            return false;
+        }
         return true;
     }
 
@@ -371,5 +380,19 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     public void setVmNetwork(boolean vmNetwork) {
         this.vmNetwork = vmNetwork;
+    }
+
+    /**
+     * Gets the ID of the QoS entity configured on this network.
+     */
+    public Guid getQosId() {
+        return qosId;
+    }
+
+    /**
+     * Sets the ID of the QoS entity configured on this network.
+     */
+    public void setQosId(Guid qosId) {
+        this.qosId = qosId;
     }
 }
