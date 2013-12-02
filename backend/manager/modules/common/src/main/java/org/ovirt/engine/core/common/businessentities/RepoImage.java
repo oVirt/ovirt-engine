@@ -11,10 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class RepoImage extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 566928138057530047L;
     private Guid storagePoolId;
-    private StoragePoolStatus storagePoolStatus;
-    private VDSStatus vdsStatus;
     private Guid repoDomainId;
-    private StorageDomainStatus storageDomainStatus;
     private String repoImageId;
     private String repoImageName;
     private long size;
@@ -48,36 +45,6 @@ public class RepoImage extends IVdcQueryable implements Serializable {
     }
 
     /**
-     * @param storagePoolStatus
-     *            the storage pool id to set
-     */
-    public void setStoragePoolStatus(StoragePoolStatus storagePoolStatus) {
-        this.storagePoolStatus = storagePoolStatus;
-    }
-
-    /**
-     * @return the storagePoolStatus
-     */
-    public StoragePoolStatus getStoragePoolStatus() {
-        return storagePoolStatus;
-    }
-
-    /**
-     * @param vdsStatus
-     *            the vds status to set
-     */
-    public void setVdsStatus(VDSStatus vdsStatus) {
-        this.vdsStatus = vdsStatus;
-    }
-
-    /**
-     * @return the vds status.
-     */
-    public VDSStatus getVdsStatus() {
-        return vdsStatus;
-    }
-
-    /**
      * @param repoDomainId
      *            the repository domain Id to set.
      */
@@ -90,21 +57,6 @@ public class RepoImage extends IVdcQueryable implements Serializable {
      */
     public Guid getRepoDomainId() {
         return repoDomainId;
-    }
-
-    /**
-     * @param storageDomainStatus
-     *            the storage domain status to set
-     */
-    public void setStorageDomainStatus(StorageDomainStatus storageDomainStatus) {
-        this.storageDomainStatus = storageDomainStatus;
-    }
-
-    /**
-     * @return the storage domain status.
-     */
-    public StorageDomainStatus getStorageDomainStatus() {
-        return storageDomainStatus;
     }
 
     /**
