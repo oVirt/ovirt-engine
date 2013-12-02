@@ -305,6 +305,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         posixDataModel.setRole(StorageDomainType.Data);
         items.add(posixDataModel);
 
+        GlusterStorageModel GlusterDataModel = new GlusterStorageModel();
+        GlusterDataModel.setRole(StorageDomainType.Data);
+        items.add(GlusterDataModel);
+
         PosixStorageModel posixIsoModel = new PosixStorageModel();
         posixIsoModel.setRole(StorageDomainType.ISO);
         items.add(posixIsoModel);
@@ -316,10 +320,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         NfsStorageModel nfsExportModel = new NfsStorageModel();
         nfsExportModel.setRole(StorageDomainType.ImportExport);
         items.add(nfsExportModel);
-
-        GlusterStorageModel GlusterDataModel = new GlusterStorageModel();
-        GlusterDataModel.setRole(StorageDomainType.Data);
-        items.add(GlusterDataModel);
 
         model.setItems(items);
 
