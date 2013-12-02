@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmDeviceTest {
 
-
+    @Test
     public void testSelfAndIdentifyEquality() {
         Guid vmId = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463");
         Guid deviceId = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2464");
