@@ -310,7 +310,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
      * is set to True, an Inactive domain will be returned in case that no domain in Active/Unknown status was found.
      * @return an elected master domain or null
      */
-    protected StorageDomain electNewMaster(boolean duringReconstruct, boolean selectInactiveWhenNoActiveUnknownDomains) {
+    protected StorageDomain electNewMaster(boolean duringReconstruct, boolean selectInactiveWhenNoActiveUnknownDomains, boolean canChooseCurrentMasterAsNewMaster) {
         StorageDomain newMaster = null;
         if (getStoragePool() != null) {
             List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
@@ -320,7 +320,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 for (StorageDomain dbStorageDomain : storageDomains) {
                     if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
                             .equals(storageDomain.getId())))
-                            && dbStorageDomain.getStorageDomainType() == StorageDomainType.Data) {
+                            && ((dbStorageDomain.getStorageDomainType() == StorageDomainType.Data)
+                            ||
+                            (canChooseCurrentMasterAsNewMaster && dbStorageDomain.getStorageDomainType() == StorageDomainType.Master))) {
                         if (dbStorageDomain.getStatus() == StorageDomainStatus.Active
                                 || dbStorageDomain.getStatus() == StorageDomainStatus.Unknown) {
                             newMaster = dbStorageDomain;
@@ -343,7 +345,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
      * @return an elected master domain or null
      */
     protected StorageDomain electNewMaster(boolean duringReconstruct) {
-        return electNewMaster(duringReconstruct, false);
+        return electNewMaster(duringReconstruct, false, false);
     }
 
     @Override

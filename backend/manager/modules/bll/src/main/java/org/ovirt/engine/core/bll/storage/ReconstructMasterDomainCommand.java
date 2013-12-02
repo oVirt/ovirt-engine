@@ -48,6 +48,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         super(parameters);
         _newMasterStorageDomainId = parameters.getNewMasterDomainId();
         canChooseInactiveDomainAsMaster = parameters.isCanChooseInactiveDomainAsMaster();
+        canChooseCurrentMasterAsNewMaster = parameters.isCanChooseCurrentMasterAsNewMaster();
     }
 
     private boolean checkIsDomainLocked(StoragePoolIsoMap domainMap) {
@@ -94,8 +95,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     protected boolean reconstructMaster() {
         proceedStorageDomainTreatmentByDomainType(true);
 
-        // To issue a reconstructMaster you need to set the domain inactive
-        if (getParameters().isInactive()) {
+        // To issue a reconstructMaster you need to set the domain inactive unless the selected domain is the current master
+        if (getParameters().isInactive() && !getStorageDomain().getId().equals(_newMasterStorageDomainId)) {
             executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {

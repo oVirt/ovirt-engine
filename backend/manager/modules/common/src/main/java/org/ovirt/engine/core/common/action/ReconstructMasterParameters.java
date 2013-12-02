@@ -7,6 +7,7 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
 
     private Guid privateNewMasterDomainId;
     private boolean canChooseInactiveDomainAsMaster;
+    private boolean canChooseCurrentMasterAsNewMaster;
 
     public ReconstructMasterParameters() {
         privateNewMasterDomainId = Guid.Empty;
@@ -18,9 +19,10 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
         setInactive(isInactive);
     }
 
-    public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, boolean isInactive, boolean canChooseInactiveDomainAsMaster) {
+    public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, boolean isInactive, boolean canChooseInactiveDomainAsMaster, boolean canChooseCurrentMasterAsNewMaster) {
         this(storagePoolId, storageDomainId, isInactive);
         setCanChooseInactiveDomainAsMaster(canChooseInactiveDomainAsMaster);
+        setCanChooseCurrentMasterAsNewMaster(canChooseCurrentMasterAsNewMaster);
     }
 
     public ReconstructMasterParameters(Guid storagePoolId, Guid newMasterDomainId) {
@@ -42,5 +44,13 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
 
     public void setNewMasterDomainId(Guid value) {
         privateNewMasterDomainId = value;
+    }
+
+    public boolean isCanChooseCurrentMasterAsNewMaster() {
+        return canChooseCurrentMasterAsNewMaster;
+    }
+
+    public void setCanChooseCurrentMasterAsNewMaster(boolean canChooseCurrentMasterAsNewMaster) {
+        this.canChooseCurrentMasterAsNewMaster = canChooseCurrentMasterAsNewMaster;
     }
 }
