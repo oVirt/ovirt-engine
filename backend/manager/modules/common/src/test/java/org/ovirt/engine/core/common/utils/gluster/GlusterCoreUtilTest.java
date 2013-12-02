@@ -54,6 +54,7 @@ public class GlusterCoreUtilTest {
         assertEquals(brick1.getId(), brick.getId());
     }
 
+    @Test
     public void testContainsBrick() {
         List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
         bricks.add(brick1);
