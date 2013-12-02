@@ -23,8 +23,6 @@ public class VmDeviceCommonUtils {
     final static String CDROM_CHAR = "D";
     final static String DRIVE_CHAR = "C";
 
-    public final static String CDROM_IMAGE_ID = "11111111-1111-1111-1111-111111111111";
-
     public static String singlePciRamByHeads(int heads) {
         return String.valueOf(HIGH_VIDEO_MEM * heads);
     }
