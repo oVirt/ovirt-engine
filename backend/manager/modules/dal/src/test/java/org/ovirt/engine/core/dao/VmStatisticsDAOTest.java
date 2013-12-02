@@ -19,7 +19,6 @@ import org.ovirt.engine.core.compat.Guid;
  *
  */
 public class VmStatisticsDAOTest extends BaseDAOTestCase {
-    private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
     private VmStaticDAO vmStaticDao;
