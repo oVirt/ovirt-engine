@@ -298,16 +298,6 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public boolean restartVds(Guid vdsId) {
-        return Backend
-                .getInstance()
-                .runInternalAction(VdcActionType.RestartVds,
-                        new FenceVdsActionParameters(vdsId, FenceActionType.Restart),
-                        ExecutionHandler.createInternalJobContext())
-                .getSucceeded();
-    }
-
-    @Override
     public void addExternallyManagedVms(List<VmStatic> externalVmList) {
         for (VmStatic currVm : externalVmList) {
             AddVmFromScratchParameters params = new AddVmFromScratchParameters(currVm, null, null);

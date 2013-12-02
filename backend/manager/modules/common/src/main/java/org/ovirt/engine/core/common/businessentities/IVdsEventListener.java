@@ -42,8 +42,6 @@ public interface IVdsEventListener {
 
     void removeAsyncRunningCommand(Guid vmId);
 
-    // void VdsNetworkConfigurationChanged(VDS vds);
-
     void storagePoolUpEvent(StoragePool storagePool);
 
 
@@ -56,8 +54,6 @@ public interface IVdsEventListener {
     void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status);
 
     void runFailedAutoStartVM(Guid vmId);
-
-    boolean restartVds(Guid vdsId);
 
     void addExternallyManagedVms(List<VmStatic> externalVmList);
 
