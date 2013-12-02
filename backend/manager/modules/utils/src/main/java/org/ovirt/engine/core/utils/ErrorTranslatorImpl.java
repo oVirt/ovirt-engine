@@ -70,15 +70,6 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         return messages;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#TranslateErrorText(java.util.List, boolean)
-     */
-    public final List<String> TranslateErrorText(List<String> errorMsg, boolean changeIfNotFound) {
-        return translate(errorMsg, changeIfNotFound, Locale.getDefault());
-    }
-
     private final List<String> translate(List<String> errorMsg, boolean changeIfNotFound, Locale locale) {
         List<String> translatedMessages = doTranslation(errorMsg, changeIfNotFound, locale);
         return ResolveMessages(translatedMessages);
@@ -100,15 +91,6 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
      */
     public List<String> TranslateErrorText(List<String> errorMsg, Locale locale) {
         return translate(errorMsg, true, locale);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.ovirt.engine.core.utils.ErrorTranslator#TranslateMessages(java.util.List, boolean)
-     */
-    public final List<String> TranslateMessages(List<String> errorMsg, boolean changeIfNotFound) {
-        return doTranslation(errorMsg, changeIfNotFound, Locale.getDefault());
     }
 
     public final List<String> doTranslation(List<String> errorMsg, boolean changeIfNotFound, Locale locale) {

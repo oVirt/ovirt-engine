@@ -4,21 +4,6 @@ import java.util.List;
 import java.util.Locale;
 
 public interface ErrorTranslator {
-
-    /**
-     * Translate errors from error types. error messages contains errors and variables. Variable used in messages.
-     * Variable definition must be in format: $variableName variableValue. Variable usage must be in format
-     * #variableName
-     *
-     * @param errorMsg
-     *            messages to be translated
-     * @param changeIfNotFound
-     *            If true: if message key is not found in the resource, return a beautified key. If false, returned
-     *            unfound key as is.
-     * @return
-     */
-    List<String> TranslateErrorText(List<String> errorMsg, boolean changeIfNotFound);
-
     /**
      * Translates and resolves errors from error types. error messages contains errors and variables. Variable used in
      * messages. Variable definition must be in format: $variableName variableValue. Variable usage must be in format
@@ -42,8 +27,6 @@ public interface ErrorTranslator {
      * @return
      */
     List<String> TranslateErrorText(List<String> errorMsg, Locale locale);
-
-    List<String> TranslateMessages(List<String> errorMsg, boolean changeIfNotFound);
 
     /**
      * returns true if the specified strMessage is in the format: "$variable-name variable-value", false otherwise.
