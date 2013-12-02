@@ -1618,7 +1618,9 @@ SELECT step.*,
 FROM gluster_volumes
 INNER JOIN job_subject_entity js ON js.entity_id = gluster_volumes.id
 INNER JOIN job on job.job_id = js.job_id
-LEFT OUTER JOIN step on step.external_id = gluster_volumes.task_id AND step.external_system_type = 'GLUSTER';
+               AND job.action_type in ('StartRebalanceGlusterVolume', 'StartRemoveGlusterVolumeBricks')
+LEFT OUTER JOIN step on step.external_id = gluster_volumes.task_id AND step.external_system_type = 'GLUSTER'
+                AND step.job_id = js.job_id;
 
 CREATE OR REPLACE VIEW gluster_server_services_view
 AS
