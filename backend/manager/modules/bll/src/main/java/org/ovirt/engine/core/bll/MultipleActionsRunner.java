@@ -19,9 +19,9 @@ public class MultipleActionsRunner {
     private static Log log = LogFactory.getLog(MultipleActionsRunner.class);
     private final static int CONCURRENT_ACTIONS = 10;
 
-    private VdcActionType _actionType = VdcActionType.Unknown;
-    private List<VdcActionParametersBase> _parameters;
-    private final ArrayList<CommandBase<?>> _commands = new ArrayList<CommandBase<?>>();
+    private VdcActionType actionType = VdcActionType.Unknown;
+    private List<VdcActionParametersBase> parameters;
+    private final ArrayList<CommandBase<?>> commands = new ArrayList<CommandBase<?>>();
     protected boolean isInternal;
 
     /**
@@ -35,23 +35,23 @@ public class MultipleActionsRunner {
     private ExecutionContext executionContext;
 
     public MultipleActionsRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, boolean isInternal) {
-        _actionType = actionType;
-        _parameters = parameters;
+        this.actionType = actionType;
+        this.parameters = parameters;
         this.isInternal = isInternal;
     }
 
     protected List<VdcActionParametersBase> getParameters() {
-        return _parameters;
+        return parameters;
     }
 
     protected ArrayList<CommandBase<?>> getCommands() {
-        return _commands;
+        return commands;
     }
 
     public ArrayList<VdcReturnValueBase> execute() {
         // sanity - don't do anything if no parameters passed
-        if (_parameters == null || _parameters.isEmpty()) {
-            log.infoFormat("{0} of type {1} invoked with no actions", this.getClass().getSimpleName(), _actionType);
+        if (parameters == null || parameters.isEmpty()) {
+            log.infoFormat("{0} of type {1} invoked with no actions", this.getClass().getSimpleName(), actionType);
             return new ArrayList<VdcReturnValueBase>();
         }
 
@@ -62,7 +62,7 @@ public class MultipleActionsRunner {
                 parameter.setMultipleAction(true);
                 returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
                 if (returnValue == null) {
-                    CommandBase<?> command = CommandsFactory.createCommand(_actionType, parameter);
+                    CommandBase<?> command = CommandsFactory.createCommand(actionType, parameter);
                     command.setInternalExecution(isInternal);
                     getCommands().add(command);
                 } else {
@@ -96,7 +96,7 @@ public class MultipleActionsRunner {
                 });
             }
         } catch (RuntimeException e) {
-            log.error("Failed to execute multiple actions of type: " + _actionType, e);
+            log.error("Failed to execute multiple actions of type: " + actionType, e);
         }
         return returnValues;
     }
