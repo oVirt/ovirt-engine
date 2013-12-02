@@ -517,16 +517,3 @@ _update_date = LOCALTIMESTAMP
 WHERE id = v_volume_id;
 END; $procedure$
 LANGUAGE plpgsql;
-
-Create or replace FUNCTION UpdateStripeCount(v_volume_id UUID,
-        v_stripe_count INTEGER)
-RETURNS VOID
-AS $procedure$
-BEGIN
-UPDATE gluster_volumes
-SET
-stripe_count = v_stripe_count,
-_update_date = LOCALTIMESTAMP
-WHERE id = v_volume_id;
-END; $procedure$
-LANGUAGE plpgsql;

@@ -68,8 +68,6 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity>, M
 
     public void updateReplicaCount(Guid volumeId, int replicaCount);
 
-    public void updateStripeCount(Guid volumeId, int stripeCount);
-
     public void updateGlusterVolume(GlusterVolumeEntity volume);
 
     public void updateVolumeTask(Guid volumeId, Guid taskId);

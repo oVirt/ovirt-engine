@@ -392,18 +392,9 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         return createVolumeIdParams(volumeId).addValue("replica_count", replicaCount);
     }
 
-    private MapSqlParameterSource createStripeCountParams(Guid volumeId, int stripeCount) {
-        return createVolumeIdParams(volumeId).addValue("stripe_count", stripeCount);
-    }
-
     @Override
     public void updateReplicaCount(Guid volumeId, int replicaCount) {
         getCallsHandler().executeModification("UpdateReplicaCount", createReplicaCountParams(volumeId, replicaCount));
-    }
-
-    @Override
-    public void updateStripeCount(Guid volumeId, int stripeCount) {
-        getCallsHandler().executeModification("UpdateStripeCount", createStripeCountParams(volumeId, stripeCount));
     }
 
     @Override
