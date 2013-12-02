@@ -88,12 +88,7 @@ public class MultipleActionsRunner {
             }
 
             if (canRunActions) {
-                ThreadPoolUtil.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        runCommands();
-                    }
-                });
+                invokeCommands();
             }
         } catch (RuntimeException e) {
             log.error("Failed to execute multiple actions of type: " + actionType, e);
@@ -156,6 +151,15 @@ public class MultipleActionsRunner {
                 executeValidatedCommand(command);
             }
         }
+    }
+
+    protected void invokeCommands() {
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                runCommands();
+            }
+        });
     }
 
     /**
