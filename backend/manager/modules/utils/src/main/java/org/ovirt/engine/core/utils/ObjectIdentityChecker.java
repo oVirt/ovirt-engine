@@ -19,8 +19,6 @@ public class ObjectIdentityChecker {
             new HashMap<String, Class<?>>();
     private static Map<Class<?>, ObjectIdentityChecker> identities =
             new HashMap<Class<?>, ObjectIdentityChecker>();
-    private static Map<Class<?>, Class<?>> statusTypes =
-            new HashMap<Class<?>, Class<?>>();
     private Map<Enum<?>, Set<String>> dictionary =
             new HashMap<Enum<?>, Set<String>>();
     private Set<String> permitted = new HashSet<String>();
@@ -38,7 +36,6 @@ public class ObjectIdentityChecker {
 
     public ObjectIdentityChecker(Class<?> type, Iterable<Class<?>> aliases, Class<?> enumType) {
         this(type, aliases);
-        statusTypes.put(type, enumType);
     }
 
     public final void setContainer(IObjectDescriptorContainer value) {
