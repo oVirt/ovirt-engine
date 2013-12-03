@@ -282,14 +282,6 @@ RETURN QUERY select 'DROP SEQUENCE if exists ' || sequence_name || ' CASCADE;' f
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION generate_drop_all_user_types_syntax() RETURNS SETOF text STABLE
-   AS $procedure$
-BEGIN
-RETURN QUERY select 'DROP TYPE if exists ' || user_defined_type_name || ' CASCADE;' from information_schema.user_defined_types where user_defined_type_schema = 'public' order by user_defined_type_name;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
 Create or replace FUNCTION fn_get_column_size( v_table varchar(64), v_column varchar(64)) returns integer STABLE
    AS $procedure$
    declare
