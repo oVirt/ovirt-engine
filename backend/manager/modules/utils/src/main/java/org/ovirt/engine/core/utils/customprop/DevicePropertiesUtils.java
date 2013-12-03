@@ -215,15 +215,6 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
     }
 
     /**
-     * Returns the list of device types for which custom properties can be set
-     *
-     * @return the list of device types for which custom properties can be set
-     */
-    public List<VmDeviceGeneralType> getSupportedDeviceTypes() {
-        return supportedDeviceTypes;
-    }
-
-    /**
      * Returns set of device types which have defined properties in specified version
      *
      * @param version
