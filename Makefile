@@ -147,6 +147,7 @@ BUILD_TARGET=install
 	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g" \
 	-e "s|@DISPLAY_VERSION@|$(DISPLAY_VERSION)|g" \
 	-e "s|@JBOSS_HOME@|$(JBOSS_HOME)|g" \
+	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
 	$< > $@
 
 # List of files that will be generated from templates:
