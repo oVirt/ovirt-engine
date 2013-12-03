@@ -22,21 +22,7 @@
         RequestHeader unset Expect early
     </IfModule>
 
-    # Legacy support of /api/
-    <IfModule rewrite_module>
-        Alias /api @OVIRT_ENGINE_DATADIR@/empty
-        <Directory @OVIRT_ENGINE_DATADIR@/empty>
-            Options Indexes FollowSymLinks
-            Order Allow,Deny
-            Allow from all
-            Satisfy Any
-            AllowOverride all
-            RewriteEngine on
-            RewriteRule ^(.*)$  /ovirt-engine/api/$1    [L]
-        </Directory>
-    </IfModule>
-
-    <LocationMatch ^/(ovirt-engine($|/)|RHEVManagerWeb/|OvirtEngineWeb/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$)>
+    <LocationMatch ^/(ovirt-engine($|/)|api($|/)|RHEVManagerWeb/|OvirtEngineWeb/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$)>
         ProxyPassMatch ajp://127.0.0.1:@JBOSS_AJP_PORT@ timeout=3600
 
         <IfModule deflate_module>

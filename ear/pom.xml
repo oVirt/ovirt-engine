@@ -204,6 +204,13 @@
             </webModule>
 
             <webModule>
+              <groupId>org.ovirt.engine.api</groupId>
+              <artifactId>restapi-webapp</artifactId>
+              <bundleFileName>legacy_restapi.war</bundleFileName>
+              <contextRoot>/api</contextRoot>
+            </webModule>
+
+            <webModule>
               <groupId>org.ovirt.engine.ui</groupId>
               <artifactId>userportal</artifactId>
               <bundleFileName>userportal.war</bundleFileName>

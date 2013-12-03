@@ -399,8 +399,6 @@ install-layout: \
 	ln -s "$(DATA_DIR)/branding/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 
-	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/empty"
-
 	# legacy-begin
 	ln -sf "$(DATA_DIR)/bin/engine-upgrade.sh" "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
 	ln -sf "$(DATA_DIR)/bin/engine-check-update.sh" "$(DESTDIR)$(BIN_DIR)/engine-check-update"
