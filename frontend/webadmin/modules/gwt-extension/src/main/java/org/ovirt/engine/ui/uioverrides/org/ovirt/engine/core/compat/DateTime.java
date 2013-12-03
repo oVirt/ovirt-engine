@@ -40,7 +40,7 @@ public class DateTime extends Date {
         return new Date(-7200000);
     }
 
-    public DateTime AddDays(int i) {
+    public DateTime addDays(int i) {
         Date date = new Date();
         CalendarUtil.addDaysToDate(date, i);
         return new DateTime(date);

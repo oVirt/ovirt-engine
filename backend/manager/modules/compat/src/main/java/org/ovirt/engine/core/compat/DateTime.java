@@ -43,21 +43,21 @@ public class DateTime extends Date {
         return dateFormat.format(this);
     }
 
-    public Date AddSeconds(int i) {
+    public Date addSeconds(int i) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(this);
         cal.add(Calendar.SECOND, i);
         return cal.getTime();
     }
 
-    public DateTime AddDays(int i) {
+    public DateTime addDays(int i) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(this);
         cal.add(Calendar.DATE, i);
         return new DateTime(cal.getTime());
     }
 
-    public TimeSpan Subtract(Date date) {
+    public TimeSpan subtract(Date date) {
         long span = this.getTime() - date.getTime();
         return new TimeSpan(span);
     }
@@ -77,7 +77,7 @@ public class DateTime extends Date {
         return new DateTime(System.currentTimeMillis());
     }
 
-    public Date AddMinutes(int i) {
+    public Date addMinutes(int i) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(this);
         cal.add(Calendar.MINUTE, i);

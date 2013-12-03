@@ -295,7 +295,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 isExistsValue = (data != null);
 
                 if (isExistsValue) {
-                    TimeSpan span = DateTime.getNow().Subtract(data.getDate());
+                    TimeSpan span = DateTime.getNow().subtract(data.getDate());
                     if (span.Days >= 1) {
                         IsFromYesterday = true;
                     }

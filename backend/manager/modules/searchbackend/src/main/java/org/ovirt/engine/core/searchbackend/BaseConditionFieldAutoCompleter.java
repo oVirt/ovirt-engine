@@ -300,7 +300,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
             if (pair.getFirst() != null && pair.getFirst().equals("=")) {
                 pair.setFirst("between");
-                DateTime nextDay = result.AddDays(1);
+                DateTime nextDay = result.addDays(1);
                 pair.setSecond(StringFormat.format("'%1$s' and '%2$s'",
                         result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT)),
                         nextDay.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT))));
@@ -348,7 +348,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 formatedValue = DateTime.getNow();
                 break;
             case Yesterday:
-                formatedValue = DateTime.getNow().AddDays(-1);
+                formatedValue = DateTime.getNow().addDays(-1);
                 break;
 
             default:
@@ -357,7 +357,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         } else {
             for (int i = -2; i > -8; i--) {
                 if (DateUtils.getDayOfWeek(i).equalsIgnoreCase(StringHelper.trim(value, '\''))) {
-                    formatedValue = DateTime.getNow().AddDays(i);
+                    formatedValue = DateTime.getNow().addDays(i);
                     return formatedValue.resetToMidnight();
                 }
             }

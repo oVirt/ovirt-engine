@@ -367,7 +367,7 @@ public final class AsyncTaskManager {
 
     private void cleanZombieTasks() {
         long maxTime = DateTime.getNow()
-                .AddMinutes((-1) * Config.<Integer>GetValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
+                .addMinutes((-1) * Config.<Integer>GetValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
         for (SPMAsyncTask task : _tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {

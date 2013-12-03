@@ -22,7 +22,7 @@ public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements ICo
         String day;
         int dayIndex = 3;
         for (int i = -2; i > -8; i--) {
-            day = DateTime.getNow().AddDays(i).getDayOfWeek().toString();
+            day = DateTime.getNow().addDays(i).getDayOfWeek().toString();
             mEnumValues.put(day, dayIndex);
             mVerbs.add(day);
             dayIndex++;
