@@ -193,7 +193,9 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("is_run_and_pause", template.isRunAndPause())
                 .addValue("created_by_user_id", template.getCreatedByUserId())
                 .addValue("template_type", template.getTemplateType().name())
-                .addValue("migration_downtime", template.getMigrationDowntime());
+                .addValue("migration_downtime", template.getMigrationDowntime())
+                .addValue("base_template_id", template.getBaseTemplateId())
+                .addValue("template_version_name", template.getTemplateVersionName());
     }
 
     @Override
@@ -280,6 +282,9 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setTrustedService(rs.getBoolean("trusted_service"));
             entity.setTemplateType(VmEntityType.valueOf(rs.getString("entity_type")));
             entity.setClusterArch(ArchitectureType.forValue(rs.getInt("architecture")));
+            entity.setBaseTemplateId(getGuidDefaultEmpty(rs, "base_template_id"));
+            entity.setTemplateVersionNumber(rs.getInt("template_version_number"));
+            entity.setTemplateVersionName(rs.getString("template_version_name"));
             return entity;
         }
     }

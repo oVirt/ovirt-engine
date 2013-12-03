@@ -51,6 +51,9 @@ public class VmStatic extends VmBase {
     private Guid instanceTypeId;
     private Guid imageTypeId;
 
+    @EditableField
+    private boolean useLatestVersion;
+
     public VmStatic() {
         setNumOfMonitors(1);
         initialized = false;
@@ -67,6 +70,7 @@ public class VmStatic extends VmBase {
         vmtGuid = vmStatic.getVmtGuid();
         setCustomProperties(vmStatic.getCustomProperties());
         setInitialized(vmStatic.isInitialized());
+        setUseLatestVersion(vmStatic.isUseLatestVersion());
     }
 
     public VmStatic(VmBase vmBase) {
@@ -161,6 +165,7 @@ public class VmStatic extends VmBase {
         result = prime * result + ((imageTypeId == null) ? 0 : imageTypeId.hashCode());
         result = prime * result + ((originalTemplateGuid == null) ? 0 : originalTemplateGuid.hashCode());
         result = prime * result + ((originalTemplateName == null) ? 0 : originalTemplateName.hashCode());
+        result = prime * result + (useLatestVersion ? 1249 : 1259);
         return result;
     }
 
@@ -187,6 +192,7 @@ public class VmStatic extends VmBase {
                 && ObjectUtils.objectsEqual(imageTypeId, other.imageTypeId)
                 && ObjectUtils.objectsEqual(originalTemplateGuid, other.originalTemplateGuid)
                 && ObjectUtils.objectsEqual(originalTemplateName, other.originalTemplateName)
+                && useLatestVersion == other.useLatestVersion
          );
     }
 
@@ -236,5 +242,13 @@ public class VmStatic extends VmBase {
 
     public void setOriginalTemplateGuid(Guid originalTemplateGuid) {
         this.originalTemplateGuid = originalTemplateGuid;
+    }
+
+    public boolean isUseLatestVersion() {
+        return useLatestVersion;
+    }
+
+    public void setUseLatestVersion(boolean useLatestVersion) {
+        this.useLatestVersion = useLatestVersion;
     }
 }

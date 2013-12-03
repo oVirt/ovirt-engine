@@ -549,6 +549,12 @@ BEGIN
          where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
    END;
 
+   -- Add also Template Versions based on the selected templates
+   insert into TEMPLATES_IDS_TEMPORARY_TABLE
+     select vm_guid from vm_static
+     where vmt_guid in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE)
+     and entity_type = 'TEMPLATE';
+
    BEGIN
      -- Vms which resides on the storage domain
      CREATE GLOBAL TEMPORARY TABLE VM_IDS_TEMPORARY_TABLE AS select vm_id,vm_images_view.entity_type as entity_type from vm_images_view
