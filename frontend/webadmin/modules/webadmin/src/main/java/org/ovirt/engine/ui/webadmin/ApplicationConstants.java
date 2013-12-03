@@ -1167,6 +1167,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("External ID")
     String externalIdExternalSubnet();
 
+    @DefaultStringValue("Network")
+    String networkExternalSubnet();
+
     @DefaultStringValue("Name")
     String nameExternalSubnet();
 
@@ -1898,6 +1901,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Remove")
     String removeNetworkProfile();
+
+    @DefaultStringValue("New")
+    String newNetworkExternalSubnet();
 
     @DefaultStringValue("Remove")
     String removeNetworkExternalSubnet();

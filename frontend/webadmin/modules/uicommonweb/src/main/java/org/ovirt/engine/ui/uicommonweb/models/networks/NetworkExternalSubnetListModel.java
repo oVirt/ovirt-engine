@@ -6,20 +6,32 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.NewExternalSubnetModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveExternalSubnetModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class NetworkExternalSubnetListModel extends SearchableListModel
 {
 
+    private UICommand newCommand;
     private UICommand removeCommand;
 
     public NetworkExternalSubnetListModel() {
         setHashName("external_subnets"); //$NON-NLS-1$
         setComparator(new NameableComparator());
+
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         updateActionAvailability();
+    }
+
+    public UICommand getNewCommand() {
+        return newCommand;
+    }
+
+    private void setNewCommand(UICommand newCommand) {
+        this.newCommand = newCommand;
     }
 
     public UICommand getRemoveCommand() {
@@ -28,6 +40,15 @@ public class NetworkExternalSubnetListModel extends SearchableListModel
 
     private void setRemoveCommand(UICommand value) {
         removeCommand = value;
+    }
+
+    public void newSubnet() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        NewExternalSubnetModel model = new NewExternalSubnetModel(getEntity(), this);
+        setWindow(model);
     }
 
     @SuppressWarnings("unchecked")
@@ -92,7 +113,9 @@ public class NetworkExternalSubnetListModel extends SearchableListModel
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
-        if (command == getRemoveCommand()) {
+        if (command == getNewCommand()) {
+            newSubnet();
+        } else if (command == getRemoveCommand()) {
             remove();
         }
     }

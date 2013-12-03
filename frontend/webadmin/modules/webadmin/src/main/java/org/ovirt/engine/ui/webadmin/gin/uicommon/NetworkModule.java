@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -151,11 +152,23 @@ public class NetworkModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<ExternalSubnet, NetworkListModel, NetworkExternalSubnetListModel> getExternalSubnetListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<ExternalSubnetPopupPresenterWidget> newExternalSubnetPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<ExternalSubnet, NetworkListModel, NetworkExternalSubnetListModel>(eventBus,
                 defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 NetworkExternalSubnetListModel.class) {
+
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkExternalSubnetListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand == getModel().getNewCommand()) {
+                    return newExternalSubnetPopupProvider.get();
+                }
+
+                return super.getModelPopup(source, lastExecutedCommand, windowModel);
+            }
 
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(NetworkExternalSubnetListModel source,

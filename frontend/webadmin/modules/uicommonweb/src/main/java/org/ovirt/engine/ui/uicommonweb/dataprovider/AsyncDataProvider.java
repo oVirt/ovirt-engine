@@ -71,6 +71,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -3440,6 +3441,10 @@ public final class AsyncDataProvider {
             };
         }
         Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
+    }
+
+    public static List<IpVersion> getExternalSubnetIpVerionList() {
+        return Arrays.asList(IpVersion.values());
     }
 
     public static void getNumberOfActiveVmsInCluster(AsyncQuery aQuery, Guid clusterId) {

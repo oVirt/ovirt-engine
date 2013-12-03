@@ -67,6 +67,12 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
 
         getTable().addColumn(externalIdColumn, constants.externalIdExternalSubnet(), "300px"); //$NON-NLS-1$
 
+        getTable().addActionButton(new WebAdminButtonDefinition<ExternalSubnet>(constants.newNetworkExternalSubnet()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getNewCommand();
+            }
+        });
         getTable().addActionButton(new WebAdminButtonDefinition<ExternalSubnet>(constants.removeNetworkExternalSubnet()) {
             @Override
             protected UICommand resolveCommand() {

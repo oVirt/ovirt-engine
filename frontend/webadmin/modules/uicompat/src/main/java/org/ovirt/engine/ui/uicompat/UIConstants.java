@@ -463,6 +463,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("VNIC Profiles")
     String vnicProfilesTitle();
 
+    @DefaultStringValue("New External Subnet")
+    String newExternalSubnetTitle();
+
     @DefaultStringValue("VMs")
     String vmsTitle();
 

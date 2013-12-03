@@ -693,6 +693,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___RemoveVnicProfile();
 
+    String VdcActionType___AddSubnetToProvider();
+
     String VdcActionType___RemoveSubnetFromProvider();
 
     String VdcObjectType___AdElements();
