@@ -35,7 +35,7 @@ public class VdsHandler extends BaseHandler {
     {
         Class<?>[] inspectedClasses = new Class<?>[] { VDS.class, VdsStatic.class, VdsDynamic.class };
         mUpdateVdsStatic =
-                new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses), VDSStatus.class);
+                new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses));
 
 
         for (Pair<EditableField, String> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {

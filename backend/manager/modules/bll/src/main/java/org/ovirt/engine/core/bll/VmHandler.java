@@ -90,7 +90,7 @@ public class VmHandler {
         osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
         mUpdateVmsStatic =
-                new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames), VMStatus.class);
+                new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames));
 
         for (Pair<EditableField, String> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
                 (inspectedClassNames))) {

@@ -34,10 +34,6 @@ public class ObjectIdentityChecker {
         }
     }
 
-    public ObjectIdentityChecker(Class<?> type, Iterable<Class<?>> aliases, Class<?> enumType) {
-        this(type, aliases);
-    }
-
     public final void setContainer(IObjectDescriptorContainer value) {
         container = value;
     }
