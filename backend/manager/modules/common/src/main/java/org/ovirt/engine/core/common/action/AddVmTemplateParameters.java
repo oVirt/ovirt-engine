@@ -51,6 +51,8 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
 
     private Boolean virtioScsiEnabled;
 
+    private String templateVersionName;
+
     public AddVmTemplateParameters(VmStatic masterVm, String name, String description) {
         this();
         _masterVm = masterVm;
@@ -159,5 +161,13 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
 
     public void setTemplateType(VmEntityType templateType) {
         this.templateType = templateType;
+    }
+
+    public String getTemplateVersionName() {
+        return templateVersionName;
+    }
+
+    public void setTemplateVersionName(String templateVersionName) {
+        this.templateVersionName = templateVersionName;
     }
 }

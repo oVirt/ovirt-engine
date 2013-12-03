@@ -1525,6 +1525,9 @@
         <column>original_template_id</column>
         <column>original_template_name</column>
         <column>migration_downtime</column>
+        <column>template_version_number</column>
+        <column>template_version_name</column>
+
         <!-- Templates -->
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
@@ -1576,13 +1579,15 @@
             <null />
             <null />
             <value>123</value>
+            <value>1</value>
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>TEMPLATE</value>
             <value>1</value>
             <value>512</value>
-            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>1</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
@@ -1627,13 +1632,15 @@
             <null />
             <null />
             <value>0</value>
+            <value>1</value>
+            <value>ver 1</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
             <value>TEMPLATE</value>
             <value>1</value>
             <value>512</value>
-            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
             <value>1</value>
             <null />
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
@@ -1678,13 +1685,15 @@
             <null />
             <null />
             <null />
+            <value>1</value>
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
             <value>TEMPLATE</value>
             <value>1</value>
             <value>512</value>
-            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
             <value>1</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -1729,13 +1738,15 @@
             <null />
             <null />
             <value>500</value>
+            <value>1</value>
+            <null />
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
             <value>TEMPLATE</value>
             <value>1</value>
             <value>512</value>
-            <value>00000000-0000-0000-0000-000000000000</value>
+             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
             <value>1</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -1780,13 +1791,15 @@
             <null />
             <null />
             <null />
+            <value>1</value>
+            <null />
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
             <value>INSTANCE_TYPE</value>
             <value>1</value>
             <value>512</value>
-            <value>00000000-0000-0000-0000-000000000000</value>
+             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
             <value>1</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -1830,6 +1843,8 @@
             <value>none</value>
             <null />
             <null />
+            <null />
+            <value>1</value>
             <null />
         </row>
          <row>
@@ -1837,7 +1852,7 @@
             <value>IMAGE_TYPE</value>
             <value>1</value>
             <value>512</value>
-            <value>00000000-0000-0000-0000-000000000000</value>
+             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
             <value>1</value>
             <null />
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -1882,6 +1897,61 @@
             <null />
             <null />
             <null />
+            <value>1</value>
+            <null />
+        </row>
+        <row>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
+            <value>TEMPLATE</value>
+            <value>1</value>
+            <value>1024</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>1</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>2010-11-21 16:39:27</value>
+            <value>0</value>
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <null />
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>GMT standard time</value>
+            <value>0</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>12</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+            <value>false</value>
+            <value>256</value>
+            <value>false</value>
+            <null />
+            <null />
+            <null />
+            <value>none</value>
+            <null />
+            <null />
+            <null />
+            <value>2</value>
+            <value>verver</value>
         </row>
 
         <!-- VMS -->
@@ -1935,6 +2005,8 @@
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
             <value>someTemplateName</value>
             <value>1234</value>
+            <value>1</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -1985,6 +2057,8 @@
             <value>none</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
             <value>someTemplateName</value>
+            <null />
+            <null />
             <null />
         </row>
         <row>
@@ -2037,6 +2111,8 @@
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
             <value>someTemplateName</value>
             <null />
+            <value>1</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -2087,6 +2163,8 @@
             <value>none</value>
             <null />
             <null />
+            <null />
+            <value>1</value>
             <null />
         </row>
         <row>
@@ -2139,6 +2217,8 @@
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
             <value>otherTemplateName</value>
             <null />
+            <value>1</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2187,6 +2267,9 @@
             <null />
             <null />
             <value>guest_agent</value>
+            <null />
+            <null />
+            <null />
             <null />
             <null />
         </row>
@@ -2238,6 +2321,115 @@
             <null />
             <value>guest_agent</value>
             <null />
+            <null />
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
+            <value>VM</value>
+            <value>rhel5-pool-50</value>
+            <value>1024</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
+            <value>0</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <null />
+            <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
+            <null />
+            <value>256</value>
+            <value>false</value>
+            <null />
+            <null />
+            <null />
+            <value>guest_agent</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
+            <value>VM</value>
+            <value>rhel5-pool-50</value>
+            <value>1024</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
+            <value>0</value>
+            <null />
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <null />
+            <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
+            <null />
+            <value>256</value>
+            <value>false</value>
+            <null />
+            <null />
+            <null />
+            <value>guest_agent</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
             <null />
         </row>
     </table>
@@ -2873,6 +3065,78 @@
             <null />
             <null />
         </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
+            <value>0</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null /> <!-- console_user_id -->
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value>5900</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <value></value>
+            <null />
+            <null />
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
+            <value>0</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null /> <!-- console_user_id -->
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value>5900</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <value></value>
+            <null />
+            <null />
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+            <null />
+        </row>
     </table>
 
     <table name="vm_statistics">
@@ -2927,6 +3191,26 @@
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
+            <value>17</value>
+            <value>0</value>
+            <value>267308</value>
+            <value>0</value>
+            <value>0</value>
+            <value>17</value>
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
+            <value>17</value>
+            <value>0</value>
+            <value>267308</value>
+            <value>0</value>
+            <value>0</value>
+            <value>17</value>
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
             <value>17</value>
             <value>0</value>
             <value>267308</value>

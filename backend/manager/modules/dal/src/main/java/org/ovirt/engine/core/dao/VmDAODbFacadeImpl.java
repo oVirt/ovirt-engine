@@ -408,6 +408,9 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVmPoolSpiceProxy(rs.getString("vm_pool_spice_proxy"));
             entity.setVdsGroupSpiceProxy(rs.getString("vds_group_spice_proxy"));
             entity.setMigrationDowntime((Integer) rs.getObject("migration_downtime"));
+            // if template_version_number is null it means use latest version
+            entity.setUseLatestVersion(rs.getObject("template_version_number") ==
+                    VmStaticDAODbFacadeImpl.USE_LATEST_VERSION_NUMBER_INDICATOR);
             return entity;
         }
     }

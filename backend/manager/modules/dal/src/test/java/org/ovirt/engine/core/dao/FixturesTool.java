@@ -214,6 +214,16 @@ public class FixturesTool {
     protected static final Guid VM_TEMPLATE_RHEL6_2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b82");
 
     /**
+     * Predefined template version for testing with the following properties :
+     * <ul>
+     * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
+     * <li>Base template: VM_TEMPLATE_RHEL5 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
+     * <li>template version: 2</li>
+     * </ul>
+     */
+    public static final Guid VM_TEMPLATE_RHEL5_V2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b83");
+
+    /**
      * Predefined user for testing with the following properties :
      * <ul>
      * <li>Ad group id : 9bf7c640-b620-456f-a550-0348f366544b</li>

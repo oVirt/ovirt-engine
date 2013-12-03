@@ -28,7 +28,7 @@ public class VmDAOTest extends BaseDAOTestCase {
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
 
-    private static final int VM_COUNT = 5;
+    private static final int VM_COUNT = 7;
     private VmDAO dao;
     private VM existingVm;
     private VmStatic newVmStatic;

@@ -23,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmTemplateDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER = 1;
-    private static final int NUMBER_OF_TEMPLATES_IN_DB = 7;
+    private static final int NUMBER_OF_TEMPLATES_IN_DB = 8;
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid DELETABLE_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b80");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");

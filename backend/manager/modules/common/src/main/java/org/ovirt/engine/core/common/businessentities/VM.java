@@ -409,6 +409,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         return vmStatic.getKernelParams();
     }
 
+    public boolean isUseLatestVersion() {
+        return vmStatic.isUseLatestVersion();
+    }
+
+    public void setUseLatestVersion(boolean useLatestVersion) {
+        vmStatic.setUseLatestVersion(useLatestVersion);
+    }
+
     public void setKernelParams(String value) {
         vmStatic.setKernelParams(value);
     }

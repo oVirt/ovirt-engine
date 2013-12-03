@@ -213,6 +213,7 @@ public final class Cloner
         vm.setOriginalTemplateGuid(instance.getOriginalTemplateGuid());
         vm.setOriginalTemplateName(instance.getOriginalTemplateName());
         vm.setMigrationDowntime(instance.getMigrationDowntime());
+        vm.setUseLatestVersion(instance.isUseLatestVersion());
 
         return vm;
     }
@@ -424,6 +425,9 @@ public final class Cloner
         obj.setDiskList(instance.getDiskList());
         obj.setRunAndPause(instance.isRunAndPause());
         obj.setClusterArch(instance.getClusterArch());
+        obj.setTemplateVersionNumber(instance.getTemplateVersionNumber());
+        obj.setBaseTemplateId(instance.getBaseTemplateId());
+        obj.setTemplateVersionName(instance.getTemplateVersionName());
 
         return obj;
     }
@@ -460,6 +464,7 @@ public final class Cloner
         obj.setId(instance.getId());
         obj.setName(instance.getName());
         obj.setVmtGuid(instance.getVmtGuid());
+        obj.setUseLatestVersion(instance.isUseLatestVersion());
 
         return obj;
     }

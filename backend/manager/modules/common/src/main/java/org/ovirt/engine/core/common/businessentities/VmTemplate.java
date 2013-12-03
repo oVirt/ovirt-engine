@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid, VmTemplateStatus>, InstanceType, ImageType {
     private static final long serialVersionUID = -5238366659716600486L;
+    public static final int BASE_VERSION_NUMBER = 1;
 
     private int childCount;
 
@@ -44,6 +45,13 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private ArchitectureType clusterArch;
 
+    private Guid baseTemplateId;
+
+    private int templateVersionNumber;
+
+    @EditableField
+    private String templateVersionName;
+
     public VmTemplate() {
         setNiceLevel(0);
         setCpuShares(0);
@@ -51,6 +59,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         status = VmTemplateStatus.OK;
         diskImageMap = new HashMap<Guid, DiskImage>();
         templateType = VmEntityType.TEMPLATE;
+        baseTemplateId = Guid.Empty;
+        setTemplateVersionNumber(BASE_VERSION_NUMBER);
     }
 
     @EditableField
@@ -64,7 +74,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId, VmEntityType templateType,
             boolean autoStartup, int priority, DisplayType defaultDisplayType, String initrdUrl, String kernelUrl,
             String kernelParams, Guid quotaId, Guid dedicatedVmForVds, MigrationSupport migrationSupport,
-            boolean allowConsoleReconnect, String isoPath, Integer migrationDowntime) {
+            boolean allowConsoleReconnect, String isoPath, Integer migrationDowntime,
+            Guid baseTemplateId, String templateVersionName) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -114,6 +125,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         this.childCount = childCount;
         this.setStatus(VmTemplateStatus.forValue(status));
         setTemplateType(templateType);
+        setBaseTemplateId(baseTemplateId);
+        setTemplateVersionNumber(BASE_VERSION_NUMBER);
+        setTemplateVersionName(templateVersionName);
     }
 
     public ArchitectureType getClusterArch() {
@@ -258,5 +272,37 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public void setTemplateType(VmEntityType templateType) {
         this.templateType = templateType;
+    }
+
+    public Guid getBaseTemplateId() {
+        return baseTemplateId;
+    }
+
+    public void setBaseTemplateId(Guid baseTemplateId) {
+        this.baseTemplateId = baseTemplateId;
+    }
+
+    public int getTemplateVersionNumber() {
+        return templateVersionNumber;
+    }
+
+    public void setTemplateVersionNumber(int templateVersionNumber) {
+        this.templateVersionNumber = templateVersionNumber;
+    }
+
+    public String getTemplateVersionName() {
+        return templateVersionName;
+    }
+
+    public void setTemplateVersionName(String templateVersionName) {
+        this.templateVersionName = templateVersionName;
+    }
+
+    /**
+     * Check if template is base template or version of a template
+     * @return true if template is a base template, and false if its a version of a template
+     */
+    public boolean isBaseTemplate() {
+        return getId().equals(getBaseTemplateId());
     }
 }

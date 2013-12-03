@@ -16,6 +16,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStaticDAO {
+    public static final Integer USE_LATEST_VERSION_NUMBER_INDICATOR = null;
+    public static final Integer DONT_USE_LATEST_VERSION_NUMBER_INDICATOR = 1;
 
     @Override
     public VmStatic get(Guid id) {
@@ -94,7 +96,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("image_type_id", vm.getImageTypeId())
                 .addValue("original_template_name", vm.getOriginalTemplateName())
                 .addValue("original_template_id", vm.getOriginalTemplateGuid())
-                .addValue("migration_downtime", vm.getMigrationDowntime());
+                .addValue("migration_downtime", vm.getMigrationDowntime())
+                .addValue("template_version_number", vm.isUseLatestVersion() ?
+                        USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR);
     }
 
     @Override
@@ -227,6 +231,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setImageTypeId(Guid.createGuidFromString(rs.getString("image_type_id")));
             entity.setOriginalTemplateName(rs.getString("original_template_name"));
             entity.setOriginalTemplateGuid(getGuid(rs, "original_template_id"));
+            // if template_version_number is null it means use latest version
+            entity.setUseLatestVersion(rs.getObject("template_version_number") == USE_LATEST_VERSION_NUMBER_INDICATOR);
 
             return entity;
         }
