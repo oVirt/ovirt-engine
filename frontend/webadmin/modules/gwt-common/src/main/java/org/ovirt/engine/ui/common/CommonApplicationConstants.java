@@ -1007,13 +1007,13 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Wipe After Delete")
     String wipeAfterDeleteVmDiskPopup();
 
-    @DefaultStringValue("Is Bootable")
+    @DefaultStringValue("Bootable")
     String isBootableVmDiskPopup();
 
-    @DefaultStringValue("Is Shareable")
+    @DefaultStringValue("Shareable")
     String isShareableVmDiskPopup();
 
-    @DefaultStringValue("Is Read Only")
+    @DefaultStringValue("Read Only")
     String isReadOnlyVmDiskPopup();
 
     @DefaultStringValue("Allow Privileged SCSI I/O")
