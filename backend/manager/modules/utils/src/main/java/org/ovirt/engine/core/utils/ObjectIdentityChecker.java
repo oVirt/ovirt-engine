@@ -126,7 +126,7 @@ public class ObjectIdentityChecker {
         boolean returnValue = true;
         if (!IsFieldUpdatable(name)) {
             if (fieldContainer != null && container != null
-                    && !container.CanUpdateField(fieldContainer, name, status)) {
+                    && !container.canUpdateField(fieldContainer, name, status)) {
                 returnValue = false;
             } else {
                 Set<String> values = dictionary.get(status);

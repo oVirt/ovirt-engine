@@ -13,9 +13,9 @@ public class BaseHandler implements IObjectDescriptorContainer {
      * Returns a boolean indication regarding whether it is allowed to update a specified field of a specified object in
      * a specified status. Example for overriding this function:
      *
-     * public override bool CanUpdateField(object obj, string fieldName, Enum status) { VDS vds = obj as VDS; VDSStatus
+     * public override bool canUpdateField(object obj, string fieldName, Enum status) { VDS vds = obj as VDS; VDSStatus
      * vdsStatus = (VDSStatus)status; switch (vdsStatus) { case Maintenance: ... ... ... default: return
-     * base.CanUpdateField(....) } }
+     * base.canUpdateField(....) } }
      *
      * @param obj
      *            The object to update field in.
@@ -26,7 +26,7 @@ public class BaseHandler implements IObjectDescriptorContainer {
      * @return True if fieldName is allowed for update, false otherwise.
      */
     @Override
-    public boolean CanUpdateField(Object obj, String fieldName, Enum<?> status) {
+    public boolean canUpdateField(Object obj, String fieldName, Enum<?> status) {
         return true;
     }
 
