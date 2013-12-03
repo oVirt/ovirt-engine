@@ -4,6 +4,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.Images;
+import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
@@ -58,5 +59,13 @@ public class BackendStorageDomainImagesResource
             collection.getImages().add(addLinks(populate(map(image), image)));
         }
         return collection;
+    }
+
+    @Override
+    protected Image addParents(Image image) {
+        StorageDomain sd = new StorageDomain();
+        sd.setId(storageDomainId.toString());
+        image.setStorageDomain(sd);
+        return super.addParents(image);
     }
 }

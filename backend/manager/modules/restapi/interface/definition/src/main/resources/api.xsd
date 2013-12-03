@@ -1828,6 +1828,9 @@
   <xs:complexType name="Image">
     <xs:complexContent>
       <xs:extension base="BaseResource">
+          <xs:sequence>
+              <xs:element ref="storage_domain" minOccurs="0"/>
+          </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
