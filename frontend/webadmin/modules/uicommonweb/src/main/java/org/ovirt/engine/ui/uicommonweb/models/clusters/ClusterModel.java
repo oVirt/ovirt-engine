@@ -1186,22 +1186,18 @@ public class ClusterModel extends EntityModel
             {
                 ClusterModel clusterModel = (ClusterModel) model;
                 ArrayList<Version> versions = (ArrayList<Version>) result;
+                Version selectedVersion = (Version) clusterModel.getVersion().getSelectedItem();
                 clusterModel.getVersion().setItems(versions);
-                if (!versions.contains(clusterModel.getVersion().getSelectedItem()))
+                if (selectedVersion == null || !versions.contains(selectedVersion))
                 {
-                    if (versions.contains(((StoragePool) clusterModel.getDataCenter().getSelectedItem()).getcompatibility_version()))
-                    {
-                        clusterModel.getVersion().setSelectedItem(((StoragePool) clusterModel.getDataCenter()
-                                .getSelectedItem()).getcompatibility_version());
-                    }
-                    else
-                    {
-                        clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
-                    }
+                    clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
                 }
                 else if (clusterModel.getIsEdit()) {
                     clusterModel.getVersion().setSelectedItem(Linq.firstOrDefault(versions,
                             new Linq.VersionPredicate(clusterModel.getEntity().getcompatibility_version())));
+                }
+                else {
+                    clusterModel.getVersion().setSelectedItem(selectedVersion);
                 }
             }
         };
