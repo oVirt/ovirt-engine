@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -35,7 +36,6 @@ import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -117,6 +117,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public EntityModelTextBoxOnlyEditor mtuEditor;
 
     @UiField(provided = true)
+    @Path(value = "qos.selectedItem")
+    public ListModelListBoxEditor<NetworkQoS> qosEditor;
+
+    @UiField(provided = true)
     @Ignore
     public final EntityModelCellTable<ListModel> clustersTable;
 
@@ -187,6 +191,12 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 return ((Provider) object).getName();
             }
         });
+        qosEditor = new ListModelListBoxEditor<NetworkQoS>(new NullSafeRenderer<NetworkQoS>() {
+            @Override
+            protected String renderNullSafe(NetworkQoS qos) {
+                return qos.getName();
+            }
+        });
         exportEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         exportEditor.asCheckBox().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
@@ -227,6 +237,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
         hasMtuEditor.setLabel(constants.overrideMtuLabel());
+        qosEditor.setLabel(constants.hostNetworkQos());
 
         subnetNameEditor.setLabel(constants.nameExternalSubnet());
         subnetCidrEditor.setLabel(constants.cidrExternalSubnet());
@@ -238,12 +249,15 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
    protected void addStyles() {
         vlanTag.addContentWidgetStyleName(style.valueBox());
         mtuEditor.addContentWidgetStyleName(style.valueBox());
+        qosEditor.addContentWidgetStyleName(style.valueBox());
         isVmNetworkEditor.addContentWidgetStyleName(style.checkBox());
         isVmNetworkEditor.asCheckBox().addStyleName(style.checkBox());
         vlanTagging.addContentWidgetStyleName(style.checkBox());
         vlanTagging.asCheckBox().addStyleName(style.checkBox());
         hasMtuEditor.addContentWidgetStyleName(style.checkBox());
         hasMtuEditor.asCheckBox().addStyleName(style.checkBox());
+        qosEditor.addLabelStyleName(style.checkBox());
+        qosEditor.addLabelStyleName(style.qosLabel());
     }
 
     @Override
@@ -417,6 +431,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         String valueBox();
 
         String checkBox();
+
+        String qosLabel();
     }
 
 }

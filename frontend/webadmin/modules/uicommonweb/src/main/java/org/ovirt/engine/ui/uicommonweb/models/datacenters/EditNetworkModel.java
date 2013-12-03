@@ -80,6 +80,7 @@ public class EditNetworkModel extends NetworkModel {
             getHasMtu().setIsChangable(false);
             getMtu().setIsChangable(false);
         }
+        super.onExportChanged();
     }
 
     @Override

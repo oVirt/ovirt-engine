@@ -54,6 +54,14 @@
 			padding: 5px;
 		}
 
+		.qosStyle {
+			float: left;
+		}
+
+		.qosLabel {
+			display: inline-block;
+		}
+
 	</ui:style>
 
 	<d:SimpleDialogPanel ui:field="mainPanel" width="780px" height="550px">
@@ -87,6 +95,7 @@
 										<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
 									</g:HorizontalPanel>
+									<e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.qosStyle}" />
 								</g:FlowPanel>
 							</g:FlowPanel>
                         </t:content>

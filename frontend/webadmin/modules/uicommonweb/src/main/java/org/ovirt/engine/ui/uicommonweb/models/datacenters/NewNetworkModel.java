@@ -115,6 +115,7 @@ public class NewNetworkModel extends NetworkModel {
             getIsVmNetwork().setEntity(true);
             getHasMtu().setEntity(false);
         }
+        super.onExportChanged();
     }
 
     @Override

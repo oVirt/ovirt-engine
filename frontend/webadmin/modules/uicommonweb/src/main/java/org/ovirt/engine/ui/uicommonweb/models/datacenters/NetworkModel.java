@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -56,6 +58,7 @@ public abstract class NetworkModel extends Model
     private EntityModel privateHasMtu;
     private EntityModel privateMtu;
     private EntityModel privateIsVmNetwork;
+    private ListModel<NetworkQoS> qos;
     private boolean isSupportBridgesReportByVDSM = false;
     private boolean mtuOverrideSupported = false;
     private ListModel privateDataCenters;
@@ -145,11 +148,12 @@ public abstract class NetworkModel extends Model
         getProfiles().setDefaultProfile(defaultProfile);
         getProfiles().setItems(profiles);
 
+        setQos(new ListModel<NetworkQoS>());
+
         setSubnetName(new EntityModel<String>());
         setSubnetCidr(new EntityModel<String>());
         setSubnetIpVersion(new ListModel<IpVersion>());
         getSubnetIpVersion().setItems(AsyncDataProvider.getExternalSubnetIpVerionList());
-
 
         // Update changeability according to initial values
         onExportChanged();
@@ -312,6 +316,14 @@ public abstract class NetworkModel extends Model
     public void setIsVmNetwork(EntityModel value)
     {
         privateIsVmNetwork = value;
+    }
+
+    public ListModel<NetworkQoS> getQos() {
+        return qos;
+    }
+
+    private void setQos(ListModel<NetworkQoS> qos) {
+        this.qos = qos;
     }
 
     public boolean isSupportBridgesReportByVDSM() {
@@ -484,8 +496,19 @@ public abstract class NetworkModel extends Model
 
         setMTUOverrideSupported(isMTUOverrideSupported);
 
-        onExportChanged();
+        AsyncQuery query = new AsyncQuery();
+        query.asyncCallback = new INewAsyncCallback() {
 
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                Iterable<NetworkQoS> qos = (Iterable<NetworkQoS>) returnValue;
+                getQos().setItems(qos);
+                getQos().setSelectedItem(Linq.findNetworkQosById(qos, getNetwork().getQosId()));
+            }
+        };
+        AsyncDataProvider.getAllNetworkQos(dc.getId(), query);
+
+        onExportChanged();
         getProfiles().updateDcId(dc.getId());
     }
 
@@ -527,6 +550,11 @@ public abstract class NetworkModel extends Model
 
         for (VnicProfileModel profileModel : getProfiles().getItems()) {
             profileModel.flush();
+        }
+
+        if (getQos().getIsChangable()) {
+            NetworkQoS qos = getQos().getSelectedItem();
+            network.setQosId(qos == NetworkQoSModel.EMPTY_QOS ? null : qos.getId());
         }
     }
 
@@ -611,7 +639,9 @@ public abstract class NetworkModel extends Model
 
     protected abstract void selectExternalProvider();
 
-    protected abstract void onExportChanged();
+    protected void onExportChanged() {
+        getQos().setIsChangable(!(Boolean) getExport().getEntity());
+    }
 
     private void updateVlanTagChangeability() {
         getVLanTag().setIsChangable((Boolean) getHasVLanTag().getEntity());
