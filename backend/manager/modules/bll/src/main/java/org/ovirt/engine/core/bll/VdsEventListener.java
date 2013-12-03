@@ -39,6 +39,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
@@ -146,8 +148,19 @@ public class VdsEventListener implements IVdsEventListener {
                             new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart),
                             ExecutionHandler.createInternalJobContext());
                 }
+                moveBricksToUnknown(vds);
             }
         });
+    }
+
+    private void moveBricksToUnknown(final VDS vds) {
+        List<GlusterBrickEntity> brickEntities = DbFacade.getInstance().getGlusterBrickDao().getGlusterVolumeBricksByServerId(vds.getId());
+        for (GlusterBrickEntity brick : brickEntities) {
+            if (brick.getStatus() == GlusterStatus.UP) {
+                brick.setStatus(GlusterStatus.UNKNOWN);
+            }
+        }
+        DbFacade.getInstance().getGlusterBrickDao().updateBrickStatuses(brickEntities);
     }
 
     @Override

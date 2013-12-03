@@ -43,6 +43,10 @@ public class BrickStatusCell extends AbstractCell<GlusterBrickEntity> {
             statusImage = resources.upImage();
             tooltip = constants.up();
             break;
+        case UNKNOWN:
+            statusImage = resources.questionMarkImage();
+            tooltip = constants.unknown();
+            break;
         default:
             statusImage = resources.downImage();
             tooltip = constants.down();

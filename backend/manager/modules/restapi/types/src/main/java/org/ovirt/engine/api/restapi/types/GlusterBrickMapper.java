@@ -66,13 +66,15 @@ public class GlusterBrickMapper {
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus.class, to = GlusterState.class)
-    public static GlusterState map(org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus glusterVolumeStatus,
+    public static GlusterState map(org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus glusterBrickStatus,
             String template) {
-        switch (glusterVolumeStatus) {
+        switch (glusterBrickStatus) {
         case UP:
             return GlusterState.UP;
         case DOWN:
             return GlusterState.DOWN;
+        case UNKNOWN:
+            return GlusterState.UNKNOWN;
         default:
             return null;
         }

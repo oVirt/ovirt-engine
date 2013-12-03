@@ -3,7 +3,8 @@ package org.ovirt.engine.api.model;
 public enum GlusterState {
 
     UP,
-    DOWN;
+    DOWN,
+    UNKNOWN;
 
     public String value() {
         return name().toLowerCase();
