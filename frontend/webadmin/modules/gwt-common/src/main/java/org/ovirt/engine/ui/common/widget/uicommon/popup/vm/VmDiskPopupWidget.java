@@ -401,6 +401,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         );
         internalDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn, readOnlyColumnHeader, "30px"); //$NON-NLS-1$
 
+        SafeHtml bootableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
+                AbstractImagePrototype.create(resources.bootableDiskIcon()).getHTML()), constants.bootable()
+        );
         internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -408,8 +411,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 setTitle(disk.isBoot() ? constants.bootableDisk() : null);
                 return disk.isBoot() ? resources.bootableDiskIcon() : null;
             }
-        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        }, bootableColumnHeader, "30px"); //$NON-NLS-1$
 
+        SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
+                AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
+        );
         internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -417,7 +423,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 setTitle(disk.isShareable() ? constants.shareable() : null);
                 return disk.isShareable() ? resources.shareableDiskIcon() : null;
             }
-        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        }, shareableColumnHeader, "30px"); //$NON-NLS-1$
 
         internalDiskTable.setWidth("100%", true); //$NON-NLS-1$
         internalDiskTable.setHeight("100%"); //$NON-NLS-1$
@@ -523,6 +529,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         );
         externalDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn, readOnlyColumnHeader, "30px"); //$NON-NLS-1$
 
+        SafeHtml bootableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
+                AbstractImagePrototype.create(resources.bootableDiskIcon()).getHTML()), constants.bootable()
+        );
         externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -530,8 +539,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 setTitle(disk.isBoot() ? constants.bootableDisk() : null);
                 return disk.isBoot() ? resources.bootableDiskIcon() : null;
             }
-        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        }, bootableColumnHeader, "30px"); //$NON-NLS-1$
 
+        SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
+                AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
+        );
         externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -539,7 +551,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 setTitle(disk.isShareable() ? constants.shareable() : null);
                 return disk.isShareable() ? resources.shareableDiskIcon() : null;
             }
-        }, "", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        }, shareableColumnHeader, "30px"); //$NON-NLS-1$
 
         externalDiskTable.setWidth("100%", true); //$NON-NLS-1$
         externalDiskTable.setHeight("100%"); //$NON-NLS-1$
