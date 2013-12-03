@@ -75,6 +75,7 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
             return;
         }
 
+        addCustomValue(GlusterConstants.NO_OF_BRICKS, String.valueOf(getParameters().getBricks().size()));
         endStepJobCommitted();
         getDbUtils().removeBricksFromVolumeInDb(volume,
                 getParameters().getBricks(),
