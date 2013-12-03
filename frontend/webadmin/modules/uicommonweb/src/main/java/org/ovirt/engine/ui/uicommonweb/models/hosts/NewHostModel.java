@@ -75,7 +75,7 @@ public class NewHostModel extends HostModel {
                     setEnableSearchHost(true);
                 }
             };
-            AsyncDataProvider.GetExternalProviderHostList(getHostsQuery, provider.getId(), true, searchFilter);
+            AsyncDataProvider.getExternalProviderHostList(getHostsQuery, provider.getId(), true, searchFilter);
         } else {
             getExternalHostName().setItems(null);
             getExternalHostName().setIsChangable(false);
@@ -98,7 +98,7 @@ public class NewHostModel extends HostModel {
                     providersListModel.setIsChangable(true);
                 }
             };
-            AsyncDataProvider.GetAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
+            AsyncDataProvider.getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
         }
         setHostProviderWidgetsAvailability(enabled);
     }

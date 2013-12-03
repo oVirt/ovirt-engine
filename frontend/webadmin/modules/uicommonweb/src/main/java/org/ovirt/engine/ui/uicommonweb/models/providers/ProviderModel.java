@@ -333,7 +333,7 @@ public class ProviderModel extends Model {
                             }
                         }
                     };
-                    AsyncDataProvider.GetProviderCertificateChain(getCertChainQuery, provider);
+                    AsyncDataProvider.getProviderCertificateChain(getCertChainQuery, provider);
                 } else {
                     stopProgress();
                     setTestResultValue(res);

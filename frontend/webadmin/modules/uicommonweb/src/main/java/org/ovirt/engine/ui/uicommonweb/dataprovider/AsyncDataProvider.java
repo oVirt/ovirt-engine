@@ -2763,10 +2763,10 @@ public final class AsyncDataProvider {
 
     }
 
-    public static void GetExternalProviderHostList(AsyncQuery aQuery,
-            Guid providerId,
-            boolean filterOutExistingHosts,
-            String searchFilter) {
+    public static void getExternalProviderHostList(AsyncQuery aQuery,
+                                                   Guid providerId,
+                                                   boolean filterOutExistingHosts,
+                                                   String searchFilter) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -2823,7 +2823,7 @@ public final class AsyncDataProvider {
         getAllProvidersByProvidedEntity(query, VdcObjectType.Network);
     }
 
-    public static void GetAllProvidersByType(AsyncQuery aQuery, ProviderType providerType) {
+    public static void getAllProvidersByType(AsyncQuery aQuery, ProviderType providerType) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -2838,7 +2838,7 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(providerType), aQuery);
     }
 
-    public static void GetProviderCertificateChain(AsyncQuery aQuery, Provider provider) {
+    public static void getProviderCertificateChain(AsyncQuery aQuery, Provider provider) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
