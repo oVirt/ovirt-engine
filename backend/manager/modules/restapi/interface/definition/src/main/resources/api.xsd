@@ -2356,7 +2356,7 @@
   <xs:complexType name="Payload">
     <xs:sequence>
       <xs:element ref="files"/>
-      <xs:element name="volume_id" type="xs:string" maxOccurs="1"/>
+      <xs:element name="volume_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="type" type="xs:string">
         <xs:annotation>
