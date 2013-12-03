@@ -113,7 +113,7 @@ public class BackendGlusterBricksResource
             GlusterBricks bricks = new GlusterBricks();
             for (Guid id : (List<Guid>) result.getActionReturnValue()) {
                 GlusterBrickEntity created = entityResolver.resolve(id);
-                bricks.getGlusterBricks().add(addLinks(doPopulate(map(created), created)));
+                bricks.getGlusterBricks().add(addLinks(populate(map(created), created)));
             }
             return bricks;
         } catch (Exception e) {
