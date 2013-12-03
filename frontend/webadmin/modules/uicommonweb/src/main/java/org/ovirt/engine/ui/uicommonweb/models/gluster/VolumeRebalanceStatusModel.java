@@ -123,11 +123,10 @@ public class VolumeRebalanceStatusModel extends Model {
         getStartTime().setEntity(rebalanceStatusEntity.getStartTime());
         getStatusTime().setEntity(rebalanceStatusEntity.getStatusTime());
         getRebalanceSessions().setItems(sessionList);
+        setStatusAvailable(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FINISHED);
         if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FINISHED) {
-            setStatusAvailable(true);
             refresh.cancel();
         }else {
-            setStatusAvailable(false);
             if ((rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED || rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.FAILED)) {
                 refresh.cancel();
                 if(rebalanceStatusEntity.getStatusSummary().getStatus() == JobExecutionStatus.ABORTED) {
@@ -175,9 +174,7 @@ public class VolumeRebalanceStatusModel extends Model {
 
     public void setStatusAvailable(boolean isStatusAvailable) {
         this.isStatusAvailable = isStatusAvailable;
-        if (isStatusAvailable == true) {
-            onPropertyChanged(new PropertyChangedEventArgs("IS_STATUS_APPLICABLE"));//$NON-NLS-1$
-        }
+        onPropertyChanged(new PropertyChangedEventArgs("STATUS_UPDATED"));//$NON-NLS-1$
     }
 
     private boolean stopTimeVisible;

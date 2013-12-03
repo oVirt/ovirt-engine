@@ -962,10 +962,6 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     private void showRemoveBricksStatus() {
-        if (getWindow() != null) {
-            return;
-        }
-
         final GlusterVolumeEntity volumeEntity = getVolumeEntity();
         final ArrayList<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
         for (GlusterBrickEntity brick : volumeEntity.getBricks()) {
@@ -1120,6 +1116,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                         localModel.stopProgress();
                         setConfirmWindow(null);
                         if (result.getReturnValue().getSucceeded()) {
+                            showRemoveBricksStatus();
                             disableRemoveBrickStatusPopUpActions();
                         }
                     }

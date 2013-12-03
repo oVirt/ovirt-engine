@@ -117,6 +117,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     }
 
     private void localize(final ApplicationConstants constants) {
+        status.setText(constants.rebalanceComplete());
         startTimeEditor.setLabel(constants.rebalanceStartTime());
         volumeEditor.setLabel(constants.rebalanceVolumeName());
         clusterEditor.setLabel(constants.rebalanceClusterVolume());
@@ -207,10 +208,10 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.PropertyName.equals("IS_STATUS_APPLICABLE")) {//$NON-NLS-1$
-                    status.setText(constants.rebalanceComplete());
-                    status.setVisible(true);
-                } else if (e.PropertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
+                if (e.PropertyName.equals("STATUS_UPDATED")) {//$NON-NLS-1$
+                    status.setVisible(object.isStatusAvailable());
+                }
+                else if (e.PropertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
                     stopTimePanel.setVisible(object.isStopTimeVisible());
                 }
             }
