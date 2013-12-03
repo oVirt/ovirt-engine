@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
@@ -68,29 +67,6 @@ public class ObjectIdentityChecker {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
-    public static boolean CanUpdateField(String objectType, String fieldName, String status) {
-        Class<?> type = aliases.get(objectType);
-        if (type != null) {
-            @SuppressWarnings("rawtypes")
-            final Class statusType = statusTypes.get(type);
-            if (statusType != null) {
-                Enum<?> currentStatus;
-                try {
-                    currentStatus = EnumUtils.valueOf(statusType, status, true);
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException(String.format("status type %1$s not contain type %2$s", statusType,
-                            status));
-                }
-                return CanUpdateField(type, fieldName, currentStatus);
-            } else {
-                throw new RuntimeException(String.format("status type %1$s not exist", type));
-            }
-        } else {
-            throw new RuntimeException(String.format("object type %1$s not exist", objectType));
-        }
-    }
-
     public final <T extends Enum<T>> void AddField(T status, String fieldName) {
         Set<String> values = dictionary.get(status);
         if (values == null) {
@@ -103,12 +79,6 @@ public class ObjectIdentityChecker {
     public final <T extends Enum<T>> void AddField(Iterable<T> statuses, String fieldName) {
         for (T status : statuses) {
             AddField(status, fieldName);
-        }
-    }
-
-    public final <T extends Enum<T>> void AddFields(Iterable<T> statuses, String... fields) {
-        for (String field : fields) {
-            AddField(statuses, field);
         }
     }
 
