@@ -222,8 +222,16 @@ public class GlusterTaskUtils {
     }
 
     public void eventMessageLogger(GlusterAsyncTask task, JobExecutionStatus oldStatus, VDSGroup cluster) {
-        String vol = task.getTaskParameters().getVolumeName();
-        GlusterVolumeEntity volume = getVolumeDao().getByName(cluster.getId(), vol);
+        GlusterVolumeEntity volume = getVolumeDao().getVolumeByGlusterTask(task.getTaskId());
+        if ( volume == null){
+            if(task.getTaskParameters() != null) {
+                String volName = task.getTaskParameters().getVolumeName();
+                volume = getVolumeDao().getByName(cluster.getId(), volName);
+            }
+            else {
+                return;
+            }
+        }
         if (JobExecutionStatus.ABORTED == task.getStatus() || JobExecutionStatus.FINISHED == task.getStatus() || JobExecutionStatus.FAILED == task.getStatus()){
             if(oldStatus != task.getStatus()){
                 logMessage(cluster.getId(), volume , taskTypeStrMap.get(task.getType()), task.getStatus().name().toLowerCase(), taskTypeAuditMsg.get(task.getType()));
