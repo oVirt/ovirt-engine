@@ -16,12 +16,6 @@
 # limitations under the License.
 #
 
-die() {
-	local m="$1"
-	echo "FATAL: ${m}" >&2
-	exit 1
-}
-
 usage() {
 	cat << __EOF__
 Usage: $0
@@ -84,4 +78,4 @@ while [ -n "$1" ]; do
 	esac
 done
 
-OTOPI_NONROOT=1 exec "${otopidir}/otopi" "${baseenv} ${environment} ${otopienv}"
+exec "${otopidir}/otopi" "${baseenv} ${environment} ${otopienv}"

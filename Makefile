@@ -152,6 +152,7 @@ BUILD_TARGET=install
 	-e "s|@JBOSS_HOME@|$(JBOSS_HOME)|g" \
 	-e "s|@PEP8@|$(PEP8)|g" \
 	-e "s|@PYFLAKES@|$(PYFLAKES)|g" \
+	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
 	$< > $@
 
 # List of files that will be generated from templates:
