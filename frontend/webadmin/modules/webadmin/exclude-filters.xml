@@ -316,10 +316,45 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
-   <Match>
-     <Class name="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
-     <Bug pattern="SKIPPED_CLASS_TOO_BIG"/>
-   </Match>
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
+      <Bug pattern="SKIPPED_CLASS_TOO_BIG"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupView$3" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView$3" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView$3" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView$3" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView$8" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView$10" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView$17" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
 
 
 </FindBugsFilter>
