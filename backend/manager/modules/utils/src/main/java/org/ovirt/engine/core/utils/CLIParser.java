@@ -34,14 +34,6 @@ public class CLIParser {
         return argsMap.keySet();
     }
 
-    public String nextParam() {
-        String strReturn = null;
-        if (argvIndex < argv.size()) {
-            strReturn = (String) argv.elementAt(argvIndex++);
-        }
-        return strReturn;
-    }
-
     public static void main(String[] args) {
         CLIParser parser = new CLIParser(args);
         if (args.length == 0) {
