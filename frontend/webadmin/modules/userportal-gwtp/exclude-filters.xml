@@ -59,5 +59,10 @@
      <Bug code="UuF"/>
    </Match>
 
+   <Match>
+     <Class name="org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider$1" />
+     <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+
 
  </FindBugsFilter>

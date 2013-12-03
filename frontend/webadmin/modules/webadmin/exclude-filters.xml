@@ -281,4 +281,39 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetworkPopupPresenterWidget$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickPopupView$2" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumePopupView$4" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeRebalanceStatusPopupView$9" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.GuidePopupView$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
 </FindBugsFilter>
