@@ -3,14 +3,14 @@ package org.ovirt.engine.ui.uicompat;
 
 public class PreparingEnlistment extends Enlistment {
 
-    public static EventDefinition PreparedEventDefinition;
+    public static EventDefinition preparedEventDefinition;
     private Event preparedEvent;
 
     protected Event getPreparedEvent() {
         return preparedEvent;
     }
 
-    public static EventDefinition RollbackEventDefinition;
+    public static EventDefinition rollbackEventDefinition;
     private Event rollbackEvent;
 
     protected Event getRollbackEvent() {
@@ -20,15 +20,15 @@ public class PreparingEnlistment extends Enlistment {
 
     static {
 
-        PreparedEventDefinition = new EventDefinition("Prepared", PreparingEnlistment.class); //$NON-NLS-1$
-        RollbackEventDefinition = new EventDefinition("Rollback", PreparingEnlistment.class); //$NON-NLS-1$
+        preparedEventDefinition = new EventDefinition("Prepared", PreparingEnlistment.class); //$NON-NLS-1$
+        rollbackEventDefinition = new EventDefinition("Rollback", PreparingEnlistment.class); //$NON-NLS-1$
     }
 
     public PreparingEnlistment(Object context) {
         super(context);
 
-        preparedEvent = new Event(PreparedEventDefinition);
-        rollbackEvent = new Event(RollbackEventDefinition);
+        preparedEvent = new Event(preparedEventDefinition);
+        rollbackEvent = new Event(rollbackEventDefinition);
     }
 
     public void prepared() {
