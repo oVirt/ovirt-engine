@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -21,12 +20,9 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class NewNetworkModel extends NetworkModel {
 
@@ -104,22 +100,6 @@ public class NewNetworkModel extends NetworkModel {
     @Override
     protected void selectExternalProvider() {
         getExternalProviders().setSelectedItem(Linq.firstOrDefault(getExternalProviders().getItems()));
-    }
-
-    @Override
-    protected void initProfiles() {
-        Iterable<VnicProfileModel> existingProfiles = getProfiles().getItems();
-        if (existingProfiles == null) {
-            // first run (dialog has just been opened and default DC chosen), create default entry
-            List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
-            profiles.add(getDefaultProfile());
-            getProfiles().setItems(profiles);
-        } else {
-            // not first run (user picked different DC), want to keep existing entries and update DC-related properties
-            for (VnicProfileModel profile : existingProfiles) {
-                profile.updateDc(getSelectedDc().getcompatibility_version(), getSelectedDc().getId());
-            }
-        }
     }
 
     @Override
@@ -215,19 +195,5 @@ public class NewNetworkModel extends NetworkModel {
             }
         }
         return clusterToAttach;
-    }
-
-    @Override
-    protected void performProfilesActions(Guid networkGuid) {
-        performVnicProfileAction(VdcActionType.AddVnicProfile,
-                (List<VnicProfileModel>) getProfiles().getItems(),
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        stopProgress();
-                        cancel();
-
-                    }
-                }, networkGuid);
     }
 }

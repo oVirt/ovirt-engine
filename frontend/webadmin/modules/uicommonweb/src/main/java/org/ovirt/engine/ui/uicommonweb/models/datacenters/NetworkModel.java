@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -32,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -443,6 +445,21 @@ public abstract class NetworkModel extends Model
         initProfiles();
     }
 
+    private void initProfiles() {
+        Iterable<VnicProfileModel> existingProfiles = getProfiles().getItems();
+        if (existingProfiles == null) {
+            // first run (dialog has just been opened and default DC chosen), create default entry
+            List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
+            profiles.add(getDefaultProfile());
+            getProfiles().setItems(profiles);
+        } else {
+            // not first run (user picked different DC), want to keep existing entries and update DC-related properties
+            for (VnicProfileModel profile : existingProfiles) {
+                profile.updateDc(getSelectedDc().getcompatibility_version(), getSelectedDc().getId());
+            }
+        }
+    }
+
     protected void addCommands() {
         UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -498,13 +515,9 @@ public abstract class NetworkModel extends Model
         }
     }
 
-    protected abstract void performProfilesActions(Guid networkGuid);
-
-    protected void performVnicProfileAction(VdcActionType action,
-            List<VnicProfileModel> profileModels,
-            IFrontendMultipleActionAsyncCallback callback, Guid networkGuid) {
+    private void performProfilesActions(Guid networkGuid) {
+        List<VnicProfileModel> profileModels = (List<VnicProfileModel>) getProfiles().getItems();
         if (profileModels.isEmpty()) {
-            callback.executed(null);
             return;
         }
 
@@ -521,7 +534,14 @@ public abstract class NetworkModel extends Model
             }
         }
 
-        Frontend.RunMultipleAction(action, paramlist, callback, null);
+        IFrontendMultipleActionAsyncCallback callback = new IFrontendMultipleActionAsyncCallback() {
+            @Override
+            public void executed(FrontendMultipleActionAsyncResult result) {
+                stopProgress();
+                cancel();
+            }
+        };
+        Frontend.RunMultipleAction(VdcActionType.AddVnicProfile, paramlist, callback, null);
     }
 
     void cancel() {
@@ -567,8 +587,6 @@ public abstract class NetworkModel extends Model
     protected abstract void initIsVm();
 
     protected abstract void selectExternalProvider();
-
-    protected abstract void initProfiles();
 
     protected abstract void onExportChanged();
 
