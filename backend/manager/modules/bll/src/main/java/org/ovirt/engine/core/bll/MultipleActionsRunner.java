@@ -62,7 +62,7 @@ public class MultipleActionsRunner {
                 parameter.setMultipleAction(true);
                 returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
                 if (returnValue == null) {
-                    CommandBase<?> command = CommandsFactory.CreateCommand(_actionType, parameter);
+                    CommandBase<?> command = CommandsFactory.createCommand(_actionType, parameter);
                     command.setInternalExecution(isInternal);
                     getCommands().add(command);
                 } else {

@@ -43,7 +43,7 @@ public final class CommandsFactory {
             new ConcurrentHashMap<String, Class<CommandBase<? extends VdcActionParametersBase>>>(VdcActionType.values().length);
 
     @SuppressWarnings("unchecked")
-    public static <P extends VdcActionParametersBase> CommandBase<P> CreateCommand(VdcActionType action, P parameters) {
+    public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
         try {
             Constructor<CommandBase<? extends VdcActionParametersBase>> constructor =
                     findCommandConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass());
@@ -69,7 +69,7 @@ public final class CommandsFactory {
      *            the command id used by the compensation.
      * @return command instance or null if exception occurred.
      */
-    public static CommandBase<?> CreateCommand(String className, Guid commandId) {
+    public static CommandBase<?> createCommand(String className, Guid commandId) {
         Constructor<?> constructor = null;
         Boolean isAcessible = null;
         try {
@@ -92,7 +92,7 @@ public final class CommandsFactory {
         }
     }
 
-    public static QueriesCommandBase<?> CreateQueryCommand(VdcQueryType query, VdcQueryParametersBase parameters) {
+    public static QueriesCommandBase<?> createQueryCommand(VdcQueryType query, VdcQueryParametersBase parameters) {
         Class<?> type = null;
         try {
             type = getCommandClass(query.name(), QueryPrefix);

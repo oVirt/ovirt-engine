@@ -317,7 +317,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         for (KeyValue commandSnapshot : commandSnapshots) {
             // create an instance of the related command by its class name and command id
             CommandBase<?> cmd =
-                    CommandsFactory.CreateCommand(commandSnapshot.getValue().toString(),
+                    CommandsFactory.createCommand(commandSnapshot.getValue().toString(),
                             (Guid) commandSnapshot.getKey());
             if (cmd != null) {
                 try {
@@ -389,7 +389,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             result.setSucceeded(false);
         }
         else {
-            CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
+            CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
             result = runAction(command, runAsInternal, context);
         }
         return result;
@@ -442,7 +442,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     public VdcReturnValueBase endAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
             CommandContext context) {
-        CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
+        CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
         command.setContext(context);
         return command.endAction();
     }
@@ -580,7 +580,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         switch (parameters.getActionType()) {
         case LoginUser:
         case LoginAdminUser:
-            CommandBase<?> command = CommandsFactory.CreateCommand(parameters.getActionType(), parameters);
+            CommandBase<?> command = CommandsFactory.createCommand(parameters.getActionType(), parameters);
             command.insertAsyncTaskPlaceHolders();
             return command.executeAction();
         default:
@@ -648,7 +648,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        return CommandsFactory.CreateQueryCommand(actionType, parameters);
+        return CommandsFactory.createQueryCommand(actionType, parameters);
     }
 
     @Override
@@ -667,7 +667,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
    @Override
     public CommandBase<?> createAction(VdcActionType actionType, VdcActionParametersBase parameters) {
-        return CommandsFactory.CreateCommand(actionType, parameters);
+        return CommandsFactory.createCommand(actionType, parameters);
     }
 
     @Override

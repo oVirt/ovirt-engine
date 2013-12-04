@@ -53,7 +53,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
         if (duringInit && isNewCommandAdded) {
             CommandBase<?> command =
-                    CommandsFactory.CreateCommand(parameters.getDbAsyncTask().getaction_type(),
+                    CommandsFactory.createCommand(parameters.getDbAsyncTask().getaction_type(),
                             parameters.getDbAsyncTask().getActionParameters());
             if (!command.acquireLockAsyncTask()) {
                 log.warnFormat("Failed to acquire locks for command {0} with parameters {1}",
