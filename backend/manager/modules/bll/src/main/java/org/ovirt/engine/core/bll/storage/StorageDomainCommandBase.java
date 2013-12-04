@@ -177,7 +177,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             valid = Arrays.asList(statuses).contains(status);
         }
         if (!valid) {
-            if (status == StorageDomainStatus.Locked) {
+            if (status.isStorageDomainInProcess()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
             }
             addStorageDomainStatusIllegalMessage();

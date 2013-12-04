@@ -195,7 +195,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
         map.setStatus(StorageDomainStatus.Unknown);
-        changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
+        changeStorageDomainStatusInTransaction(map,
+                getParameters().isInactive() ? StorageDomainStatus.Locked : StorageDomainStatus.PreparingForMaintenance);
         proceedStorageDomainTreatmentByDomainType(false);
 
         if (_isLastMaster) {
@@ -259,8 +260,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             public Object runInTransaction() {
                 if (getParameters().isInactive()) {
                     map.setStatus(StorageDomainStatus.InActive);
-                } else {
+                } else if (_isLastMaster) {
                     map.setStatus(StorageDomainStatus.Maintenance);
+                } else {
+                    log.infoFormat("Domain {0} will remain in {1} status until deactivated on all hosts",
+                            getStorageDomain().getId(), map.getStatus());
                 }
                 getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
                 if (!Guid.Empty.equals(_newMasterStorageDomainId)) {

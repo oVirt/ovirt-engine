@@ -24,6 +24,7 @@ public class StorageDomainStatusColumn extends WebAdminImageResourceColumn<Stora
         case Uninitialized:
             return getApplicationResources().unconfiguredImage();
         case Locked:
+        case PreparingForMaintenance:
             return getApplicationResources().lockImage();
         case Maintenance:
             return getApplicationResources().maintenanceImage();

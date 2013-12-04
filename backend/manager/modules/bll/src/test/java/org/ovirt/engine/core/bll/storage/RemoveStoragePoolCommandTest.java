@@ -40,33 +40,41 @@ public class RemoveStoragePoolCommandTest {
         assertTrue(!listReturned.isEmpty());
     }
 
-    /**
-     * Test when there is locked domain is in the Data Center.
-     */
-    @Test
-    public void testLockedDomainInList() {
+    private void testBusyDomainInList(StorageDomainStatus status) {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
         StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setStatus(StorageDomainStatus.Locked);
+        tempStorageDomains.setStatus(status);
         domainsList.add(tempStorageDomains);
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
         assertTrue(!listReturned.isEmpty());
     }
 
     /**
-     * Test when there is locked domain and active is in the Data Center.
+     * Test removal with locked domain in the Data Center.
      */
     @Test
-    public void testLockedAndActiveDomainInList() {
+    public void testLockedDomainInList() {
+        testBusyDomainInList(StorageDomainStatus.Locked);
+    }
+
+    /**
+     * Test removal with moving to maintenance domain in the Data Center.
+     */
+    @Test
+    public void testPreparingForMaintenanceDomainInList() {
+        testBusyDomainInList(StorageDomainStatus.PreparingForMaintenance);
+    }
+
+    private void testBusyAndActiveDomainInList(StorageDomainStatus status) {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
 
         // Add first locked storage
         StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setStatus(StorageDomainStatus.Locked);
+        tempStorageDomains.setStatus(status);
         domainsList.add(tempStorageDomains);
 
         // Add second active storage
@@ -75,6 +83,22 @@ public class RemoveStoragePoolCommandTest {
 
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
         assertTrue(listReturned.size() == 2);
+    }
+
+    /**
+     * Test removal with locked and active domains in the Data Center.
+     */
+    @Test
+    public void testLockedAndActiveDomainInList() {
+        testBusyAndActiveDomainInList(StorageDomainStatus.Locked);
+    }
+
+    /**
+     * Test removal with moving to maintenance and active domains in the Data Center.
+     */
+    @Test
+    public void testPreparingForMaintenanceAndActiveDomainInList() {
+        testBusyAndActiveDomainInList(StorageDomainStatus.PreparingForMaintenance);
     }
 
     /**

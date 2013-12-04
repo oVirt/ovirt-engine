@@ -369,7 +369,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         domainsList = LinqUtils.filter(domainsList, new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain dom) {
-                return (dom.getStatus() == StorageDomainStatus.Active || dom.getStatus() == StorageDomainStatus.Locked);
+                return (dom.getStatus() == StorageDomainStatus.Active || dom.getStatus().isStorageDomainInProcess());
             }
         });
         return domainsList;

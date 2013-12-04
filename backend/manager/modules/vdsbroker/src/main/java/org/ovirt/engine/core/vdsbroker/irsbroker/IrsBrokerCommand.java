@@ -218,6 +218,21 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         private int _errorAttempts;
 
+        private static Set<Guid> getVdsConnectedToPool(Guid storagePoolId) {
+            Set<Guid> vdsNotInMaintenance = new HashSet<>();
+
+            for (VDS vds : DbFacade.getInstance().getVdsDao().getAllForStoragePool(storagePoolId)) {
+                if (vds.getStatus() == VDSStatus.Up
+                        || vds.getStatus() == VDSStatus.NonResponsive
+                        || vds.getStatus() == VDSStatus.PreparingForMaintenance
+                        || vds.getStatus() == VDSStatus.NonOperational) {
+                    vdsNotInMaintenance.add(vds.getId());
+                }
+            }
+
+            return vdsNotInMaintenance;
+        }
+
         @SuppressWarnings("unchecked")
         private void proceedStoragePoolStats(StoragePool storagePool) {
             // ugly patch because vdsm doesnt check if host is spm on spm
@@ -292,6 +307,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 ResourceManager.getInstance().getEventListener()
                         .storagePoolStatusChanged(storagePool.getId(), storagePool.getStatus());
             }
+            List<StorageDomain> domainsInDb = DbFacade.getInstance().getStorageDomainDao()
+                    .getAllForStoragePool(_storagePoolId);
             GetStoragePoolInfoVDSCommandParameters tempVar = new GetStoragePoolInfoVDSCommandParameters(
                     _storagePoolId);
             tempVar.setIgnoreFailoverLimit(true);
@@ -307,9 +324,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     domainsInVds.add(domainData.getId());
                     proceedStorageDomain(domainData, masterVersion, storagePool);
                 }
-                List<StorageDomain> domainsInDb = DbFacade.getInstance().getStorageDomainDao()
-                        .getAllForStoragePool(_storagePoolId);
-
                 for (final StorageDomain domainInDb : domainsInDb) {
                     if (domainInDb.getStorageDomainType() != StorageDomainType.Master
                             && domainInDb.getStatus() != StorageDomainStatus.Locked
@@ -320,8 +334,35 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 .remove(new StoragePoolIsoMapId(domainInDb.getId(),
                                         _storagePoolId));
                     }
+
                 }
             }
+            for (final StorageDomain domainInDb : domainsInDb) {
+                if (domainInDb.getStatus() == StorageDomainStatus.PreparingForMaintenance) {
+                    queueDomainMaintenanceCheck(domainInDb);
+                }
+            }
+        }
+
+        public void queueDomainMaintenanceCheck(final StorageDomain domain) {
+            ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL))
+                    .submitEventAsync(new Event(_storagePoolId, domain.getId(), null, EventType.DOMAINFAILOVER, ""),
+                            new Callable<EventResult>() {
+                                @Override
+                                public EventResult call() {
+                                    Set<Guid> vdsConnectedToPool = getVdsConnectedToPool(_storagePoolId);
+                                    Set<Guid> vdsDomInMaintenance = _domainsInMaintenance.get(domain.getId());
+                                    if (vdsConnectedToPool.isEmpty() ||
+                                            (vdsDomInMaintenance != null &&
+                                                    vdsDomInMaintenance.containsAll(vdsConnectedToPool))) {
+                                        log.infoFormat("Moving domain {0} to maintenance", domain.getId());
+                                        DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(
+                                                domain.getStoragePoolIsoMapData().getId(),
+                                                StorageDomainStatus.Maintenance);
+                                    }
+                                    return null;
+                                }
+                            });
         }
 
         public Guid getPreferredHostId() {
@@ -1017,12 +1058,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private final Map<Guid, HashSet<Guid>> _domainsInProblem = new ConcurrentHashMap<Guid, HashSet<Guid>>();
+        private final Map<Guid, HashSet<Guid>> _domainsInMaintenance = new ConcurrentHashMap<Guid, HashSet<Guid>>();
         private final Map<Guid, String> _timers = new HashMap<Guid, String>();
 
         public void updateVdsDomainsData(final Guid vdsId, final String vdsName,
                 final ArrayList<VDSDomainsData> data) {
 
             Set<Guid> domainsInProblems = null;
+            Set<Guid> domainsInMaintenance = null;
             StoragePool storagePool =
                     DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
             if (storagePool != null
@@ -1084,6 +1127,19 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         }
                     }
 
+                    Set<Guid> maintInPool = new HashSet<Guid>(
+                            DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                                    _storagePoolId, StorageDomainStatus.Maintenance));
+                    maintInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                            _storagePoolId, StorageDomainStatus.PreparingForMaintenance));
+
+                    domainsInMaintenance = new HashSet<Guid>();
+                    for (Guid tempDomainId : maintInPool) {
+                        if (!dataDomainIds.contains(tempDomainId)) {
+                            domainsInMaintenance.add(tempDomainId);
+                        }
+                    }
+
                     // build a list of all potential domains
                     // in problem
                     domainsInProblems = new HashSet<Guid>();
@@ -1095,10 +1151,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
 
             }
-            updateDomainInProblem(vdsId, vdsName, domainsInProblems);
+            updateDomainInProblem(vdsId, vdsName, domainsInProblems, domainsInMaintenance);
         }
 
-        private void updateDomainInProblem(final Guid vdsId, final String vdsName, final Set<Guid> domainsInProblems) {
+        private void updateDomainInProblem(final Guid vdsId, final String vdsName, final Set<Guid> domainsInProblems,
+                                           final Set<Guid> domainsInMaintenance) {
             if (domainsInProblems != null) {
                 ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(_storagePoolId,
                         null, vdsId, EventType.DOMAINMONITORING, ""),
@@ -1107,6 +1164,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             public EventResult call() {
                                 EventResult result = new EventResult(true, EventType.DOMAINMONITORING);
                                 updateProblematicVdsData(vdsId, vdsName, domainsInProblems);
+                                updateMaintenanceVdsData(vdsId, vdsName, domainsInMaintenance);
                                 return result;
                             }
                         });
@@ -1168,6 +1226,30 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 return true;
             }
             return false;
+        }
+
+        private void updateMaintenanceVdsData(final Guid vdsId, final String vdsName, Set<Guid> domainsInMaintenance) {
+            for (Guid domainId : domainsInMaintenance) {
+                Set<Guid> vdsSet = _domainsInMaintenance.get(domainId);
+                if (vdsSet == null) {
+                    log.infoFormat("Adding domain {0} to the domains in maintenance cache", domainId);
+                    _domainsInMaintenance.put(domainId, new HashSet<>(Arrays.asList(vdsId)));
+                } else {
+                    vdsSet.add(vdsId);
+                }
+            }
+            Set<Guid> maintenanceDomainsByHost = new HashSet<>(_domainsInMaintenance.keySet());
+            maintenanceDomainsByHost.removeAll(domainsInMaintenance);
+            for (Guid domainId : maintenanceDomainsByHost) {
+                Set<Guid> vdsForDomain = _domainsInMaintenance.get(domainId);
+                if (vdsForDomain != null && vdsForDomain.contains(vdsId)) {
+                    vdsForDomain.remove(vdsId);
+                    if (vdsForDomain.isEmpty()) {
+                        log.infoFormat("Removing domain {0} from the domains in maintenance cache", domainId);
+                        _domainsInMaintenance.remove(domainId);
+                    }
+                }
+            }
         }
 
         private void updateProblematicVdsData(final Guid vdsId, final String vdsName, Set<Guid> domainsInProblems) {
@@ -1374,6 +1456,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 _domainsInProblem.remove(domainId);
             }
             removeVdsAsProblematic(nonOpVdss);
+            removeVdsFromDomainMaintenance(nonOpVdss);
         }
 
         private void removeVdsAsProblematic(List<Guid> nonOpVdss) {
@@ -1388,6 +1471,18 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             getDomainIdTuple(entry.getKey()));
                 }
 
+            }
+        }
+
+        private void removeVdsFromDomainMaintenance(List<Guid> nonOpVdss) {
+            log.infoFormat("Removing vds {0} from the domain in maintenance cache", nonOpVdss);
+            Iterator<Map.Entry<Guid, HashSet<Guid>>> iterDomainsInProblem = _domainsInMaintenance.entrySet().iterator();
+            while (iterDomainsInProblem.hasNext()) {
+                Map.Entry<Guid, HashSet<Guid>> entry = iterDomainsInProblem.next();
+                entry.getValue().removeAll(nonOpVdss);
+                if (entry.getValue().isEmpty()) {
+                    iterDomainsInProblem.remove();
+                }
             }
         }
 

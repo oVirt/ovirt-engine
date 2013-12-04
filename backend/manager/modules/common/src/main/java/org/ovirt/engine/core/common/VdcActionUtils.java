@@ -297,6 +297,9 @@ public final class VdcActionUtils {
         storageDomainMatrix.put(
                 StorageDomainStatus.Maintenance,
                 EnumSet.of(VdcActionType.DeactivateStorageDomain));
+        storageDomainMatrix.put(
+                StorageDomainStatus.PreparingForMaintenance,
+                EnumSet.of(VdcActionType.DetachStorageDomainFromPool, VdcActionType.DeactivateStorageDomain));
         _matrix.put(StorageDomain.class, storageDomainMatrix);
     }
 

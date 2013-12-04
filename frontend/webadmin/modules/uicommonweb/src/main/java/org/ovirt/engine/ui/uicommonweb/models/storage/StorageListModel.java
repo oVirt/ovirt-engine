@@ -443,7 +443,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private boolean isPathEditable(StorageDomain storage) {
         if (storage.getStorageType().isFileDomain() && !storage.getStorageType().equals(StorageType.GLUSTERFS)) {
-            return ((storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) && (storage.getStatus() == StorageDomainStatus.Maintenance || storage.getStorageDomainSharedStatus() ==  StorageDomainSharedStatus.Unattached));
+            return ((storage.getStorageDomainType() == StorageDomainType.Data
+                    || storage.getStorageDomainType() == StorageDomainType.Master)
+                        && (storage.getStatus() == StorageDomainStatus.Maintenance
+                            || storage.getStatus() == StorageDomainStatus.PreparingForMaintenance
+                            || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached));
         }
         return false;
     }
@@ -1110,7 +1114,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         boolean isEditAvailable;
         boolean isActive = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active
                 || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
-        boolean isInMaintenance = (storageDomain.getStatus() == StorageDomainStatus.Maintenance);
+        boolean isInMaintenance = (storageDomain.getStatus() == StorageDomainStatus.Maintenance
+                || storageDomain.getStatus() == StorageDomainStatus.PreparingForMaintenance);
         boolean isUnattached = (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
         boolean isDataDomain = storageDomain.getStorageDomainType().isDataDomain();
         boolean isBlockStorage = storageDomain.getStorageType().isBlockDomain();

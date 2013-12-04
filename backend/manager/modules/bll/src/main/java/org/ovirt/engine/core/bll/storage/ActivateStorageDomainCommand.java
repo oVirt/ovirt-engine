@@ -141,10 +141,11 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         boolean returnValue;
         if (isInternalExecution()) {
             returnValue = checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Unknown,
-                    StorageDomainStatus.Locked, StorageDomainStatus.Maintenance);
+                    StorageDomainStatus.Locked, StorageDomainStatus.Maintenance,
+                    StorageDomainStatus.PreparingForMaintenance);
         } else {
             returnValue = checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Unknown,
-                    StorageDomainStatus.Maintenance);
+                    StorageDomainStatus.Maintenance, StorageDomainStatus.PreparingForMaintenance);
         }
         return returnValue;
     }

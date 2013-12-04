@@ -95,6 +95,16 @@ public class ActivateStorageDomainCommandTest {
     }
 
     @Test
+    public void internalPreparingForMaintenanceAllowed() {
+        internalActionAllowed(StorageDomainStatus.PreparingForMaintenance);
+    }
+
+    @Test
+    public void nonInternalPreparingForMaintenanceAllowed() {
+        nonInternalActionAllowed(StorageDomainStatus.PreparingForMaintenance);
+    }
+
+    @Test
     public void nonActiveVdsDisallowed() {
         testNonActiveVdsExecution(StorageDomainStatus.Maintenance);
         canDoActionFails();
