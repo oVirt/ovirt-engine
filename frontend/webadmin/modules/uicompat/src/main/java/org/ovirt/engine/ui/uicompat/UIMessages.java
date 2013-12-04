@@ -198,9 +198,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Remove {0} from Bond")
     String removeFromBond(String name);
 
-    @DefaultMessage("No valid Operation for {0} and ")
-    String noValidOperation(String name);
-
     @DefaultMessage("You could detach {0} first.")
     String suggestDetachNetwork(String networkName);
 

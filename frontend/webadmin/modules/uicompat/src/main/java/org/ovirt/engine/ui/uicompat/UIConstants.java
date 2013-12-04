@@ -1753,9 +1753,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cannot have a non-VLAN VM network and VLAN-tagged networks on one interface.")
     String nullOperationVmWithVlans();
 
-    @DefaultStringValue("Unassigned Logical Networks panel")
-    String unassignedLogicalNetworksPanel();
-
     @DefaultStringValue("disk_type=")
     String diskTypeSearchPrefix();
 

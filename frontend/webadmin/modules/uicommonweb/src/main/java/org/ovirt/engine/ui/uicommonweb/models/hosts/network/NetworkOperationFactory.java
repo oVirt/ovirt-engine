@@ -86,10 +86,10 @@ public class NetworkOperationFactory {
             Set<LogicalNetworkModel> networks = new HashSet<LogicalNetworkModel>();
             networks.addAll(dst.getItems());
 
-            // op1 is a NIC, verify that it isn't already part of a bond or dragged unto itself
+            // op1 is a NIC, verify that it isn't dragged unto itself
             if (op1 instanceof NetworkInterfaceModel) {
                 NetworkInterfaceModel src = (NetworkInterfaceModel) op1;
-                if (src.isBonded() || src.equals(dst)) {
+                if (src.equals(dst)) {
                     return NetworkOperation.NULL_OPERATION;
                 }
                 networks.addAll(((NetworkInterfaceModel) op1).getItems());

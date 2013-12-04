@@ -334,7 +334,12 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getMessages().noValidOperation(op1.getName());
+            return ""; //$NON-NLS-1$
+        }
+
+        @Override
+        public boolean isUnary() {
+            return true;
         }
 
         @Override
@@ -558,9 +563,7 @@ public enum NetworkOperation {
      */
     public String getNoun(NetworkItemModel<?> op2) {
         assert !isUnary() : "The Unary Operation " + name() + " has no Noun"; //$NON-NLS-1$ //$NON-NLS-2$
-        if (op2 == null){
-            return ConstantsManager.getInstance().getConstants().unassignedLogicalNetworksPanel();
-        }
+        assert op2 != null : "Can't perform binary operation " + name() + "without a second operand"; //$NON-NLS-1$ $NON-NLS-2$
         return op2.getName();
     }
 

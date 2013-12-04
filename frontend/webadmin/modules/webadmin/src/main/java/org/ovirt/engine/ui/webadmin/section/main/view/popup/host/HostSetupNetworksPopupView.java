@@ -160,7 +160,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 if (!drop) {
                     status.setFadeText(candidate != null ? candidate.getMessage(op1, op2) : constants.noValidActionSetupNetwork());
                 }
-                setStatusStyle(!drop || !candidate.isNullOperation());
+                setStatusStyle(!drop || !candidate.isNullOperation() || candidate == NetworkOperation.NULL_OPERATION);
             }
         });
 
