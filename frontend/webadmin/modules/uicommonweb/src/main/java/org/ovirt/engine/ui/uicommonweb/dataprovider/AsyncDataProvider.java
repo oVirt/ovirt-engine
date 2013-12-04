@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -177,8 +178,8 @@ public final class AsyncDataProvider {
     // cached windows OS
     private static List<Integer> windowsOsIds;
 
-    // cached os's support for SPICE (given compatibility version)
-    private static Map<Integer, Map<Version, Boolean>> spiceSupportMatrix;
+    // cached os's support for display types (given compatibility version)
+    private static Map<Integer, Map<Version, List<DisplayType>>> displayTypes;
 
     public static String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
@@ -216,7 +217,7 @@ public final class AsyncDataProvider {
         initUniqueOsNames();
         initLinuxOsTypes();
         initWindowsOsTypes();
-        initHasSpiceSupport();
+        initDisplayTypes();
         initNicHotplugSupportMap();
         initDiskHotpluggableInterfacesMap();
     }
@@ -3207,19 +3208,23 @@ public final class AsyncDataProvider {
         return osNames.get(osId);
     }
 
-    public static Boolean hasSpiceSupport(int osId, Version version) {
-        return spiceSupportMatrix.get(osId).get(version);
+    public static boolean hasSpiceSupport(int osId, Version version) {
+        return getDisplayTypes(osId, version).contains(DisplayType.qxl);
     }
 
-    private static void initHasSpiceSupport() {
+    public static List<DisplayType> getDisplayTypes(int osId, Version version) {
+        return displayTypes.get(osId).get(version);
+    }
+
+    private static void initDisplayTypes() {
         AsyncQuery callback = new AsyncQuery();
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                spiceSupportMatrix = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                displayTypes = ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetSpiceSupportMatrix), callback);
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes), callback);
     }
 
     public static List<Integer> getOsIds() {

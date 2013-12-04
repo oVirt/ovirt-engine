@@ -77,9 +77,10 @@ public class VmDeviceUtils {
                 // add video device per each monitor
                 int monitors = entity.getSingleQxlPci() ? 1 : entity.getNumOfMonitors();
                 for (int i = 0; i<monitors; i++) {
+                    VmDeviceType vmDeviceType = osRepository.getDisplayDevice(entity.getOsId(), ClusterUtils.getCompatibilityVersion(entity), entity.getDefaultDisplayType());
                     addManagedDevice(new VmDeviceId(Guid.newGuid(), entity.getId()),
                             VmDeviceGeneralType.VIDEO,
-                            entity.getDefaultDisplayType().getVmDeviceType(),
+                            vmDeviceType,
                             getMemExpr(entity.getNumOfMonitors(), entity.getSingleQxlPci()),
                             true,
                             false,
@@ -453,10 +454,12 @@ public class VmDeviceUtils {
     }
 
     private static void addVideoDevice(VmBase vm) {
+        VmDeviceType vmDeviceType = osRepository.getDisplayDevice(vm.getOsId(), ClusterUtils.getCompatibilityVersion(vm), vm.getDefaultDisplayType());
+
         addManagedDevice(
                 new VmDeviceId(Guid.newGuid(), vm.getId()),
                 VmDeviceGeneralType.VIDEO,
-                vm.getDefaultDisplayType().getVmDeviceType(),
+                vmDeviceType,
                 getMemExpr(vm.getNumOfMonitors(), vm.getSingleQxlPci()),
                 true,
                 true,

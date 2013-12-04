@@ -29,6 +29,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -78,12 +80,17 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      */
     private void addVideoCardByDisplayType(DisplayType displayType, int numOfMonitors, boolean singleQxlPci) {
         Map<String, Object> struct = new HashMap<String, Object>();
+        VmDeviceType vmDeviceType = getOsRepository().getDisplayDevice(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), displayType);
         // create a monitor as an unmanaged device
         struct.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
-        struct.put(VdsProperties.Device, displayType.getVmDeviceType().getName());
+        struct.put(VdsProperties.Device, vmDeviceType);
         struct.put(VdsProperties.SpecParams, getNewMonitorSpecParams(displayType, numOfMonitors, singleQxlPci));
         struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
         devices.add(struct);
+    }
+
+    private OsRepository getOsRepository() {
+        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
     }
 
     /**

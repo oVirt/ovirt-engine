@@ -13,10 +13,8 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -133,21 +131,12 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionFailedVirtIODisk() throws Exception {
         mockVmStatusUp();
-        mockSpiceSupportMatrix();
         when(osRepository.getOsName(0)).thenReturn("RHEL6");
         createNotVirtIODisk();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED.toString()));
-    }
-
-    private void mockSpiceSupportMatrix() {
-        Map<Integer, Map<Version, Boolean>> supportMatrix = new HashMap<>();
-        HashMap<Version, Boolean> chunk = new HashMap<>();
-        chunk.put(Version.v3_1, true);
-        supportMatrix.put(0, chunk);
-        when(osRepository.getSpiceSupportMatrix()).thenReturn(supportMatrix);
     }
 
     @Test

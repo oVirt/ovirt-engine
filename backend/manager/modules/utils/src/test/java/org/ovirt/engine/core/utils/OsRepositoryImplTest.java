@@ -6,10 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.compat.Version;
 
 public class OsRepositoryImplTest {
@@ -35,6 +39,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.1", "512");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
         preferences.node("/os/rhel7/spiceSupport").put("value", "true");
+        preferences.node("/os/rhel7/displayProtocols").put("value", "vnc/cirrus,qxl/qxl");
         preferences.node("/os/rhel7/sysprepPath").put("value", PATH_TO_SYSPREP);
         preferences.node("/os/rhel7/productKey").put("value", SOME_PRODUCT_KEY);
         preferences.node("/os/rhel7/devices/audio").put("value", SOUND_DEVICE);
@@ -127,8 +132,14 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testHasSpiceSupport() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.getSpiceSupportMatrix().get(777).get(null));
+    public void testDisplayTypes() throws Exception {
+        List<DisplayType> supportedDisplays = OsRepositoryImpl.INSTANCE.getDisplayTypes().get(777).get(null);
+
+        boolean isSizeCorrect = supportedDisplays.size() == 2;
+        boolean containsSameElements = (new HashSet<DisplayType>(supportedDisplays)).equals(new HashSet<DisplayType>(Arrays.asList(DisplayType.qxl, DisplayType.vnc)));
+
+        assertTrue(isSizeCorrect);
+        assertTrue(containsSameElements);
     }
 
     @Test

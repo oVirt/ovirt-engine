@@ -14,6 +14,7 @@ public enum VmDeviceType {
     SPICEVMC("spicevmc", "23"),
     QXL("qxl"),
     CIRRUS("cirrus"),
+    VGA("vga"),
     SOUND("sound"),
     ICH6("ich6"),
     AC97("ac97"),
@@ -72,5 +73,20 @@ public enum VmDeviceType {
         }
         return VmDeviceType.ICH6;
     }
-}
 
+    /**
+     * gets device type for a given device name
+     *
+     * @param name
+     * @return
+     */
+    public static VmDeviceType getByName(String name) {
+        for (VmDeviceType vmDeviceType : values()) {
+            if (name.equals(vmDeviceType.getName())) {
+                return vmDeviceType;
+            }
+        }
+        return null;
+    }
+
+}

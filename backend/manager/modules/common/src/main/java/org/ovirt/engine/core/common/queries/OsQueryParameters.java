@@ -38,7 +38,7 @@ public class OsQueryParameters extends VdcQueryParametersBase {
     }
 
     public enum OsRepositoryVerb {
-        GetSpiceSupportMatrix,
+        GetDisplayTypes,
         HasNicHotplugSupport,
         GetNicHotplugSupportMap,
         GetDiskHotpluggableInterfacesMap,

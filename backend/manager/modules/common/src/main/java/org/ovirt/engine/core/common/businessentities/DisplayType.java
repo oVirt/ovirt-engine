@@ -3,24 +3,24 @@ package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 public enum DisplayType {
-    vnc(VmDeviceType.CIRRUS),
+    vnc(VmDeviceType.VGA),
     qxl(VmDeviceType.QXL);
 
-    private VmDeviceType vmDeviceType;
+    private VmDeviceType defaultVmDeviceType;
 
     public int getValue() {
         return this.ordinal();
     }
 
-    DisplayType(VmDeviceType vmDeviceType) {
-        this.vmDeviceType = vmDeviceType;
+    DisplayType(VmDeviceType defaultVmDeviceType) {
+        this.defaultVmDeviceType = defaultVmDeviceType;
     }
     public static DisplayType forValue(int value) {
         return values()[value];
     }
 
-    public VmDeviceType getVmDeviceType() {
-        return vmDeviceType;
+    public VmDeviceType getDefaultVmDeviceType() {
+        return defaultVmDeviceType;
     }
 
 }

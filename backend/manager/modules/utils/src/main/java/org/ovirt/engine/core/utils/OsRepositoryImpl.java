@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -243,21 +245,58 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public Map<Integer, Map<Version, Boolean>> getSpiceSupportMatrix() {
-        Map<Integer, Map<Version, Boolean>> spiceSupportMatrix = new HashMap<Integer, Map<Version, Boolean>>();
+    public Map<Integer, Map<Version, List<DisplayType>>> getDisplayTypes() {
+        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<Integer, Map<Version, List<DisplayType>>>();
         Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
         versionsWithNull.add(null);
 
         for (Integer osId : getOsIds()) {
-            spiceSupportMatrix.put(osId, new HashMap<Version, Boolean>());
+            displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
 
             for (Version ver : versionsWithNull) {
-                boolean spiceSupport = getBoolean(getValueByVersion(idToUnameLookup.get(osId), "spiceSupport", ver), false);
-                spiceSupportMatrix.get(osId).put(ver, spiceSupport);
+                List<DisplayType> displayTypeList = getDisplayTypes(osId, ver);
+                displayTypeMap.get(osId).put(ver, displayTypeList);
             }
         }
 
-        return spiceSupportMatrix;
+        return displayTypeMap;
+    }
+
+    private List<DisplayType> getDisplayTypes(int osId, Version version) {
+        return new ArrayList<DisplayType>(parseDisplayProtocols(osId, version).keySet());
+    }
+
+    private Map<DisplayType, VmDeviceType> parseDisplayProtocols(int osId, Version version) {
+        Map<DisplayType, VmDeviceType> parseDisplayProtocols = new HashMap<DisplayType, VmDeviceType>();
+
+        String displayProtocolValue = getValueByVersion(idToUnameLookup.get(osId), "displayProtocols", version);
+        for (String displayProtocol : displayProtocolValue.split(",")) {
+            Pair<String, String> pairs = parseDisplayProtocol(displayProtocol);
+            if (pairs != null) {
+                parseDisplayProtocols.put(DisplayType.valueOf(pairs.getFirst()),
+                        VmDeviceType.getByName(pairs.getSecond()));
+            }
+        }
+
+        return parseDisplayProtocols;
+    }
+
+    private Pair<String, String> parseDisplayProtocol(String displayProtocol) {
+        Pair<String, String> pairs = null;
+
+        String[] displayProtocolSplit = displayProtocol.split("/");
+        if (displayProtocolSplit.length == 2) {
+            return new Pair<String, String>(displayProtocolSplit[0].trim(),
+                    displayProtocolSplit[1].trim());
+        }
+
+        return pairs;
+    }
+
+    @Override
+    public VmDeviceType getDisplayDevice(int osId, Version version, DisplayType displayType) {
+        VmDeviceType vmDeviceType = parseDisplayProtocols(osId, version).get(displayType);
+        return vmDeviceType == null ? displayType.getDefaultVmDeviceType() : vmDeviceType;
     }
 
     @Override

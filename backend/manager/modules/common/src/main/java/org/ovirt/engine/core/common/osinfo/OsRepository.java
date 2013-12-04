@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -69,10 +72,19 @@ public interface OsRepository {
     public int getMaximumRam(int osId, Version version);
 
      /**
-      * @return map (osId -> compatibility version -> Boolean) that indicates SPICE support for all OSs and
+      * @return map (osId -> compatibility version -> display types list) for all OSs and
       * compatibility versions
      */
-    public Map<Integer, Map<Version, Boolean>> getSpiceSupportMatrix();
+    public Map<Integer, Map<Version, List<DisplayType>>> getDisplayTypes();
+
+    /**
+     * Get device type from display type of the OS
+     * @param osId
+     * @param version
+     * @param displayType
+     * @return
+     */
+    public VmDeviceType getDisplayDevice(int osId, Version version, DisplayType displayType);
 
     /**
      * Checks if that OS network devices support hotplug.

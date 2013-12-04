@@ -309,6 +309,10 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected abstract void readHardwareSection(XmlNode section);
 
+    protected VmDeviceType getDisplayDevice(DisplayType displayType) {
+        return osRepository.getDisplayDevice(vmBase.getOsId(), new Version(getVersion()), displayType);
+    }
+
     protected void readGeneralData() {
         XmlNode content = _document.SelectSingleNode("//*/Content");
         XmlNode node;
@@ -395,20 +399,26 @@ public abstract class OvfReader implements IOvfBuilder {
         }
 
         XmlNodeList list = content.SelectNodes("Section");
-        for (XmlNode section : list) {
-            String value = section.attributes.get("xsi:type").getValue();
 
-            if ("ovf:OperatingSystemSection_Type".equals(value)) {
-                readOsSection(section);
-                if (!osRepository.isLinux(vmBase.getOsId()) ||
-                        !FeatureSupported.singleQxlPci(new Version(getVersion()))) {
+        if (list != null) {
+            // The Os need to be read before the hardware
+            node = getNode(list, "xsi:type", "ovf:OperatingSystemSection_Type");
+            if (node != null) {
+                readOsSection(node);
+                if (!osRepository.isLinux(vmBase.getOsId())
+                        || !FeatureSupported.singleQxlPci(new Version(getVersion()))) {
                     vmBase.setSingleQxlPci(false);
                 }
             }
-            else if ("ovf:VirtualHardwareSection_Type".equals(value)) {
-                readHardwareSection(section);
-            } else if ("ovf:SnapshotsSection_Type".equals(value)) {
-                readSnapshotsSection(section);
+
+            node = getNode(list, "xsi:type", "ovf:VirtualHardwareSection_Type");
+            if (node != null) {
+                readHardwareSection(node);
+            }
+
+            node = getNode(list, "xsi:type", "ovf:SnapshotsSection_Type");
+            if (node != null) {
+                readSnapshotsSection(node);
             }
         }
 
@@ -490,6 +500,19 @@ public abstract class OvfReader implements IOvfBuilder {
         }
 
         readGeneralData(content);
+    }
+
+    private XmlNode getNode(XmlNodeList nodeList, String attributeName, String attributeValue) {
+
+        for (XmlNode section : nodeList) {
+            String value = section.attributes.get(attributeName).getValue();
+
+            if (value.equals(attributeValue)) {
+                return section;
+            }
+        }
+
+        return null;
     }
 
     protected void readSnapshotsSection(@SuppressWarnings("unused") XmlNode section) {
@@ -579,7 +602,8 @@ public abstract class OvfReader implements IOvfBuilder {
             if (Integer.valueOf(OvfHardware.Monitor) == resourceType) {
                 // if default display type is defined in the ovf, set the video device that is suitable for it
                 if (defaultDisplayType != null) {
-                    vmDevice.setDevice(defaultDisplayType.getVmDeviceType().getName());
+                    VmDeviceType vmDeviceType = getDisplayDevice(defaultDisplayType);
+                    vmDevice.setDevice(vmDeviceType.getName());
                 }
                 else {
                     // get number of monitors from VirtualQuantity in OVF
@@ -591,7 +615,8 @@ public abstract class OvfReader implements IOvfBuilder {
                         if (virtualQuantity > 1) {
                             vmDevice.setDevice(VmDeviceType.QXL.getName());
                         } else {
-                            vmDevice.setDevice(VmDeviceType.CIRRUS.getName());
+                            VmDeviceType vmDeviceType = getDisplayDevice(DisplayType.vnc);
+                            vmDevice.setDevice(vmDeviceType.getName());
                         }
                     } else { // default to spice if quantity not found
                         vmDevice.setDevice(VmDeviceType.QXL.getName());
