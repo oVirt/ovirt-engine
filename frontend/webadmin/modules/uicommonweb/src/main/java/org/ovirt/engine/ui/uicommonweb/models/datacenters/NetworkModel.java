@@ -33,9 +33,9 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class NetworkModel extends Model
 {
@@ -534,14 +534,14 @@ public abstract class NetworkModel extends Model
             }
         }
 
-        IFrontendMultipleActionAsyncCallback callback = new IFrontendMultipleActionAsyncCallback() {
+        IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
             @Override
-            public void executed(FrontendMultipleActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
                 stopProgress();
                 cancel();
             }
         };
-        Frontend.RunMultipleAction(VdcActionType.AddVnicProfile, paramlist, callback, null);
+        Frontend.RunMultipleActions(VdcActionType.AddVnicProfile, paramlist, callback);
     }
 
     void cancel() {
