@@ -131,7 +131,7 @@ public class NetworkConfigurator {
         });
     }
 
-    private SetupNetworksParameters createSetupNetworkParams(List<VdsNetworkInterface> interfaces) {
+    public SetupNetworksParameters createSetupNetworkParams(List<VdsNetworkInterface> interfaces) {
         SetupNetworksParameters parameters = new SetupNetworksParameters();
         parameters.setVdsId(host.getId());
         parameters.setInterfaces(interfaces);
@@ -197,7 +197,7 @@ public class NetworkConfigurator {
         return nicVlanId == mgmtVlanId;
     }
 
-    private List<VdsNetworkInterface> filterBondsWithoutSlaves(List<VdsNetworkInterface> interfaces) {
+    public List<VdsNetworkInterface> filterBondsWithoutSlaves(List<VdsNetworkInterface> interfaces) {
         List<VdsNetworkInterface> filteredList = new ArrayList<VdsNetworkInterface>();
         Map<String, Integer> bonds = new HashMap<String, Integer>();
 
