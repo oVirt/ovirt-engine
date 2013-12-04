@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 
-public class TagMapperTest extends AbstractInvertibleMappingTest<Tag, tags, tags> {
+public class TagMapperTest extends AbstractInvertibleMappingTest<Tag, Tags, Tags> {
 
     public TagMapperTest() {
-        super(Tag.class, tags.class, tags.class);
+        super(Tag.class, Tags.class, Tags.class);
     }
 
     @Override

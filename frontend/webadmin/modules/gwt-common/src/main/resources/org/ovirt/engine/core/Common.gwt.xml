@@ -102,7 +102,7 @@
 		<include name="common/businessentities/StorageType.java" />
 		<include name="common/businessentities/StorageFormatType.java" />
 		<include name="common/businessentities/TagsVmMap.java" />
-		<include name="common/businessentities/tags.java" />
+		<include name="common/businessentities/Tags.java" />
 		<include name="common/businessentities/TagsType.java" />
 		<include name="common/EventNotificationMethods.java" />
 		<include name="common/businessentities/UsbPolicy.java" />

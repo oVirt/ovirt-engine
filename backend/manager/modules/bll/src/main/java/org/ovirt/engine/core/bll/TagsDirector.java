@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -32,13 +32,13 @@ public class TagsDirector {
     /**
      * In memory nodes cache for quicker access to each node by ID: O(1) instead O(lnN) of tree
      */
-    private final java.util.Map<Guid, tags> tagsMapByID =
-            new CopyOnAccessMap<Guid, tags>(new java.util.HashMap<Guid, tags>());
+    private final java.util.Map<Guid, Tags> tagsMapByID =
+            new CopyOnAccessMap<Guid, Tags>(new java.util.HashMap<Guid, Tags>());
     /**
      * In memory nodes cache for quicker access to each node by name
      */
-    private final java.util.Map<String, tags> tagsMapByName =
-            new CopyOnAccessMap<String, tags>(new java.util.HashMap<String, tags>());
+    private final java.util.Map<String, Tags> tagsMapByName =
+            new CopyOnAccessMap<String, Tags>(new java.util.HashMap<String, Tags>());
 
     private static TagsDirector instance = new TagsDirector();
 
@@ -53,31 +53,31 @@ public class TagsDirector {
         log.info("Start initializing " + getClass().getSimpleName());
         tagsMapByID.clear();
         tagsMapByName.clear();
-        tags root = new tags("root", null, true, ROOT_TAG_ID, "root");
+        Tags root = new Tags("root", null, true, ROOT_TAG_ID, "root");
         AddTagToHash(root);
         AddChildren(root);
         log.info("Finished initializing " + getClass().getSimpleName());
     }
 
 
-    private void AddTagToHash(tags tag) {
+    private void AddTagToHash(Tags tag) {
         tagsMapByID.put(tag.gettag_id(), tag);
         tagsMapByName.put(tag.gettag_name(), tag);
         if (tag.getparent_id() != null) {
             // If the tag has a parent, the parent should have in its children the added tag instead
             // of the old version of the tag , if exists
-            tags parentTag = tagsMapByID.get(tag.getparent_id());
+            Tags parentTag = tagsMapByID.get(tag.getparent_id());
             if (parentTag == null) {
                 log.error(String.format("Could not obtain tag for guid %1$s", tag.getparent_id()));
                 return;
             }
-            List<tags> parentChildren = parentTag.getChildren();
+            List<Tags> parentChildren = parentTag.getChildren();
             replaceTagInChildren(tag, parentChildren);
             AddTagToHash(parentTag); // replace the parent tag after the modification
         }
     }
 
-    private void replaceTagInChildren(tags tag, List<tags> parentChildren) {
+    private void replaceTagInChildren(Tags tag, List<Tags> parentChildren) {
         for (int counter = 0; counter < parentChildren.size(); counter++) {
             if (parentChildren.get(counter).gettag_id().equals(tag.gettag_id())) {
                 parentChildren.set(counter, tag);
@@ -86,7 +86,7 @@ public class TagsDirector {
         }
     }
 
-    private void RemoveTagFromHash(tags tag) {
+    private void RemoveTagFromHash(Tags tag) {
         tagsMapByID.remove(tag.gettag_id());
         tagsMapByName.remove(tag.gettag_name());
     }
@@ -97,10 +97,10 @@ public class TagsDirector {
      * @param tag
      */
 
-    private void AddChildren(tags tag) {
+    private void AddChildren(Tags tag) {
         log.infoFormat("Tag {0} added to tree", tag.gettag_name());
-        List<tags> children = getTagDAO().getAllForParent(tag.gettag_id());
-        for (tags child : children) {
+        List<Tags> children = getTagDAO().getAllForParent(tag.gettag_id());
+        for (Tags child : children) {
             AddChildren(child);
             log.infoFormat("Tag {0} added as child to parent {1}", child.gettag_name(), tag.gettag_name());
             tag.getChildren().add(child);
@@ -113,8 +113,8 @@ public class TagsDirector {
         return DbFacade.getInstance().getTagDao();
     }
 
-    private void RemoveTagAndChildren(tags tag) {
-        for (tags child : tag.getChildren()) {
+    private void RemoveTagAndChildren(Tags tag) {
+        for (Tags child : tag.getChildren()) {
             RemoveTagAndChildren(child);
         }
         RemoveTagFromHash(tag);
@@ -124,9 +124,9 @@ public class TagsDirector {
         return instance;
     }
 
-    public void AddTag(tags tag) {
+    public void AddTag(Tags tag) {
         if (tagsMapByID.containsKey(tag.getparent_id())) {
-            tags parent = tagsMapByID.get(tag.getparent_id());
+            Tags parent = tagsMapByID.get(tag.getparent_id());
             parent.getChildren().add(tag);
             AddTagToHash(tag);
             AddTagToHash(parent);
@@ -144,9 +144,9 @@ public class TagsDirector {
      */
     public void RemoveTag(Guid tagId) {
         if (tagsMapByID.containsKey(tagId)) {
-            tags tag = tagsMapByID.get(tagId);
+            Tags tag = tagsMapByID.get(tagId);
             RemoveTagAndChildren(tag);
-            tags parent = tagsMapByID.get(tag.getparent_id());
+            Tags parent = tagsMapByID.get(tag.getparent_id());
             parent.getChildren().remove(tag);
             AddTagToHash(parent);
         } else {
@@ -159,9 +159,9 @@ public class TagsDirector {
      *
      * @param tag
      */
-    public void UpdateTag(tags tag) {
+    public void UpdateTag(Tags tag) {
         if (tagsMapByID.containsKey(tag.gettag_id())) {
-            tags tagFromCache = tagsMapByID.get(tag.gettag_id());
+            Tags tagFromCache = tagsMapByID.get(tag.gettag_id());
             String oldName = tagFromCache.gettag_name();
             // check if tag name has changed. If it has - modify name dictionary
             // accordingly:
@@ -180,17 +180,17 @@ public class TagsDirector {
 
     public void MoveTag(Guid tagId, Guid newParent) {
         if (tagsMapByID.containsKey(tagId)) {
-            tags tag = tagsMapByID.get(tagId);
+            Tags tag = tagsMapByID.get(tagId);
             if (tagsMapByID.containsKey(newParent)) {
                 if (tagsMapByID.containsKey(tag.getparent_id())) {
-                    tags parentTag = tagsMapByID.get(tag.getparent_id());
+                    Tags parentTag = tagsMapByID.get(tag.getparent_id());
                     parentTag.getChildren().remove(tag);
                     AddTagToHash(parentTag);
                 } else {
                     log.warnFormat("Trying to move tag from parent that doesn't exist in Data Structure - {0}",
                             tag.getparent_id());
                 }
-                tags newParentTag = tagsMapByID.get(newParent);
+                Tags newParentTag = tagsMapByID.get(newParent);
                 newParentTag.getChildren().add(tag);
                 tag.setparent_id(newParent);
                 AddTagToHash(newParentTag); // Parent got changed, modify it.
@@ -203,11 +203,11 @@ public class TagsDirector {
         }
     }
 
-    protected void updateTagInBackend(tags tag) {
+    protected void updateTagInBackend(Tags tag) {
         Backend.getInstance().runInternalAction(VdcActionType.UpdateTag, new TagsOperationParameters(tag));
     }
 
-    private String GetTagIdAndParentsIds(tags tag) {
+    private String GetTagIdAndParentsIds(Tags tag) {
         StringBuilder builder = new StringBuilder();
         builder.append(tag.gettag_id());
         Guid tempTagId = new Guid(tag.getparent_id().toString());
@@ -228,7 +228,7 @@ public class TagsDirector {
      * @return a comma separated list of IDs.
      */
     public String GetTagIdAndParentsIds(Guid tagId) {
-        tags tag = GetTagById(tagId);
+        Tags tag = GetTagById(tagId);
         return GetTagIdAndParentsIds(tag);
     }
 
@@ -240,7 +240,7 @@ public class TagsDirector {
      * @return a comma separated list of IDs.
      */
     public String GetTagIdAndParentsIds(String tagName) {
-        tags tag = GetTagByName(tagName);
+        Tags tag = GetTagByName(tagName);
         return GetTagIdAndParentsIds(tag);
     }
 
@@ -254,7 +254,7 @@ public class TagsDirector {
      * @return a comma separated list of IDs.
      */
     public String GetTagIdAndChildrenIds(Guid tagId) {
-        tags tag = GetTagById(tagId);
+        Tags tag = GetTagById(tagId);
         if (tag == null) {
             return StringUtils.EMPTY;
         }
@@ -263,13 +263,13 @@ public class TagsDirector {
     }
 
     public String GetTagNameAndChildrenNames(Guid tagId) {
-        tags tag = GetTagById(tagId);
+        Tags tag = GetTagById(tagId);
         StringBuilder sb = tag.getTagNameAndChildrenNames();
         return sb.toString();
     }
 
     public java.util.HashSet<Guid> GetTagIdAndChildrenIdsAsSet(Guid tagId) {
-        tags tag = GetTagById(tagId);
+        Tags tag = GetTagById(tagId);
         java.util.HashSet<Guid> set = new java.util.HashSet<Guid>();
         tag.getTagIdAndChildrenIdsAsList(set);
         return set;
@@ -285,7 +285,7 @@ public class TagsDirector {
      * @return a comma separated list of IDs.
      */
     public String GetTagIdAndChildrenIds(String tagName) {
-        tags tag = GetTagByName(tagName);
+        Tags tag = GetTagByName(tagName);
         StringBuilder sb = tag.getTagIdAndChildrenIds();
         return sb.toString();
     }
@@ -300,12 +300,12 @@ public class TagsDirector {
         return sb.toString();
     }
 
-    private void RecursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, tags tag, TagReturnValueIndicator indicator ) {
+    private void RecursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, Tags tag, TagReturnValueIndicator indicator ) {
         if ((tag.getChildren() != null) && (tag.getChildren().size() > 0)) {
             // The following line replaces '\\' in the expression that may be added by handling a '_' character with empty string.
             // since we have here both String and RegExp , each backslash char is represented by four backslash chars , so for marching 2 we will need 8
             tagNameRegExp=tagNameRegExp.replaceAll("\\\\\\\\", "");
-            for (tags child : tag.getChildren()) {
+            for (Tags child : tag.getChildren()) {
                 if (Regex.IsMatch(child.gettag_name(), tagNameRegExp))
                 // the tag matches the regular expression -> add it and all its
                 // children
@@ -337,7 +337,7 @@ public class TagsDirector {
      * @param tagId
      * @return
      */
-    public tags GetTagById(Guid tagId) {
+    public Tags GetTagById(Guid tagId) {
         if (tagsMapByID.containsKey(tagId)) {
             return tagsMapByID.get(tagId);
         } else {
@@ -351,7 +351,7 @@ public class TagsDirector {
      * @param tagName
      * @return
      */
-    public tags GetTagByName(String tagName) {
+    public Tags GetTagByName(String tagName) {
         if (tagsMapByName.containsKey(tagName)) {
             return tagsMapByName.get(tagName);
         } else {
@@ -364,8 +364,8 @@ public class TagsDirector {
      *
      * @return a tags list.
      */
-    public java.util.ArrayList<tags> GetAllTags() {
-        java.util.ArrayList<tags> ret = new java.util.ArrayList<tags>(tagsMapByID.values());
+    public java.util.ArrayList<Tags> GetAllTags() {
+        java.util.ArrayList<Tags> ret = new java.util.ArrayList<Tags>(tagsMapByID.values());
         // remove the root - it is not a real tag:
         ret.remove(GetRootTag());
         return ret;
@@ -376,7 +376,7 @@ public class TagsDirector {
      *
      * @return the root tag.
      */
-    public tags GetRootTag() {
+    public Tags GetRootTag() {
         return tagsMapByID.get(ROOT_TAG_ID);
     }
 
@@ -384,9 +384,9 @@ public class TagsDirector {
         if (sourceTagId.equals(potentialDescestorId)) {
             return true;
         }
-        tags tag = GetTagById(sourceTagId);
+        Tags tag = GetTagById(sourceTagId);
         if (tag != null && tag.getChildren() != null) {
-            for (tags childTag : tag.getChildren()) {
+            for (Tags childTag : tag.getChildren()) {
                 if (IsTagDescestorOfTag(childTag.gettag_id(), potentialDescestorId)) {
                     return true;
                 }

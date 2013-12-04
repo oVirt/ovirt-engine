@@ -10,11 +10,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -32,8 +32,8 @@ public class TagDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private TagDAO dao;
-    private tags newTag;
-    private tags existingTag;
+    private Tags newTag;
+    private Tags existingTag;
     private Guid parent;
     private Guid user;
     private Guid vm;
@@ -59,7 +59,7 @@ public class TagDAOTest extends BaseDAOTestCase {
         vm = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
         vmPool = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
 
-        newTag = new tags();
+        newTag = new Tags();
 
         newTag.settag_name("newtagname");
         newTag.setIsReadonly(true);
@@ -82,7 +82,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        tags result = dao.get(Guid.newGuid());
+        Tags result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -92,7 +92,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        tags result = dao.get(existingTag.gettag_id());
+        Tags result = dao.get(existingTag.gettag_id());
 
         assertNotNull(result);
         assertEquals(existingTag, result);
@@ -103,7 +103,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByNameWithInvalidName() {
-        tags result = dao.getByName("invalidtagname");
+        Tags result = dao.getByName("invalidtagname");
 
         assertNull(result);
     }
@@ -113,7 +113,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        tags result = dao.getByName(existingTag.gettag_name());
+        Tags result = dao.getByName(existingTag.gettag_name());
 
         assertNotNull(result);
         assertEquals(existingTag, result);
@@ -121,7 +121,7 @@ public class TagDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAll() {
-        List<tags> result = dao.getAll();
+        List<Tags> result = dao.getAll();
 
         assertNotNull(result);
         assertEquals(TAG_COUNT, result.size());
@@ -132,7 +132,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForParentWithInvalidParent() {
-        List<tags> result = dao.getAllForParent(Guid.newGuid());
+        List<Tags> result = dao.getAllForParent(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -143,11 +143,11 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForParent() {
-        List<tags> result = dao.getAllForParent(parent);
+        List<Tags> result = dao.getAllForParent(parent);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (tags tag : result) {
+        for (Tags tag : result) {
             assertEquals(parent, tag.getparent_id());
         }
     }
@@ -157,7 +157,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUserGroupWithInvalidUserGroup() {
-        List<tags> result = dao.getAllForUserGroups(Guid.newGuid().toString());
+        List<Tags> result = dao.getAllForUserGroups(Guid.newGuid().toString());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -168,7 +168,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUserGroup() {
-        List<tags> result = dao
+        List<Tags> result = dao
                 .getAllForUserGroups("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
         assertNotNull(result);
@@ -189,7 +189,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUserWithInvalidUser() {
-        List<tags> result = dao.getAllForUsers(Guid.newGuid().toString());
+        List<Tags> result = dao.getAllForUsers(Guid.newGuid().toString());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -200,7 +200,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUser() {
-        List<tags> result = dao.getAllForUsers(user.getUuid().toString());
+        List<Tags> result = dao.getAllForUsers(user.getUuid().toString());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -211,7 +211,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUserIdsWithInvalidIds() {
-        List<tags> result = dao.getAllForUsersWithIds(Guid.newGuid().getUuid()
+        List<Tags> result = dao.getAllForUsersWithIds(Guid.newGuid().getUuid()
                 .toString());
 
         assertNotNull(result);
@@ -223,7 +223,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForUserIds() {
-        List<tags> result = dao
+        List<Tags> result = dao
                 .getAllForUsersWithIds("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c");
 
         assertNotNull(result);
@@ -235,7 +235,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVdsWithInvalidVds() {
-        List<tags> result = dao.getAllForVds(Guid.newGuid().getUuid()
+        List<Tags> result = dao.getAllForVds(Guid.newGuid().getUuid()
                 .toString());
 
         assertNotNull(result);
@@ -247,7 +247,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVds() {
-        List<tags> result = dao
+        List<Tags> result = dao
                 .getAllForVds("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
         assertNotNull(result);
@@ -259,7 +259,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVmWithInvalidVm() {
-        List<tags> result = dao
+        List<Tags> result = dao
                 .getAllForVm(Guid.newGuid().getUuid().toString());
 
         assertNotNull(result);
@@ -271,7 +271,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVm() {
-        List<tags> result = dao.getAllForVm(vm.getUuid().toString());
+        List<Tags> result = dao.getAllForVm(vm.getUuid().toString());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -282,7 +282,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllVmTagsWithIds() {
-        List<tags> result = dao.getAllVmTagsWithIds(existingTag.gettag_id().toString());
+        List<Tags> result = dao.getAllVmTagsWithIds(existingTag.gettag_id().toString());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -293,7 +293,7 @@ public class TagDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVmPools() {
-        List<tags> result = dao.getAllForVmPools(vmPool.toString());
+        List<Tags> result = dao.getAllForVmPools(vmPool.toString());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -306,7 +306,7 @@ public class TagDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newTag);
 
-        tags result = dao.get(newTag.gettag_id());
+        Tags result = dao.get(newTag.gettag_id());
 
         assertNotNull(result);
         assertEquals(newTag, result);
@@ -321,7 +321,7 @@ public class TagDAOTest extends BaseDAOTestCase {
 
         dao.update(existingTag);
 
-        tags result = dao.get(existingTag.gettag_id());
+        Tags result = dao.get(existingTag.gettag_id());
 
         assertEquals(existingTag, result);
     }
@@ -333,7 +333,7 @@ public class TagDAOTest extends BaseDAOTestCase {
     public void testRemove() {
         dao.remove(existingTag.gettag_id());
 
-        tags result = dao.get(existingTag.gettag_id());
+        Tags result = dao.get(existingTag.gettag_id());
 
         assertNull(result);
     }

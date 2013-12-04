@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
@@ -316,7 +316,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             if (pair.getFirst() != null && pair.getFirst().equals("=")) {
                 pair.setFirst("IN");
                 pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
-                tags tag = tagsHandler.GetTagByTagName(pair.getSecond());
+                Tags tag = tagsHandler.GetTagByTagName(pair.getSecond());
                 if (tag != null) {
                     pair.setSecond(
                             StringFormat.format("(%1$s)", tagsHandler.GetTagNameAndChildrenNames(tag.gettag_id())));

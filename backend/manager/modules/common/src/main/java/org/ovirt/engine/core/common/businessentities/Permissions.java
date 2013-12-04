@@ -11,7 +11,7 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private Guid adElementId;
     private Guid id;
-    private ArrayList<tags> tags;
+    private ArrayList<Tags> tags;
     private Guid roleId;
     private Guid objectId;
     private String objectName;
@@ -50,7 +50,7 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         return this.roleId;
     }
 
-    public ArrayList<tags> getTags() {
+    public ArrayList<Tags> getTags() {
         return tags;
     }
 
@@ -67,7 +67,7 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         this.roleId = value;
     }
 
-    public void setTags(ArrayList<tags> value) {
+    public void setTags(ArrayList<Tags> value) {
         tags = value;
     }
 

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -23,7 +23,7 @@ public class AddTagCommand<T extends TagsOperationParameters> extends TagsComman
 
     @Override
     protected boolean canDoAction() {
-        tags tag = DbFacade.getInstance().getTagDao()
+        Tags tag = DbFacade.getInstance().getTagDao()
                 .getByName(getParameters().getTag().gettag_name());
         if (tag != null) {
             addCanDoActionMessage(VdcBllMessages.TAGS_SPECIFY_TAG_IS_IN_USE);

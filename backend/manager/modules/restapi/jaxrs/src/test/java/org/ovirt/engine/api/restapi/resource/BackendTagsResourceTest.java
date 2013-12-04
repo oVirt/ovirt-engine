@@ -20,7 +20,7 @@ import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultExcepti
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagsResourceTest
-    extends AbstractBackendCollectionResourceTest<Tag, tags, BackendTagsResource> {
+    extends AbstractBackendCollectionResourceTest<Tag, Tags, BackendTagsResource> {
 
     static int PARENT_IDX = NAMES.length-1;
     static Guid PARENT_GUID = GUIDS[PARENT_IDX];
@@ -190,7 +190,7 @@ public class BackendTagsResourceTest
     public void testAddTagNoParent() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        tags entity = getEntity(0);
+        Tags entity = getEntity(0);
         entity.setparent_id(Guid.Empty);
 
         setUpCreationExpectations(VdcActionType.AddTag,
@@ -274,18 +274,18 @@ public class BackendTagsResourceTest
     }
 
     @Override
-    protected tags getEntity(int index) {
-        return new tags(DESCRIPTIONS[index], PARENT_GUID, false, GUIDS[index], NAMES[index]);
+    protected Tags getEntity(int index) {
+        return new Tags(DESCRIPTIONS[index], PARENT_GUID, false, GUIDS[index], NAMES[index]);
     }
 
-    static tags setUpRootTag() {
-        return new tags("root", null, true, Guid.Empty, "root");
+    static Tags setUpRootTag() {
+        return new Tags("root", null, true, Guid.Empty, "root");
     }
 
-    static List<tags> setUpTags() {
-        List<tags> tags = new ArrayList<tags>();
+    static List<Tags> setUpTags() {
+        List<Tags> tags = new ArrayList<Tags>();
         for (int i = 0; i < NAMES.length; i++) {
-            tags.add(new tags(DESCRIPTIONS[i], PARENT_GUID, false, GUIDS[i], NAMES[i]));
+            tags.add(new Tags(DESCRIPTIONS[i], PARENT_GUID, false, GUIDS[i], NAMES[i]));
         }
         return tags;
     }

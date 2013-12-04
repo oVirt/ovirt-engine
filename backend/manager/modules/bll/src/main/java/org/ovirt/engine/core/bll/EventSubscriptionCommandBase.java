@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -123,7 +123,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      */
     protected boolean ValidateTag(String tagName) {
         boolean retValue = true;
-        tags tag = DbFacade.getInstance().getTagDao().getByName(tagName);
+        Tags tag = DbFacade.getInstance().getTagDao().getByName(tagName);
         if (tag == null) {
 
             addCanDoActionMessage(VdcBllMessages.EN_UNKNOWN_TAG_NAME);

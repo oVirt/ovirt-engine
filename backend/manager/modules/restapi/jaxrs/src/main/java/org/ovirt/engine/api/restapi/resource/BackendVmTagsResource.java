@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -20,7 +20,7 @@ public class BackendVmTagsResource
         super(VM.class, parentId, VdcActionType.AttachVmsToTag, VdcActionType.DetachVmFromTag);
     }
 
-    public List<tags> getCollection() {
+    public List<Tags> getCollection() {
         return getBackendCollection(VdcQueryType.GetTagsByVmId, new GetTagsByVmIdParameters(parentId));
     }
 
@@ -29,7 +29,7 @@ public class BackendVmTagsResource
     }
 
     @Override
-    protected Tag doPopulate(Tag model, tags entity) {
+    protected Tag doPopulate(Tag model, Tags entity) {
         return model;
     }
 }

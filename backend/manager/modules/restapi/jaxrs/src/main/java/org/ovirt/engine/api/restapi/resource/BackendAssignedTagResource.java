@@ -2,16 +2,16 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.resource.AssignedTagResource;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 
 public class BackendAssignedTagResource
-    extends AbstractBackendSubResource<Tag, tags>
+    extends AbstractBackendSubResource<Tag, Tags>
     implements AssignedTagResource {
 
     private AbstractBackendAssignedTagsResource parent;
 
     public BackendAssignedTagResource(String id, AbstractBackendAssignedTagsResource parent) {
-        super(id, Tag.class, tags.class);
+        super(id, Tag.class, Tags.class);
         this.parent = parent;
     }
 
@@ -30,7 +30,7 @@ public class BackendAssignedTagResource
     }
 
     @Override
-    protected Tag doPopulate(Tag model, tags entity) {
+    protected Tag doPopulate(Tag model, Tags entity) {
         return model;
     }
 }

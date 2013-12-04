@@ -5,29 +5,28 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.api.resource.TagsResource;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagsResource
-    extends AbstractBackendCollectionResource<Tag, tags>
+    extends AbstractBackendCollectionResource<Tag, Tags>
     implements TagsResource {
 
     public BackendTagsResource() {
-        super(Tag.class, tags.class);
+        super(Tag.class, Tags.class);
     }
 
     @Override
-    public Tags list() {
-        List<tags> tags = getTags();
+    public org.ovirt.engine.api.model.Tags list() {
+        List<Tags> tags = getTags();
         tags.add(getRootTag());
         return mapCollection(tags);
     }
@@ -56,17 +55,17 @@ public class BackendTagsResource
         return performAction(VdcActionType.RemoveTag, new TagsActionParametersBase(asGuid(id)));
     }
 
-    protected List<tags> getTags() {
+    protected List<Tags> getTags() {
         return getBackendCollection(VdcQueryType.GetAllTags, new VdcQueryParametersBase());
     }
 
-    protected tags getRootTag() {
-        return getEntity(tags.class, VdcQueryType.GetRootTag, new VdcQueryParametersBase(), "root");
+    protected Tags getRootTag() {
+        return getEntity(Tags.class, VdcQueryType.GetRootTag, new VdcQueryParametersBase(), "root");
     }
 
-    protected Tags mapCollection(List<tags> entities) {
-        Tags collection = new Tags();
-        for (tags entity : entities) {
+    protected org.ovirt.engine.api.model.Tags mapCollection(List<Tags> entities) {
+        org.ovirt.engine.api.model.Tags collection = new org.ovirt.engine.api.model.Tags();
+        for (Tags entity : entities) {
             collection.getTags().add(addLinks(map(entity)));
         }
         return collection;
@@ -80,8 +79,8 @@ public class BackendTagsResource
         return lookupTagByName(tag.getParent().getTag().getName()).gettag_id().toString();
     }
 
-    protected tags lookupTagByName(String name) {
-        return getEntity(tags.class, VdcQueryType.GetTagByTagName, new NameQueryParameters(name), name);
+    protected Tags lookupTagByName(String name) {
+        return getEntity(Tags.class, VdcQueryType.GetTagByTagName, new NameQueryParameters(name), name);
     }
 
     protected class TagNameResolver extends EntityIdResolver<Guid> {
@@ -93,14 +92,14 @@ public class BackendTagsResource
         }
 
         @Override
-        public tags lookupEntity(Guid id) throws BackendFailureException {
+        public Tags lookupEntity(Guid id) throws BackendFailureException {
             assert (id == null); // AddTag returns nothing, lookup name instead
             return lookupTagByName(name);
         }
     }
 
     @Override
-    protected Tag doPopulate(Tag model, tags entity) {
+    protected Tag doPopulate(Tag model, Tags entity) {
         return model;
     }
 }

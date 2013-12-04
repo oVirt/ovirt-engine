@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -458,7 +459,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     public Map<Guid, Boolean> attachedTagsToEntities;
-    public ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
+    public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
 
     private void getAttachedTagsToSelectedVMs(TagListModel model)
@@ -471,7 +472,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         attachedTagsToEntities = new HashMap<Guid, Boolean>();
-        allAttachedTags = new ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
+        allAttachedTags = new ArrayList<Tags>();
         selectedItemsCounter = 0;
 
         for (Guid id : vmIds)
@@ -484,7 +485,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             Object[] array = (Object[]) target;
                             VmListModel vmListModel = (VmListModel) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
-                            vmListModel.allAttachedTags.addAll((ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
+                            vmListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             vmListModel.selectedItemsCounter++;
                             if (vmListModel.selectedItemsCounter == vmListModel.getSelectedItems().size())
                             {
@@ -501,12 +502,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         if (vmListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
-            ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
+            ArrayList<Tags> attachedTags =
                     Linq.distinct(vmListModel.allAttachedTags, new TagsEqualityComparer());
-            for (org.ovirt.engine.core.common.businessentities.tags tag : attachedTags)
+            for (Tags tag : attachedTags)
             {
                 int count = 0;
-                for (org.ovirt.engine.core.common.businessentities.tags tag2 : vmListModel.allAttachedTags)
+                for (Tags tag2 : vmListModel.allAttachedTags)
                 {
                     if (tag2.gettag_id().equals(tag.gettag_id()))
                     {

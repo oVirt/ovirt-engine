@@ -11,14 +11,14 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedTagsResourceTest<C extends AbstractBackendAssignedTagsResource>
-    extends AbstractBackendCollectionResourceTest<Tag, tags, C> {
+    extends AbstractBackendCollectionResourceTest<Tag, Tags, C> {
 
     protected static final Guid PARENT_GUID = GUIDS[2];
 
@@ -69,9 +69,9 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
         String[] names = {"Id"};
         Object[] values = {entityId};
-        tags tag = null;
+        Tags tag = null;
         if (!returnNull) {
-            tag = new tags();
+            tag = new Tags();
             tag.settag_id(entityId);
         }
         setUpGetEntityExpectations(VdcQueryType.GetTagByTagId, IdQueryParameters.class, names, values, tag);
@@ -228,14 +228,14 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     }
 
     @Override
-    protected tags getEntity(int index) {
-        return new tags(DESCRIPTIONS[index], null, false, GUIDS[index], NAMES[index]);
+    protected Tags getEntity(int index) {
+        return new Tags(DESCRIPTIONS[index], null, false, GUIDS[index], NAMES[index]);
     }
 
-    static List<tags> setUpTags() {
-        List<tags> tags = new ArrayList<tags>();
+    static List<Tags> setUpTags() {
+        List<Tags> tags = new ArrayList<Tags>();
         for (int i = 0; i < NAMES.length; i++) {
-            tags.add(new tags(DESCRIPTIONS[i], null, false, GUIDS[i], NAMES[i]));
+            tags.add(new Tags(DESCRIPTIONS[i], null, false, GUIDS[i], NAMES[i]));
         }
         return tags;
     }

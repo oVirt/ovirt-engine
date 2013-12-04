@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class TagsCommandBase<T extends TagsActionParametersBase> extends AdminOperationCommandBase<T> {
-    private tags mTag = null;
+    private Tags mTag = null;
     protected boolean noActionDone = true;
 
-    protected tags getTag() {
+    protected Tags getTag() {
         if (mTag == null && getTagId() != null) {
             mTag = DbFacade.getInstance().getTagDao().get(getTagId());
         }

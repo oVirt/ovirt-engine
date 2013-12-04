@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -195,7 +196,7 @@ public class TagListModel extends SearchableListModel
 
                         TagListModel tagListModel = (TagListModel) target;
                         TagModel rootTag =
-                                tagListModel.tagToModel((org.ovirt.engine.core.common.businessentities.tags) returnValue);
+                                tagListModel.tagToModel((Tags) returnValue);
                         rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
                         rootTag.setType(TagModelType.Root);
                         rootTag.setIsChangable(false);
@@ -306,7 +307,7 @@ public class TagListModel extends SearchableListModel
         return model;
     }
 
-    public TagModel tagToModel(org.ovirt.engine.core.common.businessentities.tags tag)
+    public TagModel tagToModel(Tags tag)
     {
         EntityModel tempVar = new EntityModel();
         tempVar.setEntity(tag.gettag_name());
@@ -316,7 +317,7 @@ public class TagListModel extends SearchableListModel
         EntityModel description = tempVar2;
 
         ArrayList<TagModel> children = new ArrayList<TagModel>();
-        for (org.ovirt.engine.core.common.businessentities.tags a : tag.getChildren())
+        for (Tags a : tag.getChildren())
         {
             children.add(tagToModel(a));
         }
@@ -539,13 +540,13 @@ public class TagListModel extends SearchableListModel
             return;
         }
 
-        org.ovirt.engine.core.common.businessentities.tags tempVar =
-                new org.ovirt.engine.core.common.businessentities.tags();
+        Tags tempVar =
+                new Tags();
         tempVar.settag_id(model.getIsNew() ? Guid.Empty : getSelectedItem().getId());
         tempVar.setparent_id(model.getIsNew() ? getSelectedItem().getId() : getSelectedItem().getParentId());
         tempVar.settag_name((String) model.getName().getEntity());
         tempVar.setdescription((String) model.getDescription().getEntity());
-        org.ovirt.engine.core.common.businessentities.tags tag = tempVar;
+        Tags tag = tempVar;
 
         model.startProgress(null);
 

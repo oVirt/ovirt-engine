@@ -7,19 +7,19 @@ import org.ovirt.engine.core.common.action.MoveTagParameters;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagResource
-    extends AbstractBackendSubResource<Tag, tags>
+    extends AbstractBackendSubResource<Tag, Tags>
     implements TagResource {
 
     private BackendTagsResource parent;
 
     public BackendTagResource(String id, BackendTagsResource parent) {
-        super(id, Tag.class, tags.class);
+        super(id, Tag.class, Tags.class);
         this.parent = parent;
     }
 
@@ -61,15 +61,15 @@ public class BackendTagResource
         return tag.isSetParent() && tag.getParent().isSetTag() && tag.getParent().getTag().isSetId();
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<Tag, tags> {
+    protected class UpdateParametersProvider implements ParametersProvider<Tag, Tags> {
         @Override
-        public VdcActionParametersBase getParameters(Tag incoming, tags entity) {
+        public VdcActionParametersBase getParameters(Tag incoming, Tags entity) {
             return new TagsOperationParameters(map(incoming, entity));
         }
     }
 
     @Override
-    protected Tag doPopulate(Tag model, tags entity) {
+    protected Tag doPopulate(Tag model, Tags entity) {
         return model;
     }
 }

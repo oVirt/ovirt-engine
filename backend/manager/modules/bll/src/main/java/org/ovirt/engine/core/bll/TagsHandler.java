@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TagsHandler implements ITagsHandler {
 
     @Override
-    public tags GetTagByTagName(String tagName) {
+    public Tags GetTagByTagName(String tagName) {
         return TagsDirector.getInstance().GetTagByName(tagName);
     }
 

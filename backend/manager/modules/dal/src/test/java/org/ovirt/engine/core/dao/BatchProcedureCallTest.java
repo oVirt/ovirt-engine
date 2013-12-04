@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -27,7 +27,7 @@ public class BatchProcedureCallTest extends BaseDAOTestCase {
         dao = dbFacade.getTagDao();
     }
 
-    protected CustomMapSqlParameterSource getParamsSource(tags tag) {
+    protected CustomMapSqlParameterSource getParamsSource(Tags tag) {
         CustomMapSqlParameterSource paramsSource = new CustomMapSqlParameterSource(
                 dbFacade.getDbEngineDialect());
         paramsSource.addValue("description", tag.getdescription())
@@ -41,23 +41,23 @@ public class BatchProcedureCallTest extends BaseDAOTestCase {
 
     @Test
     public void testBatch() {
-        List<tags> tags = dao.getAll();
-        for (tags tag : tags) {
+        List<Tags> tags = dao.getAll();
+        for (Tags tag : tags) {
             dao.remove(tag.gettag_id());
         }
-        List<tags> data = new ArrayList<>();
-        data.add(new tags("a", Guid.Empty, true, Guid.newGuid(), "a"));
-        data.add(new tags("b", Guid.Empty, true, Guid.newGuid(), "b"));
+        List<Tags> data = new ArrayList<>();
+        data.add(new Tags("a", Guid.Empty, true, Guid.newGuid(), "a"));
+        data.add(new Tags("b", Guid.Empty, true, Guid.newGuid(), "b"));
         List<MapSqlParameterSource> executions = new ArrayList<MapSqlParameterSource>();
-        for (tags tag : data) {
+        for (Tags tag : data) {
             executions.add(getParamsSource(tag));
         }
         dbFacade.getCallsHandler().executeStoredProcAsBatch("Inserttags",
                 executions);
-        List<tags> tagsAfterInsert = dao.getAll();
+        List<Tags> tagsAfterInsert = dao.getAll();
         assertNotNull(tagsAfterInsert);
         assertEquals(data.size(), tagsAfterInsert.size());
-        for (tags tag : tagsAfterInsert) {
+        for (Tags tag : tagsAfterInsert) {
             assertTrue(data.contains(tag));
         }
     }

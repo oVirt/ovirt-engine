@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -33,7 +33,7 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
     }
 
     public String getNewParentTagName() {
-        tags newParent = TagsDirector.getInstance().GetTagById(getParameters().getNewParentId());
+        Tags newParent = TagsDirector.getInstance().GetTagById(getParameters().getNewParentId());
         if (newParent != null) {
             return newParent.gettag_name();
         }
@@ -43,7 +43,7 @@ public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase
 
     private void InitOldParentTagName() {
         if (getTag() != null && getTag().getparent_id() != null) {
-            tags parent = TagsDirector.getInstance().GetTagById(new Guid(getTag().getparent_id().toString()));
+            Tags parent = TagsDirector.getInstance().GetTagById(new Guid(getTag().getparent_id().toString()));
             if (parent != null) {
                 _oldParnetTagName = parent.gettag_name();
             }

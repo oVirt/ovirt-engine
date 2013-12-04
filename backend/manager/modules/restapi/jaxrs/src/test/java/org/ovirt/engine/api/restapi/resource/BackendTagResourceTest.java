@@ -13,14 +13,14 @@ import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagResourceTest
-    extends AbstractBackendSubResourceTest<Tag, tags, BackendTagResource> {
+    extends AbstractBackendSubResourceTest<Tag, Tags, BackendTagResource> {
 
     private static final int NEW_PARENT_IDX = 1;
     private static final Guid NEW_PARENT_ID = GUIDS[NEW_PARENT_IDX];
@@ -203,7 +203,7 @@ public class BackendTagResourceTest
     }
 
     @Override
-    protected tags getEntity(int index) {
+    protected Tags getEntity(int index) {
         return setUpTags().get(index);
     }
 

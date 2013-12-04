@@ -4,13 +4,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -20,12 +20,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
  */
 public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
-    private static class TagRowMapper implements RowMapper<tags> {
+    private static class TagRowMapper implements RowMapper<Tags> {
         public static final TagRowMapper instance = new TagRowMapper();
 
         @Override
-        public tags mapRow(ResultSet rs, int rowNum) throws SQLException {
-            tags entity = new tags();
+        public Tags mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Tags entity = new Tags();
             entity.setdescription(getValueOrNull(rs, "description", ""));
             entity.settag_id(getGuidDefaultNewGuid(rs, "tag_id"));
             entity.settag_name(getValueOrNull(rs, "tag_name", ""));
@@ -50,7 +50,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public tags get(Guid id) {
+    public Tags get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("tag_id", id);
 
@@ -59,7 +59,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public tags getByName(String name) {
+    public Tags getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("tag_name", name);
 
@@ -69,7 +69,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAll() {
+    public List<Tags> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler()
@@ -78,7 +78,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllForParent(Guid id) {
+    public List<Tags> getAllForParent(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("parent_id", id);
 
@@ -88,7 +88,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllForUserGroups(String ids) {
+    public List<Tags> getAllForUserGroups(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("group_ids", ids);
 
@@ -98,7 +98,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllUserGroupTagsWithIds(String ids) {
+    public List<Tags> getAllUserGroupTagsWithIds(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("tag_ids", ids);
 
@@ -108,7 +108,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllForUsers(String ids) {
+    public List<Tags> getAllForUsers(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_ids", ids);
 
@@ -118,7 +118,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllForUsersWithIds(String ids) {
+    public List<Tags> getAllForUsersWithIds(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("tag_ids", ids);
 
@@ -128,7 +128,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllForVds(String ids) {
+    public List<Tags> getAllForVds(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_ids", ids);
 
@@ -138,7 +138,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllForVdsWithIds(String ids) {
+    public List<Tags> getAllForVdsWithIds(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("tag_ids", ids);
 
@@ -148,7 +148,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllForVm(String ids) {
+    public List<Tags> getAllForVm(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_ids", ids);
 
@@ -158,7 +158,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllVmTagsWithIds(String ids) {
+    public List<Tags> getAllVmTagsWithIds(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("tag_ids", ids);
 
@@ -168,7 +168,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags> getAllForVmPools(String ids) {
+    public List<Tags> getAllForVmPools(String ids) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_ids", ids);
 
@@ -177,7 +177,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public void save(tags tag) {
+    public void save(Tags tag) {
         Guid id = tag.gettag_id();
         if (Guid.isNullOrEmpty(id)) {
             id = Guid.newGuid();
@@ -205,7 +205,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public void update(tags tag) {
+    public void update(Tags tag) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", tag.getdescription())
                 .addValue("tag_id", tag.gettag_id())

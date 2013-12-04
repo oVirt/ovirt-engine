@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class tags implements Serializable {
+public class Tags implements Serializable {
     private static final long serialVersionUID = -6566155246916011274L;
 
     private Guid id;
@@ -28,14 +28,14 @@ public class tags implements Serializable {
 
     private TagsType type;
 
-    private List<tags> _children;
+    private List<Tags> _children;
 
-    public tags() {
-        _children = new java.util.ArrayList<tags>();
+    public Tags() {
+        _children = new java.util.ArrayList<Tags>();
         type = TagsType.GeneralTag;
     }
 
-    public tags(String description, Guid parent_id, Boolean isReadonly, Guid tag_id, String tag_name) {
+    public Tags(String description, Guid parent_id, Boolean isReadonly, Guid tag_id, String tag_name) {
         this();
         this.description = description;
         this.parent = parent_id;
@@ -69,7 +69,7 @@ public class tags implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        tags other = (tags) obj;
+        Tags other = (Tags) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(_children, other._children)
                 && ObjectUtils.objectsEqual(description, other.description)
@@ -127,11 +127,11 @@ public class tags implements Serializable {
         this.type = type;
     }
 
-    public List<tags> getChildren() {
+    public List<Tags> getChildren() {
         return _children;
     }
 
-    public void setChildren(java.util.List<tags> children) {
+    public void setChildren(java.util.List<Tags> children) {
         _children = children;
     }
 
@@ -139,7 +139,7 @@ public class tags implements Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append("'").append(gettag_id()).append("'");
 
-        for (tags tag : _children) {
+        for (Tags tag : _children) {
             builder.append(",").append(tag.getTagIdAndChildrenIds());
         }
         return builder;
@@ -149,7 +149,7 @@ public class tags implements Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append("'").append(gettag_name()).append("'");
 
-        for (tags tag : _children) {
+        for (Tags tag : _children) {
             builder.append("," + tag.getTagNameAndChildrenNames());
         }
         return builder;
@@ -157,19 +157,19 @@ public class tags implements Serializable {
 
     public void getTagIdAndChildrenIdsAsList(java.util.HashSet<Guid> tagIds) {
         tagIds.add(gettag_id());
-        for (tags tag : _children) {
+        for (Tags tag : _children) {
             tag.getTagIdAndChildrenIdsAsList(tagIds);
         }
     }
 
     public void getTagIdAndChildrenNamesAsList(java.util.HashSet<String> tagIds) {
         tagIds.add(gettag_name());
-        for (tags tag : _children) {
+        for (Tags tag : _children) {
             tag.getTagIdAndChildrenNamesAsList(tagIds);
         }
     }
 
-    public void updateTag(tags from) {
+    public void updateTag(Tags from) {
         setdescription(from.getdescription());
         settag_name(from.gettag_name());
     }

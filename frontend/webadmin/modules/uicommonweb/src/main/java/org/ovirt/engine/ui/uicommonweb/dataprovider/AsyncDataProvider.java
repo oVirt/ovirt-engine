@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -55,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
@@ -2018,10 +2018,10 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    tags tag = (tags) source;
+                    Tags tag = (Tags) source;
 
-                    tags root =
-                            new tags(tag.getdescription(),
+                    Tags root =
+                            new Tags(tag.getdescription(),
                                     tag.getparent_id(),
                                     tag.getIsReadonly(),
                                     tag.gettag_id(),
@@ -2034,7 +2034,7 @@ public final class AsyncDataProvider {
                     return root;
                 }
 
-                return new tags();
+                return new Tags();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetRootTag, new VdcQueryParametersBase(), aQuery);
@@ -2047,8 +2047,8 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<tags> ret = new ArrayList<tags>();
-                    for (tags tags : (ArrayList<tags>) source)
+                    ArrayList<Tags> ret = new ArrayList<Tags>();
+                    for (Tags tags : (ArrayList<Tags>) source)
                     {
                         if (tags.gettype() == TagsType.GeneralTag)
                         {
@@ -2058,7 +2058,7 @@ public final class AsyncDataProvider {
                     return ret;
                 }
 
-                return new tags();
+                return new Tags();
             }
         };
     }
@@ -2874,11 +2874,11 @@ public final class AsyncDataProvider {
         getConfigFromCache(tempVar, aQuery);
     }
 
-    public static void fillTagsRecursive(tags tagToFill, List<tags> children)
+    public static void fillTagsRecursive(Tags tagToFill, List<Tags> children)
     {
-        ArrayList<tags> list = new ArrayList<tags>();
+        ArrayList<Tags> list = new ArrayList<Tags>();
 
-        for (tags tag : children)
+        for (Tags tag : children)
         {
             // tags child = new tags(tag.description, tag.parent_id, tag.IsReadonly, tag.tag_id, tag.tag_name);
             if (tag.gettype() == TagsType.GeneralTag)

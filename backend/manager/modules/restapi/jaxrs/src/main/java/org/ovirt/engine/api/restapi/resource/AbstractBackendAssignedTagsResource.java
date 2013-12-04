@@ -8,18 +8,17 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.resource.AssignedTagResource;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedTagsResource
-    extends AbstractBackendCollectionResource<Tag, tags> {
+    extends AbstractBackendCollectionResource<Tag, Tags> {
 
     protected Class<? extends BaseResource> parentType;
     protected String parentId;
@@ -30,7 +29,7 @@ public abstract class AbstractBackendAssignedTagsResource
                                                String parentId,
                                                VdcActionType attachAction,
                                                VdcActionType detachAction) {
-        super(Tag.class, tags.class);
+        super(Tag.class, Tags.class);
         this.parentType = parentType;
         this.parentId = parentId;
         this.attachAction = attachAction;
@@ -49,13 +48,13 @@ public abstract class AbstractBackendAssignedTagsResource
         return detachAction;
     }
 
-    protected abstract List<tags> getCollection();
+    protected abstract List<Tags> getCollection();
 
     protected abstract TagsActionParametersBase getAttachParams(String id);
 
-    public Tags list() {
-        Tags ret = new Tags();
-        for (tags tag : getCollection()) {
+    public org.ovirt.engine.api.model.Tags list() {
+        org.ovirt.engine.api.model.Tags ret = new org.ovirt.engine.api.model.Tags();
+        for (Tags tag : getCollection()) {
             ret.getTags().add(addLinks(populate(map(tag), tag)));
         }
         return ret;
@@ -90,7 +89,7 @@ public abstract class AbstractBackendAssignedTagsResource
     }
 
     protected Tag lookupTagByName(String name) {
-        for (tags tag : getBackendCollection(tags.class, VdcQueryType.GetAllTags, new VdcQueryParametersBase())) {
+        for (Tags tag : getBackendCollection(Tags.class, VdcQueryType.GetAllTags, new VdcQueryParametersBase())) {
             if (tag.gettag_name().equals(name)) {
                 return map(tag);
             }
@@ -98,8 +97,8 @@ public abstract class AbstractBackendAssignedTagsResource
         return handleError(new EntityNotFoundException(name), false);
     }
 
-    public tags lookupTagById(Guid id) {
-        return getEntity(tags.class, VdcQueryType.GetTagByTagId, new IdQueryParameters(id), id.toString(), true);
+    public Tags lookupTagById(Guid id) {
+        return getEntity(Tags.class, VdcQueryType.GetTagByTagId, new IdQueryParameters(id), id.toString(), true);
     }
 
     protected class TagIdResolver extends EntityIdResolver<Guid> {
@@ -111,7 +110,7 @@ public abstract class AbstractBackendAssignedTagsResource
         }
 
         @Override
-        public tags lookupEntity(Guid id) throws BackendFailureException {
+        public Tags lookupEntity(Guid id) throws BackendFailureException {
             assert (id == null); // attach actions return nothing, lookup original id instead
             return lookupTagById(this.id);
         }

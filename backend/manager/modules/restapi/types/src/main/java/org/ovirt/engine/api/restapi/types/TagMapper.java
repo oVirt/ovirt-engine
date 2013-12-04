@@ -3,14 +3,14 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.TagParent;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TagMapper {
 
-    @Mapping(from = Tag.class, to = tags.class)
-    public static tags map(Tag model, tags template) {
-        tags entity = template != null ? template : new tags();
+    @Mapping(from = Tag.class, to = Tags.class)
+    public static Tags map(Tag model, Tags template) {
+        Tags entity = template != null ? template : new Tags();
         entity.setparent_id(parent(model, entity.getparent_id()));
         if (model.isSetId()) {
             entity.settag_id(GuidUtils.asGuid(model.getId()));
@@ -24,8 +24,8 @@ public class TagMapper {
         return entity;
     }
 
-    @Mapping(from = tags.class, to = Tag.class)
-    public static Tag map(tags entity, Tag template) {
+    @Mapping(from = Tags.class, to = Tag.class)
+    public static Tag map(Tags entity, Tag template) {
         Tag model = template != null ? template : new Tag();
         model.setId(entity.gettag_id().toString());
         model.setName(entity.gettag_name());
@@ -44,7 +44,7 @@ public class TagMapper {
         }
     }
 
-    private static TagParent parent(tags entity) {
+    private static TagParent parent(Tags entity) {
         if (entity.getparent_id() != null) {
             TagParent parent = new TagParent();
             parent.setTag(new Tag());

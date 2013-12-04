@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -33,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.Permissions;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -235,7 +235,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForTag() {
-        tags tag = dbFacade.getTagDao().get(TAG_ID);
+        Tags tag = dbFacade.getTagDao().get(TAG_ID);
         assertNotNull(tag);
         String name = tag.gettag_name();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags)));

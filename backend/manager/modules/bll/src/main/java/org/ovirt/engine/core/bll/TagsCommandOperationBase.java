@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 
 public abstract class TagsCommandOperationBase<T extends TagsOperationParameters> extends TagsCommandBase<T> {
     public TagsCommandOperationBase(T parameters) {
@@ -9,7 +9,7 @@ public abstract class TagsCommandOperationBase<T extends TagsOperationParameters
     }
 
     @Override
-    protected tags getTag() {
+    protected Tags getTag() {
         return getParameters().getTag();
     }
 }

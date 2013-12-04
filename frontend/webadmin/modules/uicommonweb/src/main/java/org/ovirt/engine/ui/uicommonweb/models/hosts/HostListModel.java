@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -391,7 +392,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     public Map<Guid, Boolean> attachedTagsToEntities;
-    public ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
+    public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
 
     private void getAttachedTagsToSelectedHosts(TagListModel model)
@@ -405,7 +406,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
 
         attachedTagsToEntities = new HashMap<Guid, Boolean>();
-        allAttachedTags = new ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
+        allAttachedTags = new ArrayList<Tags>();
         selectedItemsCounter = 0;
 
         for (Guid hostId : hostIds)
@@ -418,7 +419,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                             Object[] array = (Object[]) target;
                             HostListModel hostListModel = (HostListModel) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
-                            hostListModel.allAttachedTags.addAll((ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
+                            hostListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             hostListModel.selectedItemsCounter++;
                             if (hostListModel.selectedItemsCounter == hostListModel.getSelectedItems().size())
                             {
@@ -435,12 +436,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
-            ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
+            ArrayList<Tags> attachedTags =
                     Linq.distinct(hostListModel.allAttachedTags, new TagsEqualityComparer());
-            for (org.ovirt.engine.core.common.businessentities.tags tag : attachedTags)
+            for (Tags tag : attachedTags)
             {
                 int count = 0;
-                for (org.ovirt.engine.core.common.businessentities.tags tag2 : hostListModel.allAttachedTags)
+                for (Tags tag2 : hostListModel.allAttachedTags)
                 {
                     if (tag2.gettag_id().equals(tag.gettag_id()))
                     {

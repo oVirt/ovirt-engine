@@ -1,18 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb;
 
-import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
 @SuppressWarnings("unused")
-public class TagsEqualityComparer implements IEqualityComparer<tags>
+public class TagsEqualityComparer implements IEqualityComparer<Tags>
 {
     @Override
-    public boolean equals(tags x, tags y)
+    public boolean equals(Tags x, Tags y)
     {
         return x.gettag_id().equals(y.gettag_id());
     }
 
-    public int hashCode(tags tag)
+    public int hashCode(Tags tag)
     {
         return tag.gettag_id().hashCode();
     }

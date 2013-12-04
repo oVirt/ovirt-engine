@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -137,7 +137,7 @@ public class UserListModel extends ListWithDetailsModel
     }
 
     public Map<Guid, Boolean> attachedTagsToEntities;
-    public ArrayList<tags> allAttachedTags;
+    public ArrayList<Tags> allAttachedTags;
     public int selectedItemsCounter;
 
     private void getAttachedTagsToSelectedUsers(TagListModel model)
@@ -146,7 +146,7 @@ public class UserListModel extends ListWithDetailsModel
         ArrayList<Guid> grpIds = new ArrayList<Guid>();
 
         attachedTagsToEntities = new HashMap<Guid, Boolean>();
-        allAttachedTags = new ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
+        allAttachedTags = new ArrayList<Tags>();
         selectedItemsCounter = 0;
 
         for (Object item : getSelectedItems())
@@ -172,7 +172,7 @@ public class UserListModel extends ListWithDetailsModel
                             Object[] array = (Object[]) target;
                             UserListModel userListModel = (UserListModel) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
-                            userListModel.allAttachedTags.addAll((ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
+                            userListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             userListModel.selectedItemsCounter++;
                             if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size())
                             {
@@ -193,7 +193,7 @@ public class UserListModel extends ListWithDetailsModel
                             Object[] array = (Object[]) target;
                             UserListModel userListModel = (UserListModel) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
-                            userListModel.allAttachedTags.addAll((ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
+                            userListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             userListModel.selectedItemsCounter++;
                             if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size())
                             {
@@ -210,12 +210,12 @@ public class UserListModel extends ListWithDetailsModel
     {
         if (userListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
-            ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
+            ArrayList<Tags> attachedTags =
                     Linq.distinct(userListModel.allAttachedTags, new TagsEqualityComparer());
-            for (org.ovirt.engine.core.common.businessentities.tags a : attachedTags)
+            for (Tags a : attachedTags)
             {
                 int count = 0;
-                for (org.ovirt.engine.core.common.businessentities.tags b : allAttachedTags)
+                for (Tags b : allAttachedTags)
                 {
                     if (b.gettag_id().equals(a.gettag_id()))
                     {
