@@ -171,14 +171,14 @@ public class VdsManager {
 
     public void schedulJobs() {
         SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
-        duringFailureJobId = sched.scheduleAFixedDelayJob(this, "OnVdsDuringFailureTimer", new Class[0],
+        duringFailureJobId = sched.scheduleAFixedDelayJob(this, "onVdsDuringFailureTimer", new Class[0],
                     new Object[0], VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES, VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES,
                     TimeUnit.MINUTES);
         sched.pauseJob(duringFailureJobId);
         // start with refresh statistics
         _refreshIteration = _numberRefreshesBeforeSave - 1;
 
-        onTimerJobId = sched.scheduleAFixedDelayJob(this, "OnTimer", new Class[0], new Object[0], VDS_REFRESH_RATE,
+        onTimerJobId = sched.scheduleAFixedDelayJob(this, "onTimer", new Class[0], new Object[0], VDS_REFRESH_RATE,
                 VDS_REFRESH_RATE, TimeUnit.MILLISECONDS);
     }
 
@@ -208,8 +208,8 @@ public class VdsManager {
     private VdsUpdateRunTimeInfo _vdsUpdater;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
 
-    @OnTimerMethodAnnotation("OnTimer")
-    public void OnTimer() {
+    @OnTimerMethodAnnotation("onTimer")
+    public void onTimer() {
         if (LockManagerFactory.getLockManager().acquireLock(monitoringLock).getFirst()) {
             try {
                 setIsSetNonOperationalExecuted(false);
@@ -219,7 +219,7 @@ public class VdsManager {
                 synchronized (getLockObj()) {
                     tmpVds = _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
                     if (_vds == null) {
-                        log.errorFormat("VdsManager::refreshVdsRunTimeInfo - OnTimer is NULL for {0}",
+                        log.errorFormat("VdsManager::refreshVdsRunTimeInfo - onTimer is NULL for {0}",
                                 getVdsId());
                         return;
                     }
@@ -481,8 +481,8 @@ public class VdsManager {
      * @param obj
      * @param arg
      */
-    @OnTimerMethodAnnotation("OnVdsDuringFailureTimer")
-    public void OnVdsDuringFailureTimer() {
+    @OnTimerMethodAnnotation("onVdsDuringFailureTimer")
+    public void onVdsDuringFailureTimer() {
         synchronized (getLockObj()) {
             VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
             /**
@@ -499,7 +499,7 @@ public class VdsManager {
                 setStatus(VDSStatus.Up, vds);
                 DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
             }
-            log.infoFormat("OnVdsDuringFailureTimer of vds {0} entered. Attempts after {1}", vds.getName(),
+            log.infoFormat("onVdsDuringFailureTimer of vds {0} entered. Attempts after {1}", vds.getName(),
                     mFailedToRunVmAttempts);
         }
     }

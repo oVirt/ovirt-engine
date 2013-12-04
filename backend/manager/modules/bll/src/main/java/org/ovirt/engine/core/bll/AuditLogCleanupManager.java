@@ -32,13 +32,13 @@ public class AuditLogCleanupManager {
                 calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
 
         log.info("Setting audit cleanup manager to run at: " + cronExpression);
-        SchedulerUtilQuartzImpl.getInstance().scheduleACronJob(this, "OnTimer", new Class[] {}, new Object[] {},
+        SchedulerUtilQuartzImpl.getInstance().scheduleACronJob(this, "onTimer", new Class[] {}, new Object[] {},
                 cronExpression);
         log.info("Finished initializing " + getClass().getSimpleName());
     }
 
-    @OnTimerMethodAnnotation("OnTimer")
-    public void OnTimer() {
+    @OnTimerMethodAnnotation("onTimer")
+    public void onTimer() {
         try {
             log.info("Start deleteAgedOutAuditLogs");
             DateTime latestTimeToKeep = DateTime.getNow().AddDays(

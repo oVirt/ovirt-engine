@@ -1197,14 +1197,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             log.warnFormat("domain {0} in problem. vds: {1}", getDomainIdTuple(domainId), vdsName);
             Class[] inputType = new Class[] { Guid.class };
             Object[] inputParams = new Object[] { domainId };
-            String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "OnTimer", inputType,
+            String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimer", inputType,
                     inputParams, Config.<Integer> GetValue(ConfigValues.StorageDomainFalureTimeoutInMinutes),
                     TimeUnit.MINUTES);
             clearTimer(domainId);
             _timers.put(domainId, jobId);
         }
 
-        @OnTimerMethodAnnotation("OnTimer")
+        @OnTimerMethodAnnotation("onTimer")
         public void OnTimer(final Guid domainId) {
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventAsync(new Event(_storagePoolId,
                     domainId, null, EventType.DOMAINFAILOVER, ""),

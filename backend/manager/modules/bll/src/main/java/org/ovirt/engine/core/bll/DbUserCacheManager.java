@@ -68,7 +68,7 @@ public class DbUserCacheManager {
             log.info("Start initializing " + getClass().getSimpleName());
 
             int mRefreshRate = Config.<Integer> GetValue(ConfigValues.UserRefreshRate);
-            jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this, "OnTimer", new Class[] {},
+            jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this, "onTimer", new Class[] {},
                     new Object[] {}, 0, mRefreshRate, TimeUnit.SECONDS);
             initialized = true;
             log.info("Finished initializing " + getClass().getSimpleName());
@@ -224,7 +224,7 @@ public class DbUserCacheManager {
         }
     }
 
-    @OnTimerMethodAnnotation("OnTimer")
+    @OnTimerMethodAnnotation("onTimer")
     public void OnTimer() {
         List<LdapGroup> groups = updateGroups();
         refreshAllUserData(groups);
