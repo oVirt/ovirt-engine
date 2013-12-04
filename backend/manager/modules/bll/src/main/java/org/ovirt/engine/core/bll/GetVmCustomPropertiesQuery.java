@@ -23,14 +23,14 @@ public class GetVmCustomPropertiesQuery<P extends VdcQueryParametersBase> extend
      * @return The predefined VM properties.
      */
     protected String getPredefinedVMProperties() {
-        return Config.<String> GetValue(ConfigValues.PredefinedVMProperties, Version3_0);
+        return Config.<String> getValue(ConfigValues.PredefinedVMProperties, Version3_0);
     }
 
     /**
      * @return The user-defined VM properties.
      */
     protected String getUserDefinedVMProperties() {
-        return Config.<String> GetValue(ConfigValues.UserDefinedVMProperties, Version3_0);
+        return Config.<String> getValue(ConfigValues.UserDefinedVMProperties, Version3_0);
     }
 
     /**

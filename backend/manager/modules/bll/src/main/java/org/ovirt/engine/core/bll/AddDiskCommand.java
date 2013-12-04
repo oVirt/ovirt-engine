@@ -183,7 +183,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private boolean canAddShareableDisk() {
         if (getParameters().getDiskInfo().isShareable()) {
-            if (!Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled,
+            if (!Config.<Boolean> getValue(ConfigValues.ShareableDiskEnabled,
                     getStoragePool().getcompatibility_version().getValue())) {
                 return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             } else if (!isVolumeFormatSupportedForShareable(((DiskImage) getParameters().getDiskInfo()).getVolumeFormat())) {

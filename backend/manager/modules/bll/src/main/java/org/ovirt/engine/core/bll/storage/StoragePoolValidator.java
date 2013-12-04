@@ -31,7 +31,7 @@ public class StoragePoolValidator {
      */
     public ValidationResult isPosixDcAndMatchingCompatiblityVersion() {
         if (storagePool.getStorageType() == StorageType.POSIXFS
-                && !Config.<Boolean> GetValue
+                && !Config.<Boolean> getValue
                         (ConfigValues.PosixStorageEnabled, storagePool.getcompatibility_version().toString())) {
             return new ValidationResult(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
@@ -47,7 +47,7 @@ public class StoragePoolValidator {
      */
     public ValidationResult isGlusterDcAndMatchingCompatiblityVersion() {
         if (storagePool.getStorageType() == StorageType.GLUSTERFS
-                && !Config.<Boolean> GetValue
+                && !Config.<Boolean> getValue
                         (ConfigValues.GlusterFsStorageEnabled, storagePool.getcompatibility_version().toString())) {
             return new ValidationResult(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }

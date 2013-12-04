@@ -22,7 +22,7 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
         List<String> deviceList = getParameters().getDeviceList();
         String[] deviceArray = deviceList.toArray(new String[deviceList.size()]);
         boolean isForce = getParameters().isForce();
-        boolean supportForceCreateVG = Config.<Boolean> GetValue(
+        boolean supportForceCreateVG = Config.<Boolean> getValue(
                 ConfigValues.SupportForceCreateVG, getVds().getVdsGroupCompatibilityVersion().toString());
 
         _result = supportForceCreateVG ?

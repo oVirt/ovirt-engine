@@ -494,7 +494,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
      * @return If DC level does not support live snapshots.
      */
     private boolean isLiveSnapshotEnabled() {
-        return Config.<Boolean> GetValue(
+        return Config.<Boolean> getValue(
                 ConfigValues.LiveSnapshotEnabled, getStoragePool().getcompatibility_version().getValue());
     }
 

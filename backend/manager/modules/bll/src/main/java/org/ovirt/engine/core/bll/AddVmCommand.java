@@ -324,18 +324,18 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                                           List<String> CanDoActionMessages) {
         boolean retValue = true;
         if (retValue
-                && (num_of_sockets * cpu_per_socket) > Config.<Integer> GetValue(ConfigValues.MaxNumOfVmCpus,
+                && (num_of_sockets * cpu_per_socket) > Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus,
                         compatibility_version)) {
             CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_MAX_NUM_CPU.toString());
             retValue = false;
         }
         if (retValue
-                && num_of_sockets > Config.<Integer> GetValue(ConfigValues.MaxNumOfVmSockets, compatibility_version)) {
+                && num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, compatibility_version)) {
             CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS.toString());
             retValue = false;
         }
         if (retValue
-                && cpu_per_socket > Config.<Integer> GetValue(ConfigValues.MaxNumOfCpuPerSocket, compatibility_version)) {
+                && cpu_per_socket > Config.<Integer> getValue(ConfigValues.MaxNumOfCpuPerSocket, compatibility_version)) {
             CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET.toString());
             retValue = false;
         }

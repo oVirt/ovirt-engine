@@ -16,12 +16,12 @@ public class ConfiguredRangeValidator implements ConstraintValidator<ConfiguredR
     @Override
     public void initialize(ConfiguredRange constraintAnnotation) {
         if (constraintAnnotation.minConfigValue() != ConfigValues.Invalid) {
-            min = Config.<Integer> GetValue(constraintAnnotation.minConfigValue(), ConfigCommon.defaultConfigurationVersion);
+            min = Config.<Integer> getValue(constraintAnnotation.minConfigValue(), ConfigCommon.defaultConfigurationVersion);
         } else {
             min = constraintAnnotation.min();
         }
 
-        max = Config.<Integer> GetValue(constraintAnnotation.maxConfigValue(), ConfigCommon.defaultConfigurationVersion);
+        max = Config.<Integer> getValue(constraintAnnotation.maxConfigValue(), ConfigCommon.defaultConfigurationVersion);
     }
 
     @Override

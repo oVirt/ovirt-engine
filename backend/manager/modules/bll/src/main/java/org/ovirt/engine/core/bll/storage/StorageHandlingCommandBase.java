@@ -390,7 +390,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     /** @return The supported storage domain formats, delimited by commas (","). */
     protected String getSupportedStorageFormats(Version version) {
-        return Config.<String> GetValue(ConfigValues.SupportedStorageFormats, version.toString());
+        return Config.<String> getValue(ConfigValues.SupportedStorageFormats, version.toString());
     }
 
     /* Overidden DAO access methods, for easier testing */

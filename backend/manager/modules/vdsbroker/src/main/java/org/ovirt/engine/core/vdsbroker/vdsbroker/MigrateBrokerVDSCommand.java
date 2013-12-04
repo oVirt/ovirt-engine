@@ -30,7 +30,7 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         if (StringUtils.isNotBlank(parameters.getDstQemu())) {
             migrationInfo.put(VdsProperties.DST_QEMU, parameters.getDstQemu());
         }
-        if (Config.<Boolean> GetValue(ConfigValues.AbortMigrationOnError, parameters.getClusterVersion().getValue())) {
+        if (Config.<Boolean> getValue(ConfigValues.AbortMigrationOnError, parameters.getClusterVersion().getValue())) {
             migrationInfo.put("abortOnError", Boolean.TRUE.toString());
         }
     }

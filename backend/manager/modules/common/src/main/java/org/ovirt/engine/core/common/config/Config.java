@@ -15,10 +15,10 @@ public final class Config {
     }
 
     public static <T> T GetValue(ConfigValues value) {
-        return Config.<T> GetValue(value, ConfigCommon.defaultConfigurationVersion);
+        return Config.<T> getValue(value, ConfigCommon.defaultConfigurationVersion);
     }
 
-    public static <T> T GetValue(ConfigValues value, String version) {
+    public static <T> T getValue(ConfigValues value, String version) {
         return getConfigUtils().<T>getValue(value, version);
     }
 

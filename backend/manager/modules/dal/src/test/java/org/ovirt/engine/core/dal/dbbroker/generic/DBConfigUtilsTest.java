@@ -68,8 +68,8 @@ public class DBConfigUtilsTest extends BaseDAOTestCase {
         // Verify that values for 3.0 and 3.2 are from DB (since the entries are present in fixtures.xml)
         // and for 3.1, it's the default value from annotation in ConfigValues.
         // 3.0 -> false, 3.1 -> true, 3.2 -> true
-        Assert.assertFalse(Config.<Boolean> GetValue(ConfigValues.NonVmNetworkSupported, "3.0"));
-        Assert.assertTrue(Config.<Boolean> GetValue(ConfigValues.NonVmNetworkSupported, "3.1"));
-        Assert.assertTrue(Config.<Boolean> GetValue(ConfigValues.NonVmNetworkSupported, "3.2"));
+        Assert.assertFalse(Config.<Boolean> getValue(ConfigValues.NonVmNetworkSupported, "3.0"));
+        Assert.assertTrue(Config.<Boolean> getValue(ConfigValues.NonVmNetworkSupported, "3.1"));
+        Assert.assertTrue(Config.<Boolean> getValue(ConfigValues.NonVmNetworkSupported, "3.2"));
     }
 }

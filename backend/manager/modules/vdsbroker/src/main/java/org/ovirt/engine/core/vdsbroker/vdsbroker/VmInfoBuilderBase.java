@@ -79,7 +79,7 @@ public abstract class VmInfoBuilderBase {
         if (Config.<Boolean> GetValue(ConfigValues.SSLEnabled)) {
             createInfo.put(VdsProperties.spiceSslCipherSuite,
                     Config.<String> GetValue(ConfigValues.CipherSuite));
-            createInfo.put(VdsProperties.SpiceSecureChannels, Config.<String> GetValue(
+            createInfo.put(VdsProperties.SpiceSecureChannels, Config.<String> getValue(
                     ConfigValues.SpiceSecureChannels, compatibilityVersion));
         }
         createInfo.put(VdsProperties.kvmEnable, vm.getKvmEnable().toString()
@@ -130,7 +130,7 @@ public abstract class VmInfoBuilderBase {
     private void addCpuPinning(final String compatibilityVersion) {
         final String cpuPinning = vm.getCpuPinning();
         if (StringUtils.isNotEmpty(cpuPinning)
-                && Boolean.TRUE.equals(Config.<Boolean> GetValue(ConfigValues.CpuPinningEnabled,
+                && Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
                         compatibilityVersion))) {
             final Map<String, Object> pinDict = new HashMap<String, Object>();
             for (String pin : cpuPinning.split("_")) {

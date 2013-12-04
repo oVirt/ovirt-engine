@@ -61,7 +61,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             for (VDS vds : allForVdsGroup) {
                 if (vds.getStatus() == VDSStatus.Up) {
                     emulatedMachine = ListUtils.firstMatch(
-                            Config.<List<String>>GetValue(ConfigValues.ClusterEmulatedMachines,
+                            Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines,
                                     getParameters().getVdsGroup().getcompatibility_version().getValue()), vds.getSupportedEmulatedMachines().split(","));
                     break;
                 }

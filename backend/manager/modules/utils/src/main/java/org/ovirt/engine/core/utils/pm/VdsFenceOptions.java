@@ -75,7 +75,7 @@ public class VdsFenceOptions implements Serializable {
      * alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port
      */
     private void CacheFencingAgentsOptionMapping() {
-        String localfencingOptionMapping = Config.<String> GetValue(ConfigValues.VdsFenceOptionMapping, version);
+        String localfencingOptionMapping = Config.<String> getValue(ConfigValues.VdsFenceOptionMapping, version);
         String[] agentsOptionsStr = localfencingOptionMapping.split(Pattern.quote(SEMICOLON), -1);
         for (String agentOptionsStr : agentsOptionsStr) {
             String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);

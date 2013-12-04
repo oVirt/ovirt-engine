@@ -191,7 +191,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             if (StringUtils.isEmpty(vdsStatic.getPmType())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
                 result = false;
-            } else if (!Regex.IsMatch(Config.<String> GetValue(ConfigValues.VdsFenceType,
+            } else if (!Regex.IsMatch(Config.<String> getValue(ConfigValues.VdsFenceType,
                     clusterCompatibilityVersion), String.format("(,|^)%1$s(,|$)",
                     vdsStatic.getPmType()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED);

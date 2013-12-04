@@ -160,7 +160,7 @@ public final class CpuFlagsManagerHandler {
             _ibmCpuByNameDictionary.clear();
             _allCpuList.clear();
 
-            String[] cpus = Config.<String> GetValue(ConfigValues.ServerCPUList, ver.toString()).split("[;]", -1);
+            String[] cpus = Config.<String> getValue(ConfigValues.ServerCPUList, ver.toString()).split("[;]", -1);
             for (String cpu : cpus) {
 
                 if (!StringUtils.isEmpty(cpu)) {

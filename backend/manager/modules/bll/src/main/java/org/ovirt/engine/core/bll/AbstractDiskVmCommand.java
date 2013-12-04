@@ -160,7 +160,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean isVersionSupportedForShareable(Disk disk, String compVersion) {
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            return Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled, compVersion);
+            return Config.<Boolean> getValue(ConfigValues.ShareableDiskEnabled, compVersion);
         }
         return true;
     }
