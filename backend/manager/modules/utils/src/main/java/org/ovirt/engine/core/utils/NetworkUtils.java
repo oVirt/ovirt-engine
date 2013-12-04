@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -157,9 +157,7 @@ public final class NetworkUtils {
 
         if (networks.containsKey(iface.getNetworkName())) {
             Network network = networks.get(iface.getNetworkName());
-            if ((network.getMtu() == 0 || iface.getMtu() == network.getMtu())
-                    && ObjectUtils.equals(iface.getVlanId(), network.getVlanId())
-                    && iface.isBridged() == network.isVmNetwork()) {
+            if (isNetworkInSync(iface, network)) {
                 return new VdsNetworkInterface.NetworkImplementationDetails(true, true);
             } else {
                 return new VdsNetworkInterface.NetworkImplementationDetails(false, true);
@@ -167,6 +165,12 @@ public final class NetworkUtils {
         } else {
             return new VdsNetworkInterface.NetworkImplementationDetails();
         }
+    }
+
+    public static boolean isNetworkInSync(VdsNetworkInterface iface, Network network) {
+        return (network.getMtu() == 0 || iface.getMtu() == network.getMtu())
+                && Objects.equals(iface.getVlanId(), network.getVlanId())
+                && iface.isBridged() == network.isVmNetwork();
     }
 
     /**
