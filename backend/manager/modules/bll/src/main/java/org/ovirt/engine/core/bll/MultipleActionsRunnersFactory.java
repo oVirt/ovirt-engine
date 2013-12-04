@@ -65,6 +65,11 @@ public final class MultipleActionsRunnersFactory {
             break;
         }
 
+        case PersistentSetupNetworks: {
+            runner = new ParallelMultipleActionsRunner(actionType, parameters, isInternal);
+            break;
+        }
+
         default: {
             runner = new MultipleActionsRunner(actionType, parameters, isInternal);
             break;
