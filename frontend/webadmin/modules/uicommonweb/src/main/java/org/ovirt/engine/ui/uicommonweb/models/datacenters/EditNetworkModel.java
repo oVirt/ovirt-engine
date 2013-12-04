@@ -1,35 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.EditVnicProfileModel;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class EditNetworkModel extends NetworkModel {
-
-    private List<VnicProfileModel> originalProfileModels = new ArrayList<VnicProfileModel>();
 
     public EditNetworkModel(Network network, ListModel sourceListModel) {
         super(network, sourceListModel);
@@ -85,41 +68,6 @@ public class EditNetworkModel extends NetworkModel {
     }
 
     @Override
-    protected void initProfiles() {
-        AsyncQuery profilesQuery = new AsyncQuery();
-        profilesQuery.asyncCallback = new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<VnicProfileModel> profilesModels = new LinkedList<VnicProfileModel>();
-                for (VnicProfileView profileView : (List<VnicProfileView>) returnValue) {
-                    VnicProfileModel editModel = new EditVnicProfileModel(getSourceListModel(),
-                            getSelectedDc().getcompatibility_version(),
-                            profileView, getSelectedDc().getId(), false);
-
-                    NetworkQoS networkQoS = new NetworkQoS();
-                    networkQoS.setName(profileView.getNetworkQosName() == null
-                            ? ConstantsManager.getInstance().getConstants().unlimitedQoSTitle()
-                            : profileView.getNetworkQosName());
-                    editModel.getNetworkQoS().setSelectedItem(networkQoS);
-
-                    editModel.getNetworkQoS().setIsChangable(false);
-                    profilesModels.add(editModel);
-                    editModel.getName().setIsChangable(false);
-                }
-                originalProfileModels.clear();
-                originalProfileModels.addAll(profilesModels);
-
-                if (profilesModels.isEmpty() && !(Boolean) getIsVmNetwork().getEntity()) {
-                    profilesModels.add(getDefaultProfile());
-                }
-                getProfiles().setItems(profilesModels);
-            }
-        };
-        AsyncDataProvider.getVnicProfilesByNetworkId(profilesQuery, getNetwork().getId());
-    }
-
-    @Override
     protected void onExportChanged() {
         if ((Boolean) getExport().getEntity()) {
             getHasVLanTag().setIsChangable(false);
@@ -145,41 +93,4 @@ public class EditNetworkModel extends NetworkModel {
                 },
                 null);
     }
-
-    @Override
-    protected void performProfilesActions(final Guid networkGuid) {
-
-        List<VnicProfileModel> profileModels = (List<VnicProfileModel>) getProfiles().getItems();
-        List<VnicProfileModel> profileModelsToRemove = new ArrayList<VnicProfileModel>(originalProfileModels);
-        profileModelsToRemove.removeAll(profileModels);
-
-        final List<VnicProfileModel> profileModelsToAdd = new ArrayList<VnicProfileModel>();
-
-        for (VnicProfileModel profileModel : profileModels) {
-            if (profileModel instanceof NewVnicProfileModel) {
-                profileModelsToAdd.add(profileModel);
-            }
-        }
-        startProgress(null);
-
-        performVnicProfileAction(VdcActionType.RemoveVnicProfile,
-                profileModelsToRemove,
-                new IFrontendMultipleActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        performVnicProfileAction(VdcActionType.AddVnicProfile,
-                                profileModelsToAdd,
-                                new IFrontendMultipleActionAsyncCallback() {
-
-                                    @Override
-                                    public void executed(FrontendMultipleActionAsyncResult result) {
-                                        stopProgress();
-                                        cancel();
-                                    }
-                                }, networkGuid);
-                    }
-                }, networkGuid);
-    }
-
 }
