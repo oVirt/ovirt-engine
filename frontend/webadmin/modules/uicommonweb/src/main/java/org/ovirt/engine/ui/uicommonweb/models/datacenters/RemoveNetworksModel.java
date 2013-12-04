@@ -77,7 +77,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
             Network network = (Network) a;
             pb.add(new AddNetworkStoragePoolParameters(network.getDataCenterId(), network));
         }
-        Frontend.RunMultipleAction(VdcActionType.RemoveNetwork, pb);
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveNetwork, pb);
 
         sourceListModel.setConfirmWindow(null);
     }

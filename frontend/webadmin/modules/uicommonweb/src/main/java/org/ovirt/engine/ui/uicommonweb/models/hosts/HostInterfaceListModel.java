@@ -413,7 +413,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, _asyncQuery);
 
         // VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId,
         // new GetVdsByVdsIdParameters(Entity.vds_id) { Refresh = IsQueryFirstTime });
@@ -1246,7 +1246,7 @@ public class HostInterfaceListModel extends SearchableListModel
         model.startProgress(null);
         setcurrentModel(model);
 
-        Frontend.RunAction(actionType, parameters,
+        Frontend.getInstance().runAction(actionType, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1442,7 +1442,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                         }
                     };
-                    Frontend.RunQuery(VdcQueryType.GetVdsFreeBondsByVdsId,
+                    Frontend.getInstance().runQuery(VdcQueryType.GetVdsFreeBondsByVdsId,
                             new IdQueryParameters(host.getId()),
                             _asyncQuery1);
                 }
@@ -1610,7 +1610,7 @@ public class HostInterfaceListModel extends SearchableListModel
             model.startProgress(null);
             setcurrentModel(model);
 
-            Frontend.RunAction(VdcActionType.UpdateNetworkToVdsInterface, parameters,
+            Frontend.getInstance().runAction(VdcActionType.UpdateNetworkToVdsInterface, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
@@ -1694,7 +1694,7 @@ public class HostInterfaceListModel extends SearchableListModel
             model.startProgress(null);
             setcurrentModel(model);
 
-            Frontend.RunAction(VdcActionType.AddBond, parameters,
+            Frontend.getInstance().runAction(VdcActionType.AddBond, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
@@ -1780,7 +1780,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 hostInterfaceListModel.startProgress(null);
 
-                Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
+                Frontend.getInstance().runAction(VdcActionType.DetachNetworkFromVdsInterface,
                         new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                         new IFrontendActionAsyncCallback() {
                             @Override
@@ -1892,7 +1892,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         hostInterfaceModel.startProgress(null);
                         setcurrentModel(hostInterfaceModel);
 
-                        Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
+                        Frontend.getInstance().runAction(VdcActionType.DetachNetworkFromVdsInterface,
                                 new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                                 new IFrontendActionAsyncCallback() {
                                     @Override
@@ -2025,7 +2025,7 @@ public class HostInterfaceListModel extends SearchableListModel
             model.startProgress(null);
             setcurrentModel(model);
 
-            Frontend.RunAction(actionType, parameters,
+            Frontend.getInstance().runAction(actionType, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
@@ -2122,7 +2122,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 hostInterfaceListModel.startProgress(null);
                 setcurrentModel(hostInterfaceListModel);
 
-                Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
+                Frontend.getInstance().runAction(VdcActionType.DetachNetworkFromVdsInterface,
                         new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                         new IFrontendActionAsyncCallback() {
                             @Override

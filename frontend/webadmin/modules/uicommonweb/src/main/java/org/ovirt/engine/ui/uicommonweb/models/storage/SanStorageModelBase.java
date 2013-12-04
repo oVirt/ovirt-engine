@@ -302,12 +302,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             useUserAuth_EntityChanged(sender, args);
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();
         }
@@ -388,7 +388,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         getContainer().startProgress(null);
 
-        Frontend.RunMultipleActions(actionTypes, parameters, callbacks, null, this);
+        Frontend.getInstance().runMultipleActions(actionTypes, parameters, callbacks, null, this);
     }
 
     private void sanTargetModel_LoggedIn(Object sender, EventArgs args)
@@ -448,7 +448,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             }
         }, true);
         asyncQuery.setContext(getHash());
-        Frontend.RunQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
 
     private void postDiscoverTargetsInternal(ArrayList<StorageServerConnections> items)

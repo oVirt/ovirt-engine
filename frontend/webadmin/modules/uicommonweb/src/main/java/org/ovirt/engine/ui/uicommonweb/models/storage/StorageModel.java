@@ -260,12 +260,12 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             nfsStorageModel_PathChanged(sender, args);
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();
         }

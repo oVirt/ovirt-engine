@@ -892,7 +892,7 @@ public class ClusterModel extends EntityModel
         setClusterPolicy(new ListModel());
         setCustomPropertySheet(new KeyValueModel());
         getClusterPolicy().getSelectedItemChangedEvent().addListener(this);
-        Frontend.RunQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery(this,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery(this,
                 new INewAsyncCallback() {
 
                     @Override
@@ -903,7 +903,7 @@ public class ClusterModel extends EntityModel
                         for (PolicyUnit policyUnit : policyUnits) {
                             policyUnitMap.put(policyUnit.getId(), policyUnit);
                         }
-                        Frontend.RunQuery(VdcQueryType.GetClusterPolicies,
+                        Frontend.getInstance().runQuery(VdcQueryType.GetClusterPolicies,
                                 new VdcQueryParametersBase(),
                                 new AsyncQuery(model,
                                         new INewAsyncCallback() {

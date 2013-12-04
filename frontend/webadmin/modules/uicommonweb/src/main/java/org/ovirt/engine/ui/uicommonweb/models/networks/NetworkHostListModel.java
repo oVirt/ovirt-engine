@@ -85,9 +85,9 @@ public class NetworkHostListModel extends SearchableListModel
         params.setRefresh(getIsQueryFirstTime());
 
         if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
-            Frontend.RunQuery(VdcQueryType.GetVdsWithoutNetwork, params, asyncQuery);
+            Frontend.getInstance().runQuery(VdcQueryType.GetVdsWithoutNetwork, params, asyncQuery);
         } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
-            Frontend.RunQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, params, asyncQuery);
+            Frontend.getInstance().runQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, params, asyncQuery);
         }
 
         setIsQueryFirstTime(false);

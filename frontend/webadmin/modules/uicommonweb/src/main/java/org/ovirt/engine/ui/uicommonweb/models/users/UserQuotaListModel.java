@@ -61,7 +61,7 @@ public class UserQuotaListModel extends SearchableListModel
 
         parameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetQuotasByAdElementId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetQuotasByAdElementId,
                 parameters,
                 asyncQuery);
     }

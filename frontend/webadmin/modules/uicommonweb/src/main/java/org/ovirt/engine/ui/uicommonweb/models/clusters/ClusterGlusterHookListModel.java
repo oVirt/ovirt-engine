@@ -116,7 +116,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
             GlusterHookEntity hook = (GlusterHookEntity) item;
             list.add(new GlusterHookParameters(hook.getId()));
         }
-        Frontend.RunMultipleAction(VdcActionType.EnableGlusterHook, list, null, null);
+        Frontend.getInstance().runMultipleAction(VdcActionType.EnableGlusterHook, list, null, null);
     }
 
     private void disableHook() {
@@ -171,7 +171,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.DisableGlusterHook, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.DisableGlusterHook, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -405,12 +405,12 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         if (callbacks.size() > 0) {
             callbacks.remove(callbacks.size() - 1);
             callbacks.add(onFinishCallback);
-            Frontend.RunMultipleActions(actionTypes, parameters, callbacks, failureCallback, null);
+            Frontend.getInstance().runMultipleActions(actionTypes, parameters, callbacks, failureCallback, null);
         }
     }
 
     private void syncWithServers() {
-        Frontend.RunAction(VdcActionType.RefreshGlusterHooks, new GlusterClusterParameters(getEntity().getId()));
+        Frontend.getInstance().runAction(VdcActionType.RefreshGlusterHooks, new GlusterClusterParameters(getEntity().getId()));
     }
 
     @Override

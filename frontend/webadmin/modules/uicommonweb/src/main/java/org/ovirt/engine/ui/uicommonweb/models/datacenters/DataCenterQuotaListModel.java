@@ -60,7 +60,7 @@ public class DataCenterQuotaListModel extends QuotaListModel
         };
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetQuotaByStoragePoolId,
                 parameters,
                 asyncQuery);
     }

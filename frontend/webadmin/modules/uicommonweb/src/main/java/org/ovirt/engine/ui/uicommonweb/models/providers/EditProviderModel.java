@@ -65,7 +65,7 @@ public class EditProviderModel extends ProviderModel {
 
             if (!queryTypes.isEmpty()) {
                 startProgress(null);
-                Frontend.RunMultipleQueries(queryTypes, queryParams, new IFrontendMultipleQueryAsyncCallback() {
+                Frontend.getInstance().runMultipleQueries(queryTypes, queryParams, new IFrontendMultipleQueryAsyncCallback() {
 
                     @SuppressWarnings("unchecked")
                     @Override

@@ -118,7 +118,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new IdQueryParameters(((VDSGroup) getCluster().getSelectedItem()).getId()),
                     new AsyncQuery(ImportVmModel.this,
                             new INewAsyncCallback() {
@@ -236,7 +236,7 @@ public class ImportVmModel extends ListWithDetailsModel {
             queryParamsList.add(new IdQueryParameters(storage.getId()));
         }
         storageQuotaMap = new HashMap<Guid, ArrayList<Quota>>();
-        Frontend.RunMultipleQueries(queryTypeList,
+        Frontend.getInstance().runMultipleQueries(queryTypeList,
                 queryParamsList,
                 new IFrontendMultipleQueryAsyncCallback() {
                     @Override
@@ -336,7 +336,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                 queryTypeList.add(VdcQueryType.GetVmTemplatesDisks);
                 queryParamsList.add(new IdQueryParameters(templateId));
             }
-            Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
+            Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
                 @Override
                 public void executed(FrontendMultipleQueryAsyncResult result) {
                     List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
@@ -401,7 +401,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         GetAllFromExportDomainQueryParameters tempVar =
                 new GetAllFromExportDomainQueryParameters(storagePool.getId(), ((StorageDomain) getEntity())
                         .getId());
-        Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery(ImportVmModel.this,
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery(ImportVmModel.this,
                 new INewAsyncCallback() {
 
                     @Override
@@ -572,7 +572,7 @@ public class ImportVmModel extends ListWithDetailsModel {
             }
         }
 
-        Frontend.RunQuery(VdcQueryType.Search,
+        Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(searchPattern.toString(), SearchType.VM),
                 new AsyncQuery(this, new INewAsyncCallback() {
 

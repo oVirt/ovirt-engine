@@ -59,7 +59,7 @@ public class VmBasicDiskListModel extends SearchableListModel
 
             IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());
             queryParameters.setRefresh(getIsQueryFirstTime());
-            Frontend.RunQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
                     _asyncQuery);
         }
         else if (getEntity() instanceof VmPool)
@@ -94,7 +94,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                         };
                         IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());
                         queryParameters.setRefresh(getIsQueryFirstTime());
-                        Frontend.RunQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
+                        Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
                                 _asyncQuery1);
                     }
 
@@ -102,7 +102,7 @@ public class VmBasicDiskListModel extends SearchableListModel
             };
 
             VmPool pool = (VmPool) getEntity();
-            Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+            Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
                     _asyncQuery);
         }

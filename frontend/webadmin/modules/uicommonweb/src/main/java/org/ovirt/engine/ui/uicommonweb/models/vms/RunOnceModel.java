@@ -742,7 +742,7 @@ public abstract class RunOnceModel extends Model
     }
 
     private void setIsBootFromHardDiskAllowedForVm() {
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()),
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
@@ -780,7 +780,7 @@ public abstract class RunOnceModel extends Model
     }
 
     private void setIsBootFromNetworkAllowedForVm() {
-        Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()),
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override

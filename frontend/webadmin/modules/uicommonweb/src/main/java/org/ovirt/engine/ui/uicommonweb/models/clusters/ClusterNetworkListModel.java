@@ -137,14 +137,14 @@ public class ClusterNetworkListModel extends SearchableListModel
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, _asyncQuery);
     }
 
     public void setAsDisplay()
     {
         Network network = (Network) getSelectedItem();
 
-        Frontend.RunAction(VdcActionType.UpdateDisplayToVdsGroup, new DisplayNetworkToVdsGroupParameters(getEntity(),
+        Frontend.getInstance().runAction(VdcActionType.UpdateDisplayToVdsGroup, new DisplayNetworkToVdsGroupParameters(getEntity(),
                 network, true));
     }
 
@@ -259,11 +259,11 @@ public class ClusterNetworkListModel extends SearchableListModel
                 }
 
                 if (needsAttach) {
-                    Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, toAttach, this, null);
+                    Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup, toAttach, this, null);
                 }
 
                 if (needsDetach) {
-                    Frontend.RunMultipleAction(VdcActionType.DetachNetworkToVdsGroup, toDetach, this, null);
+                    Frontend.getInstance().runMultipleAction(VdcActionType.DetachNetworkToVdsGroup, toDetach, this, null);
                 }
 
                 if (!needsAttach && !needsDetach) {

@@ -201,7 +201,7 @@ public final class AsyncDataProvider {
             }
         });
         callback.setHandleFailure(true);
-        Frontend.RunQuery(VdcQueryType.GetDefaultConfigurationVersion,
+        Frontend.getInstance().runQuery(VdcQueryType.GetDefaultConfigurationVersion,
                 new VdcQueryParametersBase(),
                 callback);
     }
@@ -231,7 +231,7 @@ public final class AsyncDataProvider {
                         .getReturnValue();
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetNicHotplugSupportMap), callback);
     }
 
@@ -258,7 +258,7 @@ public final class AsyncDataProvider {
                         .getReturnValue();
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetDiskHotpluggableInterfacesMap), callback);
     }
 
@@ -293,7 +293,7 @@ public final class AsyncDataProvider {
         };
         GetDomainListParameters tempVar = new GetDomainListParameters();
         tempVar.setFilterInternalDomain(filterInternalDomain);
-        Frontend.RunPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
+        Frontend.getInstance().runPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
     }
 
     public static void getIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
@@ -318,7 +318,7 @@ public final class AsyncDataProvider {
         };
 
         IdQueryParameters getIsoParams = new IdQueryParameters(dataCenterId);
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getIsoParams, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getIsoParams, aQuery);
     }
 
     public static void getExportDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
@@ -340,7 +340,7 @@ public final class AsyncDataProvider {
         };
 
         IdQueryParameters getExportParams = new IdQueryParameters(dataCenterId);
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getExportParams, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getExportParams, aQuery);
     }
 
     public static void getIrsImageList(AsyncQuery aQuery, Guid storagePoolId) {
@@ -371,7 +371,7 @@ public final class AsyncDataProvider {
         GetImagesListByStoragePoolIdParameters parameters =
                 new GetImagesListByStoragePoolIdParameters(storagePoolId, ImageFileType.ISO);
         parameters.setForceRefresh(forceRefresh);
-        Frontend.RunQuery(VdcQueryType.GetImagesListByStoragePoolId, parameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetImagesListByStoragePoolId, parameters, aQuery);
     }
 
     public static void getFloppyImageList(AsyncQuery aQuery, Guid storagePoolId) {
@@ -395,7 +395,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetImagesListByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetImagesListByStoragePoolId,
                 new GetImagesListByStoragePoolIdParameters(storagePoolId, ImageFileType.Floppy),
                 aQuery);
     }
@@ -408,7 +408,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVdsGroupById, new IdQueryParameters(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupById, new IdQueryParameters(id), aQuery);
     }
 
     public static void getClusterListByName(AsyncQuery aQuery, String name) {
@@ -423,7 +423,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search,
+        Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("Cluster: name=" + name + " sortby name", SearchType.Cluster), //$NON-NLS-1$ //$NON-NLS-2$
                 aQuery);
     }
@@ -436,7 +436,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmPoolById, new IdQueryParameters(poolId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmPoolById, new IdQueryParameters(poolId), aQuery);
     }
 
     public static void getVmById(AsyncQuery aQuery, Guid vmId) {
@@ -447,7 +447,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
     public static void getDataCenterList(AsyncQuery aQuery) {
@@ -462,7 +462,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search,
+        Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("DataCenter: sortby name", SearchType.StoragePool), //$NON-NLS-1$
                 aQuery);
     }
@@ -488,7 +488,7 @@ public final class AsyncDataProvider {
         parameters.setSupportsVirtService(supportsVirtService);
         parameters.setSupportsGlusterService(supportsGlusterService);
 
-        Frontend.RunQuery(VdcQueryType.GetStoragePoolsByClusterService, parameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolsByClusterService, parameters, aQuery);
     }
 
     public static void getDataCenterListByName(AsyncQuery aQuery, String name) {
@@ -503,7 +503,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search,
+        Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("DataCenter: name=" + name + " sortby name", SearchType.StoragePool), //$NON-NLS-1$ //$NON-NLS-2$
                 aQuery);
     }
@@ -680,7 +680,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDSGroup>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
     }
@@ -697,7 +697,7 @@ public final class AsyncDataProvider {
                 return getClusterByServiceList(list, supportsVirtService, supportsGlusterService);
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
     }
@@ -713,7 +713,7 @@ public final class AsyncDataProvider {
                 return false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetSoundDevices, new IdQueryParameters(vmId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetSoundDevices, new IdQueryParameters(vmId), aQuery);
     }
 
     public static void isVirtioScsiEnabledForVm(AsyncQuery aQuery, Guid vmId) {
@@ -727,7 +727,7 @@ public final class AsyncDataProvider {
                 return false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVirtioScsiControllers, new IdQueryParameters(vmId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVirtioScsiControllers, new IdQueryParameters(vmId), aQuery);
     }
 
     public static void getClusterListByService(AsyncQuery aQuery, final boolean supportsVirtService,
@@ -749,7 +749,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDSGroup>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getClusterList(AsyncQuery aQuery) {
@@ -766,7 +766,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDSGroup>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getTemplateDiskList(AsyncQuery aQuery, Guid templateId) {
@@ -781,7 +781,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmTemplatesDisks, new IdQueryParameters(templateId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesDisks, new IdQueryParameters(templateId), aQuery);
     }
 
     /**
@@ -821,7 +821,7 @@ public final class AsyncDataProvider {
 
     public static void getTemplateListByDataCenter(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new TemplateConverter();
-        Frontend.RunQuery(VdcQueryType.GetVmTemplatesByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
     }
@@ -848,7 +848,7 @@ public final class AsyncDataProvider {
                 return list;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmTemplatesFromStorageDomain,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesFromStorageDomain,
                 new IdQueryParameters(storageId),
                 aQuery);
     }
@@ -889,7 +889,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
                 new IdQueryParameters(templateId),
                 aQuery);
     }
@@ -906,7 +906,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId,
                 new IdQueryParameters(dataCenterId),
                 aQuery);
     }
@@ -944,7 +944,7 @@ public final class AsyncDataProvider {
 
         TimeZoneQueryParams params = new TimeZoneQueryParams();
         params.setTimeZoneType(timeZoneType);
-        Frontend.RunQuery(VdcQueryType.GetDefaultTimeZone, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetDefaultTimeZone, params, aQuery);
     }
 
     public static void getHostById(AsyncQuery aQuery, Guid id) {
@@ -955,7 +955,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(id), aQuery);
     }
 
     public static void getHostListByCluster(AsyncQuery aQuery, String clusterName) {
@@ -972,7 +972,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDS>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName + " sortby name", //$NON-NLS-1$ //$NON-NLS-2$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName + " sortby name", //$NON-NLS-1$ //$NON-NLS-2$
                 SearchType.VDS), aQuery);
     }
 
@@ -990,7 +990,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDS>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllVdsByStoragePool, new IdQueryParameters(spId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsByStoragePool, new IdQueryParameters(spId), aQuery);
     }
 
     public static void getVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh) {
@@ -1007,7 +1007,7 @@ public final class AsyncDataProvider {
         };
         IdQueryParameters params = new IdQueryParameters(vmId);
         params.setRefresh(isRefresh);
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, params, aQuery);
     }
 
     public static HashMap<Integer, String> getOsNames() {
@@ -1095,7 +1095,7 @@ public final class AsyncDataProvider {
         };
         GetDomainListParameters tempVar = new GetDomainListParameters();
         tempVar.setFilterInternalDomain(filterInternalDomain);
-        Frontend.RunQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
     }
 
     public static void getRoleList(AsyncQuery aQuery) {
@@ -1106,7 +1106,7 @@ public final class AsyncDataProvider {
                 return source != null ? (ArrayList<Role>) source : new ArrayList<Role>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters(), aQuery);
     }
 
     public static void getStorageDomainById(AsyncQuery aQuery, Guid storageDomainId) {
@@ -1117,7 +1117,7 @@ public final class AsyncDataProvider {
                 return source != null ? (StorageDomain) source : null;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainById,
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainById,
                 new IdQueryParameters(storageDomainId),
                 aQuery);
     }
@@ -1157,7 +1157,7 @@ public final class AsyncDataProvider {
             };
         }
 
-        Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(clusterId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
     public static void getDataCenterById(AsyncQuery aQuery, Guid dataCenterId) {
@@ -1168,11 +1168,11 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetStoragePoolById, new IdQueryParameters(dataCenterId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolById, new IdQueryParameters(dataCenterId), aQuery);
     }
 
     public static void getWatchdogByVmId(AsyncQuery aQuery, Guid vmId) {
-        Frontend.RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(vmId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(vmId), aQuery);
     }
 
     public static void getTemplateById(AsyncQuery aQuery, Guid templateId) {
@@ -1183,7 +1183,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(templateId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(templateId), aQuery);
     }
 
     public static void getHostList(AsyncQuery aQuery) {
@@ -1207,7 +1207,7 @@ public final class AsyncDataProvider {
         SearchParameters searchParameters =
                 new SearchParameters("Host: " + (status == null ? "" : ("status=" + status.name())), SearchType.VDS); //$NON-NLS-1$ //$NON-NLS-2$
         searchParameters.setMaxCount(9999);
-        Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
     public static void getHostsForStorageOperation(AsyncQuery aQuery, Guid storagePoolId, boolean localFsOnly) {
@@ -1221,7 +1221,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDS>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetHostsForStorageOperation,
+        Frontend.getInstance().runQuery(VdcQueryType.GetHostsForStorageOperation,
                 new GetHostsForStorageOperationParameters(storagePoolId, localFsOnly),
                 aQuery);
     }
@@ -1251,11 +1251,11 @@ public final class AsyncDataProvider {
                 clusterName == null ? new SearchParameters("Volumes:", SearchType.GlusterVolume) //$NON-NLS-1$
                         : new SearchParameters("Volumes: cluster.name=" + clusterName, SearchType.GlusterVolume); //$NON-NLS-1$
         searchParameters.setMaxCount(9999);
-        Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
     public static void getGlusterVolumeOptionInfoList(AsyncQuery aQuery, Guid clusterId) {
-        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeOptionsInfo, new GlusterParameters(clusterId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeOptionsInfo, new GlusterParameters(clusterId), aQuery);
     }
 
     public static void getHostFingerprint(AsyncQuery aQuery, String hostAddress) {
@@ -1266,7 +1266,7 @@ public final class AsyncDataProvider {
                 return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetServerSSHKeyFingerprint, new ServerParameters(hostAddress), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetServerSSHKeyFingerprint, new ServerParameters(hostAddress), aQuery);
     }
 
     public static void getHostPublicKey(AsyncQuery aQuery) {
@@ -1277,13 +1277,13 @@ public final class AsyncDataProvider {
                 return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetServerSSHPublicKey, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetServerSSHPublicKey, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getGlusterHosts(AsyncQuery aQuery, String hostAddress, String rootPassword, String fingerprint) {
         GlusterServersQueryParameters parameters = new GlusterServersQueryParameters(hostAddress, rootPassword);
         parameters.setFingerprint(fingerprint);
-        Frontend.RunQuery(VdcQueryType.GetGlusterServersForImport,
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterServersForImport,
                 parameters,
                 aQuery);
     }
@@ -1299,7 +1299,7 @@ public final class AsyncDataProvider {
         // Passing empty values for Volume and Brick to get the services of all the volumes/hosts in the cluster
         GlusterVolumeAdvancedDetailsParameters parameters =
                 new GlusterVolumeAdvancedDetailsParameters(clusterId, null, null, false); //$NON-NLS-1$ //$NON-NLS-2$
-        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
                 parameters,
                 aQuery);
     }
@@ -1307,7 +1307,7 @@ public final class AsyncDataProvider {
     public static void getGlusterVolumeBrickDetails(AsyncQuery aQuery, Guid clusterId, Guid volumeId, Guid brickId) {
         GlusterVolumeAdvancedDetailsParameters parameters =
                 new GlusterVolumeAdvancedDetailsParameters(clusterId, volumeId, brickId, true);
-        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
                 parameters,
                 aQuery);
     }
@@ -1320,7 +1320,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAddedGlusterServers,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAddedGlusterServers,
                 new AddedGlusterServersParameters(clusterId, isFingerprintRequired),
                 aQuery);
     }
@@ -1347,7 +1347,7 @@ public final class AsyncDataProvider {
                 return source != null ? source : new ArrayList<GlusterHookEntity>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetGlusterHooks, new GlusterParameters(clusterId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterHooks, new GlusterParameters(clusterId), aQuery);
     }
 
     public static void getGlusterBricksForServer(AsyncQuery aQuery, Guid serverId) {
@@ -1358,7 +1358,7 @@ public final class AsyncDataProvider {
                 return source != null ? source : new ArrayList<GlusterBrickEntity>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeBricksByServerId, new IdQueryParameters(serverId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeBricksByServerId, new IdQueryParameters(serverId), aQuery);
     }
 
     public static void getGlusterHook(AsyncQuery aQuery, Guid hookId, boolean includeServerHooks) {
@@ -1369,7 +1369,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetGlusterHookById,
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterHookById,
                 new GlusterHookQueryParameters(hookId, includeServerHooks),
                 aQuery);
     }
@@ -1384,7 +1384,7 @@ public final class AsyncDataProvider {
         };
         GlusterHookContentQueryParameters parameters = new GlusterHookContentQueryParameters(hookId);
         parameters.setGlusterServerId(serverId);
-        Frontend.RunQuery(VdcQueryType.GetGlusterHookContent, parameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterHookContent, parameters, aQuery);
     }
 
     public static void getGlusterSwiftServices(AsyncQuery aQuery, Guid serverId) {
@@ -1395,7 +1395,7 @@ public final class AsyncDataProvider {
                 return source != null ? source : new ArrayList<GlusterServerService>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetGlusterServerServicesByServerId, new GlusterServiceQueryParameters(serverId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterServerServicesByServerId, new GlusterServiceQueryParameters(serverId,
                 ServiceType.GLUSTER_SWIFT), aQuery);
     }
 
@@ -1416,7 +1416,7 @@ public final class AsyncDataProvider {
                 }
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetGlusterClusterServiceByClusterId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterClusterServiceByClusterId,
                 new GlusterServiceQueryParameters(clusterId,
                         ServiceType.GLUSTER_SWIFT), aQuery);
     }
@@ -1429,7 +1429,7 @@ public final class AsyncDataProvider {
                 return source != null ? source : new ArrayList<GlusterServerService>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetGlusterServerServicesByClusterId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterServerServicesByClusterId,
                 new GlusterServiceQueryParameters(clusterId,
                         ServiceType.GLUSTER_SWIFT), aQuery);
     }
@@ -1437,7 +1437,7 @@ public final class AsyncDataProvider {
     public static void getGlusterRebalanceStatus(AsyncQuery aQuery, Guid clusterId, Guid volumeId) {
         aQuery.setHandleFailure(true);
         GlusterVolumeQueriesParameters parameters = new GlusterVolumeQueriesParameters(clusterId, volumeId);
-        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeRebalanceStatus, parameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeRebalanceStatus, parameters, aQuery);
     }
 
     public static void getGlusterRemoveBricksStatus(AsyncQuery aQuery,
@@ -1447,7 +1447,7 @@ public final class AsyncDataProvider {
         aQuery.setHandleFailure(true);
         GlusterVolumeRemoveBricksQueriesParameters parameters =
                 new GlusterVolumeRemoveBricksQueriesParameters(clusterId, volumeId, bricks);
-        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeRemoveBricksStatus, parameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeRemoveBricksStatus, parameters, aQuery);
     }
 
     public static void getRpmVersion(AsyncQuery aQuery) {
@@ -1472,7 +1472,7 @@ public final class AsyncDataProvider {
                 return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
-        Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
+        Frontend.getInstance().runPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.UserMessageOfTheDay,
                         getDefaultConfigurationVersion()),
                 aQuery);
@@ -1517,7 +1517,7 @@ public final class AsyncDataProvider {
                 return retMap;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getPermissionsByAdElementId(AsyncQuery aQuery, Guid userId) {
@@ -1529,7 +1529,7 @@ public final class AsyncDataProvider {
                         : new ArrayList<Permissions>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId,
                 new IdQueryParameters(userId),
                 aQuery);
     }
@@ -1543,7 +1543,7 @@ public final class AsyncDataProvider {
                         : new ArrayList<ActionGroup>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetRoleActionGroupsByRoleId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetRoleActionGroupsByRoleId,
                 new IdQueryParameters(roleId),
                 aQuery);
     }
@@ -1556,7 +1556,7 @@ public final class AsyncDataProvider {
                 return source != null ? !((Boolean) source).booleanValue() : false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.IsVmTemlateWithSameNameExist,
+        Frontend.getInstance().runQuery(VdcQueryType.IsVmTemlateWithSameNameExist,
                 new NameQueryParameters(name),
                 aQuery);
     }
@@ -1569,7 +1569,7 @@ public final class AsyncDataProvider {
                 return source != null ? !((Boolean) source).booleanValue() : false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.IsVmWithSameNameExist, new NameQueryParameters(name), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.IsVmWithSameNameExist, new NameQueryParameters(name), aQuery);
     }
 
     public static void getDataCentersWithPermittedActionOnClusters(AsyncQuery aQuery, ActionGroup actionGroup,
@@ -1592,7 +1592,7 @@ public final class AsyncDataProvider {
         getDataCentersWithPermittedActionOnClustersParameters.setSupportsVirtService(supportsVirtService);
         getDataCentersWithPermittedActionOnClustersParameters.setSupportsGlusterService(supportsGlusterService);
 
-        Frontend.RunQuery(VdcQueryType.GetDataCentersWithPermittedActionOnClusters,
+        Frontend.getInstance().runQuery(VdcQueryType.GetDataCentersWithPermittedActionOnClusters,
                 getDataCentersWithPermittedActionOnClustersParameters,
                 aQuery);
     }
@@ -1615,7 +1615,7 @@ public final class AsyncDataProvider {
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
                 new GetEntitiesWithPermittedActionParameters();
         getEntitiesWithPermittedActionParameters.setActionGroup(actionGroup);
-        Frontend.RunQuery(VdcQueryType.GetClustersWithPermittedAction, getEntitiesWithPermittedActionParameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetClustersWithPermittedAction, getEntitiesWithPermittedActionParameters, aQuery);
     }
 
     public static void getVmTemplatesWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup) {
@@ -1624,7 +1624,7 @@ public final class AsyncDataProvider {
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
                 new GetEntitiesWithPermittedActionParameters();
         getEntitiesWithPermittedActionParameters.setActionGroup(actionGroup);
-        Frontend.RunQuery(VdcQueryType.GetVmTemplatesWithPermittedAction,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesWithPermittedAction,
                 getEntitiesWithPermittedActionParameters,
                 aQuery);
     }
@@ -1633,7 +1633,7 @@ public final class AsyncDataProvider {
         aQuery.converterCallback = new TemplateConverter();
         VdcQueryParametersBase params = new VdcQueryParametersBase();
         params.setRefresh(refresh);
-        Frontend.RunQuery(VdcQueryType.GetAllVmTemplates, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVmTemplates, params, aQuery);
     }
 
     public static void isUSBEnabledByDefault(AsyncQuery aQuery) {
@@ -1660,7 +1660,7 @@ public final class AsyncDataProvider {
         };
         StorageServerConnectionQueryParametersBase params = new StorageServerConnectionQueryParametersBase(id);
         params.setRefresh(isRefresh);
-        Frontend.RunQuery(VdcQueryType.GetStorageServerConnectionById, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageServerConnectionById, params, aQuery);
     }
 
     public static void getDataCentersByStorageDomain(AsyncQuery aQuery, Guid storageDomainId) {
@@ -1671,7 +1671,7 @@ public final class AsyncDataProvider {
                 return source != null ? (ArrayList<StoragePool>) source : null;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
                 new IdQueryParameters(storageDomainId),
                 aQuery);
     }
@@ -1694,7 +1694,7 @@ public final class AsyncDataProvider {
             }
         };
         IdQueryParameters tempVar = new IdQueryParameters(dataCenterId);
-        Frontend.RunQuery(VdcQueryType.GetAvailableClusterVersionsByStoragePool, tempVar, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAvailableClusterVersionsByStoragePool, tempVar, aQuery);
     }
 
     public static void getDataCenterMaxNameLength(AsyncQuery aQuery) {
@@ -1761,7 +1761,7 @@ public final class AsyncDataProvider {
                 return source != null ? (ArrayList<ServerCpu>) source : new ArrayList<ServerCpu>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllServerCpuList, new GetAllServerCpuListParameters(version), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllServerCpuList, new GetAllServerCpuListParameters(version), aQuery);
     }
 
     public static void getPmTypeList(AsyncQuery aQuery, Version version) {
@@ -1810,7 +1810,7 @@ public final class AsyncDataProvider {
             }
         };
         aQuery.setData(new Object[] { pmType });
-        Frontend.RunQuery(VdcQueryType.GetAgentFenceOptions, new GetAgentFenceOptionsQueryParameters(version), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAgentFenceOptions, new GetAgentFenceOptionsQueryParameters(version), aQuery);
     }
 
     public static void getNetworkList(AsyncQuery aQuery, Guid dataCenterId) {
@@ -1822,7 +1822,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllNetworks, new IdQueryParameters(dataCenterId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, new IdQueryParameters(dataCenterId), aQuery);
     }
 
     public static void getISOStorageDomainList(AsyncQuery aQuery) {
@@ -1851,7 +1851,7 @@ public final class AsyncDataProvider {
         SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
 
-        Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParams, aQuery);
     }
 
     public static void getStorageDomainList(AsyncQuery aQuery) {
@@ -1867,7 +1867,7 @@ public final class AsyncDataProvider {
         SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
 
-        Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParams, aQuery);
     }
 
     public static void getLocalStorageHost(AsyncQuery aQuery, String dataCenterName) {
@@ -1886,7 +1886,7 @@ public final class AsyncDataProvider {
             }
         };
         SearchParameters sp = new SearchParameters("hosts: datacenter=" + dataCenterName, SearchType.VDS); //$NON-NLS-1$
-        Frontend.RunQuery(VdcQueryType.Search, sp, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, sp, aQuery);
     }
 
     public static void getStorageDomainsByConnection(AsyncQuery aQuery, Guid storagePoolId, String connectionPath) {
@@ -1904,7 +1904,7 @@ public final class AsyncDataProvider {
             param.setStoragePoolId(storagePoolId);
         }
 
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainsByConnection, param, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByConnection, param, aQuery);
     }
 
     public static void getExistingStorageDomainList(AsyncQuery aQuery,
@@ -1920,7 +1920,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetExistingStorageDomainList, new GetExistingStorageDomainListParameters(hostId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetExistingStorageDomainList, new GetExistingStorageDomainListParameters(hostId,
                 storageType,
                 domainType,
                 path), aQuery);
@@ -1954,7 +1954,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Storage: name=" + name, //$NON-NLS-1$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Storage: name=" + name, //$NON-NLS-1$
                 SearchType.StorageDomain), aQuery);
     }
 
@@ -2037,7 +2037,7 @@ public final class AsyncDataProvider {
                 return new Tags();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetRootTag, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetRootTag, new VdcQueryParametersBase(), aQuery);
     }
 
     private static void setAttachedTagsConverter(AsyncQuery aQuery) {
@@ -2066,25 +2066,25 @@ public final class AsyncDataProvider {
     public static void getAttachedTagsToVm(AsyncQuery aQuery, Guid id) {
         setAttachedTagsConverter(aQuery);
 
-        Frontend.RunQuery(VdcQueryType.GetTagsByVmId, new GetTagsByVmIdParameters(id.toString()), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetTagsByVmId, new GetTagsByVmIdParameters(id.toString()), aQuery);
     }
 
     public static void getAttachedTagsToUser(AsyncQuery aQuery, Guid id) {
         setAttachedTagsConverter(aQuery);
 
-        Frontend.RunQuery(VdcQueryType.GetTagsByUserId, new GetTagsByUserIdParameters(id.toString()), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetTagsByUserId, new GetTagsByUserIdParameters(id.toString()), aQuery);
     }
 
     public static void getAttachedTagsToUserGroup(AsyncQuery aQuery, Guid id) {
         setAttachedTagsConverter(aQuery);
 
-        Frontend.RunQuery(VdcQueryType.GetTagsByUserGroupId, new GetTagsByUserGroupIdParameters(id.toString()), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetTagsByUserGroupId, new GetTagsByUserGroupIdParameters(id.toString()), aQuery);
     }
 
     public static void getAttachedTagsToHost(AsyncQuery aQuery, Guid id) {
         setAttachedTagsConverter(aQuery);
 
-        Frontend.RunQuery(VdcQueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(id.toString()), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(id.toString()), aQuery);
     }
 
     public static void getoVirtISOsList(AsyncQuery aQuery, Guid id) {
@@ -2096,7 +2096,7 @@ public final class AsyncDataProvider {
                         : new ArrayList<RpmVersion>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdsIdParametersBase(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetoVirtISOs, new VdsIdParametersBase(id), aQuery);
     }
 
     public static void getLunsByVgId(AsyncQuery aQuery, String vgId, Guid vdsId) {
@@ -2108,7 +2108,7 @@ public final class AsyncDataProvider {
             }
         };
         GetLunsByVgIdParameters params = new GetLunsByVgIdParameters(vgId, vdsId);
-        Frontend.RunQuery(VdcQueryType.GetLunsByVgId, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetLunsByVgId, params, aQuery);
     }
 
     public static void getAllTemplatesFromExportDomain(AsyncQuery aQuery, Guid storagePoolId, Guid storageDomainId) {
@@ -2121,7 +2121,7 @@ public final class AsyncDataProvider {
         };
         GetAllFromExportDomainQueryParameters getAllFromExportDomainQueryParamenters =
                 new GetAllFromExportDomainQueryParameters(storagePoolId, storageDomainId);
-        Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, getAllFromExportDomainQueryParamenters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, getAllFromExportDomainQueryParamenters, aQuery);
     }
 
     public static void getUpHostListByCluster(AsyncQuery aQuery, String clusterName) {
@@ -2147,12 +2147,12 @@ public final class AsyncDataProvider {
         if (maxCount != null) {
             searchParameters.setMaxCount(maxCount);
         }
-        Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
     public static void getClusterListByStorageDomain(AsyncQuery _AsyncQuery,
             Guid storageDomainId) {
-        Frontend.RunQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
                 new IdQueryParameters(storageDomainId),
                 new AsyncQuery(_AsyncQuery, new INewAsyncCallback() {
 
@@ -2196,7 +2196,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(id), aQuery);
     }
 
     public static void getVmSnapshotList(AsyncQuery aQuery, Guid id) {
@@ -2208,7 +2208,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByVmId, new IdQueryParameters(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVmSnapshotsByVmId, new IdQueryParameters(id), aQuery);
     }
 
     public static void getVmsRunningOnOrMigratingToVds(AsyncQuery aQuery, Guid id) {
@@ -2222,7 +2222,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetVmsRunningOnOrMigratingToVds,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsRunningOnOrMigratingToVds,
                 new IdQueryParameters(id),
                 aQuery);
     }
@@ -2246,7 +2246,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(id), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(id), aQuery);
     }
 
     public static void getVmList(AsyncQuery aQuery, String poolName) {
@@ -2258,7 +2258,7 @@ public final class AsyncDataProvider {
                 return vms;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery); //$NON-NLS-1$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery); //$NON-NLS-1$
     }
 
     public static void getVmListByClusterName(AsyncQuery aQuery, String clusterName) {
@@ -2270,7 +2270,7 @@ public final class AsyncDataProvider {
                 return vms;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search,
+        Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("Vms: cluster=" + clusterName, SearchType.VM), aQuery); //$NON-NLS-1$
     }
 
@@ -2286,7 +2286,7 @@ public final class AsyncDataProvider {
         SearchParameters searchParams = new SearchParameters("Disks:", SearchType.Disk); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
 
-        Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParams, aQuery);
     }
 
     public static void getNextAvailableDiskAliasNameByVMId(AsyncQuery aQuery, Guid vmId) {
@@ -2297,7 +2297,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
                 new IdQueryParameters(vmId),
                 aQuery);
     }
@@ -2316,7 +2316,7 @@ public final class AsyncDataProvider {
                 return false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.IsVmPoolWithSameNameExists,
+        Frontend.getInstance().runQuery(VdcQueryType.IsVmPoolWithSameNameExists,
                 new NameQueryParameters(name),
                 aQuery);
     }
@@ -2330,7 +2330,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetVmConfigurationBySnapshot,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmConfigurationBySnapshot,
                 new IdQueryParameters(snapshotSourceId),
                 aQuery);
     }
@@ -2345,7 +2345,7 @@ public final class AsyncDataProvider {
         };
         GetAllAttachableDisks params = new GetAllAttachableDisks(storagePoolId);
         params.setVmId(vmId);
-        Frontend.RunQuery(VdcQueryType.GetAllAttachableDisks, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllAttachableDisks, params, aQuery);
     }
 
     public static void getPermittedStorageDomainsByStoragePoolId(AsyncQuery aQuery,
@@ -2368,7 +2368,7 @@ public final class AsyncDataProvider {
         params.setStoragePoolId(dataCenterId);
         params.setActionGroup(actionGroup);
 
-        Frontend.RunQuery(VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, params, aQuery);
     }
 
     public static void getRedirectServletReportsPage(AsyncQuery aQuery) {
@@ -2401,7 +2401,7 @@ public final class AsyncDataProvider {
         if (cachedCommandsCompatibilityVersions != null) {
             aQuery.asyncCallback.onSuccess(aQuery.getModel(), isCommandCompatible(vdcActionType, cluster, dc));
         } else {
-            Frontend.RunQuery(VdcQueryType.GetCommandsCompatibilityVersions, new VdcQueryParametersBase(), aQuery);
+            Frontend.getInstance().runQuery(VdcQueryType.GetCommandsCompatibilityVersions, new VdcQueryParametersBase(), aQuery);
         }
     }
 
@@ -2458,7 +2458,7 @@ public final class AsyncDataProvider {
                 return cachedConfigValuesPreConvert;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetConfigurationValues, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetConfigurationValues, new VdcQueryParametersBase(), aQuery);
     }
 
     /**
@@ -2721,7 +2721,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVlanParent, new InterfaceAndIdQueryParameters(vdsID,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVlanParent, new InterfaceAndIdQueryParameters(vdsID,
                 iface), aQuery);
     }
 
@@ -2741,7 +2741,7 @@ public final class AsyncDataProvider {
                 return false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
                 new InterfaceAndIdQueryParameters(vdsID, iface), aQuery);
 
     }
@@ -2765,7 +2765,7 @@ public final class AsyncDataProvider {
         params.setFilterOutExistingHosts(filterOutExistingHosts);
         params.setProviderId(providerId);
         params.setSearchFilter(searchFilter);
-        Frontend.RunQuery(VdcQueryType.GetHostListFromExternalProvider,
+        Frontend.getInstance().runQuery(VdcQueryType.GetHostListFromExternalProvider,
                 params,
                 aQuery);
     }
@@ -2783,7 +2783,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), aQuery);
     }
 
     public static void getAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {
@@ -2799,7 +2799,7 @@ public final class AsyncDataProvider {
                 return providers;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), query);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), query);
     }
 
     public static void getAllNetworkProviders(AsyncQuery query) {
@@ -2818,7 +2818,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(providerType), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(providerType), aQuery);
     }
 
     public static void GetProviderCertificateChain(AsyncQuery aQuery, Provider provider) {
@@ -2829,7 +2829,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider), aQuery);
     }
 
     private static void getAllChildVlanInterfaces(Guid vdsID,
@@ -2843,7 +2843,7 @@ public final class AsyncDataProvider {
             queryTypeList.add(VdcQueryType.GetAllChildVlanInterfaces);
             parametersList.add(new InterfaceAndIdQueryParameters(vdsID, iface));
         }
-        Frontend.RunMultipleQueries(queryTypeList, parametersList, callback);
+        Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, callback);
     }
 
     public static void isSupportBridgesReportByVDSM(AsyncQuery aQuery, String version) {
@@ -2928,7 +2928,7 @@ public final class AsyncDataProvider {
                 chainedCallback.onSuccess(model, interfaceTypes);
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository,
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetNetworkDevices, osId, version),
                 asyncQuery);
     }
@@ -2997,7 +2997,7 @@ public final class AsyncDataProvider {
                 chainedCallback.onSuccess(model, interfaceTypes);
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository,
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetDiskInterfaces, osId, clusterVersion),
                 asyncQuery);
     }
@@ -3147,7 +3147,7 @@ public final class AsyncDataProvider {
                 windowsOsIds = (ArrayList<Integer>) ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetWindowsOss), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetWindowsOss), callback);
     }
 
     public static void initLinuxOsTypes() {
@@ -3159,7 +3159,7 @@ public final class AsyncDataProvider {
                 linuxOsIds = (ArrayList<Integer>) ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetLinuxOss), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetLinuxOss), callback);
     }
 
     public static void initUniqueOsNames() {
@@ -3173,7 +3173,7 @@ public final class AsyncDataProvider {
                 SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(uniqueOsNames));
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetUniqueOsNames), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetUniqueOsNames), callback);
     }
 
     public static void initOsNames() {
@@ -3186,7 +3186,7 @@ public final class AsyncDataProvider {
                 initOsIds();
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsNames), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsNames), callback);
     }
 
     private static void initOsIds() {
@@ -3224,7 +3224,7 @@ public final class AsyncDataProvider {
                 displayTypes = ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes), callback);
     }
 
     public static List<Integer> getOsIds() {
@@ -3232,7 +3232,7 @@ public final class AsyncDataProvider {
     }
 
     public static void getOsMaxRam(int osId, Version version, AsyncQuery asyncQuery) {
-        Frontend.RunQuery(VdcQueryType.OsRepository,
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetMaxOsRam, osId, version),
                 asyncQuery);
     }
@@ -3306,7 +3306,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
     public static void getAllVnicProfiles(AsyncQuery aQuery) {
@@ -3321,7 +3321,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllVnicProfiles, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVnicProfiles, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getVnicProfilesByNetworkId(AsyncQuery aQuery, Guid networkId) {
@@ -3336,7 +3336,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVnicProfilesByNetworkId, new IdQueryParameters(networkId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByNetworkId, new IdQueryParameters(networkId), aQuery);
     }
 
     public static void getVnicProfilesByDcId(AsyncQuery aQuery, Guid dcId) {
@@ -3354,7 +3354,7 @@ public final class AsyncDataProvider {
                 }
             };
         }
-        Frontend.RunQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
     }
 
     public static void getNumberOfActiveVmsInCluster(AsyncQuery aQuery, Guid clusterId) {
@@ -3372,7 +3372,7 @@ public final class AsyncDataProvider {
                 }
             };
         }
-        Frontend.RunQuery(VdcQueryType.GetNumberOfActiveVmsInVdsGroupByVdsGroupId, new IdQueryParameters(clusterId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInVdsGroupByVdsGroupId, new IdQueryParameters(clusterId), aQuery);
     }
 
     private static ArrayList<VDSGroup> getClusterByServiceList(ArrayList<VDSGroup> list,
@@ -3418,7 +3418,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllExternalNetworksOnProvider,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllExternalNetworksOnProvider,
                 new IdQueryParameters(providerId),
                 aQuery);
     }

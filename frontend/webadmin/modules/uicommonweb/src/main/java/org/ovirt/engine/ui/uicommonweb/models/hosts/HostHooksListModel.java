@@ -117,7 +117,7 @@ public class HostHooksListModel extends SearchableListModel
         };
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetVdsHooksById, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsHooksById, tempVar, _asyncQuery);
 
     }
 

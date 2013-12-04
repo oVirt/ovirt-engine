@@ -48,7 +48,7 @@ public class EditNetworkQoSModel extends NetworkQoSModel {
     public void executeSave() {
         NetworkQoSParametersBase parameters = new NetworkQoSParametersBase();
         parameters.setNetworkQoS(networkQoS);
-        Frontend.RunAction(VdcActionType.UpdateNetworkQoS, parameters, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.UpdateNetworkQoS, parameters, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result1) {
                 VdcReturnValueBase retVal = result1.getReturnValue();

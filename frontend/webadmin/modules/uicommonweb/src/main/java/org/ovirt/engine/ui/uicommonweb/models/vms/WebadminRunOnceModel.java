@@ -76,7 +76,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
 
     @Override
     protected void onRunOnce() {
-        Frontend.RunAction(VdcActionType.RunVmOnce, createRunVmOnceParams(), null, this);
+        Frontend.getInstance().runAction(VdcActionType.RunVmOnce, createRunVmOnceParams(), null, this);
         commandTarget.executeCommand(runOnceCommand);
     }
 }

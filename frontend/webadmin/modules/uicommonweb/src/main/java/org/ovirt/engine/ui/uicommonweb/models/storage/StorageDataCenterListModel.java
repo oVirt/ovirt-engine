@@ -225,7 +225,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainListById, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainListById, tempVar, _asyncQuery);
     }
 
     private void attach()
@@ -401,7 +401,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                 parameters.add(new StorageDomainPoolParametersBase(getEntity().getId(), dataCenter.getId()));
             }
 
-            Frontend.RunMultipleAction(VdcActionType.AttachStorageDomainToPool, parameters,
+            Frontend.getInstance().runMultipleAction(VdcActionType.AttachStorageDomainToPool, parameters,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {
@@ -529,7 +529,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                 if (listModel.getremovePrms().size() + listModel.getdetachPrms().size() == listModel.getSelectedItems()
                                         .size())
                                 {
-                                    Frontend.RunMultipleAction(VdcActionType.RemoveStorageDomain,
+                                    Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStorageDomain,
                                             listModel.getremovePrms());
                                 }
 
@@ -540,7 +540,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
             if (getdetachPrms().size() > 0)
             {
-                Frontend.RunMultipleAction(VdcActionType.DetachStorageDomainFromPool, getdetachPrms());
+                Frontend.getInstance().runMultipleAction(VdcActionType.DetachStorageDomainFromPool, getdetachPrms());
             }
         }
 
@@ -564,7 +564,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             list.add(parameters);
         }
 
-        Frontend.RunMultipleAction(VdcActionType.DeactivateStorageDomain, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomain, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -590,7 +590,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             list.add(parameters);
         }
 
-        Frontend.RunMultipleAction(VdcActionType.ActivateStorageDomain, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ActivateStorageDomain, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

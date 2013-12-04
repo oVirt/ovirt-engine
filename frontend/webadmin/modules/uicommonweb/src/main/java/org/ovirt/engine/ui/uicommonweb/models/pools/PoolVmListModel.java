@@ -145,7 +145,7 @@ public class PoolVmListModel extends VmListModel
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveVmFromPool, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmFromPool, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

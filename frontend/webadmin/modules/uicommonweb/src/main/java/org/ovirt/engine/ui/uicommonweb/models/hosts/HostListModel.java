@@ -493,14 +493,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             prmsToAttach.add(new AttachVdsToTagParameters(tag_id, hostIds));
         }
-        Frontend.RunMultipleAction(VdcActionType.AttachVdsToTag, prmsToAttach);
+        Frontend.getInstance().runMultipleAction(VdcActionType.AttachVdsToTag, prmsToAttach);
 
         ArrayList<VdcActionParametersBase> prmsToDetach = new ArrayList<VdcActionParametersBase>();
         for (Guid tag_id : tagsToDetach)
         {
             prmsToDetach.add(new AttachVdsToTagParameters(tag_id, hostIds));
         }
-        Frontend.RunMultipleAction(VdcActionType.DetachVdsFromTag, prmsToDetach);
+        Frontend.getInstance().runMultipleAction(VdcActionType.DetachVdsFromTag, prmsToDetach);
 
         cancel();
     }
@@ -554,7 +554,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.FenceVdsManualy, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.FenceVdsManualy, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -918,7 +918,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 parameters.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
             }
 
-            Frontend.RunAction(VdcActionType.AddVds, parameters,
+            Frontend.getInstance().runAction(VdcActionType.AddVds, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
@@ -943,7 +943,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
             if (!oldClusterId.equals(newClusterId))
             {
-                Frontend.RunAction(VdcActionType.ChangeVDSCluster,
+                Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
                         new ChangeVDSClusterParameters(newClusterId, host.getId()),
                         new IFrontendActionAsyncCallback() {
                             @Override
@@ -976,7 +976,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     public void postOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated)
     {
-        Frontend.RunAction(VdcActionType.UpdateVds, parameters,
+        Frontend.getInstance().runAction(VdcActionType.UpdateVds, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1016,7 +1016,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         params.setAuthMethod(model.getAuthenticationMethod());
 
-        Frontend.RunMultipleAction(VdcActionType.ApproveVds,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ApproveVds,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { params })),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
@@ -1094,7 +1094,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveVds, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1118,7 +1118,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             list.add(new VdsActionParameters(vds.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.ActivateVds, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ActivateVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1181,7 +1181,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.MaintenanceNumberOfVdss, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.MaintenanceNumberOfVdss, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1280,7 +1280,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RestartVds, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RestartVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1302,7 +1302,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Start));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.StartVds, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.StartVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1355,7 +1355,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.StopVds, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.StopVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1492,7 +1492,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             list.add(new VdsActionParameters(vds.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.RefreshHostCapabilities, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RefreshHostCapabilities, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1691,7 +1691,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 return;
             }
 
-            Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId,
+            Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId,
                     new IdQueryParameters(dbUser.getId()),
                     new AsyncQuery(this, new INewAsyncCallback() {
 
@@ -1864,7 +1864,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void selectAsSPM() {
         ForceSelectSPMParameters params = new ForceSelectSPMParameters(((VDS) getSelectedItem()).getId());
-        Frontend.RunAction(VdcActionType.ForceSelectSPM, params);
+        Frontend.getInstance().runAction(VdcActionType.ForceSelectSPM, params);
 
     }
 

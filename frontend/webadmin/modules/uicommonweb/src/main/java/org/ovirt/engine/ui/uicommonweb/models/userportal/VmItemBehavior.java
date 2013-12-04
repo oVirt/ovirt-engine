@@ -92,7 +92,7 @@ public class VmItemBehavior extends ItemBehavior {
             return;
         }
 
-        Frontend.RunAction(VdcActionType.ChangeDisk,
+        Frontend.getInstance().runAction(VdcActionType.ChangeDisk,
                 new ChangeDiskCommandParameters(entity.getId(), StringHelper.stringsEqual(imageName,
                         ConsoleModel.getEjectLabel()) ? "" : imageName)); //$NON-NLS-1$
     }
@@ -100,30 +100,30 @@ public class VmItemBehavior extends ItemBehavior {
     private void returnVm() {
         VM entity = (VM) getItem().getEntity();
 
-        Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), false),
+        Frontend.getInstance().runAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), false),
                 null, null);
     }
 
     private void shutdown()
     {
         VM entity = (VM) getItem().getEntity();
-        Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
+        Frontend.getInstance().runAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
     }
 
     private void stop() {
         VM entity = (VM) getItem().getEntity();
-        Frontend.RunAction(VdcActionType.StopVm, new StopVmParameters(entity.getId(), StopVmTypeEnum.NORMAL));
+        Frontend.getInstance().runAction(VdcActionType.StopVm, new StopVmParameters(entity.getId(), StopVmTypeEnum.NORMAL));
     }
 
     private void pause() {
         VM entity = (VM) getItem().getEntity();
-        Frontend.RunAction(VdcActionType.HibernateVm, new VmOperationParameterBase(entity.getId()));
+        Frontend.getInstance().runAction(VdcActionType.HibernateVm, new VmOperationParameterBase(entity.getId()));
     }
 
     private void run() {
         VM entity = (VM) getItem().getEntity();
 
-        Frontend.RunAction(VdcActionType.RunVm, new RunVmParams(entity.getId()));
+        Frontend.getInstance().runAction(VdcActionType.RunVm, new RunVmParams(entity.getId()));
     }
 
     private void updateProperties() {

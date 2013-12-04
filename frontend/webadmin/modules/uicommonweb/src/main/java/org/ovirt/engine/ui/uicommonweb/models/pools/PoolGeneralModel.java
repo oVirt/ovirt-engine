@@ -480,7 +480,7 @@ public class PoolGeneralModel extends EntityModel
                             }
                         };
 
-                        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
+                        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
                                 + getvm().getVdsGroupName() + " sortby name", SearchType.VDS), _asyncQuery1); //$NON-NLS-1$
                     }
                     else
@@ -511,7 +511,7 @@ public class PoolGeneralModel extends EntityModel
                 }
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
                 _asyncQuery);
     }

@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 import org.ovirt.engine.core.common.queries.SignStringParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -10,6 +8,9 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 
 public class WebClientConsoleInvoker {
 
@@ -40,9 +41,7 @@ public class WebClientConsoleInvoker {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.SignString,
-                new SignStringParameters(createConnectionString(host, port, useSsl)),
-                signCallback);
+        Frontend.getInstance().runQuery(VdcQueryType.SignString, new SignStringParameters(createConnectionString(host, port, useSsl)), signCallback);
     }
 
     private native void invokeClientNative(String connectionTicket)/*-{

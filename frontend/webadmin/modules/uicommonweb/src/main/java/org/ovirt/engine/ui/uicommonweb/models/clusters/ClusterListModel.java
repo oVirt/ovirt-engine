@@ -494,7 +494,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveVdsGroup, prms,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVdsGroup, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -705,7 +705,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         model.startProgress(null);
 
-        Frontend.RunAction(model.getIsNew() ? VdcActionType.AddVdsGroup : VdcActionType.UpdateVdsGroup,
+        Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddVdsGroup : VdcActionType.UpdateVdsGroup,
                 new VdsGroupOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -894,7 +894,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
 
 
-        Frontend.RunMultipleAction(VdcActionType.AddVds,
+        Frontend.getInstance().runMultipleAction(VdcActionType.AddVds,
                 parametersList,
                 true,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1080,7 +1080,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     @SuppressWarnings("unchecked")
     private void checkForNonResponsiveHosts(final ConfirmationModel confirmModel) {
         startProgress(null);
-        Frontend.RunQuery(VdcQueryType.GetHostsByClusterId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(((VDSGroup) getSelectedItem()).getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
 

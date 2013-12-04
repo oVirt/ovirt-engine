@@ -673,7 +673,7 @@ public class HostSetupNetworksModel extends EntityModel {
         };
 
         VDS vds = getEntity();
-        Frontend.RunQuery(VdcQueryType.GetVdsFreeBondsByVdsId, new IdQueryParameters(vds.getId()), asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsFreeBondsByVdsId, new IdQueryParameters(vds.getId()), asyncQuery);
     }
 
     private void queryInterfaces() {
@@ -696,7 +696,7 @@ public class HostSetupNetworksModel extends EntityModel {
         VDS vds = getEntity();
         IdQueryParameters params = new IdQueryParameters(vds.getId());
         params.setRefresh(false);
-        Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId, params, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsInterfacesByVdsId, params, asyncQuery);
     }
 
     private void queryNetworks() {
@@ -806,7 +806,7 @@ public class HostSetupNetworksModel extends EntityModel {
         params.setNetworksToSync(model.getNetworksToSync());
 
         model.startProgress(null);
-        Frontend.RunAction(VdcActionType.SetupNetworks, params, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.SetupNetworks, params, new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {

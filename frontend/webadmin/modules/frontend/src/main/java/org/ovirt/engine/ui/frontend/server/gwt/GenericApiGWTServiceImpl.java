@@ -180,7 +180,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     }
 
     @Override
-    protected void doUnexpectedFailure (Throwable error) {
+    protected void doUnexpectedFailure(Throwable error) {
         // If the user is using a version of the application different to what
         // the server expects the names of the RPC serialization policy files
         // will not match, and in that case GWT just sends the exception to the

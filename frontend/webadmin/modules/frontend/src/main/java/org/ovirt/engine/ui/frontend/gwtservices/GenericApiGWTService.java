@@ -39,4 +39,5 @@ public interface GenericApiGWTService extends RpcService {
     public VdcReturnValueBase logOff(DbUser userToLogoff);
 
     public VdcReturnValueBase Login(String user, String password, String domain, VdcActionType loginType);
+
 }

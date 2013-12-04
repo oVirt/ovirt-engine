@@ -43,7 +43,7 @@ public class AlertListModel extends SearchableListModel
         tempVar.setRefresh(false);
         SearchParameters searchParameters = tempVar;
 
-        Frontend.RunQuery(VdcQueryType.Search, searchParameters, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, _asyncQuery);
     }
 
     @Override

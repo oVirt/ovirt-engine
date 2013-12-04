@@ -153,7 +153,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
             }
         }, true);
         asyncQuery.setContext(getHash());
-        Frontend.RunQuery(VdcQueryType.GetDeviceList,
+        Frontend.getInstance().runQuery(VdcQueryType.GetDeviceList,
                 new GetDeviceListQueryParameters(host.getId(), getType()),
                 asyncQuery);
     }

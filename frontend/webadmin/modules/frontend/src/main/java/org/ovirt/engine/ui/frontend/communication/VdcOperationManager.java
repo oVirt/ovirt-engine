@@ -13,6 +13,7 @@ import com.google.inject.Inject;
  * This class is a singleton and manages how {@code VdcOperation}s are added to the queue to be processed.
  */
 public class VdcOperationManager {
+
     /**
      * The operation queue. It can hold any kind of VdcOperation.
      */
@@ -68,11 +69,13 @@ public class VdcOperationManager {
         // an action (allows duplicates). Then add this operation to the queue, and process the queue immediately.
         final boolean isAllowedToExecute = loggedIn || isPublic;
         final boolean operationCanBeAdded = !operationQueue.contains(operation) || operation.allowDuplicates();
+
         if (isAllowedToExecute) {
             if (operationCanBeAdded && operationQueue.add(operation)) {
                 processor.processOperation(this);
             }
         }
+
         return isAllowedToExecute;
     }
 
@@ -89,6 +92,7 @@ public class VdcOperationManager {
                 allowed = false;
             }
         }
+
         // Call the processor.
         processor.processOperation(this);
         return allowed;
@@ -147,4 +151,5 @@ public class VdcOperationManager {
     public void setLoggedIn(final boolean isLoggedIn) {
         loggedIn = isLoggedIn;
     }
+
 }

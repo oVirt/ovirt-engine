@@ -210,7 +210,7 @@ public class ImportNetworksModel extends Model {
             });
         }
 
-        Frontend.RunMultipleActions(VdcActionType.AddNetwork, multipleActionParameters, callbacks);
+        Frontend.getInstance().runMultipleActions(VdcActionType.AddNetwork, multipleActionParameters, callbacks);
         cancel();
     }
 
@@ -239,7 +239,7 @@ public class ImportNetworksModel extends Model {
             parameters.add(new AttachNetworkToVdsGroupParameter(cluster, network));
         }
 
-        Frontend.RunMultipleActions(VdcActionType.AttachNetworkToVdsGroup,
+        Frontend.getInstance().runMultipleActions(VdcActionType.AttachNetworkToVdsGroup,
                 parameters,
                 new IFrontendActionAsyncCallback() {
 
@@ -256,7 +256,7 @@ public class ImportNetworksModel extends Model {
         vnicProfile.setNetworkId(network.getId());
         VnicProfileParameters parameters = new VnicProfileParameters(vnicProfile);
         parameters.setPublicUse(publicUse);
-        Frontend.RunAction(VdcActionType.AddVnicProfile, parameters, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.AddVnicProfile, parameters, new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {

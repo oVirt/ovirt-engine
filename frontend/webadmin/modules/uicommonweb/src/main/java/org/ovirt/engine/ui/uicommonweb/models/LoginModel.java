@@ -281,7 +281,7 @@ public class LoginModel extends Model
                 }
             }
         };
-        Frontend.LoginAsync(fullUserName,
+        Frontend.getInstance().loginAsync(fullUserName,
                 (String) getPassword().getEntity(),
                 StringHelper.isNullOrEmpty(domain) ? (String) getDomain().getSelectedItem() : domain, true,
                 _asyncQuery);

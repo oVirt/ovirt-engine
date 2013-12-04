@@ -29,7 +29,7 @@ public class ClusterPolicyClusterListModel extends SearchableListModel {
 
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAttachedClustersByClusterPolicyId, params, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAttachedClustersByClusterPolicyId, params, asyncQuery);
         setIsQueryFirstTime(false);
     }
 

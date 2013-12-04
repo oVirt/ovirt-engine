@@ -50,7 +50,7 @@ public class QuotaPermissionListModel extends PermissionListModel {
 
         tempVar.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetPermissionsForObject, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsForObject, tempVar, _asyncQuery);
 
         setIsQueryFirstTime(false);
     }

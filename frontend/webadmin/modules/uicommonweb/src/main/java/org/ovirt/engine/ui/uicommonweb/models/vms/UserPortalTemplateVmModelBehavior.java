@@ -36,7 +36,7 @@ public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
 
     @Override
     protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
-        Frontend.RunQuery(
+        Frontend.getInstance().runQuery(
                 VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(cluster.getId()),
                 query

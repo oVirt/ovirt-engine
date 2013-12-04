@@ -151,7 +151,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
             };
 
             IdQueryParameters queryParams = new IdQueryParameters(dc.getId());
-            Frontend.RunQuery(VdcQueryType.GetAllNetworks, queryParams, _asyncQuery);
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, queryParams, _asyncQuery);
         }
     }
 

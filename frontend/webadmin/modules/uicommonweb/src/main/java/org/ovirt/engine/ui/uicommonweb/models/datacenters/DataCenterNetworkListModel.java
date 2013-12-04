@@ -131,7 +131,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAllNetworks, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworks, tempVar, _asyncQuery);
     }
 
     public void remove()

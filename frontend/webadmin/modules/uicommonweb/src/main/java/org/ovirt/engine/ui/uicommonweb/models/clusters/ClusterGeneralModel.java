@@ -243,7 +243,7 @@ public class ClusterGeneralModel extends EntityModel {
                 }
                 );
 
-        Frontend.RunQuery(
+        Frontend.getInstance().runQuery(
                 VdcQueryType.IsDisplayAddressConsistentInCluster,
                 new IdQueryParameters(cluster.getId()),
                 query
@@ -341,7 +341,7 @@ public class ClusterGeneralModel extends EntityModel {
                 }
             }
             if (!parametersList.isEmpty()) {
-                Frontend.RunMultipleAction(VdcActionType.ManageGlusterService,
+                Frontend.getInstance().runMultipleAction(VdcActionType.ManageGlusterService,
                         parametersList,
                         true,
                         new IFrontendMultipleActionAsyncCallback() {
@@ -377,7 +377,7 @@ public class ClusterGeneralModel extends EntityModel {
                                 null,
                                 ServiceType.GLUSTER_SWIFT,
                                 action.name().toLowerCase());
-                Frontend.RunAction(VdcActionType.ManageGlusterService, parameters, new IFrontendActionAsyncCallback() {
+                Frontend.getInstance().runAction(VdcActionType.ManageGlusterService, parameters, new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
                         ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
@@ -506,7 +506,7 @@ public class ClusterGeneralModel extends EntityModel {
             parametersList.add(parameters);
         }
 
-        Frontend.RunMultipleAction(VdcActionType.AddVds,
+        Frontend.getInstance().runMultipleAction(VdcActionType.AddVds,
                 parametersList,
                 true,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -601,7 +601,7 @@ public class ClusterGeneralModel extends EntityModel {
             String host = (String) ((EntityModel) model).getEntity();
             parametersList.add(new RemoveGlusterServerParameters(getEntity().getId(), host, force));
         }
-        Frontend.RunMultipleAction(VdcActionType.RemoveGlusterServer, parametersList);
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveGlusterServer, parametersList);
         cancel();
     }
 

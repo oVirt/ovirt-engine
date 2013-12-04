@@ -109,7 +109,7 @@ public class QuotaUserListModel extends SearchableListModel {
 
         param.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetPermissionsToConsumeQuotaByQuotaId, param, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsToConsumeQuotaByQuotaId, param, _asyncQuery);
 
         setIsQueryFirstTime(false);
     }
@@ -269,7 +269,7 @@ public class QuotaUserListModel extends SearchableListModel {
             list.add(permissionParams);
         }
 
-        Frontend.RunMultipleAction(VdcActionType.AddPermission, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.AddPermission, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -304,7 +304,7 @@ public class QuotaUserListModel extends SearchableListModel {
 
             model.startProgress(null);
 
-            Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {

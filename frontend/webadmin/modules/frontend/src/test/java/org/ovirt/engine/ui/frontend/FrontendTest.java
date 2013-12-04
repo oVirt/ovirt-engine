@@ -43,7 +43,9 @@ import com.google.gwt.user.client.rpc.StatusCodeException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FrontendTest {
+
     private static final int RETRY_COUNT = 5;
+
     /**
      * Instance of the class under test.
      */
@@ -57,9 +59,9 @@ public class FrontendTest {
     @Mock
     GenericApiGWTServiceAsync mockService;
     @Mock
-    VdsmErrors mockVdsmErrorsTranslator;
+    ErrorTranslator mockVdsmErrorsTranslator;
     @Mock
-    AppErrors mockCanDoActionErrorsTranslator;
+    ErrorTranslator mockCanDoActionErrorsTranslator;
     @Mock
     Event queryCompleteEvent;
     @Mock
@@ -79,7 +81,7 @@ public class FrontendTest {
     @Mock
     INewAsyncCallback mockAsyncCallback;
     @Mock
-    IAsyncConverter mockConverter;
+    IAsyncConverter<Object> mockConverter;
     @Captor
     ArgumentCaptor<AsyncCallback<VdcQueryReturnValue>> callback;
     @Captor
@@ -113,7 +115,7 @@ public class FrontendTest {
         verify(queryCompleteEvent, atLeastOnce()).raise(Frontend.class, EventArgs.Empty);
 
         // Make sure the context is correct
-        assertEquals("Context should be 'test'", Frontend.getCurrentContext(), "test"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Context should be 'test'", frontend.getCurrentContext(), "test"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

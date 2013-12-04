@@ -143,7 +143,7 @@ public class VmBackupModel extends ManageBackupModel {
                                 backupModel.getEntity().getId(), pool.getId()));
                     }
 
-                    Frontend.RunMultipleAction(
+                    Frontend.getInstance().runMultipleAction(
                             VdcActionType.RemoveVmFromImportExport, list,
                             new IFrontendMultipleActionAsyncCallback() {
                                 @Override
@@ -429,7 +429,7 @@ public class VmBackupModel extends ManageBackupModel {
 
         importModel.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ImportVm, prms,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVm, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(
@@ -525,7 +525,7 @@ public class VmBackupModel extends ManageBackupModel {
                         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
                                 dataCenter.getId(), backupModel.getEntity()
                                         .getId());
-                        Frontend.RunQuery(VdcQueryType.GetVmsFromExportDomain,
+                        Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
                                 tempVar, _asyncQuery1);
                     }
                 }

@@ -323,7 +323,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -402,7 +402,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -487,7 +487,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

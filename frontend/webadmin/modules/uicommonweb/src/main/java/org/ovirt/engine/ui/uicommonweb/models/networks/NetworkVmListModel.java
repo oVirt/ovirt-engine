@@ -117,7 +117,7 @@ public class NetworkVmListModel extends SearchableListModel
                 new GetVmsAndNetworkInterfacesByNetworkIdParameters(getEntity().getId(),
                         NetworkVmFilter.running.equals(getViewFilterType()));
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId,
                 params,
                 asyncQuery);
     }

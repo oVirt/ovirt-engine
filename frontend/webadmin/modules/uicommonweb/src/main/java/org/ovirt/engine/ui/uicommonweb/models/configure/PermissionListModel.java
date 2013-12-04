@@ -183,7 +183,7 @@ public class PermissionListModel extends SearchableListModel
 
             model.startProgress(null);
 
-            Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {
@@ -263,7 +263,7 @@ public class PermissionListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.AddPermission, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.AddPermission, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

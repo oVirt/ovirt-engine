@@ -52,7 +52,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         final VDS host = (VDS) model.getSelectedItem();
         VdsActionParameters parameters = new VdsActionParameters(host.getId());
         parameters.setCorrelationId(getCorrelationId());
-        Frontend.RunAction(VdcActionType.ActivateVds, parameters,
+        Frontend.getInstance().runAction(VdcActionType.ActivateVds, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -137,7 +137,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             StorageServerConnectionParametersBase parameters =
                     new StorageServerConnectionParametersBase(connection, context.host.getId());
             parameters.setCorrelationId(getCorrelationId());
-            Frontend.RunAction(VdcActionType.AddStorageServerConnection,
+            Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection,
                     parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
@@ -177,7 +177,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             parameters.setVdsId(context.host.getId());
             parameters.setCorrelationId(getCorrelationId());
 
-            Frontend.RunAction(VdcActionType.AddLocalStorageDomain, parameters,
+            Frontend.getInstance().runAction(VdcActionType.AddLocalStorageDomain, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
@@ -199,7 +199,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             StorageServerConnectionParametersBase parameter =
                     new StorageServerConnectionParametersBase(context.connection, context.host.getId());
             parameter.setCorrelationId(getCorrelationId());
-            Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
+            Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                     parameter,
                     new IFrontendActionAsyncCallback() {
                         @Override

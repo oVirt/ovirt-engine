@@ -91,7 +91,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         super.initFrontend();
 
         // Configure REST API integration for UI plugin infrastructure
-        Frontend.getInstance().setLoginHandler(new FrontendLoginHandler() {
+        frontend.setLoginHandler(new FrontendLoginHandler() {
             @Override
             public void onLoginSuccess(final String userName, final String password, final String domain) {
                 Scheduler.get().scheduleDeferred(new ScheduledCommand() {

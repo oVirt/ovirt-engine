@@ -116,7 +116,7 @@ public class VncConsoleModel extends ConsoleModel {
     }
 
     private void setVmTicket() {
-        Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
+        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
                     null,
                     TICKET_VALIDITY_SECONDS), new IFrontendActionAsyncCallback() {
 
@@ -143,7 +143,7 @@ public class VncConsoleModel extends ConsoleModel {
                                 }
                             };
 
-                            Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVmId,
+                            Frontend.getInstance().runQuery(VdcQueryType.GetManagementInterfaceAddressByVmId,
                                     new IdQueryParameters(getEntity().getId()), _asyncQuery);
                         }
                         else {

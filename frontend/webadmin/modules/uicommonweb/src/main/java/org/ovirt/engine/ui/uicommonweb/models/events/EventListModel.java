@@ -174,7 +174,7 @@ public class EventListModel extends ListWithDetailsModel
         params.setSearchFrom(getLastEvent() != null ? getLastEvent().getaudit_log_id() : 0);
         params.setRefresh(false);
 
-        Frontend.RunQuery(VdcQueryType.Search, params, query);
+        Frontend.getInstance().runQuery(VdcQueryType.Search, params, query);
     }
 
     private void details() {

@@ -99,7 +99,7 @@ public class NewDiskModel extends AbstractDiskModel
 
         startProgress(null);
 
-        Frontend.RunMultipleActions(actionTypes, paramerterList, callbacks, null, this);
+        Frontend.getInstance().runMultipleActions(actionTypes, paramerterList, callbacks, null, this);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class NewDiskModel extends AbstractDiskModel
             parameters.setStorageDomainId(storageDomain.getId());
         }
 
-        Frontend.RunAction(VdcActionType.AddDisk, parameters, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.AddDisk, parameters, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 NewDiskModel diskModel = (NewDiskModel) result.getState();

@@ -84,7 +84,7 @@ public class VmAppListModel extends SearchableListModel
                         }
                     }
                 };
-                Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+                Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                         new IdQueryParameters(pool.getVmPoolId()),
                         _asyncQuery);
             }

@@ -204,7 +204,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         };
 
         startProgress(null);
-        Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
                 new IdQueryParameters(storageDomain.getId()),
                 new AsyncQuery(this, callback));
     }

@@ -100,7 +100,7 @@ public class StorageDiskListModel extends SearchableListModel
         IdQueryParameters parameters = new IdQueryParameters((getEntity()).getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByStorageDomainId, parameters,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByStorageDomainId, parameters,
                 new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
@@ -174,7 +174,7 @@ public class StorageDiskListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

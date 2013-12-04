@@ -417,7 +417,7 @@ public abstract class VmInterfaceModel extends Model
 
         startProgress(null);
 
-        Frontend.RunAction(getVdcActionType(),
+        Frontend.getInstance().runAction(getVdcActionType(),
                 createVdcActionParameters(nic),
                 new IFrontendActionAsyncCallback() {
                     @Override

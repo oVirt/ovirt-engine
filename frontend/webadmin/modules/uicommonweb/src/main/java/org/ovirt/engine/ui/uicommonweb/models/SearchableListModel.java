@@ -763,7 +763,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
 
         vdcQueryParametersBase.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(vdcQueryType, vdcQueryParametersBase, _asyncQuery);
+        Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, _asyncQuery);
 
         setIsQueryFirstTime(false);
     }

@@ -84,7 +84,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
             actionParameters.add(importParameters);
         }
 
-        Frontend.RunMultipleAction(VdcActionType.ImportRepoImage, actionParameters,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ImportRepoImage, actionParameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

@@ -80,7 +80,7 @@ public class EditNetworkModel extends NetworkModel {
 
     @Override
     public void executeSave() {
-        Frontend.RunAction(VdcActionType.UpdateNetwork,
+        Frontend.getInstance().runAction(VdcActionType.UpdateNetwork,
                 new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
                 new IFrontendActionAsyncCallback() {
                     @Override

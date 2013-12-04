@@ -87,19 +87,19 @@ public class VmInterfaceCreatingManager {
                     }
                 }
 
-                Frontend.RunMultipleAction(VdcActionType.AddVmInterface,
+                Frontend.getInstance().runMultipleAction(VdcActionType.AddVmInterface,
                         createVnicParameters,
                         new IFrontendMultipleActionAsyncCallback() {
 
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
-                                Frontend.RunMultipleAction(VdcActionType.UpdateVmInterface,
+                                Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmInterface,
                                         updateVnicParameters,
                                         new IFrontendMultipleActionAsyncCallback() {
 
                             @Override
                             public void executed(FrontendMultipleActionAsyncResult result) {
-                                                Frontend.RunMultipleAction(VdcActionType.RemoveVmInterface,
+                                                Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmInterface,
                                                         removeVnicParameters,
                                                         new IFrontendMultipleActionAsyncCallback() {
 

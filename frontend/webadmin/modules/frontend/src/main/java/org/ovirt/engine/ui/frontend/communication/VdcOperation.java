@@ -1,20 +1,14 @@
 package org.ovirt.engine.ui.frontend.communication;
 
-import java.io.Serializable;
-
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 /**
  * This class represents a single operation, which is either a query or an action.
- * @param <T> The type of operation.
+ * @param <T> The type of operation, either {@code VdcQueryType} or {@code VdcActionType}.
  * @param <P> The parameter type for the operation.
  */
-@SuppressWarnings("rawtypes")
-public class VdcOperation<T, P> implements Serializable {
-    /**
-     * Generated serial version UID.
-     */
-    private static final long serialVersionUID = -6569717023385458462L;
+public class VdcOperation<T, P> {
 
     /**
      * The actual operation, can be either {@code VdcQueryType} or {@code VdcActionType}.
@@ -42,6 +36,11 @@ public class VdcOperation<T, P> implements Serializable {
     private final boolean isPublic;
 
     /**
+     * If {@code true}, this operation represents an action. If {@code false}, this operation represents a query.
+     */
+    private final boolean isAction;
+
+    /**
      * Private constructor that initializes the final members.
      * @param operation The operation.
      * @param param The parameter for the operation.
@@ -51,6 +50,14 @@ public class VdcOperation<T, P> implements Serializable {
      */
     private VdcOperation(final T operation, final P param, final VdcOperationCallback<?, ?> callback,
             final VdcOperation<T, P> sourceOperation, final boolean isPublicOperation) {
+        if (operation instanceof VdcActionType) {
+            this.isAction = true;
+        } else if (operation instanceof VdcQueryType) {
+            this.isAction = false;
+        } else {
+            throw new IllegalArgumentException("Operation type must be either VdcActionType or VdcQueryType"); //$NON-NLS-1$
+        }
+
         this.operationType = operation;
         this.parameter = param;
         this.operationCallback = callback;
@@ -110,6 +117,7 @@ public class VdcOperation<T, P> implements Serializable {
      * Getter.
      * @return The callback to call when the operation completes.
      */
+    @SuppressWarnings("rawtypes")
     public VdcOperationCallback getCallback() {
         return operationCallback;
     }
@@ -120,7 +128,7 @@ public class VdcOperation<T, P> implements Serializable {
      * @return True if duplicates are allowed, false otherwise.
      */
     public boolean allowDuplicates() {
-        return operationType instanceof VdcActionType;
+        return isAction();
     }
 
     /**
@@ -152,13 +160,19 @@ public class VdcOperation<T, P> implements Serializable {
         return isPublic;
     }
 
+    /**
+     * @return {@code true} if this operation represents an action, {@code false} if this operation represents a query.
+     */
+    public boolean isAction() {
+        return isAction;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((operationType == null) ? 0 : operationType.hashCode());
         result = prime * result + ((parameter == null) ? 0 : parameter.hashCode());
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
         return result;
     }
 
@@ -180,4 +194,5 @@ public class VdcOperation<T, P> implements Serializable {
                     && parameter.equals(otherOperation.getParameter());
         return result;
     }
+
 }

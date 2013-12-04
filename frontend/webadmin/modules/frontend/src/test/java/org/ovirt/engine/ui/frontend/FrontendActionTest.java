@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -62,9 +63,9 @@ public class FrontendActionTest {
     @Mock
     GenericApiGWTServiceAsync mockService;
     @Mock
-    VdsmErrors mockVdsmErrorsTranslator;
+    ErrorTranslator mockVdsmErrorsTranslator;
     @Mock
-    AppErrors mockCanDoActionErrorsTranslator;
+    ErrorTranslator mockCanDoActionErrorsTranslator;
     @Mock
     IFrontendMultipleActionAsyncCallback mockMultipleActionCallback;
     @Mock
@@ -476,7 +477,9 @@ public class FrontendActionTest {
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSize1() {
         VdcFault testFault = new VdcFault();
+        ArrayList<String> translatedErrors = new ArrayList<String>(Arrays.asList("Translated Message 1")); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
+        when(mockCanDoActionErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -497,7 +500,7 @@ public class FrontendActionTest {
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
         assertEquals("Descriptions should match", "This is a description", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessage().getDescription());
-        assertEquals("Text should match translation", "message 1", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Text should match translation", "Translated Message 1", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessage().getText());
     }
 
@@ -515,7 +518,10 @@ public class FrontendActionTest {
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSizeGreaterThan1() {
         VdcFault testFault = new VdcFault();
+        ArrayList<String> translatedErrors = new ArrayList<String>(Arrays.asList(
+                "Translated Message 1", "Translated Message 2")); //$NON-NLS-1$ //$NON-NLS-2$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
+        when(mockCanDoActionErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -536,9 +542,9 @@ public class FrontendActionTest {
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
         assertNull("Message should be null", failureCaptor.getValue().getMessage()); //$NON-NLS-1$
-        assertEquals("text should match", "message 1", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Text should match", "Translated Message 1", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessages().get(0).getText());
-        assertEquals("text should match", "message 2", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Text should match", "Translated Message 2", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessages().get(1).getText());
     }
 
@@ -748,7 +754,7 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.getInstance().initLoggedInUser(new DbUser(), testPassword);
+        frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
         frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
         verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
@@ -779,7 +785,7 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.getInstance().initLoggedInUser(new DbUser(), testPassword);
+        frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
         frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
         verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
@@ -809,7 +815,7 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.getInstance().initLoggedInUser(new DbUser(), testPassword);
+        frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
         frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
         verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),

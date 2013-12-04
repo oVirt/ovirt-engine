@@ -856,7 +856,7 @@ public class HostGeneralModel extends EntityModel
 
     public void saveNICsConfig()
     {
-        Frontend.RunMultipleAction(VdcActionType.CommitNetworkChanges,
+        Frontend.getInstance().runMultipleAction(VdcActionType.CommitNetworkChanges,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new VdsActionParameters(getEntity().getId())})),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
@@ -985,7 +985,7 @@ public class HostGeneralModel extends EntityModel
                 UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
 
                 internalParam.setRebootAfterInstallation(cluster.supportsVirtService());
-                Frontend.RunAction(
+                Frontend.getInstance().runAction(
                         VdcActionType.UpdateVds,
                         internalParam,
                         new IFrontendActionAsyncCallback() {

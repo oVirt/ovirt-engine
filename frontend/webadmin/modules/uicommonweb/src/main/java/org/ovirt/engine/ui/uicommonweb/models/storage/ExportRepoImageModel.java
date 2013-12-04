@@ -64,7 +64,7 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
             );
         }
 
-        Frontend.RunMultipleAction(VdcActionType.ExportRepoImage, actionParameters,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ExportRepoImage, actionParameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

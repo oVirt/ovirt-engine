@@ -340,7 +340,7 @@ public class ClusterGuideModel extends GuideModel
             }
         }
         model.startProgress(null);
-        Frontend.RunMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -357,7 +357,7 @@ public class ClusterGuideModel extends GuideModel
                                 if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                         && retVals.get(i).getSucceeded())
                                 {
-                                    Frontend.RunAction(VdcActionType.ApproveVds,
+                                    Frontend.getInstance().runAction(VdcActionType.ApproveVds,
                                             new ApproveVdsParameters(selectedHost.getId()));
                                 }
                                 i++;
@@ -503,7 +503,7 @@ public class ClusterGuideModel extends GuideModel
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.AddVds, vdsActionParams,
+        Frontend.getInstance().runAction(VdcActionType.AddVds, vdsActionParams,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

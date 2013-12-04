@@ -117,7 +117,7 @@ public class EditDiskModel extends AbstractDiskModel
         startProgress(null);
 
         UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(getVmId(), getDisk().getId(), getDisk());
-        Frontend.RunAction(VdcActionType.UpdateVmDisk, parameters, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.UpdateVmDisk, parameters, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 EditDiskModel diskModel = (EditDiskModel) result.getState();

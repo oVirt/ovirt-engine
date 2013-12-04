@@ -186,7 +186,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
         updateCpuSharesSelection();
 
-        Frontend.RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
+        Frontend.getInstance().runQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
@@ -212,7 +212,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
 
-        Frontend.RunQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
+        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {

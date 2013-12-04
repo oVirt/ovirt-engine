@@ -61,7 +61,7 @@ public class DiskTemplateListModel extends SearchableListModel
         IdQueryParameters getVmTemplatesByImageGuidParameters = new IdQueryParameters(diskImage.getImageId());
         getVmTemplatesByImageGuidParameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetVmTemplatesByImageGuid, getVmTemplatesByImageGuidParameters, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesByImageGuid, getVmTemplatesByImageGuidParameters, _asyncQuery);
 
         setIsQueryFirstTime(false);
     }

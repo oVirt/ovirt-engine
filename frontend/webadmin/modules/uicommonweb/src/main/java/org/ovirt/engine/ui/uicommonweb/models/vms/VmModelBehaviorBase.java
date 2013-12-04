@@ -663,7 +663,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             if (cluster == null) {
                 return;
             }
-            Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new IdQueryParameters(cluster.getId()), new AsyncQuery(getModel(),
                             new INewAsyncCallback() {
 
@@ -1036,7 +1036,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateConsoleDevice(Guid vmId) {
-        Frontend.RunQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmId), new AsyncQuery(this, new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmId), new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 List<String> consoleDevices = ((VdcQueryReturnValue)returnValue).getReturnValue();

@@ -77,7 +77,7 @@ public class RolePermissionListModel extends SearchableListModel
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetPermissionByRoleId, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionByRoleId, tempVar, _asyncQuery);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class RolePermissionListModel extends SearchableListModel
 
             model.startProgress(null);
 
-            Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {

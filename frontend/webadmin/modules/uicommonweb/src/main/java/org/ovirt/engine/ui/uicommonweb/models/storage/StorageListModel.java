@@ -765,7 +765,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         // if create connection command was the one to fail and didn't create a connection
         // then the id of connection will be empty, and there's nothing to delete.
         if (connection.getid() != null && !connection.getid().equals("")) {  //$NON-NLS-1$
-            Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
+            Frontend.getInstance().runAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
                 null, this);
         }
 
@@ -839,7 +839,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             tempVar.setDoFormat((storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) ? true
                 : (Boolean) model.getFormat().getEntity());
 
-            Frontend.RunAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
+            Frontend.getInstance().runAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
         }
 
         cancel();
@@ -885,7 +885,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ForceRemoveStorageDomain,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ForceRemoveStorageDomain,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
@@ -1259,7 +1259,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     }
 
     private void updateStorageDomain() {
-        Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain), new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain), new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 StorageListModel storageListModel = (StorageListModel) result.getState();
@@ -1335,7 +1335,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             }
         };
 
-        Frontend.RunMultipleActions(actionTypes,
+        Frontend.getInstance().runMultipleActions(actionTypes,
             parameters,
             new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2 })),
@@ -1447,7 +1447,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             }
         };
 
-        Frontend.RunMultipleActions(actionTypes,
+        Frontend.getInstance().runMultipleActions(actionTypes,
             parameters,
             new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2 })),
@@ -1532,7 +1532,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         StorageServerConnectionParametersBase parameters =
                 new StorageServerConnectionParametersBase(connection, hostId);
-        Frontend.RunAction(VdcActionType.UpdateStorageServerConnection, parameters,
+        Frontend.getInstance().runAction(VdcActionType.UpdateStorageServerConnection, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1642,7 +1642,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             }
         };
-        Frontend.RunMultipleActions(actionTypes,
+        Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
                 new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2, callback3 })),
@@ -1667,7 +1667,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         params.setVdsId(host.getId());
         params.setLunIds(lunIds);
         params.setForce(force);
-        Frontend.RunAction(VdcActionType.AddSANStorageDomain, params,
+        Frontend.getInstance().runAction(VdcActionType.AddSANStorageDomain, params,
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
@@ -1817,7 +1817,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             }
         };
-        Frontend.RunMultipleActions(actionTypes,
+        Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
                 new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2 })),
@@ -1869,7 +1869,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else
         {
-            Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
+            Frontend.getInstance().runAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
 
@@ -1885,7 +1885,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     }
 
                     if (lunIds.size() > 0) {
-                        Frontend.RunAction(VdcActionType.ExtendSANStorageDomain,
+                        Frontend.getInstance().runAction(VdcActionType.ExtendSANStorageDomain,
                             new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunIds, force),
                             null, this);
                     }
@@ -1897,7 +1897,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId)
     {
-        Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
+        Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
             dataCenterId), null, this);
     }
 
@@ -1922,7 +1922,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         if (fileConnection != null)
         {
             // Clean nfs connection
-            Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
+            Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(fileConnection, hostId),
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1990,7 +1990,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     public void importFileStorageConnect()
     {
-        Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId),
+        Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId),
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
@@ -2054,7 +2054,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
-        Frontend.RunAction(VdcActionType.AddExistingFileStorageDomain, params, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.AddExistingFileStorageDomain, params, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
 
@@ -2084,7 +2084,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     public void postImportFileStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
-        Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
+        Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
             new StorageServerConnectionParametersBase(fileConnection, hostId),
             new IFrontendActionAsyncCallback() {
                 @Override

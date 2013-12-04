@@ -34,7 +34,7 @@ public class QuotaStorageListModel extends SearchableListModel {
             }
         };
         IdQueryParameters params = new IdQueryParameters(((Quota) getEntity()).getId());
-        Frontend.RunQuery(VdcQueryType.GetQuotaStorageByQuotaId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetQuotaStorageByQuotaId,
                 params,
                 asyncQuery);
     }

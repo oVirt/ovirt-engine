@@ -125,7 +125,7 @@ public class NetworkTemplateListModel extends SearchableListModel
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, params, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, params, asyncQuery);
     }
 
     private void updateActionAvailability()

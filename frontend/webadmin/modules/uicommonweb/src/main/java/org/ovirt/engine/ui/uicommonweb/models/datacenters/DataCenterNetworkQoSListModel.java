@@ -66,7 +66,7 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel {
         };
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId,
                 parameters,
                 asyncQuery);
     }

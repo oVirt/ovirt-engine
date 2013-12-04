@@ -335,11 +335,11 @@ public class AdElementListModel extends SearchableListModel
     }
 
     protected void findGroups(String searchString, AsyncQuery query) {
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("ADGROUP@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("ADGROUP@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void findUsers(String searchString, AsyncQuery query) {
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("ADUSER@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdUser), query); //$NON-NLS-1$ //$NON-NLS-2$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("ADUSER@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdUser), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)

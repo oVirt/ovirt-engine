@@ -591,7 +591,7 @@ public class VmGeneralModel extends EntityModel
         setHasDefaultHost(vm.getDedicatedVmForVds() != null);
         if (getHasDefaultHost())
         {
-            Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getVdsGroupName() //$NON-NLS-1$
+            Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getVdsGroupName() //$NON-NLS-1$
                     + " sortby name", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
                     new INewAsyncCallback() {
                         @Override

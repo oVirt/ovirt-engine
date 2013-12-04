@@ -29,7 +29,7 @@ public final class AutoLoginData extends JavaScriptObject {
         return this.domain;
     }-*/;
 
-    public DbUser getVdcUser() {
+    public DbUser getDbUser() {
         DbUser user = new DbUser();
         user.setId(Guid.createGuidFromStringDefaultEmpty(getId()));
         user.setDomain(getDomain());

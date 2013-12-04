@@ -227,7 +227,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ExportVmTemplate, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ExportVmTemplate, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -365,7 +365,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplate, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplate, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -492,7 +492,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         setVmWatchdogToParams(model, parameters);
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
 
-        Frontend.RunAction(VdcActionType.UpdateVmTemplate, parameters,
+        Frontend.getInstance().runAction(VdcActionType.UpdateVmTemplate, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

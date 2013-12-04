@@ -287,7 +287,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                             queryParamList.add(new IdQueryParameters(dataCenter.getId()));
                                         }
 
-                                        Frontend.RunMultipleQueries(queryTypeList, queryParamList, new IFrontendMultipleQueryAsyncCallback() {
+                                        Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamList, new IFrontendMultipleQueryAsyncCallback() {
 
                                             @Override
                                             public void executed(FrontendMultipleQueryAsyncResult result) {
@@ -328,7 +328,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                                     dummyResult.getReturnValues().add(value);
                                                     SystemTreeModel.this.executed(dummyResult);
                                                 } else {
-                                                    Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel);
+                                                    Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamList, systemTreeModel);
                                                 }
                                             }
                                         });

@@ -339,7 +339,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.DeleteGlusterVolume, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.DeleteGlusterVolume, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -513,7 +513,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
         }
-        Frontend.RunMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list);
+        Frontend.getInstance().runMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list);
     }
 
     private void stopRebalance() {
@@ -555,7 +555,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItem();
         GlusterVolumeRebalanceParameters param = new GlusterVolumeRebalanceParameters(volumeEntity.getId(), false, false);
 
-        Frontend.RunAction(VdcActionType.StopRebalanceGlusterVolume, param, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.StopRebalanceGlusterVolume, param, new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {
@@ -695,7 +695,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                     optionOwnerGroup.setValue(optionOwnerGroupVirt);
                                     list.add(new GlusterVolumeOptionParameters(optionOwnerGroup));
                                 }
-                                Frontend.RunMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
+                                Frontend.getInstance().runMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
                             }
                         };
 
@@ -773,7 +773,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.StopGlusterVolume, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.StopGlusterVolume, list,
                 new IFrontendMultipleActionAsyncCallback() {
 
                     @Override
@@ -797,7 +797,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
-        Frontend.RunMultipleAction(VdcActionType.StartGlusterVolume, list);
+        Frontend.getInstance().runMultipleAction(VdcActionType.StartGlusterVolume, list);
     }
 
 
@@ -860,7 +860,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(volume);
 
-        Frontend.RunAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {

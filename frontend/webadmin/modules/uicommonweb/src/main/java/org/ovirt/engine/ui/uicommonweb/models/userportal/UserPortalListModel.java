@@ -315,7 +315,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         super.syncSearch();
         VdcQueryParametersBase queryParameters = new VdcQueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAllVmsAndVmPools, queryParameters,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsAndVmPools, queryParameters,
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
@@ -645,7 +645,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
 
-        Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
+        Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -818,7 +818,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             paramsList.add(new RemoveVmParameters(vm.getId(), false));
         }
 
-        Frontend.RunMultipleActions(VdcActionType.RemoveVm, paramsList,
+        Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVm, paramsList,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -918,7 +918,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem().toString();
 
-        Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
+        Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1089,7 +1089,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 parameters.setMakeCreatorExplicitOwner(true);
                 parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                 parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
+                Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch, parameters, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
             }
             else
             {
@@ -1114,7 +1114,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                             param.setSoundDeviceEnabled(unitVmModel.getIsSoundcardEnabled().getEntity());
                             param.setConsoleEnabled(unitVmModel.getIsConsoleDeviceEnabled().getEntity());
-                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(unitVmModel, defaultNetworkCreatingManager), this);
+                            Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(unitVmModel, defaultNetworkCreatingManager), this);
                         }
                     };
                     AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
@@ -1128,7 +1128,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                     param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                     param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                    Frontend.RunAction(VdcActionType.AddVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
+                    Frontend.getInstance().runAction(VdcActionType.AddVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
                 }
             }
         }
@@ -1137,7 +1137,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             Guid oldClusterID = ((VM) selectedItem.getEntity()).getVdsGroupId();
             if (oldClusterID.equals(newClusterID) == false)
             {
-                Frontend.RunAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
+                Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
                         gettempVm().getId()),
                         new IFrontendActionAsyncCallback() {
                             @Override
@@ -1146,7 +1146,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                                 param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                                 param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
 
-                                Frontend.RunAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
+                                Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
                             }
                         }, this);
             }
@@ -1155,7 +1155,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                 param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                 param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                Frontend.RunAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
+                Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
             }
         }
     }

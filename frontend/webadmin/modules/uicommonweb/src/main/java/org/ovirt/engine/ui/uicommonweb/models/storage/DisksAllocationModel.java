@@ -137,7 +137,7 @@ public class DisksAllocationModel extends EntityModel
 
     private void updateQuota(Guid storageDomainId, final ListModel isItem) {
         if (getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED && storageDomainId != null) {
-            Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
                     new IdQueryParameters(storageDomainId),
                     new AsyncQuery(this,
                             new INewAsyncCallback() {

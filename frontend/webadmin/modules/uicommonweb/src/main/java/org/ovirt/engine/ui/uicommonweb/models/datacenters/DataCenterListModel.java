@@ -501,7 +501,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                                 a.getId()));
                     }
                     windowModel.startProgress(null);
-                    Frontend.RunMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
+                    Frontend.getInstance().runMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
                                 @Override
                                 public void executed(FrontendMultipleActionAsyncResult result) {
@@ -548,7 +548,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveStoragePool, parameters,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStoragePool, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -571,7 +571,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         StoragePoolParametersBase tempVar = new StoragePoolParametersBase(((StoragePool) getSelectedItem()).getId());
         tempVar.setForceDelete(true);
         VdcActionParametersBase parametersBase = tempVar;
-        Frontend.RunAction(VdcActionType.RemoveStoragePool, parametersBase);
+        Frontend.getInstance().runAction(VdcActionType.RemoveStoragePool, parametersBase);
         cancel();
     }
 
@@ -651,7 +651,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     private void checkForQuotaInDC(StoragePool storage_pool, final ICommandTarget commandTarget) {
         IdQueryParameters parameters = new IdQueryParameters(storage_pool.getId());
-        Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetQuotaByStoragePoolId,
                 parameters,
                 new AsyncQuery(
                         quotaListModel,
@@ -718,7 +718,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         if (model.getIsNew()) {
             // When adding a data center use sync action to be able present a Guide Me dialog afterwards.
-            Frontend.RunAction(VdcActionType.AddEmptyStoragePool,
+            Frontend.getInstance().runAction(VdcActionType.AddEmptyStoragePool,
                 new StoragePoolManagementParameter(dataCenter),
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -730,7 +730,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 this);
         } else {
             // Otherwise use async action in order to close dialog immediately.
-            Frontend.RunMultipleAction(VdcActionType.UpdateStoragePool,
+            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateStoragePool,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(
                     new StoragePoolManagementParameter(dataCenter))
                 ),

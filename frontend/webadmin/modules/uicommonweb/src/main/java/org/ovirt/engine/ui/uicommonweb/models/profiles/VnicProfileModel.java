@@ -204,7 +204,7 @@ public abstract class VnicProfileModel extends Model {
 
         startProgress(null);
 
-        Frontend.RunAction(getVdcActionType(),
+        Frontend.getInstance().runAction(getVdcActionType(),
                 getActionParameters(),
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -273,7 +273,7 @@ public abstract class VnicProfileModel extends Model {
         params.setVersion(getDcCompatibilityVersion());
         params.setDeviceType(VmDeviceGeneralType.INTERFACE);
         startProgress(null);
-        Frontend.RunQuery(VdcQueryType.GetDeviceCustomProperties,
+        Frontend.getInstance().runQuery(VdcQueryType.GetDeviceCustomProperties,
                 params,
                 new AsyncQuery(this,
                         new INewAsyncCallback() {
@@ -318,7 +318,7 @@ public abstract class VnicProfileModel extends Model {
         };
 
         IdQueryParameters queryParams = new IdQueryParameters(getDcId());
-        Frontend.RunQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, queryParams, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, queryParams, _asyncQuery);
     }
 
     public boolean validate()

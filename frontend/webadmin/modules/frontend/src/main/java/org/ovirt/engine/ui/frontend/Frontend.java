@@ -40,19 +40,61 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 import com.google.inject.Inject;
+
 /**
- * The {@code Frontend} class is the interface between the front-end and the back-end. It manages the operations
- * that are being sent to the back-end and returns the results back to the callers. This is class is designed as a
- * singleton class.
- *
- * There are several deprecated static methods that allow static access to the singleton, usage of those methods is
- * purely for legacy purposes and is discouraged for new development.
+ * The {@code Frontend} class is the interface between the front-end and the back-end. It manages the operations that
+ * are being sent to the back-end and returns the results back to the callers. This class is designed as a singleton
+ * class.
+ * <p>
+ * Legacy code or code not managed within application's GIN context can use {@link #getInstance()} to retrieve the
+ * instance of this class.
  */
 public class Frontend {
+
+    /**
+     * Provides static access to {@code Frontend} singleton instance.
+     */
+    public static class InstanceHolder {
+
+        @Inject
+        static Frontend instance;
+
+    }
+
+    /**
+     * Empty implementation of IFrontendActionAsyncCallback.
+     */
+    private static final class NullableFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
+        @Override
+        public void executed(final FrontendActionAsyncResult result) {
+            // Do nothing, we are the 'NullableFrontendActionAsyncCallback'
+        }
+    }
+
+    /**
+     * Empty callback. Use this when we don't want anything called when an operation completes.
+     */
+    private static final IFrontendActionAsyncCallback NULLABLE_ASYNC_CALLBACK = new NullableFrontendActionAsyncCallback();
+
     /**
      * The logger.
      */
-    private static Logger logger = Logger.getLogger(Frontend.class.getName());
+    private static final Logger logger = Logger.getLogger(Frontend.class.getName());
+
+    /**
+     * The {@code VdcOperationManager}.
+     */
+    private final VdcOperationManager operationManager;
+
+    /**
+     * Action error translator.
+     */
+    private final ErrorTranslator canDoActionErrorsTranslator;
+
+    /**
+     * VDSM error translator.
+     */
+    private final ErrorTranslator vdsmErrorsTranslator;
 
     /**
      * The events handler.
@@ -63,16 +105,6 @@ public class Frontend {
      * The loginHandler.
      */
     private FrontendLoginHandler loginHandler;
-
-    /**
-     * Action error translator.
-     */
-    private ErrorTranslator canDoActionErrorsTranslator = null;
-
-    /**
-     * VDSM error translator.
-     */
-    private ErrorTranslator vdsmErrorsTranslator = null;
 
     /**
      * The set of query types others are subscribed to.
@@ -133,12 +165,7 @@ public class Frontend {
     /**
      * UI constants, messages to show the user in the UI.
      */
-    private UIConstants constants = null;
-
-    /**
-     * The {@code VdcOperationManager}.
-     */
-    private final VdcOperationManager operationManager;
+    private UIConstants constants;
 
     /**
      * GWT scheduler.
@@ -146,23 +173,28 @@ public class Frontend {
     private Scheduler scheduler;
 
     /**
-     * The instance of the {@code Frontend} class.
-     */
-    private static Frontend instance;
-
-    /**
      * Constructor.
-     * @param manager The {@code VdcOperationManger} to associate with this object.
+     * @param operationManager The {@code VdcOperationManger} to associate with this object.
      * @param applicationErrors The application error messages, we can use to translate application errors.
      * @param vdsmErrors The VDSM error messages, we can use to translate VDSM errors.
      */
     @Inject
-    public Frontend(final VdcOperationManager manager, final AppErrors applicationErrors,
-            final VdsmErrors vdsmErrors) {
-        this.operationManager = manager;
-        setAppErrorsTranslator(new ErrorTranslator(applicationErrors));
-        setVdsmErrorsTranslator(new ErrorTranslator(vdsmErrors));
-        instance = this;
+    public Frontend(final VdcOperationManager operationManager,
+                    final AppErrors applicationErrors, final VdsmErrors vdsmErrors) {
+        this(operationManager,
+                new ErrorTranslator(applicationErrors),
+                new ErrorTranslator(vdsmErrors));
+    }
+
+    /**
+     * Constructor for unit testing.
+     */
+    Frontend(final VdcOperationManager operationManager,
+             final ErrorTranslator canDoActionErrorsTranslator,
+             final ErrorTranslator vdsmErrorsTranslator) {
+        this.operationManager = operationManager;
+        this.canDoActionErrorsTranslator = canDoActionErrorsTranslator;
+        this.vdsmErrorsTranslator = vdsmErrorsTranslator;
     }
 
     /**
@@ -179,39 +211,20 @@ public class Frontend {
      * @return {@code Frontend} instance.
      */
     public static Frontend getInstance() {
-        return instance;
+        return InstanceHolder.instance;
     }
 
     /**
-     * Run a query against the back-end. This method is deprecated, the preferred method of running queries against
-     * the back-end is, have a copy of Frontend injected into your class, and use the {@code runQuery} method.
+     * Run a non-public query against the back-end.
      *
      * @param queryType The type of the query.
      * @param parameters The parameters of the query.
      * @param callback The callback to call when the query completes.
      */
-    @Deprecated
-    public static void RunQuery(final VdcQueryType queryType,
+    public void runQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final AsyncQuery callback) {
-        RunQuery(queryType, parameters, callback, false);
-    }
-
-    /**
-     * Static version
-     * Run a query against the back-end. This method is deprecated, the preferred method of running queries against
-     * the back-end is, have a copy of Frontend injected into your class, and use the {@code runQuery} method.
-     *
-     * @param queryType The type of the query.
-     * @param parameters The parameters of the query.
-     * @param callback The callback to call when the query completes.
-     * @param isPublic Determine if the query is public or not.
-     */
-    @Deprecated
-    public static void RunQuery(final VdcQueryType queryType,
-            final VdcQueryParametersBase parameters,
-            final AsyncQuery callback, final boolean isPublic) {
-        getInstance().runQuery(queryType, parameters, callback, isPublic);
+        runQuery(queryType, parameters, callback, false);
     }
 
     /**
@@ -226,10 +239,10 @@ public class Frontend {
             final VdcQueryParametersBase parameters,
             final AsyncQuery callback, final boolean isPublic) {
         initQueryParamsFilter(parameters);
+
         final VdcOperation<VdcQueryType, VdcQueryParametersBase> operation =
                 new VdcOperation<VdcQueryType, VdcQueryParametersBase>(queryType, parameters, isPublic,
                 new VdcOperationCallback<VdcOperation<VdcQueryType, VdcQueryParametersBase>, VdcQueryReturnValue>() {
-
             @Override
             public void onSuccess(final VdcOperation<VdcQueryType, VdcQueryParametersBase> operation,
                     final VdcQueryReturnValue result) {
@@ -279,27 +292,14 @@ public class Frontend {
                 }
             }
         });
+
         // raise the query started event.
         raiseQueryStartedEvent(queryType, callback.getContext());
         if (isPublic) {
-            getInstance().getOperationManager().addPublicOperation(operation);
+            getOperationManager().addPublicOperation(operation);
         } else {
-            getInstance().getOperationManager().addOperation(operation);
+            getOperationManager().addOperation(operation);
         }
-    }
-
-    /**
-     * Static version.
-     * Run a query that does not require the user to be logged in.
-     * @param queryType The type of query.
-     * @param parameters The parameter of the query.
-     * @param callback The callback to when the query completes.
-     */
-    @Deprecated
-    public static void RunPublicQuery(final VdcQueryType queryType,
-            final VdcQueryParametersBase parameters,
-            final AsyncQuery callback) {
-        getInstance().runPublicQuery(queryType, parameters, callback);
     }
 
     /**
@@ -315,33 +315,15 @@ public class Frontend {
     }
 
     /**
-     * Static version, deprecated.
-     * Run multiple queries in a single request to the back-end. Do not supply a context.
-     * @param queryTypeList A list of {@code VdcQueryType}s.
-     * @param queryParamsList A list of parameters associated with each query.
-     * @param callback The callback to call when the query completes.
-     */
-    @Deprecated
-    public static void RunMultipleQueries(final List<VdcQueryType> queryTypeList,
-            final List<VdcQueryParametersBase> queryParamsList,
-            final IFrontendMultipleQueryAsyncCallback callback) {
-        RunMultipleQueries(queryTypeList, queryParamsList, callback, null);
-    }
-
-    /**
-     * Static version, deprecated.
      * Run multiple queries in a single request to the back-end.
      * @param queryTypeList A list of {@code VdcQueryType}s.
      * @param queryParamsList A list of parameters associated with each query.
      * @param callback The callback to call when the query completes.
-     * @param context The context to run the queries in.
      */
-    @Deprecated
-    public static void RunMultipleQueries(final List<VdcQueryType> queryTypeList,
+    public void runMultipleQueries(final List<VdcQueryType> queryTypeList,
             final List<VdcQueryParametersBase> queryParamsList,
-            final IFrontendMultipleQueryAsyncCallback callback,
-            final String context) {
-        getInstance().runMultipleQueries(queryTypeList, queryParamsList, callback, context);
+            final IFrontendMultipleQueryAsyncCallback callback) {
+        runMultipleQueries(queryTypeList, queryParamsList, callback, null);
     }
 
     /**
@@ -358,7 +340,6 @@ public class Frontend {
         VdcOperationCallbackList<VdcOperation<VdcQueryType, VdcQueryParametersBase>,
             List<VdcQueryReturnValue>> multiCallback = new VdcOperationCallbackList<VdcOperation<VdcQueryType,
             VdcQueryParametersBase>, List<VdcQueryReturnValue>>() {
-
             @Override
             public void onSuccess(final List<VdcOperation<VdcQueryType, VdcQueryParametersBase>> operationList,
                     final List<VdcQueryReturnValue> resultObject) {
@@ -386,6 +367,7 @@ public class Frontend {
                 }
             }
         };
+
         List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
         for (int i = 0; i < queryTypeList.size(); i++) {
             VdcQueryParametersBase parameters = queryParamsList.get(i);
@@ -394,80 +376,55 @@ public class Frontend {
             operationList.add(new VdcOperation<VdcQueryType, VdcQueryParametersBase>(queryTypeList.get(i),
                     parameters, multiCallback));
         }
+
         raiseQueryStartedEvent(queryTypeList, context);
-        getInstance().getOperationManager().addOperationList(operationList);
+        getOperationManager().addOperationList(operationList);
     }
 
     /**
-     * Static version deprecated.
      * Run an action of the specified action type using the passed in parameters. No object state.
      * @param actionType The action type of the action to perform.
      * @param parameters The parameters of the action.
      * @param callback The callback to call when the action is completed.
      */
-    @Deprecated
-    public static void RunAction(final VdcActionType actionType,
+    public void runAction(final VdcActionType actionType,
             final VdcActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback) {
-        RunAction(actionType, parameters, callback, null);
+        runAction(actionType, parameters, callback, null);
     }
 
     /**
-     * Static version deprecated.
      * Run an action of the specified action type using the passed in parameters, also pass in a state object.
      * @param actionType The action type of the action to perform.
      * @param parameters The parameters of the action.
      * @param callback The callback to call when the action is completed.
      * @param state The state object.
      */
-    @Deprecated
-    public static void RunAction(final VdcActionType actionType,
+    public void runAction(final VdcActionType actionType,
             final VdcActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback,
             final Object state) {
-        RunAction(actionType, parameters, callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, true);
+        runAction(actionType, parameters, callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, true);
     }
 
     /**
-     * Static version deprecated.
      * {@code RunAction} without callback.
      * @param actionType The action type of the action to run.
      * @param parameters The parameters to the action.
      * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
      */
-    @Deprecated
-    public static void RunAction(final VdcActionType actionType, final VdcActionParametersBase parameters,
+    public void runAction(final VdcActionType actionType, final VdcActionParametersBase parameters,
             final boolean showErrorDialog) {
-        RunAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK, null, showErrorDialog);
+        runAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK, null, showErrorDialog);
     }
 
     /**
-     * Static version deprecated.
      * {@code RunAction} without callback.
      * @param actionType The action type of the action to run.
      * @param parameters The parameters to the action.
      */
-    @Deprecated
-    public static void RunAction(final VdcActionType actionType, final VdcActionParametersBase parameters) {
-        RunAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK);
-    }
-
-    /**
-     * Static version deprecated.
-     * Run an action of the specified action type using the passed in parameters, also pass in a state object.
-     * @param actionType The action type of the action to perform.
-     * @param parameters The parameters of the action.
-     * @param callback The callback to call when the action is completed.
-     * @param state The state object.
-     * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
-     */
-    @Deprecated
-    public static void RunAction(final VdcActionType actionType,
-            final VdcActionParametersBase parameters,
-            final IFrontendActionAsyncCallback callback,
-            final Object state,
-            final boolean showErrorDialog) {
-        getInstance().runAction(actionType, parameters, callback, state, showErrorDialog);
+    public void runAction(final VdcActionType actionType, final VdcActionParametersBase parameters) {
+        runAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK);
     }
 
     /**
@@ -486,7 +443,6 @@ public class Frontend {
         VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<VdcActionType,
                 VdcActionParametersBase>(actionType, parameters, new VdcOperationCallback<VdcOperation<VdcActionType,
                         VdcActionParametersBase>, VdcReturnValueBase>() {
-
             @Override
             public void onSuccess(final VdcOperation<VdcActionType, VdcActionParametersBase> operation,
                     final VdcReturnValueBase result) {
@@ -509,7 +465,8 @@ public class Frontend {
                 }
             }
         });
-        getInstance().getOperationManager().addOperation(operation);
+
+        getOperationManager().addOperation(operation);
     }
 
     /**
@@ -519,12 +476,11 @@ public class Frontend {
      * @param callback The callback to call after the operation happens.
      * @param state A state object.
      */
-    @Deprecated
-    public static void RunMultipleAction(final VdcActionType actionType,
+    public void runMultipleAction(final VdcActionType actionType,
             final ArrayList<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
-        RunMultipleAction(actionType, parameters, false, callback, state);
+        runMultipleAction(actionType, parameters, false, callback, state);
     }
 
     /**
@@ -532,42 +488,9 @@ public class Frontend {
      * @param actionType The type of action to perform.
      * @param parameters The parameters of the action.
      */
-    @Deprecated
-    public static void RunMultipleAction(final VdcActionType actionType,
+    public void runMultipleAction(final VdcActionType actionType,
             final ArrayList<VdcActionParametersBase> parameters) {
-        RunMultipleAction(actionType, parameters, null, null);
-    }
-
-    /**
-     * Overloaded method for {@link #RunMultipleActions(VdcActionType, List, IFrontendActionAsyncCallback, Object)} with
-     * state = null.
-     * @param actionType The action type of the actions.
-     * @param parameters A list of parameters, once for each action.
-     * @param successCallback The callback to call on success.
-     */
-    @Deprecated
-    public static void RunMultipleActions(final VdcActionType actionType,
-            final List<VdcActionParametersBase> parameters,
-            final IFrontendActionAsyncCallback successCallback) {
-        RunMultipleActions(actionType, parameters, successCallback, null);
-    }
-
-    /**
-     * Static version.
-     * Run multiple actions using the same {@code VdcActionType}.
-     * @param actionType The action type.
-     * @param parameters The list of parameters.
-     * @param isRunOnlyIfAllCanDoPass A flag to only run the actions if all can be completed.
-     * @param callback The callback to call when the operation completes.
-     * @param state The state.
-     */
-    @Deprecated
-    public static void RunMultipleAction(final VdcActionType actionType,
-            final ArrayList<VdcActionParametersBase> parameters,
-            final boolean isRunOnlyIfAllCanDoPass,
-            final IFrontendMultipleActionAsyncCallback callback,
-            final Object state) {
-        getInstance().runMultipleAction(actionType, parameters, isRunOnlyIfAllCanDoPass, callback, state);
+        runMultipleAction(actionType, parameters, null, null);
     }
 
     /**
@@ -625,6 +548,7 @@ public class Frontend {
                 }
             }
         };
+
         List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
         for (VdcActionParametersBase parameter: parameters) {
             VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<VdcActionType,
@@ -654,73 +578,64 @@ public class Frontend {
     }
 
     /**
-     * Overloaded method for {@link #RunMultipleActions(VdcActionType, List, List, Object)} with state = null.
-     * @param actionType
-     *            the action to be repeated.
-     * @param parameters
-     *            the parameters of each action.
-     * @param callbacks A list of callbacks.
-     */
-    public static void RunMultipleActions(VdcActionType actionType,
-            List<VdcActionParametersBase> parameters,
-            List<IFrontendActionAsyncCallback> callbacks) {
-        RunMultipleActions(actionType, parameters, callbacks, null);
-    }
-
-    /**
-     * A convenience method that calls {@link #RunMultipleActions(VdcActionType, List, List, Object)} with just a single
+     * A convenience method that calls {@link #runMultipleActions(VdcActionType, List, List, Object)} with just a single
      * callback to be called when all actions have succeeded.
      *
-     * @param actionType
-     *            the action to be repeated.
-     * @param parameters
-     *            the parameters of each action.
-     * @param successCallback
-     *            the callback to be executed when all actions have succeeded.
+     * @param actionType The action to be repeated.
+     * @param parameters The parameters of each action.
+     * @param successCallback The callback to be executed when all actions have succeeded.
      * @param state State object
      */
-    @Deprecated
-    public static void RunMultipleActions(final VdcActionType actionType,
+    public void runMultipleActions(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
             final IFrontendActionAsyncCallback successCallback,
             final Object state) {
-
         if (parameters == null || parameters.isEmpty()) {
             return;
         }
+
         int n = parameters.size();
         IFrontendActionAsyncCallback[] callbacks = new IFrontendActionAsyncCallback[n];
         callbacks[n - 1] = successCallback;
-        RunMultipleActions(actionType, parameters,
+        runMultipleActions(actionType, parameters,
                 new LinkedList<IFrontendActionAsyncCallback>(Arrays.asList(callbacks)),
                 state);
     }
 
     /**
+     * Overloaded method for {@link #runMultipleActions(VdcActionType, List, IFrontendActionAsyncCallback, Object)} with
+     * state = null.
+     * @param actionType The action type of the actions.
+     * @param parameters A list of parameters, once for each action.
+     * @param successCallback The callback to call on success.
+     */
+    public void runMultipleActions(final VdcActionType actionType,
+            final List<VdcActionParametersBase> parameters,
+            final IFrontendActionAsyncCallback successCallback) {
+        runMultipleActions(actionType, parameters, successCallback, null);
+    }
+
+    /**
      * A convenience method that calls
-     * {@link #RunMultipleActions(List, List, List, IFrontendActionAsyncCallback, Object)} with just the one
+     * {@link #runMultipleActions(List, List, List, IFrontendActionAsyncCallback, Object)} with just the one
      * VdcActionType for all actions.
      *
-     * @param actionType
-     *            the action to be repeated.
-     * @param parameters
-     *            the parameters of each action.
-     * @param callbacks
-     *            the callback to be executed upon the success of each action.
-     * @param state
-     *            the state.
+     * @param actionType The action to be repeated.
+     * @param parameters The parameters of each action.
+     * @param callbacks The callback to be executed upon the success of each action.
+     * @param state The state.
      */
-    public static void RunMultipleActions(VdcActionType actionType,
-            List<VdcActionParametersBase> parameters,
-            List<IFrontendActionAsyncCallback> callbacks,
-            Object state) {
-
+    public void runMultipleActions(final VdcActionType actionType,
+            final List<VdcActionParametersBase> parameters,
+            final List<IFrontendActionAsyncCallback> callbacks,
+            final Object state) {
         if (parameters == null || parameters.isEmpty()) {
             return;
         }
+
         VdcActionType[] actionTypes = new VdcActionType[parameters.size()];
         Arrays.fill(actionTypes, actionType);
-        RunMultipleActions(new LinkedList<VdcActionType>(Arrays.asList(actionTypes)),
+        runMultipleActions(new LinkedList<VdcActionType>(Arrays.asList(actionTypes)),
                 parameters,
                 callbacks,
                 null,
@@ -728,22 +643,15 @@ public class Frontend {
     }
 
     /**
-     * Static version.
-     * This method allows us to run a transaction like set of actions. If one
-     * fails the rest do not get executed.
-     * @param actionTypes The list of actions to execute.
-     * @param parameters The list of parameters, must match the number of actions.
-     * @param callbacks The list of callbacks, the number must match the number of actions.
-     * @param failureCallback The callback to call in case of failure.
-     * @param state The state.
+     * Overloaded method for {@link #runMultipleActions(VdcActionType, List, List, Object)} with state = null.
+     * @param actionType The action to be repeated.
+     * @param parameters The parameters of each action.
+     * @param callbacks A list of callbacks.
      */
-    @Deprecated
-    public static void RunMultipleActions(final List<VdcActionType> actionTypes,
+    public void runMultipleActions(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
-            final List<IFrontendActionAsyncCallback> callbacks,
-            final IFrontendActionAsyncCallback failureCallback,
-            final Object state) {
-        getInstance().runMultipleActions(actionTypes, parameters, callbacks, failureCallback, state);
+            final List<IFrontendActionAsyncCallback> callbacks) {
+        runMultipleActions(actionType, parameters, callbacks, null);
     }
 
     /**
@@ -760,8 +668,7 @@ public class Frontend {
             final List<IFrontendActionAsyncCallback> callbacks,
             final IFrontendActionAsyncCallback failureCallback,
             final Object state) {
-        if (actionTypes.isEmpty() || parameters.isEmpty() || callbacks.isEmpty())
-        {
+        if (actionTypes.isEmpty() || parameters.isEmpty() || callbacks.isEmpty()) {
             return;
         }
 
@@ -788,24 +695,6 @@ public class Frontend {
     }
 
     /**
-     * Static version.
-     * ASynchronous user login.
-     * @param userName The name of the user.
-     * @param password The password of the user.
-     * @param domain The domain to check for the user.
-     * @param isAdmin If the user an admin user.
-     * @param callback The callback to call when the operation is finished.
-     */
-    @Deprecated
-    public static void LoginAsync(final String userName,
-            final String password,
-            final String domain,
-            final boolean isAdmin,
-            final AsyncQuery callback) {
-        getInstance().loginAsync(userName, password, domain, isAdmin, callback);
-    }
-
-    /**
      * ASynchronous user login.
      * @param userName The name of the user.
      * @param password The password of the user.
@@ -819,22 +708,22 @@ public class Frontend {
             final boolean isAdmin,
             final AsyncQuery callback) {
         logger.finer("Frontend: Invoking async Login."); //$NON-NLS-1$
+
         LoginUserParameters params = new LoginUserParameters(userName, password, domain, null, null, null);
         VdcActionType action = isAdmin ? VdcActionType.LoginAdminUser : VdcActionType.LoginUser;
         VdcOperation<VdcActionType, LoginUserParameters> loginOperation =
             new VdcOperation<VdcActionType, LoginUserParameters>(action, params, true, //Public action.
                     new VdcOperationCallback<VdcOperation<VdcActionType, LoginUserParameters>,
                     VdcReturnValueBase>() {
-
                 @Override
                 public void onSuccess(final VdcOperation<VdcActionType, LoginUserParameters> operation,
                         final VdcReturnValueBase result) {
                     logger.finer("Succesful returned result from Login."); //$NON-NLS-1$
-                    getInstance().setLoggedInUser((DbUser) result.getActionReturnValue());
+                    setLoggedInUser((DbUser) result.getActionReturnValue());
                     result.setCanDoActionMessages((ArrayList<String>) translateError(result));
                     callback.getDel().onSuccess(callback.getModel(), result);
-                    if (getInstance().getLoginHandler() != null && result.getSucceeded()) {
-                        getInstance().getLoginHandler().onLoginSuccess(userName, password, domain);
+                    if (getLoginHandler() != null && result.getSucceeded()) {
+                        getLoginHandler().onLoginSuccess(userName, password, domain);
                     }
                 }
 
@@ -849,22 +738,13 @@ public class Frontend {
                     failureEventHandler(caught);
                     clearLoggedInUser();
                     if (callback.isHandleFailure()) {
-                        getInstance().setLoggedInUser(null);
+                        setLoggedInUser(null);
                         callback.getDel().onSuccess(callback.getModel(), null);
                     }
                 }
         });
-        getInstance().getOperationManager().loginUser(loginOperation);
-    }
 
-    /**
-     * Static version of the log off method.
-     * @param dbUser The user object to use to log off.
-     * @param callback The callback to call when the user is logged off.
-     */
-    @Deprecated
-    public static void LogoffAsync(final DbUser dbUser, final AsyncQuery callback) {
-        getInstance().logoffAsync(dbUser, callback);
+        getOperationManager().loginUser(loginOperation);
     }
 
     /**
@@ -875,13 +755,13 @@ public class Frontend {
     public void logoffAsync(final DbUser dbUser, final AsyncQuery callback) {
         logger.finer("Frontend: Invoking async logoff."); //$NON-NLS-1$
 
-        getInstance().getOperationManager().logoutUser(dbUser, new UserCallback<VdcReturnValueBase>() {
+        getOperationManager().logoutUser(dbUser, new UserCallback<VdcReturnValueBase>() {
             @Override
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from logoff."); //$NON-NLS-1$
                 callback.getDel().onSuccess(callback.getModel(), result);
-                if (getInstance().getLoginHandler() != null) {
-                    getInstance().getLoginHandler().onLogout();
+                if (getLoginHandler() != null) {
+                    getLoginHandler().onLogout();
                 }
             }
 
@@ -968,36 +848,6 @@ public class Frontend {
         }
     }
 
-// Use for debugging only.
-//    private void dumpQueryDetails(VdcQueryType queryType, VdcQueryParametersBase searchParameters) {
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("VdcQuery Type: '" + queryType + "', "); //$NON-NLS-1$//$NON-NLS-2$
-//        if (searchParameters instanceof SearchParameters) {
-//            SearchParameters sp = (SearchParameters) searchParameters;
-//
-//            if (sp.getSearchPattern().equals("Not implemented")) { //$NON-NLS-1$
-//                throw new RuntimeException("Search pattern is defined as 'Not implemented',
-//                    probably because of a use of String.format()"); //$NON-NLS-1$
-//            }
-//
-//            sb.append("Type value: [" + sp.getSearchTypeValue() + "], Pattern: [" + //$NON-NLS-1$//$NON-NLS-2$
-//                    sp.getSearchPattern() + "]"); //$NON-NLS-1$
-//        } else {
-//            sb.append("Search type is base or unknown"); //$NON-NLS-1$
-//        }
-//
-//        logger.fine(sb.toString());
-//    }
-
-// Use for debugging only.
-//    private void dumpActionDetails(VdcActionType actionType, VdcActionParametersBase parameters) {
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("actionType Type: '" + actionType + "', "); //$NON-NLS-1$//$NON-NLS-2$
-//        sb.append("Params: " + parameters); //$NON-NLS-1$
-//
-//        logger.fine(sb.toString());
-//    }
-//
     /**
      * Handle the result(s) of an action.
      * @param actionType The action type.
@@ -1047,9 +897,8 @@ public class Frontend {
      * Get the current context.
      * @return The current context
      */
-    @Deprecated
-    public static String getCurrentContext() {
-        return getInstance().currentContext;
+    public String getCurrentContext() {
+        return currentContext;
     }
 
     /**
@@ -1134,19 +983,19 @@ public class Frontend {
     }
 
     /**
+     * Getter for the Application error translator.
+     * @return An {@code ErrorTranslator} that can translate application errors.
+     */
+    public ErrorTranslator getAppErrorsTranslator() {
+        return canDoActionErrorsTranslator;
+    }
+
+    /**
      * Getter for the VDSM error translator.
      * @return The {@code ErrorTranslator}
      */
     public ErrorTranslator getVdsmErrorsTranslator() {
         return vdsmErrorsTranslator;
-    }
-
-    /**
-     * Setter for the VDSM error translator.
-     * @param translator The translator.
-     */
-    protected void setVdsmErrorsTranslator(final ErrorTranslator translator) {
-        vdsmErrorsTranslator = translator;
     }
 
     /**
@@ -1206,22 +1055,6 @@ public class Frontend {
         }
         return false;
     }
-
-    /**
-     * Empty implementation of IFrontendActionAsyncCallback.
-     */
-    private static final class NullableFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
-        @Override
-        public void executed(final FrontendActionAsyncResult result) {
-            //Do nothing, we are the 'NullableFrontendActionAsyncCallback'
-        }
-    }
-
-    /**
-     * empty callback. use this when we don't want anything called when an operation completes.
-     */
-    private static final NullableFrontendActionAsyncCallback NULLABLE_ASYNC_CALLBACK =
-            new NullableFrontendActionAsyncCallback();
 
     /**
      * Getter for queryStartedEventDefinition.
@@ -1285,22 +1118,6 @@ public class Frontend {
      */
     public void setLoginHandler(final FrontendLoginHandler frontendLoginHandler) {
         this.loginHandler = frontendLoginHandler;
-    }
-
-    /**
-     * Getter for the Application error translator.
-     * @return An {@code ErrorTranslator} that can translate application errors.
-     */
-    public ErrorTranslator getAppErrorsTranslator() {
-        return canDoActionErrorsTranslator;
-    }
-
-    /**
-     * Setter for the application error translator.
-     * @param translator The new translator
-     */
-    protected void setAppErrorsTranslator(final ErrorTranslator translator) {
-        canDoActionErrorsTranslator = translator;
     }
 
     /**
@@ -1375,7 +1192,7 @@ public class Frontend {
      * Setter for constants.
      * @param uiConstants The constants to set.
      */
-    public void setConstants(final UIConstants uiConstants) {
+    void setConstants(final UIConstants uiConstants) {
         constants = uiConstants;
     }
 
@@ -1415,4 +1232,5 @@ public class Frontend {
     private void initQueryParamsFilter(final VdcQueryParametersBase parameters) {
         parameters.setFiltered(filterQueries);
     }
+
 }

@@ -541,7 +541,7 @@ public abstract class NetworkModel extends Model
                 cancel();
             }
         };
-        Frontend.RunMultipleActions(VdcActionType.AddVnicProfile, paramlist, callback);
+        Frontend.getInstance().runMultipleActions(VdcActionType.AddVnicProfile, paramlist, callback);
     }
 
     void cancel() {

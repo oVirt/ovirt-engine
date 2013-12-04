@@ -57,7 +57,7 @@ public class PoolDiskListModel extends VmDiskListModelBase
                     }
                 }
             };
-            Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+            Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
                     _asyncQuery);
         }

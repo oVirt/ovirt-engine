@@ -30,7 +30,7 @@ public class UserPortalRunOnceModel extends RunOnceModel {
    protected void onRunOnce() {
        startProgress(null);
 
-       Frontend.RunAction(VdcActionType.RunVmOnce, createRunVmOnceParams(),
+       Frontend.getInstance().runAction(VdcActionType.RunVmOnce, createRunVmOnceParams(),
                new IFrontendActionAsyncCallback() {
                    @Override
                    public void executed(FrontendActionAsyncResult result) {

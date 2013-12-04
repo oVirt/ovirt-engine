@@ -101,7 +101,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
                 VdsGroupOperationParameters parameters = new VdsGroupOperationParameters(cluster);
                 parameters.setCorrelationId(getCorrelationId());
-                Frontend.RunAction(VdcActionType.AddVdsGroup, parameters,
+                Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {

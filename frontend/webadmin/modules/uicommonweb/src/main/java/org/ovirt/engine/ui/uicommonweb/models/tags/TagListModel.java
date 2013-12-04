@@ -457,7 +457,7 @@ public class TagListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.RemoveTag, new TagsActionParametersBase(getSelectedItem().getId()),
+        Frontend.getInstance().runAction(VdcActionType.RemoveTag, new TagsActionParametersBase(getSelectedItem().getId()),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -550,7 +550,7 @@ public class TagListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunAction(model.getIsNew() ? VdcActionType.AddTag : VdcActionType.UpdateTag,
+        Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddTag : VdcActionType.UpdateTag,
                 new TagsOperationParameters(tag),
                 new IFrontendActionAsyncCallback() {
                     @Override

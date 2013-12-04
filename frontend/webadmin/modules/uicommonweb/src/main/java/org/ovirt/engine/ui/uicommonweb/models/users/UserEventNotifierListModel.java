@@ -290,11 +290,11 @@ public class UserEventNotifierListModel extends SearchableListModel
             EventSubscriptionFrontendActionAsyncCallback callback = new EventSubscriptionFrontendActionAsyncCallback(toAddList, toRemoveList);
             for (VdcActionParametersBase param : toRemoveList)
             {
-                Frontend.RunAction(VdcActionType.RemoveEventSubscription, param, callback);
+                Frontend.getInstance().runAction(VdcActionType.RemoveEventSubscription, param, callback);
             }
         } else if (toAddList.size() > 0)
         {
-            Frontend.RunMultipleAction(VdcActionType.AddEventSubscription, toAddList);
+            Frontend.getInstance().runMultipleAction(VdcActionType.AddEventSubscription, toAddList);
         }
         cancel();
     }
@@ -317,7 +317,7 @@ public class UserEventNotifierListModel extends SearchableListModel
                 // we wait until all subscribed events have been removed and then
                 // invoke the AddEventSubscription action
                 if (toAddList.size() > 0 && sucessCount == toRemoveList.size()) {
-                    Frontend.RunMultipleAction(VdcActionType.AddEventSubscription, toAddList);
+                    Frontend.getInstance().runMultipleAction(VdcActionType.AddEventSubscription, toAddList);
                 }
             }
         }

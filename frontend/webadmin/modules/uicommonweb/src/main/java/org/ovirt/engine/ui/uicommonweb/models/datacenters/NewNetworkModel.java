@@ -143,10 +143,10 @@ public class NewNetworkModel extends NetworkModel {
             providerNetwork.setProviderId(externalProvider.getId());
             getNetwork().setProvidedBy(providerNetwork);
 
-            Frontend.RunAction(VdcActionType.AddNetworkOnProvider,
+            Frontend.getInstance().runAction(VdcActionType.AddNetworkOnProvider,
                     parameters, addNetworkCallback, null);
         } else {
-            Frontend.RunAction(VdcActionType.AddNetwork,
+            Frontend.getInstance().runAction(VdcActionType.AddNetwork,
                     parameters,
                     addNetworkCallback,
                     null);
@@ -179,7 +179,7 @@ public class NewNetworkModel extends NetworkModel {
             actionParameters1.add(new AttachNetworkToVdsGroupParameter(networkClusterModel.getEntity(), tempVar));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
+        Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
     }
 
     public ArrayList<NetworkClusterModel> getClustersToAttach()

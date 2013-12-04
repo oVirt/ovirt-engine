@@ -94,7 +94,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                         getEntitiesWithPermittedActionParameters }));
 
         // Get clusters and templates
-        Frontend.RunMultipleQueries(queryTypeList, parametersList, this, getModel().getHash());
+        Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, this, getModel().getHash());
 
     }
 
@@ -174,7 +174,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
     @Override
     protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
-        Frontend.RunQuery(
+        Frontend.getInstance().runQuery(
                 VdcQueryType.GetHostsByClusterId,
                 new IdQueryParameters(cluster.getId()),
                 query

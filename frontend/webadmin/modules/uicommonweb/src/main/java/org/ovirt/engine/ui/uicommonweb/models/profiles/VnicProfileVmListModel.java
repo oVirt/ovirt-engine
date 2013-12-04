@@ -79,7 +79,7 @@ public class VnicProfileVmListModel extends SearchableListModel
         IdQueryParameters params =
                 new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetVmsByVnicProfileId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByVnicProfileId,
                 params,
                 asyncQuery);
     }

@@ -129,7 +129,7 @@ public class StorageIsoListModel extends SearchableListModel
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetImagesList, imagesListParams, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetImagesList, imagesListParams, _asyncQuery);
     }
 
     @Override

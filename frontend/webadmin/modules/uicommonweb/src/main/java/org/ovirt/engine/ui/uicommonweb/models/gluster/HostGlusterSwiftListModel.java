@@ -149,7 +149,7 @@ public class HostGlusterSwiftListModel extends SearchableListModel {
                         getEntity().getId(),
                         ServiceType.GLUSTER_SWIFT, action);
 
-        Frontend.RunAction(VdcActionType.ManageGlusterService, parameters);
+        Frontend.getInstance().runAction(VdcActionType.ManageGlusterService, parameters);
     }
 
     @Override

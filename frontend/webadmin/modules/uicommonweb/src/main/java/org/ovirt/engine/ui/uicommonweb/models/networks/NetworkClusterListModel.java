@@ -154,11 +154,11 @@ public class NetworkClusterListModel extends SearchableListModel
                 }
 
                 if (needsAttach) {
-                    Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, toAttach, this, null);
+                    Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup, toAttach, this, null);
                 }
 
                 if (needsDetach) {
-                    Frontend.RunMultipleAction(VdcActionType.DetachNetworkToVdsGroup, toDetach, this, null);
+                    Frontend.getInstance().runMultipleAction(VdcActionType.DetachNetworkToVdsGroup, toDetach, this, null);
                 }
 
                 if (!needsAttach && !needsDetach) {
@@ -234,7 +234,7 @@ public class NetworkClusterListModel extends SearchableListModel
 
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, params, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, params, asyncQuery);
     }
 
     @Override

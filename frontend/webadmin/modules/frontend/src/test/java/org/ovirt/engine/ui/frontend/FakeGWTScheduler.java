@@ -7,10 +7,12 @@ import com.google.gwt.core.client.Scheduler;
  * one to set how many times the schedule has to be called before actually executing the command.
  */
 public class FakeGWTScheduler extends Scheduler {
+
     /**
      * Count the number of times scheduleDeferred is called.
      */
     private int callCount = 0;
+
     /**
      * The threshold for executing a deferred command. If the call count is greater or equals to the threshold. The
      * {@code ScheduledCommand} is executed immediately. This allows us to simulate several calls the scheduler
@@ -76,4 +78,5 @@ public class FakeGWTScheduler extends Scheduler {
     public void resetCount() {
         this.callCount = 0;
     }
+
 }

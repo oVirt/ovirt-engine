@@ -107,7 +107,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     protected void syncSearch() {
         super.syncSearch();
         if (getIsQueryFirstTime()) {
-            Frontend.RunQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery(this,
+            Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery(this,
                     new INewAsyncCallback() {
 
                         @Override
@@ -143,7 +143,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
 
         VdcQueryParametersBase parametersBase = new VdcQueryParametersBase();
         parametersBase.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetClusterPolicies, parametersBase, asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetClusterPolicies, parametersBase, asyncQuery);
         setIsQueryFirstTime(false);
     }
 
@@ -245,7 +245,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     {
         for (Object item : getSelectedItems()) {
             ClusterPolicy clusterPolicy = (ClusterPolicy) item;
-            Frontend.RunAction(VdcActionType.RemoveClusterPolicy,
+            Frontend.getInstance().runAction(VdcActionType.RemoveClusterPolicy,
                     new ClusterPolicyCRUDParameters(clusterPolicy.getId(), clusterPolicy));
         }
 

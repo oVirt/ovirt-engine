@@ -68,7 +68,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
 
         startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveVnicProfile, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVnicProfile, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

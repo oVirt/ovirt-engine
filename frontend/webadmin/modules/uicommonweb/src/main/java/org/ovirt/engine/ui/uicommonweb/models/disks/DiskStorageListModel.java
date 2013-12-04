@@ -56,7 +56,7 @@ public class DiskStorageListModel extends SearchableListModel
         IdQueryParameters getStorageDomainsByImageIdParameters = new IdQueryParameters(diskImage.getImageId());
         getStorageDomainsByImageIdParameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainsByImageId, getStorageDomainsByImageIdParameters, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByImageId, getStorageDomainsByImageIdParameters, _asyncQuery);
 
         setIsQueryFirstTime(false);
     }

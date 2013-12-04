@@ -88,7 +88,7 @@ public class StorageVmListModel extends SearchableListModel
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetVmsByStorageDomain, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByStorageDomain, tempVar, _asyncQuery);
     }
 
     @Override

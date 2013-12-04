@@ -103,7 +103,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
         }
 
         MoveDisksParameters moveDisksParameters = new MoveDisksParameters((List) parameters);
-        Frontend.RunAction(getActionType(), moveDisksParameters,
+        Frontend.getInstance().runAction(getActionType(), moveDisksParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

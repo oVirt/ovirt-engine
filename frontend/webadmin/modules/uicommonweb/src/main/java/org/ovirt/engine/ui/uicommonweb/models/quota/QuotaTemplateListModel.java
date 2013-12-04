@@ -45,7 +45,7 @@ public class QuotaTemplateListModel extends SearchableListModel {
 
         IdQueryParameters tempVar = new IdQueryParameters(((Quota) getEntity()).getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetTemplatesRelatedToQuotaId, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesRelatedToQuotaId, tempVar, _asyncQuery);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class ChangeQuotaModel extends ListModel {
             queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
         }
 
-        Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
+        Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {

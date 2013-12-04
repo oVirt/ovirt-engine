@@ -60,7 +60,7 @@ public class RemoveProvidersModel extends ConfirmationModel {
             parameterList.add(new ProviderParameters(provider));
         }
 
-        Frontend.RunMultipleActions(VdcActionType.RemoveProvider, parameterList, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runMultipleActions(VdcActionType.RemoveProvider, parameterList, new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {

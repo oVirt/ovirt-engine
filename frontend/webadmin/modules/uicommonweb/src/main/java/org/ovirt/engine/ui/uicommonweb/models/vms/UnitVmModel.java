@@ -1401,12 +1401,12 @@ public class UnitVmModel extends Model {
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();
         }

@@ -217,12 +217,12 @@ public abstract class ConsoleModel extends EntityModel {
                 if (returnValue) {
                     command.execute();
                 } else {
-                    Frontend.RunQuery(VdcQueryType.HasAdElementReconnectPermission, portalUserReconnectPermParams, portalUserReconnectPermissionQuery);
+                    Frontend.getInstance().runQuery(VdcQueryType.HasAdElementReconnectPermission, portalUserReconnectPermParams, portalUserReconnectPermissionQuery);
                 }
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.HasAdElementReconnectPermission, consoleUserReconnectPermParams, consoleUserReconnectPermissionQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.HasAdElementReconnectPermission, consoleUserReconnectPermParams, consoleUserReconnectPermissionQuery);
     }
 
     private void displayConsoleConnectConfirmPopup(final UICommand onConfirmCommand) {

@@ -558,14 +558,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
         }
-        Frontend.RunMultipleAction(VdcActionType.AttachVmsToTag, parameters);
+        Frontend.getInstance().runMultipleAction(VdcActionType.AttachVmsToTag, parameters);
 
         parameters = new ArrayList<VdcActionParametersBase>();
         for (Guid a : tagsToDetach)
         {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
         }
-        Frontend.RunMultipleAction(VdcActionType.DetachVmFromTag, parameters);
+        Frontend.getInstance().runMultipleAction(VdcActionType.DetachVmFromTag, parameters);
 
         cancel();
     }
@@ -798,7 +798,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         // TODO: There's no point in creating a VdcQueryType list when you wanna run the same query for all parameters,
         // revise when refactoring org.ovirt.engine.ui.Frontend to support runMultipleQuery with a single query
         if (!params.isEmpty()) {
-            Frontend.RunMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
+            Frontend.getInstance().runMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
                 @Override
                 public void executed(FrontendMultipleQueryAsyncResult result) {
                     for (int i = 0; i < result.getReturnValues().size(); i++) {
@@ -1086,7 +1086,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 model.startProgress(null);
 
-                Frontend.RunMultipleAction(VdcActionType.ExportVm, parameters,
+                Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
                         new IFrontendMultipleActionAsyncCallback() {
                             @Override
                             public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1112,7 +1112,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
             model.startProgress(null);
 
-            Frontend.RunMultipleAction(VdcActionType.ExportVm, parameters,
+            Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1161,7 +1161,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ExportVm, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1352,7 +1352,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.startProgress(null);
         addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
 
-        Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
+        Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1408,7 +1408,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             list.add(new VmOperationParameterBase(a.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.CancelMigrateVm, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.CancelMigrateVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(
@@ -1505,7 +1505,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 list.add(new MigrateVmParameters(true, a.getId()));
             }
 
-            Frontend.RunMultipleAction(VdcActionType.MigrateVm, list,
+            Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVm, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1533,7 +1533,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         .getSelectedItem()).getId()));
             }
 
-            Frontend.RunMultipleAction(VdcActionType.MigrateVmToServer, list,
+            Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVmToServer, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1593,7 +1593,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ShutdownVm, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ShutdownVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1652,7 +1652,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.StopVm, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.StopVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1674,7 +1674,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             list.add(new VmOperationParameterBase(a.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.HibernateVm, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.HibernateVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1692,7 +1692,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             list.add(new RunVmParams(a.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.RunVm, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RunVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1717,7 +1717,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveVm, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1800,7 +1800,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
+        Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1985,7 +1985,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 setVmWatchdogToParams(model, parameters);
 
-                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters, new UnitVmModelNetworkAsyncCallback(model, addVmFromScratchNetworkManager), this);
+                Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch, parameters, new UnitVmModelNetworkAsyncCallback(model, addVmFromScratchNetworkManager), this);
             }
             else
             {
@@ -2017,7 +2017,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             param.setBalloonEnabled(balloonEnabled(model));
                             param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
 
-                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
+                            Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                         }
                     };
                     AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
@@ -2043,7 +2043,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
                     setVmWatchdogToParams(model, params);
 
-                    Frontend.RunAction(VdcActionType.AddVm, params, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
+                    Frontend.getInstance().runAction(VdcActionType.AddVm, params, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
                 }
             }
         }
@@ -2067,7 +2067,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 model.startProgress(null);
 
-                Frontend.RunAction(VdcActionType.ChangeVMCluster, parameters,
+                Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
@@ -2084,7 +2084,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     updateVmParams.setBalloonEnabled(balloonEnabled(model));
                                     updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
-                                    Frontend.RunAction(VdcActionType.UpdateVm,
+                                    Frontend.getInstance().runAction(VdcActionType.UpdateVm,
                                             updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vmListModel.getcurrentVm().getId()), vmListModel);
                                 }
                                 else
@@ -2111,7 +2111,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                 updateVmParams.setBalloonEnabled(balloonEnabled(model));
                 updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-                Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
+                Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }
     }
@@ -2176,7 +2176,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        Frontend.RunMultipleAction(VdcActionType.ChangeDisk,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeDisk,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
                         StringHelper.stringsEqual(isoName, ConsoleModel.getEjectLabel()) ? "" : isoName) })), //$NON-NLS-1$
                 new IFrontendMultipleActionAsyncCallback() {

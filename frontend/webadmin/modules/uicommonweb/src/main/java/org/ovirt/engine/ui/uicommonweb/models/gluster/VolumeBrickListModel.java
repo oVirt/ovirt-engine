@@ -478,7 +478,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterVolumeBricksActionParameters parameter = new GlusterVolumeBricksActionParameters(volumeEntity.getId(),
                 brickList, volumeBrickModel.getReplicaCountValue(), volumeBrickModel.getStripeCountValue());
 
-        Frontend.RunAction(VdcActionType.AddBricksToGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.AddBricksToGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {
@@ -811,7 +811,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         boolean isMigrate = (Boolean) model.getMigrateData().getEntity();
 
-        Frontend.RunAction(isMigrate ? VdcActionType.StartRemoveGlusterVolumeBricks
+        Frontend.getInstance().runAction(isMigrate ? VdcActionType.StartRemoveGlusterVolumeBricks
                 : VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
@@ -878,7 +878,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.StopRemoveGlusterVolumeBricks, parameter, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks, parameter, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -945,7 +945,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.CommitRemoveGlusterVolumeBricks,
+        Frontend.getInstance().runAction(VdcActionType.CommitRemoveGlusterVolumeBricks,
                 parameter,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1111,7 +1111,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.StopRemoveGlusterVolumeBricks,
+        Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks,
                 parameter,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1232,7 +1232,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                         newBrick,
                         false);
 
-        Frontend.RunAction(VdcActionType.ReplaceGlusterVolumeBrick, parameter, new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(VdcActionType.ReplaceGlusterVolumeBrick, parameter, new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {

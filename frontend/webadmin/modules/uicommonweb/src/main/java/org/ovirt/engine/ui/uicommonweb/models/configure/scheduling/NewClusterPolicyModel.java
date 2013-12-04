@@ -526,7 +526,7 @@ public class NewClusterPolicyModel extends Model {
         policy.setFunctions(pairs);
         policy.setBalance(((PolicyUnit) getLoadBalanceList().getSelectedItem()).getId());
         policy.setParameterMap(KeyValueModel.convertProperties(getCustomPropertySheet().getEntity()));
-        Frontend.RunAction(commandType == CommandType.Edit ? VdcActionType.EditClusterPolicy
+        Frontend.getInstance().runAction(commandType == CommandType.Edit ? VdcActionType.EditClusterPolicy
                 : VdcActionType.AddClusterPolicy,
                 new ClusterPolicyCRUDParameters(policy.getId(), policy), new IFrontendActionAsyncCallback() {
 

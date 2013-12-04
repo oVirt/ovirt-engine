@@ -212,7 +212,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, tempVar, _asyncQuery);
     }
 
     public void maintenance()
@@ -228,7 +228,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.DeactivateStorageDomain, pb);
+        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomain, pb);
     }
 
     public void activate()
@@ -244,7 +244,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.ActivateStorageDomain, pb);
+        Frontend.getInstance().runMultipleAction(VdcActionType.ActivateStorageDomain, pb);
     }
 
     public void attachBackup()
@@ -462,7 +462,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                 pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
             }
 
-            Frontend.RunMultipleAction(VdcActionType.AttachStorageDomainToPool, pb);
+            Frontend.getInstance().runMultipleAction(VdcActionType.AttachStorageDomainToPool, pb);
         }
 
         cancel();
@@ -595,7 +595,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     public void postDetach(Model model)
     {
-        Frontend.RunMultipleAction(VdcActionType.RemoveStorageDomain, getpb_remove(),
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStorageDomain, getpb_remove(),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result1) {
@@ -604,7 +604,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                         ConfirmationModel localModel1 = (ConfirmationModel) array[0];
                         ArrayList<VdcActionParametersBase> parameters =
                                 (ArrayList<VdcActionParametersBase>) array[1];
-                        Frontend.RunMultipleAction(VdcActionType.DetachStorageDomainFromPool, parameters,
+                        Frontend.getInstance().runMultipleAction(VdcActionType.DetachStorageDomainFromPool, parameters,
                                 new IFrontendMultipleActionAsyncCallback() {
                                     @Override
                                     public void executed(FrontendMultipleActionAsyncResult result2) {

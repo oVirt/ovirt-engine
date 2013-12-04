@@ -24,7 +24,7 @@ public class SaveNetworkConfigAction {
     }
 
     public void execute() {
-        Frontend.RunAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(host.getId()),
+        Frontend.getInstance().runAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(host.getId()),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

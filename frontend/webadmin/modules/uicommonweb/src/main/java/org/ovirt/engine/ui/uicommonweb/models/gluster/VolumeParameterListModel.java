@@ -177,7 +177,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.SetGlusterVolumeOption,
+        Frontend.getInstance().runAction(VdcActionType.SetGlusterVolumeOption,
                 new GlusterVolumeOptionParameters(option),
                 new IFrontendActionAsyncCallback() {
 
@@ -328,7 +328,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.ResetGlusterVolumeOptions,
+        Frontend.getInstance().runAction(VdcActionType.ResetGlusterVolumeOptions,
                 parameters,
                 new IFrontendActionAsyncCallback() {
 
@@ -382,7 +382,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.ResetGlusterVolumeOptions,
+        Frontend.getInstance().runAction(VdcActionType.ResetGlusterVolumeOptions,
                 parameters,
                 new IFrontendActionAsyncCallback() {
 

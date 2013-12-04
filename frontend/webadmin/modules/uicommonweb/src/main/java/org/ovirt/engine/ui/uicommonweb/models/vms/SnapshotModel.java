@@ -320,7 +320,7 @@ public class SnapshotModel extends EntityModel
         param.setQuotaId(vm.getQuotaId());
         params.add(param);
 
-        Frontend.RunMultipleAction(VdcActionType.CreateAllSnapshotsFromVm, params,
+        Frontend.getInstance().runMultipleAction(VdcActionType.CreateAllSnapshotsFromVm, params,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

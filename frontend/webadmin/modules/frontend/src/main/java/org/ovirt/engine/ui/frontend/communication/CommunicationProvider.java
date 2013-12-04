@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
  * Interface defining the communication options between the client and the server.
  */
 public interface CommunicationProvider {
+
     /**
      * Transmits a list of operations using the communications provider. The list can contain one or more operations.
      * The provider must properly determine if the caller wants a single response or a list of responses in the
@@ -29,4 +30,5 @@ public interface CommunicationProvider {
      * @param callback The callback object to call after the operation is completed.
      */
     void logout(Object userObject, UserCallback<?> callback);
+
 }

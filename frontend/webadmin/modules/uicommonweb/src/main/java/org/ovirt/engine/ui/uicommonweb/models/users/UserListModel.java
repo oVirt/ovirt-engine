@@ -286,11 +286,11 @@ public class UserListModel extends ListWithDetailsModel
         }
         if (usersToAttach.size() > 0)
         {
-            Frontend.RunMultipleAction(VdcActionType.AttachUserToTag, usersToAttach);
+            Frontend.getInstance().runMultipleAction(VdcActionType.AttachUserToTag, usersToAttach);
         }
         if (grpsToAttach.size() > 0)
         {
-            Frontend.RunMultipleAction(VdcActionType.AttachUserGroupToTag, grpsToAttach);
+            Frontend.getInstance().runMultipleAction(VdcActionType.AttachUserGroupToTag, grpsToAttach);
         }
 
         ArrayList<VdcActionParametersBase> usersToDetach = new ArrayList<VdcActionParametersBase>();
@@ -308,11 +308,11 @@ public class UserListModel extends ListWithDetailsModel
         }
         if (usersToDetach.size() > 0)
         {
-            Frontend.RunMultipleAction(VdcActionType.DetachUserFromTag, usersToDetach);
+            Frontend.getInstance().runMultipleAction(VdcActionType.DetachUserFromTag, usersToDetach);
         }
         if (grpsToDetach.size() > 0)
         {
-            Frontend.RunMultipleAction(VdcActionType.DetachUserGroupFromTag, grpsToDetach);
+            Frontend.getInstance().runMultipleAction(VdcActionType.DetachUserGroupFromTag, grpsToDetach);
         }
 
         cancel();
@@ -466,7 +466,7 @@ public class UserListModel extends ListWithDetailsModel
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.AddUser, parameters,
+        Frontend.getInstance().runMultipleAction(VdcActionType.AddUser, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -499,13 +499,13 @@ public class UserListModel extends ListWithDetailsModel
 
         if (userPrms.size() > 0)
         {
-            Frontend.RunMultipleAction(VdcActionType.RemoveUser, userPrms);
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemoveUser, userPrms);
 
         }
 
         if (groupPrms.size() > 0)
         {
-            Frontend.RunMultipleAction(VdcActionType.RemoveAdGroup, groupPrms);
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemoveAdGroup, groupPrms);
         }
 
         cancel();

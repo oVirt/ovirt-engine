@@ -580,7 +580,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
 
         IdQueryParameters parameters = new IdQueryParameters(storageDomain.getId());
-        Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage, parameters, new AsyncQuery(this,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForStorage, parameters, new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object innerModel, Object innerReturnValue) {
@@ -870,12 +870,12 @@ public abstract class AbstractDiskModel extends DiskModel
             storageDomain_SelectedItemChanged();
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();
         }

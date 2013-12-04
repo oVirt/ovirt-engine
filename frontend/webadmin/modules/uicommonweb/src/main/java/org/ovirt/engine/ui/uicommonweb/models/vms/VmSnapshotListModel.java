@@ -350,7 +350,7 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         if (vm != null)
         {
-            Frontend.RunAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(snapshot.getId(),
+            Frontend.getInstance().runAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(snapshot.getId(),
                     vm.getId()), null, null);
         }
 
@@ -366,7 +366,7 @@ public class VmSnapshotListModel extends SearchableListModel
         {
             Snapshot snapshot = getPreview();
 
-            Frontend.RunAction(VdcActionType.RestoreAllSnapshots,
+            Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), snapshot.getId()),
                     null,
                     null);
@@ -380,7 +380,7 @@ public class VmSnapshotListModel extends SearchableListModel
         {
             Snapshot snapshot = getInPreview();
 
-            Frontend.RunAction(VdcActionType.RestoreAllSnapshots,
+            Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), snapshot.getId()),
                     null,
                     null);
@@ -397,7 +397,7 @@ public class VmSnapshotListModel extends SearchableListModel
         Snapshot snapshot = (Snapshot) getSelectedItem();
         // if snapshot doesn't have memory, just trigger preview without showing popup
         if (!isMemorySnapshotSupported() || snapshot.getMemoryVolume().isEmpty()) {
-            Frontend.RunAction(VdcActionType.TryBackToAllSnapshotsOfVm,
+            Frontend.getInstance().runAction(VdcActionType.TryBackToAllSnapshotsOfVm,
                     new TryBackToAllSnapshotsOfVmParameters(vm.getId(), snapshot.getId()),
                     null);
         }
@@ -436,7 +436,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.TryBackToAllSnapshotsOfVm,
+        Frontend.getInstance().runAction(VdcActionType.TryBackToAllSnapshotsOfVm,
                 new TryBackToAllSnapshotsOfVmParameters(vm.getId(), snapshot.getId(),
                         (Boolean) model.getMemory().getEntity()),
                 new IFrontendActionAsyncCallback() {
@@ -632,7 +632,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.AddVmFromSnapshot, parameters,
+        Frontend.getInstance().runAction(VdcActionType.AddVmFromSnapshot, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

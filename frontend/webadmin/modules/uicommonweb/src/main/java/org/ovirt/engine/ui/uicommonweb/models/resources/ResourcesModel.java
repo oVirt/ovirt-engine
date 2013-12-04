@@ -314,7 +314,7 @@ public class ResourcesModel extends SearchableListModel
                 VdcQueryParametersBase parameters =
                         new VdcQueryParametersBase();
                 parameters.setRefresh(getIsQueryFirstTime());
-                Frontend.RunQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery(this,
+                Frontend.getInstance().runQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object model, Object ReturnValue) {
@@ -365,7 +365,7 @@ public class ResourcesModel extends SearchableListModel
                 new GetUserVmsByUserIdAndGroupsParameters();
         getUserVmsByUserIdAndGroupsParameters.setIncludeDiskData(true);
         getUserVmsByUserIdAndGroupsParameters.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetUserVmsByUserIdAndGroups, getUserVmsByUserIdAndGroupsParameters, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetUserVmsByUserIdAndGroups, getUserVmsByUserIdAndGroupsParameters, _asyncQuery);
     }
 
     // Temporarily converter

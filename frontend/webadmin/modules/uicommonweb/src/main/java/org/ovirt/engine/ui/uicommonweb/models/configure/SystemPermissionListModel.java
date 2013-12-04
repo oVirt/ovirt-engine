@@ -83,7 +83,7 @@ public class SystemPermissionListModel extends SearchableListModel
         VdcQueryParametersBase params = new VdcQueryParametersBase();
         params.setRefresh(false);
 
-        Frontend.RunQuery(VdcQueryType.GetSystemPermissions, params, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetSystemPermissions, params, _asyncQuery);
     }
 
     private void updateActionAvailability()
@@ -183,7 +183,7 @@ public class SystemPermissionListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.AddSystemPermission, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.AddSystemPermission, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -249,7 +249,7 @@ public class SystemPermissionListModel extends SearchableListModel
 
             model.startProgress(null);
 
-            Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {

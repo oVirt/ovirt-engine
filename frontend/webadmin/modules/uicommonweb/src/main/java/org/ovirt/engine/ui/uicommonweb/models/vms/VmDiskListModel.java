@@ -346,7 +346,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -440,7 +440,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(actionType, paramerterList,
+        Frontend.getInstance().runMultipleAction(actionType, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -468,7 +468,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             plugAction = VdcActionType.HotUnPlugDiskFromVm;
         }
 
-        Frontend.RunMultipleAction(plugAction, paramerterList,
+        Frontend.getInstance().runMultipleAction(plugAction, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -517,7 +517,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

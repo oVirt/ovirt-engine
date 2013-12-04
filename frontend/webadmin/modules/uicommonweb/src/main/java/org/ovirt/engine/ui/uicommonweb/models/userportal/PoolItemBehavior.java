@@ -69,7 +69,7 @@ public class PoolItemBehavior extends ItemBehavior
                 Frontend.getInstance().getLoggedInUser(),
                 false);
 
-        Frontend.RunAction(VdcActionType.AttachUserToVmFromPoolAndRun, params,
+        Frontend.getInstance().runAction(VdcActionType.AttachUserToVmFromPoolAndRun, params,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -95,7 +95,7 @@ public class PoolItemBehavior extends ItemBehavior
             getItem().setOsId(poolToOsType.get(entity.getVmPoolId()));
         }
 
-        Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                 new IdQueryParameters(entity.getVmPoolId()),
                 new AsyncQuery(this,
                         new INewAsyncCallback() {

@@ -23,10 +23,11 @@ import com.google.inject.Inject;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GWTRPCCommunicationProvider implements CommunicationProvider {
+
     /**
      * GWT RPC service.
      */
-    private GenericApiGWTServiceAsync service = null;
+    private final GenericApiGWTServiceAsync service;
 
     /**
      * Get the GWT RPC service.
@@ -42,7 +43,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     @Inject
     public GWTRPCCommunicationProvider(final GenericApiGWTServiceAsync asyncService) {
-        service = asyncService;
+        this.service = asyncService;
     }
 
     /**
@@ -51,10 +52,11 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     void transmitOperation(final VdcOperation<?, ?> operation) {
         // Figure out if this is an action or a query.
-        if (operation.getOperation() instanceof VdcActionType) {
+        if (operation.isAction()) {
             // Action
             runAction(operation);
         } else {
+            // Query
             if (operation.isPublic()) {
                 runPublicQuery(operation);
             } else {
@@ -127,8 +129,9 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         List<VdcOperation<?, ?>> queriesList = new ArrayList<VdcOperation<?, ?>>();
         Map<VdcActionType, List<VdcOperation<?, ?>>> actionsMap =
                 new HashMap<VdcActionType, List<VdcOperation<?, ?>>>();
+
         for (VdcOperation<?, ?> operation: operations) {
-            if (operation.getOperation() instanceof VdcActionType) {
+            if (operation.isAction()) {
                 List<VdcOperation<?, ?>> actionsList = actionsMap.get(operation.getOperation());
                 if (actionsList == null) {
                     actionsList = new ArrayList<VdcOperation<?, ?>>();
@@ -139,6 +142,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 queriesList.add(operation);
             }
         }
+
         if (!actionsMap.isEmpty()) {
             // We have some actions, call method to send actions.
             transmitMultipleActions(actionsMap);
@@ -159,6 +163,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 && queriesList.get(0).getCallback() instanceof VdcOperationCallbackList)) {
             List<VdcQueryType> queryTypes = new ArrayList<VdcQueryType>();
             List<VdcQueryParametersBase> parameters = new ArrayList<VdcQueryParametersBase>();
+
             for (VdcOperation<?, ?> operation: new ArrayList<VdcOperation<?, ?>>(queriesList)) {
                 if (operation.isPublic()) {
                     queriesList.remove(operation);
@@ -168,6 +173,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     parameters.add((VdcQueryParametersBase) operation.getParameter());
                 }
             }
+
             getService().RunMultipleQueries((ArrayList<VdcQueryType>) queryTypes,
                     (ArrayList<VdcQueryParametersBase>) parameters,
                     new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
@@ -198,7 +204,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     }
                 }
             });
-        } else {
+        } else if (queriesList.size() == 1) {
             transmitOperation(queriesList.get(0));
         }
     }
@@ -215,9 +221,11 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         for (final Map.Entry<VdcActionType, List<VdcOperation<?, ?>>> actionEntry: actions.entrySet()) {
             List<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
             final List<VdcOperation<?, ?>> allActionOperations = actionEntry.getValue();
+
             for (VdcOperation<?, ?> operation: allActionOperations) {
                 parameters.add((VdcActionParametersBase) operation.getParameter());
             }
+
             if (parameters.size() > 1 || (allActionOperations.size() == 1
                     && allActionOperations.get(0).getCallback() instanceof VdcOperationCallbackList)) {
                 getService().RunMultipleActions(actionEntry.getKey(), (ArrayList<VdcActionParametersBase>) parameters, false,
@@ -255,7 +263,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     }
 
                 });
-            } else {
+            } else if (actionEntry.getValue().size() == 1) {
                 transmitOperation(actionEntry.getValue().get(0));
             }
         }
@@ -270,6 +278,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             final List<VdcOperation<?, ?>> operationList) {
         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
                 new HashMap<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>>();
+
         for (VdcOperation<?, ?> operation: operationList) {
             List<VdcOperation<?, ?>> operationsByCallback = callbackMap.get(operation.getCallback());
             if (operationsByCallback == null) {
@@ -278,6 +287,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             }
             operationsByCallback.add(operation);
         }
+
         return callbackMap;
     }
 
@@ -293,12 +303,14 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     List<?> getOperationResult(final List<VdcOperation<?, ?>> operationList,
             final List<VdcOperation<?, ?>> allOperations, final List<?> allResults) {
         List result = new ArrayList();
+
         for (VdcOperation<?, ?> operation: operationList) {
             int index = allOperations.indexOf(operation);
             if (index > -1 && index < allResults.size()) {
                 result.add(allResults.get(index));
             }
         }
+
         return result;
     }
 
@@ -342,4 +354,5 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             }
         });
     }
+
 }

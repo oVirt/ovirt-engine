@@ -166,10 +166,10 @@ public class ConfigureLocalStorageModel extends Model {
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
             dataCenterVersion_SelectedItemChanged();
         } else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), frontendHash)) {
             frontend_QueryStarted();
         } else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
+                && StringHelper.stringsEqual(Frontend.getInstance().getCurrentContext(), frontendHash)) {
             frontend_QueryComplete();
         }
     }

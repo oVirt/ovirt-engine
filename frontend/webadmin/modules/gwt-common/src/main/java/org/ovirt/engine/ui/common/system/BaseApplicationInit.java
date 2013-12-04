@@ -153,7 +153,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
      * When a user is already logged in on the server, the server provides user data within the host page.
      */
     protected void handleAutoLogin(AutoLoginData autoLoginData) {
-        final DbUser vdcUser = autoLoginData.getVdcUser();
+        final DbUser loggedUser = autoLoginData.getDbUser();
 
         // Use deferred command because CommonModel change needs to happen
         // after all model providers have been properly initialized
@@ -161,7 +161,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
             @Override
             public void execute() {
                 lockInteractionManager.showLoadingIndicator();
-                getLoginModel().autoLogin(vdcUser);
+                getLoginModel().autoLogin(loggedUser);
             }
         });
 

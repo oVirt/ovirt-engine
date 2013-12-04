@@ -222,7 +222,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     }
                 }), getEntity().getId());
 
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getName() //$NON-NLS-1$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getName() //$NON-NLS-1$
                 + " status=maintenance or status=pendingapproval ", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
                 new INewAsyncCallback() {
                     @Override
@@ -860,7 +860,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
             }
         };
-        Frontend.RunMultipleActions(actionTypes,
+        Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
                 new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2 })),
@@ -870,7 +870,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void cleanConnection(StorageServerConnections connection, Guid hostId)
     {
-        Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
+        Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(connection, hostId),
                 null,
                 this);
@@ -1019,7 +1019,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
             }
         };
-        Frontend.RunMultipleActions(actionTypes,
+        Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
                 new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2, callback3 })),
@@ -1123,7 +1123,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         params.setVdsId(host.getId());
         params.setLunIds(lunIds);
         params.setForce(force);
-        Frontend.RunAction(VdcActionType.AddSANStorageDomain, params,
+        Frontend.getInstance().runAction(VdcActionType.AddSANStorageDomain, params,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1198,7 +1198,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId)
     {
-        Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
+        Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
                 dataCenterId),
                 null,
                 this);
@@ -1398,7 +1398,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster),
+        Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1501,7 +1501,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1519,7 +1519,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                 if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                         && retVals.get(i).getSucceeded())
                                 {
-                                    Frontend.RunAction(VdcActionType.ApproveVds,
+                                    Frontend.getInstance().runAction(VdcActionType.ApproveVds,
 
                                             new ApproveVdsParameters(selectedHost.getId()),
                                             null,
@@ -1643,7 +1643,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         addVdsParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.AddVds, addVdsParams,
+        Frontend.getInstance().runAction(VdcActionType.AddVds, addVdsParams,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

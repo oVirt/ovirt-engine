@@ -175,7 +175,7 @@ public class BookmarkListModel extends SearchableListModel
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), _asyncQuery);
     }
 
     public void remove()
@@ -224,7 +224,7 @@ public class BookmarkListModel extends SearchableListModel
 
         getWindow().startProgress(null);
 
-        Frontend.RunAction(VdcActionType.RemoveBookmark, parameters, async);
+        Frontend.getInstance().runAction(VdcActionType.RemoveBookmark, parameters, async);
     }
 
     public void edit()
@@ -303,7 +303,7 @@ public class BookmarkListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
+        Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
                 new BookmarksOperationParameters(bookmark),
                 new IFrontendActionAsyncCallback() {
                     @Override

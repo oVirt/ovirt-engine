@@ -106,7 +106,7 @@ public class UserPermissionListModel extends SearchableListModel
 
         mlaParams.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId, mlaParams, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId, mlaParams, _asyncQuery);
 
         setIsQueryFirstTime(false);
 
@@ -156,7 +156,7 @@ public class UserPermissionListModel extends SearchableListModel
 
             model.startProgress(null);
 
-            Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {

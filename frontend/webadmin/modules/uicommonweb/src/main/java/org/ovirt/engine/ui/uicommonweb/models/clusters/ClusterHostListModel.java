@@ -134,7 +134,7 @@ public class ClusterHostListModel extends HostListModel
             list.add(new VdsActionParameters(vds.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.UpdateMomPolicy, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.UpdateMomPolicy, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

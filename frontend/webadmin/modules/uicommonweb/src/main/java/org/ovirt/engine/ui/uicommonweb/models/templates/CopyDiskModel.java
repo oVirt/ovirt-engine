@@ -103,7 +103,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
             return;
         }
 
-        Frontend.RunMultipleAction(getActionType(), parameters,
+        Frontend.getInstance().runMultipleAction(getActionType(), parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

@@ -334,7 +334,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         if (!quota.getId().equals(Guid.Empty)) {
             actionType = VdcActionType.UpdateQuota;
         }
-        Frontend.RunAction(actionType,
+        Frontend.getInstance().runAction(actionType,
                 parameters,
                 new IFrontendActionAsyncCallback() {
 
@@ -542,7 +542,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         };
 
         IdQueryParameters quotaParameters = new IdQueryParameters(outer_quota.getId());
-        Frontend.RunQuery(VdcQueryType.GetQuotaByQuotaId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetQuotaByQuotaId,
                 quotaParameters,
                 asyncQuery);
 
@@ -597,7 +597,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveQuota, prms,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveQuota, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

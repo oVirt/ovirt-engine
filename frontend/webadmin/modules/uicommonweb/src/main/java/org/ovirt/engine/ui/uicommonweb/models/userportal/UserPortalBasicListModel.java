@@ -126,7 +126,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
         super.syncSearch();
         VdcQueryParametersBase queryParameters = new VdcQueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAllVmsAndVmPools, queryParameters,
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllVmsAndVmPools, queryParameters,
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
@@ -250,7 +250,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
             };
 
             VmPool pool = (VmPool) entity;
-            Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+            Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
                     _asyncQuery);
         }

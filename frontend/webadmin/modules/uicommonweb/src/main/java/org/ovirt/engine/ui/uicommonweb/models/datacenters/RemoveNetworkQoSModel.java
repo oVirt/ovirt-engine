@@ -48,7 +48,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
             parameters.add(parameter);
             queryTypes.add(VdcQueryType.GetVnicProfilesByNetworkQosId);
         }
-        Frontend.RunMultipleQueries(queryTypes, parameters, new IFrontendMultipleQueryAsyncCallback() {
+        Frontend.getInstance().runMultipleQueries(queryTypes, parameters, new IFrontendMultipleQueryAsyncCallback() {
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
@@ -87,7 +87,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
             parameter.setNetworkQoS((NetworkQoS) networkQoS);
             parameters.add(parameter);
         }
-        Frontend.RunMultipleAction(VdcActionType.RemoveNetworkQoS, parameters);
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveNetworkQoS, parameters);
 
         cancel();
     }

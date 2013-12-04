@@ -225,7 +225,7 @@ public class RoleListModel extends ListWithDetailsModel
 
         MultilevelAdministrationsQueriesParameters tempVar = new MultilevelAdministrationsQueriesParameters();
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAllRoles, tempVar, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, tempVar, _asyncQuery);
         setIsQueryFirstTime(false);
     }
 
@@ -281,7 +281,7 @@ public class RoleListModel extends ListWithDetailsModel
         for (Object item : getSelectedItems())
         {
             Role role = (Role) item;
-            Frontend.RunAction(VdcActionType.RemoveRole, new RolesParameterBase(role.getId()));
+            Frontend.getInstance().runAction(VdcActionType.RemoveRole, new RolesParameterBase(role.getId()));
         }
 
         cancel();
@@ -336,7 +336,7 @@ public class RoleListModel extends ListWithDetailsModel
                     }
                 };
                 Role role = (Role) getSelectedItem();
-                Frontend.RunQuery(
+                Frontend.getInstance().runQuery(
                         VdcQueryType.GetRoleActionGroupsByRoleId,
                         new IdQueryParameters(role.getId()),
                         _asyncQuery);
@@ -530,7 +530,7 @@ public class RoleListModel extends ListWithDetailsModel
             RoleWithActionGroupsParameters tempVar = new RoleWithActionGroupsParameters();
             tempVar.setRole(role);
             tempVar.setActionGroups(actions);
-            Frontend.RunAction(VdcActionType.AddRoleWithActionGroups, tempVar,
+            Frontend.getInstance().runAction(VdcActionType.AddRoleWithActionGroups, tempVar,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
@@ -547,7 +547,7 @@ public class RoleListModel extends ListWithDetailsModel
             detachActionGroup = Linq.except(publicAttachedActions, actions);
             attachActionGroup = Linq.except(actions, publicAttachedActions);
 
-            Frontend.RunAction(VdcActionType.UpdateRole, new RolesOperationsParameters(role),
+            Frontend.getInstance().runAction(VdcActionType.UpdateRole, new RolesOperationsParameters(role),
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
@@ -561,14 +561,14 @@ public class RoleListModel extends ListWithDetailsModel
                                     ActionGroupsToRoleParameter tempVar2 = new ActionGroupsToRoleParameter();
                                     tempVar2.setActionGroups(roleListModel.detachActionGroup);
                                     tempVar2.setRoleId(roleListModel.role.getId());
-                                    Frontend.RunAction(VdcActionType.DetachActionGroupsFromRole, tempVar2);
+                                    Frontend.getInstance().runAction(VdcActionType.DetachActionGroupsFromRole, tempVar2);
                                 }
                                 if (roleListModel.attachActionGroup.size() > 0)
                                 {
                                     ActionGroupsToRoleParameter tempVar3 = new ActionGroupsToRoleParameter();
                                     tempVar3.setActionGroups(roleListModel.attachActionGroup);
                                     tempVar3.setRoleId(roleListModel.role.getId());
-                                    Frontend.RunAction(VdcActionType.AttachActionGroupsToRole, tempVar3);
+                                    Frontend.getInstance().runAction(VdcActionType.AttachActionGroupsToRole, tempVar3);
                                 }
                                 roleListModel.getWindow().stopProgress();
                                 roleListModel.cancel();

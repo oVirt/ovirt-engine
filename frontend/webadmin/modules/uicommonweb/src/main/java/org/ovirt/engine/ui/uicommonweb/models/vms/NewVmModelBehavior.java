@@ -213,7 +213,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             }
         });
 
-        Frontend.RunQuery(VdcQueryType.GetTemplateInterfacesByTemplateId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplateInterfacesByTemplateId,
                 new IdQueryParameters(template.getId()),
                 query);
     }

@@ -155,7 +155,7 @@ public class TaskListModel extends SearchableListModel {
         };
         GetJobsByOffsetQueryParameters tempVar = new GetJobsByOffsetQueryParameters();
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetJobsByOffset,
+        Frontend.getInstance().runQuery(VdcQueryType.GetJobsByOffset,
                 tempVar, _asyncQuery);
 
         setIsQueryFirstTime(false);
@@ -228,7 +228,7 @@ public class TaskListModel extends SearchableListModel {
                 };
                 GetJobsByCorrelationIdQueryParameters parameters = new GetJobsByCorrelationIdQueryParameters();
                 parameters.setCorrelationId(guidOrCorrelationId);
-                Frontend.RunQuery(VdcQueryType.GetJobsByCorrelationId,
+                Frontend.getInstance().runQuery(VdcQueryType.GetJobsByCorrelationId,
                         parameters, _asyncQuery);
             } else {
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -255,7 +255,7 @@ public class TaskListModel extends SearchableListModel {
                     }
                 };
                 IdQueryParameters parameters = new IdQueryParameters(new Guid(guidOrCorrelationId));
-                Frontend.RunQuery(VdcQueryType.GetJobByJobId,
+                Frontend.getInstance().runQuery(VdcQueryType.GetJobByJobId,
                         parameters, _asyncQuery);
             }
             return false;
@@ -294,7 +294,7 @@ public class TaskListModel extends SearchableListModel {
     }
 
     /**
-     * @param string - the name of the action (e.g. "Remove multiple disk from vm-Win7") cannot exceed 40 chars.
+     * @param actionDescription the name of the action (e.g. "Remove multiple disk from vm-Win7") cannot exceed 40 chars.
      * @return frontend correlation id Description
      * example: _WEBADMIN_098437232_Remove_multiple_disk_from_vm-Win7
      */

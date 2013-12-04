@@ -218,14 +218,14 @@ public class UserPortalLoginModel extends LoginModel
                 stopProgress();
             }
         };
-        Frontend.LoginAsync((String) getUserName().getEntity(), (String) getPassword().getEntity(),
+        Frontend.getInstance().loginAsync((String) getUserName().getEntity(), (String) getPassword().getEntity(),
                 (String) getDomain().getSelectedItem(), false, asyncQuery);
     }
 
     private void changePassword()
     {
         // TODO: Invoke the async query and handle failure correctly
-        Frontend.RunAction(VdcActionType.ChangeUserPassword,
+        Frontend.getInstance().runAction(VdcActionType.ChangeUserPassword,
                         new ChangeUserPasswordParameters((String) getUserName().getEntity(),
                                 (String) getPassword().getEntity(),
                                 (String) getNewPassword().getEntity(),
@@ -362,7 +362,7 @@ public class UserPortalLoginModel extends LoginModel
             queryTypeList.add(VdcQueryType.GetRoleActionGroupsByRoleId);
             queryParamsList.add(new IdQueryParameters(roleId));
         }
-        Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
+        Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {

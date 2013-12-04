@@ -34,7 +34,7 @@ public class QuotaClusterListModel extends SearchableListModel {
             }
         };
         IdQueryParameters params = new IdQueryParameters(((Quota) getEntity()).getId());
-        Frontend.RunQuery(VdcQueryType.GetQuotaVdsGroupByQuotaId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetQuotaVdsGroupByQuotaId,
                 params,
                 asyncQuery);
     }

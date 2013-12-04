@@ -70,7 +70,7 @@ public class DiskVmListModel extends SearchableListModel
         IdQueryParameters getVmsByDiskGuidParameters = new IdQueryParameters(disk.getId());
         getVmsByDiskGuidParameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, _asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, _asyncQuery);
 
         setIsQueryFirstTime(false);
     }

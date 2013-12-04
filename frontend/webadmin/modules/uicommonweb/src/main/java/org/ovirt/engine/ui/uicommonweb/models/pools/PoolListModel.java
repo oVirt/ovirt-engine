@@ -238,7 +238,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         final PoolListModel poolListModel = this;
 
-        Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
 
                 new AsyncQuery(this, new INewAsyncCallback() {
@@ -386,7 +386,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveVmPool, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmPool, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -519,7 +519,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                         if (model.getIsNew())
                         {
-                            Frontend.RunMultipleAction(VdcActionType.AddVmPoolWithVms,
+                            Frontend.getInstance().runMultipleAction(VdcActionType.AddVmPoolWithVms,
                                     new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
@@ -532,7 +532,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         }
                         else
                         {
-                            Frontend.RunMultipleAction(VdcActionType.UpdateVmPoolWithVms,
+                            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPoolWithVms,
                                     new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override

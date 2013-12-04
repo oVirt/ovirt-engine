@@ -287,7 +287,7 @@ public class ProviderModel extends Model {
 
     protected void actualSave() {
         flush();
-        Frontend.RunAction(action, new ProviderParameters(provider), new IFrontendActionAsyncCallback() {
+        Frontend.getInstance().runAction(action, new ProviderParameters(provider), new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {
@@ -310,7 +310,7 @@ public class ProviderModel extends Model {
     private void onTest() {
         flush();
         startProgress(null);
-        Frontend.RunAction(VdcActionType.TestProviderConnectivity,
+        Frontend.getInstance().runAction(VdcActionType.TestProviderConnectivity,
                 new ProviderParameters(provider),
                 new IFrontendActionAsyncCallback() {
 
@@ -366,7 +366,7 @@ public class ProviderModel extends Model {
     }
 
     private void importChain() {
-        Frontend.RunAction(VdcActionType.ImportProviderCertificateChain,
+        Frontend.getInstance().runAction(VdcActionType.ImportProviderCertificateChain,
                 new ProviderParameters(provider),
                 new IFrontendActionAsyncCallback() {
 
@@ -375,7 +375,7 @@ public class ProviderModel extends Model {
                 VdcReturnValueBase res = result.getReturnValue();
 
                 if (res != null && res.getSucceeded()) {
-                    Frontend.RunAction(VdcActionType.TestProviderConnectivity,
+                    Frontend.getInstance().runAction(VdcActionType.TestProviderConnectivity,
                             new ProviderParameters(provider),
                             new IFrontendActionAsyncCallback() {
 

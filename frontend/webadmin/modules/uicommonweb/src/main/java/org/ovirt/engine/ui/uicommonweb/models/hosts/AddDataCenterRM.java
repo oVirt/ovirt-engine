@@ -99,7 +99,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
                 StoragePoolManagementParameter parameters = new StoragePoolManagementParameter(dataCenter);
                 parameters.setCorrelationId(getCorrelationId());
-                Frontend.RunAction(VdcActionType.AddEmptyStoragePool, parameters,
+                Frontend.getInstance().runAction(VdcActionType.AddEmptyStoragePool, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
@@ -230,7 +230,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         if (enlistmentContext.getOldClusterId() != null) {
 
             // Switch host back to previous cluster.
-            Frontend.RunAction(VdcActionType.ChangeVDSCluster,
+            Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
                     new ChangeVDSClusterParameters(enlistmentContext.getOldClusterId(), host.getId()),
                     new IFrontendActionAsyncCallback() {
                         @Override
@@ -260,7 +260,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             // Remove cluster.
             if (enlistmentContext.getClusterId() != null) {
 
-                Frontend.RunAction(VdcActionType.RemoveVdsGroup,
+                Frontend.getInstance().runAction(VdcActionType.RemoveVdsGroup,
                         new VdsGroupParametersBase(enlistmentContext.getClusterId()),
                         new IFrontendActionAsyncCallback() {
                             @Override
@@ -282,7 +282,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         // Try to remove data center.
         if (enlistmentContext.getDataCenterId() != null) {
-            Frontend.RunAction(VdcActionType.RemoveStoragePool,
+            Frontend.getInstance().runAction(VdcActionType.RemoveStoragePool,
                     new StoragePoolParametersBase(enlistmentContext.getDataCenterId()));
         }
 

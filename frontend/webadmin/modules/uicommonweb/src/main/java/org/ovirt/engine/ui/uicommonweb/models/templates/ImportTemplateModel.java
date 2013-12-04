@@ -69,7 +69,7 @@ public class ImportTemplateModel extends ImportVmModel
             }
         }
 
-        Frontend.RunQuery(VdcQueryType.Search,
+        Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters(searchPattern.toString(), SearchType.VmTemplate),
                 new AsyncQuery(this, new INewAsyncCallback() {
 

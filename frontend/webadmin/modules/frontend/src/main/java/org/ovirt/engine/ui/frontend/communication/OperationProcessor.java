@@ -18,6 +18,7 @@ import com.google.inject.Inject;
  * provider.
  */
 public class OperationProcessor {
+
     /**
      * Retry threshold.
      */
@@ -31,8 +32,7 @@ public class OperationProcessor {
     /**
      * The collection of pending operations.
      */
-    @SuppressWarnings("rawtypes")
-    private Collection<VdcOperation> pending;
+    private final Collection<VdcOperation<?, ?>> pending;
 
     /**
      * GWT scheduler.
@@ -43,11 +43,10 @@ public class OperationProcessor {
      * Constructor for {@code OperationProcess}.
      * @param commProvider The communication provider that communicates with the back-end.
      */
-    @SuppressWarnings("rawtypes")
     @Inject
     public OperationProcessor(final CommunicationProvider commProvider) {
         this.communicationProvider = commProvider;
-        this.pending = new ArrayList<VdcOperation>();
+        this.pending = new ArrayList<VdcOperation<?, ?>>();
     }
 
     /**
@@ -79,15 +78,15 @@ public class OperationProcessor {
      * several operations into a single one. For example, lets say that the queue has 4 operations in it. 3
      * of those operations came from an operation list add, and 1 from a single add. The 3 operations will all
      * have the same callback object. The 4th operation will have a different callback. In essence the 4 operations
-     * only have 2 call backs. <br />
-     * <br />
+     * only have 2 call backs.
+     * <p>
      * If the operations are all of the same type, we can merge all those operations into a single list of operations
      * that is handed to the communications provider. If the provider has a way of sending that list in a single
      * communications request we will have saved a round trip to the back end. In order to effectively handle error
      * conditions we will want to replace the call backs in the operations with our own so we can add behavior to
      * the call backs. When we replace those call backs with our own we need to make sure that we only create 2
-     * call backs and that they line up with the original call backs.<br />
-     * <br />
+     * call backs and that they line up with the original call backs.
+     * <p>
      * When the provider returns the results, we can then use our replaced call backs to handle errors or other things
      * and call the original call backs.
      *
@@ -99,6 +98,7 @@ public class OperationProcessor {
         Map<VdcOperationCallback<VdcOperation<?, ?>, ?>, VdcOperationCallback<VdcOperation<?, ?>, ?>> usedCallbacks =
                 new HashMap<VdcOperationCallback<VdcOperation<?, ?>, ?>, VdcOperationCallback<VdcOperation<?, ?>, ?>>();
         VdcOperation<?, ?> operation;
+
         while ((operation = manager.pollOperation()) != null) {
             if (!operation.allowDuplicates() && (pending.contains(operation) || operations.contains(operation))) {
                 // Skip this one as the result is pending.
@@ -122,6 +122,7 @@ public class OperationProcessor {
             }
             operations.add(new VdcOperation(operation, replacementCallback));
         }
+
         // Mark the operations pending.
         addPending(operations);
         communicationProvider.transmitOperationList(operations);
@@ -241,9 +242,11 @@ public class OperationProcessor {
     private VdcOperation<?, ?> getOriginalOperation(final VdcOperation<?, ?> operation) {
         // Get the original operation.
         VdcOperation<?, ?> originalOperation = operation;
+
         while (originalOperation.getSource() != null) {
             originalOperation = originalOperation.getSource();
         }
+
         return originalOperation;
     }
 
@@ -263,4 +266,5 @@ public class OperationProcessor {
     public void logoutUser(final Object userObject, final UserCallback<?> callback) {
         communicationProvider.logout(userObject, callback);
     }
+
 }

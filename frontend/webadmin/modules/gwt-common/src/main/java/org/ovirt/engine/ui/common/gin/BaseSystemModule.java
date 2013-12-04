@@ -38,12 +38,8 @@ public abstract class BaseSystemModule extends AbstractGinModule {
 
     protected void bindCommonInfrastructure(Class<? extends PlaceManager> placeManager) {
         bindEventBus();
-        bind(GenericApiGWTServiceAsync.class).asEagerSingleton();
+        bindFrontendInfrastructure();
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
-        bind(OperationProcessor.class).asEagerSingleton();
-        bind(VdcOperationManager.class).asEagerSingleton();
-        bind(CommunicationProvider.class).to(GWTRPCCommunicationProvider.class).in(Singleton.class);
-        bind(Frontend.class).asEagerSingleton();
         bind(RootPresenter.class).asEagerSingleton();
         bind(PlaceManager.class).to(placeManager);
         bind(placeManager).in(Singleton.class);
@@ -55,8 +51,6 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(ClientStorage.class).in(Singleton.class);
         bind(ApplicationFocusManager.class).asEagerSingleton();
         bind(LockInteractionManager.class).asEagerSingleton();
-        bind(AppErrors.class).in(Singleton.class);
-        bind(VdsmErrors.class).in(Singleton.class);
     }
 
     private void bindEventBus() {
@@ -64,6 +58,15 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(com.google.web.bindery.event.shared.EventBus.class).to(com.google.gwt.event.shared.EventBus.class);
         // Bind legacy EventBus interface to SimpleEventBus implementation
         bind(com.google.gwt.event.shared.EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
+    }
+
+    private void bindFrontendInfrastructure() {
+        bind(Frontend.class).in(Singleton.class);
+        requestStaticInjection(Frontend.InstanceHolder.class);
+        bind(VdcOperationManager.class).in(Singleton.class);
+        bind(OperationProcessor.class).in(Singleton.class);
+        bind(CommunicationProvider.class).to(GWTRPCCommunicationProvider.class).in(Singleton.class);
+        bind(GenericApiGWTServiceAsync.class).in(Singleton.class);
     }
 
     protected void bindResourceConfiguration(
@@ -77,6 +80,8 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(CommonApplicationResources.class).to(resources).in(Singleton.class);
         bind(CommonApplicationTemplates.class).to(templates).in(Singleton.class);
         bind(DynamicMessages.class).to(dynamicMessages).in(Singleton.class);
+        bind(AppErrors.class).in(Singleton.class);
+        bind(VdsmErrors.class).in(Singleton.class);
     }
 
 }

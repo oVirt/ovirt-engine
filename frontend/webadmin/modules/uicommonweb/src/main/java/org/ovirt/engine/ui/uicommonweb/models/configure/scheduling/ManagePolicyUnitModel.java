@@ -27,7 +27,7 @@ public class ManagePolicyUnitModel extends Model {
     }
 
     public void remove(final PolicyUnit policyUnit) {
-        Frontend.RunAction(VdcActionType.RemoveExternalPolicyUnit,
+        Frontend.getInstance().runAction(VdcActionType.RemoveExternalPolicyUnit,
                 new RemoveExternalPolicyUnitParameters(policyUnit.getId()), new IFrontendActionAsyncCallback() {
 
                     @Override

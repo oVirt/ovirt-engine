@@ -315,7 +315,7 @@ public class TemplateDiskListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

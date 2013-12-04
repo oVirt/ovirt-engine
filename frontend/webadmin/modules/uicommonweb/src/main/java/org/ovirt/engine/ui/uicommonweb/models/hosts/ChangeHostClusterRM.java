@@ -40,7 +40,7 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
             ChangeVDSClusterParameters parameters =
                     new ChangeVDSClusterParameters(enlistmentContext.getClusterId(), host.getId());
             parameters.setCorrelationId(getCorrelationId());
-            Frontend.RunAction(VdcActionType.ChangeVDSCluster,
+            Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
                     parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override

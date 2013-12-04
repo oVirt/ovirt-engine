@@ -16,7 +16,7 @@ public class UserPortalAdElementListModel extends AdElementListModel {
 
     @Override
     protected void findUsers(String searchString, AsyncQuery query) {
-        Frontend.RunQuery(VdcQueryType.GetAllDbUsers, getParameters(), query);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllDbUsers, getParameters(), query);
     }
 
     private VdcQueryParametersBase getParameters() {

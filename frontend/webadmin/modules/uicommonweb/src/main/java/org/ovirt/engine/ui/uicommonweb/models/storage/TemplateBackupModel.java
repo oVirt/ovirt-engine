@@ -107,7 +107,7 @@ public class TemplateBackupModel extends VmBackupModel
                                 pool.getId()));
                     }
 
-                    Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplateFromImportExport, prms);
+                    Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplateFromImportExport, prms);
                 }
             }
         }),
@@ -217,7 +217,7 @@ public class TemplateBackupModel extends VmBackupModel
 
         model.startProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.ImportVmTemplate, prms,
+        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmTemplate, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -325,7 +325,7 @@ public class TemplateBackupModel extends VmBackupModel
                         GetAllFromExportDomainQueryParameters tempVar =
                                 new GetAllFromExportDomainQueryParameters(dataCenter.getId(), backupModel.getEntity()
                                         .getId());
-                        Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, _asyncQuery1);
+                        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, _asyncQuery1);
                     }
                 }
             };
