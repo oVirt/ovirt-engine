@@ -475,7 +475,7 @@ public class VdsManager {
     }
 
     /**
-     * This function called when vds have failed vm attempts one in predefined time. Its increments failure attemts to
+     * This function called when vds have failed vm attempts one in predefined time. Its increments failure attempts to
      * one
      *
      * @param obj
@@ -486,7 +486,7 @@ public class VdsManager {
         synchronized (getLockObj()) {
             VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
             /**
-             * Disable timer if vds returns from suspitious mode
+             * Disable timer if vds returns from suspicious mode
              */
             if (mFailedToRunVmAttempts.decrementAndGet() == 0) {
                 SchedulerUtilQuartzImpl.getInstance().pauseJob(duringFailureJobId);
@@ -542,7 +542,7 @@ public class VdsManager {
             if (FeatureSupported.hardwareInfo(clusterCompatibility) &&
                 // If the feature is enabled in cluster level, we continue by verifying that this VDS also
                 // supports the specific cluster level. Otherwise getHardwareInfo API won't exist for the
-                // host and an exception will be raised by vdsm.
+                // host and an exception will be raised by VDSM.
                 (hostVersions = vds.getSupportedClusterVersionsSet()) != null &&
                 hostVersions.contains(clusterCompatibility)) {
                 VDSReturnValue ret = ResourceManager.getInstance().runVdsCommand(VDSCommandType.GetHardwareInfo,
