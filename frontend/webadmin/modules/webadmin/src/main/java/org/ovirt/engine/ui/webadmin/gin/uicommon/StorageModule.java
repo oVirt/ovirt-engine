@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -122,11 +122,11 @@ public class StorageModule extends AbstractGinModule {
     // Searchable Detail Models
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, StorageListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, StorageListModel, PermissionListModel>(
+        return new SearchableDetailTabModelProvider<Permissions, StorageListModel, PermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 PermissionListModel.class) {

@@ -14,7 +14,6 @@ import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
-import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.PermissionResource;
@@ -23,7 +22,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -33,7 +32,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAssignedPermissionsResource
-        extends AbstractBackendCollectionResource<Permission, permissions>
+        extends AbstractBackendCollectionResource<Permission, Permissions>
         implements AssignedPermissionsResource {
 
     private Guid targetId;
@@ -54,7 +53,7 @@ public class BackendAssignedPermissionsResource
                                               VdcQueryParametersBase queryParams,
                                               Class<? extends BaseResource> suggestedParentType,
                                               VdcObjectType objectType) {
-        super(Permission.class, permissions.class);
+        super(Permission.class, Permissions.class);
         this.targetId = targetId;
         this.queryType = queryType;
         this.queryParams = queryParams;
@@ -63,9 +62,9 @@ public class BackendAssignedPermissionsResource
     }
 
     @Override
-    public Permissions list() {
-        Set<permissions> permissions = new TreeSet<permissions>(new PermissionsComparator());
-        List<permissions> directPermissions = getBackendCollection(queryType, queryParams);
+    public org.ovirt.engine.api.model.Permissions list() {
+        Set<Permissions> permissions = new TreeSet<Permissions>(new PermissionsComparator());
+        List<Permissions> directPermissions = getBackendCollection(queryType, queryParams);
         permissions.addAll(directPermissions);
         if (queryType.equals(VdcQueryType.GetPermissionsForObject)) {
             permissions.addAll(getInheritedPermissions());
@@ -73,11 +72,11 @@ public class BackendAssignedPermissionsResource
         return mapCollection(permissions);
     }
 
-    private List<permissions> getInheritedPermissions() {
+    private List<Permissions> getInheritedPermissions() {
         ((GetPermissionsForObjectParameters)queryParams).setVdcObjectType(objectType);
         ((GetPermissionsForObjectParameters)queryParams).setDirectOnly(false);
-        List<permissions> inheritedPermissions = getBackendCollection(queryType, queryParams);
-        for (permissions entity : inheritedPermissions) {
+        List<Permissions> inheritedPermissions = getBackendCollection(queryType, queryParams);
+        for (Permissions entity : inheritedPermissions) {
             if (objectType != null) {
                 entity.setObjectType(objectType);
                 entity.setObjectId(targetId);
@@ -86,9 +85,9 @@ public class BackendAssignedPermissionsResource
         return inheritedPermissions;
     }
 
-    static class PermissionsComparator implements Comparator<permissions>, Serializable {
+    static class PermissionsComparator implements Comparator<Permissions>, Serializable {
         @Override
-        public int compare(permissions o1, permissions o2) {
+        public int compare(Permissions o1, Permissions o2) {
             String id1 = o1.getId().toString();
             String id2 = o2.getId().toString();
             return id1.compareTo(id2);
@@ -101,7 +100,7 @@ public class BackendAssignedPermissionsResource
                            isPrincipalSubCollection()
                            ? new String[] {"role.id", "dataCenter|cluster|host|storageDomain|vm|vmpool|template.id"}
                            : new String[] {"role.id", "user|group.id"});
-        permissions entity = map(permission, getPermissionsTemplate(permission));
+        Permissions entity = map(permission, getPermissionsTemplate(permission));
         return performCreate(VdcActionType.AddPermission,
                                getPrincipal(entity, permission),
                                new QueryIdResolver<Guid>(VdcQueryType.GetPermissionById,
@@ -119,9 +118,9 @@ public class BackendAssignedPermissionsResource
         return inject(new BackendPermissionResource(id, this, suggestedParentType));
     }
 
-    protected Permissions mapCollection(Set<permissions> entities) {
-        Permissions collection = new Permissions();
-        for (permissions entity : entities) {
+    protected org.ovirt.engine.api.model.Permissions mapCollection(Set<Permissions> entities) {
+        org.ovirt.engine.api.model.Permissions collection = new org.ovirt.engine.api.model.Permissions();
+        for (Permissions entity : entities) {
              castEveryonePermissionsToUser(entity);
              Permission permission = map(entity, getUserById(entity.getad_element_id()));
              collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? suggestedParentType : Group.class));
@@ -129,7 +128,7 @@ public class BackendAssignedPermissionsResource
         return collection;
     }
 
-    private void castEveryonePermissionsToUser(permissions entity) {
+    private void castEveryonePermissionsToUser(Permissions entity) {
         if (entity.getad_element_id() != null &&
             entity.getad_element_id().equals(Guid.EVERYONE) &&
             queryType.equals(VdcQueryType.GetPermissionsByAdElementId)) {
@@ -170,7 +169,7 @@ public class BackendAssignedPermissionsResource
      * @param user the permission owner
      * @return permission
      */
-    public Permission map(permissions entity, DbUser user) {
+    public Permission map(Permissions entity, DbUser user) {
         Permission template = new Permission();
         if (entity.getad_element_id() != null) {
             if (isUser(user)) {
@@ -193,7 +192,7 @@ public class BackendAssignedPermissionsResource
      * @pre completeness of "user|group.id" already validated if not
      * user sub-collection
      */
-    protected PermissionsOperationsParametes getPrincipal(permissions entity, Permission permission) {
+    protected PermissionsOperationsParametes getPrincipal(Permissions entity, Permission permission) {
         PermissionsOperationsParametes ret = null;
         if (isUserSubCollection() || permission.isSetUser()) {
             DbUser user = new DbUser();
@@ -226,8 +225,8 @@ public class BackendAssignedPermissionsResource
         return permission;
     }
 
-    protected permissions getPermissionsTemplate(Permission perm) {
-        permissions permission = new permissions();
+    protected Permissions getPermissionsTemplate(Permission perm) {
+        Permissions permission = new Permissions();
         // allow the target Id to be implicit in the client-provided
         // representation
         if (isPrincipalSubCollection()) {
@@ -257,15 +256,15 @@ public class BackendAssignedPermissionsResource
         return Group.class.equals(suggestedParentType);
     }
 
-    protected permissions getPermissions(String id) {
-        return getEntity(permissions.class,
+    protected Permissions getPermissions(String id) {
+        return getEntity(Permissions.class,
                          VdcQueryType.GetPermissionById,
                          new IdQueryParameters(new Guid(id)),
                          id);
     }
 
     @Override
-    protected Permission doPopulate(Permission model, permissions entity) {
+    protected Permission doPopulate(Permission model, Permissions entity) {
         return model;
     }
 }

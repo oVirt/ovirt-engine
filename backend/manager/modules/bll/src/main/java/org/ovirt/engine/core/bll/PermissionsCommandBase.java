@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -45,7 +45,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
      * @return Object name.
      */
     public String getVdcObjectName() {
-        permissions perms = getParameters().getPermission();
+        Permissions perms = getParameters().getPermission();
         return getDbFacade().getEntityNameByIdAndType(perms.getObjectId(), perms.getObjectType());
     }
 
@@ -72,7 +72,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     }
 
     protected boolean isSystemSuperUser() {
-        permissions superUserPermission =
+        Permissions superUserPermission =
                 getPermissionDAO()
                         .getForRoleAndAdElementAndObjectWithGroupCheck(
                                 PredefinedRoles.SUPER_USER.getId(),
@@ -86,7 +86,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
-        permissions permission = getParameters().getPermission();
+        Permissions permission = getParameters().getPermission();
         permissionList.add(new PermissionSubject(permission.getObjectId(),
                 permission.getObjectType(),
                 getActionType().getActionGroup()));

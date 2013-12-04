@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.user;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.ObjectNameColumn;
@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.GroupNameColumn;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, permissions, UserListModel, UserPermissionListModel>
+public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Permissions, UserListModel, UserPermissionListModel>
         implements SubTabUserPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabUserPermissionView> {
@@ -28,7 +28,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
     }
 
     @Inject
-    public SubTabUserPermissionView(SearchableDetailModelProvider<permissions, UserListModel, UserPermissionListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabUserPermissionView(SearchableDetailModelProvider<Permissions, UserListModel, UserPermissionListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
@@ -38,31 +38,31 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
     void initTable(ApplicationConstants constants) {
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
+        TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
             @Override
-            public String getValue(permissions object) {
+            public String getValue(Permissions object) {
                 return object.getRoleName();
             }
         };
         getTable().addColumn(roleColumn, constants.rolePermission());
 
-        TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
+        TextColumnWithTooltip<Permissions> permissionColumn = new ObjectNameColumn<Permissions>() {
             @Override
-            protected Object[] getRawValue(permissions object) {
+            protected Object[] getRawValue(Permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName() };
             }
         };
         getTable().addColumn(permissionColumn, constants.objectPermission());
 
-        TextColumnWithTooltip<permissions> groupColumn = new GroupNameColumn<permissions>() {
+        TextColumnWithTooltip<Permissions> groupColumn = new GroupNameColumn<Permissions>() {
             @Override
-            protected Object[] getRawValue(permissions object) {
+            protected Object[] getRawValue(Permissions object) {
                 return new Object[] { getDetailModel().getEntity(), object.getad_element_id(), object.getOwnerName() };
             }
         };
         getTable().addColumn(groupColumn, constants.inheritedPermission());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<permissions>(constants.removePermission()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<Permissions>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

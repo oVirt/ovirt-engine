@@ -5,6 +5,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
@@ -197,7 +197,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel> getSubTabDataCenterNetworkQoSModelProvider();
 
-    SearchableDetailModelProvider<permissions, DataCenterListModel, PermissionListModel> getSubTabDataCenterPermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, DataCenterListModel, PermissionListModel> getSubTabDataCenterPermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> getSubTabDataCenterEventModelProvider();
 
@@ -219,7 +219,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getSubTabStorageDiskModelProvider();
 
-    SearchableDetailModelProvider<permissions, StorageListModel, PermissionListModel> getSubTabStoragePermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel> getSubTabStoragePermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> getSubTabStorageEventModelProvider();
 
@@ -237,7 +237,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> getSubTabClusterGlusterHookModelProvider();
 
-    SearchableDetailModelProvider<permissions, ClusterListModel, PermissionListModel> getSubTabClusterPermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel> getSubTabClusterPermissionModelProvider();
 
     // VirtualMachine
 
@@ -251,7 +251,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<String, VmListModel, VmAppListModel> getSubTabVirtualMachineApplicationModelProvider();
 
-    SearchableDetailModelProvider<permissions, VmListModel, PermissionListModel> getSubTabVirtualMachinePermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, VmListModel, PermissionListModel> getSubTabVirtualMachinePermissionModelProvider();
 
     DetailModelProvider<VmListModel, VmSessionsModel> getSubTabVirtualMachineSessionsModelProvider();
 
@@ -271,7 +271,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> getSubTabHostGlusterSwiftModelProvider();
 
-    SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> getSubTabHostPermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, HostListModel, PermissionListModel> getSubTabHostPermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> getSubTabHostEventModelProvider();
 
@@ -283,7 +283,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> getSubTabPoolVmModelProvider();
 
-    SearchableDetailModelProvider<permissions, PoolListModel, PermissionListModel> getSubTabPoolPermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, PoolListModel, PermissionListModel> getSubTabPoolPermissionModelProvider();
 
     // Template
 
@@ -297,7 +297,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> getSubTabTemplateStorageModelProvider();
 
-    SearchableDetailModelProvider<permissions, TemplateListModel, PermissionListModel> getSubTabTemplatePermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, TemplateListModel, PermissionListModel> getSubTabTemplatePermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, TemplateListModel, TemplateEventListModel> getSubTabTemplateEventModelProvider();
 
@@ -305,7 +305,7 @@ public interface ClientGinjectorExtension {
 
     DetailModelProvider<UserListModel, UserGeneralModel> getSubTabUserGeneralModelProvider();
 
-    SearchableDetailModelProvider<permissions, UserListModel, UserPermissionListModel> getSubTabUserPermissionlModelProvider();
+    SearchableDetailModelProvider<Permissions, UserListModel, UserPermissionListModel> getSubTabUserPermissionlModelProvider();
 
     SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> getSubTabUserEventNotifierModelProvider();
 
@@ -321,9 +321,9 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> getSubTabQuotaStorageModelProvider();
 
-    SearchableDetailModelProvider<permissions, QuotaListModel, QuotaUserListModel> getSubTabQuotaUserModelProvider();
+    SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaUserListModel> getSubTabQuotaUserModelProvider();
 
-    SearchableDetailModelProvider<permissions, QuotaListModel, QuotaPermissionListModel> getSubTabQuotaPermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaPermissionListModel> getSubTabQuotaPermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, QuotaListModel, QuotaEventListModel> getSubTabQuotaEventModelProvider();
 
@@ -339,7 +339,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getSubTabVolumeParameterModelProvider();
 
-    SearchableDetailModelProvider<permissions, VolumeListModel, PermissionListModel> getSubTabVolumePermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel> getSubTabVolumePermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getSubTabVolumeEventModelProvider();
 
@@ -353,7 +353,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> getSubTabDiskStorageModelProvider();
 
-    SearchableDetailModelProvider<permissions, DiskListModel, PermissionListModel> getSubTabDiskPermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, DiskListModel, PermissionListModel> getSubTabDiskPermissionModelProvider();
 
     // Network
 
@@ -369,7 +369,7 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> getSubTabNetworkTemplateModelProvider();
 
-    SearchableDetailModelProvider<permissions, NetworkListModel, PermissionListModel> getSubTabNetworkPermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, NetworkListModel, PermissionListModel> getSubTabNetworkPermissionModelProvider();
 
     // Provider
 
@@ -382,6 +382,6 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel> getSubTabVnicProfileTemplateModelProvider();
 
-    SearchableDetailModelProvider<permissions, VnicProfileListModel, PermissionListModel> getSubTabVnicProfilePermissionModelProvider();
+    SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel> getSubTabVnicProfilePermissionModelProvider();
 
 }

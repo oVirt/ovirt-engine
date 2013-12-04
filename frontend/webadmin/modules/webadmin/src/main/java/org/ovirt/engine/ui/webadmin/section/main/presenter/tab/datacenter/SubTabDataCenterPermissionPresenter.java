@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -35,14 +35,14 @@ public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<permissions, DataCenterListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, DataCenterListModel, PermissionListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.dataCenterPermissionSubTabLabel(), 5, modelProvider);
     }
 
     @Inject
     public SubTabDataCenterPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, DataCenterListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, DataCenterListModel, PermissionListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }

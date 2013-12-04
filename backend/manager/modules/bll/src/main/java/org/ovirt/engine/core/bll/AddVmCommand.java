@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -52,7 +53,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -917,8 +917,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         if (!permissionsToAdd.isEmpty()) {
-            List<permissions> permissionsList = permissionsToAdd.asPermissionList();
-            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new permissions[permissionsList.size()]));
+            List<Permissions> permissionsList = permissionsToAdd.asPermissionList();
+            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permissions[permissionsList.size()]));
 
             getCompensationContext().snapshotNewEntities(permissionsList);
         }
@@ -927,9 +927,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
         PermissionDAO dao = getDbFacade().getPermissionDao();
 
-        List<permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getCurrentUser().getId(), false);
+        List<Permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getCurrentUser().getId(), false);
 
-        for (permissions templatePermission : templatePermissions) {
+        for (Permissions templatePermission : templatePermissions) {
             boolean templateOwnerRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_OWNER.getId());
             boolean templateUserRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_USER.getId());
 
@@ -945,10 +945,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void addDiskPermissions() {
         List<Guid> newDiskImageIds = new ArrayList<>(srcDiskIdToTargetDiskIdMapping.values());
-        permissions[] permsArray = new permissions[newDiskImageIds.size()];
+        Permissions[] permsArray = new Permissions[newDiskImageIds.size()];
         for (int i = 0; i < newDiskImageIds.size(); i++) {
             permsArray[i] =
-                    new permissions(getCurrentUser().getId(),
+                    new Permissions(getCurrentUser().getId(),
                             PredefinedRoles.DISK_OPERATOR.getId(),
                             newDiskImageIds.get(i),
                             VdcObjectType.Disk);

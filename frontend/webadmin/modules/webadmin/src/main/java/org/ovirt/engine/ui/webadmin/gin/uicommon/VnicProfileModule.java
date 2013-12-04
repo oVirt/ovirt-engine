@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -101,11 +101,11 @@ public class VnicProfileModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, VnicProfileListModel, PermissionListModel> getVnicProfilePermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel> getVnicProfilePermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, VnicProfileListModel, PermissionListModel>(eventBus, defaultConfirmPopupProvider,
+        return new SearchableDetailTabModelProvider<Permissions, VnicProfileListModel, PermissionListModel>(eventBus, defaultConfirmPopupProvider,
                 VnicProfileListModel.class,
                 PermissionListModel.class) {
             @Override

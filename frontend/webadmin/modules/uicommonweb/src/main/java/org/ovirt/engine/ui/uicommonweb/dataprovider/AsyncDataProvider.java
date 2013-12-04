@@ -54,7 +54,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -1525,8 +1525,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<permissions>) source
-                        : new ArrayList<permissions>();
+                return source != null ? (ArrayList<Permissions>) source
+                        : new ArrayList<Permissions>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId,

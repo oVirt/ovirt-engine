@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedPermissionsResourceTest
-        extends AbstractBackendCollectionResourceTest<Permission, permissions, BackendAssignedPermissionsResource> {
+        extends AbstractBackendCollectionResourceTest<Permission, Permissions, BackendAssignedPermissionsResource> {
 
     private Guid targetId;
     private Class<? extends BaseResource> targetType;
@@ -203,7 +203,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assert(query.equals(""));
 
-        List<permissions> perms = setUpPermissions();
+        List<Permissions> perms = setUpPermissions();
         setUpEntityQueryExpectations(queryType,
                                      queryParams.getClass(),
                                      new String[] { queryParameterName },
@@ -227,7 +227,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         control.replay();
     }
 
-    protected void setUpGetEntityExpectations(int times, Guid entityId, permissions permission) throws Exception {
+    protected void setUpGetEntityExpectations(int times, Guid entityId, Permissions permission) throws Exception {
         while (times-->0) {
             setUpGetEntityExpectations(VdcQueryType.GetPermissionById,
                                        IdQueryParameters.class,
@@ -238,8 +238,8 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     }
 
     @Override
-    protected permissions getEntity(int index) {
-        permissions permission = new permissions();
+    protected Permissions getEntity(int index) {
+        Permissions permission = new Permissions();
         permission.setId(GUIDS[index]);
         permission.setad_element_id(GUIDS[1]);
         permission.setObjectId(GUIDS[2]);
@@ -248,18 +248,18 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         return permission;
     }
 
-    protected List<permissions> setUpPermissions() {
-        List<permissions> perms = new ArrayList<permissions>();
+    protected List<Permissions> setUpPermissions() {
+        List<Permissions> perms = new ArrayList<Permissions>();
         for (int i = 0; i < NAMES.length; i++) {
             perms.add(getEntity(i));
         }
         return perms;
     }
 
-    protected List<permissions> setUpPermissionsWithAdElementId(Guid adElementId) {
-        List<permissions> perms = new ArrayList<permissions>();
+    protected List<Permissions> setUpPermissionsWithAdElementId(Guid adElementId) {
+        List<Permissions> perms = new ArrayList<Permissions>();
         for (int i = 0; i < NAMES.length; i++) {
-            permissions entity = getEntity(i);
+            Permissions entity = getEntity(i);
             entity.setad_element_id(adElementId);
             perms.add(entity);
         }

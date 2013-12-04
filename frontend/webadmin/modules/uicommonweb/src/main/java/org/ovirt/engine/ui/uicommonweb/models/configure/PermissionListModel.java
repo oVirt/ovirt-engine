@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -177,7 +177,7 @@ public class PermissionListModel extends SearchableListModel
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();
-                tempVar.setPermission((permissions) perm);
+                tempVar.setPermission((Permissions) perm);
                 list.add(tempVar);
             }
 
@@ -238,10 +238,10 @@ public class PermissionListModel extends SearchableListModel
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)
         {
-            permissions tempVar2 = new permissions();
+            Permissions tempVar2 = new Permissions();
             tempVar2.setad_element_id(user.getId());
             tempVar2.setrole_id(role.getId());
-            permissions perm = tempVar2;
+            Permissions perm = tempVar2;
             perm.setObjectId(getEntityGuid());
             perm.setObjectType(this.getObjectType());
 
@@ -316,7 +316,7 @@ public class PermissionListModel extends SearchableListModel
         Guid entityGuid = getEntityGuid();
         for (Object p : getSelectedItems())
         {
-            if (!entityGuid.equals(((permissions) p).getObjectId()))
+            if (!entityGuid.equals(((Permissions) p).getObjectId()))
             {
                 getRemoveCommand().setIsExecutionAllowed(false);
                 return;

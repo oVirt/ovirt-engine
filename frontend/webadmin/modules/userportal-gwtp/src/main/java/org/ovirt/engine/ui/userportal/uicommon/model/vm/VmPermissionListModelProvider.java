@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class VmPermissionListModelProvider
-        extends UserPortalSearchableDetailModelProvider<permissions, UserPortalListModel, UserPortalPermissionListModel> {
+        extends UserPortalSearchableDetailModelProvider<Permissions, UserPortalListModel, UserPortalPermissionListModel> {
 
     private final Provider<PermissionsPopupPresenterWidget> permissionPopupProvider;
     private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;

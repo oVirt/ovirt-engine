@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -21,8 +21,8 @@ public class UniquePermissionsSet extends HashSet<PermissionWithUniqueKeyEquals>
      * Converts to instances of permissions class - the rest of the code expects the getClass() to be permissions
      * and not it's child
      */
-    public List<permissions> asPermissionList() {
-        List<permissions> res = new ArrayList<permissions>();
+    public List<Permissions> asPermissionList() {
+        List<Permissions> res = new ArrayList<Permissions>();
 
         for (PermissionWithUniqueKeyEquals permission : this) {
             res.add(permission.asPermission());
@@ -36,14 +36,14 @@ public class UniquePermissionsSet extends HashSet<PermissionWithUniqueKeyEquals>
 /**
  * Permission which offers the same equals as the unique key constraint on the permissions table
  */
-class PermissionWithUniqueKeyEquals extends permissions {
+class PermissionWithUniqueKeyEquals extends Permissions {
 
     public PermissionWithUniqueKeyEquals(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
         super(adElementId, roleId, objectId, objectType);
     }
 
-    public permissions asPermission() {
-        return new permissions(getad_element_id(), getrole_id(), getObjectId(), getObjectType());
+    public Permissions asPermission() {
+        return new Permissions(getad_element_id(), getrole_id(), getObjectId(), getObjectType());
     }
 
     @Override
@@ -67,7 +67,7 @@ class PermissionWithUniqueKeyEquals extends permissions {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        permissions other = (permissions) obj;
+        Permissions other = (Permissions) obj;
         return (ObjectUtils.objectsEqual(getad_element_id(), other.getad_element_id())
                 && ObjectUtils.objectsEqual(getrole_id(), other.getrole_id())
                 && ObjectUtils.objectsEqual(getObjectId(), other.getObjectId()));

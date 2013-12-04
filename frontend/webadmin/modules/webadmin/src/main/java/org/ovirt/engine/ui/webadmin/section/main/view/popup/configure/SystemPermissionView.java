@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -34,7 +34,7 @@ public class SystemPermissionView extends Composite {
 
     SplitLayoutPanel content;
 
-    private SimpleActionTable<permissions> table;
+    private SimpleActionTable<Permissions> table;
 
     private final SystemPermissionModelProvider modelProvider;
 
@@ -65,37 +65,37 @@ public class SystemPermissionView extends Composite {
     }
 
     private void initTable(ApplicationConstants constants) {
-        table = new SimpleActionTable<permissions>(modelProvider,
+        table = new SimpleActionTable<Permissions>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         content.add(table);
 
         table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
+        TextColumnWithTooltip<Permissions> userColumn = new TextColumnWithTooltip<Permissions>() {
             @Override
-            public String getValue(permissions object) {
+            public String getValue(Permissions object) {
                 return object.getOwnerName();
             }
         };
         table.addColumn(userColumn, constants.userPermission());
 
-        TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
+        TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
             @Override
-            public String getValue(permissions object) {
+            public String getValue(Permissions object) {
                 return object.getRoleName();
             }
         };
         table.addColumn(roleColumn, constants.rolePermission());
 
-        table.addActionButton(new WebAdminButtonDefinition<permissions>(constants.addPermission()) {
+        table.addActionButton(new WebAdminButtonDefinition<Permissions>(constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getAddCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<permissions>(constants.removePermission()) {
+        table.addActionButton(new WebAdminButtonDefinition<Permissions>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();

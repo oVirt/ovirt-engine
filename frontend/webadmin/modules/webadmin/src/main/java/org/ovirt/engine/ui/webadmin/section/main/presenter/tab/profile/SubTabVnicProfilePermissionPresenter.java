@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile;
 
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -35,7 +35,7 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
 
     @TabInfo(container = VnicProfileSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<permissions, VnicProfileListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.vnicProfilePermissionSubTabLabel(), 2,
                 modelProvider);
     }
@@ -43,7 +43,7 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
     @Inject
     public SubTabVnicProfilePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, VnicProfileListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, VnicProfileSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

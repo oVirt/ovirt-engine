@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
+public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 7249605272394212576L;
 
     private Guid adElementId;
@@ -20,11 +20,11 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     private String ownerName;
     private RoleType roleType;
 
-    public permissions() {
+    public Permissions() {
         this (Guid.Empty, Guid.Empty, null, null);
     }
 
-    public permissions(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
+    public Permissions(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
         this.id = Guid.newGuid();
         this.adElementId = adElementId;
         this.roleId = roleId;
@@ -147,7 +147,7 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        permissions other = (permissions) obj;
+        Permissions other = (Permissions) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(adElementId, other.adElementId)
                 && ObjectUtils.objectsEqual(objectId, other.objectId)

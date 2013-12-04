@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
@@ -145,7 +145,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
         assertFalse(nonAdminUser.isAdmin());
 
-        permissions perms = new permissions();
+        Permissions perms = new Permissions();
         perms.setRoleType(RoleType.ADMIN);
 
         // An available role from the fixtures

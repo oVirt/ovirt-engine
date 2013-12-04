@@ -13,14 +13,14 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.compat.Guid;
 
 public class PermissionMapper {
 
-    @Mapping(from = Permission.class, to = permissions.class)
-    public static permissions map(Permission model, permissions template) {
-        permissions entity = template != null ? template : new permissions();
+    @Mapping(from = Permission.class, to = Permissions.class)
+    public static Permissions map(Permission model, Permissions template) {
+        Permissions entity = template != null ? template : new Permissions();
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -37,16 +37,16 @@ public class PermissionMapper {
         return entity;
     }
 
-    @Mapping(from = permissions.class, to = Role.class)
-    public static Role map(permissions entity, Role template) {
+    @Mapping(from = Permissions.class, to = Role.class)
+    public static Role map(Permissions entity, Role template) {
         Role model = template != null ? template : new Role();
         model.setName(entity.getRoleName());
         model.setId(entity.getrole_id().toString());
         return model;
     }
 
-    @Mapping(from = permissions.class, to = Permission.class)
-    public static Permission map(permissions entity, Permission template) {
+    @Mapping(from = Permissions.class, to = Permission.class)
+    public static Permission map(Permissions entity, Permission template) {
         Permission model = template != null ? template : new Permission();
         model.setId(entity.getId().toString());
         if (entity.getrole_id() != null) {
@@ -104,7 +104,7 @@ public class PermissionMapper {
     /**
      * @pre completeness of "{entityType}.id" already validated
      */
-    private static void setObjectId(Permission model, permissions entity) {
+    private static void setObjectId(Permission model, Permissions entity) {
         String id = entity.getObjectId().toString();
         switch (entity.getObjectType()) {
         case System:

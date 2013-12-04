@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -261,11 +261,11 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, DataCenterListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, DataCenterListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, DataCenterListModel, PermissionListModel>(
+        return new SearchableDetailTabModelProvider<Permissions, DataCenterListModel, PermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 DataCenterListModel.class,
                 PermissionListModel.class) {

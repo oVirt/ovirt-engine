@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,7 +29,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
 
     @Override
     protected boolean canDoAction() {
-        permissions perm = getParameters().getPermission();
+        Permissions perm = getParameters().getPermission();
         if (perm == null) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_PERMISSION_NOT_SENT);
             return false;
@@ -88,8 +88,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
 
     @Override
     protected void executeCommand() {
-        final permissions paramPermission = getParameters().getPermission();
-        permissions permission =
+        final Permissions paramPermission = getParameters().getPermission();
+        Permissions permission =
                 getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getrole_id(),
                         paramPermission.getad_element_id(),
                         paramPermission.getObjectId());
@@ -130,7 +130,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
         setSucceeded(true);
     }
 
-    private void updateAdminStatus(permissions perm) {
+    private void updateAdminStatus(Permissions perm) {
         // if the role of the permission is of type admin update the user
         // lastAdminCheckStatus to true
         Role role = getRoleDao().get(perm.getrole_id());
@@ -146,7 +146,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        permissions permission = getParameters().getPermission();
+        Permissions permission = getParameters().getPermission();
         List<PermissionSubject> permissionsSubject = new ArrayList<>();
         permissionsSubject.add(new PermissionSubject(permission.getObjectId(),
                 permission.getObjectType(),

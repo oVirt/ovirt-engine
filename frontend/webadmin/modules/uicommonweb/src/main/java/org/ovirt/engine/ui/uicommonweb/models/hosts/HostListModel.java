@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -1701,9 +1701,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                                 hasAdminSystemPermission = false;
                                 updateConfigureLocalStorageCommandAvailability1();
                             } else {
-                                ArrayList<permissions> permissions =
-                                        (ArrayList<permissions>) response.getReturnValue();
-                                for (permissions permission : permissions) {
+                                ArrayList<Permissions> permissions =
+                                        (ArrayList<Permissions>) response.getReturnValue();
+                                for (Permissions permission : permissions) {
 
                                     if (permission.getObjectType() == VdcObjectType.System
                                             && permission.getRoleType() == RoleType.ADMIN) {

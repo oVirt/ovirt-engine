@@ -15,10 +15,10 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -67,7 +67,7 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
                 DiskImage newDiskImage = (DiskImage) vdcReturnValue.getActionReturnValue();
                 enclosingCommand.getParameters().setDestinationImageId(newDiskImage.getImageId());
                 enclosingCommand.getParameters().getDiskImage().setImageId(newDiskImage.getImageId());
-                MultiLevelAdministrationHandler.addPermission(new permissions(
+                MultiLevelAdministrationHandler.addPermission(new Permissions(
                         enclosingCommand.getCurrentUser().getId(), PredefinedRoles.DISK_OPERATOR.getId(),
                         newDiskImage.getId(), VdcObjectType.Disk));
             }

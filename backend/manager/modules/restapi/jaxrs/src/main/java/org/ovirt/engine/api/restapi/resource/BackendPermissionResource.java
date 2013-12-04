@@ -7,13 +7,13 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendPermissionResource
-        extends AbstractBackendSubResource<Permission, permissions>
+        extends AbstractBackendSubResource<Permission, Permissions>
         implements PermissionResource {
 
     protected BackendAssignedPermissionsResource parent;
@@ -22,7 +22,7 @@ public class BackendPermissionResource
     protected BackendPermissionResource(String id,
                                         BackendAssignedPermissionsResource parent,
                                         Class<? extends BaseResource> suggestedParentType) {
-        super(id, Permission.class, permissions.class);
+        super(id, Permission.class, Permissions.class);
         this.parent = parent;
         this.suggestedParentType = suggestedParentType;
     }
@@ -40,7 +40,7 @@ public class BackendPermissionResource
     }
 
     @Override
-    protected Permission map(permissions entity, Permission template) {
+    protected Permission map(Permissions entity, Permission template) {
         Map<Guid, DbUser> users = parent.getUsers();
         return parent.map(entity, users.containsKey(entity.getad_element_id()) ? users.get(entity.getad_element_id()) : null);
     }
@@ -51,7 +51,7 @@ public class BackendPermissionResource
     }
 
     @Override
-    protected Permission doPopulate(Permission model, permissions entity) {
+    protected Permission doPopulate(Permission model, Permissions entity) {
         return model;
     }
 }

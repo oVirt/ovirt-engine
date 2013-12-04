@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,7 +61,7 @@ public class NetworkHelper {
     }
 
     private static void addPermission(Guid userId, Guid entityId, PredefinedRoles role, VdcObjectType objectType) {
-        permissions perms = new permissions();
+        Permissions perms = new Permissions();
         perms.setad_element_id(userId);
         perms.setObjectType(objectType);
         perms.setObjectId(entityId);

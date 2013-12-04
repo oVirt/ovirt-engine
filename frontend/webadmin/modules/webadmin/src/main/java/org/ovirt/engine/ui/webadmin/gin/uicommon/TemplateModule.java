@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -96,11 +96,11 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, TemplateListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, TemplateListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, TemplateListModel, PermissionListModel>(
+        return new SearchableDetailTabModelProvider<Permissions, TemplateListModel, PermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 TemplateListModel.class,
                 PermissionListModel.class) {

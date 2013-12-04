@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -24,7 +24,7 @@ public class SubTabVolumePermissionView extends AbstractSubTabPermissionsView<Gl
     }
 
     @Inject
-    public SubTabVolumePermissionView(SearchableDetailModelProvider<permissions, VolumeListModel, PermissionListModel> modelProvider,
+    public SubTabVolumePermissionView(SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);

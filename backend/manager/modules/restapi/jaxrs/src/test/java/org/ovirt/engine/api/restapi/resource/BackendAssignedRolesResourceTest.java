@@ -7,12 +7,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendAssignedRolesResourceTest
-        extends AbstractBackendCollectionResourceTest<Role, permissions, BackendAssignedRolesResource> {
+        extends AbstractBackendCollectionResourceTest<Role, Permissions, BackendAssignedRolesResource> {
 
     public BackendAssignedRolesResourceTest() {
         super(new BackendAssignedRolesResource(GUIDS[0]), null, "");
@@ -44,8 +44,8 @@ public class BackendAssignedRolesResourceTest
     }
 
     @Override
-    protected permissions getEntity(int index) {
-        permissions permission = new permissions();
+    protected Permissions getEntity(int index) {
+        Permissions permission = new Permissions();
         permission.setId(GUIDS[(index + 1) % 3]);
         permission.setad_element_id(GUIDS[0]);
         permission.setrole_id(GUIDS[index]);
@@ -53,8 +53,8 @@ public class BackendAssignedRolesResourceTest
         return permission;
     }
 
-    protected List<permissions> setUpPermissions() {
-        List<permissions> perms = new ArrayList<permissions>();
+    protected List<Permissions> setUpPermissions() {
+        List<Permissions> perms = new ArrayList<Permissions>();
         for (int i = 0; i < NAMES.length; i++) {
             perms.add(getEntity(i));
         }

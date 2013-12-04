@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -65,8 +65,8 @@ public class MultiLevelAdministrationHandler {
         return false;
     }
 
-    public static void addPermission(permissions... permissions) {
-        for (permissions perms : permissions) {
+    public static void addPermission(Permissions... permissions) {
+        for (Permissions perms : permissions) {
             getPermissionDAO().save(perms);
         }
     }
@@ -98,7 +98,7 @@ public class MultiLevelAdministrationHandler {
         boolean retValue=false;
         if (PredefinedRoles.SUPER_USER.getId().equals(roleId)) {
             // check that there is at least one super-user left in the system
-            List<permissions> permissions = getPermissionDAO().getAllForRole(
+            List<Permissions> permissions = getPermissionDAO().getAllForRole(
                     PredefinedRoles.SUPER_USER.getId());
             if (permissions.size() <= 1) {
                 retValue = true;
@@ -117,12 +117,12 @@ public class MultiLevelAdministrationHandler {
     public static boolean isLastSuperUserGroup(Guid groupId) {
         boolean retValue=false;
         // check that there is at least one super-user left in the system
-        List<permissions> permissions = getPermissionDAO().getAllForRole(
+        List<Permissions> permissions = getPermissionDAO().getAllForRole(
                 PredefinedRoles.SUPER_USER.getId());
         if (permissions.size() <= 1) {
             // get group role
             permissions = getPermissionDAO().getAllForAdElement(groupId);
-            for (permissions permission : permissions){
+            for (Permissions permission : permissions){
                 if (permission.getrole_id().equals(PredefinedRoles.SUPER_USER.getId())){
                     retValue = true;
                     break;

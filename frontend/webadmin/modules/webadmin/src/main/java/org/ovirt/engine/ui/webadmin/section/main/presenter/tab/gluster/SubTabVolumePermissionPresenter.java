@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster;
 
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -27,14 +27,14 @@ public class SubTabVolumePermissionPresenter extends AbstractSubTabPresenter<Glu
 
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<permissions, VolumeListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.volumePermissionSubTabLabel(), 3, modelProvider);
     }
 
     @Inject
     public SubTabVolumePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, VolumeListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -151,7 +151,7 @@ public class RolePermissionListModel extends SearchableListModel
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();
-                tempVar.setPermission((permissions) perm);
+                tempVar.setPermission((Permissions) perm);
                 list.add(tempVar);
             }
 

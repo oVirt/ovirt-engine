@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -24,7 +24,7 @@ public class SubTabHostPermissionView extends AbstractSubTabPermissionsView<VDS,
     }
 
     @Inject
-    public SubTabHostPermissionView(SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> modelProvider,
+    public SubTabHostPermissionView(SearchableDetailModelProvider<Permissions, HostListModel, PermissionListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);

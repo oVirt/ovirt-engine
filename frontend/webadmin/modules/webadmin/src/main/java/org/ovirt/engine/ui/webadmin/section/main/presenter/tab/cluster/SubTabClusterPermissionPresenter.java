@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -35,14 +35,14 @@ public class SubTabClusterPermissionPresenter extends AbstractSubTabPresenter<VD
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<permissions, ClusterListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.clusterPermissionSubTabLabel(), 6, modelProvider);
     }
 
     @Inject
     public SubTabClusterPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, ClusterListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }

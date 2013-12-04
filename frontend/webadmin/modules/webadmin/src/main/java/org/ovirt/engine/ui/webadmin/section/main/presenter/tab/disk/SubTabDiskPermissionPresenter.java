@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -35,14 +35,14 @@ public class SubTabDiskPermissionPresenter extends AbstractSubTabPresenter<Disk,
 
     @TabInfo(container = DiskSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<permissions, DiskListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, DiskListModel, PermissionListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.diskPermissionSubTabLabel(), 4, modelProvider);
     }
 
     @Inject
     public SubTabDiskPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, DiskListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, DiskListModel, PermissionListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 DiskSubTabPanelPresenter.TYPE_SetTabContent);
     }

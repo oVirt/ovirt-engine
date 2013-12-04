@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -299,9 +299,9 @@ public class UserPortalLoginModel extends LoginModel
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        ArrayList<permissions> permissions = (ArrayList<permissions>) returnValue;
+                        ArrayList<Permissions> permissions = (ArrayList<Permissions>) returnValue;
                         ArrayList<Guid> roleIdList = new ArrayList<Guid>();
-                        for (permissions permission : permissions) {
+                        for (Permissions permission : permissions) {
 
                             // ignore:
                             // ALL Everyone/UserPoralBasedVM permissions and
@@ -331,19 +331,19 @@ public class UserPortalLoginModel extends LoginModel
 
                     }
 
-                    private boolean isEveryoneVnicProfileUserPermission(permissions permission) {
+                    private boolean isEveryoneVnicProfileUserPermission(Permissions permission) {
                         return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid()) &&
                                 permission.getrole_id().equals(ApplicationGuids.vnicProfileUser.asGuid());
                     }
 
-                    private boolean isEveryoneUserPortalBasedVmPermission(permissions permission) {
+                    private boolean isEveryoneUserPortalBasedVmPermission(Permissions permission) {
                         return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid())
                                 &&
                                 permission.getrole_id()
                                         .equals(ApplicationGuids.userTemplateBasedVM.asGuid());
                     }
 
-                    private boolean isEveryoneQuotaConsumerPermission(permissions permission) {
+                    private boolean isEveryoneQuotaConsumerPermission(Permissions permission) {
                         return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid()) &&
                                 permission.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid());
                     }

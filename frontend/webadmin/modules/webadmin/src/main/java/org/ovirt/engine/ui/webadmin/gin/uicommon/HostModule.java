@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -281,11 +281,11 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, HostListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, HostListModel, PermissionListModel>(
+        return new SearchableDetailTabModelProvider<Permissions, HostListModel, PermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 PermissionListModel.class) {

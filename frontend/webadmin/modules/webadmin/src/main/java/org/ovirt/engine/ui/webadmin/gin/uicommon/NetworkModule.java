@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -247,11 +247,11 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, NetworkListModel, PermissionListModel> getNetworkPermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, NetworkListModel, PermissionListModel> getNetworkPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, NetworkListModel, PermissionListModel>(
+        return new SearchableDetailTabModelProvider<Permissions, NetworkListModel, PermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 PermissionListModel.class) {

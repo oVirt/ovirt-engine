@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -160,10 +160,10 @@ public class SystemPermissionListModel extends SearchableListModel
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)
         {
-            permissions tempVar = new permissions();
+            Permissions tempVar = new Permissions();
             tempVar.setad_element_id(user.getId());
             tempVar.setrole_id(role.getId());
-            permissions perm = tempVar;
+            Permissions perm = tempVar;
 
             if (user.isGroup())
             {
@@ -243,7 +243,7 @@ public class SystemPermissionListModel extends SearchableListModel
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();
-                tempVar.setPermission((permissions) perm);
+                tempVar.setPermission((Permissions) perm);
                 list.add(tempVar);
             }
 

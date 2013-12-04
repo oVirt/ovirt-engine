@@ -21,7 +21,7 @@
 //import org.mockito.Mock;
 //import org.mockito.MockitoAnnotations;
 //import org.ovirt.engine.core.common.businessentities.RoleType;
-//import org.ovirt.engine.core.common.businessentities.permissions;
+//import org.ovirt.engine.core.common.businessentities.Permissions;
 //import org.ovirt.engine.core.common.businessentities.Role;
 //import org.ovirt.engine.core.common.users.VdcUser;
 //import org.ovirt.engine.core.compat.Guid;

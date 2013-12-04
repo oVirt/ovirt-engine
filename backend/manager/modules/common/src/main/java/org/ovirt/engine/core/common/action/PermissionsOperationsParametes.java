@@ -2,21 +2,21 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 
 public class PermissionsOperationsParametes extends VdcActionParametersBase {
     private static final long serialVersionUID = 8854712438369127152L;
 
-    public PermissionsOperationsParametes(permissions permission) {
+    public PermissionsOperationsParametes(Permissions permission) {
         setPermission(permission);
     }
 
-    public PermissionsOperationsParametes(permissions permission, DbUser user) {
+    public PermissionsOperationsParametes(Permissions permission, DbUser user) {
         this(permission);
         this.user = user;
     }
 
-    public PermissionsOperationsParametes(permissions permission, LdapGroup adGroup) {
+    public PermissionsOperationsParametes(Permissions permission, LdapGroup adGroup) {
         this(permission);
         setAdGroup(adGroup);
     }
@@ -41,13 +41,13 @@ public class PermissionsOperationsParametes extends VdcActionParametersBase {
         privateAdGroup = value;
     }
 
-    private permissions privatePermission;
+    private Permissions privatePermission;
 
-    public permissions getPermission() {
+    public Permissions getPermission() {
         return privatePermission;
     }
 
-    public void setPermission(permissions value) {
+    public void setPermission(Permissions value) {
         privatePermission = value;
     }
 

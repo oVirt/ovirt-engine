@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -227,11 +227,11 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, ClusterListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, ClusterListModel, PermissionListModel>(
+        return new SearchableDetailTabModelProvider<Permissions, ClusterListModel, PermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 ClusterListModel.class,
                 PermissionListModel.class) {

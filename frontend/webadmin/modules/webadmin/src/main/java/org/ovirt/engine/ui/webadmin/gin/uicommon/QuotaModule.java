@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -117,11 +117,11 @@ public class QuotaModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, QuotaListModel, QuotaUserListModel> getQuotaUserListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaUserListModel> getQuotaUserListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, QuotaListModel, QuotaUserListModel>(
+        return new SearchableDetailTabModelProvider<Permissions, QuotaListModel, QuotaUserListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 QuotaListModel.class,
                 QuotaUserListModel.class) {
@@ -149,11 +149,11 @@ public class QuotaModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, QuotaListModel, QuotaPermissionListModel> getQuotaPermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaPermissionListModel> getQuotaPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, QuotaListModel, QuotaPermissionListModel>(
+        return new SearchableDetailTabModelProvider<Permissions, QuotaListModel, QuotaPermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 QuotaListModel.class,
                 QuotaPermissionListModel.class) {
