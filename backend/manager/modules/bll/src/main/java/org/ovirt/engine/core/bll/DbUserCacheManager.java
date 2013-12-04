@@ -225,7 +225,7 @@ public class DbUserCacheManager {
     }
 
     @OnTimerMethodAnnotation("onTimer")
-    public void OnTimer() {
+    public void onTimer() {
         List<LdapGroup> groups = updateGroups();
         refreshAllUserData(groups);
     }

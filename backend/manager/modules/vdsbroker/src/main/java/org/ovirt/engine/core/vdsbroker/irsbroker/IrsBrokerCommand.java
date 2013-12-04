@@ -1205,7 +1205,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         @OnTimerMethodAnnotation("onTimer")
-        public void OnTimer(final Guid domainId) {
+        public void onTimer(final Guid domainId) {
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventAsync(new Event(_storagePoolId,
                     domainId, null, EventType.DOMAINFAILOVER, ""),
                     new Callable<EventResult>() {

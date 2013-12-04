@@ -329,7 +329,7 @@ public class VdsUpdateRunTimeInfo {
         _vmDict = getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
     }
 
-    public void Refresh() {
+    public void refresh() {
         try {
             refreshVdsRunTimeInfo();
         } finally {
@@ -370,7 +370,7 @@ public class VdsUpdateRunTimeInfo {
                 _vds.getName());
     }
 
-    public void AfterRefreshTreatment() {
+    public void afterRefreshTreatment() {
         try {
             if (processHardwareCapsNeeded) {
                 monitoringStrategy.processHardwareCapabilities(_vds);

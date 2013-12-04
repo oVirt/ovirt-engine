@@ -233,7 +233,7 @@ public class VdsManager {
                         if (isMonitoringNeeded()) {
                             setStartTime();
                             _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds, monitoringStrategy);
-                            _vdsUpdater.Refresh();
+                            _vdsUpdater.refresh();
                             mUnrespondedAttempts.set(0);
                             sshSoftFencingExecuted.set(false);
                             setLastUpdate();
@@ -253,7 +253,7 @@ public class VdsManager {
                     }
                     try {
                         if (_vdsUpdater != null) {
-                            _vdsUpdater.AfterRefreshTreatment();
+                            _vdsUpdater.afterRefreshTreatment();
 
                             // Get vds data for updating domains list, ignoring vds which is down, since it's not
                             // connected
