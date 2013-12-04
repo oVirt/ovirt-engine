@@ -236,7 +236,7 @@ Requires:	logrotate
 Requires:	mod_ssl
 Requires:	novnc
 Requires:	openssl
-Requires:	ovirt-host-deploy-java >= 1.1.1-1
+Requires:	ovirt-host-deploy-java >= 1.1.2-1
 Requires:	python-cheetah
 Requires:	spice-html5
 
@@ -472,8 +472,8 @@ Group:		%{ovirt_product_group}
 Requires:	%{name}-sdk >= 3.3.0.5
 Requires:	%{name}-setup >= %{version}-%{release}
 Requires:	openssh-server
-Requires:	ovirt-host-deploy >= 1.1.1-1
-Requires:	ovirt-host-deploy-offline >= 1.1.1-1
+Requires:	ovirt-host-deploy >= 1.1.2-1
+Requires:	ovirt-host-deploy-offline >= 1.1.2-1
 
 %description setup-plugin-allinone
 All-in-one plugin for %{ovirt_product_name_short}'s setup
