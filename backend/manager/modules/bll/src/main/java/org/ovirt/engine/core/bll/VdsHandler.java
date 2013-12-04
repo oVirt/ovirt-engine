@@ -31,7 +31,7 @@ public class VdsHandler extends BaseHandler {
      *
      * @see Backend#InitHandlers
      */
-    public static void Init()
+    public static void init()
     {
         Class<?>[] inspectedClasses = new Class<?>[] { VDS.class, VdsStatic.class, VdsDynamic.class };
         mUpdateVdsStatic =

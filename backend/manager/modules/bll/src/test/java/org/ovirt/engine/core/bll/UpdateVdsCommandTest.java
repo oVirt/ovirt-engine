@@ -39,7 +39,7 @@ public class UpdateVdsCommandTest {
         VdsDAO vdsDaoMock = Mockito.mock(VdsDAO.class);
         Mockito.when(vdsDaoMock.get(vdsId)).thenReturn(oldVdsData);
         Mockito.when(commandMock.getVdsDAO()).thenReturn(vdsDaoMock);
-        VdsHandler.Init();
+        VdsHandler.init();
 
         Assert.assertTrue(commandMock.canDoAction());
     }
@@ -77,7 +77,7 @@ public class UpdateVdsCommandTest {
         Mockito.when(vdsDaoMock.getByName("BAR")).thenReturn(oldVdsData);
 
         Mockito.when(commandMock.getVdsDAO()).thenReturn(vdsDaoMock);
-        VdsHandler.Init();
+        VdsHandler.init();
 
         Assert.assertFalse(commandMock.canDoAction());
     }
