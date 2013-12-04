@@ -38,13 +38,17 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     @UiField(provided = true)
     EntityModelCellTable<ClusterNetworkManageModel> networks;
 
+    private final ApplicationConstants constants;
+    private final ApplicationTemplates templates;
+
     @Inject
     public ClusterManageNetworkPopupView(EventBus eventBus,
             ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
+        this.constants = constants;
+        this.templates = templates;
         this.networks = new EntityModelCellTable<ClusterNetworkManageModel>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initEntityModelCellTable(constants, templates);
     }
 
     @SuppressWarnings("unchecked")
@@ -59,6 +63,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
         networks.enableColumnResizing();
+        boolean multipleSelectionAllowed = networks.asEditor().flush().isMultiCluster();
 
         CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.assignAll())) {
             @Override
@@ -205,7 +210,8 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         }, constants.vmNetwork(), "80px"); //$NON-NLS-1$
 
-        networks.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
+        networks.addColumn(new CheckboxColumn<EntityModel>(multipleSelectionAllowed,
+                new FieldUpdater<EntityModel, Boolean>() {
             @Override
             public void update(int index, EntityModel model, Boolean value) {
                 ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
@@ -226,7 +232,8 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             }
         }, constants.displayNetwork(), "100px"); //$NON-NLS-1$
 
-        networks.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
+        networks.addColumn(new CheckboxColumn<EntityModel>(multipleSelectionAllowed,
+                new FieldUpdater<EntityModel, Boolean>() {
             @Override
             public void update(int index, EntityModel model, Boolean value) {
                 ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
@@ -254,6 +261,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     @Override
     public void edit(ClusterNetworkManageModel model) {
         networks.asEditor().edit(model);
+        initEntityModelCellTable(constants, templates);
     }
 
     @Override
