@@ -1,21 +1,35 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -49,7 +63,29 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         });
 
+        if (applyChangesToHostsRequired()) {
+            applyNetworkChangesToHosts();
+        }
+
         setSucceeded(true);
+    }
+
+    protected boolean setupNetworkSupported() {
+        return VersionSupport.isActionSupported(VdcActionType.SetupNetworks,
+                getStoragePool().getcompatibility_version());
+    }
+
+    private boolean applyChangesToHostsRequired() {
+        return !getNetwork().isExternal() && setupNetworkSupported();
+    }
+
+    private void applyNetworkChangesToHosts() {
+        SyncNetworkParametersBuilder builder = new SyncNetworkParametersBuilder();
+        ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(getNetwork());
+
+        if (!parameters.isEmpty()) {
+            getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
+        }
     }
 
     private boolean networkChangedToNonVmNetwork() {
@@ -79,8 +115,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorOld.networkIsSet())
                 && validate(validatorOld.notRenamingManagementNetwork(getNetwork()))
                 && validate(validatorNew.networkNameNotUsed())
-                && validate(validatorOld.networkNotUsedByVms())
-                && validate(validatorOld.networkNotUsedByTemplates())
+                && validate(validatorOld.networkNotUsedByRunningVms())
+                && validate(validatorOld.nonVmNetworkNotUsedByVms(getNetwork()))
+                && validate(validatorOld.nonVmNetworkNotUsedByTemplates(getNetwork()))
+                && validate(validatorOld.notRenamingUsedNetwork(getNetworkName()))
                 && (oldAndNewNetworkIsNotExternal()
                 || validate(validatorOld.externalNetworkDetailsUnchanged(getNetwork())));
     }
@@ -135,6 +173,56 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             super(network);
         }
 
+        public ValidationResult notRenamingUsedNetwork(String networkName) {
+            if (StringUtils.equals(network.getName(), networkName)) {
+                return ValidationResult.VALID;
+            }
+
+            ValidationResult result = networkNotUsedByHosts();
+            if (!result.isValid()) {
+                return result;
+            }
+
+            result = networkNotUsedByVms();
+            if (!result.isValid()) {
+                return result;
+            }
+
+            return networkNotUsedByTemplates();
+        }
+
+        public ValidationResult nonVmNetworkNotUsedByVms(Network updatedNetwork) {
+            if (networkChangedToNonVmNetwork(updatedNetwork)) {
+                return networkNotUsed(getVms(), VdcBllMessages.VAR__ENTITIES__VMS);
+            }
+
+            return ValidationResult.VALID;
+        }
+
+        private boolean networkChangedToNonVmNetwork(Network updatedNetwork) {
+            return network.isVmNetwork() && !updatedNetwork.isVmNetwork();
+        }
+
+        public ValidationResult networkNotUsedByRunningVms() {
+            List<VM> runningVms = new ArrayList<>();
+
+            for (VM vm : getVms()) {
+                if (vm.isRunningOrPaused()) {
+                    runningVms.add(vm);
+                }
+            }
+
+            return networkNotUsed(runningVms, VdcBllMessages.VAR__ENTITIES__VMS);
+        }
+
+        public ValidationResult nonVmNetworkNotUsedByTemplates(Network updatedNetwork) {
+            if (networkChangedToNonVmNetwork(updatedNetwork)) {
+                return networkNotUsed(getTemplates(), VdcBllMessages.VAR__ENTITIES__VMS);
+            }
+
+            return ValidationResult.VALID;
+        }
+
         public ValidationResult notRenamingManagementNetwork(Network newNetwork) {
             String managementNetwork = NetworkUtils.getEngineNetwork();
             return network.getName().equals(managementNetwork) &&
@@ -181,5 +269,41 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     @Override
     public void setEntityId(AuditLogableBase logable) {
 
+    }
+
+    private class SyncNetworkParametersBuilder {
+
+        private SetupNetworksParameters createSetupNetworksParameters(Guid hostId) {
+            VDS host = new VDS();
+            host.setId(hostId);
+            NetworkConfigurator configurator = new NetworkConfigurator(host);
+            List<VdsNetworkInterface> nics = configurator.filterBondsWithoutSlaves(getHostInterfaces(hostId));
+            return configurator.createSetupNetworkParams(nics);
+        }
+
+        private List<VdsNetworkInterface> getHostInterfaces(Guid hostId) {
+            return getDbFacade().getInterfaceDao().getAllInterfacesForVds(hostId);
+        }
+
+        protected ArrayList<VdcActionParametersBase> buildParameters(Network network) {
+            ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+            List<VdsNetworkInterface> nics =
+                    getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(getNetwork().getId());
+
+            Set<Guid> hostIdsToSync = new HashSet<>();
+            for (VdsNetworkInterface nic : nics) {
+                if (!NetworkUtils.isNetworkInSync(nic, getNetwork())) {
+                    hostIdsToSync.add(nic.getVdsId());
+                }
+            }
+
+            for (Guid hostId : hostIdsToSync) {
+                SetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(hostId);
+                setupNetworkParams.setNetworksToSync(Collections.singletonList(getNetworkName()));
+                parameters.add(setupNetworkParams);
+            }
+
+            return parameters;
+        }
     }
 }

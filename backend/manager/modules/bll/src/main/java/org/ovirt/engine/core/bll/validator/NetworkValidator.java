@@ -7,6 +7,8 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -24,6 +26,8 @@ public class NetworkValidator {
 
     private StoragePool dataCenter;
     private List<Network> networks;
+    private List<VM> vms;
+    private List<VmTemplate> templates;
 
     public NetworkValidator(Network network) {
         this.network = network;
@@ -156,8 +160,7 @@ public class NetworkValidator {
      * @return An error iff the network is in use by any VMs.
      */
     public ValidationResult networkNotUsedByVms() {
-        return networkNotUsed(getDbFacade().getVmDao().getAllForNetwork(network.getId()),
-                VdcBllMessages.VAR__ENTITIES__VMS);
+        return networkNotUsed(getVms(), VdcBllMessages.VAR__ENTITIES__VMS);
     }
 
     /**
@@ -172,7 +175,23 @@ public class NetworkValidator {
      * @return An error iff the network is in use by any templates.
      */
     public ValidationResult networkNotUsedByTemplates() {
-        return networkNotUsed(getDbFacade().getVmTemplateDao().getAllForNetwork(network.getId()),
+        return networkNotUsed(getTemplates(),
                 VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
+    }
+
+    protected List<VM> getVms() {
+        if (vms == null) {
+            vms = getDbFacade().getVmDao().getAllForNetwork(network.getId());
+        }
+
+        return vms;
+    }
+
+    protected List<VmTemplate> getTemplates() {
+        if (templates == null) {
+            templates = getDbFacade().getVmTemplateDao().getAllForNetwork(network.getId());
+        }
+
+        return templates;
     }
 }
