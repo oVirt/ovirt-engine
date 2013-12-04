@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -196,10 +197,13 @@ public class ImportNetworksModel extends Model {
 
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
-                    network.setId((Guid) result.getReturnValue().getActionReturnValue());
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    if (returnValue != null && returnValue.getSucceeded()) {
+                        network.setId((Guid) returnValue.getActionReturnValue());
 
-                    // Perform sequentially: first fetch clusters, then attach network, then create VNIC profile
-                    fetchDcClusters(dcId, network, externalNetwork.isPublicUse());
+                        // Perform sequentially: first fetch clusters, then attach network, then create VNIC profile
+                        fetchDcClusters(dcId, network, externalNetwork.isPublicUse());
+                    }
                 }
             });
         }
