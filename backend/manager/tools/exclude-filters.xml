@@ -39,4 +39,18 @@
        <Method name="handle"/>
        <Bug code="Dm"/>
      </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.config.db.ConfigDaoImpl" />
+       <Method name="getKey" params="org.ovirt.engine.core.config.entity.ConfigKey"/>
+       <Bug pattern="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE"/>
+     </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.config.db.ConfigDaoImpl" />
+       <Method name="getKeysForName" params="java.lang.String" />
+       <Bug pattern="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE"/>
+     </Match>
+
+
 </FindBugsFilter>
