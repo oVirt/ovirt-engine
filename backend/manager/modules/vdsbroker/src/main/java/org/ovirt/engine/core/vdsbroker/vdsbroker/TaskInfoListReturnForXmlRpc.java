@@ -11,7 +11,7 @@ public final class TaskInfoListReturnForXmlRpc extends StatusReturnForXmlRpc {
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore),
     // XmlRpcMember("allTasksInfo")]
-    public Map<String, java.util.Map<String, String>> TaskInfoList;
+    public Map<String, java.util.Map<String, String>> taskInfoList;
 
     @Override
     public String toString() {
@@ -19,7 +19,7 @@ public final class TaskInfoListReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(TaskInfoList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(taskInfoList, builder);
         return builder.toString();
     }
 
@@ -28,7 +28,7 @@ public final class TaskInfoListReturnForXmlRpc extends StatusReturnForXmlRpc {
         super(innerMap);
         Object temp = innerMap.get(ALL_TASKS_INFO);
         if (temp != null) {
-            TaskInfoList = (Map<String, java.util.Map<String, String>>) temp;
+            taskInfoList = (Map<String, java.util.Map<String, String>>) temp;
         }
     }
 

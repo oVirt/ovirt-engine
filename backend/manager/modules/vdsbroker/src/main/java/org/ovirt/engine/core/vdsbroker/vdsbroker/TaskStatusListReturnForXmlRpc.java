@@ -9,7 +9,7 @@ public final class TaskStatusListReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String ALL_TASKS_STATUS = "allTasksStatus";
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
-    public Map<String, Object> TaskStatusList;
+    public Map<String, Object> taskStatusList;
 
     @Override
     public String toString() {
@@ -17,14 +17,14 @@ public final class TaskStatusListReturnForXmlRpc extends StatusReturnForXmlRpc {
         builder.append("\n");
         builder.append(super.toString());
         builder.append("\n");
-        XmlRpcObjectDescriptor.toStringBuilder(TaskStatusList, builder);
+        XmlRpcObjectDescriptor.toStringBuilder(taskStatusList, builder);
         return builder.toString();
     }
 
     @SuppressWarnings("unchecked")
     public TaskStatusListReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        TaskStatusList = (Map<String, Object>) innerMap.get(ALL_TASKS_STATUS);
+        taskStatusList = (Map<String, Object>) innerMap.get(ALL_TASKS_STATUS);
     }
 
 }

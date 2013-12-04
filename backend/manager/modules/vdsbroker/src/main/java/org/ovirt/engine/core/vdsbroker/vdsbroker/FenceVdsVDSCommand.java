@@ -59,8 +59,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
 
             proceedProxyReturnValue();
             getVDSReturnValue().setSucceeded(false);
-            if (getParameters().getAction() == FenceActionType.Status && _result.Power != null) {
-                String stat = _result.Power.toLowerCase();
+            if (getParameters().getAction() == FenceActionType.Status && _result.power != null) {
+                String stat = _result.power.toLowerCase();
                 String msg = _result.mStatus.mMessage;
                 if ("on".equals(stat) || "off".equals(stat)) {
                     getVDSReturnValue().setSucceeded(true);
@@ -112,8 +112,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         _result = getBroker().fenceNode(getParameters().getIp(), "",
                 getParameters().getType(), getParameters().getUser(),
                 getParameters().getPassword(), "status", "", options);
-        if (_result.Power != null) {
-            String powerStatus = _result.Power.toLowerCase();
+        if (_result.power != null) {
+            String powerStatus = _result.power.toLowerCase();
             if ((action == FenceActionType.Start && powerStatus.equals("on")) ||
                     action == FenceActionType.Stop && powerStatus.equals("off"))
                 ret = true;

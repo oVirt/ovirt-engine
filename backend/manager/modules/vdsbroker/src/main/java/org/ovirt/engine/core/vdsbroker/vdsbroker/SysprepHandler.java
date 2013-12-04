@@ -60,7 +60,7 @@ public final class SysprepHandler {
         passwordPerDomain = Config.<DomainsPasswordMap> GetValue(ConfigValues.AdUserPassword);
     }
 
-    public static String GetSysPrep(VM vm, String hostName, String domain, SysPrepParams sysPrepParams) {
+    public static String getSysPrep(VM vm, String hostName, String domain, SysPrepParams sysPrepParams) {
         String sysPrepContent = "";
         sysPrepContent = LoadFile(osRepository.getSysprepPath(vm.getVmOsId(), null));
         sysPrepContent = replace(sysPrepContent, "$ProductKey$", osRepository.getProductKey(vm.getVmOsId(), null));

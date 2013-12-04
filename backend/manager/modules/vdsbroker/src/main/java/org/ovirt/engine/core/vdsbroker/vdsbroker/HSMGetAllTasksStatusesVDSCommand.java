@@ -24,7 +24,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     protected void executeVdsBrokerCommand() {
         _result = getBroker().getAllTasksStatuses();
         proceedProxyReturnValue();
-        setReturnValue(parseTaskStatusList(_result.TaskStatusList));
+        setReturnValue(parseTaskStatusList(_result.taskStatusList));
     }
 
     protected AsyncTaskStatus parseTaskStatus(TaskStatusForXmlRpc taskStatus) {

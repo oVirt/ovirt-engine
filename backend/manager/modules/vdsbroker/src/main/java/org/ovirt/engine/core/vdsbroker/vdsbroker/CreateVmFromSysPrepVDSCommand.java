@@ -6,7 +6,7 @@ public class CreateVmFromSysPrepVDSCommand<P extends CreateVmFromSysPrepVDSComma
     public CreateVmFromSysPrepVDSCommand(P parameters) {
         super(parameters);
         String sysPrepContent =
-                SysprepHandler.GetSysPrep(parameters.getVm(),
+                SysprepHandler.getSysPrep(parameters.getVm(),
                         parameters.getHostName(),
                         parameters.getDomain(),
                         parameters.getSysPrepParams());

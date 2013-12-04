@@ -19,7 +19,7 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
     protected void executeVdsBrokerCommand() {
         _result = getBroker().getAllTasksInfo();
         proceedProxyReturnValue();
-        setReturnValue(parseTaskInfoList(_result.TaskInfoList));
+        setReturnValue(parseTaskInfoList(_result.taskInfoList));
     }
 
     protected java.util.ArrayList<AsyncTaskCreationInfo> parseTaskInfoList(Map<String, Map<String, String>> taskInfoList) {
