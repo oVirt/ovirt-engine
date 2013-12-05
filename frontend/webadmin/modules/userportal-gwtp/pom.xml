@@ -246,6 +246,15 @@
     <profile>
       <id>gwtdev</id>
       <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>gwt-maven-plugin</artifactId>
+              <version>${gwt-maven-plugin.workingRefresh.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>

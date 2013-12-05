@@ -101,6 +101,8 @@
     <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>
     <exec-maven-plugin.version>1.2</exec-maven-plugin.version>
     <maven-ejb-plugin.version>2.3</maven-ejb-plugin.version>
+    <!-- https://jira.codehaus.org/browse/MGWT-350 -->
+    <gwt-maven-plugin.workingRefresh.version>2.4.0</gwt-maven-plugin.workingRefresh.version>
   </properties>
   <dependencyManagement>
     <dependencies>
