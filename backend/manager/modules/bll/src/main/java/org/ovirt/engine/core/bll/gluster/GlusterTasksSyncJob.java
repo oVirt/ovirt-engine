@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddInternalJobParameters;
 import org.ovirt.engine.core.common.action.AddStepParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
@@ -33,6 +36,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.log.Log;
@@ -153,7 +157,6 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 task.getTaskId(),
                 ExternalSystemType.GLUSTER);
         updateVolumeBricksAndLock(cluster, task);
-
     }
 
     private Guid addAsyncTaskStep(VDSGroup cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
@@ -211,29 +214,30 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 if (GlusterTaskType.REMOVE_BRICK == task.getType()) {
                     //update bricks associated with task id
                     String[] bricks = task.getTaskParameters().getBricks();
-                    if (bricks == null)
+
+                    if (bricks != null)
                     {
-                        return;
-                    }
-                    List<GlusterBrickEntity> brickEntities = new ArrayList<>();
-                    for (String brick: bricks) {
-                        String[] brickParts = brick.split(":", -1);
-                        String hostnameOrIp = brickParts[0];
-                        String brickDir = brickParts[1];
-                        GlusterBrickEntity brickEntity = new GlusterBrickEntity();
-                        VdsStatic server = GlusterDBUtils.getInstance().getServer(cluster.getId(), hostnameOrIp);
-                        if (server == null) {
-                            log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, cluster.getId());
-                        } else {
-                            brickEntity.setServerId(server.getId());
-                            brickEntity.setBrickDirectory(brickDir);
-                            brickEntity.setAsyncTask(new GlusterAsyncTask());
-                            brickEntity.getAsyncTask().setTaskId(task.getTaskId());
-                            brickEntities.add(brickEntity);
+                        List<GlusterBrickEntity> brickEntities = new ArrayList<>();
+                        for (String brick: bricks) {
+                            String[] brickParts = brick.split(":", -1);
+                            String hostnameOrIp = brickParts[0];
+                            String brickDir = brickParts[1];
+                            GlusterBrickEntity brickEntity = new GlusterBrickEntity();
+                            VdsStatic server = GlusterDBUtils.getInstance().getServer(cluster.getId(), hostnameOrIp);
+                            if (server == null) {
+                                log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, cluster.getId());
+                            } else {
+                                brickEntity.setServerId(server.getId());
+                                brickEntity.setBrickDirectory(brickDir);
+                                brickEntity.setAsyncTask(new GlusterAsyncTask());
+                                brickEntity.getAsyncTask().setTaskId(task.getTaskId());
+                                brickEntities.add(brickEntity);
+                            }
                         }
+                        getBrickDao().updateAllBrickTasksByHostIdBrickDirInBatch(brickEntities);
                     }
-                    getBrickDao().updateAllBrickTasksByHostIdBrickDirInBatch(brickEntities);
                 }
+                logTaskStartedFromCLI(cluster, task, vol);
             } catch (Exception e) {
                 log.error(e);
                 throw new VdcBLLException(VdcBllErrors.GeneralException, e.getMessage());
@@ -245,6 +249,29 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             log.debugFormat("Did not find a volume associated with volumeName {0} and task {1} ",
                                 volumeName, task.getTaskId());
         }
+    }
+
+    private void logTaskStartedFromCLI(VDSGroup cluster, GlusterAsyncTask task, GlusterVolumeEntity vol) {
+        Map<String, String> values = new HashMap<String, String>();
+
+        AuditLogType logType;
+        switch (task.getType()) {
+        case REBALANCE:
+            logType = AuditLogType.GLUSTER_VOLUME_REBALANCE_START_DETECTED_FROM_CLI;
+            break;
+        case REMOVE_BRICK:
+            logType = AuditLogType.START_REMOVING_GLUSTER_VOLUME_BRICKS_DETECTED_FROM_CLI;
+            values.put(GlusterConstants.BRICK, StringUtils.join(task.getTaskParameters().getBricks(), ','));
+            break;
+         default:
+            logType = AuditLogType.UNASSIGNED;
+            break;
+        }
+        getGlusterLogUtil().logAuditMessage(cluster.getId(), vol, null, logType, values);
+    }
+
+    protected GlusterAuditLogUtil getGlusterLogUtil() {
+        return GlusterAuditLogUtil.getInstance();
     }
 
     public GlusterTaskUtils getGlusterTaskUtils() {
