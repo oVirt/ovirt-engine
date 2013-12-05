@@ -126,4 +126,14 @@
        <Class name="org.ovirt.engine.core.bll.memory.HibernationVolumesRemover$1" />
        <Bug code="HE"/>
      </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.utils.GlusterUtil" />
+       <Or>
+          <Method name="getPeers" params="java.lang.String,java.lang.String,java.lang.String" />
+          <Method name="getPeers" params="java.lang.String,java.lang.String,java.lang.String,java.lang.String"/>
+       </Or>
+       <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+     </Match>
+
 </FindBugsFilter>
