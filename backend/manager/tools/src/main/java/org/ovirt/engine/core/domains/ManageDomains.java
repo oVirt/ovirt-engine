@@ -180,7 +180,6 @@ public class ManageDomains {
 
     public static void main(String[] args) {
         initLogging();
-
         ManageDomains util;
         util = new ManageDomains();
 
@@ -477,7 +476,10 @@ public class ManageDomains {
             }
             ArrayList<String> result = new ArrayList<String>();
             for (int counter = 0; counter < ldapDnsResult.getNumOfValidAddresses(); counter++) {
-                result.add(ldapDnsResult.getAddresses()[counter]);
+                // In case the address provides a port, don't keep it, we currently assume only the port
+                // defined at ConfigValues.ldapServerPort is being used.
+                String[] addressParts = ldapDnsResult.getAddresses()[counter].split(":");
+                result.add(addressParts[0]);
             }
             return result;
         }
@@ -525,14 +527,7 @@ public class ManageDomains {
         adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput(parser));
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
-
-        String ldapServersStr = parser.getArg(Arguments.ldapServers.name());
-        if (!StringUtils.isEmpty(ldapServersStr)) {
-            //Replacing "," with ";" - from user perspective of the utility, passing comma delimited string makes more sense and more natural
-            //But "," is used as domain separate character when storing to DB.
-            ldapServersStr = ldapServersStr.replace(',',';');
-            ldapServersEntry.setValueForDomain(domainName, ldapServersStr);
-        }
+        setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
 
 
         testConfiguration(domainName,
@@ -559,6 +554,18 @@ public class ManageDomains {
                 adUserIdEntry,
                 ldapProviderTypesEntry);
         printSuccessMessage(domainName,"added");
+    }
+
+    private void setLdapServersPerDomain(String domainName,
+            DomainsConfigurationEntry ldapServersEntry,
+            String ldapServersStr) {
+        if (!StringUtils.isEmpty(ldapServersStr)) {
+            // Replacing "," with ";" - from user perspective of the utility, passing comma delimited string makes more
+            // sense and more natural
+            // But "," is used as domain separate character when storing to DB.
+            ldapServersStr = ldapServersStr.replace(',', ';');
+            ldapServersEntry.setValueForDomain(domainName, ldapServersStr);
+        }
     }
 
     private void printSuccessMessage(String domainName, String action) {
@@ -602,8 +609,7 @@ public class ManageDomains {
         String authMode;
         String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
         authMode = getDomainAuthMode(domainName);
-        List<String> ldapServers = getLdapServers(parser, domainName);
-        validateKdcServers(authMode,domainName);
+        validateKdcServers(authMode, domainName);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         String userName  = parser.getArg(Arguments.user.toString());
         DomainsConfigurationEntry domainNameEntry =
@@ -619,7 +625,6 @@ public class ManageDomains {
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
         String currentAdUserPasswordEntry = configurationProvider.getConfigValue(ConfigValues.AdUserPassword);
         String currentAuthModeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPSecurityAuthentication);
-        String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String currentLdapProviderTypeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
         String ldapServerPort = configurationProvider.getConfigValue(ConfigValues.LDAPServerPort);
@@ -631,8 +636,6 @@ public class ManageDomains {
                 new PasswordDomainsConfigurationEntry(currentAdUserPasswordEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry authModeEntry =
                 new DomainsConfigurationEntry(currentAuthModeEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
-        DomainsConfigurationEntry ldapServersEntry =
-                new DomainsConfigurationEntry(currentLdapServersEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry adUserIdEntry =
                 new DomainsConfigurationEntry(currentAdUserIdEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry ldapProviderTypeEntry =
@@ -646,8 +649,16 @@ public class ManageDomains {
             adUserPasswordEntry.setValueForDomain(domainName, password);
         }
 
-        if (authMode.equalsIgnoreCase(LdapAuthModeEnum.SIMPLE.name())) {
-            ldapServersEntry.setValueForDomain(domainName, utilityConfiguration.getLocalHostEntry());
+        String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
+        DomainsConfigurationEntry ldapServersEntry =
+                new DomainsConfigurationEntry(currentLdapServersEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+
+        List<String> ldapServers = getLdapServers(parser, domainName);
+        // Set the the obtained LDAP servers (either from arguments or from a DNS SRV record query
+        // only if the -ldapServers option is used.
+
+        if (parser.hasArg(Arguments.ldapServers.name())) {
+            setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
         }
         LdapProviderType ldapProviderType = getLdapProviderType(parser);
         if (ldapProviderType != null) {
