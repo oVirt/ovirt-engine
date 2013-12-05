@@ -25,7 +25,6 @@ import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
-import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -583,7 +582,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     getVmId().toString());
             return false;
         } else {
-            handleMemoryAdjustments();
             VmHandler.updateDisksFromDb(getVm());
             getVm().setKvmEnable(getParameters().getKvmEnable());
             getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
@@ -623,10 +621,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                             .getVdsGroupCompatibilityVersion()));
             return true;
         }
-    }
-
-    protected void handleMemoryAdjustments() {
-        // nothing to do in RunVmCommand class
     }
 
     protected boolean getVdsToRunOn() {
@@ -795,10 +789,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(StartEntity.class);
         return super.getValidationGroups();
-    }
-
-    protected VmValidator getVmValidator(VM vm) {
-        return new VmValidator(vm);
     }
 
     protected RunVmValidator getRunVmValidator() {
