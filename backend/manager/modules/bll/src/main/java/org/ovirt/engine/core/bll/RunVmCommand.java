@@ -273,31 +273,28 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // configuration option change
         VmDeviceUtils.updateVmDevices(getVm().getStaticData());
         setActionReturnValue(VMStatus.Down);
-        if (initVm()) {
-            if (getVm().getStatus() == VMStatus.Paused) { // resume
-                resumeVm();
-            } else { // run vm
-                if (!_isRerun && Boolean.TRUE.equals(getParameters().getRunAsStateless())
-                        && getVm().getStatus() != VMStatus.Suspended) {
-                    if (getVm().getDiskList().isEmpty()) { // If there are no snappable disks, there is no meaning for
-                                                           // running as stateless, log a warning and run normally
-                        warnIfNotAllDisksPermitSnapshots();
-                        runVm();
-                    }
-                    else {
-                        statelessVmTreatment();
-                    }
-                } else if (!isInternalExecution() && !_isRerun
-                        && getVm().getStatus() != VMStatus.Suspended
-                        && isStatelessSnapshotExistsForVm()
-                        && !isVMPartOfManualPool()) {
-                    removeVmStatlessImages();
-                } else {
+        initVm();
+        if (getVm().getStatus() == VMStatus.Paused) { // resume
+            resumeVm();
+        } else { // run vm
+            if (!_isRerun && Boolean.TRUE.equals(getParameters().getRunAsStateless())
+                    && getVm().getStatus() != VMStatus.Suspended) {
+                if (getVm().getDiskList().isEmpty()) { // If there are no snappable disks, there is no meaning for
+                    // running as stateless, log a warning and run normally
+                    warnIfNotAllDisksPermitSnapshots();
                     runVm();
                 }
+                else {
+                    statelessVmTreatment();
+                }
+            } else if (!isInternalExecution() && !_isRerun
+                    && getVm().getStatus() != VMStatus.Suspended
+                    && isStatelessSnapshotExistsForVm()
+                    && !isVMPartOfManualPool()) {
+                removeVmStatlessImages();
+            } else {
+                runVm();
             }
-        } else {
-            setActionReturnValue(getVm().getStatus());
         }
     }
 
@@ -580,62 +577,44 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    protected boolean initVm() {
-        if (getVm() == null) {
-            log.warnFormat("ResourceManager::{0}::No such vm (where id = '{1}' )in database", getClass().getName(),
-                    getVmId().toString());
-            throw new VdcBLLException(VdcBllErrors.DB_NO_SUCH_VM);
-        }
-        if ((getVm().getStatus() == VMStatus.ImageIllegal) || (getVm().getStatus() == VMStatus.ImageLocked)) {
-            log.warnFormat("ResourceManager::{0}::vm '{1}' has {2}", getClass().getName(), getVmId().toString(),
-                    (getVm().getStatus() == VMStatus.ImageLocked ? "a locked image" : "an illegal image"));
-            setActionReturnValue(getVm().getStatus());
-            return false;
-        } else if (!getSnapshotsValidator().vmNotDuringSnapshot(getVmId()).isValid()) {
-            log.warnFormat("ResourceManager::{0}::VM {1} is during snapshot",
-                    getClass().getName(),
-                    getVmId().toString());
-            return false;
-        } else {
-            VmHandler.updateDisksFromDb(getVm());
-            getVm().setKvmEnable(getParameters().getKvmEnable());
-            getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
-            getVm().setAcpiEnable(getParameters().getAcpiEnable());
+    protected void initVm() {
+        VmHandler.updateDisksFromDb(getVm());
+        getVm().setKvmEnable(getParameters().getKvmEnable());
+        getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
+        getVm().setAcpiEnable(getParameters().getAcpiEnable());
 
-            // Clear the first user:
-            getVm().setConsoleUserId(null);
-            getParameters().setRunAsStateless(getParameters().getRunAsStateless() != null ? getParameters().getRunAsStateless()
-                    : getVm().isStateless());
+        // Clear the first user:
+        getVm().setConsoleUserId(null);
+        getParameters().setRunAsStateless(getParameters().getRunAsStateless() != null ? getParameters().getRunAsStateless()
+                : getVm().isStateless());
 
-            getVm().setDisplayType(getParameters().getUseVnc() == null ?
-                    getVm().getDefaultDisplayType() :
-                     // if Use Vnc is not null it means runVM was launch from the run once command, thus
-                     // the VM can run with display type which is different from its default display type
+        getVm().setDisplayType(getParameters().getUseVnc() == null ?
+                getVm().getDefaultDisplayType() :
+                    // if Use Vnc is not null it means runVM was launch from the run once command, thus
+                    // the VM can run with display type which is different from its default display type
                     (getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl));
 
-            if (getParameters().getInitializationType() == null) {
-                // if vm not initialized, use sysprep/cloud-init
-                if (!getVm().isInitialized()) {
-                    getVm().setInitializationType(osRepository.isWindows(getVm().getVmOsId()) ?
-                            InitializationType.Sysprep :
+        if (getParameters().getInitializationType() == null) {
+            // if vm not initialized, use sysprep/cloud-init
+            if (!getVm().isInitialized()) {
+                getVm().setInitializationType(osRepository.isWindows(getVm().getVmOsId()) ?
+                        InitializationType.Sysprep :
                             // TODO: we should use cloud init automatically only when cloud init configuration will be available
                             InitializationType.None);
-                }
-            } else {
-                getVm().setInitializationType(getParameters().getInitializationType());
             }
-
-            // if we attach floppy we don't need the sysprep
-            if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
-                getVmStaticDAO().update(getVm().getStaticData());
-            }
-            // get what cpu flags should be passed to vdsm according to cluster
-            // cpu name
-            getVm().setVdsGroupCpuFlagsData(
-                    CpuFlagsManagerHandler.GetVDSVerbDataByCpuName(getVm().getVdsGroupCpuName(), getVm()
-                            .getVdsGroupCompatibilityVersion()));
-            return true;
+        } else {
+            getVm().setInitializationType(getParameters().getInitializationType());
         }
+
+        // if we attach floppy we don't need the sysprep
+        if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
+            getVmStaticDAO().update(getVm().getStaticData());
+        }
+        // get what cpu flags should be passed to vdsm according to cluster
+        // cpu name
+        getVm().setVdsGroupCpuFlagsData(
+                CpuFlagsManagerHandler.GetVDSVerbDataByCpuName(getVm().getVdsGroupCpuName(), getVm()
+                        .getVdsGroupCompatibilityVersion()));
     }
 
     protected boolean getVdsToRunOn() {

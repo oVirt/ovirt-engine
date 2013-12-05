@@ -661,8 +661,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String DB();
 
-    String DB_NO_SUCH_VM();
-
     String MAC_POOL_NO_MACS_LEFT();
 
     String MAC_POOL_NOT_INITIALIZED();
