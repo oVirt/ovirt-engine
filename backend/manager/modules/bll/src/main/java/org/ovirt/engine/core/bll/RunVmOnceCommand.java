@@ -74,10 +74,6 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
      */
     @Override
     protected void refreshBootParameters(RunVmParams runVmParameters) {
-        if (runVmParameters == null) {
-            return;
-        }
-
         getVm().setInitrdUrl(runVmParameters.getInitrdUrl());
         getVm().setKernelUrl(runVmParameters.getKernelUrl());
         getVm().setKernelParams(runVmParameters.getKernelParams());
@@ -86,12 +82,13 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         getVm().setBootSequence((runVmParameters.getBootSequence() != null) ?
                 runVmParameters.getBootSequence() :
                 getVm().getDefaultBootSequence());
+
+        getVm().setRunOnce(true);
     }
 
     @Override
-    protected CreateVmVDSCommandParameters initCreateVmParams() {
-        CreateVmVDSCommandParameters createVmParams = super.initCreateVmParams();
-        createVmParams.getVm().setRunOnce(true);
+    protected CreateVmVDSCommandParameters buildCreateVmParameters() {
+        CreateVmVDSCommandParameters createVmParams = super.buildCreateVmParameters();
 
         RunVmOnceParams runOnceParams = getParameters();
 

@@ -10,7 +10,6 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private VM vm;
     private VmInit vmInit;
     private SysPrepParams sysPrepParams;
-    private boolean clearHibernationVolumes;
 
     public CreateVmVDSCommandParameters() {
     }
@@ -43,13 +42,5 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setSysPrepParams(SysPrepParams sysPrepParams) {
         this.sysPrepParams = sysPrepParams;
-    }
-
-    public boolean isClearHibernationVolumes() {
-        return clearHibernationVolumes;
-    }
-
-    public void setClearHibernationVolumes(boolean clearHibernationVolumes) {
-        this.clearHibernationVolumes = clearHibernationVolumes;
     }
 }

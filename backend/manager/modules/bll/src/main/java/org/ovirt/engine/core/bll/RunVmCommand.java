@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -102,13 +100,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private RunVmFlow cachedFlow;
     /** Note: this field should not be used directly, use {@link #isStatelessSnapshotExistsForVm()} instead */
     private Boolean cachedStatelessSnapshotExistsForVm;
-    /** Indicates whether restoration of memory from snapshot is supported for the VM */
-    private boolean memorySnapshotSupported;
-    /** The memory volume which is stored in the active snapshot of the VM */
-    private String memoryVolumeFromSnapshot = StringUtils.EMPTY;
-    /** This flag is used to indicate that the disks might be dirty since the memory
-     *  from the active snapshot was restored so the memory should not be used */
-    private boolean memoryFromSnapshotIrrelevant;
+    /** Cache the memory volume which is stored in the active snapshot of the VM */
+    private String cachedMemoryVolumeFromSnapshot;
+    /** Indicates whether there is a possibility that the active snapshot's memory was already restored */
+    private boolean memoryFromSnapshotUsed;
 
     private Guid cachedActiveIsoDomainId;
 
@@ -125,29 +120,25 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         super(runVmParams);
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
-        initRunVmCommand();
     }
 
     protected Guid getPredefinedVdsIdToRunOn() {
         return getVm().getDedicatedVmForVds();
     }
 
-    private void initRunVmCommand() {
-        RunVmParams runVmParameters = getParameters();
-
-        if (getVm() != null) {
-            refreshBootParameters(runVmParameters);
-            getVm().setLastStartTime(new Date());
-
-            // set vm disks
-            VmHandler.updateDisksForVm(getVm(), getDiskDao().getAllForVm(getVm().getId()));
-
-            if (getVm().getStatus() != VMStatus.Suspended) {
-                memorySnapshotSupported = FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion());
-                // If the VM is not hibernated, save the hibernation volume from the baseline snapshot
-                memoryVolumeFromSnapshot = getActiveSnapshot().getMemoryVolume();
-            }
+    private String getMemoryFromSnapshot() {
+        // If the memory from the snapshot could have been restored already, the disks might be
+        // non coherent with the memory, thus we don't want to try to restore the memory again
+        if (memoryFromSnapshotUsed) {
+            return StringUtils.EMPTY;
         }
+
+        if (cachedMemoryVolumeFromSnapshot == null) {
+            cachedMemoryVolumeFromSnapshot = FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion()) ?
+                    getActiveSnapshot().getMemoryVolume() : StringUtils.EMPTY;
+        }
+
+        return cachedMemoryVolumeFromSnapshot;
     }
 
     private Snapshot getActiveSnapshot() {
@@ -155,7 +146,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     private SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
+        return getDbFacade().getSnapshotDao();
     }
 
     /**
@@ -163,11 +154,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * extended, however it can be overridden (e.g. the children will not call the super)
      */
     protected void refreshBootParameters(RunVmParams runVmParameters) {
-        if (runVmParameters == null) {
-            return;
-        }
-
         getVm().setBootSequence(getVm().getDefaultBootSequence());
+        getVm().setRunOnce(false);
     }
 
     /**
@@ -221,7 +209,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVdsToRunOn()) {
             VMStatus status = null;
             try {
-                VmHandler.updateVmGuestAgentVersion(getVm());
                 if (connectLunDisks(getVdsId())) {
                     status = createVm();
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
@@ -267,9 +254,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void executeVmCommand() {
-        // Before running the VM we update its devices, as they may need to be changed due to
-        // configuration option change
-        VmDeviceUtils.updateVmDevices(getVm().getStaticData());
         setActionReturnValue(VMStatus.Down);
         initVm();
         perform();
@@ -482,12 +466,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected VMStatus createVm() {
-
-        // reevaluate boot parameters if VM was executed with 'run once'
-        refreshBootParameters(getParameters());
-
-        getVm().setLastStartTime(new Date());
-
         final String cdPath = chooseCd();
         if (StringUtils.isNotEmpty(cdPath)) {
             log.infoFormat("Running VM with attached cd {0}", cdPath);
@@ -509,10 +487,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         VMStatus vmStatus = (VMStatus) getBackend()
                 .getResourceManager()
-                .RunAsyncVdsCommand(VDSCommandType.CreateVm, initCreateVmParams(), this).getReturnValue();
+                .RunAsyncVdsCommand(VDSCommandType.CreateVm, buildCreateVmParameters(), this).getReturnValue();
 
         // Don't use the memory from the active snapshot anymore if there's a chance that disks were changed
-        memoryFromSnapshotIrrelevant = vmStatus.isRunning() || vmStatus == VMStatus.RestoringState;
+        memoryFromSnapshotUsed = vmStatus.isRunning() || vmStatus == VMStatus.RestoringState;
 
         // After VM was create (or not), we can remove the quota vds group memory.
         return vmStatus;
@@ -523,31 +501,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * Initialize the parameters for the VDSM command of VM creation
      * @return the VDS create VM parameters
      */
-    protected CreateVmVDSCommandParameters initCreateVmParams() {
-        VM vmToBeCreated = getVm();
-        vmToBeCreated.setRunOnce(false);
-        vmToBeCreated.setCpuName(getVdsGroup().getcpu_name());
-        if (!vmToBeCreated.getInterfaces().isEmpty()) {
-            initParametersForExternalNetworks();
-        }
-
-        if (vmToBeCreated.getStatus() == VMStatus.Suspended) {
-            return new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
-        }
-
-        if (!memorySnapshotSupported || memoryFromSnapshotIrrelevant) {
-            vmToBeCreated.setHibernationVolHandle(StringUtils.EMPTY);
-            return new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
-        }
-
-        // otherwise, use the memory that is saved on the active snapshot (might be empty)
-        vmToBeCreated.setHibernationVolHandle(memoryVolumeFromSnapshot);
-        CreateVmVDSCommandParameters parameters =
-                new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
-        // Mark that the hibernation volume should be cleared from the VM right after the sync part of
-        // the create verb is finished (unlike hibernation volume that is created by hibernate command)
-        parameters.setClearHibernationVolumes(true);
-        parameters.setVmInit(vmToBeCreated.getVmInit());
+    protected CreateVmVDSCommandParameters buildCreateVmParameters() {
+        CreateVmVDSCommandParameters parameters = new CreateVmVDSCommandParameters(getVdsId(), getVm());
+        parameters.setVmInit(getVm().getVmInit());
         return parameters;
     }
 
@@ -636,12 +592,26 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 && !getVm().getRunOnVds().equals(getVm().getDedicatedVmForVds());
     }
 
+    /**
+     * @return true if we need to create the VM object, false otherwise
+     */
+    private boolean isInitVmRequired() {
+        return EnumSet.of(RunVmFlow.RUN, RunVmFlow.RESUME_HIBERNATE).contains(getFlow());
+    }
+
     protected void initVm() {
-        if (!EnumSet.of(RunVmFlow.RUN, RunVmFlow.RESUME_HIBERNATE).contains(getFlow())) {
+        if (!isInitVmRequired()) {
             return;
         }
 
         fetchVmDisksFromDb();
+        // reevaluate boot parameters if VM was executed with 'run once'
+        refreshBootParameters(getParameters());
+
+        // Before running the VM we update its devices, as they may
+        // need to be changed due to configuration option change
+        VmDeviceUtils.updateVmDevices(getVm().getStaticData());
+
         getVm().setKvmEnable(getParameters().getKvmEnable());
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
         getVm().setAcpiEnable(getParameters().getAcpiEnable());
@@ -682,6 +652,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getVm().setVdsGroupCpuFlagsData(
                 CpuFlagsManagerHandler.GetVDSVerbDataByCpuName(getVm().getVdsGroupCpuName(), getVm()
                         .getVdsGroupCompatibilityVersion()));
+
+        VmHandler.updateVmGuestAgentVersion(getVm());
+
+        getVm().setCpuName(getVdsGroup().getcpu_name());
+
+        if (!getVm().getInterfaces().isEmpty()) {
+            initParametersForExternalNetworks();
+        }
+
+        if (getFlow() != RunVmFlow.RESUME_HIBERNATE) {
+            getVm().setHibernationVolHandle(getMemoryFromSnapshot());
+        }
     }
 
     protected void fetchVmDisksFromDb() {
@@ -705,7 +687,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getRunVdssList().add(vdsToRunOn);
         }
 
-        VmHandler.updateVmGuestAgentVersion(getVm());
         setVds(null);
         setVdsName(null);
         if (getVdsId().equals(Guid.Empty)) {
@@ -947,20 +928,20 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void runningFailed() {
-        if (memoryFromSnapshotIrrelevant) {
+        if (memoryFromSnapshotUsed) {
             removeMemoryFromActiveSnapshot();
         }
         super.runningFailed();
     }
 
     private void removeMemoryFromActiveSnapshot() {
-        if (memoryVolumeFromSnapshot.isEmpty()) {
+        if (StringUtils.isEmpty(cachedMemoryVolumeFromSnapshot)) {
             return;
         }
 
         // If the active snapshot is the only one that points to the memory volume we can remove it
-        if (getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolumeFromSnapshot) == 1) {
-            removeMemoryVolumes(memoryVolumeFromSnapshot, getActionType(), true);
+        if (getSnapshotDao().getNumOfSnapshotsByMemory(cachedMemoryVolumeFromSnapshot) == 1) {
+            removeMemoryVolumes(cachedMemoryVolumeFromSnapshot, getActionType(), true);
         }
         getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
     }
