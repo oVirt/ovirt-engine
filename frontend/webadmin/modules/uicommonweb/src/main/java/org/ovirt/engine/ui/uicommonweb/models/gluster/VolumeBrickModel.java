@@ -504,14 +504,14 @@ public class VolumeBrickModel extends Model {
             break;
 
         case DISTRIBUTED_REPLICATE:
-            if (brickCount < replicaCount || (brickCount % replicaCount) != 0)
+            if (brickCount <= replicaCount || (brickCount % replicaCount) != 0)
             {
                 valid = false;
             }
             break;
 
         case DISTRIBUTED_STRIPE:
-            if (brickCount < stripeCount || (brickCount % stripeCount) != 0)
+            if (brickCount <= stripeCount || (brickCount % stripeCount) != 0)
             {
                 valid = false;
             }
@@ -525,7 +525,7 @@ public class VolumeBrickModel extends Model {
             break;
 
         case DISTRIBUTED_STRIPED_REPLICATE:
-            if (brickCount < stripeCount * replicaCount || (brickCount % (stripeCount * replicaCount)) != 0)
+            if (brickCount <= stripeCount * replicaCount || (brickCount % (stripeCount * replicaCount)) != 0)
             {
                 valid = false;
             }
