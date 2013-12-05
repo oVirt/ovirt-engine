@@ -219,8 +219,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     private void connectAndRefreshAllUpHosts(final boolean commandSucceeded) {
         final boolean isPerformConnectOps = !_isLastMaster && commandSucceeded;
-        final boolean isPerformDisconnect = !getParameters().isInactive();
-        if (isPerformConnectOps || isPerformDisconnect) {
+        if (isPerformConnectOps) {
             List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
             for (final VDS vds : getAllRunningVdssInPool()) {
                 tasks.add(new Callable<Void>() {
@@ -256,12 +255,6 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                                 ex.getMessage());
                                     }
                                 }
-                            }
-                            // only if we deactivate the storage domain we want to disconnect from it.
-                            if (isPerformDisconnect) {
-                                StorageHelperDirector.getInstance()
-                                        .getItem(getStorageDomain().getStorageType())
-                                        .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
                             }
 
                         } catch (Exception e) {
