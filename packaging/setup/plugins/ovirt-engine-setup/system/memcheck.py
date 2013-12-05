@@ -58,7 +58,9 @@ class Plugin(plugin.PluginBase):
         satisfied = False
         if self._total_memory < self.environment[
             osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB
-        ] * 0.95:
+        ] * self.environment[
+            osetupcons.SystemEnv.MEMCHECK_THRESHOLD
+        ] / 100:
             self.logger.warn(
                 _(
                     'Warning: Not enough memory is available on the host. '
@@ -77,7 +79,9 @@ class Plugin(plugin.PluginBase):
             satisfied = True
             if self._total_memory < self.environment[
                 osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
-            ] * 0.95:
+            ] * self.environment[
+                osetupcons.SystemEnv.MEMCHECK_THRESHOLD
+            ] / 100:
                 self.logger.warn(
                     _(
                         'Less than {recommended}MB of memory is available'
@@ -104,6 +108,10 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB,
             osetupcons.Defaults.DEFAULT_SYSTEM_MEMCHECK_RECOMMENDED_MB
+        )
+        self.environment.setdefault(
+            osetupcons.SystemEnv.MEMCHECK_THRESHOLD,
+            osetupcons.Defaults.DEFAULT_SYSTEM_MEMCHECK_THRESHOLD
         )
 
     @plugin.event(
