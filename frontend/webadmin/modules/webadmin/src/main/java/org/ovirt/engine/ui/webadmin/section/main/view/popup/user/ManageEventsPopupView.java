@@ -75,6 +75,10 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
     @WithElementId
     Button collapseAllButton;
 
+    @UiField
+    @Ignore
+    Label infoLabel;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
@@ -93,6 +97,7 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
         titleLabel.setText(constants.manageEventsPopupTitleLabel());
         expandAllButton.setText(constants.treeExpandAll());
         collapseAllButton.setText(constants.treeCollapseAll());
+        infoLabel.setText(constants.manageEventsPopupInfoLabel());
     }
 
     private void initTree() {

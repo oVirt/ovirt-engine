@@ -900,6 +900,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Select the Events for Notification:")
     String manageEventsPopupTitleLabel();
 
+    @DefaultStringValue("Note: To receive email notifications, ensure that the mail server is configured and the ovirt-event-notifier service is running.")
+    String manageEventsPopupInfoLabel();
+
     @DefaultStringValue("Devices to configure:")
     String guidePopupRequiredActionsLabel();
 
