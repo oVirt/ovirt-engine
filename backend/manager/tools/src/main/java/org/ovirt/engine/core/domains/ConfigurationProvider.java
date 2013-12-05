@@ -124,7 +124,9 @@ public class ConfigurationProvider {
     protected void disposePassFile(File file) {
         if (file != null) {
             if (file.exists()) {
-                file.delete();
+                if (!file.delete()) {
+                    log.info("Failed deleting file " + file.getAbsolutePath() + ". Continuing anyway.");
+                }
             }
         }
     }

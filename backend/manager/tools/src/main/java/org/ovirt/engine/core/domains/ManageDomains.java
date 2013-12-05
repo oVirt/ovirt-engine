@@ -1145,7 +1145,9 @@ public class ManageDomains {
     private static void deleteFile(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            file.delete();
+            if (!file.delete()) {
+                log.info("Failed deleting file " + file.getAbsolutePath() + ". Continuing anyway.");
+            }
         }
     }
 }
