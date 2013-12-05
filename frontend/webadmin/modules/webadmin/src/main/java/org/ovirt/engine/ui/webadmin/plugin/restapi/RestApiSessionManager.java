@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
+import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
@@ -71,7 +71,7 @@ public class RestApiSessionManager {
         // Note that the slash at the end of the URL is not just a whim. With the trailing slash the browser will only
         // send authentication headers to URLs ending in api/, otherwise it will send them to URLs ending in /, and
         // this causes problems in other applications, for example in the reports application.
-        this.restApiBaseUrl = FrontendUrlUtils.getRootURL() + "api/"; //$NON-NLS-1$
+        this.restApiBaseUrl = BaseContextPathData.getInstance().getPath() + "api/"; //$NON-NLS-1$
     }
 
     void sendRequest(RequestBuilder requestBuilder, RestApiCallback callback) {
