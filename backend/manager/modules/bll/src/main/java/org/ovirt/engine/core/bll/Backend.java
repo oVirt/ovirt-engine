@@ -181,7 +181,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // initialize configuration utils to use DB
         Config.setConfigUtils(new DBConfigUtils());
 
-        log.info("Running ovirt-engine " + Config.<String>GetValue(ConfigValues.ProductRPMVersion));
+        log.info("Running ovirt-engine " + Config.<String>getValue(ConfigValues.ProductRPMVersion));
         _resourceManger = new VDSBrokerFrontendImpl();
 
         CpuFlagsManagerHandler.InitDictionaries();
@@ -216,8 +216,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         initExecutionMessageDirector();
 
-        Integer sessionTimeoutInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInterval);
-        Integer sessionTimeOutInvalidationInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInvalidationInterval);
+        Integer sessionTimeoutInterval = Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
+        Integer sessionTimeOutInvalidationInterval = Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInvalidationInterval);
         // negative value means session should never expire, therefore no need to clean sessions.
         if (sessionTimeoutInterval > 0) {
             SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(SessionDataContainer.getInstance(),
@@ -229,20 +229,20 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Set start-up time
         _startedAt = DateTime.getNow();
 
-        int vmPoolMonitorIntervalInMinutes = Config.<Integer> GetValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
+        int vmPoolMonitorIntervalInMinutes = Config.<Integer> getValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
         poolMonitoringJobId =
                 SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(new VmPoolMonitor(),
                         "managePrestartedVmsInAllVmPools", new Class[] {}, new Object[] {},
                         vmPoolMonitorIntervalInMinutes,
                         vmPoolMonitorIntervalInMinutes, TimeUnit.MINUTES);
 
-        int autoStartVmsRunnerIntervalInSeconds = Config.<Integer> GetValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
+        int autoStartVmsRunnerIntervalInSeconds = Config.<Integer> getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(AutoStartVmsRunner.getInstance(),
                 "startFailedAutoStartVms", new Class[] {}, new Object[] {},
                 autoStartVmsRunnerIntervalInSeconds,
                 autoStartVmsRunnerIntervalInSeconds, TimeUnit.SECONDS);
 
-        int quotaCacheIntervalInMinutes = Config.<Integer> GetValue(ConfigValues.QuotaCacheIntervalInMinutes);
+        int quotaCacheIntervalInMinutes = Config.<Integer> getValue(ConfigValues.QuotaCacheIntervalInMinutes);
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
                 "updateQuotaCache",  new Class[] {}, new Object[] {},
                 1, quotaCacheIntervalInMinutes, TimeUnit.MINUTES);
@@ -658,7 +658,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void initOsRepository() {
-        OsInfoPreferencesLoader.INSTANCE.init(FileSystems.getDefault().getPath(EngineLocalConfig.getInstance().getEtcDir().getAbsolutePath(), Config.<String>GetValue(ConfigValues.OsRepositoryConfDir)));
+        OsInfoPreferencesLoader.INSTANCE.init(FileSystems.getDefault().getPath(EngineLocalConfig.getInstance().getEtcDir().getAbsolutePath(), Config.<String>getValue(ConfigValues.OsRepositoryConfDir)));
         OsRepositoryImpl.INSTANCE.init(OsInfoPreferencesLoader.INSTANCE.getPreferences());
         OsRepository osRepository = OsRepositoryImpl.INSTANCE;
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);

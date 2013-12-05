@@ -20,7 +20,7 @@ public class GetJobsByOffsetQuery<P extends GetJobsByOffsetQueryParameters> exte
     @Override
     protected void executeQueryCommand() {
         // Defines the page size for retrieving the Jobs
-        final int pageSize = Config.<Integer> GetValue(ConfigValues.JobPageSize);
+        final int pageSize = Config.<Integer> getValue(ConfigValues.JobPageSize);
 
         int offset = Math.max(getParameters().getOffset(), 0);
         List<Job> jobs = DbFacade.getInstance().getJobDao().getJobsByOffsetAndPageSize(offset * pageSize, pageSize);

@@ -283,7 +283,7 @@ public class VmDeviceCommonUtils {
 
     public static boolean isInWhiteList(VmDeviceGeneralType type, String device) {
         String expr = getDeviceTypeSearchExpr(type, device);
-        String whiteList = Config.GetValue(ConfigValues.ManagedDevicesWhiteList);
+        String whiteList = Config.getValue(ConfigValues.ManagedDevicesWhiteList);
         return (whiteList.indexOf(expr) >= 0);
     }
 

@@ -117,7 +117,7 @@ public class EngineEncryptionUtils {
     public static String getEngineSSHPublicKey() {
         return OpenSSHUtils.getKeyString(
             getCertificate().getPublicKey(),
-            Config.<String> GetValue(ConfigValues.SSHKeyAlias)
+            Config.<String> getValue(ConfigValues.SSHKeyAlias)
         );
     }
 

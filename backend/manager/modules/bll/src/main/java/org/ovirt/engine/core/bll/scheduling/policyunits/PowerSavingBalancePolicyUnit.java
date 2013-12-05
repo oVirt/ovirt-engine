@@ -35,10 +35,10 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
     protected List<VDS> getOverUtilizedHosts(List<VDS> relevantHosts,
             Map<String, String> parameters) {
         final int lowUtilization = tryParseWithDefault(parameters.get("LowUtilization"), Config
-                .<Integer> GetValue(ConfigValues.LowUtilizationForPowerSave));
+                .<Integer> getValue(ConfigValues.LowUtilizationForPowerSave));
         final int cpuOverCommitDurationMinutes =
                 tryParseWithDefault(parameters.get("CpuOverCommitDurationMinutes"), Config
-                        .<Integer> GetValue(ConfigValues.CpuOverCommitDurationMinutes));
+                        .<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes));
         List<VDS> overUtilized = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
@@ -67,7 +67,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
 
     @Override
     protected int getHighUtilizationDefaultValue() {
-        return Config.<Integer> GetValue(ConfigValues.HighUtilizationForPowerSave);
+        return Config.<Integer> getValue(ConfigValues.HighUtilizationForPowerSave);
     }
 
     @Override
@@ -75,14 +75,14 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
             List<VDS> relevantHosts,
             Map<String, String> parameters) {
         int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
-                .<Integer> GetValue(ConfigValues.HighUtilizationForPowerSave));
+                .<Integer> getValue(ConfigValues.HighUtilizationForPowerSave));
         final int lowUtilization = tryParseWithDefault(parameters.get("LowUtilization"), Config
-                .<Integer> GetValue(ConfigValues.LowUtilizationForPowerSave));
+                .<Integer> getValue(ConfigValues.LowUtilizationForPowerSave));
         final int highVdsCount = Math
-                .min(Config.<Integer> GetValue(ConfigValues.UtilizationThresholdInPercent)
+                .min(Config.<Integer> getValue(ConfigValues.UtilizationThresholdInPercent)
                         * highUtilization / 100,
                         highUtilization
-                                - Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage));
+                                - Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage));
         List<VDS> underUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {

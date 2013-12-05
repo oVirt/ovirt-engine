@@ -30,6 +30,6 @@ public class GetVdsCertificateSubjectByVdsIdQuery<P extends IdQueryParameters> e
      * @return The organization's name from {@link Config}
      */
     protected String getOrganizationName() {
-        return Config.<String> GetValue(ConfigValues.OrganizationName);
+        return Config.<String> getValue(ConfigValues.OrganizationName);
     }
 }

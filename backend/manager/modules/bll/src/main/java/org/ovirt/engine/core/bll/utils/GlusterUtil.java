@@ -112,7 +112,7 @@ public class GlusterUtil {
     }
 
     protected void connect(SSHClient client, String serverName) {
-        Integer timeout = Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds) * 1000;
+        Integer timeout = Config.<Integer> getValue(ConfigValues.ConnectToServerTimeoutInSeconds) * 1000;
         client.setHardTimeout(timeout);
         client.setSoftTimeout(timeout);
         client.setHost(serverName, SSH_PORT);
@@ -139,7 +139,7 @@ public class GlusterUtil {
 
     protected String executePeerStatusCommand(SSHClient client) {
         ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(500);
-        String command = Config.<String> GetValue(ConfigValues.GlusterPeerStatusCommand);
+        String command = Config.<String> getValue(ConfigValues.GlusterPeerStatusCommand);
         try {
             client.executeCommand(command, null, out, null);
             return new String(out.toByteArray(), "UTF-8");

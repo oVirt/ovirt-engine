@@ -19,7 +19,7 @@ public final class NetworkUtils {
     public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
 
     public static String getEngineNetwork() {
-        return Config.<String> GetValue(ConfigValues.ManagementNetwork);
+        return Config.<String> getValue(ConfigValues.ManagementNetwork);
     }
 
     // method return interface name without vlan:

@@ -140,7 +140,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         });
         // do not install vds's which added in pending mode (currently power
         // clients). they are installed as part of the approve process
-        if (Config.<Boolean> GetValue(ConfigValues.InstallVds) && !getParameters().getAddPending()) {
+        if (Config.<Boolean> getValue(ConfigValues.InstallVds) && !getParameters().getAddPending()) {
             final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
             installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
@@ -230,7 +230,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     private void AddVdsStaticToDb() {
         getParameters().getVdsStaticData().setServerSslEnabled(
-                Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication));
+                Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
         DbFacade.getInstance().getVdsStaticDao().save(getParameters().getVdsStaticData());
         getCompensationContext().snapshotNewEntity(getParameters().getVdsStaticData());
         setVdsIdRef(getParameters().getVdsStaticData().getId());
@@ -244,7 +244,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (getParameters().getAddPending()) {
             vdsDynamic.setStatus(VDSStatus.PendingApproval);
         }
-        else if (Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
+        else if (Config.<Boolean> getValue(ConfigValues.InstallVds)) {
             vdsDynamic.setStatus(VDSStatus.Installing);
         }
         DbFacade.getInstance().getVdsDynamicDao().save(vdsDynamic);
@@ -275,7 +275,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             VDS vds = getParameters().getvds();
             String vdsName = vds.getName();
             String hostName = vds.getHostName();
-            int maxVdsNameLength = Config.<Integer> GetValue(ConfigValues.MaxVdsNameLength);
+            int maxVdsNameLength = Config.<Integer> getValue(ConfigValues.MaxVdsNameLength);
             // check that vds name is not null or empty
             if (vdsName == null || vdsName.isEmpty()) {
                 returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
@@ -297,7 +297,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } else {
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
-                if (Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication)
+                if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)
                         && !EngineEncryptionUtils.haveKey()) {
                     returnValue = failCanDoAction(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                 } else if (!getParameters().getAddPending()
@@ -340,7 +340,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     public EngineSSHClient getSSHClient() throws Exception {
         Long timeout =
-                TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
+                TimeUnit.SECONDS.toMillis(Config.<Integer> getValue(ConfigValues.ConnectToServerTimeoutInSeconds));
 
         EngineSSHClient sshclient = new EngineSSHClient();
         sshclient.setVds(getParameters().getvds());
@@ -371,7 +371,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private String getInstalledVdsIdIfExists(SSHClient client) {
         try {
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
-            client.executeCommand(Config.<String> GetValue(ConfigValues.GetVdsmIdByVdsmToolCommand),
+            client.executeCommand(Config.<String> getValue(ConfigValues.GetVdsmIdByVdsmToolCommand),
                                   null, out, null);
             return new String(out.toByteArray(), Charset.forName("UTF-8"));
         }
@@ -388,7 +388,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (
             !getParameters().getAddPending() &&
-            Config.<Boolean> GetValue(ConfigValues.InstallVds)
+            Config.<Boolean> getValue(ConfigValues.InstallVds)
         ) {
             try (final EngineSSHClient sshclient = getSSHClient()) {
                 sshclient.connect();

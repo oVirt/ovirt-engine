@@ -93,12 +93,12 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
 
     @Override
     protected int getRerties() {
-        return Config.<Integer> GetValue(ConfigValues.FenceStopStatusRetries);
+        return Config.<Integer> getValue(ConfigValues.FenceStopStatusRetries);
     }
 
     @Override
     protected int getDelayInSeconds() {
-        return Config.<Integer> GetValue(ConfigValues.FenceStopStatusDelayBetweenRetriesInSec);
+        return Config.<Integer> getValue(ConfigValues.FenceStopStatusDelayBetweenRetriesInSec);
     }
 
     @Override

@@ -156,7 +156,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
             );
             _dialog.authenticate();
 
-            String dest = Config.<String> GetValue(ConfigValues.oVirtUploadPath);
+            String dest = Config.<String> getValue(ConfigValues.oVirtUploadPath);
 
             _messages.post(
                 InstallerMessages.Severity.INFO,
@@ -202,7 +202,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
                 dest
             );
 
-            String command = Config.<String> GetValue(ConfigValues.oVirtUpgradeScriptName);
+            String command = Config.<String> getValue(ConfigValues.oVirtUpgradeScriptName);
 
             _messages.post(
                 InstallerMessages.Severity.INFO,

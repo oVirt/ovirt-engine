@@ -189,7 +189,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     static boolean validatePinningAndMigration(List<String> reasons, VmStatic vmStaticData, String cpuPinning) {
-        final boolean cpuPinMigrationEnabled = Boolean.TRUE.equals(Config.<Boolean> GetValue(ConfigValues.CpuPinMigrationEnabled));
+        final boolean cpuPinMigrationEnabled = Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinMigrationEnabled));
         if (!cpuPinMigrationEnabled
                 && (vmStaticData.getMigrationSupport() == MigrationSupport.MIGRATABLE
                 || vmStaticData.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE)

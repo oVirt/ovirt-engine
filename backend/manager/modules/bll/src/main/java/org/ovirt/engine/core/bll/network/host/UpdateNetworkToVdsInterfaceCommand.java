@@ -67,7 +67,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                         .getBootProtocol());
         parameters.setVmNetwork(getParameters().getNetwork().isVmNetwork());
         parameters.setOldNetworkName(getParameters().getOldNetworkName());
-        parameters.setConnectionTimeout(Config.<Integer> GetValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds));
+        parameters.setConnectionTimeout(Config.<Integer> getValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds));
         parameters.setCheckConnectivity(getParameters().getCheckConnectivity());
 
         IPAddress[] adresses = Dns.getHostAddresses(NetworkUtils.OS_REFERENCE_TO_MACHINE_NAME);

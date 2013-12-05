@@ -64,7 +64,7 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
         createInfo.put(VdsProperties.num_of_cpus,
                 String.valueOf(vm.getNumOfCpus()));
-        if (Config.<Boolean> GetValue(ConfigValues.SendSMPOnRunVm)) {
+        if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
             createInfo.put(VdsProperties.cores_per_socket,
                     (Integer.toString(vm.getCpuPerSocket())));
         }
@@ -76,9 +76,9 @@ public abstract class VmInfoBuilderBase {
                 .getEmulatedMachine());
         // send cipher suite and spice secure channels parameters only if ssl
         // enabled.
-        if (Config.<Boolean> GetValue(ConfigValues.SSLEnabled)) {
+        if (Config.<Boolean> getValue(ConfigValues.SSLEnabled)) {
             createInfo.put(VdsProperties.spiceSslCipherSuite,
-                    Config.<String> GetValue(ConfigValues.CipherSuite));
+                    Config.<String> getValue(ConfigValues.CipherSuite));
             createInfo.put(VdsProperties.SpiceSecureChannels, Config.<String> getValue(
                     ConfigValues.SpiceSecureChannels, compatibilityVersion));
         }
@@ -113,7 +113,7 @@ public abstract class VmInfoBuilderBase {
         }
         String keyboardLayout = vm.getVncKeyboardLayout(); // if set per VM use that value
         if (keyboardLayout == null) { // otherwise fall back to global setting
-            keyboardLayout = Config.<String> GetValue(ConfigValues.VncKeyboardLayout);
+            keyboardLayout = Config.<String> getValue(ConfigValues.VncKeyboardLayout);
         }
         createInfo.put(VdsProperties.KeyboardLayout, keyboardLayout);
         if (osRepository.isLinux(vm.getVmOsId())) {
@@ -216,7 +216,7 @@ public abstract class VmInfoBuilderBase {
 
         // else fallback to engine config default for given OS type
         if (osRepository.isWindows(vm.getOs())) {
-            return Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone);
+            return Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone);
         } else {
             return "Etc/GMT";
         }

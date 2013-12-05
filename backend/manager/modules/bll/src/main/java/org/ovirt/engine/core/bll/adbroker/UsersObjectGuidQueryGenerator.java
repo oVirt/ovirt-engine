@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class UsersObjectGuidQueryGenerator extends LdapQueryDataGeneratorBase<Guid> {
 
     public List<LdapQueryData> getLdapQueriesData(String domain) {
-        int queryLimit = Config.<Integer> GetValue(ConfigValues.MaxLDAPQueryPartsNumber);
+        int queryLimit = Config.<Integer> getValue(ConfigValues.MaxLDAPQueryPartsNumber);
         List<LdapQueryData> results = new ArrayList<LdapQueryData>();
         LdapQueryData subQueryData = new LdapQueryDataImpl();
 

@@ -46,7 +46,7 @@ public class VmPoolMonitor {
         if (missingPrestartedVms > 0) {
             // We do not want to start too many vms at once
             int numOfVmsToPrestart =
-                    Math.min(missingPrestartedVms, Config.<Integer> GetValue(ConfigValues.VmPoolMonitorBatchSize));
+                    Math.min(missingPrestartedVms, Config.<Integer> getValue(ConfigValues.VmPoolMonitorBatchSize));
 
             log.infoFormat("VmPool {0} is missing {1} prestarted Vms, attempting to prestart {2} Vms",
                     vmPoolId,
@@ -67,7 +67,7 @@ public class VmPoolMonitor {
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         int failedAttempts = 0;
         int prestartedVmsCounter = 0;
-        final int maxFailedAttempts = Config.<Integer> GetValue(ConfigValues.VmPoolMonitorMaxAttempts);
+        final int maxFailedAttempts = Config.<Integer> getValue(ConfigValues.VmPoolMonitorMaxAttempts);
         if (vmPoolMaps != null && vmPoolMaps.size() > 0) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (failedAttempts < maxFailedAttempts && prestartedVmsCounter < numOfVmsToPrestart) {

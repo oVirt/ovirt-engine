@@ -315,7 +315,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             try {
                 RpmVersion isoVersion = new RpmVersion(
                     isoFile,
-                    Config.<String> GetValue(ConfigValues.OvirtIsoPrefix),
+                    Config.<String> getValue(ConfigValues.OvirtIsoPrefix),
                     true
                 );
 

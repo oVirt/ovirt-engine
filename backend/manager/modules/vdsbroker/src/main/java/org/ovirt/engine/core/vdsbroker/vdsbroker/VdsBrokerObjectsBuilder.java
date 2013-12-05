@@ -369,9 +369,9 @@ public class VdsBrokerObjectsBuilder {
     }
 
     public static void checkTimeDrift(VDS vds, Map<String, Object> xmlRpcStruct) {
-        Boolean isHostTimeDriftEnabled = Config.GetValue(ConfigValues.EnableHostTimeDrift);
+        Boolean isHostTimeDriftEnabled = Config.getValue(ConfigValues.EnableHostTimeDrift);
         if (isHostTimeDriftEnabled) {
-            Integer maxTimeDriftAllowed = Config.GetValue(ConfigValues.HostTimeDriftInSec);
+            Integer maxTimeDriftAllowed = Config.getValue(ConfigValues.HostTimeDriftInSec);
             Date hostDate = AssignDatetimeValue(xmlRpcStruct, VdsProperties.hostDatetime);
             if (hostDate != null) {
                 Long timeDrift =

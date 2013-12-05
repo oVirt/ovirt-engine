@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.attestationbroker;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.mina.util.ConcurrentHashSet;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -16,14 +19,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
 
-import java.util.List;
-import java.util.Map;
-
 public class AttestThread extends Thread {
 
     private List<String> trustedHostsNames;
-    private final int FIRST_STAGE_QUERY_SIZE = Config.<Integer> GetValue(ConfigValues.AttestationFirstStageSize);
-    private final int SECOND_STAGE_QUERY_SIZE = Config.<Integer> GetValue(ConfigValues.AttestationSecondStageSize);
+    private final int FIRST_STAGE_QUERY_SIZE = Config.<Integer> getValue(ConfigValues.AttestationFirstStageSize);
+    private final int SECOND_STAGE_QUERY_SIZE = Config.<Integer> getValue(ConfigValues.AttestationSecondStageSize);
     private final static ConcurrentHashSet<Guid> trustedVdses = new ConcurrentHashSet<>();
 
     public AttestThread(List<String> trustedHostsNames) {

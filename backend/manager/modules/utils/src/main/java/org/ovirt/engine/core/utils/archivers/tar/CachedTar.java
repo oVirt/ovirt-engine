@@ -129,7 +129,7 @@ public class CachedTar {
         this.archive = archive;
         this.dir = dir;
 
-        this.refreshInterval = Config.<Integer>GetValue(
+        this.refreshInterval = Config.<Integer>getValue(
             ConfigValues.BootstrapCacheRefreshInterval
         );
     }

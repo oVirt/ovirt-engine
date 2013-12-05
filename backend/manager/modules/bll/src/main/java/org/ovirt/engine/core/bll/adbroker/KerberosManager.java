@@ -1,20 +1,18 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import java.io.File;
+import javax.annotation.PostConstruct;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.DependsOn;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-
 import sun.security.krb5.Config;
 import sun.security.krb5.KrbException;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.DependsOn;
-import javax.ejb.Startup;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
 
 /**
  * Manage the container's Kerberos initialization.
@@ -38,9 +36,9 @@ public class KerberosManager implements KerberosManagerSericeManagmentMBean {
 
     private boolean isKerberosAuth() {
         boolean isKerberosAuth = false;
-        String authMethod = org.ovirt.engine.core.common.config.Config.<String> GetValue(ConfigValues.AuthenticationMethod);
-        String domainName = org.ovirt.engine.core.common.config.Config.<String> GetValue(ConfigValues.DomainName);
-        String ldapSecurityAuthentication = org.ovirt.engine.core.common.config.Config.<String> GetValue(ConfigValues.LDAPSecurityAuthentication);
+        String authMethod = org.ovirt.engine.core.common.config.Config.<String> getValue(ConfigValues.AuthenticationMethod);
+        String domainName = org.ovirt.engine.core.common.config.Config.<String> getValue(ConfigValues.DomainName);
+        String ldapSecurityAuthentication = org.ovirt.engine.core.common.config.Config.<String> getValue(ConfigValues.LDAPSecurityAuthentication);
 
         if (authMethod.equalsIgnoreCase("LDAP")) {
             // If there are domains then we need to load the Kerberos configuration in case the LDAP security

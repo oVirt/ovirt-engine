@@ -71,7 +71,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<Permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered) {
-        int appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id).
@@ -138,7 +138,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<Permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered, boolean allUsersWithPermission) {
-        int appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
         return getAllForEntity(id, userID, isFiltered, allUsersWithPermission, appMode);
     }
 
@@ -163,7 +163,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered) {
-        int appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
         return getTreeForEntity(id, type, userID, isFiltered, appMode);
     }
 

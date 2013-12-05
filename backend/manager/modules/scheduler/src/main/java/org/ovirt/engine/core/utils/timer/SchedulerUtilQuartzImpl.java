@@ -203,7 +203,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      */
     private long getConfigurableDelay(String configurableDelayKeyName) {
         ConfigValues configDelay = ConfigValues.valueOf(configurableDelayKeyName);
-        return Config.<Integer> GetValue(configDelay).longValue();
+        return Config.<Integer> getValue(configDelay).longValue();
     }
 
     /**

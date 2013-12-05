@@ -201,14 +201,14 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             _vds.getVdsGroupId()
         );
 
-        String ipTablesConfig = Config.<String> GetValue(ConfigValues.IPTablesConfig);
+        String ipTablesConfig = Config.<String> getValue(ConfigValues.IPTablesConfig);
 
         String serviceIPTablesConfig = "";
         if (vdsGroup.supportsVirtService()) {
-            serviceIPTablesConfig += Config.<String> GetValue(ConfigValues.IPTablesConfigForVirt);
+            serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigForVirt);
         }
         if (vdsGroup.supportsGlusterService()) {
-            serviceIPTablesConfig += Config.<String> GetValue(ConfigValues.IPTablesConfigForGluster);
+            serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigForGluster);
         }
 
         ipTablesConfig = ipTablesConfig.replace(
@@ -365,7 +365,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                     "%svars/ssl",
                     VdsmEnv.CONFIG_PREFIX
                 ),
-                Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication).toString()
+                Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication).toString()
             );
             return null;
         }},
@@ -413,7 +413,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         }},
         new Callable<Object>() {
             public Object call() throws Exception {
-                String minimal = Config.<String> GetValue(ConfigValues.BootstrapMinimalVdsmVersion);
+                String minimal = Config.<String> getValue(ConfigValues.BootstrapMinimalVdsmVersion);
                 if (minimal.trim().length() == 0) {
                     _parser.cliNoop();
             }
@@ -904,9 +904,9 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             s_deployPackage = new CachedTar(
                 new File(
                     EngineLocalConfig.getInstance().getCacheDir(),
-                    Config.<String> GetValue(ConfigValues.BootstrapPackageName)
+                    Config.<String> getValue(ConfigValues.BootstrapPackageName)
                 ),
-                new File(Config.<String> GetValue(ConfigValues.BootstrapPackageDirectory))
+                new File(Config.<String> getValue(ConfigValues.BootstrapPackageDirectory))
             );
         }
     }
@@ -1027,7 +1027,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             );
             _dialog.authenticate();
 
-            String command = Config.<String> GetValue(ConfigValues.BootstrapCommand);
+            String command = Config.<String> getValue(ConfigValues.BootstrapCommand);
 
             // in future we should set here LANG, LC_ALL
             command = command.replace(

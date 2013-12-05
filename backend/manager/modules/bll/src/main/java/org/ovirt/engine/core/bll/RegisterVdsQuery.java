@@ -173,7 +173,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             Guid vdsGroupId;
             if (Guid.Empty.equals(getParameters().getVdsGroupId())) {
                 vdsGroupId = Guid.createGuidFromStringDefaultEmpty(
-                        Config.<String> GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID));
+                        Config.<String> getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID));
                 log.debugFormat(
                         "RegisterVdsQuery::ExecuteCommand - VdsGroupId received as -1, using AutoRegistrationDefaultVdsGroupID: {0}",
                         vdsGroupId);
@@ -282,7 +282,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     getParameters().getSSHPort(),
                     getParameters().getSSHUser(),
                     vdsGroupId, Guid.Empty,
-                    getParameters().getVdsName(), Config.<Boolean> GetValue(ConfigValues.SSLEnabled),
+                    getParameters().getVdsName(), Config.<Boolean> getValue(ConfigValues.SSLEnabled),
                     VDSType.VDS);
 
                 log.debugFormat(
@@ -481,8 +481,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         log.debugFormat("RegisterVdsQuery::CheckAutoApprovalDefinitions - Entering");
 
         isPending.argvalue = true;
-        if (!Config.<String> GetValue(ConfigValues.AutoApprovePatterns).equals("")) {
-            for (String pattern : Config.<String> GetValue(ConfigValues.AutoApprovePatterns)
+        if (!Config.<String> getValue(ConfigValues.AutoApprovePatterns).equals("")) {
+            for (String pattern : Config.<String> getValue(ConfigValues.AutoApprovePatterns)
                     .split("[,]", -1)) {
                 try {
                     String pattern_helper = pattern.toLowerCase();

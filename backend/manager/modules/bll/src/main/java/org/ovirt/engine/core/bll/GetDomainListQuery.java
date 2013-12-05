@@ -16,7 +16,7 @@ public class GetDomainListQuery<P extends GetDomainListParameters> extends Queri
     @Override
     protected void executeQueryCommand() {
         List<String> domains = LdapBrokerUtils.getDomainsList(getParameters().getFilterInternalDomain());
-        String internalDomainName = Config.<String>GetValue(ConfigValues.AdminDomain);
+        String internalDomainName = Config.<String>getValue(ConfigValues.AdminDomain);
         Collections.sort(domains, new LoginDomainComparator(internalDomainName));
         getQueryReturnValue().setReturnValue(domains);
     }

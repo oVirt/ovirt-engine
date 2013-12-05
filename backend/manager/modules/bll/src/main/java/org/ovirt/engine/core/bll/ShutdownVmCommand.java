@@ -53,7 +53,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
             log.infoFormat("Sending shutdown command for VM {0}.", getVmName());
 
             int secondsToWait = getParameters().getWaitBeforeShutdown() ? Config
-                    .<Integer> GetValue(ConfigValues.VmGracefulShutdownTimeout) : 0;
+                    .<Integer> getValue(ConfigValues.VmGracefulShutdownTimeout) : 0;
 
             // sending a shutdown command to the VM:
             setActionReturnValue(Backend

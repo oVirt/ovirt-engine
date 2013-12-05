@@ -59,7 +59,7 @@ public class GetRootDSE {
             searchControls.setSearchScope(queryExecution.getSearchScope());
             // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
             searchControls.setReturningObjFlag(true);
-            searchControls.setTimeLimit(Config.<Integer> GetValue(ConfigValues.LDAPOperationTimeout) * 1000);
+            searchControls.setTimeLimit(Config.<Integer> getValue(ConfigValues.LDAPOperationTimeout) * 1000);
             NamingEnumeration<SearchResult> search =
                     ctx.search(queryExecution.getBaseDN(), queryExecution.getFilter(), searchControls);
 
@@ -137,7 +137,7 @@ public class GetRootDSE {
     }
 
     private void updateProviderTypeInConfig(String domain, String type) {
-        String[] types = Config.<String> GetValue(ConfigValues.LDAPProviderTypes).split(",");
+        String[] types = Config.<String> getValue(ConfigValues.LDAPProviderTypes).split(",");
         for (int x = 0; x < types.length; x++) {
             if (types[x].startsWith(domain)) {
                 types[x] = domain + ":" + type;

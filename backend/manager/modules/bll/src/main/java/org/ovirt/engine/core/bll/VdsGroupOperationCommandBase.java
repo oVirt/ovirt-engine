@@ -52,12 +52,12 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     protected void checkMaxMemoryOverCommitValue() {
         if (getVdsGroup().getmax_vds_memory_over_commit() <= 0) {
             getVdsGroup().setmax_vds_memory_over_commit(
-                    Config.<Integer> GetValue(ConfigValues.MaxVdsMemOverCommit));
+                    Config.<Integer> getValue(ConfigValues.MaxVdsMemOverCommit));
         }
     }
 
     protected boolean isAllowClusterWithVirtGluster() {
-        Boolean allowVirGluster = Config.<Boolean> GetValue(ConfigValues.AllowClusterWithVirtGlusterEnabled);
+        Boolean allowVirGluster = Config.<Boolean> getValue(ConfigValues.AllowClusterWithVirtGlusterEnabled);
         return allowVirGluster;
     }
 

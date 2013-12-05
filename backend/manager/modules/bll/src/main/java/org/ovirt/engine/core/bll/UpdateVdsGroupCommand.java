@@ -267,7 +267,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                                     .toString());
                     result = false;
                 }
-                else if (Config.GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID).equals(getVdsGroup().getId())) {
+                else if (Config.getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID).equals(getVdsGroup().getId())) {
                     addCanDoActionMessage(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
                     result = false;
                 }
@@ -311,7 +311,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 result = false;
             }
         }
-        if (result && getVdsGroup().supportsTrustedService() && Config.<String> GetValue(ConfigValues.AttestationServer).equals("")) {
+        if (result && getVdsGroup().supportsTrustedService() && Config.<String> getValue(ConfigValues.AttestationServer).equals("")) {
             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
             result = false;
         }

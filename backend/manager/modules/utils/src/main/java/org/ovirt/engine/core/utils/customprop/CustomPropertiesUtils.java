@@ -94,7 +94,7 @@ public class CustomPropertiesUtils {
      * @return supported cluster levels
      */
     public Set<Version> getSupportedClusterLevels() {
-        Set<Version> versions = Config.<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels);
+        Set<Version> versions = Config.<java.util.HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels);
         return versions;
     }
 

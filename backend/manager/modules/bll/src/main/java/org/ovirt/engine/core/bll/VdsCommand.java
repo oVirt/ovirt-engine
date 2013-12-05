@@ -72,7 +72,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     private void SleepOnReboot() {
-        int sleepTimeInSec = Config.<Integer> GetValue(ConfigValues.ServerRebootTimeout);
+        int sleepTimeInSec = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
         log.infoFormat("Waiting {0} seconds, for server to finish reboot process.",
                 sleepTimeInSec);
         ThreadUtils.sleep(sleepTimeInSec * 1000);

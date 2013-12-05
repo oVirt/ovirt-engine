@@ -1,5 +1,16 @@
 package org.ovirt.engine.core.vdsbroker.attestation;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -16,17 +27,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class AttestationService {
     private static final String HEADER_HOSTS = "hosts";
     private static final String HEADER_HOST_NAME = "host_name";
@@ -39,17 +39,17 @@ public class AttestationService {
     public static HttpClient getClient() {
         HttpClient httpClient = new HttpClient();
         if (Config
-                .<Boolean> GetValue(ConfigValues.SecureConnectionWithOATServers)) {
+                .<Boolean> getValue(ConfigValues.SecureConnectionWithOATServers)) {
             URL trustStoreUrl;
             try {
                 int port = Config
-                        .<Integer> GetValue(ConfigValues.AttestationPort);
+                        .<Integer> getValue(ConfigValues.AttestationPort);
                 trustStoreUrl = new URL("file://"
                         + Config.resolveAttestationTrustStorePath());
                 String truststorePassword = Config
-                        .<String> GetValue(ConfigValues.AttestationTruststorePass);
+                        .<String> getValue(ConfigValues.AttestationTruststorePass);
                 String attestationServer = Config
-                        .<String> GetValue(ConfigValues.AttestationServer);
+                        .<String> getValue(ConfigValues.AttestationServer);
                 // registering the https protocol with a socket factory that
                 // provides client authentication.
                 ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(getTrustStore(trustStoreUrl.getPath(),
@@ -85,7 +85,7 @@ public class AttestationService {
     }
 
     public List<AttestationValue> attestHosts(List<String> hosts) {
-        String pollURI = Config.<String> GetValue(ConfigValues.PollUri);
+        String pollURI = Config.<String> getValue(ConfigValues.PollUri);
         List<AttestationValue> values = new ArrayList<AttestationValue>();
 
         PostMethod postMethod = new PostMethod("/" + pollURI);

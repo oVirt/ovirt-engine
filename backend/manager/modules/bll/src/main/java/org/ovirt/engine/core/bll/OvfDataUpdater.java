@@ -70,13 +70,13 @@ public class OvfDataUpdater {
     public void initOvfDataUpdater() {
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
         scheduler.scheduleAFixedDelayJob(this, "ovfUpdate_timer", new Class[] {},
-                new Object[] {}, Config.<Integer> GetValue(ConfigValues.OvfUpdateIntervalInMinutes),
-                Config.<Integer> GetValue(ConfigValues.OvfUpdateIntervalInMinutes), TimeUnit.MINUTES);
+                new Object[] {}, Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
+                Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes), TimeUnit.MINUTES);
         log.info("Initialization of OvfDataUpdater completed successfully.");
     }
 
     protected int reloadConfigValue() {
-        return Config.<Integer> GetValue(ConfigValues.OvfItemsCountPerUpdate);
+        return Config.<Integer> getValue(ConfigValues.OvfItemsCountPerUpdate);
     }
 
     @OnTimerMethodAnnotation("ovfUpdate_timer")

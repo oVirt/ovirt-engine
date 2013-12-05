@@ -8,7 +8,7 @@ public final class LdapFactory {
 
     private static LdapBroker internalInstance;
     private static LdapBroker ldapInstance;
-    private static String internalDomain = Config.<String> GetValue(ConfigValues.AdminDomain).trim();
+    private static String internalDomain = Config.<String> getValue(ConfigValues.AdminDomain).trim();
 
     static {
         internalInstance = new InternalBrokerImpl();

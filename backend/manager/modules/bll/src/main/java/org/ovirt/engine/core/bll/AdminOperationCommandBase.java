@@ -39,7 +39,7 @@ public abstract class AdminOperationCommandBase<T extends VdcActionParametersBas
      */
     @Override
     protected boolean isUserAuthorizedToRunAction() {
-        if (isInternalExecution() || !Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn)) {
+        if (isInternalExecution() || !Config.<Boolean> getValue(ConfigValues.IsMultilevelAdministrationOn)) {
             if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "IsUserAuthorizedToRunAction: Internal action or MLA is off - permission check skipped for action {0}",

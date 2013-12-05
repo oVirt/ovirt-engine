@@ -1,5 +1,13 @@
 package org.ovirt.engine.core.bll.provider;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackTokenProvider;
@@ -26,14 +34,6 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class OpenStackImageProviderProxy implements ProviderProxy {
@@ -167,7 +167,7 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
     private OpenStackTokenProvider getTokenProvider() {
         if (tokenProvider == null && getProvider().isRequiringAuthentication()) {
             String tenantName = provider.getAdditionalProperties().getTenantName();
-            tokenProvider = new KeystoneTokenProvider(Config.<String> GetValue(ConfigValues.KeystoneAuthUrl),
+            tokenProvider = new KeystoneTokenProvider(Config.<String> getValue(ConfigValues.KeystoneAuthUrl),
                     getProvider().getUsername(), getProvider().getPassword()).getProviderByTenant(tenantName);
         }
         return tokenProvider;

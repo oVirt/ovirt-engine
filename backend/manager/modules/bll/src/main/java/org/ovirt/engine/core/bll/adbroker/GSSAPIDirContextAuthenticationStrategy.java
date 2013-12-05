@@ -73,7 +73,7 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
     @Override
     public void setupEnvironment(Hashtable env, String userDn, String password) throws NamingException {
         env.put(Context.SECURITY_AUTHENTICATION, GSS_API_AUTHENTICATION);
-        String qopValue = Config.<String>GetValue(ConfigValues.SASL_QOP);
+        String qopValue = Config.<String>getValue(ConfigValues.SASL_QOP);
         env.put("javax.security.sasl.qop", qopValue);
     }
 

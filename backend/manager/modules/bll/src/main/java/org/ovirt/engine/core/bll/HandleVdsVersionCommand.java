@@ -51,7 +51,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         // this will be compared to vdsm supported engines to see if vdsm can be added
         // to cluster
         Version partialVdcVersion =
-                new Version(new Version(Config.<String> GetValue(ConfigValues.VdcVersion)).toString(2));
+                new Version(new Version(Config.<String> getValue(ConfigValues.VdcVersion)).toString(2));
         RpmVersion vdsVersion = vds.getVersion();
         Version vdsmVersion = new Version(vdsVersion.getMajor(), vdsVersion.getMinor());
         if (!StringUtils.isEmpty(vds.getSupportedEngines())) {
@@ -62,9 +62,9 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         // vdsm supprtedEngineVersions list) we move on and check if engine
         // and cluster supports the specific vdsm version. which is sufficient
         if (!isEngineSupportedByVdsm &&
-            !Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion)) {
+            !Config.<HashSet<Version>> getValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion)) {
             reportNonOperationReason(NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER,
-                                     Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).toString(),
+                                     Config.<HashSet<Version>> getValue(ConfigValues.SupportedVDSMVersions).toString(),
                                      vdsmVersion.toString());
         }
         else if (!VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(), vds)) {

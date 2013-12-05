@@ -86,7 +86,7 @@ public class SchedulingManager {
         loadPolicyUnits();
         loadClusterPolicies();
         ExternalSchedulerDiscoveryThread discoveryThread = new ExternalSchedulerDiscoveryThread();
-        if(Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+        if(Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)) {
             log.info("Starting external scheduler dicovery thread");
             discoveryThread.start();
         } else {
@@ -367,7 +367,7 @@ public class SchedulingManager {
                         memoryChecker, correlationId, result);
 
         if (shouldRunExternalFilters
-                && Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled)
+                && Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)
                 && externalFilters.size() > 0
                 && hostList != null
                 && hostList.size() > 0) {
@@ -528,7 +528,7 @@ public class SchedulingManager {
 
         Map<Guid, Integer> hostCostTable = runInternalFunctions(internalScoreFunctions, hostList, vm, parameters);
 
-        if (Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled) && externalScoreFunctions.size() > 0) {
+        if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled) && externalScoreFunctions.size() > 0) {
             runExternalFunctions(externalScoreFunctions, hostList, vm, parameters, hostCostTable);
         }
         Entry<Guid, Integer> bestHostEntry = null;
@@ -659,14 +659,14 @@ public class SchedulingManager {
     }
 
     public static void enableLoadBalancer() {
-        if (Config.<Boolean> GetValue(ConfigValues.EnableVdsLoadBalancing)) {
+        if (Config.<Boolean> getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start scheduling to enable vds load balancer");
             SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance,
                     "performLoadBalancing",
                     new Class[] {},
                     new Object[] {},
-                    Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
-                    Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
+                    Config.<Integer> getValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
+                    Config.<Integer> getValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
                     TimeUnit.MINUTES);
             log.info("Finished scheduling to enable vds load balancer");
         }
@@ -684,7 +684,7 @@ public class SchedulingManager {
                 List<VDS> hosts = getVdsDAO().getAllForVdsGroupWithoutMigrating(cluster.getId());
                 if (policyUnit.isInternal()) {
                     balanceResult = internalRunBalance(policyUnit, cluster, hosts);
-                } else if (Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+                } else if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)) {
                     balanceResult = externalRunBalance(policyUnit, cluster, hosts);
                 }
             }

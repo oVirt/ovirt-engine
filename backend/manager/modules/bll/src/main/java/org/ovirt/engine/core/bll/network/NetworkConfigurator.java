@@ -83,7 +83,7 @@ public class NetworkConfigurator {
                     Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.Poll,
                             new VdsIdVDSCommandParametersBase(host.getId()));
             VDSReturnValue returnValue =
-                    task.get(Config.<Integer> GetValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
+                    task.get(Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
 
             if (returnValue.getSucceeded()) {
                 return true;
@@ -97,7 +97,7 @@ public class NetworkConfigurator {
     public boolean awaitVdsmResponse() {
         final int checks =
                 VDSM_RESPONSIVENESS_PERIOD_IN_SECONDS
-                        / Config.<Integer> GetValue(ConfigValues.SetupNetworksPollingTimeout);
+                        / Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
         for (int i = 0; i < checks; i++) {
             if (pollVds()) {
                 log.infoFormat("Engine managed to communicate with VDSM agent on host {0}",

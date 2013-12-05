@@ -38,7 +38,7 @@ public final class StoragePoolStatusHandler {
     private StoragePoolStatusHandler scheduleTimeout() {
         Class[] argTypes = new Class[0];
         Object[] args = new Object[0];
-        Integer timeout = Config.<Integer> GetValue(ConfigValues.StoragePoolNonOperationalResetTimeoutInMin);
+        Integer timeout = Config.<Integer> getValue(ConfigValues.StoragePoolNonOperationalResetTimeoutInMin);
 
         timerId = getScheduler().scheduleAOneTimeJob(this, "onTimeout", argTypes, args, timeout, TimeUnit.MINUTES);
 

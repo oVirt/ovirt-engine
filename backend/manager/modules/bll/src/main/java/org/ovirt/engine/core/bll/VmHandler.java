@@ -324,9 +324,9 @@ public class VmHandler {
         if (vm.getAppList() != null) {
             final String[] parts = vm.getAppList().split("[,]", -1);
             if (parts != null && parts.length != 0) {
-                final List<String> possibleAgentAppNames = Config.<List<String>> GetValue(ConfigValues.AgentAppName);
+                final List<String> possibleAgentAppNames = Config.<List<String>> getValue(ConfigValues.AgentAppName);
                 final Map<String, String> spiceDriversInGuest =
-                        Config.<Map<String, String>> GetValue(ConfigValues.SpiceDriverNameInGuest);
+                        Config.<Map<String, String>> getValue(ConfigValues.SpiceDriverNameInGuest);
                 final String spiceDriverInGuest =
                         spiceDriversInGuest.get(osRepository.getOsFamily(vm.getOs()).toLowerCase());
 
@@ -449,7 +449,7 @@ public class VmHandler {
     private static int getMaxNumberOfMonitors() {
         int max = 0;
         String numOfMonitorsStr =
-                Config.GetValue(ConfigValues.ValidNumOfMonitors).toString().replaceAll("[\\[\\]]", "");
+                Config.getValue(ConfigValues.ValidNumOfMonitors).toString().replaceAll("[\\[\\]]", "");
         String values[] = numOfMonitorsStr.split(",");
         for (String val : values) {
             val = val.trim();

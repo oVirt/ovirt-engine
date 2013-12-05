@@ -42,7 +42,7 @@ public class LdapBrokerUtils {
      * @return
      */
     public static List<String> getDomainsList(boolean filterInternalDomain) {
-        String[] domains = Config.<String> GetValue(ConfigValues.DomainName).split("[,]", -1);
+        String[] domains = Config.<String> getValue(ConfigValues.DomainName).split("[,]", -1);
         List<String> results = new ArrayList<String>();
         for (String domain : domains) {
             String trimmedDomain = domain.trim();
@@ -51,7 +51,7 @@ public class LdapBrokerUtils {
             }
         }
         if (!filterInternalDomain) {
-            results.add(Config.<String> GetValue(ConfigValues.AdminDomain).trim());
+            results.add(Config.<String> getValue(ConfigValues.AdminDomain).trim());
         }
         return results;
     }
@@ -392,8 +392,8 @@ public class LdapBrokerUtils {
      * this method adds to hashtable specific ldap configuration.
      */
     public static void addLdapConfigValues(Hashtable<String, String> env){
-        env.put("com.sun.jndi.ldap.read.timeout", Long.toString(Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout) * 1000));
-        env.put("com.sun.jndi.ldap.connect.timeout", Long.toString(Config.<Integer> GetValue(ConfigValues.LDAPConnectTimeout) * 1000));
+        env.put("com.sun.jndi.ldap.read.timeout", Long.toString(Config.<Integer> getValue(ConfigValues.LDAPQueryTimeout) * 1000));
+        env.put("com.sun.jndi.ldap.connect.timeout", Long.toString(Config.<Integer> getValue(ConfigValues.LDAPConnectTimeout) * 1000));
     }
 
     /**

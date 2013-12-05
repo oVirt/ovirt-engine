@@ -99,7 +99,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
         String poolName = getParameters().getVmStaticData().getName();
         int subsequentFailedAttempts = 0;
-        int vmPoolMaxSubsequentFailures = Config.<Integer> GetValue(ConfigValues.VmPoolMaxSubsequentFailures);
+        int vmPoolMaxSubsequentFailures = Config.<Integer> getValue(ConfigValues.VmPoolMaxSubsequentFailures);
         for (int i = 1, number = 1; i <= getParameters().getVmsCount(); i++, number++) {
             String currentVmName;
             number--;
@@ -327,7 +327,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     private int getBlockSparseInitSizeInGB() {
-        return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
+        return Config.<Integer> getValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
     }
 
     protected boolean getAddVmsSucceded() {

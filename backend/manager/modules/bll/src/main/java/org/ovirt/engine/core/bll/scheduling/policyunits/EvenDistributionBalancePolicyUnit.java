@@ -110,7 +110,7 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
                 getHighUtilizationDefaultValue());
         final int cpuOverCommitDurationMinutes =
                 tryParseWithDefault(parameters.get("CpuOverCommitDurationMinutes"), Config
-                        .<Integer> GetValue(ConfigValues.CpuOverCommitDurationMinutes));
+                        .<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes));
         List<VDS> overUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
@@ -125,19 +125,19 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
     }
 
     protected int getHighUtilizationDefaultValue() {
-        return Config.<Integer> GetValue(ConfigValues.HighUtilizationForEvenlyDistribute);
+        return Config.<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute);
     }
 
     protected List<VDS> getUnderUtilizedHosts(VDSGroup cluster,
             List<VDS> relevantHosts,
             Map<String, String> parameters) {
         int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
-                .<Integer> GetValue(ConfigValues.HighUtilizationForEvenlyDistribute));
+                .<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute));
         final int highVdsCount = Math
-                .min(Config.<Integer> GetValue(ConfigValues.UtilizationThresholdInPercent)
+                .min(Config.<Integer> getValue(ConfigValues.UtilizationThresholdInPercent)
                         * highUtilization / 100,
                         highUtilization
-                                - Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage));
+                                - Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage));
         List<VDS> underUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
@@ -150,8 +150,8 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
 
     protected int calcSpmCpuConsumption(VDS vds) {
         return ((vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
-                .<Integer> GetValue(ConfigValues.SpmVCpuConsumption)
-                * Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores());
+                .<Integer> getValue(ConfigValues.SpmVCpuConsumption)
+                * Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores());
     }
 
     protected VdsDAO getVdsDao() {

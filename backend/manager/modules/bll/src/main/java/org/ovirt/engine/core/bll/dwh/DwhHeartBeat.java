@@ -58,7 +58,7 @@ public class DwhHeartBeat {
                 new Class[] {},
                 new Object[] {},
                 0,
-                Config.<Integer> GetValue(ConfigValues.DwhHeartBeatInterval),
+                Config.<Integer> getValue(ConfigValues.DwhHeartBeatInterval),
                 TimeUnit.SECONDS);
         log.info("DWH Heart Beat initialized");
     }

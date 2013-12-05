@@ -33,11 +33,11 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
     private XmlRpcClientConfigImpl config = null;
 
     public ExternalSchedulerBrokerImpl() {
-        String extSchedUrl = Config.GetValue(ConfigValues.ExternalSchedulerServiceURL);
+        String extSchedUrl = Config.getValue(ConfigValues.ExternalSchedulerServiceURL);
         config = new XmlRpcClientConfigImpl();
         config.setEnabledForExtensions(true);
-        config.setConnectionTimeout((Integer) Config.GetValue(ConfigValues.ExternalSchedulerConnectionTimeout));
-        config.setReplyTimeout((Integer) Config.GetValue(ConfigValues.ExternalSchedulerResponseTimeout));
+        config.setConnectionTimeout((Integer) Config.getValue(ConfigValues.ExternalSchedulerConnectionTimeout));
+        config.setReplyTimeout((Integer) Config.getValue(ConfigValues.ExternalSchedulerResponseTimeout));
         try {
             config.setServerURL(new URL(extSchedUrl));
         } catch (MalformedURLException e) {

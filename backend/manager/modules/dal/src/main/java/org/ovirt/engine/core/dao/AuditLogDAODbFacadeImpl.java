@@ -186,7 +186,7 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_name", vdsName)
                 .addValue("event", event)
-                .addValue("wait_for_sec", Config.GetValue(ConfigValues.FenceQuietTimeBetweenOperationsInSec));
+                .addValue("wait_for_sec", Config.getValue(ConfigValues.FenceQuietTimeBetweenOperationsInSec));
 
         Map<String, Object> dbResults =
                 new SimpleJdbcCall(jdbcTemplate).withFunctionName("get_seconds_to_wait_before_pm_operation").execute(

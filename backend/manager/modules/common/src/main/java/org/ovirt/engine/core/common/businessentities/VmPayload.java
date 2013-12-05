@@ -39,7 +39,7 @@ public class VmPayload implements Serializable {
     }
 
     public static boolean isPayloadSizeLegal(String payload) {
-        return payload.length() <= Config.<Integer> GetValue(ConfigValues.PayloadSize);
+        return payload.length() <= Config.<Integer> getValue(ConfigValues.PayloadSize);
     }
 
     public VmDeviceType getType() {

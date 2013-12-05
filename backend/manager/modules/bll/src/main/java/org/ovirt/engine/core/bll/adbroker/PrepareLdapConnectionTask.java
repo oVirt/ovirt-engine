@@ -46,7 +46,7 @@ public class PrepareLdapConnectionTask implements Callable<LDAPTemplateWrapper> 
                     searcher.getExplicitAuth(),
                     searcher.getExplicitBaseDN(),
                     searcher.getDomainObject(domain).getLdapProviderType(),
-                    Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout) * 1000);
+                    Config.<Integer> getValue(ConfigValues.LDAPQueryTimeout) * 1000);
             ldapctx.afterPropertiesSet();
         } catch (Exception e) {
             log.error("Error connecting to directory server", e);

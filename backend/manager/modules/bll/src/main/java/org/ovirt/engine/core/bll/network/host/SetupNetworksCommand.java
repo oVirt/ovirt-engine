@@ -100,7 +100,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
         int timeout =
                 bckndCmdParams.getConectivityTimeout() != null ? bckndCmdParams.getConectivityTimeout()
-                        : Config.<Integer> GetValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds);
+                        : Config.<Integer> getValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds);
         vdsCmdParams.setConectivityTimeout(timeout);
 
         FutureVDSCall<VDSReturnValue> setupNetworksTask = createFutureTask(vdsCmdParams);
@@ -192,7 +192,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.Poll,
                         new VdsIdVDSCommandParametersBase(getVds().getId()));
         try {
-            task.get(Config.<Integer> GetValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
+            task.get(Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
 
             if (System.currentTimeMillis() - timeBeforePoll < POLLING_BREAK) {
                 Thread.sleep(POLLING_BREAK);

@@ -22,7 +22,7 @@ public class GetAvailableClusterVersionsByStoragePoolQuery<P extends IdQueryPara
             if (storagePool != null) {
                 // return all versions that >= to the storage pool version
                 for (Version supportedVer : Config
-                        .<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
+                        .<java.util.HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
                     // if version lower than current skip because cannot
                     // decrease version
                     if (supportedVer.compareTo(storagePool.getcompatibility_version()) < 0) {
@@ -35,7 +35,7 @@ public class GetAvailableClusterVersionsByStoragePoolQuery<P extends IdQueryPara
         } else {
             getQueryReturnValue().setReturnValue(
                     new java.util.ArrayList<Version>(Config
-                            .<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)));
+                            .<java.util.HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)));
         }
     }
 }

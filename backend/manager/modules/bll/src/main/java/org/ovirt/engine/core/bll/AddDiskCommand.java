@@ -197,7 +197,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (isExceedMaxBlockDiskSize()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
             getReturnValue().getCanDoActionMessages().add(
-                    String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize)));
+                    String.format("$max_disk_size %1$s", Config.<Integer> getValue(ConfigValues.MaxBlockDiskSize)));
             return false;
         }
         return true;
@@ -254,7 +254,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private boolean isExceedMaxBlockDiskSize() {
         if (getStorageDomain().getStorageType().isBlockDomain()) {
-            return getRequestDiskSpace() > Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize);
+            return getRequestDiskSpace() > Config.<Integer> getValue(ConfigValues.MaxBlockDiskSize);
         }
 
         return false;

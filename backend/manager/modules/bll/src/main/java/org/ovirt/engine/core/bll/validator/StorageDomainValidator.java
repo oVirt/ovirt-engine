@@ -70,7 +70,7 @@ public class StorageDomainValidator {
     }
 
     private static Integer getLowDiskSpaceThreshold() {
-        return Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB);
+        return Config.<Integer> getValue(ConfigValues.FreeSpaceCriticalLowInGB);
     }
 
     public static Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,

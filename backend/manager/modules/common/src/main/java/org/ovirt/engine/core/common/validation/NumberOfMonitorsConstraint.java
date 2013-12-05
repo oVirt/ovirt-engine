@@ -18,7 +18,7 @@ public class NumberOfMonitorsConstraint implements ConstraintValidator<NumberOfM
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
         // Is fetched every time to support the reloadability of the config value
-        final List<String> validValues = Config.<List<String>> GetValue(ConfigValues.ValidNumOfMonitors);
+        final List<String> validValues = Config.<List<String>> getValue(ConfigValues.ValidNumOfMonitors);
         if (value == null || validValues == null) {
             return false;
         }

@@ -147,11 +147,11 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
      */
     public static boolean isVmPriorityValueLegal(int value, List<String> reasons) {
         boolean res = false;
-        if (value >= 0 && value <= Config.<Integer> GetValue(ConfigValues.VmPriorityMaxValue)) {
+        if (value >= 0 && value <= Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)) {
             res = true;
         } else {
             reasons.add(VdcBllMessages.VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE.toString());
-            reasons.add(String.format("$MaxValue %1$s", Config.<Integer> GetValue(ConfigValues.VmPriorityMaxValue)));
+            reasons.add(String.format("$MaxValue %1$s", Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)));
         }
         return res;
     }

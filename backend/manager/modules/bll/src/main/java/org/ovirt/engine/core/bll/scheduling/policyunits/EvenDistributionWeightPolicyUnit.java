@@ -31,9 +31,9 @@ public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
      * @return
      */
     private double calcDistributeMetric(VDS vds, VM vm, int hostCores) {
-        int vcpu = Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage);
+        int vcpu = Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage);
         int spmCpu = (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
-                .<Integer> GetValue(ConfigValues.SpmVCpuConsumption);
+                .<Integer> getValue(ConfigValues.SpmVCpuConsumption);
         double hostCpu = vds.getUsageCpuPercent();
         double pendingVcpus = vds.getPendingVcpusCount();
 

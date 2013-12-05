@@ -16,7 +16,7 @@ public abstract class ContainedInConfigValueListConstraint<A extends Annotation,
 
     @Override
     public void initialize(A constraintAnnotation) {
-        validValues = Config.<List<String>> GetValue(getConfigValue(constraintAnnotation));
+        validValues = Config.<List<String>> getValue(getConfigValue(constraintAnnotation));
     }
 
     @Override

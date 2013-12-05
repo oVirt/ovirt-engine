@@ -27,7 +27,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
                         storagePool.getId(), getUserID(), getParameters().isFiltered());
 
                 for (Version supportedVer : Config
-                        .<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
+                        .<java.util.HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
                     // if version lower than current skip because cannot
                     // decrease version
                     if (supportedVer.compareTo(storagePool.getcompatibility_version()) < 0) {
@@ -51,7 +51,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
         } else {
             getQueryReturnValue().setReturnValue(
                     new java.util.ArrayList<Version>(Config
-                            .<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)));
+                            .<java.util.HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)));
         }
     }
 }

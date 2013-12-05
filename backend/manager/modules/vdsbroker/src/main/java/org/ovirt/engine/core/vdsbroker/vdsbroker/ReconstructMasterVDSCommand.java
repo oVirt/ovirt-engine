@@ -29,11 +29,11 @@ public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandPa
         status = getBroker().reconstructMaster(getParameters().getStoragePoolId().toString(),
             getParameters().getStoragePoolName(),
             getParameters().getMasterDomainId().toString(), domains,
-            getParameters().getMasterVersion(), Config.<String> GetValue(ConfigValues.LockPolicy),
-            Config.<Integer> GetValue(ConfigValues.LockRenewalIntervalSec),
-            Config.<Integer> GetValue(ConfigValues.LeaseTimeSec),
-            Config.<Integer> GetValue(ConfigValues.IoOpTimeoutSec),
-            Config.<Integer> GetValue(ConfigValues.LeaseRetries),
+            getParameters().getMasterVersion(), Config.<String> getValue(ConfigValues.LockPolicy),
+            Config.<Integer> getValue(ConfigValues.LockRenewalIntervalSec),
+            Config.<Integer> getValue(ConfigValues.LeaseTimeSec),
+            Config.<Integer> getValue(ConfigValues.IoOpTimeoutSec),
+            Config.<Integer> getValue(ConfigValues.LeaseRetries),
             getParameters().getVdsSpmId());
 
         proceedProxyReturnValue();

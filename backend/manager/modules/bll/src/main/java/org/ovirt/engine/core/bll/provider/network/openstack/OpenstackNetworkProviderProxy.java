@@ -52,7 +52,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             if (provider.isRequiringAuthentication()) {
                 final String tenantName = provider.getAdditionalProperties().getTenantName();
                 final KeystoneTokenProvider keystoneTokenProvider =
-                        new KeystoneTokenProvider(Config.<String> GetValue(ConfigValues.KeystoneAuthUrl),
+                        new KeystoneTokenProvider(Config.<String> getValue(ConfigValues.KeystoneAuthUrl),
                                 provider.getUsername(),
                                 provider.getPassword());
 

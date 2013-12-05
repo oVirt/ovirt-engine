@@ -28,7 +28,7 @@ public final class CpuFlagsManagerHandler {
     public static void InitDictionaries() {
         log.info("Start initializing dictionaries");
         _managersDictionary.clear();
-        for (Version ver : Config.<HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
+        for (Version ver : Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
             _managersDictionary.put(ver, new CpuFlagsManager(ver));
         }
        log.info("Finished initializing dictionaries");

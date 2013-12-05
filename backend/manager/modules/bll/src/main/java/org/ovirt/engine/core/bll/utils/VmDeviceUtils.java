@@ -658,7 +658,7 @@ public class VmDeviceUtils {
             currentNumberOfSlots = getUsbRedirectDevices(oldVm).size();
         }
 
-        final int usbSlots = Config.<Integer> GetValue(ConfigValues.NumberOfUSBSlots);
+        final int usbSlots = Config.<Integer> getValue(ConfigValues.NumberOfUSBSlots);
 
         // We add USB slots in case support doesn't exist in the oldVm configuration, but exists in the new one
         if (!oldUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE) && newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {

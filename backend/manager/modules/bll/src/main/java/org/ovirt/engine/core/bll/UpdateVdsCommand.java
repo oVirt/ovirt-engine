@@ -61,7 +61,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 }
                 String vdsName = getParameters().getvds().getName();
                 String hostName = getParameters().getvds().getHostName();
-                int maxVdsNameLength = Config.<Integer> GetValue(ConfigValues.MaxVdsNameLength);
+                int maxVdsNameLength = Config.<Integer> getValue(ConfigValues.MaxVdsNameLength);
                 // check that VDS name is not null or empty
                 if (vdsName == null || vdsName.isEmpty()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);

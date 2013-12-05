@@ -1089,7 +1089,7 @@ public class QuotaManager {
             lock.readLock().unlock();
         }
 
-        return cacheCount < quotaCount * Config.<Integer> GetValue(ConfigValues.MinimumPercentageToUpdateQuotaCache)/100;
+        return cacheCount < quotaCount * Config.<Integer> getValue(ConfigValues.MinimumPercentageToUpdateQuotaCache)/100;
     }
 
     public boolean isVmStatusQuotaCountable(VMStatus status) {

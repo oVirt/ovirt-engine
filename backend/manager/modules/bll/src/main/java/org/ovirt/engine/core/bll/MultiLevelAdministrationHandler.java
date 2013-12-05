@@ -133,6 +133,6 @@ public class MultiLevelAdministrationHandler {
     }
 
     public static boolean isMultilevelAdministrationOn() {
-        return Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn);
+        return Config.<Boolean> getValue(ConfigValues.IsMultilevelAdministrationOn);
     }
 }

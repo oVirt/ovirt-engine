@@ -60,9 +60,9 @@ public class InternalBrokerUtils {
 
     public static UserAuthenticationResult authenticate(String userName, String password, String domain) {
         UserAuthenticationResult result = null;
-        String adminPassword = Config.<String> GetValue(ConfigValues.AdminPassword).trim();
-        String adminUser = Config.<String> GetValue(ConfigValues.AdminUser).trim();
-        String adminDomain = Config.<String> GetValue(ConfigValues.AdminDomain).trim();
+        String adminPassword = Config.<String> getValue(ConfigValues.AdminPassword).trim();
+        String adminUser = Config.<String> getValue(ConfigValues.AdminUser).trim();
+        String adminDomain = Config.<String> getValue(ConfigValues.AdminDomain).trim();
 
         if (userName.equals(adminUser)) {
             if (domain.equalsIgnoreCase(adminDomain)) {

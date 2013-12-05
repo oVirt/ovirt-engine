@@ -21,7 +21,7 @@ public class SyntaxCheckerFactory {
     public static ISyntaxChecker createBackendSyntaxChecker(String AuthenticationMethod) {
         ConfigAuthenticationMethod = AuthenticationMethod;
         if(backendSyntaxChecker == null) {
-            backendSyntaxChecker = new SyntaxChecker(Config.<Integer> GetValue(ConfigValues.SearchResultsLimit));
+            backendSyntaxChecker = new SyntaxChecker(Config.<Integer> getValue(ConfigValues.SearchResultsLimit));
         }
         return backendSyntaxChecker;
     }

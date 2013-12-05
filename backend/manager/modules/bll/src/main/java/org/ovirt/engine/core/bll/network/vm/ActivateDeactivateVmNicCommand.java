@@ -193,7 +193,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     protected ValidationResult macAvailable() {
-        Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+        Boolean allowDupMacs = Config.<Boolean> getValue(ConfigValues.AllowDuplicateMacAddresses);
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
         if (allowDupMacs || !vmInterfaceManager.existsPluggedInterfaceWithSameMac(getParameters().getNic())) {
             return ValidationResult.VALID;

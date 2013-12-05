@@ -385,7 +385,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     /** @return The maximum length for a storage pool's name, from the configuration. */
     protected Integer getStoragePoolNameSizeLimit() {
-        return Config.<Integer> GetValue(ConfigValues.StoragePoolNameSizeLimit);
+        return Config.<Integer> getValue(ConfigValues.StoragePoolNameSizeLimit);
     }
 
     /** @return The supported storage domain formats, delimited by commas (","). */

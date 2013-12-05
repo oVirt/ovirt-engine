@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class PolicyUnitImpl extends PolicyUnit {
-    public static final int MaxSchedulerWeight = Config.<Integer> GetValue(ConfigValues.MaxSchedulerWeight);;
+    public static final int MaxSchedulerWeight = Config.<Integer> getValue(ConfigValues.MaxSchedulerWeight);;
 
     public static PolicyUnitImpl getPolicyUnitImpl(PolicyUnit policyUnit) {
         switch (policyUnit.getName()) {

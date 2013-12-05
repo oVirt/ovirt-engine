@@ -65,7 +65,7 @@ public class MacPoolManager {
         lockObj.writeLock().lock();
         try {
             log.infoFormat("{0}: Start initializing", instanceId());
-            String ranges = Config.<String> GetValue(ConfigValues.MacPoolRanges);
+            String ranges = Config.<String> getValue(ConfigValues.MacPoolRanges);
             if (!"".equals(ranges)) {
                 try {
                     initRanges(ranges);
@@ -120,7 +120,7 @@ public class MacPoolManager {
     private boolean initRange(String start, String end) {
         List<String> macAddresses = MacAddressRangeUtils.initRange(start, end);
 
-        if (macAddresses.size() + availableMacs.size() > Config.<Integer> GetValue(ConfigValues.MaxMacsCountInPool)) {
+        if (macAddresses.size() + availableMacs.size() > Config.<Integer> getValue(ConfigValues.MaxMacsCountInPool)) {
             throw new MacPoolExceededMaxException();
         }
 
@@ -298,7 +298,7 @@ public class MacPoolManager {
     }
 
     private boolean allowDuplicate() {
-        return Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+        return Config.<Boolean> getValue(ConfigValues.AllowDuplicateMacAddresses);
     }
 
     /**

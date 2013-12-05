@@ -33,7 +33,7 @@ public class TicketUtils {
     public static TicketUtils getInstanceForEngineStoreSigning() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         return new TicketUtils(
             EngineEncryptionUtils.getPrivateKeyEntry().getPrivateKey(),
-            Config.<Integer> GetValue (ConfigValues.WebSocketProxyTicketValiditySeconds)
+            Config.<Integer> getValue (ConfigValues.WebSocketProxyTicketValiditySeconds)
         );
     }
 

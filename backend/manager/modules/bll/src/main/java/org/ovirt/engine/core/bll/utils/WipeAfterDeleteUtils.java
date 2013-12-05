@@ -10,7 +10,7 @@ public class WipeAfterDeleteUtils {
 
     public static boolean getDefaultWipeAfterDeleteFlag(final StorageType storageType) {
         if (storageType.isBlockDomain()) {
-            return Config.<Boolean> GetValue(ConfigValues.SANWipeAfterDelete);
+            return Config.<Boolean> getValue(ConfigValues.SANWipeAfterDelete);
         } else {
             return WIPE_AFTER_DELETE_FILE_DOMAIN;
         }

@@ -67,7 +67,7 @@ public class DbUserCacheManager {
         if (!initialized) {
             log.info("Start initializing " + getClass().getSimpleName());
 
-            int mRefreshRate = Config.<Integer> GetValue(ConfigValues.UserRefreshRate);
+            int mRefreshRate = Config.<Integer> getValue(ConfigValues.UserRefreshRate);
             jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this, "onTimer", new Class[] {},
                     new Object[] {}, 0, mRefreshRate, TimeUnit.SECONDS);
             initialized = true;

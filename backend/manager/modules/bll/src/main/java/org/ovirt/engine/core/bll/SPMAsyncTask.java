@@ -134,7 +134,7 @@ public class SPMAsyncTask {
     boolean isTaskOverPrePollingLapse() {
         AsyncTaskParameters parameters = getParameters();
         long taskStartTime = parameters.getDbAsyncTask().getStartTime().getTime();
-        Integer prePollingPeriod = Config.<Integer> GetValue(UknownTaskPrePollingLapse);
+        Integer prePollingPeriod = Config.<Integer> getValue(UknownTaskPrePollingLapse);
         boolean idlePeriodPassed =
                 System.currentTimeMillis() - taskStartTime > prePollingPeriod;
 

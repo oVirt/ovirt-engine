@@ -175,7 +175,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         public IrsProxyData(Guid storagePoolId) {
             _storagePoolId = storagePoolId;
-            int storagePoolRefreshTime = Config.<Integer> GetValue(ConfigValues.StoragePoolRefreshTimeInSeconds);
+            int storagePoolRefreshTime = Config.<Integer> getValue(ConfigValues.StoragePoolRefreshTimeInSeconds);
             storagePoolRefreshJobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
                     "_updatingTimer_Elapsed", new Class[0], new Object[0], storagePoolRefreshTime,
                     storagePoolRefreshTime, TimeUnit.SECONDS);
@@ -258,7 +258,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     if ((tasksList == null) || allTasksFinished) {
                         nullifyInternalProxies();
                     } else {
-                        if (_errorAttempts < Config.<Integer> GetValue(ConfigValues.SPMFailOverAttempts)) {
+                        if (_errorAttempts < Config.<Integer> getValue(ConfigValues.SPMFailOverAttempts)) {
                             _errorAttempts++;
                             log.warnFormat("failed getting spm status for pool {0}:{1}, attempt number {2}",
                                     _storagePoolId, storagePool.getName(), _errorAttempts);
@@ -383,9 +383,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         int freeDiskInGB = data.getStorageDynamicData().getfreeDiskInGB();
                         AuditLogType type = AuditLogType.UNASSIGNED;
                         boolean spaceThresholdMet =
-                                freeDiskInGB <= Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB);
+                                freeDiskInGB <= Config.<Integer> getValue(ConfigValues.FreeSpaceCriticalLowInGB);
                         boolean percentThresholdMet =
-                                freePercent <= Config.<Integer> GetValue(ConfigValues.FreeSpaceLow);
+                                freePercent <= Config.<Integer> getValue(ConfigValues.FreeSpaceLow);
                         if (spaceThresholdMet && percentThresholdMet) {
                             type = AuditLogType.IRS_DISK_SPACE_LOW_ERROR;
                         } else {
@@ -537,9 +537,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
                     if (host != null) {
                         // Get the values of the timeouts:
-                        int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
-                        int connectionTimeOut = Config.<Integer>GetValue(ConfigValues.vdsConnectionTimeout) * 1000;
-                        int clientRetries = Config.<Integer> GetValue(ConfigValues.vdsRetries);
+                        int clientTimeOut = Config.<Integer> getValue(ConfigValues.vdsTimeout) * 1000;
+                        int connectionTimeOut = Config.<Integer>getValue(ConfigValues.vdsConnectionTimeout) * 1000;
+                        int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
 
                         Pair<IrsServerConnector, HttpClient> returnValue =
                                 XmlRpcUtils.getConnection(host,
@@ -548,7 +548,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                         connectionTimeOut,
                                         clientRetries,
                                         IrsServerConnector.class,
-                                        Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication));
+                                        Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
                         privatemIrsProxy = new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
                         runStoragePoolUpEvent(storagePool);
                     }
@@ -774,7 +774,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 if (vds.getStatus() == VDSStatus.Initializing) {
                     final int DELAY = 5;// 5 Sec
                     int total = 0;
-                    Integer maxSecToWait = Config.GetValue(ConfigValues.WaitForVdsInitInSec);
+                    Integer maxSecToWait = Config.getValue(ConfigValues.WaitForVdsInitInSec);
                     while (total <= maxSecToWait
                             && DbFacade.getInstance().getVdsDynamicDao().get(curVdsId).getStatus() == VDSStatus.Initializing) {
                         try {
@@ -1051,7 +1051,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         if (domainsInPool.contains(tempData.getDomainId())) {
                             if (isDomainReportedAsProblematic(tempData, false)) {
                                 domainsSeenByVdsInProblem.add(tempData.getDomainId());
-                            } else if (tempData.getDelay() > Config.<Double> GetValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
+                            } else if (tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
                                 logDelayedDomain(vdsId, tempData);
                             }
                         } else if (inActiveDomainsInPool.contains(tempData.getDomainId())
@@ -1144,7 +1144,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 return true;
             }
             if (tempData.getLastCheck() > Config
-                    .<Double> GetValue(ConfigValues.MaxStorageVdsTimeoutCheckSec)) {
+                    .<Double> getValue(ConfigValues.MaxStorageVdsTimeoutCheckSec)) {
                 if (isLog) {
                     log.errorFormat("Domain {0} check timeot {1} is too big",
                             getDomainIdTuple(tempData.getDomainId()),
@@ -1198,7 +1198,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             Class[] inputType = new Class[] { Guid.class };
             Object[] inputParams = new Object[] { domainId };
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimer", inputType,
-                    inputParams, Config.<Integer> GetValue(ConfigValues.StorageDomainFalureTimeoutInMinutes),
+                    inputParams, Config.<Integer> getValue(ConfigValues.StorageDomainFalureTimeoutInMinutes),
                     TimeUnit.MINUTES);
             clearTimer(domainId);
             _timers.put(domainId, jobId);
@@ -1476,7 +1476,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     private void failover() {
         if ((getParameters().getIgnoreFailoverLimit() || _failoverCounter < Config
-                .<Integer> GetValue(ConfigValues.SpmCommandFailOverRetries) - 1)
+                .<Integer> getValue(ConfigValues.SpmCommandFailOverRetries) - 1)
                 && getCurrentIrsProxyData().getHasVdssForSpmSelection() && getCurrentIrsProxyData().failover()) {
             _failoverCounter++;
             executeCommand();

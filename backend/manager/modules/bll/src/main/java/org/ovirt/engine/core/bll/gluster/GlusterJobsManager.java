@@ -67,12 +67,12 @@ public class GlusterJobsManager {
     }
 
     private static boolean glusterModeSupported() {
-        Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        Integer appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
         return ((appMode & ApplicationMode.GlusterOnly.getValue()) > 0);
     }
 
     private static int getRefreshRate(ConfigValues refreshRateConfig) {
-        return Config.<Integer> GetValue(refreshRateConfig);
+        return Config.<Integer> getValue(refreshRateConfig);
     }
 
 }

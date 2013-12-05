@@ -30,10 +30,10 @@ public class JobRepositoryCleanupManager {
      */
     public void initialize() {
         log.info("Start initializing " + getClass().getSimpleName());
-        succeededJobTime = Config.<Integer> GetValue(ConfigValues.SucceededJobCleanupTimeInMinutes).intValue();
-        failedJobTime = Config.<Integer> GetValue(ConfigValues.FailedJobCleanupTimeInMinutes).intValue();
+        succeededJobTime = Config.<Integer> getValue(ConfigValues.SucceededJobCleanupTimeInMinutes).intValue();
+        failedJobTime = Config.<Integer> getValue(ConfigValues.FailedJobCleanupTimeInMinutes).intValue();
 
-        Integer cleanupFrequency = Config.<Integer> GetValue(ConfigValues.JobCleanupRateInMinutes);
+        Integer cleanupFrequency = Config.<Integer> getValue(ConfigValues.JobCleanupRateInMinutes);
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
                 "completed_jobs_cleanup",
                 new Class[] {},

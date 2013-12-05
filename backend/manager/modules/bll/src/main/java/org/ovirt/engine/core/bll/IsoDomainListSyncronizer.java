@@ -77,7 +77,7 @@ public class IsoDomainListSyncronizer {
 
     // Not kept as static member to enable reloading the config value
     public static String getGuestToolsSetupIsoPrefix() {
-        return Config.<String> GetValue(ConfigValues.GuestToolsSetupIsoPrefix);
+        return Config.<String> getValue(ConfigValues.GuestToolsSetupIsoPrefix);
     }
 
     /**
@@ -91,7 +91,7 @@ public class IsoDomainListSyncronizer {
         log.info("Start initializing " + getClass().getSimpleName());
         repoStorageDom = DbFacade.getInstance().getRepoFileMetaDataDao();
         providerDao = DbFacade.getInstance().getProviderDao();
-        isoDomainRefreshRate = Config.<Integer> GetValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
+        isoDomainRefreshRate = Config.<Integer> getValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
                 "fetchIsoDomains",
                 new Class[] {},
@@ -226,9 +226,9 @@ public class IsoDomainListSyncronizer {
                         public Object runInTransaction() {
                             repoFileMetaDataDao.removeRepoDomainFileList(storageDomain.getId(), imageType);
 
-                            Integer totalListSize = Config.<Integer> GetValue(ConfigValues.GlanceImageTotalListSize);
+                            Integer totalListSize = Config.<Integer> getValue(ConfigValues.GlanceImageTotalListSize);
                             List<RepoImage> repoImages = client.getAllImagesAsRepoImages(
-                                    Config.<Integer> GetValue(ConfigValues.GlanceImageListSize), totalListSize);
+                                    Config.<Integer> getValue(ConfigValues.GlanceImageListSize), totalListSize);
 
                             if (repoImages.size() >= totalListSize) {
                                 AuditLogableBase logable = new AuditLogableBase();

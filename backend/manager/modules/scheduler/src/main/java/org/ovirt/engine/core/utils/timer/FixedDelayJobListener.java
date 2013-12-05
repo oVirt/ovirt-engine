@@ -73,7 +73,7 @@ public class FixedDelayJobListener implements JobListener {
             delay = data.getLongValue(SchedulerUtilQuartzImpl.FIXED_DELAY_VALUE);
         } else {
             ConfigValues configDelay = ConfigValues.valueOf(configValueName);
-            delay = Config.<Integer> GetValue(configDelay).longValue();
+            delay = Config.<Integer> getValue(configDelay).longValue();
         }
 
         TimeUnit delayUnit = (TimeUnit) data.getWrappedMap().get(SchedulerUtilQuartzImpl.FIXED_DELAY_TIME_UNIT);

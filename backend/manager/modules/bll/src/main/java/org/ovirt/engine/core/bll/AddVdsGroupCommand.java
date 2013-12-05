@@ -150,7 +150,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                 result = false;
             }
         }
-        if (result && getVdsGroup().supportsTrustedService()&& Config.<String> GetValue(ConfigValues.AttestationServer).equals("")) {
+        if (result && getVdsGroup().supportsTrustedService()&& Config.<String> getValue(ConfigValues.AttestationServer).equals("")) {
              addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
              result = false;
         }

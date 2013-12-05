@@ -67,7 +67,7 @@ public class DiskValidator {
      */
     public ValidationResult isOsSupportedForVirtIoScsi(VM vm) {
         //TODO move this config val to osinfo
-        final List<String> unsupportedOSs = Config.<List<String>> GetValue(ConfigValues.VirtIoScsiUnsupportedOsList);
+        final List<String> unsupportedOSs = Config.<List<String>> getValue(ConfigValues.VirtIoScsiUnsupportedOsList);
         String vmOs = SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(vm.getVmOsId());
         for (String os : unsupportedOSs) {
             if (os.equalsIgnoreCase(vmOs)) {

@@ -23,7 +23,7 @@ public class GetDefaultTimeZoneQuery<P extends TimeZoneQueryParams> extends Quer
             break;
         }
 
-        String timeZone = Config.<String> GetValue(defaultTimeZoneConfigKey);
+        String timeZone = Config.<String> getValue(defaultTimeZoneConfigKey);
         getQueryReturnValue().setReturnValue(timeZone);
     }
 }

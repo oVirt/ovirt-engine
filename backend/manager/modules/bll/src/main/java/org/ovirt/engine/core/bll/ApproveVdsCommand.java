@@ -41,7 +41,7 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
 
     @Override
     protected void executeCommand() {
-        if (Config.<Boolean> GetValue(ConfigValues.AutoInstallCertificateOnApprove)) {
+        if (Config.<Boolean> getValue(ConfigValues.AutoInstallCertificateOnApprove)) {
             super.executeCommand();
         } else {
             setSucceeded(true);

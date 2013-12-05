@@ -25,7 +25,7 @@ public class VersionSupport implements Serializable {
     public static boolean checkVersionSupported(final Version compatibility_version) {
         boolean result = true;
         if (compatibility_version == null
-                || !Config.<Set<Version>>GetValue(
+                || !Config.<Set<Version>>getValue(
                 ConfigValues.SupportedClusterLevels).contains(compatibility_version)) {
             result = false;
         }

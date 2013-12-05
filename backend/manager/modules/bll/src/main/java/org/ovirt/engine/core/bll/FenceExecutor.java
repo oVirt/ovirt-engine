@@ -58,15 +58,15 @@ public class FenceExecutor {
         int count = 0;
         // make sure that loop is executed at least once , no matter what is the
         // value in config
-        int retries = Math.max(Config.<Integer> GetValue(ConfigValues.FindFenceProxyRetries), 1);
-        int delayInMs = 1000 * Config.<Integer> GetValue(ConfigValues.FindFenceProxyDelayBetweenRetriesInSec);
+        int retries = Math.max(Config.<Integer> getValue(ConfigValues.FindFenceProxyRetries), 1);
+        int delayInMs = 1000 * Config.<Integer> getValue(ConfigValues.FindFenceProxyDelayBetweenRetriesInSec);
         proxyHostId = NO_VDS;
         VDS proxyHost = null;
         boolean proxyFound = false;
         // get PM Proxy preferences or use defaults if not defined
         String pmProxyPreferences = (StringUtils.isEmpty(_vds.getPmProxyPreferences()))
                 ?
-                Config.<String> GetValue(ConfigValues.FenceProxyDefaultPreferences)
+                Config.<String> getValue(ConfigValues.FenceProxyDefaultPreferences)
                 : _vds.getPmProxyPreferences();
         String[] pmProxyOptions = pmProxyPreferences.split(",");
         for (String pmProxyOption : pmProxyOptions) {

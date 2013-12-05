@@ -31,7 +31,7 @@ public class ReportsRedirectServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-        String reportsUrl = Config.<String> GetValue(ConfigValues.RedirectServletReportsPage);
+        String reportsUrl = Config.<String> getValue(ConfigValues.RedirectServletReportsPage);
         if (StringUtils.isEmpty(reportsUrl)) {
             addAlert(out, "The reports application isn't installed.");
         }

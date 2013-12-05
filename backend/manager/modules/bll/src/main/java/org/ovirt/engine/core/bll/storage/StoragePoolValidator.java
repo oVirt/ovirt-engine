@@ -69,7 +69,7 @@ public class StoragePoolValidator {
         List<VDSGroup> clusters = getVdsGroupDao().getAllForStoragePool(storagePool.getId());
         boolean hasDefaultCluster = false;
         for (VDSGroup cluster : clusters) {
-            if (cluster.getId().equals(Config.GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID))) {
+            if (cluster.getId().equals(Config.getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID))) {
                 hasDefaultCluster = true;
                 break;
             }

@@ -170,7 +170,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         // This can not be done with reflection like:
         // return (SqlInjectionChecker) Class.forName(props.getProperty(SQL_INJECTION)).newInstance();
         // GWT lacks support of reflection.
-        if (((String) Config.GetValue(ConfigValues.DBEngine)).equalsIgnoreCase("postgres")) {
+        if (((String) Config.getValue(ConfigValues.DBEngine)).equalsIgnoreCase("postgres")) {
             return new PostgresSqlInjectionChecker();
         }
         else {
@@ -918,7 +918,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                         tableNameWithOutTags, primeryKey, innerQuery);
             }
             retval =
-                    StringFormat.format(Config.<String> GetValue(ConfigValues.DBSearchTemplate),
+                    StringFormat.format(Config.<String> getValue(ConfigValues.DBSearchTemplate),
                             sortExpr.toString(),
                             inQuery,
                             pagePhrase);
@@ -941,7 +941,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
         PagingType pagingType = getPagingType();
         if (pagingType != null) {
-            String pagingSyntax = Config.<String> GetValue(ConfigValues.DBPagingSyntax);
+            String pagingSyntax = Config.<String> getValue(ConfigValues.DBPagingSyntax);
             switch (pagingType) {
             case Range:
                 result =
@@ -960,7 +960,7 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private PagingType getPagingType() {
-        String val = Config.<String> GetValue(ConfigValues.DBPagingType);
+        String val = Config.<String> getValue(ConfigValues.DBPagingType);
         PagingType type = null;
         try {
             type = PagingType.valueOf(val);
@@ -1118,7 +1118,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             // This is done in a IF block and not with Method Factory pattern since this is the only change
             // right now, if we encounter other changes, this will be refactored to use the Method Factory pattern.
             String replaceWith = "_";
-            int pgMajorRelease = Config.<Integer> GetValue(ConfigValues.PgMajorRelease);
+            int pgMajorRelease = Config.<Integer> getValue(ConfigValues.PgMajorRelease);
             if (pgMajorRelease == PgMajorRelease.PG8.getValue()) {
                 replaceWith = "\\\\_";
             }

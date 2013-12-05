@@ -312,7 +312,7 @@ public class RunVmValidator {
      * return true if all storage domains have enough space to create snapshots for this VM plugged disks
      */
     protected ValidationResult hasSpaceForSnapshots(VM vm, List<Disk> plugDisks) {
-        Integer minSnapshotSize = Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB);
+        Integer minSnapshotSize = Config.<Integer> getValue(ConfigValues.InitStorageSparseSizeInGB);
         Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks = mapStorageDomainsToNumOfDisks(vm, plugDisks);
         for (Entry<StorageDomain, Integer> e : mapStorageDomainsToNumOfDisks.entrySet()) {
             ValidationResult validationResult =

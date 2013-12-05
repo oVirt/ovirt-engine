@@ -55,7 +55,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
 
         LoginResult result = LoginResult.CantAuthenticate;
-        if (!Config.<String> GetValue(ConfigValues.AuthenticationMethod).toUpperCase().equals("LDAP")) {
+        if (!Config.<String> getValue(ConfigValues.AuthenticationMethod).toUpperCase().equals("LDAP")) {
             // In case we're using LDAP+GSSAPI/Kerberos - and there was an
             // authentication error -
             // we cannot query information about the user - we can do it only in

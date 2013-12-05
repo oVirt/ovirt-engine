@@ -83,13 +83,13 @@ public final class AsyncTaskManager {
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
         scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[]{},
-                new Object[]{}, Config.<Integer>GetValue(ConfigValues.AsyncTaskPollingRate),
-                Config.<Integer>GetValue(ConfigValues.AsyncTaskPollingRate), TimeUnit.SECONDS);
+                new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate),
+                Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate), TimeUnit.SECONDS);
 
         scheduler.scheduleAFixedDelayJob(this, "_cacheTimer_Elapsed", new Class[]{},
-                new Object[]{}, Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
-                Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
-        _cacheTimeInMinutes = Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
+                new Object[]{}, Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
+                Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
+        _cacheTimeInMinutes = Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
     }
 
     public void initAsyncTaskManager() {
@@ -130,7 +130,7 @@ public final class AsyncTaskManager {
 
             if (thereAreTasksToPoll() && logChangedMap) {
                 log.infoFormat("Finished polling Tasks, will poll again in {0} seconds.",
-                        Config.<Integer>GetValue(ConfigValues.AsyncTaskPollingRate));
+                        Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate));
 
                 // Set indication to false for not logging the same message next
                 // time.
@@ -367,7 +367,7 @@ public final class AsyncTaskManager {
 
     private void cleanZombieTasks() {
         long maxTime = DateTime.getNow()
-                .addMinutes((-1) * Config.<Integer>GetValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
+                .addMinutes((-1) * Config.<Integer>getValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
         for (SPMAsyncTask task : _tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {

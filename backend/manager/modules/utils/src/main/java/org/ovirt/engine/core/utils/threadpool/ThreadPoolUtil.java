@@ -34,11 +34,11 @@ public class ThreadPoolUtil {
          * maximumPoolSize equal to DefaultMaxThreadPoolSize
          */
         public InternalThreadExecutor() {
-            super(Config.<Integer> GetValue(ConfigValues.DefaultMinThreadPoolSize),
-                    Config.<Integer> GetValue(ConfigValues.DefaultMaxThreadPoolSize),
+            super(Config.<Integer> getValue(ConfigValues.DefaultMinThreadPoolSize),
+                    Config.<Integer> getValue(ConfigValues.DefaultMaxThreadPoolSize),
                     60L,
                     TimeUnit.SECONDS,
-                    new ArrayBlockingQueue<Runnable>(Config.<Integer> GetValue(ConfigValues.DefaultMaxThreadWaitQueueSize)));
+                    new ArrayBlockingQueue<Runnable>(Config.<Integer> getValue(ConfigValues.DefaultMaxThreadWaitQueueSize)));
 
         }
 

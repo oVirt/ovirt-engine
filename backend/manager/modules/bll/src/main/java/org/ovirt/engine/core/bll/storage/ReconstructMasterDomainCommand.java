@@ -113,7 +113,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
         boolean commandSucceeded = stopSpm();
 
-        final List<String> disconnectPoolFormats = Config.<List<String>> GetValue(
+        final List<String> disconnectPoolFormats = Config.<List<String>> getValue(
                 ConfigValues.DisconnectPoolOnReconstruct);
 
         if (commandSucceeded && disconnectPoolFormats.contains(getNewMaster(true).getStorageFormat().getValue())) {

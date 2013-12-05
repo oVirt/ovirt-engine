@@ -45,7 +45,7 @@ public class XmlRpcUtils {
     private static final String HTTPS = "https://";
     private static Log log = LogFactory.getLog(XmlRpcUtils.class);
     static {
-        if (Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication)) {
+        if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
             URL keystoreUrl;
             try {
                 // registering the https protocol with a socket factory that
@@ -132,7 +132,7 @@ public class XmlRpcUtils {
 
         // Configure the HTTP client so it will retry the execution of
         // methods when there are IO errors:
-        int retries = Config.<Integer> GetValue(ConfigValues.vdsRetries);
+        int retries = Config.<Integer> getValue(ConfigValues.vdsRetries);
         HttpMethodRetryHandler handler = new DefaultHttpMethodRetryHandler(retries, false);
         HttpClientParams parameters = client.getParams();
         parameters.setParameter(HttpMethodParams.RETRY_HANDLER, handler);

@@ -65,7 +65,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteNamespace(XSI_PREFIX, XSI_URI);
 
         // Setting the OVF version according to ENGINE (in 2.2 , version was set to "0.9")
-        _writer.WriteAttributeString(OVF_URI, "version", Config.<String> GetValue(ConfigValues.VdcVersion));
+        _writer.WriteAttributeString(OVF_URI, "version", Config.<String> getValue(ConfigValues.VdcVersion));
     }
 
     protected long bytesToGigabyte(long bytes) {

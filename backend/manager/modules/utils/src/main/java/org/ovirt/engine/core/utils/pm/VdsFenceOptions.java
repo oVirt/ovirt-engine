@@ -105,7 +105,7 @@ public class VdsFenceOptions implements Serializable {
      * for example : secure=bool,port=int,slot=int
      */
     private void CacheFencingAgentsOptionTypes() {
-        String localfencingOptionTypes = Config.<String> GetValue(ConfigValues.VdsFenceOptionTypes);
+        String localfencingOptionTypes = Config.<String> getValue(ConfigValues.VdsFenceOptionTypes);
         String[] types = localfencingOptionTypes.split(Pattern.quote(COMMA), -1);
         for (String entry : types) {
             String[] optionKeyVal = entry.split(Pattern.quote(EQUAL), -1);
@@ -270,7 +270,7 @@ public class VdsFenceOptions implements Serializable {
      * @return string , the agent real name to be used
      */
     public static String getRealAgent(String agent) {
-        String agentMapping = Config.<String> GetValue(ConfigValues.FenceAgentMapping);
+        String agentMapping = Config.<String> getValue(ConfigValues.FenceAgentMapping);
         String realAgent = agent;
         // result has the format [<agent>=<real agent>[,]]*
         String[] settings = agentMapping.split(Pattern.quote(COMMA), -1);
@@ -297,7 +297,7 @@ public class VdsFenceOptions implements Serializable {
      * @return String the options after adding default agent parameters
      */
     public static String getDefaultAgentOptions(String agent, String fenceOptions) {
-        String agentdefaultParams = Config.<String> GetValue(ConfigValues.FenceAgentDefaultParams);
+        String agentdefaultParams = Config.<String> getValue(ConfigValues.FenceAgentDefaultParams);
         StringBuilder realOptions = new StringBuilder(fenceOptions);
         // result has the format [<agent>:param=value[,]...;]*
         String[] params = agentdefaultParams.split(Pattern.quote(SEMICOLON), -1);

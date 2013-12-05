@@ -152,8 +152,8 @@ public class OvfVmWriter extends OvfWriter {
 
         _writer.WriteStartElement("System");
         _writer.WriteStartElement(VSSD_URI, "VirtualSystemType");
-        _writer.WriteRaw(String.format("%1$s %2$s", Config.<String> GetValue(ConfigValues.OvfVirtualSystemType),
-                Config.<String> GetValue(ConfigValues.VdcVersion)));
+        _writer.WriteRaw(String.format("%1$s %2$s", Config.<String> getValue(ConfigValues.OvfVirtualSystemType),
+                Config.<String> getValue(ConfigValues.VdcVersion)));
         _writer.WriteEndElement();
         _writer.WriteEndElement();
 

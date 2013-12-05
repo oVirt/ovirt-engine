@@ -228,9 +228,9 @@ public class VdsUpdateRunTimeInfo {
      */
     private void checkVdsMemoryThreshold(VdsStatistics stat) {
 
-        Integer minAvailableThreshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
+        Integer minAvailableThreshold = Config.getValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
         Integer maxUsedPercentageThreshold =
-                Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
+                Config.getValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
 
         if (stat.getMemFree() == null || stat.getusage_mem_percent() == null) {
             return;
@@ -260,7 +260,7 @@ public class VdsUpdateRunTimeInfo {
      */
     private void checkVdsCpuThreshold(VdsStatistics stat) {
 
-        Integer maxUsedPercentageThreshold = Config.GetValue(ConfigValues.LogMaxCpuUsedThresholdInPercentage);
+        Integer maxUsedPercentageThreshold = Config.getValue(ConfigValues.LogMaxCpuUsedThresholdInPercentage);
         if (stat.getusage_cpu_percent() != null
                 && stat.getusage_cpu_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
@@ -278,7 +278,7 @@ public class VdsUpdateRunTimeInfo {
      */
     private void checkVdsNetworkThreshold(VdsStatistics stat) {
 
-        Integer maxUsedPercentageThreshold = Config.GetValue(ConfigValues.LogMaxNetworkUsedThresholdInPercentage);
+        Integer maxUsedPercentageThreshold = Config.getValue(ConfigValues.LogMaxNetworkUsedThresholdInPercentage);
         if (stat.getusage_network_percent() != null
                 && stat.getusage_network_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
@@ -296,9 +296,9 @@ public class VdsUpdateRunTimeInfo {
      */
     private void checkVdsSwapThreshold(VdsStatistics stat) {
 
-        Integer minAvailableThreshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
+        Integer minAvailableThreshold = Config.getValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
         Integer maxUsedPercentageThreshold =
-                Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
+                Config.getValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
 
         if (stat.getswap_total() == null || stat.getswap_free() == null || stat.getswap_total() == 0) {
             return;
@@ -502,7 +502,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void refreshVdsStats() {
-        if (Config.<Boolean> GetValue(ConfigValues.DebugTimerLogging)) {
+        if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
             log.debugFormat("vdsManager::refreshVdsStats entered, vds = {0} : {1}", _vds.getId(),
                     _vds.getName());
         }
@@ -537,7 +537,7 @@ public class VdsUpdateRunTimeInfo {
         alertIfLowDiskSpaceOnHost();
         checkVdsInterfaces();
 
-        if (Config.<Boolean> GetValue(ConfigValues.DebugTimerLogging)) {
+        if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
             log.debugFormat("vds::refreshVdsStats\n{0}", toString());
         }
     }
@@ -554,9 +554,9 @@ public class VdsUpdateRunTimeInfo {
         List<String> disksWithLowSpace = new ArrayList<String>();
         List<String> disksWithCriticallyLowSpace = new ArrayList<String>();
         final int lowSpaceCriticalThreshold =
-                Config.<Integer> GetValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace);
+                Config.<Integer> getValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace);
         final int lowSpaceThreshold =
-                Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace);
+                Config.<Integer> getValue(ConfigValues.VdsLocalDisksLowFreeSpace);
 
         for (Entry<String, Long> diskUsage : disksUsage.entrySet()) {
             if (diskUsage.getValue() != null) {
@@ -622,7 +622,7 @@ public class VdsUpdateRunTimeInfo {
                 }
 
                 // if less then 1 minutes, still waiting for DHCP
-                int delay = Config.<Integer> GetValue(ConfigValues.NicDHCPDelayGraceInMS) * 1000;
+                int delay = Config.<Integer> getValue(ConfigValues.NicDHCPDelayGraceInMS) * 1000;
                 if (System.currentTimeMillis() < hostDownTimes.get(_vds.getId()) + delay) {
                     return;
                 }
@@ -895,7 +895,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void refreshVmStats() {
-        if (Config.<Boolean> GetValue(ConfigValues.DebugTimerLogging)) {
+        if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
             log.debug("vds::refreshVmList entered");
         }
 
@@ -1325,7 +1325,7 @@ public class VdsUpdateRunTimeInfo {
             vmsWithUncontrolledBalloon.put(vmId, 1);
         } else {
             vmsWithUncontrolledBalloon.put(vmId, currentVal + 1);
-            if (currentVal >= Config.<Integer> GetValue(ConfigValues.IterationsWithBalloonProblem)) {
+            if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.setVmId(vmId);
                 AuditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED);
@@ -1347,7 +1347,7 @@ public class VdsUpdateRunTimeInfo {
             vmsWithBalloonDriverProblem.put(vmId, 1);
         } else {
             vmsWithBalloonDriverProblem.put(vmId, currentVal + 1);
-            if (currentVal >= Config.<Integer> GetValue(ConfigValues.IterationsWithBalloonProblem)) {
+            if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.setVmId(vmId);
                 AuditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_ERROR);
@@ -1910,7 +1910,7 @@ public class VdsUpdateRunTimeInfo {
         } else {
             // This should only happened when someone run a VM from command
             // line.
-            if (Config.<Boolean> GetValue(ConfigValues.DebugTimerLogging)) {
+            if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
                 log.info("VDS::UpdateVmRunTimeInfo Error: found VM on a VDS that is not in the database!");
             }
         }

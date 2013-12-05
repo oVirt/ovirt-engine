@@ -87,7 +87,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         final List<VdsNetworkInterface> allInterfacesForVds = getInterfaceDAO().getAllInterfacesForVds(vds.getId());
 
         boolean onlyRequiredNetworks =
-                Config.<Boolean> GetValue(ConfigValues.OnlyRequiredNetworksMandatoryForVdsSelection);
+                Config.<Boolean> getValue(ConfigValues.OnlyRequiredNetworksMandatoryForVdsSelection);
         for (final VmNetworkInterface vmIf : vmNICs) {
             boolean found = false;
 

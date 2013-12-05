@@ -57,7 +57,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
 
     @Override
     public List<Role> getAll() {
-        Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        Integer appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("app_mode", appMode);
 
@@ -66,7 +66,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
 
     @Override
     public List<Role> getAllForUserAndGroups(Guid id, String groupIds) {
-        Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        Integer appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
         return getAllForUserAndGroups(id, groupIds, appMode.intValue());
     }
 

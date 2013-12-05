@@ -25,7 +25,7 @@ public class AuditLogCleanupManager {
     private AuditLogCleanupManager() {
         log.info("Start initializing " + getClass().getSimpleName());
         Calendar calendar = new GregorianCalendar();
-        Date mAuditLogCleanupTime = Config.<DateTime> GetValue(ConfigValues.AuditLogCleanupTime);
+        Date mAuditLogCleanupTime = Config.<DateTime> getValue(ConfigValues.AuditLogCleanupTime);
         calendar.setTimeInMillis(mAuditLogCleanupTime.getTime());
 
         String cronExpression = String.format("%d %d %d * * ?", calendar.get(Calendar.SECOND),
@@ -42,7 +42,7 @@ public class AuditLogCleanupManager {
         try {
             log.info("Start deleteAgedOutAuditLogs");
             DateTime latestTimeToKeep = DateTime.getNow().addDays(
-                    Config.<Integer>GetValue(ConfigValues.AuditLogAgingThreshold)
+                    Config.<Integer>getValue(ConfigValues.AuditLogAgingThreshold)
                             * -1);
             DbFacade.getInstance().getAuditLogDao().removeAllBeforeDate(latestTimeToKeep);
             log.info("Finished deleteAgedOutAuditLogs");

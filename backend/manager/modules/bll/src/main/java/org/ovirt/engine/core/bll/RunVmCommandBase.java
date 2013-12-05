@@ -99,7 +99,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
          * predefine maximum 3 attempts to rerun VM - on 4th turn vm will stop to run despite there are still available
          * hosts to run it DO NOT TRY TO RERUN IF RESUME FAILED.
          */
-        if (getRunVdssList().size() < Config.<Integer> GetValue(ConfigValues.MaxRerunVmOnVdsCount)
+        if (getRunVdssList().size() < Config.<Integer> getValue(ConfigValues.MaxRerunVmOnVdsCount)
                 && getVm().getStatus() != VMStatus.Paused) {
             // restore CanDoAction value to false so CanDoAction checks will run again
             getReturnValue().setCanDoAction(false);
@@ -311,8 +311,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             // but still no higher than a configurable max to prevent very long updates to stall command.
             long t = Math.max(
                     ResourceManager.getInstance().GetVdsManager(vdsId).getLastUpdateElapsed(),
-                    TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(VdsRefreshRate)));
-            t = Math.max(Config.<Integer> GetValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
+                    TimeUnit.SECONDS.toMillis(Config.<Integer> getValue(VdsRefreshRate)));
+            t = Math.max(Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
 
             // wait for the run-time refresh to decrease any current powering-up VMs
             getBlockingQueue(vdsId).poll(t, TimeUnit.MILLISECONDS);

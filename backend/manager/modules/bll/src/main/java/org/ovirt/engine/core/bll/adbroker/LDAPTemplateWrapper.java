@@ -129,7 +129,7 @@ public abstract class LDAPTemplateWrapper {
             if (log.isDebugEnabled()) {
                 log.debugFormat("LDAP query is {0}", displayFilter);
             }
-            int ldapPageSize = Config.<Integer> GetValue(ConfigValues.LdapQueryPageSize);
+            int ldapPageSize = Config.<Integer> getValue(ConfigValues.LdapQueryPageSize);
             PagedResultsDirContextProcessor requestControl = new PagedResultsDirContextProcessor(ldapPageSize);
             ldapTemplate.search(baseDN, filter, searchControls, handler, requestControl);
             PagedResultsCookie cookie = requestControl.getCookie();

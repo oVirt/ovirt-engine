@@ -49,7 +49,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
      * @return <c>true</c> if [is VM swap value legal] [the specified VDS]; otherwise, <c>false</c>.
      */
     private boolean isVMSwapValueLegal(VDS host) {
-        if (!Config.<Boolean> GetValue(ConfigValues.EnableSwapCheck)) {
+        if (!Config.<Boolean> getValue(ConfigValues.EnableSwapCheck)) {
             return true;
         }
 
@@ -64,6 +64,6 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         long physical_mem_mb = host.getPhysicalMemMb();
 
         return ((swap_total - swap_free - mem_available) * 100 / physical_mem_mb) <= Config
-                .<Integer> GetValue(ConfigValues.BlockMigrationOnSwapUsagePercentage);
+                .<Integer> getValue(ConfigValues.BlockMigrationOnSwapUsagePercentage);
     }
 }

@@ -282,7 +282,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     @Ignore
     public void testLongMessageSave() {
         // generate a value that is longer than the max configured.
-        char[] fill = new char[Config.<Integer> GetValue(ConfigValues.MaxAuditLogMessageLength) + 1];
+        char[] fill = new char[Config.<Integer> getValue(ConfigValues.MaxAuditLogMessageLength) + 1];
         Arrays.fill(fill, '0');
         newAuditLog.setaudit_log_id(45000);
         newAuditLog.setmessage(new String(fill));

@@ -87,9 +87,9 @@ public class AutoRecoveryManagerTest {
 
     @Test
     public void onTimerFullConfig() {
-        Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("storage domains",
+        Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes).put("storage domains",
                 Boolean.TRUE.toString());
-        Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
+        Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
                 Boolean.TRUE.toString());
         manager.onTimer();
         verify(backendMock, times(vdss.size())).runInternalAction(eq(VdcActionType.ActivateVds),
@@ -100,9 +100,9 @@ public class AutoRecoveryManagerTest {
 
     @Test
     public void onTimerFalseConfig() {
-        Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("storage domains",
+        Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes).put("storage domains",
                 Boolean.FALSE.toString());
-        Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
+        Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
                 Boolean.FALSE.toString());
         manager.onTimer();
         verify(backendMock, never()).runInternalAction(eq(VdcActionType.ActivateVds),

@@ -44,7 +44,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     protected void executeCommand() {
         List<vds_spm_id_map> vds_spm_id_mapList = DbFacade.getInstance().getVdsSpmIdMapDao().getAll(
                 getVds().getStoragePoolId());
-        if (vds_spm_id_mapList.size() >= Config.<Integer> GetValue(ConfigValues.MaxNumberOfHostsInStoragePool)) {
+        if (vds_spm_id_mapList.size() >= Config.<Integer> getValue(ConfigValues.MaxNumberOfHostsInStoragePool)) {
             buildFaultResult();
             return;
         }

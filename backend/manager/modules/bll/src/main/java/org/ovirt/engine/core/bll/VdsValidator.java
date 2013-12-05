@@ -76,7 +76,7 @@ public class VdsValidator {
     }
 
     public ValidationResult validateUniqueId() {
-        if (StringUtils.isBlank(vds.getUniqueId()) && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
+        if (StringUtils.isBlank(vds.getUniqueId()) && Config.<Boolean> getValue(ConfigValues.InstallVds)) {
             return new ValidationResult(VdcBllMessages.VDS_NO_UUID);
         }
         return ValidationResult.VALID;

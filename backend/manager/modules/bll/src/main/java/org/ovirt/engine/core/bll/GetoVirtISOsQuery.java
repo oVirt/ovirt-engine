@@ -232,7 +232,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
     }
 
     private boolean isIsoVersionSupported(String isoVersion) {
-        String supported = Config.<String> GetValue(ConfigValues.OvirtInitialSupportedIsoVersion);
+        String supported = Config.<String> getValue(ConfigValues.OvirtInitialSupportedIsoVersion);
         return RpmVersionUtils.compareRpmParts(isoVersion, supported) >= 0;
     }
 
@@ -247,7 +247,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
     /** @return The prefix for oVirt ISO files, from the configuration */
     private static String getOvirtIsoPrefix() {
-        return Config.<String> GetValue(ConfigValues.OvirtIsoPrefix);
+        return Config.<String> getValue(ConfigValues.OvirtIsoPrefix);
     }
 
     /**

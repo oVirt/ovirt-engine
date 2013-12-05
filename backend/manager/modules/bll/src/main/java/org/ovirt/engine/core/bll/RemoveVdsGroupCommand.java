@@ -33,7 +33,7 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
             addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
             returnValue = false;
         } else {
-            if (getVdsGroup().getId().equals(Config.GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID))) {
+            if (getVdsGroup().getId().equals(Config.getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID))) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP);
                 returnValue = false;
             }

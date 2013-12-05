@@ -71,10 +71,10 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
     }
 
     private void fillLdapServersMap() {
-        String ldapServerPerDomainEntry = Config.<String> GetValue(ConfigValues.LdapServers);
+        String ldapServerPerDomainEntry = Config.<String> getValue(ConfigValues.LdapServers);
         if (!ldapServerPerDomainEntry.isEmpty()) {
             String[] domainServerPairs = ldapServerPerDomainEntry.split(",");
-            int ldapPort = Config.<Integer> GetValue(ConfigValues.LDAPServerPort);
+            int ldapPort = Config.<Integer> getValue(ConfigValues.LDAPServerPort);
 
             for (String domainServerPair : domainServerPairs) {
                 String[] parts = domainServerPair.split(":");
@@ -103,7 +103,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
     // use
     // Note that every change in one will probably require the same change in the other
     private void fillUsersMap() {
-        String userPerDomainEntry = Config.<String> GetValue(ConfigValues.AdUserName);
+        String userPerDomainEntry = Config.<String> getValue(ConfigValues.AdUserName);
         if (!userPerDomainEntry.isEmpty()) {
             String[] domainUserPairs = userPerDomainEntry.split(",");
 
@@ -118,12 +118,12 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
     }
 
     private void fillPasswordsMap() {
-        passwordPerDomain = Config.<DomainsPasswordMap> GetValue(ConfigValues.AdUserPassword);
+        passwordPerDomain = Config.<DomainsPasswordMap> getValue(ConfigValues.AdUserPassword);
     }
 
     private void fillLdapSecurityAuthenticationMap() {
 
-        String ldapSecurityAuthEntry = Config.<String> GetValue(ConfigValues.LDAPSecurityAuthentication);
+        String ldapSecurityAuthEntry = Config.<String> getValue(ConfigValues.LDAPSecurityAuthentication);
         if (!ldapSecurityAuthEntry.isEmpty()) {
             String[] ldapSecurityPairs = ldapSecurityAuthEntry.split(",");
 
@@ -151,7 +151,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
     public void create() {
 
         log.info("Start initializing " + getClass().getSimpleName());
-        String authMethod = Config.<String> GetValue(ConfigValues.AuthenticationMethod);
+        String authMethod = Config.<String> getValue(ConfigValues.AuthenticationMethod);
         if (!authMethod.equalsIgnoreCase("LDAP")) {
             return;
         }
@@ -192,7 +192,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
      */
     protected Map<String, LdapProviderType> parseLDAPProviders() {
         Map<String, LdapProviderType> domainProviderTypes = new HashMap<String, LdapProviderType>();
-        for (String pair : StringUtils.split(Config.<String> GetValue(ConfigValues.LDAPProviderTypes), ",")) {
+        for (String pair : StringUtils.split(Config.<String> getValue(ConfigValues.LDAPProviderTypes), ",")) {
             if (pair != null) {
                 String[] split = StringUtils.split(pair, ":");
                 if (split != null && split[0] != null && split[1] != null) {
@@ -261,7 +261,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
     }
 
     private void constructLDAPUrlOnDNSFailure(Domain domain) {
-        int ldapPort = Config.<Integer> GetValue(ConfigValues.LDAPServerPort);
+        int ldapPort = Config.<Integer> getValue(ConfigValues.LDAPServerPort);
         StringBuilder ldapURL = new StringBuilder();
         ldapURL.append("ldap://").append(domain.getName()).append(":").append(ldapPort);
         try {

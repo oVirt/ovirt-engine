@@ -65,11 +65,11 @@ public class VdsManager {
         return (_refreshIteration == _numberRefreshesBeforeSave);
     }
 
-    private static final int VDS_REFRESH_RATE = Config.<Integer> GetValue(ConfigValues.VdsRefreshRate) * 1000;
+    private static final int VDS_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
 
     private String onTimerJobId;
 
-    private final int _numberRefreshesBeforeSave = Config.<Integer> GetValue(ConfigValues.NumberVmRefreshesBeforeSave);
+    private final int _numberRefreshesBeforeSave = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
     private int _refreshIteration = 1;
 
     private final Object _lockObj = new Object();
@@ -98,7 +98,7 @@ public class VdsManager {
     private final AtomicBoolean sshSoftFencingExecuted;
 
     private static final int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
-            .<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
+            .<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
     private String duringFailureJobId;
     private boolean privateInitialized;
 
@@ -149,7 +149,7 @@ public class VdsManager {
             _vds.setPreviousStatus(VDSStatus.Up);
         }
         // if ssl is on and no certificate file
-        if (Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication)
+        if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)
                 && !EngineEncryptionUtils.haveKey()) {
             if (_vds.getStatus() != VDSStatus.Maintenance && _vds.getStatus() != VDSStatus.InstallFailed) {
                 setStatus(VDSStatus.NonResponsive, _vds);
@@ -186,9 +186,9 @@ public class VdsManager {
         log.infoFormat("Initialize vdsBroker ({0},{1})", _vds.getHostName(), _vds.getPort());
 
         // Get the values of the timeouts:
-        int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
-        int connectionTimeOut = Config.<Integer>GetValue(ConfigValues.vdsConnectionTimeout) * 1000;
-        int clientRetries = Config.<Integer>GetValue(ConfigValues.vdsRetries);
+        int clientTimeOut = Config.<Integer> getValue(ConfigValues.vdsTimeout) * 1000;
+        int connectionTimeOut = Config.<Integer>getValue(ConfigValues.vdsConnectionTimeout) * 1000;
+        int clientRetries = Config.<Integer>getValue(ConfigValues.vdsRetries);
 
         Pair<VdsServerConnector, HttpClient> returnValue =
                 XmlRpcUtils.getConnection(_vds.getHostName(),
@@ -197,7 +197,7 @@ public class VdsManager {
                         connectionTimeOut,
                         clientRetries,
                         VdsServerConnector.class,
-                        Config.<Boolean> GetValue(ConfigValues.EncryptHostCommunication));
+                        Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
         _vdsProxy = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
     }
 
@@ -332,7 +332,7 @@ public class VdsManager {
                     _vds.getId(),
                     _vds.getName(),
                     ex.getMessage());
-            final int VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config.<Integer> GetValue(ConfigValues.VdsRecoveryTimeoutInMintues);
+            final int VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config.<Integer> getValue(ConfigValues.VdsRecoveryTimeoutInMintues);
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
                     new Object[0], VDS_RECOVERY_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
             recoveringJobIdMap.put(_vds.getId(), jobId);
@@ -494,7 +494,7 @@ public class VdsManager {
             /**
              * Move vds to Up status from error
              */
-            if (mFailedToRunVmAttempts.get() < Config.<Integer> GetValue(ConfigValues.NumberOfFailedRunsOnVds)
+            if (mFailedToRunVmAttempts.get() < Config.<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)
                     && vds.getStatus() == VDSStatus.Error) {
                 setStatus(VDSStatus.Up, vds);
                 DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
@@ -505,15 +505,15 @@ public class VdsManager {
     }
 
     public void failedToRunVm(VDS vds) {
-        if (mFailedToRunVmAttempts.get() < Config.<Integer> GetValue(ConfigValues.NumberOfFailedRunsOnVds)
+        if (mFailedToRunVmAttempts.get() < Config.<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)
                 && mFailedToRunVmAttempts.incrementAndGet() >= Config
-                        .<Integer> GetValue(ConfigValues.NumberOfFailedRunsOnVds)) {
+                        .<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)) {
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
             SchedulerUtilQuartzImpl.getInstance().resumeJob(duringFailureJobId);
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
-            logable.addCustomValue("Time", Config.<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
+            logable.addCustomValue("Time", Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
                     .toString());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
             log.infoFormat("Vds {0} moved to Error mode after {1} attempts. Time: {2}", vds.getName(),
@@ -609,9 +609,9 @@ public class VdsManager {
         }
         int secToFence = (int)(
                 // delay time can be fracture number, casting it to int should be enough
-                Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds) +
-                (Config.<Double> GetValue(ConfigValues.DelayResetForSpmInSeconds) * spmIndicator) +
-                (Config.<Double> GetValue(ConfigValues.DelayResetPerVmInSeconds) * vmCount));
+                Config.<Integer> getValue(ConfigValues.TimeoutToResetVdsInSeconds) +
+                (Config.<Double> getValue(ConfigValues.DelayResetForSpmInSeconds) * spmIndicator) +
+                (Config.<Double> getValue(ConfigValues.DelayResetPerVmInSeconds) * vmCount));
 
         if (sshSoftFencingExecuted.get()) {
             // VDSM restart by SSH has been executed, wait more to see if host is OK
@@ -629,7 +629,7 @@ public class VdsManager {
     public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
         if (vds.getStatus() != VDSStatus.Down) {
             long timeoutToFence = calcTimeoutToFence(vds.getVmCount(), vds.getSpmStatus());
-            if (mUnrespondedAttempts.get() < Config.<Integer> GetValue(ConfigValues.VDSAttemptsToResetCount)
+            if (mUnrespondedAttempts.get() < Config.<Integer> getValue(ConfigValues.VDSAttemptsToResetCount)
                     || (lastUpdate + timeoutToFence) > System.currentTimeMillis()) {
                 boolean result = false;
                 if (vds.getStatus() != VDSStatus.Connecting && vds.getStatus() != VDSStatus.PreparingForMaintenance
@@ -743,7 +743,7 @@ public class VdsManager {
 
     public void calculateNextMaintenanceAttemptTime() {
         this.nextMaintenanceAttemptTime = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(
-                Config.<Integer>GetValue(ConfigValues.HostPreparingForMaintenanceIdleTime), TimeUnit.SECONDS);
+                Config.<Integer>getValue(ConfigValues.HostPreparingForMaintenanceIdleTime), TimeUnit.SECONDS);
     }
 
     public boolean isTimeToRetryMaintenance() {

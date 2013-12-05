@@ -69,7 +69,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     protected ValidationResult macAvailable() {
-        Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+        Boolean allowDupMacs = Config.<Boolean> getValue(ConfigValues.AllowDuplicateMacAddresses);
         return MacPoolManager.getInstance().isMacInUse(getMacAddress()) && !allowDupMacs
                 ? new ValidationResult(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE)
                 : ValidationResult.VALID;

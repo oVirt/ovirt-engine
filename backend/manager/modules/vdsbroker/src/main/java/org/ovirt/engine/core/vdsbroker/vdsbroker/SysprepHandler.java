@@ -38,7 +38,7 @@ public final class SysprepHandler {
      * them both can use. Note that every change in one will probably require the same change in the other
      */
     private static void fillUsersMap() {
-        String userPerDomainEntry = Config.<String> GetValue(ConfigValues.AdUserName);
+        String userPerDomainEntry = Config.<String> getValue(ConfigValues.AdUserName);
         if (!userPerDomainEntry.isEmpty()) {
             String[] domainUserPairs = userPerDomainEntry.split(",");
 
@@ -57,7 +57,7 @@ public final class SysprepHandler {
      * them both can use. Note that every change in one will probably require the same change in the other
      */
     private static void fillPasswordsMap() {
-        passwordPerDomain = Config.<DomainsPasswordMap> GetValue(ConfigValues.AdUserPassword);
+        passwordPerDomain = Config.<DomainsPasswordMap> getValue(ConfigValues.AdUserPassword);
     }
 
     public static String getSysPrep(VM vm, String hostName, String domain, SysPrepParams sysPrepParams) {
@@ -69,12 +69,12 @@ public final class SysprepHandler {
 
             sysPrepContent = populateSysPrepDomainProperties(sysPrepContent, domain, sysPrepParams);
             sysPrepContent = replace(sysPrepContent, "$ComputerName$", hostName != null ? hostName : "");
-            sysPrepContent = replace(sysPrepContent, "$AdminPassword$", Config.<String> GetValue(ConfigValues.LocalAdminPassword));
+            sysPrepContent = replace(sysPrepContent, "$AdminPassword$", Config.<String> getValue(ConfigValues.LocalAdminPassword));
 
             String timeZone = getTimeZone(vm);
 
             sysPrepContent = replace(sysPrepContent, "$TimeZone$", timeZone);
-            sysPrepContent = replace(sysPrepContent, "$OrgName$", Config.<String> GetValue(ConfigValues.OrganizationName));
+            sysPrepContent = replace(sysPrepContent, "$OrgName$", Config.<String> getValue(ConfigValues.OrganizationName));
         }
 
         return sysPrepContent;
@@ -97,10 +97,10 @@ public final class SysprepHandler {
         if (sysPrepParams == null || sysPrepParams.getSysPrepUserName() == null
                 || sysPrepParams.getSysPrepPassword() == null) {
             adminUserName = useDefaultIfNull("user", userPerDomain.get(domainName.toLowerCase()),
-                    Config.<String> GetValue(ConfigValues.SysPrepDefaultUser), true);
+                    Config.<String> getValue(ConfigValues.SysPrepDefaultUser), true);
 
             adminPassword = useDefaultIfNull("password", passwordPerDomain.get(domainName.toLowerCase()),
-                    Config.<String> GetValue(ConfigValues.SysPrepDefaultPassword), false);
+                    Config.<String> getValue(ConfigValues.SysPrepDefaultPassword), false);
         } else {
             adminUserName = sysPrepParams.getSysPrepUserName();
             adminPassword = sysPrepParams.getSysPrepPassword();
@@ -131,7 +131,7 @@ public final class SysprepHandler {
         String timeZone;
         // Can be empty if the VM was imported.
         if (StringUtils.isEmpty(vm.getTimeZone())) {
-            vm.setTimeZone(Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone));
+            vm.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
         }
 
         if (osRepository.isTimezoneValueInteger(vm.getStaticData(). getOsId(), null)) {
@@ -145,7 +145,7 @@ public final class SysprepHandler {
     }
 
     private static String getSysprepDir() {
-        return Config.<String> GetValue(ConfigValues.DataDir) + File.separator + "sysprep";
+        return Config.<String> getValue(ConfigValues.DataDir) + File.separator + "sysprep";
     }
 
     private static String LoadFile(String fileName) {

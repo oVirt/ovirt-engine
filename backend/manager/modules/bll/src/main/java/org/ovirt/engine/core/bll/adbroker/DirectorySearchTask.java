@@ -37,7 +37,7 @@ public class DirectorySearchTask implements Callable<List<?>> {
         controls.setCountLimit(resultcount);
         // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
         controls.setReturningObjFlag(true);
-        controls.setTimeLimit(Config.<Integer> GetValue(ConfigValues.LDAPQueryTimeout) * 1000);
+        controls.setTimeLimit(Config.<Integer> getValue(ConfigValues.LDAPQueryTimeout) * 1000);
 
         ldapTemplate.search("",
                 queryExecution.getFilter(),

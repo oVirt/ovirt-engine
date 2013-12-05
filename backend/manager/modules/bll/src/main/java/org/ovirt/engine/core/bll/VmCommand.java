@@ -327,7 +327,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected int getBlockSparseInitSizeInGb() {
-        return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
+        return Config.<Integer> getValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
     }
 
     protected List<ValidationError> validateCustomProperties(VmStatic vmStaticFromParams) {
@@ -350,8 +350,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         String vmName = vm.getName();
 
         // get the max VM name (configuration parameter)
-        int maxVmNameLengthWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthWindows);
-        int maxVmNameLengthNonWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthNonWindows);
+        int maxVmNameLengthWindows = Config.<Integer> getValue(ConfigValues.MaxVmNameLengthWindows);
+        int maxVmNameLengthNonWindows = Config.<Integer> getValue(ConfigValues.MaxVmNameLengthNonWindows);
 
         // names are allowed different lengths in Windows and non-Windows OSs,
         // consider this when setting the max length.
@@ -424,7 +424,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             for (String content : payload.getFiles().values()) {
                 // Check each file individually, no constraint on total size
                 if (!VmPayload.isPayloadSizeLegal(content)) {
-                    Integer lengthInKb = 2 * Config.<Integer> GetValue(ConfigValues.PayloadSize) / Kb;
+                    Integer lengthInKb = 2 * Config.<Integer> getValue(ConfigValues.PayloadSize) / Kb;
                     addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
                     addCanDoActionMessage(String.format("$size %1$s", lengthInKb.toString()));
                     returnValue = false;

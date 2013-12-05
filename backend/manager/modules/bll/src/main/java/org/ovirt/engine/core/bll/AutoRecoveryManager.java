@@ -46,7 +46,7 @@ public class AutoRecoveryManager {
     void initialize() {
         log.info("Start initializing " + getClass().getSimpleName());
         SchedulerUtilQuartzImpl.getInstance().scheduleACronJob(this, "onTimer",
-                new Class<?>[] {}, new Object[] {}, Config.<String> GetValue(ConfigValues.AutoRecoverySchedule));
+                new Class<?>[] {}, new Object[] {}, Config.<String> getValue(ConfigValues.AutoRecoverySchedule));
         log.info("Finished initializing " + getClass().getSimpleName());
     }
 
@@ -157,7 +157,7 @@ public class AutoRecoveryManager {
 
     private static boolean shouldPerformRecoveryOnType(String type) {
         Map<String, String> allowedRecoveryTypesFromConfig =
-                Config.<Map<String, String>> GetValue(ConfigValues.AutoRecoveryAllowedTypes);
+                Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes);
         String isAllowed = allowedRecoveryTypesFromConfig.get(type);
         if (isAllowed != null) {
             return Boolean.parseBoolean(isAllowed);
