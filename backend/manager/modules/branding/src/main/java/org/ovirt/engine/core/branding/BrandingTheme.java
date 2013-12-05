@@ -338,9 +338,6 @@ public class BrandingTheme {
 
         try {
             String resourceFile = getResourcesBundle().getString(resourceName + FILE_SUFFIX);
-            if (resourceFile == null) {
-                return null;
-            }
 
             File file = new File(filePath + "/" + resourceFile); //$NON-NLS-1$
             if (file.exists() && file.canRead()) {
