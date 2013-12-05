@@ -88,6 +88,12 @@ public class StepMapper {
         if (StepEnum.FINALIZING.name().equals(type.name().toUpperCase())) {
             return org.ovirt.engine.core.common.job.StepEnum.FINALIZING;
         }
+        if (StepEnum.REBALANCING_VOLUME.name().equals(type.name().toUpperCase())) {
+            return org.ovirt.engine.core.common.job.StepEnum.REBALANCING_VOLUME;
+        }
+        if (StepEnum.REMOVING_BRICKS.name().equals(type.name().toUpperCase())) {
+            return org.ovirt.engine.core.common.job.StepEnum.REMOVING_BRICKS;
+        }
         return org.ovirt.engine.core.common.job.StepEnum.UNKNOWN;
     }
 
@@ -102,6 +108,12 @@ public class StepMapper {
         }
         if (StepEnum.FINALIZING.name().equals(type.name())) {
             return StepEnum.FINALIZING;
+        }
+        if (StepEnum.REBALANCING_VOLUME.name().equals(type.name())) {
+            return StepEnum.REBALANCING_VOLUME;
+        }
+        if (StepEnum.REMOVING_BRICKS.name().equals(type.name())) {
+            return StepEnum.REMOVING_BRICKS;
         }
         return StepEnum.UNKNOWN;
     }

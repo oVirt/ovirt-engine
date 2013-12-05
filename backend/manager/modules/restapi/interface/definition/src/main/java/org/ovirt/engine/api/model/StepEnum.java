@@ -1,9 +1,12 @@
 package org.ovirt.engine.api.model;
 
+
 public enum StepEnum {
     VALIDATING,
     EXECUTING,
     FINALIZING,
+    REBALANCING_VOLUME,
+    REMOVING_BRICKS,
     UNKNOWN;
 
     public String value() {
