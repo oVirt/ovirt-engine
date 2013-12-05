@@ -219,6 +219,7 @@ public class KerberosConfigCheck {
             String resultMessage = ex.getMessage();
             String formattedMessage = ERROR_PREFIX + " exception message: " + resultMessage;
             log.error(formattedMessage);
+            log.debug("", ex);
 
             KerberosReturnCodeParser parser = new KerberosReturnCodeParser();
             result = parser.parse(resultMessage);
