@@ -337,7 +337,7 @@
     </Match>
 
     <Match>
-      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView$3" />
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView$1" />
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
@@ -356,5 +356,39 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.VnicProfilePopupView$4" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.QuotaPopupView$15" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPopupView$3" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeneralView$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider$5" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm$2" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
 
 </FindBugsFilter>
