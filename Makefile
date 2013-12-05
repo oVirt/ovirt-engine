@@ -310,7 +310,7 @@ copy-recursive:
 		install -m "$${MASK}" "$(SOURCEDIR)/$${f}" "$$(dirname "$(TARGETDIR)/$${f}")"; \
 	done
 
-python-validation:
+python-validation:	generated-files
 	if [ "$(BUILD_PYTHON_VALIDATION)" != 0 ]; then \
 		build/python-check.sh; \
 	fi
