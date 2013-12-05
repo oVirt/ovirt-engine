@@ -210,7 +210,7 @@ public class GlusterTaskUtils {
             JobExecutionStatus oldStatus = step.getStatus();
             step.setDescription(getTaskMessage(cluster, step.getStepType(), task));
             step.setStatus(task.getStatus());
-            eventMessageLogger(task, oldStatus, cluster);
+            logEventMessage(task, oldStatus, cluster);
             if (hasTaskCompleted(task)) {
                 step.markStepEnded(task.getStatus());
                 endStepJob(step);
@@ -221,7 +221,7 @@ public class GlusterTaskUtils {
         }
     }
 
-    public void eventMessageLogger(GlusterAsyncTask task, JobExecutionStatus oldStatus, VDSGroup cluster) {
+    public void logEventMessage(GlusterAsyncTask task, JobExecutionStatus oldStatus, VDSGroup cluster) {
         GlusterVolumeEntity volume = getVolumeDao().getVolumeByGlusterTask(task.getTaskId());
         if ( volume == null){
             if(task.getTaskParameters() != null) {

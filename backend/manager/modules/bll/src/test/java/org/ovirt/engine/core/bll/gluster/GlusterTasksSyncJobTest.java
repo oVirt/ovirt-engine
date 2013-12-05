@@ -121,7 +121,7 @@ public class GlusterTasksSyncJobTest {
         doNothing().when(taskUtils).releaseLock(any(Guid.class));
         doNothing().when(taskUtils).endStepJob(any(Step.class));
         doReturn(null).when(provider).getMonitoredTaskIDsInDB();
-        doNothing().when(taskUtils).eventMessageLogger(any(GlusterAsyncTask.class), any(JobExecutionStatus.class), any(VDSGroup.class));
+        doNothing().when(taskUtils).logEventMessage(any(GlusterAsyncTask.class), any(JobExecutionStatus.class), any(VDSGroup.class));
     }
 
     @Test

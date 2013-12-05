@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -108,6 +109,10 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
 
     private void updateLatestStatus(GlusterVolumeTaskStatusEntity status) {
         GlusterAsyncTask asyncTask = volume.getAsyncTask();
+        GlusterTaskParameters taskParameters = new GlusterTaskParameters();
+        taskParameters.setVolumeName(volume.getName());
+        asyncTask.setTaskParameters(taskParameters);
+
         if (asyncTask != null && asyncTask.getTaskId() != null) {
             List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
 
