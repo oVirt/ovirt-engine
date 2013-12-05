@@ -181,8 +181,6 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
                 if (value.getClass().isEnum()) {
                     try {
                         Method method = value.getClass().getMethod("getValue");
-                        if (method == null)
-                            method = value.getClass().getMethod("ordinal");
                         value = method.invoke(value);
                     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
                         log.error("Can't map Enum type " + value + "Exception is: " + ex.getMessage());
