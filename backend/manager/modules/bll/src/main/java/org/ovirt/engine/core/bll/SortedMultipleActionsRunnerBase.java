@@ -12,8 +12,8 @@ public abstract class SortedMultipleActionsRunnerBase extends MultipleActionsRun
     protected abstract void sortCommands();
 
     @Override
-    protected void RunCommands() {
+    protected void runCommands() {
         sortCommands();
-        super.RunCommands();
+        super.runCommands();
     }
 }

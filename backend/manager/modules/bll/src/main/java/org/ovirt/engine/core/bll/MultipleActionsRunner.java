@@ -48,7 +48,7 @@ public class MultipleActionsRunner {
         return _commands;
     }
 
-    public ArrayList<VdcReturnValueBase> Execute() {
+    public ArrayList<VdcReturnValueBase> execute() {
         // sanity - don't do anything if no parameters passed
         if (_parameters == null || _parameters.isEmpty()) {
             log.infoFormat("{0} of type {1} invoked with no actions", this.getClass().getSimpleName(), _actionType);
@@ -74,7 +74,7 @@ public class MultipleActionsRunner {
                 ThreadLocalParamsContainer.setCorrelationId(getCommands().get(0).getCorrelationId());
                 returnValues.add(getCommands().get(0).canDoActionOnly());
             } else {
-                CheckCanDoActionsAsyncroniousely(returnValues);
+                checkCanDoActionsAsynchronously(returnValues);
             }
 
             boolean canRunActions = true;
@@ -91,7 +91,7 @@ public class MultipleActionsRunner {
                 ThreadPoolUtil.execute(new Runnable() {
                     @Override
                     public void run() {
-                        RunCommands();
+                        runCommands();
                     }
                 });
             }
@@ -107,7 +107,7 @@ public class MultipleActionsRunner {
      *
      * @param returnValues
      */
-    private void CheckCanDoActionsAsyncroniousely(
+    private void checkCanDoActionsAsynchronously(
             ArrayList<VdcReturnValueBase> returnValues) {
         for (int i = 0; i < getCommands().size(); i += CONCURRENT_ACTIONS) {
             int handleSize = Math.min(CONCURRENT_ACTIONS, getCommands().size() - i);
@@ -150,7 +150,7 @@ public class MultipleActionsRunner {
         }
     }
 
-    protected void RunCommands() {
+    protected void runCommands() {
         for (CommandBase<?> command : getCommands()) {
             if (command.getReturnValue().getCanDoAction()) {
                 executeValidatedCommand(command);

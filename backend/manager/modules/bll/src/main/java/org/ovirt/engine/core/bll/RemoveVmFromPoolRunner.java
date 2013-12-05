@@ -16,8 +16,8 @@ public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
     }
 
     @Override
-    protected void RunCommands() {
-        super.RunCommands();
+    protected void runCommands() {
+        super.runCommands();
 
         // remove also the pool if there is no VMs left in it
         removePoolIfNeeded();

@@ -662,7 +662,7 @@ public class SchedulingManager {
         if (Config.<Boolean> GetValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start scheduling to enable vds load balancer");
             SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance,
-                    "PerformLoadBalancing",
+                    "performLoadBalancing",
                     new Class[] {},
                     new Object[] {},
                     Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
@@ -672,8 +672,8 @@ public class SchedulingManager {
         }
     }
 
-    @OnTimerMethodAnnotation("PerformLoadBalancing")
-    public void PerformLoadBalancing() {
+    @OnTimerMethodAnnotation("performLoadBalancing")
+    public void performLoadBalancing() {
         log.debugFormat("Load Balancer timer entered.");
         List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAll();
         for (VDSGroup cluster : clusters) {

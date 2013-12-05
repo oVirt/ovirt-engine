@@ -15,9 +15,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public final class MultipleActionsRunnersFactory {
-    public static MultipleActionsRunner CreateMultipleActionsRunner(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
-            boolean isInternal) {
+    public static MultipleActionsRunner createMultipleActionsRunner(VdcActionType actionType,
+                                                                    ArrayList<VdcActionParametersBase> parameters,
+                                                                    boolean isInternal) {
         MultipleActionsRunner runner;
         switch (actionType) {
         case DeactivateStorageDomain: {

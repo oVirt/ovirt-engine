@@ -23,7 +23,7 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
     }
 
     @Override
-    public java.util.ArrayList<VdcReturnValueBase> Execute() {
+    public java.util.ArrayList<VdcReturnValueBase> execute() {
         if (getParameters().size() > 0) {
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(
                     ((StorageDomainPoolParametersBase) getParameters().get(0)).getStoragePoolId());
@@ -44,10 +44,10 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
                             parameters, false);
                 }
             } else {
-                return super.Execute();
+                return super.execute();
             }
         } else {
-            return super.Execute();
+            return super.execute();
         }
     }
 
@@ -57,7 +57,7 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
     }
 
     @Override
-    protected void RunCommands() {
+    protected void runCommands() {
         sortCommands();
 
         for (final CommandBase<?> command : getCommands()) {

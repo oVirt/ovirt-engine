@@ -535,11 +535,11 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 }
             }
         }
-        MultipleActionsRunner runner = MultipleActionsRunnersFactory.CreateMultipleActionsRunner(actionType,
+        MultipleActionsRunner runner = MultipleActionsRunnersFactory.createMultipleActionsRunner(actionType,
                 parameters, isInternal);
         runner.setExecutionContext(executionContext);
         runner.setIsRunOnlyIfAllCanDoPass(isRunOnlyIfAllCanDoPass);
-        return runner.Execute();
+        return runner.execute();
     }
 
     @Override
