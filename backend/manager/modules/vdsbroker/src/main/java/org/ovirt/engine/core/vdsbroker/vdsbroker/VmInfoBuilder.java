@@ -426,8 +426,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             }
         }
         createInfo.put(VdsProperties.Custom, customMap);
-        Map[] devArray = new HashMap[devices.size()];
-        createInfo.put(DEVICES, devices.toArray(devArray));
+        createInfo.put(DEVICES, devices);
     }
 
     @Override
