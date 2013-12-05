@@ -88,8 +88,6 @@ public class TemplateDiskListModel extends SearchableListModel
         this.storageDomains = storageDomains;
     }
 
-    Iterable value;
-
     public TemplateDiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
