@@ -11,15 +11,14 @@ import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends VmOperationCommandBase<T> {
-    private String mCdImagePath;
+    private String cdImagePath;
 
     public ChangeDiskCommand(T parameters) {
         super(parameters);
-        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
     }
 
     public String getDiskName() {
-        return new File(mCdImagePath).getName();
+        return new File(cdImagePath).getName();
     }
 
     @Override
@@ -38,6 +37,8 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
         if (retValue && !canRunActionOnNonManagedVm()) {
             retValue = false;
+        } else {
+            cdImagePath = ImagesHandler.cdPathWindowsToLinux(getParameters().getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
         }
 
         if (retValue && !getVm().isRunningOrPaused()) {
@@ -45,15 +46,15 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
 
-            // An empty 'mCdImagePath' means eject CD
-            if (!StringUtils.isEmpty(mCdImagePath)) {
+            // An empty 'cdImagePath' means eject CD
+            if (!StringUtils.isEmpty(cdImagePath)) {
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
             } else {
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EJECT_CD);
             }
             failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
         } else if ((IsoDomainListSyncronizer.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
-                && !StringUtils.isEmpty(mCdImagePath)) {
+                && !StringUtils.isEmpty(cdImagePath)) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
             setSucceeded(false);
@@ -68,7 +69,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.ChangeDisk,
-                        new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), mCdImagePath))
+                        new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), cdImagePath))
                 .getReturnValue());
         setSucceeded(true);
 
@@ -76,7 +77,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? "".equals(mCdImagePath) ? AuditLogType.USER_EJECT_VM_DISK
+        return getSucceeded() ? "".equals(cdImagePath) ? AuditLogType.USER_EJECT_VM_DISK
                 : AuditLogType.USER_CHANGE_DISK_VM : AuditLogType.USER_FAILED_CHANGE_DISK_VM;
     }
 }
