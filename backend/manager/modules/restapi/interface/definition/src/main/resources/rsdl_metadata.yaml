@@ -3910,10 +3910,10 @@ actions:
   description: migrate the data from the brick to others and mark for deletion
   request:
     body:
-      parameterType: GlusterBricks
+      parameterType: Action
       signatures:
       - mandatoryArguments:
-          bricks--COLLECTION: {brick.name: 'xs:string'}
+          action.bricks--COLLECTION: {brick.name: 'xs:string'}
         optionalArguments: {}
         description: migrate the data from the brick to others and mark for deletion
     urlparams: {}
@@ -3924,10 +3924,10 @@ actions:
   description: stops the bricks migration task started on on volume
   request:
     body:
-      parameterType: GlusterBricks
+      parameterType: Action
       signatures:
       - mandatoryArguments:
-          bricks--COLLECTION: {brick.name: 'xs:string'}
+          action.bricks--COLLECTION: {brick.name: 'xs:string'}
         optionalArguments: {}
         description: stops the bricks migration task started on on volume
     urlparams: {}
@@ -3938,10 +3938,10 @@ actions:
   description: activates the bricks post migration of data for reuse
   request:
     body:
-      parameterType: GlusterBricks
+      parameterType: Action
       signatures:
       - mandatoryArguments:
-          bricks--COLLECTION: {brick.name: 'xs:string'}
+          action.bricks--COLLECTION: {brick.name: 'xs:string'}
         optionalArguments: {}
         description: activates the bricks post migration of data for reuse
     urlparams: {}
