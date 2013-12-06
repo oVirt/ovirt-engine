@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class MainContentView extends AbstractView implements MainContentPresenter.ViewDef {
 
-    private static final int subTabPanelHeight = 300;
+    private static final int subTabPanelMaxHeight = 300;
 
     private final SplitLayoutPanel splitPanel = new SplitLayoutPanel(4);
     private final SimplePanel mainTabPanelContainer = new SimplePanel();
@@ -44,7 +44,11 @@ public class MainContentView extends AbstractView implements MainContentPresente
             splitPanel.clear();
 
             if (subTabPanelVisible) {
-                splitPanel.addSouth(subTabPanelContainer, subTabPanelHeight);
+                int subTabHeight = splitPanel.getOffsetHeight() / 2;
+                if (subTabHeight > subTabPanelMaxHeight) {
+                    subTabHeight = subTabPanelMaxHeight;
+                }
+                splitPanel.addSouth(subTabPanelContainer, subTabHeight);
                 splitPanel.add(mainTabPanelContainer);
             } else {
                 splitPanel.add(mainTabPanelContainer);
