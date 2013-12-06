@@ -254,12 +254,10 @@
                                         <e:EntityModelTextBoxEditor ui:field="userNameEditor"/>
                                         <g:HorizontalPanel ui:field="passwordSection" width="100%" verticalAlignment="middle">
                                             <g:RadioButton ui:field="rbPassword" />
-                                            <g:Label text="{constants.hostPasswordLabel}" />
                                             <e:EntityModelPasswordBoxEditor ui:field="passwordEditor"/>
                                         </g:HorizontalPanel>
                                         <g:HorizontalPanel ui:field="pkSection" width="100%" verticalAlignment="middle">
                                             <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.radioButton}" />
-                                            <g:Label text="{constants.hostPublicKeyLable}" />
                                             <e:EntityModelTextAreaLabelEditor ui:field="publicKeyEditor" />
                                         </g:HorizontalPanel>
                                         <d:AdvancedParametersExpander ui:field="expander"/>

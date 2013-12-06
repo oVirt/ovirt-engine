@@ -527,6 +527,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
+        rbPassword.setText(constants.hostPopupPasswordLabel());
+        rbPublicKey.setText(constants.hostPopupPublicKeyLable());
 
         fingerprintLabel.setText(constants.hostPopupHostFingerprintLabel());
         overrideIpTablesEditor.setLabel(constants.hostPopupOverrideIpTablesLabel());
