@@ -1,5 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import com.google.gwt.dom.client.FormElement;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.HasAdElementReconnectPermissionParameters;
@@ -18,15 +25,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import com.google.gwt.dom.client.FormElement;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
-import com.google.gwt.user.client.ui.NamedFrame;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class ConsoleModel extends EntityModel {
     public static final String GET_ATTACHMENT_SERVLET_URL = BaseContextPathData.getInstance().getPath()
@@ -255,32 +253,29 @@ public abstract class ConsoleModel extends EntityModel {
     }
 
     public static void makeConsoleConfigRequest(String fileName, String contentType, String configFileContent) {
-        // open form always in a new window
-        final FormPanel formPanel = new FormPanel(new NamedFrame("_blank")); //$NON-NLS-1$
-        formPanel.setMethod(FormPanel.METHOD_POST);
-
         final FlowPanel innerPanel = new FlowPanel();
         innerPanel.add(buildTextArea("contenttype", contentType));//$NON-NLS-1$
         innerPanel.add(buildTextArea("content", configFileContent));//$NON-NLS-1$
         innerPanel.add(buildTextArea("encodingtype", "plain"));//$NON-NLS-1$ $NON-NLS-2$
 
+        final FormPanel formPanel = new FormPanel(); //$NON-NLS-1$
+        formPanel.setMethod(FormPanel.METHOD_POST);
+        formPanel.getElement().setId("conform" + Double.valueOf(Math.random()).toString());//$NON-NLS-1$
         formPanel.setWidget(innerPanel);
         formPanel.setAction(GET_ATTACHMENT_SERVLET_URL + fileName);
-        formPanel.setVisible(false);
-
-        final FormElement form = FormElement.as(formPanel.getElement());
         formPanel.setEncoding(FormPanel.ENCODING_URLENCODED);
-        RootPanel.getBodyElement().appendChild(form);
+        formPanel.setVisible(false);
 
         // clean-up after form submit
         formPanel.addSubmitCompleteHandler(new SubmitCompleteHandler() {
             @Override
             public void onSubmitComplete(SubmitCompleteEvent event) {
-                RootPanel.getBodyElement().removeChild(form);
+                RootPanel.get().remove(formPanel);
             }
         });
 
-        form.submit();
+        RootPanel.get().add(formPanel);
+        FormElement.as(formPanel.getElement()).submit();
     }
 
     private static TextArea buildTextArea(String name, String value) {
