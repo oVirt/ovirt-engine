@@ -74,11 +74,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         return isSuccess;
     }
 
-    private List<StorageServerConnections> FilterConnectionsUsedByOthers(
-            List<StorageServerConnections> connections, String vgId) {
-        return filterConnectionsUsedByOthers(connections, vgId, "");
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     protected List<StorageServerConnections> filterConnectionsUsedByOthers(
@@ -194,7 +189,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
         List<StorageServerConnections> list = DbFacade.getInstance()
                 .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
-        for (StorageServerConnections connection : FilterConnectionsUsedByOthers(list, storageDomain.getStorage())) {
+        for (StorageServerConnections connection : filterConnectionsUsedByOthers(list, storageDomain.getStorage(), "")) {
             DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
         }
 
