@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.EventMap;
-import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +32,7 @@ public class EventDAOTest extends BaseDAOTestCase {
         newSubscriber = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
         newSubscription = new event_subscriber();
         newSubscription.setsubscriber_id(newSubscriber);
-        newSubscription.setmethod_id(1);
+        newSubscription.setevent_notification_method(EventNotificationMethods.EMAIL);
         newSubscription.setevent_up_name("TestRun");
         newSubscription.settag_name("farkle");
 
@@ -73,15 +73,6 @@ public class EventDAOTest extends BaseDAOTestCase {
         }
     }
 
-    @Test
-    public void testGetEventNotificationMethodsById() {
-        List<EventNotificationMethod> result = dao.getEventNotificationMethodsById(1);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-    }
-
     /**
      * Ensures that subscribing a user works as expected.
      */
@@ -97,26 +88,6 @@ public class EventDAOTest extends BaseDAOTestCase {
         for (event_subscriber subscription : result) {
             assertEquals(newSubscriber, subscription.getsubscriber_id());
         }
-    }
-
-    /**
-     * Ensures that updating a subscription works as expected.
-     */
-    @Test
-    public void testUpdate() {
-        event_subscriber before = dao
-                .getAllForSubscriber(existingSubscriber).get(0);
-
-        int oldMethodId = before.getmethod_id();
-        before.setmethod_id(2);
-
-        dao.update(before, oldMethodId);
-
-        event_subscriber after = dao
-                .getAllForSubscriber(existingSubscriber).get(0);
-
-        assertNotNull(after);
-        assertEquals(before, after);
     }
 
     /**

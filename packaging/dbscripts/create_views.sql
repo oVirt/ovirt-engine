@@ -929,7 +929,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
 CREATE OR REPLACE VIEW event_audit_log_subscriber_view
 
 AS
-SELECT     1 as event_type, event_subscriber_1.subscriber_id as subscriber_id, event_subscriber_1.event_up_name as event_up_name, event_subscriber_1.method_id as method_id,
+SELECT     1 as event_type, event_subscriber_1.subscriber_id as subscriber_id, event_subscriber_1.event_up_name as event_up_name, event_subscriber_1.notification_method as notification_method,
                       event_subscriber_1.method_address as method_address, event_subscriber_1.tag_name as tag_name, audit_log_1.audit_log_id as audit_log_id, audit_log_1.user_id as user_id, audit_log_1.user_name as user_name,
                       audit_log_1.vm_id as vm_id, audit_log_1.vm_name as vm_name, audit_log_1.vm_template_id as vm_template_id, audit_log_1.vm_template_name as vm_template_name, audit_log_1.vds_id as vds_id, audit_log_1.vds_name as vds_name,
                       audit_log_1.storage_pool_id as storage_pool_id, audit_log_1.storage_pool_name as storage_pool_name, audit_log_1.storage_domain_id as storage_domain_id, audit_log_1.storage_domain_name as storage_domain_name,
@@ -938,7 +938,7 @@ FROM         audit_log AS audit_log_1 INNER JOIN
 event_subscriber AS event_subscriber_1 ON audit_log_1.log_type_name = event_subscriber_1.event_up_name
 WHERE     (audit_log_1.processed = false)
 UNION
-SELECT     distinct 0 as event_type, event_subscriber.subscriber_id as subscriber_id, audit_log.log_type_name as event_up_name, event_subscriber.method_id as method_id, event_subscriber.method_address as method_address,
+SELECT     distinct 0 as event_type, event_subscriber.subscriber_id as subscriber_id, audit_log.log_type_name as event_up_name, event_subscriber.notification_method as notification_method, event_subscriber.method_address as method_address,
                       event_subscriber.tag_name as tag_name, audit_log.audit_log_id as audit_log_id, audit_log.user_id as user_id, audit_log.user_name as user_name, audit_log.vm_id as vm_id, audit_log.vm_name as vm_name,
                       audit_log.vm_template_id as vm_template_id, audit_log.vm_template_name as vm_template_name, audit_log.vds_id as vds_id, audit_log.vds_name as vds_name, audit_log.storage_pool_id as storage_pool_id,
                       audit_log.storage_pool_name as storage_pool_name, audit_log.storage_domain_id as storage_domain_id, audit_log.storage_domain_name as storage_domain_name, audit_log.log_time as log_time, audit_log.severity as severity,

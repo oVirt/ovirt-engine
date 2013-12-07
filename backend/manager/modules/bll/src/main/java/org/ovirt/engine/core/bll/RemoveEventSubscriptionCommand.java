@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventMap;
-import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -19,9 +19,8 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
     protected boolean canDoAction() {
         boolean retValue;
         // get notification method
-        List<EventNotificationMethod> event_notification_methods = (DbFacade.getInstance()
-                .getEventDao().getEventNotificationMethodsById(getParameters().getEventSubscriber().getmethod_id()));
-        if (event_notification_methods.size() > 0) {
+        EventNotificationMethods event_notification_method = getParameters().getEventSubscriber().getevent_notification_method();
+        if (event_notification_method != null) {
             // validate event
             List<EventMap> event_map = DbFacade.getInstance().getEventDao().getEventMapByName(
                     getParameters().getEventSubscriber().getevent_up_name());
@@ -35,7 +34,7 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
                     addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
                     retValue = false;
                 } else {
-                    retValue = ValidateRemove(event_notification_methods, getParameters().getEventSubscriber(), user);
+                    retValue = ValidateRemove(event_notification_method, getParameters().getEventSubscriber(), user);
                 }
             } else {
                 addCanDoActionMessage(VdcBllMessages.EN_UNSUPPORTED_NOTIFICATION_EVENT);

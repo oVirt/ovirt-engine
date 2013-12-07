@@ -101,8 +101,6 @@ INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_BRI
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_BRICK_REMOVED_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_SERVER_REMOVED_FROM_CLI', 'UNASSIGNED');
 
--- Insert notification methods for notification service
-INSERT INTO event_notification_methods (method_id, method_type) values (0,'Email');
 
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
     SELECT 41, '3.1', '3.1';

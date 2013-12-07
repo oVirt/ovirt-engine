@@ -29,25 +29,13 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromevent_notification_hist()
-RETURNS SETOF event_notification_hist STABLE
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM event_notification_hist;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
 ----------------------------------------------------------------
 -- [event_subscriber] Table
 --
 
 
 Create or replace FUNCTION Insertevent_subscriber(v_event_up_name VARCHAR(100),
-	v_method_id INTEGER,
+	v_notification_method VARCHAR(32),
     v_method_address VARCHAR(255),
 	v_subscriber_id UUID,
 	v_tag_name VARCHAR(50))
@@ -57,11 +45,11 @@ BEGIN
       if not exists(select * from  event_subscriber where
       subscriber_id = v_subscriber_id and
       event_up_name = v_event_up_name and
-      method_id = v_method_id and
+      notification_method = v_notification_method and
       tag_name = v_tag_name) then
 
-INSERT INTO event_subscriber(event_up_name, method_id, method_address, subscriber_id, tag_name)
-			VALUES(v_event_up_name, v_method_id, v_method_address, v_subscriber_id,v_tag_name);
+INSERT INTO event_subscriber(event_up_name, notification_method, method_address, subscriber_id, tag_name)
+			VALUES(v_event_up_name, v_notification_method, v_method_address, v_subscriber_id,v_tag_name);
       end if;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -82,31 +70,8 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAllFromevent_audit_log_subscriber()
-RETURNS SETOF event_audit_log_subscriber_view STABLE
-   AS $procedure$
-   DECLARE
-   v_last  BIGINT;
-BEGIN
-      -- begin tran
-
-
-			-- get last event
-			select   audit_log_id INTO v_last from audit_log    order by audit_log_id desc LIMIT 1;
-			-- mark processed events
-      update audit_log set processed = TRUE where audit_log_id <= v_last;
-			-- get from view all events with id <= @last
-      RETURN QUERY SELECT *
-      from event_audit_log_subscriber_view  event_audit_log_subscriber_view
-      where audit_log_id <= v_last;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
 Create or replace FUNCTION Deleteevent_subscriber(v_event_up_name VARCHAR(100) ,
-	v_method_id INTEGER ,
+  v_notification_method VARCHAR(32),
 	v_subscriber_id UUID,
     v_tag_name VARCHAR(50))
 RETURNS VOID
@@ -115,47 +80,18 @@ BEGIN
       if (v_tag_name IS NULL) then
          delete from event_subscriber
          where event_up_name = v_event_up_name
-         and method_id = v_method_id
+         and notification_method = v_notification_method
          and subscriber_id = v_subscriber_id;
       else
          delete from event_subscriber
          where event_up_name = v_event_up_name
-         and method_id = v_method_id
+         and notification_method = v_notification_method
          and subscriber_id = v_subscriber_id
          and tag_name = v_tag_name;
       end if;
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
-Create or replace FUNCTION Updateevent_subscriber(v_event_up_name VARCHAR(100) ,
-	v_old_method_id INTEGER ,
-	v_new_method_id INTEGER ,
-	v_subscriber_id UUID)
-RETURNS VOID
-   AS $procedure$
-BEGIN
-      update event_subscriber set method_id = v_new_method_id
-      where event_up_name = v_event_up_name
-      and method_id = v_old_method_id
-      and subscriber_id = v_subscriber_id;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-Create or replace FUNCTION GetEventNotificationMethodById(v_method_id INTEGER)
-RETURNS SETOF event_notification_methods STABLE
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT *
-      from event_notification_methods
-      where method_id = v_method_id;
-END; $procedure$
-LANGUAGE plpgsql;
 
 
 
@@ -170,26 +106,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-
--------------------------------------------------------------------------------------
---- GetAllFromevent_audit_log_subscriber used to get un notified events
--------------------------------------------------------------------------------------
-
-
-Create or replace FUNCTION GetAllFromevent_audit_log_subscriber_only() RETURNS SETOF event_audit_log_subscriber_view STABLE
-   AS $procedure$
-   DECLARE
-   v_last  BIGINT;
-BEGIN
-        -- get last event
-        select   audit_log_id INTO v_last from audit_log order by audit_log_id desc LIMIT 1;
-        -- get from view all events with id <= @last
-        RETURN QUERY select *
-                   from event_audit_log_subscriber_view  where audit_log_id <= v_last;
-END; $procedure$
-LANGUAGE plpgsql;
 
 
 ----------------------------------------------------------------

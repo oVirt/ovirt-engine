@@ -23,12 +23,9 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
-import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.notifier.methods.EventMethodFiller;
-import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder;
-import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder.NotificationMethodFactoryMapper;
+import org.ovirt.engine.core.notifier.utils.NotificationMethodsMapper;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
 import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
@@ -46,7 +43,7 @@ public class NotificationService implements Runnable {
 
     private DataSource ds;
     private NotificationProperties prop = null;
-    private NotificationMethodFactoryMapper methodsMapper = null;
+    private NotificationMethodsMapper notificationMethodsMapper;
     private int daysToKeepHistory = 0;
     private int daysToSendOnStartup = 0;
     private EventSender failedQueriesEventSender;
@@ -81,9 +78,8 @@ public class NotificationService implements Runnable {
         if (failedQueriesNotificationThreshold == 0) {
             failedQueriesNotificationThreshold = 1;
         }
-        initMethodMapper();
-        failedQueriesEventSender =
-                methodsMapper.getMethod(EventNotificationMethods.EMAIL);
+        notificationMethodsMapper = new NotificationMethodsMapper(prop);
+        failedQueriesEventSender = notificationMethodsMapper.getEventSender(EventNotificationMethods.EMAIL);
     }
 
     private int getNonNegativeIntegerProperty(final String name) throws NotificationServiceException {
@@ -186,30 +182,6 @@ public class NotificationService implements Runnable {
         }
     }
 
-    private void initMethodMapper() throws NotificationServiceException {
-        EventMethodFiller methodFiller = new EventMethodFiller();
-        Connection connection = null;
-        try {
-            connection = ds.getConnection();
-            methodFiller.fillEventNotificationMethods(connection);
-        } catch (Exception e) {
-            throw new NotificationServiceException("Failed to initialize method mapper", e);
-        }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException exception) {
-                    log.error("Failed to release connection", exception);
-                }
-            }
-        }
-
-        List<EventNotificationMethod> eventNotificationMethods = methodFiller.getEventNotificationMethods();
-        methodsMapper = NotificationMethodMapBuilder.instance().createMethodsMapper(eventNotificationMethods, prop);
-    }
-
     private void initConnectivity() throws NotificationServiceException {
         try {
             ds = new StandaloneDataSource();
@@ -260,7 +232,7 @@ public class NotificationService implements Runnable {
             dbUser = getUserByUserId(eventSubscriber.getsubscriber_id());
             if (dbUser != null) {
                 EventSender method =
-                        methodsMapper.getMethod(EventNotificationMethods.forValue(eventSubscriber.getmethod_id()));
+                        notificationMethodsMapper.getEventSender(eventSubscriber.getEventNotificationMethod());
                 EventSenderResult sendResult = null;
                 try {
                     sendResult = method.send(eventSubscriber, dbUser.getEmail());
@@ -342,7 +314,7 @@ public class NotificationService implements Runnable {
         event_notification_hist eventHistory = new event_notification_hist();
         eventHistory.setaudit_log_id(eals.getaudit_log_id());
         eventHistory.setevent_name(eals.getevent_up_name());
-        eventHistory.setmethod_type(EventNotificationMethods.forValue(eals.getmethod_id()).name());
+        eventHistory.setmethod_type(eals.getEventNotificationMethod().name());
         eventHistory.setreason(reason);
         eventHistory.setsent_at(new Date());
         eventHistory.setstatus(isNotified);
@@ -379,7 +351,7 @@ public class NotificationService implements Runnable {
         eals.setevent_type(rs.getInt("event_type"));
         eals.setsubscriber_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("subscriber_id")));
         eals.setevent_up_name(rs.getString("event_up_name"));
-        eals.setmethod_id(rs.getInt("method_id"));
+        eals.setEventNotificationMethod(EventNotificationMethods.valueOf(rs.getString("notification_method")));
         eals.setmethod_address(rs.getString("method_address"));
         eals.settag_name(rs.getString("tag_name"));
         eals.setaudit_log_id(rs.getLong("audit_log_id"));
@@ -411,7 +383,7 @@ public class NotificationService implements Runnable {
             EventAuditLogSubscriber eals = new EventAuditLogSubscriber();
             eals.setevent_type(MessageHelper.MessageType.alertMessage.getEventType());
             eals.setevent_up_name("DATABASE_UNREACHABLE");
-            eals.setmethod_id(EventNotificationMethods.EMAIL.getValue());
+            eals.setEventNotificationMethod(EventNotificationMethods.EMAIL);
             eals.setmethod_address(StringUtils.strip(email));
             eals.setmessage("Failed to query for notifications. Database Connection refused.");
             eals.setseverity(AuditLogSeverity.ERROR.getValue());

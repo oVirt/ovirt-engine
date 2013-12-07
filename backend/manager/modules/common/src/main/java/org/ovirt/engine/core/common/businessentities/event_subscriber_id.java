@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -10,7 +11,7 @@ public class event_subscriber_id implements Serializable {
 
     Guid subscriberId;
     String eventUpName;
-    int methodId;
+    EventNotificationMethods eventNotificationMethod;
     String tagName;
 
     @Override
@@ -19,7 +20,7 @@ public class event_subscriber_id implements Serializable {
         int result = 1;
         result = prime * result + ((subscriberId == null) ? 0 : subscriberId.hashCode());
         result = prime * result + ((eventUpName == null) ? 0 : eventUpName.hashCode());
-        result = prime * result + methodId;
+        result = prime * result + ((eventNotificationMethod == null) ? 0 : eventNotificationMethod.hashCode());
         result = prime * result + ((tagName == null) ? 0 : tagName.hashCode());
         return result;
     }
@@ -38,7 +39,7 @@ public class event_subscriber_id implements Serializable {
         event_subscriber_id other = (event_subscriber_id) obj;
         return (ObjectUtils.objectsEqual(subscriberId, other.subscriberId)
                 && ObjectUtils.objectsEqual(eventUpName, other.eventUpName)
-                && methodId == other.methodId
+                && eventNotificationMethod == other.eventNotificationMethod
                 && ObjectUtils.objectsEqual(tagName, other.tagName));
     }
 }

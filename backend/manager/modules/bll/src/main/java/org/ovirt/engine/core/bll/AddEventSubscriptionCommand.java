@@ -3,10 +3,10 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventMap;
-import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,17 +25,16 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         // method and address
         Guid subscriberId = getParameters().getEventSubscriber().getsubscriber_id();
         String eventName = getParameters().getEventSubscriber().getevent_up_name();
-        int methodId = getParameters().getEventSubscriber().getmethod_id();
+        EventNotificationMethods eventNotificationMethod =
+                getParameters().getEventSubscriber().getevent_notification_method();
         List<event_subscriber> subscriptions = DbFacade.getInstance()
                 .getEventDao().getAllForSubscriber(subscriberId);
-        if (IsAlreadySubscribed(subscriptions, subscriberId, eventName, methodId)) {
+        if (IsAlreadySubscribed(subscriptions, subscriberId, eventName, eventNotificationMethod)) {
             addCanDoActionMessage(VdcBllMessages.EN_ALREADY_SUBSCRIBED);
             retValue = false;
         } else {
             // get notification method
-            List<EventNotificationMethod> eventNotificationMethods = (DbFacade.getInstance()
-                    .getEventDao().getEventNotificationMethodsById(methodId));
-            if (eventNotificationMethods.size() > 0) {
+            if (eventNotificationMethod != null) {
                 // validate event
                 List<EventMap> eventMap = DbFacade.getInstance().getEventDao().getEventMapByName(eventName);
                 if (eventMap.size() > 0) {
@@ -45,7 +44,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                         addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
                         retValue = false;
                     } else {
-                        retValue = ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(), user);
+                        retValue = ValidateAdd(eventNotificationMethod, getParameters().getEventSubscriber(), user);
                     }
                 } else {
                     addCanDoActionMessage(String.format("$eventName %1$s", eventName));
@@ -63,24 +62,20 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
     /**
      * Determines whether [is already subscribed] [the specified subscriptions].
      *
-     * @param subscriptions
-     *            The subscriptions.
-     * @param subscriberId
-     *            The subscriber id.
-     * @param eventName
-     *            Name of the event.
-     * @param methodId
-     *            The method id.
+     * @param subscriptions           The subscriptions.
+     * @param subscriberId            The subscriber id.
+     * @param eventName               Name of the event.
+     * @param eventNotificationMethod The notification method.
      * @return <c>true</c> if [is already subscribed] [the specified
-     *         subscriptions]; otherwise, <c>false</c>.
+     * subscriptions]; otherwise, <c>false</c>.
      */
     private static boolean IsAlreadySubscribed(Iterable<event_subscriber> subscriptions, Guid subscriberId,
-                                               String eventName, int methodId) {
+            String eventName, EventNotificationMethods eventNotificationMethod) {
         boolean retval = false;
         for (event_subscriber eventSubscriber : subscriptions) {
             if (subscriberId.equals(eventSubscriber.getsubscriber_id())
                     && StringUtils.equals(eventSubscriber.getevent_up_name(), eventName)
-                    && eventSubscriber.getmethod_id() == methodId) {
+                    && eventSubscriber.getevent_notification_method() == eventNotificationMethod) {
                 retval = true;
                 break;
             }
