@@ -4,16 +4,19 @@ import java.util.HashMap;
 
 public enum StorageType implements Identifiable {
 
-    UNKNOWN(0),
-    NFS(1),
-    FCP(2),
-    ISCSI(3),
-    LOCALFS(4),
-    POSIXFS(6),
-    GLUSTERFS(7),
-    GLANCE(8);
+    UNKNOWN(0, Subtype.NONE),
+    NFS(1, Subtype.FILE),
+    FCP(2, Subtype.BLOCK),
+    ISCSI(3, Subtype.BLOCK),
+    LOCALFS(4, Subtype.FILE),
+    POSIXFS(6, Subtype.FILE),
+    GLUSTERFS(7, Subtype.FILE),
+    GLANCE(8, Subtype.FILE);
+
+    private enum Subtype { NONE, FILE, BLOCK }
 
     private int value;
+    private Subtype subtype;
 
     private static final HashMap<Integer, StorageType> mappings = new HashMap<Integer, StorageType>();
 
@@ -23,8 +26,9 @@ public enum StorageType implements Identifiable {
         }
     }
 
-    private StorageType(int value) {
+    private StorageType(int value, Subtype subtype) {
         this.value = value;
+        this.subtype = subtype;
     }
 
     @Override
@@ -33,7 +37,7 @@ public enum StorageType implements Identifiable {
     }
 
     public boolean isConcreteStorageType() {
-        return this != UNKNOWN;
+        return subtype != Subtype.NONE;
     }
 
     public static StorageType forValue(int value) {
@@ -41,10 +45,10 @@ public enum StorageType implements Identifiable {
     }
 
     public boolean isFileDomain() {
-        return this == NFS || this == POSIXFS || this == LOCALFS || this == GLUSTERFS || this == GLANCE;
+        return subtype == Subtype.FILE;
     }
 
     public boolean isBlockDomain() {
-        return this == FCP || this == ISCSI;
+        return subtype == Subtype.BLOCK;
     }
 }
