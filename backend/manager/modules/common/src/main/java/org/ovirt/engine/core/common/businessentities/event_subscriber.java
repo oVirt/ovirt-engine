@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import org.hibernate.validator.constraints.Email;
+import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -22,7 +23,7 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
         int result = 1;
         result = prime * result + ((id.eventUpName == null) ? 0 : id.eventUpName.hashCode());
         result = prime * result + ((methodAddress == null) ? 0 : methodAddress.hashCode());
-        result = prime * result + id.methodId;
+        result = prime * result + ((id.eventNotificationMethod == null) ? 0 : id.eventNotificationMethod.hashCode());
         result = prime * result + ((id.subscriberId == null) ? 0 : id.subscriberId.hashCode());
         result = prime * result + ((id.tagName == null) ? 0 : id.tagName.hashCode());
         return result;
@@ -42,23 +43,24 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
         event_subscriber other = (event_subscriber) obj;
         return (ObjectUtils.objectsEqual(id.eventUpName, other.id.eventUpName)
                 && ObjectUtils.objectsEqual(methodAddress, other.methodAddress)
-                && id.methodId == other.id.methodId
+                && ObjectUtils.objectsEqual(id.eventNotificationMethod, other.id.eventNotificationMethod)
                 && ObjectUtils.objectsEqual(id.subscriberId, other.id.subscriberId)
                 && ObjectUtils.objectsEqual(id.tagName, other.id.tagName));
     }
 
-    public event_subscriber(String event_up_name, int method_id, Guid subscriber_id, String tagName) {
+    public event_subscriber(String event_up_name, EventNotificationMethods eventNotificationMethod,
+                            Guid subscriber_id, String tagName) {
         this();
         this.id.eventUpName = event_up_name;
-        this.id.methodId = method_id;
+        this.id.eventNotificationMethod = eventNotificationMethod;
         this.methodAddress = "";
         this.id.subscriberId = subscriber_id;
         this.id.tagName = tagName;
     }
 
-    public event_subscriber(String event_up_name, int method_id, String method_address, Guid subscriber_id,
+    public event_subscriber(String event_up_name, EventNotificationMethods eventNotificationMethod, String method_address, Guid subscriber_id,
             String tagName) {
-        this (event_up_name, method_id, subscriber_id, tagName);
+        this (event_up_name, eventNotificationMethod, subscriber_id, tagName);
         this.methodAddress = method_address;
     }
 
@@ -70,12 +72,12 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
         this.id.eventUpName = value;
     }
 
-    public int getmethod_id() {
-        return this.id.methodId;
+    public EventNotificationMethods getevent_notification_method() {
+        return this.id.eventNotificationMethod;
     }
 
-    public void setmethod_id(int value) {
-        this.id.methodId = value;
+    public void setevent_notification_method(EventNotificationMethods eventNotificationMethod) {
+        this.id.eventNotificationMethod = eventNotificationMethod;
     }
 
     @Email(message = "VALIDATION.EVENTS.EMAIL_FORMAT")
@@ -109,7 +111,7 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
     // table
     @Override
     public Object getQueryableId() {
-        return StringFormat.format("%1$s%2$s%3$s%4$s", id.eventUpName, id.methodId, id.subscriberId,
+        return StringFormat.format("%1$s%2$s%3$s%4$s", id.eventUpName, id.eventNotificationMethod, id.subscriberId,
                 id.tagName == null ? "" : id.tagName);
     }
 }

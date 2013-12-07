@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.EventMap;
-import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,22 +25,10 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
                 throws SQLException {
             event_subscriber entity = new event_subscriber();
             entity.setevent_up_name(rs.getString("event_up_name"));
-            entity.setmethod_id(rs.getInt("method_id"));
+            entity.setevent_notification_method(EventNotificationMethods.valueOf(rs.getString("notification_method")));
             entity.setmethod_address(rs.getString("method_address"));
             entity.setsubscriber_id(getGuidDefaultEmpty(rs, "subscriber_id"));
             entity.settag_name(rs.getString("tag_name"));
-            return entity;
-        }
-    }
-
-    private static final class EventNotificationMethodRowMapper implements RowMapper<EventNotificationMethod> {
-        public static final EventNotificationMethodRowMapper instance = new EventNotificationMethodRowMapper();
-
-        @Override
-        public EventNotificationMethod mapRow(ResultSet rs, int rowNum) throws SQLException {
-            EventNotificationMethod entity = new EventNotificationMethod();
-            entity.setmethod_id(rs.getInt("method_id"));
-            entity.setmethod_type(EventNotificationMethods.EMAIL);
             return entity;
         }
     }
@@ -68,20 +55,11 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
                 parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<EventNotificationMethod> getEventNotificationMethodsById(int method_id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("method_id", method_id);
-        return getCallsHandler().executeReadList("GetEventNotificationMethodById",
-                EventNotificationMethodRowMapper.instance,
-                parameterSource);
-    }
-
     @Override
     public void subscribe(event_subscriber subscriber) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("event_up_name", subscriber.getevent_up_name())
-                .addValue("method_id", subscriber.getmethod_id())
+                .addValue("notification_method", subscriber.getevent_notification_method().name())
                 .addValue("method_address", subscriber.getmethod_address())
                 .addValue("subscriber_id", subscriber.getsubscriber_id())
                 .addValue("tag_name", subscriber.gettag_name());
@@ -90,21 +68,10 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
     }
 
     @Override
-    public void update(event_subscriber subscriber, int oldMethodId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("event_up_name", subscriber.getevent_up_name())
-                .addValue("old_method_id", oldMethodId)
-                .addValue("new_method_id", subscriber.getmethod_id())
-                .addValue("subscriber_id", subscriber.getsubscriber_id());
-
-        getCallsHandler().executeModification("Updateevent_subscriber", parameterSource);
-    }
-
-    @Override
     public void unsubscribe(event_subscriber subscriber) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("event_up_name", subscriber.getevent_up_name())
-                .addValue("method_id", subscriber.getmethod_id())
+                .addValue("notification_method", subscriber.getevent_notification_method().name())
                 .addValue("subscriber_id", subscriber.getsubscriber_id())
                 .addValue("tag_name", subscriber.gettag_name());
 

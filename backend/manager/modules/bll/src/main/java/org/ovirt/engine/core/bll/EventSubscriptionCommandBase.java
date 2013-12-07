@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -38,7 +37,8 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
     /**
      * Validates the notification method.
      *
-     * @param eventNotificationMethods
+     *
+     * @param eventNotificationMethod
      *            The eventNotificationMethods.
      * @param event_subscriber
      *            The event_subscriber.
@@ -46,10 +46,10 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *            The user.
      * @return
      */
-    protected boolean ValidateNotificationMethod(java.util.List<EventNotificationMethod> eventNotificationMethods,
+    protected boolean ValidateNotificationMethod(EventNotificationMethods eventNotificationMethod,
                                                  event_subscriber event_subscriber, DbUser user) {
         boolean retValue = true;
-        EventNotificationMethods notificationMethod = eventNotificationMethods.get(0).getmethod_type();
+        EventNotificationMethods notificationMethod = eventNotificationMethod;
 
         switch (notificationMethod) {
         case EMAIL:
@@ -80,7 +80,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
      *            The user.
      * @return
      */
-    protected boolean ValidateAdd(List<EventNotificationMethod> eventNotificationMethods,
+    protected boolean ValidateAdd(EventNotificationMethods eventNotificationMethods,
                                   event_subscriber event_subscriber, DbUser user) {
         String tagName = event_subscriber.gettag_name();
         // validate notification method
@@ -93,7 +93,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         return retValue;
     }
 
-    protected boolean ValidateRemove(List<EventNotificationMethod> eventNotificationMethods,
+    protected boolean ValidateRemove(EventNotificationMethods eventNotificationMethods,
                                      event_subscriber event_subscriber, DbUser user) {
         boolean retValue = false;
         // check if user is subscribed to the event
@@ -157,7 +157,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         for (event_subscriber event_subscriber : subscriptions) {
             if (event_subscriber.getsubscriber_id().equals(current.getsubscriber_id())
                     && StringUtils.equals(event_subscriber.getevent_up_name(), current.getevent_up_name())
-                    && event_subscriber.getmethod_id() == current.getmethod_id()) {
+                    && event_subscriber.getevent_notification_method() == current.getevent_notification_method()) {
                 retValue = true;
                 break;
             }

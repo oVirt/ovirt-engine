@@ -4021,23 +4021,6 @@
         </row>
     </table>
 
-    <table name="event_notification_methods">
-        <column>method_id</column>
-        <column>method_type</column>
-        <row>
-            <value>1</value>
-            <value>Email</value>
-        </row>
-        <row>
-            <value>2</value>
-            <value>Pidgeon</value>
-        </row>
-        <row>
-            <value>3</value>
-            <value>Aldis Lamp</value>
-        </row>
-    </table>
-
     <table name="event_map">
         <column>event_up_name</column>
         <column>event_down_name</column>
@@ -4050,13 +4033,13 @@
     <table name="event_subscriber">
         <column>subscriber_id</column>
         <column>event_up_name</column>
-        <column>method_id</column>
+        <column>notification_method</column>
         <column>method_address</column>
         <column>tag_name</column>
         <row>
             <value>9bf7c640-b620-456f-a550-0348f366544a</value>
             <value>TestRun</value>
-            <value>1</value>
+            <value>EMAIL</value>
             <null />
             <value>testrun</value>
         </row>
