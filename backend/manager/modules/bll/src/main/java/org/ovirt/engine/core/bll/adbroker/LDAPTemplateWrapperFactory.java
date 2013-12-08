@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import org.ovirt.engine.core.utils.log.Log;
@@ -47,7 +48,8 @@ public class LDAPTemplateWrapperFactory {
             Constructor<? extends LDAPTemplateWrapper> constructor = wrapperClass.getConstructor(
                     LdapContextSource.class, String.class, String.class, String.class);
             return constructor.newInstance(contextSource, userName, password, domain);
-        } catch (Exception ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException |
+                InvocationTargetException | NoSuchMethodException | SecurityException e) {
             log.error("Failed to get LDAPTemplateWrapper for security authentication "
                     + ldapSecurityAuthentication.toString());
             return null;
