@@ -481,7 +481,7 @@ begin
     OK:=1;
     LOCKED:=2;
     update images set imagestatus = OK where imagestatus = LOCKED and
-    image_group_id in (select device_id from vm_device where device_id = v_id and is_plugged);
+    image_group_id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
