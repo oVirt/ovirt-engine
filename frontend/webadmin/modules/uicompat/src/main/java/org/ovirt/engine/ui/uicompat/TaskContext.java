@@ -19,7 +19,7 @@ public class TaskContext {
         setState(state);
     }
 
-    public void InvokeUIThread(ITaskTarget target, Object state)
+    public void invokeUIThread(ITaskTarget target, Object state)
     {
         setState(state);
         target.run(this);

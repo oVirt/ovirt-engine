@@ -1832,7 +1832,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
-        context.InvokeUIThread(this,
+        context.invokeUIThread(this,
                 new ArrayList<Object>(Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
                         message })));
     }
