@@ -14,6 +14,7 @@ import javax.ejb.TransactionAttributeType;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -369,5 +370,11 @@ public class VdsEventListener implements IVdsEventListener {
         }
     }
 
+    @Override
+    public void updateSchedulingStats(VDS vds) {
+        SchedulingManager.getInstance().updateHostSchedulingStats(vds);
+    }
+
     private static Log log = LogFactory.getLog(VdsEventListener.class);
+
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -17,6 +18,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -61,6 +63,9 @@ public class SchedulingManager {
         }
         return instance;
     }
+
+    private static final String HIGH_UTILIZATION = "HighUtilization";
+    private static final String LOW_UTILIZATION = "LowUtilization";
 
     /**
      * <policy id, policy> map
@@ -817,6 +822,29 @@ public class SchedulingManager {
     public void removeExternalPolicyUnit(Guid policyUnitId) {
         getPolicyUnitDao().remove(policyUnitId);
         policyUnits.remove(policyUnitId);
+    }
+
+    /**
+     * update host scheduling statistics:
+     * * CPU load duration interval over/under policy threshold
+     * @param vds
+     */
+    public void updateHostSchedulingStats(VDS vds) {
+        if (vds.getUsageCpuPercent() != null) {
+            VDSGroup vdsGroup = getVdsGroupDao().get(vds.getVdsGroupId());
+            if (vds.getUsageCpuPercent() >= NumberUtils.toInt(vdsGroup.getClusterPolicyProperties()
+                    .get(HIGH_UTILIZATION),
+                    Config.<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute))
+                    || vds.getUsageCpuPercent() <= NumberUtils.toInt(vdsGroup.getClusterPolicyProperties()
+                            .get(LOW_UTILIZATION),
+                            Config.<Integer> getValue(ConfigValues.LowUtilizationForEvenlyDistribute))) {
+                if (vds.getCpuOverCommitTimestamp() == null) {
+                    vds.setCpuOverCommitTimestamp(new Date());
+                }
+            } else {
+                vds.setCpuOverCommitTimestamp(null);
+            }
+        }
     }
 
 }

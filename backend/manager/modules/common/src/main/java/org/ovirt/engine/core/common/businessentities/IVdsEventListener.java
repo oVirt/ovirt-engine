@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.List;
 import java.util.Map;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -58,4 +59,11 @@ public interface IVdsEventListener {
     void addExternallyManagedVms(List<VmStatic> externalVmList);
 
     void handleVdsMaintenanceTimeout(VDS vds);
+
+    /**
+     * update host's scheduling related properties
+     *
+     * @param vds
+     */
+    void updateSchedulingStats(VDS vds); // BLL
 }
