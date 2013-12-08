@@ -3497,4 +3497,14 @@ public final class AsyncDataProvider {
         return (Integer) getConfigValuePreConverted(ConfigurationValues.SpeedOptimizationSchedulingThreshold,
                 getDefaultConfigurationVersion());
     }
+
+    public static boolean getScheudulingAllowOverbookingSupported() {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.SchedulerAllowOverBooking,
+                getDefaultConfigurationVersion());
+    }
+
+    public static int getSchedulerAllowOverbookingPendingRequestsThreshold() {
+        return (Integer) getConfigValuePreConverted(ConfigurationValues.SchedulerOverBookingThreshold,
+                getDefaultConfigurationVersion());
+    }
 }

@@ -1547,5 +1547,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     SpeedOptimizationSchedulingThreshold,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    SchedulerAllowOverBooking,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    SchedulerOverBookingThreshold,
+
     Invalid;
 }

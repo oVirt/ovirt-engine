@@ -3391,4 +3391,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Scheduler Optimization")
     String schedulerOptimizationPanelLabel();
+
+    @DefaultStringValue("Allow Overbooking")
+    String allowOverbookingLabel();
+
+    @DefaultStringValue("Guaranty Resources")
+    String guarantyResourcesLabel();
 }

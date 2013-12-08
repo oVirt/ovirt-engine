@@ -107,7 +107,9 @@ public enum ConfigurationValues {
     AttestationServer,
     DefaultGeneralTimeZone,
     DefaultWindowsTimeZone,
-    SpeedOptimizationSchedulingThreshold;
+    SpeedOptimizationSchedulingThreshold,
+    SchedulerAllowOverBooking,
+    SchedulerOverBookingThreshold;
 
     public static enum ConfigAuthType {
         Admin,

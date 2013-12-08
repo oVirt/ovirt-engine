@@ -136,4 +136,15 @@
        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
      </Match>
 
+     <!--
+        findbugs complains about synchronizing java.util.concurrent object - semaphore
+        we must synchronize 2 calls to the semaphore object (drain and release)
+        findbugs reason:
+        JLM_JSR166_UTILCONCURRENT_MONITORENTER:
+        This method performs synchronization an object that is an instance of a class from the java.util.concurrent
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.scheduling.SchedulingManager" />
+       <Bug pattern="JLM_JSR166_UTILCONCURRENT_MONITORENTER" />
+     </Match>
 </FindBugsFilter>
