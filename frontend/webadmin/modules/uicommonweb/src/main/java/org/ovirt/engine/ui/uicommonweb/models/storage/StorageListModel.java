@@ -673,7 +673,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
             nfsModel.setMessage(null);
 
-            Task.Create(this,
+            Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
                             host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS }))).Run();
         }
@@ -682,7 +682,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
             localModel.setMessage(null);
 
-            Task.Create(this,
+            Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
                             host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS }))).Run();
         }
@@ -691,13 +691,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             PosixStorageModel posixModel = (PosixStorageModel) model.getSelectedItem();
             posixModel.setMessage(null);
 
-            Task.Create(this,
+            Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
                             host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS}))).Run();
         }
         else
         {
-            Task.Create(this,
+            Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
                             host.getId() }))).Run();
         }
@@ -945,7 +945,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().startProgress(null);
 
-        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
     }
 
     private void saveNfsStorage()
@@ -957,7 +957,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().startProgress(null);
 
-        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
     }
 
     private void savePosixStorage() {
@@ -968,7 +968,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().startProgress(null);
 
-        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SavePosix"}))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SavePosix"}))).Run(); //$NON-NLS-1$
     }
 
     private void saveGlusterStorage() {
@@ -979,7 +979,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().startProgress(null);
 
-        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SaveGluster"}))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SaveGluster"}))).Run(); //$NON-NLS-1$
     }
 
     private void saveSanStorage()
@@ -1008,7 +1008,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         cancelConfirm();
         getWindow().startProgress(null);
 
-        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
     }
 
     private void forceCreationWarning(ArrayList<String> usedLunsMessages) {

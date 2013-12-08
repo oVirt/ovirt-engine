@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
 public class Task {
-    public static Task Create(ITaskTarget target, Object state)
+    public static Task create(ITaskTarget target, Object state)
     {
         return new Task(target, state);
     }
