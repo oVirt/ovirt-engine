@@ -234,6 +234,8 @@ public class SchedulingManager {
             String correlationId) {
         clusterLockMap.putIfAbsent(cluster.getId(), new Semaphore(1));
         try {
+            log.debugFormat("scheduling started, correlation Id: {0}", correlationId);
+            checkAllowOverbooking(cluster);
             clusterLockMap.get(cluster.getId()).acquire();
             List<VDS> vdsList = getVdsDAO()
                     .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
@@ -241,7 +243,6 @@ public class SchedulingManager {
             updateInitialHostList(vdsList, hostWhiteList, false);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             Map<String, String> parameters = createClusterPolicyParameters(cluster);
-
             vdsList =
                     runFilters(policy.getFilters(),
                             vdsList,
@@ -289,7 +290,34 @@ public class SchedulingManager {
             log.error("interrupted", e);
             return null;
         } finally {
-            clusterLockMap.get(cluster.getId()).release();
+            // ensuring setting the semaphore permits to 1
+            synchronized (clusterLockMap.get(cluster.getId())) {
+                clusterLockMap.get(cluster.getId()).drainPermits();
+                clusterLockMap.get(cluster.getId()).release();
+            }
+            log.debugFormat("Scheduling ended, correlation Id: {0}", correlationId);
+        }
+    }
+
+    /**
+     * Checks whether scheduler should schedule several requests in parallel:
+     * Conditions:
+     * * config option SchedulerAllowOverBooking should be enabled.
+     * * cluster optimization type flag should allow over-booking.
+     * * more than than X (config.SchedulerOverBookingThreshold) pending for scheduling.
+     * In case all of the above conditions are met, we release all the pending scheduling
+     * requests.
+     */
+    protected void checkAllowOverbooking(VDSGroup cluster) {
+        if (OptimizationType.ALLOW_OVERBOOKING == cluster.getOptimizationType()
+                && Config.<Boolean> GetValue(ConfigValues.SchedulerAllowOverBooking)
+                && clusterLockMap.get(cluster.getId()).getQueueLength() >=
+                Config.<Integer> GetValue(ConfigValues.SchedulerOverBookingThreshold)) {
+            log.infoFormat("scheduler: cluster ({0}) lock is skipped (cluster is allowed to overbook)",
+                    cluster.getName());
+            // release pending threads (requests) and current one (+1)
+            clusterLockMap.get(cluster.getId())
+                    .release(Config.<Integer> GetValue(ConfigValues.SchedulerOverBookingThreshold) + 1);
         }
     }
 

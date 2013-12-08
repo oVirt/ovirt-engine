@@ -40,6 +40,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
@@ -168,6 +169,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     InfoIcon memoryOptimizationInfo;
 
     @UiField(provided = true)
+    InfoIcon allowOverbookingInfoIcon;
+
+    @UiField(provided = true)
     @Path(value = "optimizationNone_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationNoneEditor;
@@ -265,6 +269,19 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelRadioButtonEditor optimizeForSpeedEditor;
 
+    @UiField
+    HorizontalPanel allowOverbookingPanel;
+
+    @UiField(provided = true)
+    @Path(value = "guarantyResources.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor guarantyResourcesEditor;
+
+    @UiField(provided = true)
+    @Path(value = "allowOverbooking.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor allowOverbookingEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final ApplicationMessages messages;
@@ -298,7 +315,6 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
         enableTrustedServiceEditor.setContentWidgetStyleName(style.fullWidth());
-
     }
 
     private void localize(ApplicationConstants constants) {
@@ -347,6 +363,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         schedulerOptimizationPanelTitle.setText(constants.schedulerOptimizationPanelLabel());
         optimizeForUtilizationEditor.setLabel(constants.optimizeForUtilizationLabel());
         optimizeForSpeedEditor.setLabel(constants.optimizeForSpeedLabel());
+        guarantyResourcesEditor.setLabel(constants.guarantyResourcesLabel());
+        allowOverbookingEditor.setLabel(constants.allowOverbookingLabel());
     }
 
     private void initRadioButtonEditors() {
@@ -364,6 +382,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         optimizeForUtilizationEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
         optimizeForSpeedEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+
+        guarantyResourcesEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
+        allowOverbookingEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
     }
 
     private void initListBoxEditors() {
@@ -407,7 +428,6 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         enableBallooning = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableBallooning.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
-
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates)
@@ -416,6 +436,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo()), resources); //$NON-NLS-1$
         schedulerOptimizationInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
+        allowOverbookingInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
     }
 
     private void applyModeCustomizations() {
@@ -505,6 +526,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 templates.italicFixedWidth("350px", //$NON-NLS-1$
                 object.getSchedulerOptimizationInfoMessage()).asString()
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
+        allowOverbookingInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
+                templates.italicFixedWidth("350px", //$NON-NLS-1$
+                        object.getAllowOverbookingInfoMessage()).asString()
+                        .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
+        allowOverbookingPanel.setVisible(allowOverbookingEditor.isVisible());
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {

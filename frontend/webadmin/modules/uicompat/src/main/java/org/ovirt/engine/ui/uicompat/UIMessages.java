@@ -311,4 +311,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
             "Utilization: include weight modules in shceduling to allow best selection\n" +
             "Speed: skip host weighing in case there are more than {0} pending requests")
     String schedulerOptimizationInfo(int numOfRequests);
+
+    @DefaultMessage("Overbooking: Allows running cluster''s scheduling requests in parallel, " +
+            "without preserving resource allocation. This option allows handling a mass of " +
+            "scheduling requests ({0} requests), while some requests may fail due to the re-use of the " +
+            "same resource allocation (Use this option only if you are familiar with this behavior).")
+    String schedulerAllowOverbookingInfo(int numOfRequests);
 }

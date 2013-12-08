@@ -229,6 +229,11 @@
 										<e:EntityModelRadioButtonEditor ui:field="optimizeForSpeedEditor" addStyleNames="{style.radioButtonLabel}" />
 										<d:InfoIcon ui:field="schedulerOptimizationInfoIcon" addStyleNames="{style.panelInfo}" />
 									</g:HorizontalPanel>
+									<g:HorizontalPanel ui:field="allowOverbookingPanel">
+										<e:EntityModelRadioButtonEditor ui:field="guarantyResourcesEditor" addStyleNames="{style.radioButtonLabel}"/>
+										<e:EntityModelRadioButtonEditor ui:field="allowOverbookingEditor" addStyleNames="{style.radioButtonLabel}"/>
+										<d:InfoIcon ui:field="allowOverbookingInfoIcon" addStyleNames="{style.panelInfo}" />
+									</g:HorizontalPanel>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="additionPropsPanel" addStyleNames="{style.nestedSubsequentPanel}">
 									<g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.panelTitle}" />

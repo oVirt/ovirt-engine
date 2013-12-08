@@ -507,6 +507,25 @@ public class ClusterModel extends EntityModel
     public void setOptimizeForSpeed(EntityModel optimizeForSpeed) {
         this.optimizeForSpeed = optimizeForSpeed;
     }
+    private EntityModel guarantyResources;
+
+    public EntityModel getGuarantyResources() {
+        return guarantyResources;
+    }
+
+    public void setGuarantyResources(EntityModel guarantyResources) {
+        this.guarantyResources = guarantyResources;
+    }
+
+    private EntityModel allowOverbooking;
+
+    public EntityModel getAllowOverbooking() {
+        return allowOverbooking;
+    }
+
+    public void setAllowOverbooking(EntityModel allowOverbooking) {
+        this.allowOverbooking = allowOverbooking;
+    }
 
     private boolean isGeneralTabValid;
 
@@ -639,6 +658,12 @@ public class ClusterModel extends EntityModel
         return ConstantsManager.getInstance()
                 .getMessages()
                 .schedulerOptimizationInfo(AsyncDataProvider.getOptimizeSchedulerForSpeedPendingRequests());
+    }
+
+    public String getAllowOverbookingInfoMessage() {
+        return ConstantsManager.getInstance()
+                .getMessages()
+                .schedulerAllowOverbookingInfo(AsyncDataProvider.getSchedulerAllowOverbookingPendingRequestsThreshold());
     }
 
     public void setMemoryOverCommit(int value)
@@ -835,6 +860,38 @@ public class ClusterModel extends EntityModel
         getOptimizeForSpeed().setEntity(false);
         getOptimizeForUtilization().getEntityChangedEvent().addListener(this);
         getOptimizeForSpeed().getEntityChangedEvent().addListener(this);
+
+        setGuarantyResources(new EntityModel());
+        setAllowOverbooking(new EntityModel());
+        getGuarantyResources().setEntity(true);
+        getAllowOverbooking().setEntity(false);
+        getAllowOverbooking().getEntityChangedEvent().addListener(this);
+        getGuarantyResources().getEntityChangedEvent().addListener(this);
+
+        boolean overbookingSupported = AsyncDataProvider.getScheudulingAllowOverbookingSupported();
+        getAllowOverbooking().setIsAvailable(overbookingSupported);
+        if (overbookingSupported) {
+            getOptimizeForSpeed().getEntityChangedEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    Boolean entity = (Boolean) getOptimizeForSpeed().getEntity();
+                    if (entity) {
+                        getGuarantyResources().setEntity(true);
+                    }
+                    getAllowOverbooking().setIsChangable(!entity);
+                }
+            });
+            getAllowOverbooking().getEntityChangedEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    Boolean entity = (Boolean) getAllowOverbooking().getEntity();
+                    if (entity) {
+                        getOptimizeForUtilization().setEntity(true);
+                    }
+                    getOptimizeForSpeed().setIsChangable(!entity);
+                }
+            });
+        }
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1134,6 +1191,10 @@ public class ClusterModel extends EntityModel
                     getOptimizeForSpeed().setEntity(false);
                 } else if (senderEntityModel == getOptimizeForSpeed()) {
                     getOptimizeForUtilization().setEntity(false);
+                } else if(senderEntityModel == getGuarantyResources()) {
+                    getAllowOverbooking().setEntity(false);
+                } else if(senderEntityModel == getAllowOverbooking()) {
+                    getGuarantyResources().setEntity(false);
                 }
             }
         }

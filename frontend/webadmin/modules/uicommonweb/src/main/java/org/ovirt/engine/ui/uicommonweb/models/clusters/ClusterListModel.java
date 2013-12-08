@@ -372,6 +372,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         clusterModel.getOptimizeForSpeed()
                 .setEntity(OptimizationType.OPTIMIZE_FOR_SPEED == cluster.getOptimizationType());
+        clusterModel.getAllowOverbooking()
+                .setEntity(OptimizationType.ALLOW_OVERBOOKING == cluster.getOptimizationType());
 
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -700,8 +702,13 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setTrustedService((Boolean) model.getEnableTrustedService().getEntity());
         cluster.setClusterPolicyId(((ClusterPolicy) model.getClusterPolicy().getSelectedItem()).getId());
         cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().getEntity()));
-        cluster.setOptimizationType((Boolean) model.getOptimizeForSpeed().getEntity() ?
-                OptimizationType.OPTIMIZE_FOR_SPEED : OptimizationType.NONE);
+        if ((Boolean) model.getOptimizeForSpeed().getEntity()) {
+            cluster.setOptimizationType(OptimizationType.OPTIMIZE_FOR_SPEED);
+        } else if ((Boolean) model.getAllowOverbooking().getEntity()) {
+            cluster.setOptimizationType(OptimizationType.ALLOW_OVERBOOKING);
+        } else {
+            cluster.setOptimizationType(OptimizationType.NONE);
+        }
 
         model.startProgress(null);
 
