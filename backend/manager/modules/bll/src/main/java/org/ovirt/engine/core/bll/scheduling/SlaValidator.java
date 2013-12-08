@@ -8,7 +8,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class SlaValidator {
-    public static Log log = LogFactory.getLog(SlaValidator.class);
+    private static final Log log = LogFactory.getLog(SlaValidator.class);
 
     private static final SlaValidator instance = new SlaValidator();
 
