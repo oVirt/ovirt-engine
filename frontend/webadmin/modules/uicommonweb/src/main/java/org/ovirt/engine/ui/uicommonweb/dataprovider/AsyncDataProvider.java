@@ -3213,7 +3213,7 @@ public final class AsyncDataProvider {
                 osArchitectures = (HashMap<Integer, ArchitectureType>) ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
         };
-        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsArchitectures), callback);
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsArchitectures), callback);
     }
 
     public static String getOsName(Integer osId) {
