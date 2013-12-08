@@ -21,8 +21,4 @@ public class Task {
         target.run(context);
     }
 
-    public void InvokeUIThread() {
-        //Java implementation to this method is identical to Run.
-        Run();
-    }
 }
