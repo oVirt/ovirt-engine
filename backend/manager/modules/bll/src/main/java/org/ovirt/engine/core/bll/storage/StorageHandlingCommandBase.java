@@ -353,7 +353,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
         SyncronizeNumberOfAsyncOperations sync = new SyncronizeNumberOfAsyncOperations(allRunningVdsInPool.size(),
                 parameters, factory);
-        sync.Execute();
+        sync.execute();
     }
 
     private ArrayList<Object> initAsyncOperationParameters(List<VDS> allRunningVdsInPool) {

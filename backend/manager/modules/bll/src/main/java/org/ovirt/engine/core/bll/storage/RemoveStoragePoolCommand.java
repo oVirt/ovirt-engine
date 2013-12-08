@@ -401,7 +401,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                         // no need to initilalize params
                     }
                 });
-        sync.Execute();
+        sync.execute();
     }
 
     @Override

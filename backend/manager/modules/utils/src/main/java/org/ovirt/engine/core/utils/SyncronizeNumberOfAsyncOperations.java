@@ -16,7 +16,7 @@ public final class SyncronizeNumberOfAsyncOperations {
         _factory.initialize(parameters);
     }
 
-    public void Execute() {
+    public void execute() {
 
         List<AsyncOpThread> operations = new ArrayList<AsyncOpThread>();
         for (int i = 0; i < _numberOfOperations; i++) {
