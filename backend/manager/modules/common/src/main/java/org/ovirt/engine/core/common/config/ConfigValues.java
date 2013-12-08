@@ -1416,12 +1416,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     VirtIoScsiEnabled,
 
-    @Reloadable
-    @TypeConverterAttribute(java.util.List.class)
-    @DefaultValueAttribute("WindowsXP,RHEL5,RHEL5x64,RHEL4,RHEL4x64,RHEL3,RHEL3x64")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    VirtIoScsiUnsupportedOsList,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/bin/vdsm-tool service-restart vdsmd")
     SshSoftFencingCommand,

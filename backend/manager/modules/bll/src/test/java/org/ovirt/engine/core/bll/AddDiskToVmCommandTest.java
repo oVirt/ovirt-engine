@@ -69,9 +69,7 @@ public class AddDiskToVmCommandTest {
             mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
             mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, FREE_SPACE_CRITICAL_LOW_IN_GB),
             mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true),
-            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true),
-            mockConfig(ConfigValues.VirtIoScsiUnsupportedOsList,
-                    Arrays.asList("WindowsXP", "RHEL5", "RHEL5x64", "RHEL4", "RHEL4x64", "RHEL3", "RHEL3x64"))
+            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true)
             );
 
     @Mock
@@ -325,6 +323,7 @@ public class AddDiskToVmCommandTest {
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(mockSnapshotValidator()).when(command).getSnapshotsValidator();
         doReturn(false).when(command).isVirtioScsiControllerAttached(any(Guid.class));
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     /**
@@ -641,13 +640,8 @@ public class AddDiskToVmCommandTest {
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
 
-        //  mock osrepo
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
-        HashMap<Integer, String> uniqueOsNames = new HashMap<Integer, String>();
-        uniqueOsNames.put(7, "RHEL5");
-        when(osRepository.getUniqueOsNames()).thenReturn(uniqueOsNames);
-
-        vm.setVmOs(7);
+        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+            new ArrayList<>(Arrays.asList("VirtIO")));
 
         DiskValidator diskValidator = spyDiskValidator(disk);
         doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
@@ -712,6 +706,9 @@ public class AddDiskToVmCommandTest {
 
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+
+        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+                new ArrayList<>(Arrays.asList("VirtIO_SCSI")));
 
         DiskValidator diskValidator = spyDiskValidator(disk);
         doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));

@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Version;
+
+import java.util.List;
 
 public class VmValidationUtils {
 
@@ -30,6 +33,18 @@ public class VmValidationUtils {
      */
     public static boolean isOsTypeSupported(int osId, ArchitectureType architectureType) {
         return architectureType == (SimpleDependecyInjector.getInstance().get(OsRepository.class).getArchitectureFromOS(osId));
+    }
+
+    /**
+     * Check if the OS type support VirtIO-SCSI.
+     *
+     * @param osId The OS identifier.
+     *
+     * @return If the OS type is supported.
+     */
+    public static boolean isOsSupportedForVirtIoScsi(int osId, Version clusterVersion) {
+        List<String> diskInterfaces = SimpleDependecyInjector.getInstance().get(OsRepository.class).getDiskInterfaces(osId, clusterVersion);
+        return diskInterfaces.contains(DiskInterface.VirtIO_SCSI.toString());
     }
 
     /**
