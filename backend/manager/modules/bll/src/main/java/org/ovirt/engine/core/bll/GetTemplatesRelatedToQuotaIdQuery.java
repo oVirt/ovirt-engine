@@ -16,7 +16,7 @@ public class GetTemplatesRelatedToQuotaIdQuery<P extends IdQueryParameters>
         List<VmTemplate> vmTemplates =
                 getDbFacade().getVmTemplateDao().getAllTemplatesRelatedToQuotaId(getParameters().getId());
         for (VmTemplate vmTemplate : vmTemplates) {
-            VmTemplateHandler.UpdateDisksFromDb(vmTemplate);
+            VmTemplateHandler.updateDisksFromDb(vmTemplate);
         }
         getQueryReturnValue().setReturnValue(vmTemplates);
     }

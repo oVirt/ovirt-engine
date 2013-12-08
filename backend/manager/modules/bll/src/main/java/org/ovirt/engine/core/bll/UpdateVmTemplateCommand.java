@@ -58,7 +58,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
-        VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
+        VmTemplateHandler.updateDisksFromDb(mOldTemplate);
         if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
             return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
         }

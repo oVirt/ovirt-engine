@@ -57,7 +57,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
-        VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+        VmTemplateHandler.updateDisksFromDb(getVmTemplate());
 
         if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getNumOfMonitors(),
                 Collections.<VmNic>singletonList(getParameters().getInterface()),

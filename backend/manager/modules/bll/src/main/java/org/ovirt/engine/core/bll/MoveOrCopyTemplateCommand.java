@@ -98,7 +98,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected List<DiskImage> getTemplateDisks() {
         if (_templateDisks == null && getVmTemplate() != null) {
-            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+            VmTemplateHandler.updateDisksFromDb(getVmTemplate());
             _templateDisks = getVmTemplate().getDiskList();
         }
         return _templateDisks;
@@ -273,7 +273,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (getVmTemplate() != null) {
             VmDeviceUtils.setVmDevices(getVmTemplate());
             incrementDbGeneration();
-            VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
+            VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
         }
         else {
             setCommandShouldBeLogged(false);

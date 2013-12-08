@@ -15,7 +15,7 @@ public class GetAllVmTemplatesQuery<P extends VdcQueryParametersBase> extends Qu
         List<VmTemplate> retval =
                 getDbFacade().getVmTemplateDao().getAll(getUserID(), getParameters().isFiltered());
         for (VmTemplate template : retval) {
-            VmTemplateHandler.UpdateDisksFromDb(template);
+            VmTemplateHandler.updateDisksFromDb(template);
         }
         getQueryReturnValue().setReturnValue(retval);
     }

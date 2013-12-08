@@ -270,7 +270,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 removeTemplateFromDb();
             } else {
                 // unlock template
-                VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
+                VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
             }
             setSucceeded(true);
         } catch (RuntimeException e) {

@@ -201,7 +201,7 @@ public class OvfDataUpdater {
     }
 
     protected void updateTemplateDisksFromDb(VmTemplate template) {
-        VmTemplateHandler.UpdateDisksFromDb(template);
+        VmTemplateHandler.updateDisksFromDb(template);
     }
 
     protected void updateVmDisksFromDb(VM vm) {

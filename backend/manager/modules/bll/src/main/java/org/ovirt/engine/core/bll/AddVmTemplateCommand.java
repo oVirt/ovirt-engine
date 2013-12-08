@@ -520,7 +520,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (isVmInDb) {
             VmHandler.unLockVm(getVm());
         }
-        VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
+        VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
     }
 
     private VmTemplate reloadVmTemplateFromDB() {

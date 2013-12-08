@@ -19,7 +19,7 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
             vmt = DbFacade.getInstance().getVmTemplateDao()
                 .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         }
-        VmTemplateHandler.UpdateDisksFromDb(vmt);
+        VmTemplateHandler.updateDisksFromDb(vmt);
         getQueryReturnValue().setReturnValue(vmt);
     }
 }

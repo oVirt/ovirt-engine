@@ -76,7 +76,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected void initTemplate() {
         if (getVmTemplate() != null) {
-            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+            VmTemplateHandler.updateDisksFromDb(getVmTemplate());
         }
     }
 
@@ -150,7 +150,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
         getReturnValue().setCanDoAction(!isAtLeastOneVMCreationFailed);
         setSucceeded(!isAtLeastOneVMCreationFailed);
-        VmTemplateHandler.UnLockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
+        VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
         getCompensationContext().resetCompensation();
     }
 

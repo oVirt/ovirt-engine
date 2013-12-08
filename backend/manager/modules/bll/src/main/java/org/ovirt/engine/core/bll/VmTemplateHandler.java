@@ -29,9 +29,9 @@ public class VmTemplateHandler {
      * Initialize static list containers, for identity and permission check. The initialization should be executed
      * before calling ObjectIdentityChecker.
      *
-     * @see Backend#InitHandlers
+     * @see Backend#initHandlers()
      */
-    public static void Init() {
+    public static void init() {
         final Class<?>[] inspectedClassNames = new Class<?>[] { VmBase.class, VmTemplate.class };
         mUpdateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
 
@@ -49,7 +49,7 @@ public class VmTemplateHandler {
         return mUpdateVmTemplate.IsUpdateValid(source, destination);
     }
 
-    public static void UpdateDisksFromDb(VmTemplate vmt) {
+    public static void updateDisksFromDb(VmTemplate vmt) {
         vmt.getDiskTemplateMap().clear();
         vmt.getDiskImageMap().clear();
         vmt.getDiskList().clear();
@@ -78,15 +78,15 @@ public class VmTemplateHandler {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                SetVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.Locked, compensationContext);
+                setVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.Locked, compensationContext);
                 compensationContext.stateChanged();
                 return null;
             }
         });
     }
 
-    public static void UnLockVmTemplate(Guid vmTemplateGuid) {
-        SetVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.OK, null);
+    public static void unlockVmTemplate(Guid vmTemplateGuid) {
+        setVmTemplateStatus(vmTemplateGuid, VmTemplateStatus.OK, null);
     }
 
     /**
@@ -100,7 +100,7 @@ public class VmTemplateHandler {
      *            The compensation context for saving the old status (can be <code>null</code> if the old status is not
      *            required to be saved).
      */
-    private static void SetVmTemplateStatus(
+    private static void setVmTemplateStatus(
             Guid vmTemplateGuid, VmTemplateStatus status, CompensationContext compensationContext) {
         VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDao().get(vmTemplateGuid);
         if (vmTemplate != null) {
@@ -111,7 +111,7 @@ public class VmTemplateHandler {
             DbFacade.getInstance().getVmTemplateDao().update(vmTemplate);
         } else {
             log.warnFormat(
-                    "VmTemplateHandler::SetVmTemplateStatus: vmTemplate is null, not setting status '{0}' to vmTemplate",
+                    "setVmTemplateStatus: vmTemplate is null, not setting status '{0}' to vmTemplate",
                     status);
         }
     }

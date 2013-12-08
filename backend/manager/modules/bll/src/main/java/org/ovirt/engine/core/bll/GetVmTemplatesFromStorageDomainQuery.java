@@ -23,7 +23,7 @@ public class GetVmTemplatesFromStorageDomainQuery<P extends IdQueryParameters>
                                 getUserID(),
                                 getParameters().isFiltered());
         for (VmTemplate template : returnValue) {
-            VmTemplateHandler.UpdateDisksFromDb(template);
+            VmTemplateHandler.updateDisksFromDb(template);
             java.util.Collections.sort(template.getDiskList(), new DiskImageByDiskAliasComparator());
 
         }

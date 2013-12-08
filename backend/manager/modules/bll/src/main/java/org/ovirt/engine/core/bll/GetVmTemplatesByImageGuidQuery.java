@@ -26,6 +26,6 @@ public class GetVmTemplatesByImageGuidQuery<P extends IdQueryParameters> extends
     }
 
     protected void updateDisksFromDb(VmTemplate t) {
-        VmTemplateHandler.UpdateDisksFromDb(t);
+        VmTemplateHandler.updateDisksFromDb(t);
     }
 }

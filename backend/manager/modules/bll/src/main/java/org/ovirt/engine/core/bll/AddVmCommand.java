@@ -190,7 +190,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void initTemplateDisks() {
         if (vmDisksSource != null) {
-            VmTemplateHandler.UpdateDisksFromDb(vmDisksSource);
+            VmTemplateHandler.updateDisksFromDb(vmDisksSource);
         }
     }
 

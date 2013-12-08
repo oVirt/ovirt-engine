@@ -215,7 +215,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             public List<VmTemplate> filter(final List<VmTemplate> data) {
                 for (IVdcQueryable vmt_helper : data) {
                     VmTemplate vmt = (VmTemplate) vmt_helper;
-                    VmTemplateHandler.UpdateDisksFromDb(vmt);
+                    VmTemplateHandler.updateDisksFromDb(vmt);
                 }
                 return data;
             }

@@ -177,7 +177,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
                     new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
             OvfDataUpdater.getInstance().loadTemplateData(getVmTemplate());
-            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+            VmTemplateHandler.updateDisksFromDb(getVmTemplate());
             // update the target (export) domain
             OvfDataUpdater.getInstance().buildMetadataDictionaryForTemplate(getVmTemplate(), metaDictionary);
             OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVmTemplate().getStoragePoolId(),

@@ -13,7 +13,7 @@ public class VmTemplateHandlerTest {
 
     @Before
     public void setUp() {
-        VmTemplateHandler.Init();
+        VmTemplateHandler.init();
     }
 
     @Test

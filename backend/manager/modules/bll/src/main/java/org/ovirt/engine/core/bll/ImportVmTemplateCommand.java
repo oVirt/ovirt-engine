@@ -432,7 +432,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Override
     protected void endMoveOrCopyCommand() {
-        VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
+        VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
 
         endActionOnAllImageGroups();
 
