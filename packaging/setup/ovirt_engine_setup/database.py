@@ -362,12 +362,13 @@ class OvirtUtils(base.Base):
                         union
                         select
                             'drop type if exists ' ||
-                            user_defined_type_name || ' ' ||
+                            c.relname::information_schema.sql_identifier || ' ' ||
                             'cascade;'
                         from
-                            information_schema.user_defined_types
+                            pg_namespace n, pg_class c, pg_type t
                         where
-                            user_defined_type_schema = 'public';
+                            n.oid = c.relnamespace and t.typrelid = c.oid and
+                            c.relkind = 'c'::"char" and n.nspname = 'public';
                 end; $procedure$
                 language plpgsql;
             """,
