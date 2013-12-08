@@ -512,6 +512,7 @@ public class VdsUpdateRunTimeInfo {
         GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
                 new GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(new VdsIdAndVdsVDSCommandParametersBase(_vds));
         vdsBrokerCommand.execute();
+        ResourceManager.getInstance().getEventListener().updateSchedulingStats(_vds);
         if (!vdsBrokerCommand.getVDSReturnValue().getSucceeded()
                 && vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
             VDSNetworkException ex =

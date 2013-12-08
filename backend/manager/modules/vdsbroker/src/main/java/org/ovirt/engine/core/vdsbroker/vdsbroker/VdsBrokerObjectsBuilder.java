@@ -582,14 +582,6 @@ public class VdsBrokerObjectsBuilder {
         vds.setCpuUser(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_user));
         if (vds.getCpuSys() != null && vds.getCpuUser() != null) {
             vds.setUsageCpuPercent((int) (vds.getCpuSys() + vds.getCpuUser()));
-            if (vds.getUsageCpuPercent() >= vds.getHighUtilization()
-                    || vds.getUsageCpuPercent() <= vds.getLowUtilization()) {
-                if (vds.getCpuOverCommitTimestamp() == null) {
-                    vds.setCpuOverCommitTimestamp(new Date());
-                }
-            } else {
-                vds.setCpuOverCommitTimestamp(null);
-            }
         }
         // CPU load reported by VDSM is in uptime-style format, i.e. normalized
         // to unity, so that say an 8% load is reported as 0.08

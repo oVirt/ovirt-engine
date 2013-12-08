@@ -45,9 +45,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         result = prime * result + ((mVdsStatic == null) ? 0 : mVdsStatic.hashCode());
         result = prime * result + ((cpuName == null) ? 0 : cpuName.hashCode());
         result = prime * result + ((_spm_status == null) ? 0 : _spm_status.hashCode());
-        result = prime * result + cpuOverCommitDurationMinutes;
-        result = prime * result + highUtilization;
-        result = prime * result + lowUtilization;
         result = prime * result + ((mImagesLastCheck == null) ? 0 : mImagesLastCheck.hashCode());
         result = prime * result + ((mImagesLastDelay == null) ? 0 : mImagesLastDelay.hashCode());
         result = prime * result + ((mInterfaceList == null) ? 0 : mInterfaceList.hashCode());
@@ -82,9 +79,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         return (ObjectUtils.objectsEqual(mVdsStatic, other.mVdsStatic)
                 && ObjectUtils.objectsEqual(cpuName, other.cpuName)
                 && _spm_status == other._spm_status
-                && cpuOverCommitDurationMinutes == other.cpuOverCommitDurationMinutes
-                && highUtilization == other.highUtilization
-                && lowUtilization == other.lowUtilization
                 && ObjectUtils.objectsEqual(mImagesLastCheck, other.mImagesLastCheck)
                 && ObjectUtils.objectsEqual(mImagesLastDelay, other.mImagesLastDelay)
                 && ObjectUtils.objectsEqual(mInterfaceList, other.mInterfaceList)
@@ -798,36 +792,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setVdsStrength(int value) {
         this.mVdsStatic.setVdsStrength(value);
-    }
-
-    private int highUtilization;
-
-    public int getHighUtilization() {
-        return this.highUtilization;
-    }
-
-    public void setHighUtilization(int value) {
-        this.highUtilization = value;
-    }
-
-    private int lowUtilization;
-
-    public int getLowUtilization() {
-        return this.lowUtilization;
-    }
-
-    public void setLowUtilization(int value) {
-        this.lowUtilization = value;
-    }
-
-    private int cpuOverCommitDurationMinutes;
-
-    public int getCpuOverCommitDurationMinutes() {
-        return this.cpuOverCommitDurationMinutes;
-    }
-
-    public void setCpuOverCommitDurationMinutes(int value) {
-        this.cpuOverCommitDurationMinutes = value;
     }
 
     private Guid storagePoolId;
