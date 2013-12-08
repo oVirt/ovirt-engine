@@ -372,7 +372,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         // Defer search if there max result limit was not yet retrieved.
         if (getSearchPageSize() == UnknownInteger)
         {
-            asyncCallback.RequestSearch();
+            asyncCallback.requestSearch();
         }
         else
         {
@@ -823,7 +823,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
             AsyncDataProvider.getSearchResultsLimit(_asyncQuery1);
         }
 
-        public void RequestSearch()
+        public void requestSearch()
         {
             searchRequested = true;
             model.setItems(new ArrayList<T>());
