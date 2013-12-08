@@ -5,10 +5,10 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 @SuppressWarnings("unused")
 public final class ProvideTickEvent
 {
-    public static EventDefinition Definition;
+    public static EventDefinition definition;
 
     static
     {
-        Definition = new EventDefinition("Tick", IProvideTickEvent.class); //$NON-NLS-1$
+        definition = new EventDefinition("Tick", IProvideTickEvent.class); //$NON-NLS-1$
     }
 }

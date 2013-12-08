@@ -484,7 +484,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
         {
             asyncResult_Retrieved();
         }
-        if (ev.matchesDefinition(ProvideTickEvent.Definition))
+        if (ev.matchesDefinition(ProvideTickEvent.definition))
         {
             syncSearch();
         }
