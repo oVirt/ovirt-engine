@@ -295,7 +295,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 isExistsValue = (data != null);
 
                 if (isExistsValue) {
-                    TimeSpan span = DateTime.getNow().subtract(data.getDate());
+                    TimeSpan span = DateTime.getNow().subtract(new Date(data.getDate()));
                     if (span.Days >= 1) {
                         IsFromYesterday = true;
                     }
@@ -360,7 +360,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // An expression is considered safe if matches a trivial search.
                 data =
                         new QueryData(curSyntaxChecker.generateQueryFromSyntaxContainer(searchObj, isSafe),
-                                new Date(),
+                                DateTime.getNow().getTime(),
                                 queryDomain);
                 // when looking for tags , the query contains all parent children tag id's
                 // statically, therefore , in order to reflect changes in the parent tree
