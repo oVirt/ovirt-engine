@@ -20,7 +20,7 @@ public class OpenLdapGroupContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
-    protected final static String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), entryuuid.name() };
+    static final String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), entryuuid.name() };
 
     @Override
     public Object mapFromContext(Object ctx) {

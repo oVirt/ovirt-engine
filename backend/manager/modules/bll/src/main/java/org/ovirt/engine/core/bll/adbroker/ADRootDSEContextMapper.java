@@ -11,7 +11,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 public class ADRootDSEContextMapper implements ContextMapper {
 
-    protected final static String[] ROOTDSE_ATTRIBUTE_FILTER = { defaultNamingContext.name(), domainControllerFunctionality.name(), domainFunctionality.name() };
+    static final String[] ROOTDSE_ATTRIBUTE_FILTER = { defaultNamingContext.name(), domainControllerFunctionality.name(), domainFunctionality.name() };
 
     @Override
     public Object mapFromContext(Object ctx) {

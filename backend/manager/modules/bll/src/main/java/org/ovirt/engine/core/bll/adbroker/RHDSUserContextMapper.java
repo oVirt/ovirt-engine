@@ -28,7 +28,7 @@ public class RHDSUserContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
-    protected final static String[] USERS_ATTRIBUTE_FILTER = { nsUniqueId.name(), uid.name(),
+    static final String[] USERS_ATTRIBUTE_FILTER = { nsUniqueId.name(), uid.name(),
             givenname.name(), departmentnumber.name(), title.name(), mail.name(), memberof.name(),
             sn.name() };
 

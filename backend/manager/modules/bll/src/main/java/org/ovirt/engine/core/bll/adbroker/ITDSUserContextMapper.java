@@ -23,7 +23,7 @@ public class ITDSUserContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
-    protected final static String[] USERS_ATTRIBUTE_FILTER = { uniqueIdentifier.name(), uid.name(),
+    static final String[] USERS_ATTRIBUTE_FILTER = { uniqueIdentifier.name(), uid.name(),
         givenname.name(), department.name(), title.name(), mail.name(), sn.name() };
 
     @Override

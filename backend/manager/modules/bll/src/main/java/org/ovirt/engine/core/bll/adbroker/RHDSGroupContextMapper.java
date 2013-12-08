@@ -20,7 +20,7 @@ public class RHDSGroupContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
-    protected final static String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), nsUniqueId.name() };
+    static final String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), nsUniqueId.name() };
 
     @Override
     public Object mapFromContext(Object ctx) {

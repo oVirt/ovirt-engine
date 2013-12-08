@@ -15,7 +15,7 @@ public class DefaultRootDSEContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(DefaultRootDSEContextMapper.class);
 
-    protected final static String[] ROOTDSE_ATTRIBUTE_FILTER = { namingContexts.name() };
+    static final String[] ROOTDSE_ATTRIBUTE_FILTER = { namingContexts.name() };
 
     @Override
     public Object mapFromContext(Object ctx) {

@@ -14,8 +14,8 @@ import org.springframework.ldap.core.DirContextAdapter;
 public class RHDSRootDSEContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(RHDSRootDSEContextMapper.class);
-    protected final static String RHDS_NAMING_CONTEXT = "o=netscaperoot";
-    protected final static String[] ROOTDSE_ATTRIBUTE_FILTER = { namingContexts.name() };
+    protected static final String RHDS_NAMING_CONTEXT = "o=netscaperoot";
+    static final String[] ROOTDSE_ATTRIBUTE_FILTER = { namingContexts.name() };
 
     public static String getDefaultNamingContextFromNameingContexts(Attribute namingContexts) {
         for (int index = 0; index < namingContexts.size(); ++index) {
