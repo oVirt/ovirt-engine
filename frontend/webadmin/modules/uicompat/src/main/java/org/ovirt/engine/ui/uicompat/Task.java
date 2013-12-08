@@ -13,7 +13,7 @@ public class Task {
     {
         this.target = target;
 
-        context = new TaskContext(Dispatcher.CurrentDispatcher, state);
+        context = new TaskContext(state);
     }
 
     public void run()

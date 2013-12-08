@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicompat;
 
 public class TaskContext {
 
-//    private Dispatcher dispatcher;
     private Object privateState;
     public Object getState()
     {
@@ -13,9 +12,8 @@ public class TaskContext {
         privateState = value;
     }
 
-    public TaskContext(Dispatcher dispatcher, Object state)
+    public TaskContext(Object state)
     {
-//        this.dispatcher = dispatcher;
         setState(state);
     }
 
