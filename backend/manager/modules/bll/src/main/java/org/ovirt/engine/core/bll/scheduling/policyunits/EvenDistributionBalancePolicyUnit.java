@@ -165,13 +165,13 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
      * Comparator that compares the CPU usage of two hosts, with regard to the number of CPUs each host has and it's
      * strength.
      */
-    protected final class VdsCpuUsageComparator implements Comparator<VDS> {
+    protected static final class VdsCpuUsageComparator implements Comparator<VDS> {
         @Override
         public int compare(VDS o1, VDS o2) {
             return Integer.valueOf(calculateCpuUsage(o1)).compareTo(calculateCpuUsage(o2));
         }
 
-        private int calculateCpuUsage(VDS o1) {
+        private static int calculateCpuUsage(VDS o1) {
             return o1.getUsageCpuPercent() * SlaValidator.getEffectiveCpuCores(o1) / o1.getVdsStrength();
         }
     }
@@ -179,13 +179,13 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
     /**
      * Comparator that compares the CPU usage of two VMs, with regard to the number of CPUs each VM has.
      */
-    private final class VmCpuUsageComparator implements Comparator<VM> {
+    private static final class VmCpuUsageComparator implements Comparator<VM> {
         @Override
         public int compare(VM o1, VM o2) {
             return Integer.valueOf(calculateCpuUsage(o1)).compareTo(calculateCpuUsage(o2));
         }
 
-        private int calculateCpuUsage(VM o1) {
+        private static int calculateCpuUsage(VM o1) {
             return o1.getUsageCpuPercent() * o1.getNumOfCpus();
         }
     }
