@@ -255,12 +255,11 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         condition=lambda self: (
-            self._needStart or
-            (
-                self._enabled and
-                not self.environment[
-                    osetupcons.CoreEnv.DEVELOPER_MODE
-                ]
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ] and (
+                self._needStart or
+                self._enabled
             )
         ),
     )
