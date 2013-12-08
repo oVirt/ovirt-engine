@@ -116,5 +116,5 @@ public class VmTemplateHandler {
         }
     }
 
-    private static Log log = LogFactory.getLog(VmTemplateHandler.class);
+    private static final Log log = LogFactory.getLog(VmTemplateHandler.class);
 }
