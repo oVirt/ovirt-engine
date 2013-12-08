@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -17,8 +16,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class VolumeBrickStatusCell extends AbstractCell<GlusterVolumeEntity> {
 
     ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
-
-    ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
 
