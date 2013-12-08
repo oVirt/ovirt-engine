@@ -164,7 +164,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
             // Don't rollback.
             context.enlistment = null;
-            enlistment.Done();
+            enlistment.done();
         } else {
 
             StorageDomainStatic storage = new StorageDomainStatic();
@@ -226,7 +226,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         // ReturnValue not equals null means remove connection occurred.
         if (returnValue != null) {
             // Don't rollback.
-            enlistment.Done();
+            enlistment.done();
         } else {
             enlistment.prepared();
         }
@@ -234,12 +234,12 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
     @Override
     public void commit(Enlistment enlistment) {
-        enlistment.Done();
+        enlistment.done();
     }
 
     @Override
     public void rollback(Enlistment enlistment) {
-        enlistment.Done();
+        enlistment.done();
     }
 
     private final Context context = new Context();

@@ -143,12 +143,12 @@ public class AddClusterRM extends IEnlistmentNotification {
 
     @Override
     public void commit(Enlistment enlistment) {
-        enlistment.Done();
+        enlistment.done();
     }
 
     @Override
     public void rollback(Enlistment enlistment) {
-        enlistment.Done();
+        enlistment.done();
     }
 
     private final Context context = new Context();

@@ -27,7 +27,7 @@ public class Enlistment {
         this.context = context;
     }
 
-    public void Done() {
+    public void done() {
         getDoneEvent().raise(this, EventArgs.Empty);
     }
 }

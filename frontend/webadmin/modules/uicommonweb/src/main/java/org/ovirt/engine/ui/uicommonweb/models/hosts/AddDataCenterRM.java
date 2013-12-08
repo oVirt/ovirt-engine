@@ -137,7 +137,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
     @Override
     public void commit(Enlistment enlistment) {
-        enlistment.Done();
+        enlistment.done();
     }
 
     @Override
@@ -213,7 +213,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         if (abort) {
 
             context.enlistment = null;
-            enlistment.Done();
+            enlistment.done();
             return;
         }
 
@@ -223,7 +223,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         if (dataCenter.getStatus() != StoragePoolStatus.Uninitialized) {
 
             context.enlistment = null;
-            enlistment.Done();
+            enlistment.done();
             return;
         }
 
@@ -245,7 +245,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         } else {
             context.enlistment = null;
-            enlistment.Done();
+            enlistment.done();
         }
     }
 
@@ -271,7 +271,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             }
         } else {
             context.enlistment = null;
-            enlistment.Done();
+            enlistment.done();
         }
     }
 
@@ -288,7 +288,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         // Call done, no matter whether the data center deletion was successful.
         context.enlistment = null;
-        enlistment.Done();
+        enlistment.done();
     }
 
     private final Context context = new Context();
