@@ -748,7 +748,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().startProgress(null);
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).run(); //$NON-NLS-1$
     }
 
     private void saveLocalStorage(TaskContext context)
@@ -895,7 +895,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().startProgress(null);
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).run(); //$NON-NLS-1$
     }
 
     private void saveNfsStorage(TaskContext context)
@@ -1034,7 +1034,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().startProgress(null);
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).run(); //$NON-NLS-1$
     }
 
     private void saveSanStorage(TaskContext context)

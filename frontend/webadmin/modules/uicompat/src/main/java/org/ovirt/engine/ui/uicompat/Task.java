@@ -16,7 +16,7 @@ public class Task {
         context = new TaskContext(Dispatcher.CurrentDispatcher, state);
     }
 
-    public void Run()
+    public void run()
     {
         target.run(context);
     }

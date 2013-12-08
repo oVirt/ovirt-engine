@@ -675,7 +675,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS }))).Run();
+                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS }))).run();
         }
         else if (model.getSelectedItem() instanceof LocalStorageModel)
         {
@@ -684,7 +684,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS }))).Run();
+                            host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS }))).run();
         }
         else if (model.getSelectedItem() instanceof PosixStorageModel)
         {
@@ -693,13 +693,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS}))).Run();
+                            host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS}))).run();
         }
         else
         {
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
-                            host.getId() }))).Run();
+                            host.getId() }))).run();
         }
     }
 
@@ -945,7 +945,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().startProgress(null);
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).run(); //$NON-NLS-1$
     }
 
     private void saveNfsStorage()
@@ -957,7 +957,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().startProgress(null);
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).run(); //$NON-NLS-1$
     }
 
     private void savePosixStorage() {
@@ -968,7 +968,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().startProgress(null);
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SavePosix"}))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SavePosix"}))).run(); //$NON-NLS-1$
     }
 
     private void saveGlusterStorage() {
@@ -979,7 +979,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().startProgress(null);
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SaveGluster"}))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SaveGluster"}))).run(); //$NON-NLS-1$
     }
 
     private void saveSanStorage()
@@ -1008,7 +1008,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         cancelConfirm();
         getWindow().startProgress(null);
 
-        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).run(); //$NON-NLS-1$
     }
 
     private void forceCreationWarning(ArrayList<String> usedLunsMessages) {
