@@ -182,7 +182,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
                 super.updateRowData(display, start, values);
 
                 for (M model : values) {
-                    UpdateSelection(model, display);
+                    updateSelection(model, display);
                 }
             }
         };
@@ -219,7 +219,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         }
     }
 
-    public void UpdateSelection(M model, final HasData<M> display) {
+    public void updateSelection(M model, final HasData<M> display) {
         // Add Selection Listener
         if (nodeSelectionHandler == null) {
             nodeSelectionHandler = new NodeSelectionHandler(display);
@@ -230,7 +230,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         display.getSelectionModel().setSelected(model, model.getSelected());
 
         for (int i = 0; i < model.getChildren().size(); i++) {
-            UpdateSelection(model.getChildren().get(i), display);
+            updateSelection(model.getChildren().get(i), display);
         }
     }
 
