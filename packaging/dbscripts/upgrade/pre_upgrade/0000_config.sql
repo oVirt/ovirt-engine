@@ -387,18 +387,6 @@ select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$
 select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.2');
 select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.3');
 select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.4');
-select fn_db_add_config_value('ProductKey2003','','general');
-select fn_db_add_config_value('ProductKey2003x64','','general');
-select fn_db_add_config_value('ProductKey2008','','general');
-select fn_db_add_config_value('ProductKey2008R2','','general');
-select fn_db_add_config_value('ProductKey2008x64','','general');
---Handling Product Key (for Windows XP)
-select fn_db_add_config_value('ProductKey','','general');
-select fn_db_add_config_value('ProductKeyWindow7','','general');
-select fn_db_add_config_value('ProductKeyWindow7x64','','general');
-select fn_db_add_config_value('ProductKeyWindows8','','general');
-select fn_db_add_config_value('ProductKeyWindows8x64','','general');
-select fn_db_add_config_value('ProductKeyWindows2012x64','','general');
 select fn_db_add_config_value('ProductRPMVersion','3.0.0.0','general');
 select fn_db_add_config_value('QuotaGraceStorage','20','general');
 select fn_db_add_config_value('QuotaGraceVdsGroup','20','general');
@@ -809,6 +797,17 @@ select fn_db_delete_config_value('LogDBCommands','general');
 select fn_db_delete_config_value('LogVdsRegistration','general');
 select fn_db_delete_config_value('LogXmlRpcData','general');
 select fn_db_delete_config_value('NetConsolePort','general');
+select fn_db_delete_config_value('ProductKey2003','general');
+select fn_db_delete_config_value('ProductKey2003x64','general');
+select fn_db_delete_config_value('ProductKey2008','general');
+select fn_db_delete_config_value('ProductKey2008R2','general');
+select fn_db_delete_config_value('ProductKey2008x64','general');
+select fn_db_delete_config_value('ProductKey','general');
+select fn_db_delete_config_value('ProductKeyWindow7','general');
+select fn_db_delete_config_value('ProductKeyWindow7x64','general');
+select fn_db_delete_config_value('ProductKeyWindows8','general');
+select fn_db_delete_config_value('ProductKeyWindows8x64','general');
+select fn_db_delete_config_value('ProductKeyWindows2012x64','general');
 select fn_db_delete_config_value('VdsFenceOptionMapping','general');
 -- removing power client
 select fn_db_delete_config_value('PowerClientAllowUsingAsIRS','general');

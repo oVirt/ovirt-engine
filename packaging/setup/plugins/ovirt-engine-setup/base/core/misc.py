@@ -60,14 +60,8 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LOW
     )
     def _init(self):
-        if (
-            self.environment.get(
-                osetupcons.CoreEnv.UPGRADE_FROM_LEGACY,
-                False
-            ) or
-            os.path.exists(
-                osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
-            )
+        if os.path.exists(
+            osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
         ):
             self.environment[
                 osetupcons.CoreEnv.ACTION

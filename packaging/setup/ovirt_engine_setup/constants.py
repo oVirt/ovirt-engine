@@ -80,10 +80,6 @@ class FileLocations(object):
     OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG = config.ENGINE_WEBSOCKET_PROXY_CONFIG
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG = \
         config.ENGINE_NOTIFIER_SERVICE_CONFIG
-    OVIRT_ENGINE_OSINFO_REPOSITORY_DIR = os.path.join(
-        OVIRT_ENGINE_SYSCONFDIR,
-        'osinfo.conf.d',
-    )
 
     OVIRT_ENGINE_BINDIR = os.path.join(
         OVIRT_ENGINE_DATADIR,
@@ -133,26 +129,10 @@ class FileLocations(object):
         'ovirt-engine.conf',
     )
 
-    LEGACY_OVIRT_ENGINE_SYSCONFIG = os.path.join(
-        SYSCONFDIR,
-        'sysconfig',
-        'ovirt-engine',
-    )
-
-    LEGACY_PSQL_PASS_FILE = os.path.join(
-        OVIRT_ENGINE_SYSCONFDIR,
-        '.pgpass',
-    )
-
     FIREWALLD_SERVICES_DIR = os.path.join(
         SYSCONFDIR,
         'firewalld',
         'services',
-    )
-
-    LEGACY_FIREWALLD_SERVICE_FILE = os.path.join(
-        FIREWALLD_SERVICES_DIR,
-        'ovirt.xml'
     )
 
     OVIRT_ENGINE_DB_UTILS_DIR = os.path.join(
@@ -426,12 +406,6 @@ class FileLocations(object):
         'ovirt-engine-root-redirect.conf.in',
     )
 
-    HTTPD_CONF_OVIRT_ENGINE_LEGACY = os.path.join(
-        DIR_HTTPD,
-        'conf.d',
-        'ovirt-engine.conf',
-    )
-
     AIO_VDSM_PATH = os.path.join(
         DATADIR,
         'vdsm',
@@ -444,11 +418,6 @@ class FileLocations(object):
     AIO_POST_INSTALL_CONFIG = os.path.join(
         '%s.d' % OVIRT_OVIRT_SETUP_CONFIG_FILE,
         '20-setup-aio.conf'
-    )
-
-    EXTRACTED_PRODUCTKEYS = os.path.join(
-        OVIRT_ENGINE_OSINFO_REPOSITORY_DIR,
-        '10-productkeys.properties',
     )
 
 
@@ -574,9 +543,6 @@ class Stages(object):
     AIO_CONFIG_SSH = 'osetup.aio.config.ssh'
     AIO_CONFIG_VDSM = 'osetup.aio.config.vdsm'
 
-    UPGRADE_FROM_LEGACY_CONFIG = 'osetup.legacy.upgrade'
-    LEGACY_CORE_INIT = 'osetup.legacy.core.init'
-
     REMOVE_CUSTOMIZATION_COMMON = 'osetup.remove.customization.common'
     REMOVE_CUSTOMIZATION_GROUPS = 'osetup.remove.customization.groups'
     REMOVE_FIREWALLD_SERVICES = 'osetup.remove.firewalld.services'
@@ -661,7 +627,6 @@ class CoreEnv(object):
     LINES_GROUP_PREFIX = 'OVESETUP_CORE_MODIFIED_LINES_GROUP/'
     REGISTER_UNINSTALL_GROUPS = 'OVESETUP_CORE/registerUninstallGroups'
     UPGRADE_SUPPORTED_VERSIONS = 'OVESETUP_CORE/upgradeSupportedVersions'
-    UPGRADE_FROM_LEGACY = 'OVESETUP_CORE/upgradeFromLegacy'
     ACTION = 'OVESETUP_CORE/action'
 
     @osetupattrs(
@@ -683,8 +648,6 @@ class CoreEnv(object):
         return 'OVESETUP_CORE/generatedByVersion'
 
     ORIGINAL_GENERATED_BY_VERSION = 'OVESETUP_CORE/originalGeneratedByVersion'
-
-    LEGACY_PG_CREDS_FOUND = 'OVESETUP_CORE/legacyPGCredsFound'
 
     SETUP_ATTRS_MODULES = 'OVESETUP_CORE/setupAttributesModules'
 
