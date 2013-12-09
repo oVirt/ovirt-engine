@@ -371,10 +371,10 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     @Override
     public void install() {
         logger.finer("Spice must be installed ahead..."); //$NON-NLS-1$
-        InstallNatively();
+        installNatively();
     }
 
-    public native void InstallNatively() /*-{
+    public native void installNatively() /*-{
                                          alert("Spice must be already installed!");
                                          }-*/;
 
