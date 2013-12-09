@@ -29,10 +29,6 @@ public class RunVmOnceParams extends RunVmParams {
         super(vmId);
     }
 
-    public RunVmOnceParams(Guid vmId, boolean isInternal) {
-        super(vmId, isInternal);
-    }
-
     public void setSysPrepDomainName(String sysPrepDomainName) {
         this.sysPrepDomainName = sysPrepDomainName;
     }

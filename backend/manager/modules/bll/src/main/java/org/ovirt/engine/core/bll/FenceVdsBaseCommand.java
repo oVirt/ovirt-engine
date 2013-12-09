@@ -488,7 +488,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
             // Handle highly available VMs
             if (vm.isAutoStartup()) {
-                runVmParamsList.add(new RunVmParams(vm.getId(), true));
+                runVmParamsList.add(new RunVmParams(vm.getId()));
             }
         }
         if (runVmParamsList.size() > 0) {

@@ -550,13 +550,13 @@ public class VmMapper {
                 params.setBootSequence(map(vm.getOs().getBoot(), null));
             }
             if (vm.getOs().isSetKernel()) {
-                params.setkernel_url(vm.getOs().getKernel());
+                params.setKernelUrl(vm.getOs().getKernel());
             }
             if (vm.getOs().isSetInitrd()) {
-                params.setinitrd_url(vm.getOs().getInitrd());
+                params.setInitrdUrl(vm.getOs().getInitrd());
             }
             if (vm.getOs().isSetCmdline()) {
-                params.setkernel_params(vm.getOs().getCmdline());
+                params.setKernelParams(vm.getOs().getCmdline());
             }
         }
         if (vm.isSetDomain() && vm.getDomain().isSetName()) {

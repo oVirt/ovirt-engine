@@ -709,15 +709,15 @@ public abstract class RunOnceModel extends Model
         // kernel params
         if (getKernel_path().getEntity() != null)
         {
-            params.setkernel_url((String) getKernel_path().getEntity());
+            params.setKernelUrl((String) getKernel_path().getEntity());
         }
         if (getKernel_parameters().getEntity() != null)
         {
-            params.setkernel_params((String) getKernel_parameters().getEntity());
+            params.setKernelParams((String) getKernel_parameters().getEntity());
         }
         if (getInitrd_path().getEntity() != null)
         {
-            params.setinitrd_url((String) getInitrd_path().getEntity());
+            params.setInitrdUrl((String) getInitrd_path().getEntity());
         }
 
         // Sysprep params
