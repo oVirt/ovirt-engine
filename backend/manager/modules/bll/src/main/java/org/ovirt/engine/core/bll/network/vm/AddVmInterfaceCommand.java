@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.network.vm;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -122,7 +122,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         }
 
         // check that not exceeded PCI and IDE limit
-        if (!pciAndIdeWithinLimit(vm, Collections.<VmNic> singletonList(getInterface()))) {
+        List<VmNic> allInterfaces = new ArrayList<>(interfaces);
+        allInterfaces.add(getInterface());
+
+        if (!pciAndIdeWithinLimit(vm, allInterfaces)) {
             return false;
         }
 
