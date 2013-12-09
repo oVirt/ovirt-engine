@@ -423,10 +423,6 @@ public class AddDiskToVmCommandTest {
         return mockStorageDomain(storageId, 6, 4, storageType, new Version());
     }
 
-    private StorageDomain mockStorageDomain(Guid storageId, int availableSize, int usedSize) {
-        return mockStorageDomain(storageId, availableSize, usedSize, StorageType.UNKNOWN, new Version());
-    }
-
     private StorageDomain mockStorageDomain(Guid storageId, StorageType storageType, Version version) {
         return mockStorageDomain(storageId, 6, 4, storageType, version);
     }
