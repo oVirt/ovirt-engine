@@ -8,12 +8,14 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -133,26 +135,28 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         };
         getTable().addColumn(descColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.addNetworkNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getNewNetworkCommand();
-            }
-        });
+        if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
+            getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.addNetworkNetwork()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getDetailModel().getNewNetworkCommand();
+                }
+            });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.assignDetatchNetworksNework()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getManageCommand();
-            }
-        });
+            getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.assignDetatchNetworksNework()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getDetailModel().getManageCommand();
+                }
+            });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.setAsDisplayNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSetAsDisplayCommand();
-            }
-        });
+            getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.setAsDisplayNetwork()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getDetailModel().getSetAsDisplayCommand();
+                }
+            });
+        }
     }
 
 }
