@@ -584,6 +584,8 @@ public class VolumeBrickListModel extends SearchableListModel {
                         .getMessages()
                         .removeBricksReplicateVolumeMessage(volumeEntity.getReplicaCount(),
                                 volumeEntity.getReplicaCount() - 1));
+                removeBrickModel.setMigrationSupported(false);
+                removeBrickModel.getMigrateData().setEntity(false);
             }
             else
             {
