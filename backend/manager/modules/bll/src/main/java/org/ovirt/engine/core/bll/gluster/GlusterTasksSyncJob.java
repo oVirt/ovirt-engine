@@ -131,7 +131,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     private void createJobToMonitor(VDSGroup cluster, GlusterAsyncTask task) {
-        if (task.getStatus() != JobExecutionStatus.STARTED) {
+        if (!isTaskToBeMonitored(task)) {
             return; //there's no need to monitor jobs that are failed or completed
         }
         StepEnum step = task.getType().getStep();
@@ -157,6 +157,10 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 task.getTaskId(),
                 ExternalSystemType.GLUSTER);
         updateVolumeBricksAndLock(cluster, task);
+    }
+
+    private boolean isTaskToBeMonitored(GlusterAsyncTask task) {
+        return task.getStatus() == JobExecutionStatus.STARTED || task.getType() == GlusterTaskType.REMOVE_BRICK;
     }
 
     private Guid addAsyncTaskStep(VDSGroup cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
