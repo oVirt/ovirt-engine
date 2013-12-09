@@ -117,6 +117,16 @@
     </xs:sequence>
   </xs:complexType>
 
+
+  <xs:element name="usage_message" type="UsageMessage"/>
+
+  <xs:complexType name="UsageMessage">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string"/>
+      <xs:element ref="detailedLink" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Actions -->
 
   <xs:complexType name="GracePeriod">

@@ -19,11 +19,9 @@ package org.ovirt.engine.api.restapi.resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
@@ -34,7 +32,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.ovirt.engine.api.common.util.FileUtils;
 import org.ovirt.engine.api.common.util.JAXBHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
-import org.ovirt.engine.api.common.util.LinkHelper.LinkFlags;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.API;
 import org.ovirt.engine.api.model.Action;
@@ -45,8 +42,6 @@ import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkHeader;
 import org.ovirt.engine.api.model.ObjectFactory;
-import org.ovirt.engine.api.model.Parameter;
-import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.ProductInfo;
 import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.model.SpecialObjects;
@@ -58,6 +53,7 @@ import org.ovirt.engine.api.restapi.rsdl.GeneralMetadataBuilder;
 import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
 import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
 import org.ovirt.engine.api.restapi.types.DateMapper;
+import org.ovirt.engine.api.restapi.util.ApiRootLinksCreator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -100,43 +96,11 @@ public class BackendApiResource
     }
 
     private Collection<DetailedLink> getLinks() {
-        Collection<DetailedLink> links = new LinkedList<DetailedLink>();
-        links.add(createLink("capabilities"));
-        links.add(createLink("clusters", LinkFlags.SEARCHABLE));
-        links.add(createLink("datacenters", LinkFlags.SEARCHABLE));
-        links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams()));
-        links.add(createLink("hosts", LinkFlags.SEARCHABLE));
-        links.add(createLink("networks", LinkFlags.SEARCHABLE));
-        links.add(createLink("roles"));
-        links.add(createLink("storagedomains", LinkFlags.SEARCHABLE));
-        links.add(createLink("tags"));
-        links.add(createLink("templates", LinkFlags.SEARCHABLE));
-        links.add(createLink("users", LinkFlags.SEARCHABLE));
-        links.add(createLink("groups", LinkFlags.SEARCHABLE));
-        links.add(createLink("domains"));
-        links.add(createLink("vmpools", LinkFlags.SEARCHABLE));
-        links.add(createLink("vms", LinkFlags.SEARCHABLE));
-        links.add(createLink("disks", LinkFlags.SEARCHABLE));
-        links.add(createLink("jobs"));
-        links.add(createLink("storageconnections"));
-        links.add(createLink("vnicprofiles"));
-        links.add(createLink("permissions"));
-        return links;
+        return ApiRootLinksCreator.getLinks(getUriInfo());
     }
 
     private Collection<DetailedLink> getGlusterLinks() {
-        Collection<DetailedLink> links = new LinkedList<DetailedLink>();
-        links.add(createLink("capabilities"));
-        links.add(createLink("clusters", LinkFlags.SEARCHABLE));
-        links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams()));
-        links.add(createLink("hosts", LinkFlags.SEARCHABLE));
-        links.add(createLink("networks", LinkFlags.SEARCHABLE));
-        links.add(createLink("roles"));
-        links.add(createLink("tags"));
-        links.add(createLink("users", LinkFlags.SEARCHABLE));
-        links.add(createLink("groups", LinkFlags.SEARCHABLE));
-        links.add(createLink("domains"));
-        return links;
+        return ApiRootLinksCreator.getGlusterLinks(getUriInfo());
     }
 
     private Link createBlankTemplateLink() {
@@ -191,57 +155,12 @@ public class BackendApiResource
         return api;
     }
 
-    private ParametersSet getEventParams() {
-        ParametersSet ps = new ParametersSet();
-        Parameter param = new Parameter();
-        param.setName("from");
-        param.setValue("event_id");
-        ps.getParameters().add(param);
-        return ps;
-    }
-
-    public List<String> getRels() {
-        appMode = getCurrent().get(ApplicationMode.class);
-        if (appMode == ApplicationMode.GlusterOnly) {
-            return getGlusterRels();
-        }
-        return getAllRels();
-    }
-
-    public List<String> getAllRels() {
-        List<String> rels = new ArrayList<String>();
-        for (Link link : getLinks()) {
-            rels.add(link.getRel());
-        }
-        return rels;
-    }
-
-    public List<String> getGlusterRels() {
-        List<String> rels = new ArrayList<String>();
-        for (Link link : getGlusterLinks()) {
-            rels.add(link.getRel());
-        }
-        return rels;
-    }
-
     private String getTagRootUri() {
         return LinkHelper.combine(getUriInfo().getBaseUri().getPath(), "tags/00000000-0000-0000-0000-000000000000");
     }
 
     private String getTemplateBlankUri() {
         return LinkHelper.combine(getUriInfo().getBaseUri().getPath(), "templates/00000000-0000-0000-0000-000000000000");
-    }
-
-    private DetailedLink createLink(String rel, LinkFlags flags) {
-        return LinkHelper.createLink(getUriInfo().getBaseUri().getPath(), rel, flags);
-    }
-
-    private DetailedLink createLink(String rel, LinkFlags flags, ParametersSet params) {
-        return LinkHelper.createLink(getUriInfo().getBaseUri().getPath(), rel, flags, params);
-    }
-
-    private DetailedLink createLink(String rel) {
-        return LinkHelper.createLink(getUriInfo().getBaseUri().getPath(), rel, LinkFlags.NONE);
     }
 
     private String addPath(UriBuilder uriBuilder, Link link) {
@@ -358,9 +277,12 @@ public class BackendApiResource
             return rsdl;
     }
 
-    private synchronized RSDL getRSDL() {
+    public synchronized RSDL getRSDL() {
         if (rsdl == null) {
-            rsdl = new RsdlBuilder(this).description(RSDL_DESCRIPTION)
+            List<String> rels =
+                    getCurrent().get(ApplicationMode.class) == ApplicationMode.GlusterOnly ? ApiRootLinksCreator.getGlusterRels(uriInfo)
+                            : ApiRootLinksCreator.getAllRels(uriInfo);
+            rsdl = new RsdlBuilder(getUriInfo(), rels).description(RSDL_DESCRIPTION)
                     .rel(RSDL_REL)
                     .href(getUriInfo().getBaseUri().getPath() +
                             QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER)
