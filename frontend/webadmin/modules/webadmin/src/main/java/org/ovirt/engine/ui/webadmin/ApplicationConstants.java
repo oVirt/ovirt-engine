@@ -1083,6 +1083,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Profiles")
     String profilesTabNetworkPopup();
 
+    @DefaultStringValue("Subnet")
+    String subnetTabNetworkPopup();
+
     @DefaultStringValue("General")
     String networkGeneralSubTabLabel();
 

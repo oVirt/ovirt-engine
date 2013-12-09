@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
 	xmlns:v="urn:import:org.ovirt.engine.ui.webadmin.widget.vnicProfile"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
@@ -102,6 +105,17 @@
 									<e:EntityModelCellTable ui:field="clustersTable" />
 								</g:ScrollPanel>
 							</g:VerticalPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="subnetTab">
+                        <t:content>
+							<g:FlowPanel>
+								<ge:StringEntityModelTextBoxEditor ui:field="subnetNameEditor" />
+								<ge:StringEntityModelTextBoxEditor ui:field="subnetCidrEditor" />
+								<e:ListModelListBoxEditor ui:field="subnetIpVersionEditor"/>
+							</g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

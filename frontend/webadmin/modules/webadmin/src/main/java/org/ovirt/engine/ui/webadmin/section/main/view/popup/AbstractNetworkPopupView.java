@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -11,10 +12,12 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -32,6 +35,7 @@ import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -131,6 +135,18 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public EntityModelTextBoxEditor networkLabel;
 
     @UiField
+    @Path("subnetName.entity")
+    public StringEntityModelTextBoxEditor subnetNameEditor;
+
+    @UiField
+    @Path("subnetCidr.entity")
+    public StringEntityModelTextBoxEditor subnetCidrEditor;
+
+    @UiField(provided = true)
+    @Path("subnetIpVersion.selectedItem")
+    public ListModelListBoxEditor<IpVersion> subnetIpVersionEditor;
+
+    @UiField
     @Ignore
     public VnicProfilesEditor profilesEditor;
 
@@ -145,6 +161,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @UiField
     @Ignore
     public DialogTab profilesTab;
+
+    @UiField
+    @Ignore
+    public DialogTab subnetTab;
 
     @UiField
     @Ignore
@@ -178,6 +198,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 }
             }
         });
+        subnetIpVersionEditor = new ListModelListBoxEditor<IpVersion>(new EnumRenderer<IpVersion>());
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -192,6 +213,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         generalTab.setLabel(constants.generalTabNetworkPopup());
         clusterTab.setLabel(constants.clusterTabNetworkPopup());
         profilesTab.setLabel(constants.profilesTabNetworkPopup());
+        subnetTab.setLabel(constants.subnetTabNetworkPopup());
 
         dataCenterEditor.setLabel(constants.networkPopupDataCenterLabel());
         assignLabel.setText(constants.networkPopupAssignLabel());
@@ -205,6 +227,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
         hasMtuEditor.setLabel(constants.overrideMtuLabel());
+
+        subnetNameEditor.setLabel(constants.nameExternalSubnet());
+        subnetCidrEditor.setLabel(constants.cidrExternalSubnet());
+        subnetIpVersionEditor.setLabel(constants.ipVersionExternalSubnet());
 
         profilesLabel.setText(constants.profilesLabel());
     }
@@ -370,6 +396,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public T flush() {
         profilesEditor.flush();
         return null;
+    }
+
+    @Override
+    public void toggleSubnetVisibility(boolean visible) {
+        subnetTab.setVisible(visible);
     }
 
     @Override

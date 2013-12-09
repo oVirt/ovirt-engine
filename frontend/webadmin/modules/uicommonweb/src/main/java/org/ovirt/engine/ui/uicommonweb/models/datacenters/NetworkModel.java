@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -25,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -60,6 +62,9 @@ public abstract class NetworkModel extends Model
     private NetworkProfilesModel profiles;
     private final Network network;
     private final ListModel sourceListModel;
+    private EntityModel<String> subnetName;
+    private EntityModel<String> subnetCidr;
+    private ListModel<IpVersion> subnetIpVersion;
 
     public NetworkModel(ListModel sourceListModel)
     {
@@ -139,6 +144,12 @@ public abstract class NetworkModel extends Model
         profiles.add(defaultProfile);
         getProfiles().setDefaultProfile(defaultProfile);
         getProfiles().setItems(profiles);
+
+        setSubnetName(new EntityModel<String>());
+        setSubnetCidr(new EntityModel<String>());
+        setSubnetIpVersion(new ListModel<IpVersion>());
+        getSubnetIpVersion().setItems(AsyncDataProvider.getExternalSubnetIpVerionList());
+
 
         // Update changeability according to initial values
         onExportChanged();
@@ -371,6 +382,30 @@ public abstract class NetworkModel extends Model
         return sourceListModel;
     }
 
+    public EntityModel<String> getSubnetName() {
+        return subnetName;
+    }
+
+    private void setSubnetName(EntityModel<String> subnetName) {
+        this.subnetName = subnetName;
+    }
+
+    public EntityModel<String> getSubnetCidr() {
+        return subnetCidr;
+    }
+
+    private void setSubnetCidr(EntityModel<String> subnetCidr) {
+        this.subnetCidr = subnetCidr;
+    }
+
+    public ListModel<IpVersion> getSubnetIpVersion() {
+        return subnetIpVersion;
+    }
+
+    private void setSubnetIpVersion(ListModel<IpVersion> subnetIpVersion) {
+        this.subnetIpVersion = subnetIpVersion;
+    }
+
     public boolean validate()
     {
         RegexValidation tempVar = new RegexValidation();
@@ -408,6 +443,12 @@ public abstract class NetworkModel extends Model
 
         getExternalProviders().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
+        getSubnetName().validateEntity(new IValidation[] { new AsciiNameValidation() });
+        if (getSubnetName().getEntity() != null && !getSubnetName().getEntity().isEmpty()) {
+            getSubnetCidr().validateEntity(new IValidation[] { new NotEmptyValidation() });
+            getSubnetIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        }
+
         boolean profilesValid = true;
         Iterable<VnicProfileModel> profiles = getProfiles().getItems();
         for (VnicProfileModel profileModel : profiles) {
@@ -418,6 +459,7 @@ public abstract class NetworkModel extends Model
 
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
                 && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid()
+                && getSubnetName().getIsValid() && getSubnetCidr().getIsValid() && getSubnetIpVersion().getIsValid()
                 && profilesValid;
     }
 

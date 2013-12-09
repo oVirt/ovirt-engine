@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
@@ -180,6 +182,18 @@ public class NewNetworkModel extends NetworkModel {
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
+
+        if ((Boolean) getExport().getEntity()
+                && getSubnetName().getEntity() != null
+                && !getSubnetName().getEntity().isEmpty()) {
+            ExternalSubnet subnet = new ExternalSubnet();
+            subnet.setName(getSubnetName().getEntity());
+            subnet.setCidr(getSubnetCidr().getEntity());
+            subnet.setIpVersion(getSubnetIpVersion().getSelectedItem());
+
+            Frontend.getInstance().runAction(VdcActionType.AddSubnetToProvider,
+                    new AddExternalSubnetParameters(subnet, networkId));
+        }
     }
 
     public ArrayList<NetworkClusterModel> getClustersToAttach()

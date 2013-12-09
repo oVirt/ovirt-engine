@@ -46,6 +46,7 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
         super.updateVisibility();
         attachPanel.setVisible(false);
         clusterTab.setVisible(false);
+        toggleSubnetVisibility(false);
     }
 
     @Override
