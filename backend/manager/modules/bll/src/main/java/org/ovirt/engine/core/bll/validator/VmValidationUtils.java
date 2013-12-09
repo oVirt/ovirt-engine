@@ -32,7 +32,7 @@ public class VmValidationUtils {
      * @return If the OS type is supported.
      */
     public static boolean isOsTypeSupported(int osId, ArchitectureType architectureType) {
-        return architectureType == (SimpleDependecyInjector.getInstance().get(OsRepository.class).getArchitectureFromOS(osId));
+        return architectureType == getOsRepository().getArchitectureFromOS(osId);
     }
 
     /**
@@ -43,7 +43,7 @@ public class VmValidationUtils {
      * @return If the OS type is supported.
      */
     public static boolean isOsSupportedForVirtIoScsi(int osId, Version clusterVersion) {
-        List<String> diskInterfaces = SimpleDependecyInjector.getInstance().get(OsRepository.class).getDiskInterfaces(osId, clusterVersion);
+        List<String> diskInterfaces = getOsRepository().getDiskInterfaces(osId, clusterVersion);
         return diskInterfaces.contains(DiskInterface.VirtIO_SCSI.toString());
     }
 
@@ -53,7 +53,7 @@ public class VmValidationUtils {
      * @return The minimum VM memory size allowed (as per configuration).
      */
     public static Integer getMinMemorySizeInMb(int osId, Version version) {
-        return SimpleDependecyInjector.getInstance().get(OsRepository.class).getMinimumRam(osId, version);
+        return getOsRepository().getMinimumRam(osId, version);
     }
 
     /**
@@ -64,6 +64,10 @@ public class VmValidationUtils {
      * @return The maximum VM memory setting for this OS (as per configuration).
      */
     public static Integer getMaxMemorySizeInMb(int osId, Version clusterVersion) {
-        return SimpleDependecyInjector.getInstance().get(OsRepository.class).getMaximumRam(osId, clusterVersion);
+        return getOsRepository().getMaximumRam(osId, clusterVersion);
+    }
+
+    private static OsRepository getOsRepository() {
+        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
     }
 }
