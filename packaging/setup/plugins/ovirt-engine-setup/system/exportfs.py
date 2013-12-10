@@ -40,27 +40,32 @@ class Plugin(plugin.PluginBase):
     NFS exports configuration plugin.
     """
 
-    def _delete_path(self, path, conf, modifiedList):
-        conf_content = ''
-        if os.path.exists(conf):
-            with open(conf, 'r') as src_file:
-                conf_content = src_file.read()
+    _RE_EXPORTS_LINE = re.compile(
+        flags=re.VERBOSE,
+        pattern=r"""
+            ^
+            (?P<path>\S+)
+            \s+
+            (?P<clients>[^\#]*[^\#\s])
+            (?P<comment>\s*\#.*)?
+            $
+        """,
+    )
 
-            self.environment[
-                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-            ].append(conf)
-            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                filetransaction.FileTransaction(
-                    name=conf,
-                    # Can't compile parametric re
-                    content=re.sub(
-                        pattern=r'%s\s+[^\n]+\n' % path,
-                        repl='',
-                        string=conf_content
-                    ),
-                    modifiedList=modifiedList,
-                )
-            )
+    def _read_and_find_path(self, conf, path):
+        index = None
+        content = None
+        clients = None
+        if os.path.exists(conf):
+            with open(conf, 'r') as f:
+                content = f.read().splitlines()
+            for i, line in enumerate(content):
+                matcher = self._RE_EXPORTS_LINE.match(line)
+                if matcher and matcher.group('path') == path:
+                    index = i
+                    clients = matcher.group('clients')
+                    break
+        return content, index, clients
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -80,9 +85,10 @@ class Plugin(plugin.PluginBase):
             self._conf = osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE
         else:
             self._conf = osetupcons.FileLocations.NFS_EXPORT_FILE
-            self.environment[
-                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-            ].append(self._conf)
+
+        self.environment[
+            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+        ].append(osetupcons.FileLocations.NFS_EXPORT_FILE)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
@@ -108,46 +114,75 @@ class Plugin(plugin.PluginBase):
         In /etc/exports make sure we have our own path.
         """
         uninstall_files = []
-        self.environment[
+        exports_uninstall_group = self.environment[
             osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
         ].createGroup(
             group='exportfs',
             description='NFS exports configuration',
             optional=True
-        ).addFiles(
+        )
+        exports_uninstall_group.addFiles(
             group='exportfs',
             fileList=uninstall_files,
         )
         path = self.environment[
             osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
         ]
-        content = '{path}\t0.0.0.0/0.0.0.0(rw)\n'.format(
+        default_clients = '0.0.0.0/0.0.0.0(rw)'
+        new_line = '{path}\t{clients}'.format(
             path=path,
+            clients=default_clients,
+        )
+        exports_content, exports_index, exports_clients = (
+            self._read_and_find_path(
+                osetupcons.FileLocations.NFS_EXPORT_FILE,
+                path
+            )
         )
         if self._conf == osetupcons.FileLocations.NFS_EXPORT_FILE:
-            with open(self._conf, 'r') as f:
-                export_content = f.readlines()
-
-                Found = False
-                for line in export_content:
-                    if path in line:
-                        Found = True
-                if not Found:
-                    content = '%s\n%s' % (
-                        '\n'.join(export_content),
-                        content
-                    )
+            if exports_index is None:
+                exports_content.append(new_line)
+                exports_uninstall_group.addChanges(
+                    group='exportfs',
+                    filename=self._conf,
+                    changes=[
+                        {
+                            'added': new_line,
+                        }
+                    ],
+                )
         else:
-            self._delete_path(
-                path,
-                osetupcons.FileLocations.NFS_EXPORT_FILE,
-                uninstall_files
+            if exports_index is not None:
+                new_line = exports_content.pop(exports_index)
+                if exports_clients != default_clients:
+                    self.environment[
+                        osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+                    ].append(self._conf)
+            exports_d_content, exports_d_index, exports_d_clients = (
+                self._read_and_find_path(
+                    self._conf,
+                    path
+                )
             )
-
+            if exports_d_index is not None:
+                self.logger.debug(
+                    '{path} already in {conf}, not changing it'.format(
+                        path=path,
+                        conf=self._conf,
+                    )
+                )
+            else:
+                self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                    filetransaction.FileTransaction(
+                        name=self._conf,
+                        content=[new_line],
+                        modifiedList=uninstall_files,
+                    )
+                )
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
-                name=self._conf,
-                content=content,
+                name=osetupcons.FileLocations.NFS_EXPORT_FILE,
+                content=exports_content,
                 modifiedList=uninstall_files,
             )
         )
