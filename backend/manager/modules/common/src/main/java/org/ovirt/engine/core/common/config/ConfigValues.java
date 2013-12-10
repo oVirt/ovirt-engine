@@ -1606,5 +1606,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     MaxNumOfTriesToRunFailedAutoStartVm,
 
+    /**
+     * Value representing maximum number of milliseconds a VM can be down during live migration.
+     * Default value of 0 means this value will not be sent to VDSM at all and the currently configured value on
+     * the VDSM will be used.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("0")
+    DefaultMaximumMigrationDowntime,
+
     Invalid;
 }

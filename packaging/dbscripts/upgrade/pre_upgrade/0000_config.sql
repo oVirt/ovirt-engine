@@ -608,6 +608,8 @@ select fn_db_add_config_value('ScaleDownForHaReservation','1','general');
 select fn_db_add_config_value('EnableVdsHaReservation','true','general');
 select fn_db_add_config_value('VdsHaReservationIntervalInMinutes','5','general');
 
+select fn_db_add_config_value('DefaultMaximumMigrationDowntime','0','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

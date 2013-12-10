@@ -23,6 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -166,7 +168,16 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDestinationVds().getPort());
 
         return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, vdsDestinationId,
-                dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getVdsGroupCompatibilityVersion());
+                dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getVdsGroupCompatibilityVersion(),
+                getMaximumMigrationDowntime());
+    }
+
+    private int getMaximumMigrationDowntime() {
+        if (getVm().getMigrationDowntime() != null) {
+            return getVm().getMigrationDowntime();
+        }
+
+        return Config.getValue(ConfigValues.DefaultMaximumMigrationDowntime);
     }
 
     private boolean isTunnelMigrationUsed() {

@@ -48,6 +48,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
         entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
         entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));
         entity.setCreatedByUserId(Guid.createGuidFromString(rs.getString("created_by_user_id")));
+        entity.setMigrationDowntime((Integer) rs.getObject("migration_downtime"));
     }
 
 }

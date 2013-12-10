@@ -112,7 +112,8 @@ public enum ConfigurationValues {
     SpeedOptimizationSchedulingThreshold,
     SchedulerAllowOverBooking,
     SchedulerOverBookingThreshold,
-    UserSessionTimeOutInterval(ConfigAuthType.User);
+    UserSessionTimeOutInterval(ConfigAuthType.User),
+    DefaultMaximumMigrationDowntime;
 
     public static enum ConfigAuthType {
         Admin,

@@ -499,6 +499,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode("MigrationDowntime");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setMigrationDowntime(Integer.parseInt(node.innerText));
+            }
+        }
+
         readGeneralData(content);
     }
 

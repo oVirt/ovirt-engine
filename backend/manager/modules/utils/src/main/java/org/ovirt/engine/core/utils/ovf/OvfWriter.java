@@ -281,6 +281,12 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteRaw(String.valueOf(vmBase.getCreatedByUserId()));
             _writer.WriteEndElement();
         }
+
+        if (vmBase.getMigrationDowntime() != null) {
+            _writer.WriteStartElement("MigrationDowntime");
+            _writer.WriteRaw(String.valueOf(vmBase.getMigrationDowntime()));
+            _writer.WriteEndElement();
+        }
     }
 
     protected abstract void writeAppList();

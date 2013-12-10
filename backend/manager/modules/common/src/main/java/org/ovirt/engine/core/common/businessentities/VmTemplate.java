@@ -64,7 +64,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId, VmEntityType templateType,
             boolean autoStartup, int priority, DisplayType defaultDisplayType, String initrdUrl, String kernelUrl,
             String kernelParams, Guid quotaId, Guid dedicatedVmForVds, MigrationSupport migrationSupport,
-            boolean allowConsoleReconnect, String isoPath) {
+            boolean allowConsoleReconnect, String isoPath, Integer migrationDowntime) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -105,7 +105,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 migrationSupport,
                 allowConsoleReconnect,
                 dedicatedVmForVds,
-                defaultDisplayType);
+                defaultDisplayType,
+                migrationDowntime);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();

@@ -51,7 +51,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_min_allocated_mem INTEGER,
  v_is_run_and_pause BOOLEAN,
  v_created_by_user_id UUID,
- v_template_type VARCHAR(40))
+ v_template_type VARCHAR(40),
+ v_migration_downtime INTEGER)
 
 RETURNS VOID
    AS $procedure$
@@ -103,7 +104,8 @@ INTO vm_static(
     vnc_keyboard_layout,
     min_allocated_mem,
     is_run_and_pause,
-    created_by_user_id)
+    created_by_user_id,
+    migration_downtime)
 VALUES(
     -- This field is meaningless for templates for the time being, however we want to keep it not null for VMs.
     -- Thus, since templates are top level elements they "point" to the 'Blank' template.
@@ -152,7 +154,8 @@ VALUES(
     v_vnc_keyboard_layout,
     v_min_allocated_mem,
     v_is_run_and_pause,
-    v_created_by_user_id);
+    v_created_by_user_id,
+    v_migration_downtime);
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id)
@@ -210,7 +213,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_min_allocated_mem INTEGER,
  v_is_run_and_pause BOOLEAN,
  v_created_by_user_id UUID,
- v_template_type VARCHAR(40))
+ v_template_type VARCHAR(40),
+ v_migration_downtime INTEGER)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -233,7 +237,8 @@ BEGIN
       kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP, quota_id = v_quota_id,
       migration_support = v_migration_support, dedicated_vm_for_vds = v_dedicated_vm_for_vds, is_smartcard_enabled = v_is_smartcard_enabled,
       is_delete_protected = v_is_delete_protected, sso_method = v_sso_method, is_disabled = v_is_disabled, tunnel_migration = v_tunnel_migration,
-      vnc_keyboard_layout = v_vnc_keyboard_layout, min_allocated_mem = v_min_allocated_mem, is_run_and_pause = v_is_run_and_pause, created_by_user_id = v_created_by_user_id
+      vnc_keyboard_layout = v_vnc_keyboard_layout, min_allocated_mem = v_min_allocated_mem, is_run_and_pause = v_is_run_and_pause, created_by_user_id = v_created_by_user_id,
+      migration_downtime = v_migration_downtime
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = v_template_type;
 END; $procedure$
