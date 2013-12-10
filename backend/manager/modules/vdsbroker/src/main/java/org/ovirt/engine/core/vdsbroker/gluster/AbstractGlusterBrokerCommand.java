@@ -40,6 +40,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterVolumeProfileStopFailed:
         case GlusterAddHostFailed:
         case GlusterHostRemoveFailedException:
+        case GlusterHostIsNotPartOfCluster:
         case GlusterPeerListFailed:
         case GlusterVolumeStatusFailed:
         case GlusterVolumeProfileInfoFailed:

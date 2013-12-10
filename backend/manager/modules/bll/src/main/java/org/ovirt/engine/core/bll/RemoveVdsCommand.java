@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -222,7 +223,9 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                                 new RemoveGlusterServerVDSParameters(upServer.getId(),
                                         getVds().getHostName(),
                                         getParameters().isForceAction()));
-                setSucceeded(returnValue.getSucceeded());
+                // If the host is already removed Cluster using Gluster CLI then we can setSucceeded to true.
+                setSucceeded(returnValue.getSucceeded()
+                        || VdcBllErrors.GlusterHostIsNotPartOfCluster == returnValue.getVdsError().getCode());
                 if (!getSucceeded()) {
                     getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
                     getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());

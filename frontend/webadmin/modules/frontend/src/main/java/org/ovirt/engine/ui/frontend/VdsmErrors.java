@@ -726,6 +726,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Host Remove Failed.")
     String GlusterHostRemoveFailedException();
 
+    @DefaultStringValue("Host is not part of the cluster")
+    String GlusterHostIsNotPartOfCluster();
+
     @DefaultStringValue("Gluster Volume Profile Start Failed.")
     String GlusterVolumeProfileStartFailed();
 
