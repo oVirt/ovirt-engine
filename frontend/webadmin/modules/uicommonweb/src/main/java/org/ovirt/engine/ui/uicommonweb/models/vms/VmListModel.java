@@ -2266,7 +2266,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void setRngDeviceToParams(UnitVmModel model, VmManagementParametersBase parameters) {
         parameters.setUpdateRngDevice(true);
-        parameters.setRngDevice((Boolean) model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
+        parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
     private void retrieveIsoImages()

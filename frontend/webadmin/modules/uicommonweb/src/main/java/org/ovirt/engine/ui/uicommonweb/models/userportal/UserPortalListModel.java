@@ -679,6 +679,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         addVmTemplateParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
+        addVmTemplateParameters.setUpdateRngDevice(true);
+        addVmTemplateParameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
         if (model.getIsSubTemplate().getEntity()) {
             addVmTemplateParameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
             addVmTemplateParameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
@@ -1127,6 +1129,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                             param.setSoundDeviceEnabled(unitVmModel.getIsSoundcardEnabled().getEntity());
                             param.setConsoleEnabled(unitVmModel.getIsConsoleDeviceEnabled().getEntity());
+                            setRngDeviceToParams(unitVmModel, param);
                             Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(unitVmModel, defaultNetworkCreatingManager), this);
                         }
                     };
@@ -1216,6 +1219,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
             param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
             param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+            setRngDeviceToParams(model, param);
             param.setApplyChangesLater(applyCpuChangesLater);
             setRngDeviceToParams(model, param);
 
@@ -1225,7 +1229,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     private void setRngDeviceToParams(UnitVmModel model, VmManagementParametersBase parameters) {
         parameters.setUpdateRngDevice(true);
-        parameters.setRngDevice((Boolean) model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
+        parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
     protected static void buildVmOnSave(UnitVmModel model, VM vm) {

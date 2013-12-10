@@ -15,7 +15,9 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -214,6 +216,26 @@ public class ClusterModel extends EntityModel<VDSGroup>
     public void setCPU(ListModel<ServerCpu> value)
     {
         privateCPU = value;
+    }
+
+    private EntityModel<Boolean> rngRandomSourceRequired;
+
+    public EntityModel<Boolean> getRngRandomSourceRequired() {
+        return rngRandomSourceRequired;
+    }
+
+    public void setRngRandomSourceRequired(EntityModel<Boolean> rngRandomSourceRequired) {
+        this.rngRandomSourceRequired = rngRandomSourceRequired;
+    }
+
+    private EntityModel<Boolean> rngHwrngSourceRequired;
+
+    public EntityModel<Boolean> getRngHwrngSourceRequired() {
+        return rngHwrngSourceRequired;
+    }
+
+    public void setRngHwrngSourceRequired(EntityModel<Boolean> rngHwrngSourceRequired) {
+        this.rngHwrngSourceRequired = rngHwrngSourceRequired;
     }
 
     private ListModel<Version> privateVersion;
@@ -755,8 +777,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         super();
     }
 
-    public void init(final boolean isEdit)
-    {
+    public void init(final boolean isEdit) {
         setIsEdit(isEdit);
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
@@ -819,6 +840,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getEnableOvirtService().setEntity(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         getEnableOvirtService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.VirtOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+
+        setRngRandomSourceRequired(new EntityModel<Boolean>());
+        setRngHwrngSourceRequired(new EntityModel<Boolean>());
 
         initImportCluster(isEdit);
 
@@ -1042,6 +1066,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
         setVersion(new ListModel<Version>());
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
+
+        getRngRandomSourceRequired().setEntity(false);
+        getRngHwrngSourceRequired().setEntity(false);
 
         setArchitecture(new ListModel<ArchitectureType>());
 
@@ -1372,6 +1399,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
         getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
         getEnableBallooning().setIsChangable(version.compareTo(Version.v3_3) >= 0);
+
+        setRngSourcesCheckboxes(version);
+
         boolean isSmallerThanVersion3_4 = version.compareTo(Version.v3_4) < 0;
         getEnableKsm().setIsChangable(!isSmallerThanVersion3_4);
         getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
@@ -1405,6 +1435,28 @@ public class ClusterModel extends EntityModel<VDSGroup>
             getMigrateOnErrorOption_HA_ONLY().setIsAvailable(false);
 
             setMigrateOnErrorOption(MigrateOnErrorOptions.NO);
+        }
+    }
+
+    private void setRngSourcesCheckboxes(Version ver) {
+        boolean rngSupported = isRngSupportedForClusterVersion(ver);
+        getRngRandomSourceRequired().setIsChangable(rngSupported);
+        getRngHwrngSourceRequired().setIsChangable(rngSupported);
+
+        String defaultRequiredRngSourcesCsv = defaultClusterRngSourcesCsv(ver);
+
+        if (rngSupported) {
+            getRngRandomSourceRequired().setEntity(getIsNew()
+                    ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.RANDOM.toString())
+                    : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.RANDOM));
+            getRngHwrngSourceRequired().setEntity(getIsNew()
+                    ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.HWRNG.toString())
+                    : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.HWRNG));
+        } else { // reset
+            getRngRandomSourceRequired().setEntity(false);
+            getRngHwrngSourceRequired().setEntity(false);
+            getRngRandomSourceRequired().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().rngNotSupportedByClusterCV());
+            getRngHwrngSourceRequired().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().rngNotSupportedByClusterCV());
         }
     }
 
@@ -1587,6 +1639,8 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
+        validateRngRequiredSource();
+
         // TODO: async validation for webadmin
         // string name = (string)Name.Entity;
 
@@ -1634,20 +1688,44 @@ public class ClusterModel extends EntityModel<VDSGroup>
             getSerialNumberPolicy().getCustomSerialNumber().setIsValid(true);
         }
 
-        setIsGeneralTabValid(getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
+        boolean generalTabValid = getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
+                && getRngRandomSourceRequired().getIsValid()
+                && getRngHwrngSourceRequired().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && (getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
-                        && getGlusterHostPassword().getIsValid()
-                        && isFingerprintVerified()) : true));
-
-        return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid() && getSpiceProxy().getIsValid()
-                && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && getSerialNumberPolicy().getCustomSerialNumber().getIsValid()
-                && (getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
-                        && getGlusterHostPassword().getIsValid()
-                        && isFingerprintVerified()) : true) && getCustomPropertySheet().getIsValid();
+                && isFingerprintVerified()) : true);
+
+        setIsGeneralTabValid(generalTabValid);
+
+        return generalTabValid && getCustomPropertySheet().getIsValid();
     }
 
+    private void validateRngRequiredSource() {
+        Version clusterVersion = getVersion().getSelectedItem();
+        boolean rngSupportedForCluster = isRngSupportedForClusterVersion(clusterVersion);
+
+        getRngRandomSourceRequired().setIsValid(rngSupportedForCluster || !getRngRandomSourceRequired().getEntity());
+        getRngHwrngSourceRequired().setIsValid(rngSupportedForCluster || !getRngHwrngSourceRequired().getEntity());
+    }
+
+    private boolean isRngSupportedForClusterVersion(Version version) {
+        if (version == null) {
+            return false;
+        }
+
+        Boolean supported = (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VirtIoRngDeviceSupported, version.toString());
+        return (supported == null)
+                ? false
+                : supported;
+    }
+
+    private String defaultClusterRngSourcesCsv(Version ver) {
+        String srcs = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClusterRequiredRngSourcesDefault, ver.toString());
+        return (srcs == null)
+                ? ""
+                : srcs;
+    }
 }

@@ -1859,4 +1859,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Enable SPICE clipboard copy and paste")
     String spiceCopyPasteEnabled();
+
+    @DefaultStringValue("Required Random Number Generator sources:")
+    String requiredRngSources();
 }

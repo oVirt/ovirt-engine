@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.Set;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -39,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +53,7 @@ import java.util.List;
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    private final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private TModel privateModel;
     private final HashMap<Guid, List<VmTemplate>> baseTemplateToSubTemplates = new HashMap<Guid, List<VmTemplate>>();
@@ -111,9 +114,40 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         getModel().getIsRngEnabled().setIsChangable(isRngDeviceSupported(getModel()));
-        getModel().getIsRngEnabled().setMessage(constants.rngNotSupported());
+
+        getModel().getIsRngEnabled().setMessage(constants.rngNotSupportedByCluster());
+        setRngAvailability();
 
         postDataCenterWithClusterSelectedItemChanged();
+    }
+
+    private void setRngAvailability() {
+        TModel model = getModel();
+        Set<VmRngDevice.Source> requiredRngSources = model.getSelectedCluster().getRequiredRngSources();
+
+        boolean requiredRngSourcesEmpty = requiredRngSources.isEmpty();
+        boolean randomSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.RANDOM);
+        boolean hwrngSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.HWRNG);
+
+        model.getIsRngEnabled().setIsChangable(!requiredRngSourcesEmpty);
+        model.getRngPeriod().setIsChangable(!requiredRngSourcesEmpty);
+        model.getRngBytes().setIsChangable(!requiredRngSourcesEmpty);
+
+        if (requiredRngSourcesEmpty) {
+            model.getIsRngEnabled().setMessage(constants.rngNotSupportedByCluster());
+            model.getRngPeriod().setMessage(constants.rngNotSupportedByCluster());
+            model.getRngBytes().setMessage(constants.rngNotSupportedByCluster());
+        }
+
+        model.getRngSourceRandom().setIsChangable(randomSourceAvailable);
+        if (randomSourceAvailable) {
+            model.getRngSourceRandom().setMessage(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.RANDOM.toString()));
+        }
+
+        model.getRngSourceHwrng().setIsChangable(hwrngSourceAvailable);
+        if (hwrngSourceAvailable) {
+            model.getRngSourceHwrng().setMessage(messages.rngSourceNotSupportedByCluster(VmRngDevice.Source.HWRNG.toString()));
+        }
     }
 
     protected void updateMigrationForLocalSD() {
@@ -249,15 +283,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateUserCdImage(Guid storagePoolId) {
         AsyncDataProvider.getIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                UnitVmModel model = (UnitVmModel) target;
-                List<String> images = (List<String>) returnValue;
-                setImagesToModel(model, images);
-            }
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        UnitVmModel model = (UnitVmModel) target;
+                        List<String> images = (List<String>) returnValue;
+                        setImagesToModel(model, images);
+                    }
 
-        }),
-                storagePoolId);
+                }),
+                storagePoolId
+        );
     }
 
     protected void setImagesToModel(UnitVmModel model, List<String> images) {
@@ -471,7 +506,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         behavior.maxCpus = (Integer) returnValue;
                         behavior.postUpdateNumOfSockets2();
                     }
-                }, getModel().getHash()), version);
+                }, getModel().getHash()
+        ), version);
     }
 
     public void postUpdateNumOfSockets2() {
@@ -707,29 +743,31 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void setupTemplate(Guid templateId, final boolean useLatest) {
         AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel model = (UnitVmModel) target;
-                        VmTemplate template = (VmTemplate) returnValue;
+                                UnitVmModel model = (UnitVmModel) target;
+                                VmTemplate template = (VmTemplate) returnValue;
 
-                        if (useLatest) {
-                            template = createLatestTemplate(template);
-                        }
+                                if (useLatest) {
+                                    template = createLatestTemplate(template);
+                                }
 
-                        setupBaseTemplate(template.getBaseTemplateId());
+                                setupBaseTemplate(template.getBaseTemplateId());
 
-                        model.getTemplate().setItems(Collections.singletonList(template));
-                        model.getTemplate().setSelectedItem(template);
-                        model.getTemplate().setIsChangable(false);
-                        if (!template.getId().equals(Guid.Empty)) {
-                            getModel().getVmInitModel().init(template);
-                        }
-                    }
-                },
-                getModel().getHash()),
-                templateId);
+                                model.getTemplate().setItems(Collections.singletonList(template));
+                                model.getTemplate().setSelectedItem(template);
+                                model.getTemplate().setIsChangable(false);
+                                if (!template.getId().equals(Guid.Empty)) {
+                                    getModel().getVmInitModel().init(template);
+                                }
+                            }
+                        },
+                        getModel().getHash()
+                ),
+                templateId
+        );
     }
 
     protected void setupBaseTemplate(Guid baseTemplateId) {

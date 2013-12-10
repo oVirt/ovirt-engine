@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -748,6 +749,14 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
         cluster.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         cluster.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
+
+        cluster.getRequiredRngSources().clear();
+        if (Boolean.TRUE.equals(model.getRngRandomSourceRequired().getEntity())) {
+            cluster.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
+        }
+        if (Boolean.TRUE.equals(model.getRngHwrngSourceRequired().getEntity())) {
+            cluster.getRequiredRngSources().add(VmRngDevice.Source.HWRNG);
+        }
 
         model.startProgress(null);
 

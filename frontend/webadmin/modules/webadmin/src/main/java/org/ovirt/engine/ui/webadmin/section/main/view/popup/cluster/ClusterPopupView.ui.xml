@@ -177,6 +177,11 @@
                                 <ge:StringEntityModelPasswordBoxEditor ui:field="glusterHostPasswordEditor" />
                                 <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
                                 <ge:EntityModelCheckBoxEditor ui:field="enableOptionalReasonEditor" />
+                                <g:FlowPanel>
+                                    <g:Label ui:field="rngLabel"  addStyleNames="{style.panelTitle}" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="rngRandomSourceRequired" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="rngHwrngSourceRequired" />
+                                </g:FlowPanel>
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>

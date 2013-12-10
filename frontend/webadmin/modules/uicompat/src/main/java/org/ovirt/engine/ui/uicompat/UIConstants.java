@@ -2287,7 +2287,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("If period is specified, bytes per period must be specified as well.")
     String rngRateInvalid();
 
-    @DefaultStringValue("Random Number Generator not supported for this cluster level or is disabled in the engine config.")
-    String rngNotSupported();
+    @DefaultStringValue("Random Number Generator requirements must be set in Cluster.")
+    String rngNotSupportedByCluster();
+
+    @DefaultStringValue("Random Number Generator is not supported by your cluster compatibility version.")
+    String rngNotSupportedByClusterCV();
 }
 

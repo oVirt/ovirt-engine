@@ -370,4 +370,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("This option requires SPICE display protocol to be used")
     String optionRequiresSpiceEnabled();
+
+    @DefaultMessage("Random Number Generator source ''{0}'' is not supported by the cluster")
+    String rngSourceNotSupportedByCluster(String source);
 }
