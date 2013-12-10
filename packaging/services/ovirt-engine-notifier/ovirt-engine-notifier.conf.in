@@ -46,9 +46,8 @@ INTERVAL_IN_SECONDS=120
 # The SMTP mail server address. Required.
 MAIL_SERVER=
 
-# The SMTP port
+# The SMTP port (usually 25 for plain SMTP, 465 for SMTP with SSL)
 MAIL_PORT=25
-MAIL_PORT_SSL=465
 
 # Required if SSL enabled to authenticate the user. Used also to specify 'from' user address if mail server
 # supports, when MAIL_FROM is not set. Address is in RFC822 format

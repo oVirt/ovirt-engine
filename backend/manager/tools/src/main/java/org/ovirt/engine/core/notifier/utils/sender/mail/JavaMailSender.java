@@ -38,15 +38,13 @@ public class JavaMailSender {
         Properties mailSessionProps = setCommonProperties(aMailProps);
 
         mailSessionProps.put("mail.smtp.host", aMailProps.getProperty(NotificationProperties.MAIL_SERVER));
+        mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT));
         // enable SSL
         if (aMailProps.getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false)) {
-            mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT_SSL));
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             mailSessionProps.put("mail.smtp.socketFactory.fallback", false);
-            mailSessionProps.put("mail.smtp.socketFactory.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT_SSL));
-        } else {
-            mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT));
+            mailSessionProps.put("mail.smtp.socketFactory.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT));
         }
 
         String password = aMailProps.getProperty(NotificationProperties.MAIL_PASSWORD, true);

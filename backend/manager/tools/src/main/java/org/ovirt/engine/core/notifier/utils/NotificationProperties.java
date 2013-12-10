@@ -17,7 +17,6 @@ public class NotificationProperties extends LocalConfig {
      */
     public static final String MAIL_SERVER = "MAIL_SERVER";
     public static final String MAIL_PORT = "MAIL_PORT";
-    public static final String MAIL_PORT_SSL = "MAIL_PORT_SSL";
     public static final String MAIL_USER = "MAIL_USER";
     public static final String MAIL_PASSWORD = "MAIL_PASSWORD";
     public static final String MAIL_ENABLE_SSL = "MAIL_ENABLE_SSL";
