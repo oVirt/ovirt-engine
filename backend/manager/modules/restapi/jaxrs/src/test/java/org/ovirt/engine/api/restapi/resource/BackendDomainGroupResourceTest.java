@@ -1,23 +1,29 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 
+import org.ovirt.engine.api.model.Domain;
+import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDomainGroupResourceTest
-    extends AbstractBackendGroupResourceTest<BackendDomainGroupResource> {
-
-    static final Guid GROUP_ID = GUIDS[1];
-    static final Guid DOMAIN_ID = GUIDS[2];
+    extends AbstractBackendSubResourceTest<Group, LdapGroup, BackendDomainGroupResource> {
 
     public BackendDomainGroupResourceTest() {
-      super(new BackendDomainGroupResource(GROUP_ID.toString(),
-                                           new BackendDomainGroupsResource(DOMAIN_ID.toString(), null)));
+        super(new BackendDomainGroupResource(GUIDS[1].toString(), null));
+    }
+
+    @Override
+    protected void init () {
+        super.init();
+        setUpParentExpectations();
     }
 
     @Test
@@ -32,11 +38,27 @@ public class BackendDomainGroupResourceTest
     }
 
     @Test
+    public void testGet() throws Exception {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        setUriInfo(uriInfo);
+        setUpEntityQueryExpectations(1, false);
+
+        control.replay();
+
+        verifyModel(resource.get(), 1);
+    }
+
+    @Override
+    protected void verifyModel(Group model, int index) {
+        assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(NAMES[index], model.getName());
+    }
+
+    @Test
     public void testGetNotFound() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
-        setUpGetEntityExpectations(2);
-        initParetResource(resource.parent, uriInfo);
+        setUpEntityQueryExpectations(1, true);
 
         control.replay();
         try {
@@ -47,16 +69,30 @@ public class BackendDomainGroupResourceTest
         }
     }
 
-    private void initParetResource(AbstractBackendGroupsResource resource, UriInfo uriInfo) {
-        initResource(resource);
-        resource.setUriInfo(uriInfo);
+    private void setUpParentExpectations() {
+        BackendDomainGroupsResource parent = control.createMock(BackendDomainGroupsResource.class);
+        Domain domain = new Domain();
+        domain.setName(DOMAIN);
+        expect(parent.getDirectory()).andReturn(domain).anyTimes();
+        resource.setParent(parent);
     }
 
-    protected void setUpGetEntityExpectations(int index) throws Exception {
-        LdapGroup user = BackendGroupsResourceTest.setUpEntityExpectations(control.createMock(LdapGroup.class), index);
-        setUpGetEntityExpectations("ADGROUP@"+DOMAIN+": name=*",
-                SearchType.AdGroup,
-                user);
+    private void setUpEntityQueryExpectations(int index, boolean notFound) throws Exception {
+        setUpGetEntityExpectations(
+            VdcQueryType.GetDirectoryGroupById,
+            DirectoryIdQueryParameters.class,
+            new String[] { "Domain", "Id" },
+            new Object[] { DOMAIN, GUIDS[index] },
+            notFound? null: getEntity(index)
+        );
+    }
+
+    @Override
+    protected LdapGroup getEntity(int index) {
+        LdapGroup entity = new LdapGroup();
+        entity.setid(GUIDS[index]);
+        entity.setname(NAMES[index]);
+        return entity;
     }
 }
 

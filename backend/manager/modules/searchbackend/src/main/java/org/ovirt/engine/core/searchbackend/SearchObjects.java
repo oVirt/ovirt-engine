@@ -20,6 +20,8 @@ public final class SearchObjects {
     public static final String TEMPLATE_PLU_OBJ_NAME = "TEMPLATES";
     public static final String VDC_USER_OBJ_NAME = "USER";
     public static final String VDC_USER_PLU_OBJ_NAME = "USERS";
+    public static final String VDC_GROUP_OBJ_NAME = "GROUP";
+    public static final String VDC_GROUP_PLU_OBJ_NAME = "GROUPS";
     public static final String VDC_POOL_OBJ_NAME = "POOL";
     public static final String VDC_POOL_PLU_OBJ_NAME = "POOLS";
     public static final String VDC_CLUSTER_OBJ_NAME = "CLUSTER";
@@ -68,6 +70,8 @@ public final class SearchObjects {
             add(TEMPLATE_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
             add(VDC_USER_OBJ_NAME.toLowerCase() + SEPARATOR);
             add(VDC_USER_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
+            add(VDC_GROUP_OBJ_NAME.toLowerCase() + SEPARATOR);
+            add(VDC_GROUP_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
             add(VDC_POOL_OBJ_NAME.toLowerCase() + SEPARATOR);
             add(VDC_POOL_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
             add(VDC_CLUSTER_OBJ_NAME.toLowerCase() + SEPARATOR);

@@ -11,18 +11,18 @@ import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveAdGroupCommand<T extends AdElementParametersBase> extends AdGroupsHandlingCommandBase<T> {
+public class RemoveGroupCommand<T extends AdElementParametersBase> extends AdGroupsHandlingCommandBase<T> {
 
     /**
      * Constructor for command creation when compensation is applied on startup
      *
      * @param commandId
      */
-    protected RemoveAdGroupCommand(Guid commandId) {
+    protected RemoveGroupCommand(Guid commandId) {
         super(commandId);
     }
 
-    public RemoveAdGroupCommand(T parameters) {
+    public RemoveGroupCommand(T parameters) {
         super(parameters);
     }
 

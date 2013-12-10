@@ -46,7 +46,7 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
-import org.ovirt.engine.core.dao.AdGroupDAO;
+import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
@@ -573,12 +573,12 @@ public class DbFacade {
     }
 
     /**
-     * Retrieves the singleton instance of {@link AdGroupDAO}.
+     * Retrieves the singleton instance of {@link DbGroupDAO}.
      *
      * @return the dao
      */
-    public AdGroupDAO getAdGroupDao() {
-        return getDao(AdGroupDAO.class);
+    public DbGroupDAO getDbGroupDao() {
+        return getDao(DbGroupDAO.class);
     }
 
     /**

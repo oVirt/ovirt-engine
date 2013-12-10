@@ -17,6 +17,7 @@ import javax.naming.ldap.Rdn;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
@@ -238,12 +239,14 @@ public class LdapBrokerUtils {
      */
     private static void AddGroupToUser(LdapUser user, String groupName) {
         if (!user.getGroups().containsKey(groupName)) {
-            LdapGroup group = DbFacade.getInstance().getAdGroupDao().getByName(groupName);
-            if (group != null) {
-                user.getGroups().put(groupName, group);
+            DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().getByName(groupName);
+            LdapGroup ldapGroup = null;
+            if (dbGroup != null) {
+                ldapGroup = new LdapGroup(dbGroup);
             } else {
-                user.getGroups().put(groupName, new LdapGroup());
+                ldapGroup = new LdapGroup();
             }
+            user.getGroups().put(groupName, ldapGroup);
         }
     }
 

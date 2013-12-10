@@ -1,80 +1,136 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
-import org.junit.Ignore;
 import org.junit.Test;
+import org.ovirt.engine.api.model.Domain;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.AddUserParameters;
+import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGroupsResourceTest
-    extends AbstractBackendCollectionResourceTest<Group, LdapGroup, BackendGroupsResource> {
+    extends AbstractBackendCollectionResourceTest<Group, DbGroup, BackendGroupsResource> {
+
+    /**
+     * This is the query that will be used when the user didn't provide any query explicitly.
+     */
+    private static final String QUERY = "grpname != \"\"";
+
+    /**
+     * This is the query that will be used when the user provided a query explicitly in the parameters.
+     */
+    private static final String SEARCH_QUERY =
+        "name=s* AND id=*0 and grpname != \"\"";
+
+    /**
+     * These are the names that will be used to build the directory group objects returned by mocked directory group
+     * searches, thus then must have the same format that we generate when searching in directories.
+     */
+    private static final String[] GROUP_NAMES;
+
+    static {
+        GROUP_NAMES = new String[NAMES.length];
+        for (int i = 0; i < NAMES.length; i++) {
+            GROUP_NAMES[i] = DOMAIN + "/Groups/" + NAMES[i];
+        }
+    }
 
     public BackendGroupsResourceTest() {
-        super(new BackendGroupsResource(), null, "");
+        super(new BackendGroupsResource(), SearchType.DBGroup, "Groups : ");
     }
 
     @Test
-    @Ignore
-    @Override
-    public void testQuery() throws Exception {
-    }
-
-    @Test
-    @Override
-    @Ignore
-    //TODO: revisit when fixed #699242
     public void testList() throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
+        setUpQueryExpectations(QUERY);
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection());
     }
 
     @Test
-    @Override
-    @Ignore
-    //TODO: revisit when fixed #699242
     public void testListFailure() throws Exception {
-
+        UriInfo uriInfo = setUpUriExpectations(null);
+        setUpQueryExpectations(QUERY, FAILURE);
+        collection.setUriInfo(uriInfo);
+        try {
+            getCollection();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            assertTrue(wae.getResponse().getEntity() instanceof Fault);
+            assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
+        }
     }
 
     @Test
-    @Override
-    @Ignore
-    //TODO: revisit when fixed #699242
     public void testListCrash() throws Exception {
-
+        UriInfo uriInfo = setUpUriExpectations(null);
+        Throwable t = new RuntimeException(FAILURE);
+        setUpQueryExpectations(QUERY, t);
+        collection.setUriInfo(uriInfo);
+        try {
+            getCollection();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
+        }
     }
 
     @Test
-    @Override
-    @Ignore
-    //TODO: revisit when fixed #699242
     public void testListCrashClientLocale() throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
+        locales.add(CLIENT_LOCALE);
+        Throwable t = new RuntimeException(FAILURE);
+        setUpQueryExpectations(QUERY, t);
+        collection.setUriInfo(uriInfo);
+        try {
+            getCollection();
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
+            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
+        }
+        finally {
+            locales.clear();
+        }
+    }
 
+    @Test
+    public void testQuery() throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(SEARCH_QUERY);
+        setUpQueryExpectations(SEARCH_QUERY);
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection());
     }
 
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveAdGroup,
-                                           AdElementParametersBase.class,
-                                           new String[] { "AdElementId" },
-                                           new Object[] { GUIDS[0] },
-                                           true,
-                                           true));
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveGroup,
+                AdElementParametersBase.class,
+                new String[] { "AdElementId" },
+                new Object[] { GUIDS[0] },
+                true,
+                true
+            )
+        );
         verifyRemove(collection.remove(GUIDS[0].toString()));
     }
 
@@ -85,7 +141,8 @@ public class BackendGroupsResourceTest
         try {
             collection.remove(NON_EXISTANT_GUID.toString());
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }
@@ -95,12 +152,14 @@ public class BackendGroupsResourceTest
         setUpGetEntityExpectations(GUIDS[0], false);
     }
 
-    private void setUpGetEntityExpectations(Guid entityId, Boolean returnNull) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetAdGroupById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { entityId },
-                returnNull ? null : getEntity(0));
+    private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
+        setUpGetEntityExpectations(
+            VdcQueryType.GetDbGroupById,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { entityId },
+            returnNull? null : getEntity(0)
+        );
     }
 
     @Test
@@ -113,42 +172,59 @@ public class BackendGroupsResourceTest
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveAdGroup,
-                                           AdElementParametersBase.class,
-                                           new String[] { "AdElementId" },
-                                           new Object[] { GUIDS[0] },
-                                           canDo,
-                                           success));
+        setUriInfo(
+            setUpActionExpectations(
+                VdcActionType.RemoveGroup,
+                AdElementParametersBase.class,
+                new String[] { "AdElementId" },
+                new Object[] { GUIDS[0] },
+                canDo,
+                success
+            )
+        );
         try {
             collection.remove(GUIDS[0].toString());
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
 
+    /**
+     * Test that a group can be added when the user provides explicitly the name of the directory, so there is no need
+     * to extract it from the name of the group.
+     */
     @Test
-    public void testAddGroup() throws Exception {
+    public void testAddGroupWithExplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations("ADGROUP@" + DOMAIN + ": name=*",
-                                   SearchType.AdGroup,
-                                   getAdGroup(0));
-        setUpCreationExpectations(VdcActionType.AddUser,
-                                  AddUserParameters.class,
-                                  new String[] { "AdGroup.id" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  null,
-                                  VdcQueryType.GetAdGroupById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getEntity(0));
+        setUpGetEntityExpectations(
+            "ADGROUP@" + DOMAIN + ": allnames=" + NAMES[0],
+            SearchType.AdGroup,
+            getDirectoryGroup(0)
+        );
+        setUpCreationExpectations(
+            VdcActionType.AddGroup,
+            AddGroupParameters.class,
+            new String[] { "Group.id" },
+            new Object[] { GUIDS[0] },
+            true,
+            true,
+            null,
+            VdcQueryType.GetDbGroupById,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { GUIDS[0] },
+            getEntity(0)
+        );
+
+        Domain domain = new Domain();
+        domain.setName(DOMAIN);
         Group model = new Group();
         model.setName(NAMES[0]);
+        model.setDomain(domain);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -156,74 +232,93 @@ public class BackendGroupsResourceTest
         verifyModel((Group) response.getEntity(), 0);
     }
 
+    /**
+     * Test that a group can be added when the user doesn't explicitly provide the name of the directory, but provides
+     * it as part of the group name.
+     */
     @Test
-    public void testAddGroupFailure() throws Exception {
+    public void testAddGroupWithImplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations("ADGROUP@" + DOMAIN + ": name=*",
-                                   SearchType.AdGroup,
-                                   getAdGroup(0));
-        control.replay();
+        setUpGetEntityExpectations(
+            "ADGROUP@" + DOMAIN + ": allnames=" + GROUP_NAMES[0],
+            SearchType.AdGroup,
+            getDirectoryGroup(0)
+        );
+        setUpCreationExpectations(
+            VdcActionType.AddGroup,
+            AddGroupParameters.class,
+            new String[] { "Group.id" },
+            new Object[] { GUIDS[0] },
+            true,
+            true,
+            null,
+            VdcQueryType.GetDbGroupById,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { GUIDS[0] },
+            getEntity(0)
+        );
+
         Group model = new Group();
-        model.setName(BAD_NAMES[0]);
+        model.setName(GROUP_NAMES[0]);
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Group);
+        verifyModel((Group) response.getEntity(), 0);
+    }
+
+    /**
+     * Test that a group can't be added if the directory name isn't provider explicitly or as part of the group name.
+     */
+    @Test
+    public void testAddGroupWithoutDirectoryName() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+
+        Group model = new Group();
+        model.setName(NAMES[0]);
 
         try {
-           Response response = collection.add(model);
+           collection.add(model);
            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
+            assertEquals(400, wae.getResponse().getStatus());
         }
     }
 
-    @Test
-    public void testAddGroupUsingDomainFromGroupName() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations("ADGROUP@" + DOMAIN + ": name=*",
-                                   SearchType.AdGroup,
-                                   getAdGroupWithDomain(0));
-        setUpCreationExpectations(VdcActionType.AddUser,
-                                  AddUserParameters.class,
-                                  new String[] { "AdGroup.id" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  null,
-                                  VdcQueryType.GetAdGroupById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getEntity(0));
-        Group model = new Group();
-        model.setName(DOMAIN+"/"+NAMES[0]);
-
-        Response response = collection.add(model);
-        assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Group);
-        verifyModel((Group) response.getEntity(), 0);
-    }
-
+    /**
+     * Test that if the group identifier is provided it is used to search in the directory instead of the name.
+     */
     @Test
     public void testAddGroupById() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetAdGroupById,
-                                   IdQueryParameters.class,
-                                   new String[] { "Id" },
-                                   new Object[] { GUIDS[0] },
-                                   getEntity(0));
-        setUpCreationExpectations(VdcActionType.AddUser,
-                                  AddUserParameters.class,
-                                  new String[] { "AdGroup.id" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  null,
-                                  VdcQueryType.GetAdGroupById,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getEntity(0));
+        setUpGetEntityExpectations(
+            VdcQueryType.GetDirectoryGroupById,
+            DirectoryIdQueryParameters.class,
+            new String[] { "Domain", "Id" },
+            new Object[] { DOMAIN, GUIDS[0] },
+            getDirectoryGroup(0)
+        );
+        setUpCreationExpectations(
+            VdcActionType.AddGroup,
+            AddGroupParameters.class,
+            new String[] { "Group.id" },
+            new Object[] { GUIDS[0] },
+            true,
+            true,
+            null,
+            VdcQueryType.GetDbGroupById,
+            IdQueryParameters.class,
+            new String[] { "Id" },
+            new Object[] { GUIDS[0] },
+            getEntity(0)
+        );
+
         Group model = new Group();
-        model.setName(NAMES[0]);
+        model.setName(GROUP_NAMES[0]);
         model.setId(GUIDS[0].toString());
 
         Response response = collection.add(model);
@@ -232,19 +327,30 @@ public class BackendGroupsResourceTest
         verifyModel((Group) response.getEntity(), 0);
     }
 
+    /**
+     * Test that if the provided directory identifier doesn't correspond to any existing directory user the user isn't
+     * added.
+     */
     @Test
     public void testAddGroupByIdFailure() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(NON_EXISTANT_GUID, true);
+        setUpGetEntityExpectations(
+            VdcQueryType.GetDirectoryGroupById,
+            DirectoryIdQueryParameters.class,
+            new String[] { "Domain", "Id" },
+            new Object[] { DOMAIN, NON_EXISTANT_GUID },
+            null
+        );
         control.replay();
         Group model = new Group();
-        model.setName(NAMES[0]);
+        model.setName(GROUP_NAMES[0]);
         model.setId(NON_EXISTANT_GUID.toString());
 
         try {
-           Response response = collection.add(model);
-           fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+            collection.add(model);
+            fail("expected WebApplicationException");
+        }
+        catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }
@@ -256,69 +362,30 @@ public class BackendGroupsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert(query.equals(""));
-
-        setUpEntityQueryExpectations(VdcQueryType.GetAllAdGroups,
-                                     VdcQueryParametersBase.class,
-                                     new String[] { },
-                                     new Object[] { },
-                                     setUpGroups(),
-                                     failure);
-
-        control.replay();
-    }
-
-    @Override
-    protected LdapGroup getEntity(int index) {
-        LdapGroup entity = new LdapGroup();
-        entity.setid(GUIDS[index]);
-        entity.setname(NAMES[index]);
-        entity.setdomain(DOMAIN);
+    protected DbGroup getEntity(int index) {
+        DbGroup entity = new DbGroup();
+        entity.setId(GUIDS[index]);
+        entity.setName(GROUP_NAMES[index]);
+        entity.setDomain(DOMAIN);
+        entity.setExternalId(new ExternalId(GUIDS[index].toByteArray()));
 
         return entity;
     }
 
-    protected List<LdapGroup> setUpGroups() {
-        List<LdapGroup> groups = new ArrayList<LdapGroup>();
-        for (int i = 0; i < NAMES.length; i++) {
-            groups.add(getEntity(i));
-        }
-        return groups;
-    }
-
-    protected LdapGroup getAdGroup(int index) {
-        LdapGroup adGroup = new LdapGroup();
-        adGroup.setid(GUIDS[index]);
-        adGroup.setname(NAMES[index]);
-        adGroup.setdomain(DOMAIN);
-
-        return adGroup;
-    }
-
-    protected LdapGroup getAdGroupWithDomain(int index) {
-        LdapGroup adGroup = new LdapGroup();
-        adGroup.setid(GUIDS[index]);
-        adGroup.setname(DOMAIN+"/"+NAMES[index]);
-        adGroup.setdomain(DOMAIN);
-
-        return adGroup;
+    private LdapGroup getDirectoryGroup(int index) {
+        LdapGroup directoryGroup = new LdapGroup();
+        directoryGroup.setid(GUIDS[index]);
+        directoryGroup.setname(GROUP_NAMES[index]);
+        directoryGroup.setdomain(DOMAIN);
+        return directoryGroup;
     }
 
     @Override
     protected void verifyModel(Group model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
-        assertEquals(NAMES[index], model.getName());
+        assertEquals(GROUP_NAMES[index], model.getName());
         assertNotNull(model.getDomain());
         assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());
         verifyLinks(model);
     }
-
-    public static LdapGroup setUpEntityExpectations(LdapGroup entity, int index) {
-        expect(entity.getid()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getdomain()).andReturn(DOMAIN).anyTimes();
-        expect(entity.getstatus()).andReturn(LdapRefStatus.Active).anyTimes();
-        return entity;
-    }
 }
-

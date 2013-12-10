@@ -10,6 +10,6 @@ public class GetAllAdGroupsQuery<P extends VdcQueryParametersBase> extends Queri
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getAdGroupDao().getAll());
+        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getDbGroupDao().getAll());
     }
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -152,13 +153,17 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         for (String groupDN : groupDNList) {
             String groupName = LdapBrokerUtils.generateGroupDisplayValue(groupDN);
             if (!groupsDict.containsKey(groupName)) {
-                LdapGroup group = DbFacade.getInstance().getAdGroupDao().getByName(groupName);
-                if (group == null) {
-                    group = new LdapGroup();
-                    group.setname(groupName);
+                DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().getByName(groupName);
+                LdapGroup ldapGroup = null;
+                if (dbGroup == null) {
+                    ldapGroup = new LdapGroup();
+                    ldapGroup.setname(groupName);
                 }
-                group.setDistinguishedName(groupDN);
-                groupsDict.put(groupName, group);
+                else {
+                    ldapGroup = new LdapGroup(dbGroup);
+                }
+                ldapGroup.setDistinguishedName(groupDN);
+                groupsDict.put(groupName, ldapGroup);
                 generator.add(groupDN);
             }
         }

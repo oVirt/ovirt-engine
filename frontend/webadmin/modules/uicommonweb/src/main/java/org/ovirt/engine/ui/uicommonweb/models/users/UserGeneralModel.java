@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -48,19 +47,19 @@ public class UserGeneralModel extends EntityModel
         }
     }
 
-    private LdapRefStatus status;
+    private boolean active;
 
-    public LdapRefStatus getStatus()
+    public boolean isActive()
     {
-        return status;
+        return active;
     }
 
-    public void setStatus(LdapRefStatus value)
+    public void setActive(boolean value)
     {
-        if (status != value)
+        if (active != value)
         {
-            status = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
+            active = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Active")); //$NON-NLS-1$
         }
     }
 
@@ -89,7 +88,6 @@ public class UserGeneralModel extends EntityModel
 
         setDomain(user.getDomain());
         setEmail(user.getEmail());
-        setStatus(user.getLdapStatus());
-
+        setActive(user.isActive());
     }
 }

@@ -138,10 +138,11 @@ public enum VdcActionType {
     LoginUser(406, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     LogoutUser(408, false, QuotaDependency.NONE),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
-    RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
+    RemoveGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     ChangeUserPassword(416, QuotaDependency.NONE),
     LoginAdminUser(418, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     AddUser(419, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
+    AddGroup(420, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     // Tags
     AddTag(501, false, QuotaDependency.NONE),
     RemoveTag(502, false, QuotaDependency.NONE),

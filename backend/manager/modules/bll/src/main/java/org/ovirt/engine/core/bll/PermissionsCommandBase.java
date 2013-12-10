@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.Permissions;
@@ -67,7 +68,10 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
             _dbUser = getDbUserDAO().get(getParameters().getPermission().getad_element_id());
         }
         if (_adGroup == null) {
-            _adGroup = getAdGroupDAO().get(getParameters().getPermission().getad_element_id());
+            DbGroup dbGroup = getAdGroupDAO().get(getParameters().getPermission().getad_element_id());
+            if (dbGroup != null) {
+                _adGroup = new LdapGroup(dbGroup);
+            }
         }
     }
 

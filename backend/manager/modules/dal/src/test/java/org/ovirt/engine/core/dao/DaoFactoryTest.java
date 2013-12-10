@@ -15,7 +15,7 @@ public class DaoFactoryTest extends Assert {
     }
 
     @Test public void testActionGroup()             { testLoadClass(ActionGroupDAO.class); }
-    @Test public void testAdGroup()                 { testLoadClass(AdGroupDAO.class); }
+    @Test public void testAdGroup()                 { testLoadClass(DbGroupDAO.class); }
     @Test public void testAsyncTask()               { testLoadClass(AsyncTaskDAO.class); }
     @Test public void testAuditLog()                { testLoadClass(AuditLogDAO.class); }
     @Test public void testBookmark()                { testLoadClass(BookmarkDAO.class); }

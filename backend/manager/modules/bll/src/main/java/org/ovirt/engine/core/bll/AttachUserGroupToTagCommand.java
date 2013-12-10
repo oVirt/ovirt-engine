@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -17,17 +17,17 @@ public class AttachUserGroupToTagCommand<T extends AttachEntityToTagParameters> 
     protected void executeCommand() {
         if (getTagId() != null) {
             for (Guid groupGuid : getGroupList()) {
-                LdapGroup group = DbFacade.getInstance().getAdGroupDao().get(groupGuid);
+                DbGroup group = DbFacade.getInstance().getDbGroupDao().get(groupGuid);
                 if (DbFacade.getInstance().getTagDao().getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) == null) {
                     TagsUserGroupMap map = new TagsUserGroupMap(groupGuid, getTagId());
                     DbFacade.getInstance().getTagDao().attachUserGroupToTag(map);
                     noActionDone = false;
                     if (group != null) {
-                        appendCustomValue("AttachGroupsNames", group.getname(), ", ");
+                        appendCustomValue("AttachGroupsNames", group.getName(), ", ");
                     }
                 } else {
                     if (group != null) {
-                        appendCustomValue("AttachGroupsNamesExists", group.getname(), ", ");
+                        appendCustomValue("AttachGroupsNamesExists", group.getName(), ", ");
                     }
                 }
             }

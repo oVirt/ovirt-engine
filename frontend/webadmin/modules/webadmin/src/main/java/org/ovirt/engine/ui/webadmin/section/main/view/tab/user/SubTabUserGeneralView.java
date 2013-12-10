@@ -3,13 +3,12 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.user;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.EnumLabel;
+import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
@@ -34,7 +33,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
     TextBoxLabel domain = new TextBoxLabel();
 
-    EnumLabel<LdapRefStatus> status = new EnumLabel<LdapRefStatus>();
+    BooleanLabel active = new BooleanLabel();
 
     TextBoxLabel email = new TextBoxLabel();
 
@@ -59,7 +58,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         formBuilder = new FormBuilder(formPanel, 1, 3);
 
         formBuilder.addFormItem(new FormItem(constants.domainUserGeneral(), domain, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.statusUserGeneral(), status, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.activeUserGeneral(), active, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.emailUserGeneral(), email, 2, 0) {
             @Override
             public boolean getIsAvailable() {

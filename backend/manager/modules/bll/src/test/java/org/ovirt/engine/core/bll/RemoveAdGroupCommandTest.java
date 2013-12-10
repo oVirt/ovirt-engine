@@ -16,13 +16,13 @@ public class RemoveAdGroupCommandTest {
     /**
      * The command under test.
      */
-    private RemoveAdGroupCommand<AdElementParametersBase> command;
+    private RemoveGroupCommand<AdElementParametersBase> command;
     private Guid adElementId = Guid.newGuid();
 
     @Before
     public void initializeCommand() {
         AdElementParametersBase parameters = createParameters();
-        command = spy(new RemoveAdGroupCommand<AdElementParametersBase>(parameters));
+        command = spy(new RemoveGroupCommand<AdElementParametersBase>(parameters));
     }
 
     /**

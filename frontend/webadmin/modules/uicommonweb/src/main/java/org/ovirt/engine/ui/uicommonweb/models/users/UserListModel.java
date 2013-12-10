@@ -505,7 +505,7 @@ public class UserListModel extends ListWithDetailsModel
 
         if (groupPrms.size() > 0)
         {
-            Frontend.getInstance().runMultipleAction(VdcActionType.RemoveAdGroup, groupPrms);
+            Frontend.getInstance().runMultipleAction(VdcActionType.RemoveGroup, groupPrms);
         }
 
         cancel();

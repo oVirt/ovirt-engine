@@ -15,10 +15,9 @@ import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserIdListParameters;
 import org.ovirt.engine.core.bll.adbroker.UsersDomainsCacheManagerService;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -96,17 +95,17 @@ public class DbUserCacheManager {
 
         if ((ldapUser == null) || (ldapUser.getUserId().equals(Guid.Empty))
                 || (!ldapUser.getUserId().equals(dbUser.getId()))) {
-            if (dbUser.getStatus() != 0) {
+            if (dbUser.isActive()) {
                 log.warnFormat("User {0} not found in directory server, its status switched to InActive",
                         dbUser.getFirstName());
-                dbUser.setStatus(0);
+                dbUser.setActive(false);
                 succeeded = true;
             }
         } else {
-            if (dbUser.getStatus() == 0) {
+            if (!dbUser.isActive()) {
                 log.warnFormat("Inactive User {0} found in directory server, its status switched to Active",
                         dbUser.getFirstName());
-                dbUser.setStatus(1);
+                dbUser.setActive(true);
                 succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getFirstName(), ldapUser.getName())) {
@@ -146,16 +145,13 @@ public class DbUserCacheManager {
                 dbUser.setGroupIds(ldapUser.getGroupIds());
                 succeeded = true;
             }
-            if (succeeded) {
-                dbUser.setStatus(dbUser.getStatus() + 1);
-            }
         }
         if (succeeded) {
             DbFacade.getInstance().getDbUserDao().update(dbUser);
         }
     }
 
-    public void refreshAllUserData(List<LdapGroup> updatedGroups) {
+    public void refreshAllUserData(List<DbGroup> updatedGroups) {
         try {
             log.info("Start refreshing all users data");
             List<DbUser> allUsers = DbFacade.getInstance().getDbUserDao().getAll();
@@ -164,7 +160,7 @@ public class DbUserCacheManager {
             List<DbUser> filteredUsers = LinqUtils.filter(allUsers, new UsersPerDomainPredicate(domainsList));
             Map<String, Map<Guid, DbUser>> userByDomains = new HashMap<String, Map<Guid, DbUser>>();
 
-            // Filter all users by domains
+            // Map all users by domains
             for (DbUser user : filteredUsers) {
                 Map<Guid, DbUser> domainUser;
                 if (!userByDomains.containsKey(user.getDomain())) {
@@ -192,7 +188,12 @@ public class DbUserCacheManager {
                     if (adUsers == null) {
                         log.warn("No users returned from directory server during refresh users");
                     } else {
-                        LdapBrokerUtils.performGroupPopulationForUsers(adUsers, domain, updatedGroups);
+                        List<LdapGroup> ldapUpdatedGroups = new ArrayList<>(updatedGroups.size());
+                        for (DbGroup dbGroup : updatedGroups) {
+                            LdapGroup ldapGroup = new LdapGroup(dbGroup);
+                            ldapUpdatedGroups.add(ldapGroup);
+                        }
+                        LdapBrokerUtils.performGroupPopulationForUsers(adUsers, domain, ldapUpdatedGroups);
                         for (LdapUser adUser : adUsers) {
                             updateDBUserFromADUser(userByDomains.get(domain).get(adUser.getUserId()), adUser, updatedUsers);
                             userByDomains.get(domain).remove(adUser.getUserId());
@@ -203,10 +204,10 @@ public class DbUserCacheManager {
                         log.warnFormat("No users for domain {0}", domain);
                     } else {
                         for (DbUser dbUser : usersForDomain) {
-                            if (dbUser.getStatus() != 0) {
+                            if (dbUser.isActive()) {
                                 log.warnFormat("User {0} not found in directory server, its status switched to InActive",
                                         dbUser.getFirstName());
-                                dbUser.setStatus(AsyncTaskStatusEnum.unknown.getValue());
+                                dbUser.setActive(false);
                                 DbFacade.getInstance().getDbUserDao().update(dbUser);
                             }
                         }
@@ -226,13 +227,13 @@ public class DbUserCacheManager {
 
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer() {
-        List<LdapGroup> groups = updateGroups();
+        List<DbGroup> groups = updateGroups();
         refreshAllUserData(groups);
     }
 
-    private static List<LdapGroup> updateGroups() {
-        List<LdapGroup> groups = DbFacade.getInstance().getAdGroupDao().getAll();
-        for (LdapGroup group : groups) {
+    private static List<DbGroup> updateGroups() {
+        List<DbGroup> groups = DbFacade.getInstance().getDbGroupDao().getAll();
+        for (DbGroup group : groups) {
             /*
              * Vitaly workaround. Temporary treatment on missing group domains
              */
@@ -241,13 +242,13 @@ public class DbUserCacheManager {
             // class is fixed,
             // domain name will be passed correctly to the backend, and the
             // following code should not occur
-            if (group.getdomain() == null && group.getname().contains("@")) {
+            if (group.getDomain() == null && group.getName().contains("@")) {
                 StringBuilder logMsg = new StringBuilder();
                 logMsg.append("domain name for ad group ")
-                        .append(group.getname())
+                        .append(group.getName())
                         .append(" is null. This should not occur, please check that domain name is passed correctly from client");
                 log.warn(logMsg.toString());
-                String partAfterAtSign = group.getname().split("[@]", -1)[1];
+                String partAfterAtSign = group.getName().split("[@]", -1)[1];
                 String newDomainName = partAfterAtSign;
                 if (partAfterAtSign.contains("/")) {
                     String partPreviousToSlashSign = partAfterAtSign.split("[/]", -1)[0];
@@ -255,40 +256,40 @@ public class DbUserCacheManager {
 
                 }
 
-                group.setdomain(newDomainName);
+                group.setDomain(newDomainName);
             }
             // We check if the domain is null or empty for internal groups.
             // An internal group does not have a domain, and there is no need to query
             // the ldap server for it. Note that if we will add support in the future for
             // domain-less groups in the ldap server then this code will have to change in order
             // to fetch for them
-            if (group.getdomain() != null && !group.getdomain().isEmpty()) {
-                if (UsersDomainsCacheManagerService.getInstance().getDomain(group.getdomain()) == null) {
+            if (group.getDomain() != null && !group.getDomain().isEmpty()) {
+                if (UsersDomainsCacheManagerService.getInstance().getDomain(group.getDomain()) == null) {
                     log.errorFormat("Cannot query for group {0} from domain {1} because the domain is not configured. Please use the manage domains utility if you wish to add this domain.",
-                            group.getname(),
-                            group.getdomain());
+                            group.getName(),
+                            group.getDomain());
                 } else {
                     LdapGroup groupFromAD =
                             (LdapGroup) LdapFactory
-                                    .getInstance(group.getdomain())
+                                    .getInstance(group.getDomain())
                                     .runAdAction(AdActionType.GetAdGroupByGroupId,
-                                            new LdapSearchByIdParameters(group.getdomain(), group.getid()))
+                                            new LdapSearchByIdParameters(group.getDomain(), group.getId()))
                                     .getReturnValue();
 
-                    if (group.getstatus() == LdapRefStatus.Active
-                                && (groupFromAD == null || groupFromAD.getstatus() == LdapRefStatus.Inactive)) {
-                        group.setstatus(LdapRefStatus.Inactive);
-                        DbFacade.getInstance().getAdGroupDao().update(group);
+                    if (group.isActive() && (groupFromAD == null || !groupFromAD.isActive())) {
+                        group.setActive(false);
                     } else if (groupFromAD != null
-                                && (!StringUtils.equals(group.getname(), groupFromAD.getname())
-                                        || group.getstatus() != groupFromAD
-                                                .getstatus() || !StringUtils.equals(group.getDistinguishedName(),
-                                        groupFromAD.getDistinguishedName()))) {
-                        DbFacade.getInstance().getAdGroupDao().update(groupFromAD);
+                            && (!StringUtils.equals(group.getName(), groupFromAD.getname())
+                                    || group.isActive() != groupFromAD.isActive()
+                                    || !StringUtils.equals(group.getDistinguishedName(),
+                                    groupFromAD.getDistinguishedName()))) {
+                        group = new DbGroup(groupFromAD);
                     }
+                    DbFacade.getInstance().getDbGroupDao().update(group);
+
                     // memberOf is not persistent and should be set in the returned groups list from the LDAP queries
                     if (groupFromAD != null) {
-                        group.setMemberOf(groupFromAD.getMemberOf());
+                        group.setMemberOf(new HashSet<>(groupFromAD.getMemberOf()));
                     }
                 }
             }

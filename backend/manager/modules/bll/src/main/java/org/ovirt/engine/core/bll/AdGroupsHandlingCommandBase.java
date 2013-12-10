@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -40,7 +41,8 @@ public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersB
 
     protected LdapGroup getAdGroup() {
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
-            mGroup = DbFacade.getInstance().getAdGroupDao().get(getGroupId());
+            DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(getGroupId());
+            mGroup = new LdapGroup(dbGroup);
         }
         return mGroup;
     }
@@ -51,12 +53,12 @@ public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersB
     }
 
     public static LdapGroup initAdGroup(LdapGroup adGroup) {
-        LdapGroup dbGroup = DbFacade.getInstance().getAdGroupDao().get(adGroup.getid());
+        DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(adGroup.getid());
         if (dbGroup == null) {
-            DbFacade.getInstance().getAdGroupDao().save(adGroup);
-            dbGroup = adGroup;
+            dbGroup = new DbGroup(adGroup);
+            DbFacade.getInstance().getDbGroupDao().save(dbGroup);
         }
-        return dbGroup;
+        return new LdapGroup(dbGroup);
     }
 
     // TODO to be removed

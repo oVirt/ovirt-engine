@@ -1,9 +1,5 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.StringHelper;
-
 public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public enum UserOrGroup {
         User,
@@ -19,7 +15,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add("DEPARTMENT");
         mVerbs.add("GROUP");
         mVerbs.add("TITLE");
-        mVerbs.add("STATUS");
+        mVerbs.add("ACTIVE");
         mVerbs.add("ROLE");
         mVerbs.add("TAG");
         mVerbs.add("POOL");
@@ -34,7 +30,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("DEPARTMENT", String.class);
         getTypeDictionary().put("TITLE", String.class);
         getTypeDictionary().put("GROUP", String.class);
-        getTypeDictionary().put("STATUS", LdapRefStatus.class);
+        getTypeDictionary().put("ACTIVE", Boolean.class);
         getTypeDictionary().put("ROLE", String.class);
         getTypeDictionary().put("TAG", String.class);
         getTypeDictionary().put("POOL", String.class);
@@ -47,7 +43,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         columnNameDict.put("DEPARTMENT", "department");
         columnNameDict.put("TITLE", "role");
         columnNameDict.put("GROUP", "groups");
-        columnNameDict.put("STATUS", "status");
+        columnNameDict.put("ACTIVE", "active");
         columnNameDict.put("ROLE", "mla_role");
         columnNameDict.put("TAG", "tag_name");
         columnNameDict.put("POOL", "vm_pool_name");
@@ -62,30 +58,6 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
             return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
-        }
-    }
-
-    @Override
-    public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-        IConditionValueAutoCompleter retval = null;
-        if ("STATUS".equals(fieldName)) {
-            retval = new EnumValueAutoCompleter(LdapRefStatus.class);
-        }
-        return retval;
-    }
-
-    @Override
-    public void formatValue(String fieldName, Pair<String, String> pair, boolean caseSensitive) {
-        if ("STATUS".equals(fieldName)) {
-            String tmp = StringHelper.trim(pair.getSecond(), '\'');
-            if ("=".equals(pair.getFirst()) && "1".equals(tmp)) {
-                pair.setSecond(">=");
-            }
-            if ("!=".equals(pair.getFirst()) && "1".equals(tmp)) {
-                pair.setFirst("<");
-            }
-        } else {
-            super.formatValue(fieldName, pair, caseSensitive);
         }
     }
 }

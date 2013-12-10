@@ -2,15 +2,15 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>AdGroupDAO</code> defines a type that performs CRUD operations on instances of {@link LdapGroup}.
- *
- *
+ * Defines a type that performs CRUD operations on instances of
+ * {@link DbGroup}.
  */
-public interface AdGroupDAO extends DAO {
+public interface DbGroupDAO extends DAO, SearchDAO<DbGroup> {
     /**
      * Retrieves the instance with the specified id.
      *
@@ -18,7 +18,17 @@ public interface AdGroupDAO extends DAO {
      *            the group id
      * @return the group
      */
-    LdapGroup get(Guid id);
+    DbGroup get(Guid id);
+
+    /**
+     * Retrieves a group by domain name and external identifier.
+     *
+     * @param domain the name of the domain
+     * @param externalId the external identifier
+     * @return a reference to the group or <code>null</code> if no such group
+     *   can be found in the database
+     */
+    DbGroup getByExternalId(String domain, ExternalId externalId);
 
     /**
      * Retrieves the group with the specified name.
@@ -27,14 +37,14 @@ public interface AdGroupDAO extends DAO {
      *            the group name
      * @return the group
      */
-    LdapGroup getByName(String name);
+    DbGroup getByName(String name);
 
     /**
      * Retrieves all groups.
      *
      * @return the list of all groups
      */
-    List<LdapGroup> getAll();
+    List<DbGroup> getAll();
 
     /**
      * Saves the supplied group.
@@ -42,7 +52,7 @@ public interface AdGroupDAO extends DAO {
      * @param group
      *            the group
      */
-    void save(LdapGroup group);
+    void save(DbGroup group);
 
     /**
      * Updates the supplied group.
@@ -50,7 +60,7 @@ public interface AdGroupDAO extends DAO {
      * @param group
      *            the group
      */
-    void update(LdapGroup group);
+    void update(DbGroup group);
 
     /**
      * Removes the group with the specified id.

@@ -45,10 +45,10 @@ public class DbUser extends IVdcQueryable {
     private String note;
 
     /**
-     * The status of the user in the directory, 0 for inactive and any other
-     * value for active.
+     * This flag indicates if the user was available in the directory the last time that it was checked, so {@code true}
+     * means it was available and {@code false} means it wasn't.
      */
-    private int status;
+    private boolean active;
 
     /**
      * GUI flag only. Do not use for internal logic. The sole purpose of
@@ -89,7 +89,7 @@ public class DbUser extends IVdcQueryable {
         lastName = ldapUser.getSurName();
         department = ldapUser.getDepartment();
         email = ldapUser.getEmail();
-        status = LdapRefStatus.Active.getValue();
+        active = true;
         groupNames = ldapUser.getGroup();
         groupIds = ldapUser.getGroupIds();
         role = "";
@@ -184,16 +184,12 @@ public class DbUser extends IVdcQueryable {
         role = value;
     }
 
-    public int getStatus() {
-        return status;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setStatus(int value) {
-        status = value;
-    }
-
-    public LdapRefStatus getLdapStatus() {
-        return status == 0? LdapRefStatus.Inactive: LdapRefStatus.Active;
+    public void setActive(boolean value) {
+        active = value;
     }
 
     public boolean isGroup() {
@@ -235,7 +231,7 @@ public class DbUser extends IVdcQueryable {
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((note == null) ? 0 : note.hashCode());
         result = prime * result + ((role == null) ? 0 : role.hashCode());
-        result = prime * result + status;
+        result = prime * result + (active ? 1231 : 1237);
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
         result = prime * result + ((loginName == null) ? 0 : loginName.hashCode());
         return result;
@@ -263,7 +259,7 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(firstName, other.firstName)
                 && ObjectUtils.objectsEqual(note, other.note)
                 && ObjectUtils.objectsEqual(role, other.role)
-                && status == other.status
+                && active == other.active
                 && ObjectUtils.objectsEqual(lastName, other.lastName)
                 && ObjectUtils.objectsEqual(loginName, other.loginName));
     }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -12,7 +13,7 @@ public class LdapGroup extends IVdcQueryable {
 
     private String name;
 
-    private LdapRefStatus status;
+    private boolean active;
 
     private String domain;
 
@@ -21,10 +22,19 @@ public class LdapGroup extends IVdcQueryable {
     private String distinguishedName;
 
     public LdapGroup() {
-        this.status = LdapRefStatus.Active;
+        active = true;
         id = Guid.Empty;
         name = "";
         distinguishedName = "";
+    }
+
+    public LdapGroup(DbGroup dbGroup) {
+        id = dbGroup.getId();
+        name = dbGroup.getName();
+        domain = dbGroup.getDomain();
+        active = dbGroup.isActive();
+        distinguishedName = dbGroup.getDistinguishedName();
+        memberOf = new ArrayList<String>(dbGroup.getMemberOf());
     }
 
     public Guid getid() {
@@ -43,12 +53,12 @@ public class LdapGroup extends IVdcQueryable {
         this.name = value;
     }
 
-    public LdapRefStatus getstatus() {
-        return status;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setstatus(LdapRefStatus value) {
-        status = value;
+    public void setActive(boolean value) {
+        active = value;
     }
 
     public LdapGroup(Guid id, String name, String domain) {
@@ -70,7 +80,7 @@ public class LdapGroup extends IVdcQueryable {
      */
     public LdapGroup(Guid id) {
         this.id = id;
-        status = LdapRefStatus.Inactive;
+        active = false;
     }
 
     public String getdomain() {
@@ -111,7 +121,7 @@ public class LdapGroup extends IVdcQueryable {
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((memberOf == null) ? 0 : memberOf.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + (active ? 1231 : 1237);
         return result;
     }
 
@@ -132,6 +142,6 @@ public class LdapGroup extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(memberOf, other.memberOf)
                 && ObjectUtils.objectsEqual(name, other.name)
-                && status == other.status);
+                && active == other.active);
     }
 }

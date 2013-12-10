@@ -340,67 +340,78 @@
 
     <table name="ad_groups">
         <column>id</column>
+        <column>external_id</column>
         <column>name</column>
-        <column>status</column>
+        <column>active</column>
         <column>domain</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ0Q==</value>
             <value>administrators</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ0g==</value>
             <value>qa-membersgroup@testportal.redhat.com/test-all-users</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ0w==</value>
             <value>qb-membersgroup@testportal.redhat.com/test-all-users</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d4</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ1A==</value>
             <value>qc-membersgroup@testportal.redhat.com/test-all-users</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d5</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ1Q==</value>
             <value>qd-membersgroup@testportal.redhat.com/test-all-users</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d6</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ1g==</value>
             <value>qe-membersgroup@testportal.redhat.com/test-all-users</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d7</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ1w==</value>
             <value>qf-membersgroup@testportal.redhat.com/test-all-users</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d8</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ2A==</value>
             <value>qg-membersgroup@testportal.redhat.com/test-all-users</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d9</value>
+            <value>s5mUSoGrTsWCZuGbp8PJ2Q==</value>
             <value>qh-membersgroup@testportal.redhat.com/test-all-users</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
         <row>
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>m/fGQLYgRW+lUANI82ZUSw==</value>
             <value>philosophers</value>
-            <value>1</value>
+            <value>true</value>
             <value>rhel</value>
         </row>
     </table>
@@ -3394,7 +3405,7 @@
       <column>role</column>
       <column>email</column>
       <column>note</column>
-      <column>status</column>
+      <column>active</column>
       <column>last_admin_check_status</column>
       <column>group_ids</column>
       <row>
@@ -3409,7 +3420,7 @@
           <null />
           <null />
           <null />
-          <value>2</value>
+          <value>true</value>
           <value>0</value>
           <value>35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364</value>
       </row>
@@ -3425,7 +3436,7 @@
           <null />
           <null />
           <null />
-          <value>2</value>
+          <value>true</value>
           <value>0</value>
           <value>26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7</value>
       </row>

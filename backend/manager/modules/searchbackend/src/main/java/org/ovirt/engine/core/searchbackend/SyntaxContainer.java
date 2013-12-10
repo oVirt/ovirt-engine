@@ -176,6 +176,9 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         else if (SearchObjects.VDC_USER_OBJ_NAME.equals(obj) || SearchObjects.VDC_USER_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_USER_OBJ_NAME;
         }
+        else if (SearchObjects.VDC_GROUP_OBJ_NAME.equals(obj) || SearchObjects.VDC_GROUP_PLU_OBJ_NAME.equals(obj)) {
+            retval = SearchObjects.VDC_GROUP_OBJ_NAME;
+        }
         else if (SearchObjects.VDS_OBJ_NAME.equals(obj) || SearchObjects.VDS_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDS_OBJ_NAME;
         }

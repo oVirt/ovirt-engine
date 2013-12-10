@@ -10,6 +10,7 @@ public enum SearchType implements Serializable {
     AdUser,
     AdGroup,
     DBUser,
+    DBGroup,
     VmPools,
     Cluster,
     StoragePool,

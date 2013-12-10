@@ -1713,8 +1713,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Domain")
     String domainUserGeneral();
 
-    @DefaultStringValue("Status")
-    String statusUserGeneral();
+    @DefaultStringValue("Active")
+    String activeUserGeneral();
 
     @DefaultStringValue("E-mail")
     String emailUserGeneral();

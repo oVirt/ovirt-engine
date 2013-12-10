@@ -269,7 +269,8 @@ public class ADSyntaxChecker implements ISyntaxChecker {
         StringBuilder retval = new StringBuilder();
         if (syntax.getvalid()) {
             IConditionFieldAutoCompleter conditionFieldAC;
-            if (syntax.getSearchObjectStr().toUpperCase().contains("ADUSER")) {
+            final boolean isUsersQuery = syntax.getSearchObjectStr().contains("ADUSER");
+            if (isUsersQuery) {
                 retval.append("(&");
                 retval.append("(" + USER_ACCOUNT_TYPE + ")");
                 conditionFieldAC = new AdUserConditionFieldAutoCompleter();
@@ -284,7 +285,12 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                 switch (so.getType()) {
                 case CONDITION_FIELD:
                     if ("ALLNAMES".equals(so.getBody())) {
-                        phrase.append(" (|($GIVENNAME={value})(sn={value})($USER_ACCOUNT_NAME={value})($PRINCIPAL_NAME={value}))");
+                        if (isUsersQuery) {
+                            phrase.append("(|($GIVENNAME={value})(sn={value})($USER_ACCOUNT_NAME={value})($PRINCIPAL_NAME={value}))");
+                        }
+                        else {
+                            phrase.append("(|($CN={value}))");
+                        }
                         /**
                          * mark this search as findAll for later use
                          */

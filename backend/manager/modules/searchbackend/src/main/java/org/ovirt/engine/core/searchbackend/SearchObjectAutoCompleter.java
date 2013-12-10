@@ -19,6 +19,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.TEMPLATE_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.AUDIT_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.VDC_USER_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_GROUP_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.DISK_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME);
@@ -38,6 +39,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.TEMPLATE_OBJ_NAME);
         mVerbs.add(SearchObjects.AUDIT_OBJ_NAME);
         mVerbs.add(SearchObjects.VDC_USER_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_GROUP_OBJ_NAME);
         mVerbs.add(SearchObjects.VDC_CLUSTER_OBJ_NAME);
         mVerbs.add(SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
         mVerbs.add(SearchObjects.NETWORK_OBJ_NAME);
@@ -216,6 +218,13 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vdc_users_with_tags",
                             "user_id",
                             "name ASC "));
+                    put(SearchObjects.VDC_GROUP_OBJ_NAME, new EntitySearchInfo(
+                            null,
+                            new VdcGroupConditionFieldAutoCompleter(),
+                            "ad_groups",
+                            "ad_groups",
+                            "id",
+                            "name ASC "));
                     put(SearchObjects.VDS_OBJ_NAME, new EntitySearchInfo(new VdsCrossRefAutoCompleter(),
                             new VdsConditionFieldAutoCompleter(),
                             "vds",
@@ -332,6 +341,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             put(SearchObjects.INSTANCE_TYPE_PLU_OBJ_NAME, SearchObjects.INSTANCE_TYPE_OBJ_NAME);
             put(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME, SearchObjects.INSTANCE_TYPE_OBJ_NAME);
             put(SearchObjects.VDC_USER_PLU_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME);
+            put(SearchObjects.VDC_GROUP_PLU_OBJ_NAME, SearchObjects.VDC_GROUP_OBJ_NAME);
             put(SearchObjects.VDS_PLU_OBJ_NAME, SearchObjects.VDS_OBJ_NAME);
             put(SearchObjects.VM_PLU_OBJ_NAME, SearchObjects.VM_OBJ_NAME);
             put(SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME, SearchObjects.VDC_CLUSTER_OBJ_NAME);

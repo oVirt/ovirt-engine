@@ -42,6 +42,7 @@
 		<include name="searchbackend/VmTemplateConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/AuditLogConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/VdcUserConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/VdcGroupConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/PoolConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/ClusterConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/StoragePoolFieldAutoCompleter.java" />

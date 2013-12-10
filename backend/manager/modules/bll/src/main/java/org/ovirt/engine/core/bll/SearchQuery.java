@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -77,6 +78,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
         case DBUser: {
             returnValue = searchDbUsers();
+            break;
+        }
+        case DBGroup: {
+            returnValue = searchDbGroups();
             break;
         }
         case VDS: {
@@ -207,6 +212,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<DbUser> searchDbUsers() {
         return genericSearch(getDbFacade().getDbUserDao(), true, null);
+    }
+
+    private List<DbGroup> searchDbGroups() {
+        return genericSearch(getDbFacade().getDbGroupDao(), true, null);
     }
 
     private List<VmTemplate> searchVMTemplates() {

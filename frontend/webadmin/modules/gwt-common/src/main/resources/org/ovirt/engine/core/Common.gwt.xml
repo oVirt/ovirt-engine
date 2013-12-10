@@ -15,7 +15,6 @@
 		<include name="common/businessentities/LdapGroup.java" />
 		<include name="common/businessentities/BusinessEntitiesDefinitions.java" />
 		<include name="common/businessentities/LdapUser.java" />
-		<include name="common/businessentities/LdapRefStatus.java" />
 		<include name="common/businessentities/AuditLog.java" />
 		<include name="common/businessentities/Bookmark.java" />
 		<include name="common/businessentities/BaseDisk.java" />
@@ -32,6 +31,7 @@
 		<include name="common/businessentities/DisplayType.java" />
 		<include name="common/businessentities/event_subscriber.java" />
 		<include name="common/businessentities/event_subscriber_id.java" />
+		<include name="common/businessentities/DbGroup.java" />
 		<include name="common/businessentities/DbUser.java" />
 		<include name="common/businessentities/BootSequence.java" />
 		<include name="common/businessentities/IImage.java" />

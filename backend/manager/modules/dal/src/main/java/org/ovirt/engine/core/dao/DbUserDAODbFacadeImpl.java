@@ -32,7 +32,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setNote(rs.getString("note"));
             entity.setNote(rs.getString("note"));
             entity.setRole(rs.getString("role"));
-            entity.setStatus(rs.getInt("status"));
+            entity.setActive(rs.getBoolean("active"));
             entity.setLastName(rs.getString("surname"));
             entity.setId(getGuidDefaultEmpty(rs, "user_id"));
             entity.setLoginName(rs.getString("username"));
@@ -54,7 +54,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             addValue("name", user.getFirstName());
             addValue("note", user.getNote());
             addValue("role", user.getRole());
-            addValue("status", user.getStatus());
+            addValue("active", user.isActive());
             addValue("surname", user.getLastName());
             addValue("user_id", user.getId());
             addValue("username", user.getLoginName());

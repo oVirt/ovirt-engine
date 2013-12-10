@@ -1,26 +1,46 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.DomainGroupResource;
 import org.ovirt.engine.api.resource.DomainGroupsResource;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 
-public class BackendDomainGroupsResource extends AbstractBackendGroupsResource
-implements DomainGroupsResource {
+/**
+ * This resource corresponds to the groups that exist in a directory accessible to the engine. Those groups may or may
+ * not have been added to the engine database and the engine can't modify them, and thus the resource doesn't provide
+ * any method to modify the collection.
+ */
+public class BackendDomainGroupsResource
+        extends AbstractBackendSubResource<Group, LdapGroup>
+        implements DomainGroupsResource {
+    private static final String SEARCH_TEMPLATE = "ADGROUP@{0}: ";
 
-    private String directoryId;
+    private BackendDomainResource parent;
 
     public BackendDomainGroupsResource(String id, BackendDomainResource parent) {
-        super(id, parent);
-        this.directoryId = id;
+        super(id, Group.class, LdapGroup.class);
+        this.parent = parent;
     }
 
-    @Override
-    public Group addParents(Group user) {
-        user.setDomain(new Domain());
-        user.getDomain().setId(directoryId);
-        return user;
+    public void setParent(BackendDomainResource parent) {
+        this.parent = parent;
+    }
+
+    public BackendDomainResource getParent() {
+        return parent;
+    }
+
+    public Domain getDirectory() {
+        return parent.getDirectory();
     }
 
     @Override
@@ -29,9 +49,44 @@ implements DomainGroupsResource {
         return inject(new BackendDomainGroupResource(id, this));
     }
 
+    private String getSearchPattern() {
+        String constraint = QueryHelper.getConstraint(
+            getUriInfo(),
+            LdapGroup.class,
+            false
+        );
+        StringBuilder sb = new StringBuilder(128);
+        sb.append(MessageFormat.format(SEARCH_TEMPLATE, parent.getDirectory().getName()));
+        sb.append(StringUtils.isEmpty(constraint)? "allnames=*": constraint);
+        return sb.toString();
+    }
+
+    private List<LdapGroup> getDomainGroups() {
+        return asCollection(
+            LdapGroup.class,
+            getEntity(ArrayList.class, SearchType.AdGroup, getSearchPattern())
+        );
+    }
+
+    private Groups mapGroups(List<LdapGroup> entities) {
+        Groups collection = new Groups();
+        for (LdapGroup entity : entities) {
+            Group group = map(entity);
+            group = populate(group, entity);
+            group = addLinks(group, true);
+            collection.getGroups().add(group);
+        }
+        return collection;
+    }
+
     @Override
     public Groups list() {
-        return mapDomainGroupsCollection(getGroupsFromDomain());
+        return mapGroups(getDomainGroups());
+    }
+
+    @Override
+    protected Group doPopulate(Group model, LdapGroup entity) {
+        return model;
     }
 
 }
