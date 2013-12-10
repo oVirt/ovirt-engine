@@ -439,7 +439,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         getVm().setLastStartTime(new Date());
 
-        getVm().setCdPath(cdPathWindowsToLinux(chooseCd()));
+        final String cdPath = chooseCd();
+        if (StringUtils.isNotEmpty(cdPath)) {
+            log.infoFormat("Running VM with attached cd {0}", cdPath);
+        }
+        getVm().setCdPath(cdPathWindowsToLinux(cdPath));
 
         if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
             getVm().setFloppyPath(cdPathWindowsToLinux(getParameters().getFloppyPath()));
