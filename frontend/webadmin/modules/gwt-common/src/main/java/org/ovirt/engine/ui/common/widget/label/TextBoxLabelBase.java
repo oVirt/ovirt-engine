@@ -28,17 +28,22 @@ public abstract class TextBoxLabelBase<T> extends ValueBoxBase<T> {
 
     private T value;
 
-    public TextBoxLabelBase(Renderer<T> renderer) {
-        super(Document.get().createTextInputElement(), renderer, new Parser<T>() {
+    private TextBoxLabelBase(Renderer<T> renderer, Parser<T> parser) {
+        super(Document.get().createTextInputElement(), renderer, parser);
+        setReadOnly(true);
+        initStyles();
+        addHandlers();
+    }
+
+    @SuppressWarnings("unchecked")
+    public TextBoxLabelBase(Renderer<? super T> renderer) {
+        this((Renderer<T>) renderer, new Parser<T>() {
             @Override
             public T parse(CharSequence text) throws ParseException {
                 // No-op null parser, not used at runtime
                 return null;
             }
         });
-        setReadOnly(true);
-        initStyles();
-        addHandlers();
     }
 
     @Override

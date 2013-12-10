@@ -6,18 +6,17 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
 
 import com.google.gwt.text.shared.AbstractRenderer;
 
-public class DetailsRenderer<T extends ArrayList<TextBoxLabelBase<V>>, V> extends AbstractRenderer<T> {
+public class DetailsRenderer<V> extends AbstractRenderer<ArrayList<TextBoxLabelBase<V>>> {
 
     String[] delimiters;
 
     public DetailsRenderer(String... delimiters) {
         super();
-
         this.delimiters = delimiters;
     }
 
     @Override
-    public String render(T widgets) {
+    public String render(ArrayList<TextBoxLabelBase<V>> widgets) {
         StringBuilder formattedStr = new StringBuilder();
 
         for (int i = 0; i < widgets.size(); i++) {
