@@ -45,4 +45,24 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
+    <Match>
+      <Class name="org.ovirt.engine.ui.uicommonweb.models.CommonModel" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.uicommonweb.models.hosts.AsyncIterator$1" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModelErrorEventListener" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
 </FindBugsFilter>

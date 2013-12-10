@@ -297,4 +297,14 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.ui.common.uicommon.RdpPluginImpl" />
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
  </FindBugsFilter>
