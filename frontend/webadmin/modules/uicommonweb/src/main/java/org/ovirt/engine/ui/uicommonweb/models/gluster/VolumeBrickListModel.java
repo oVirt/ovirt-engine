@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -709,37 +711,42 @@ public class VolumeBrickListModel extends SearchableListModel {
         int replicaCount = removeBrickModel.getReplicaCount();
         int distributions = brickList.size() / replicaCount;
 
-        if (selectedBricks.size() != replicaCount && selectedBricks.size() != distributions)
-        {
-            return false;
-        }
+        // Key - No.of.bricks selected in sub-volume
+        // Value - No.of sub-volumes which has 'Key' no.of bricks selected
+        Map<Integer, Integer> selectedBricksToSubVolumesMap = new HashMap<Integer, Integer>();
 
-        for (int i = 0; i < distributions; i++)
-        {
-            List<GlusterBrickEntity> subBrickList =
-                    brickList.subList((i * replicaCount), (i * replicaCount) + replicaCount);
-            if (subBrickList.containsAll(selectedBricks))
-            {
-                return true;
-            }
-            int count = 0;
-            for (GlusterBrickEntity brick : selectedBricks)
-            {
-                if (subBrickList.contains(brick))
-                {
-                    count++;
+        for (int distIndex = 0; distIndex < distributions; distIndex++) {
+
+            List<GlusterBrickEntity> bricksInSubVolumeList =
+                    brickList.subList((distIndex * replicaCount), (distIndex * replicaCount) + replicaCount);
+
+            int selectedBricksInSubVolume = 0;
+            for (GlusterBrickEntity brick : bricksInSubVolumeList) {
+                if (selectedBricks.contains(brick)) {
+                    selectedBricksInSubVolume++;
                 }
             }
-            if (count == 1 && i == (distributions - 1))
-            {
+            if (selectedBricksInSubVolume > 0) {
+                if (!selectedBricksToSubVolumesMap.containsKey(selectedBricksInSubVolume)) {
+                    selectedBricksToSubVolumesMap.put(selectedBricksInSubVolume, 0);
+                }
+                selectedBricksToSubVolumesMap.put(selectedBricksInSubVolume, selectedBricksToSubVolumesMap.get(selectedBricksInSubVolume) + 1);
+            }
+        }
+
+        // If the size of the map is more than 1, then the user has selected different no.of bricks from different
+        // sub-volumes, hence not valid for removal.
+        if (selectedBricksToSubVolumesMap.size() == 1) {
+            // If the user has selected once brick from each sub-volume, then replica count needs to be reduced
+            if (selectedBricksToSubVolumesMap.containsKey(1) && selectedBricksToSubVolumesMap.get(1) == distributions) {
                 removeBrickModel.setReplicaCount(removeBrickModel.getReplicaCount() - 1);
                 removeBrickModel.setReduceReplica(true);
                 return true;
             }
-            else if (count > 1)
-            {
-                return false;
+            else if (selectedBricksToSubVolumesMap.containsKey(replicaCount)) {
+                return true;
             }
+            return false;
         }
 
         return false;
