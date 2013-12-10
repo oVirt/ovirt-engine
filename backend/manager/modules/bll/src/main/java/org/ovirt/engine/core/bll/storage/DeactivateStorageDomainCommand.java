@@ -185,7 +185,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             });
 
             StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
-            runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
             getStorageDomain().getStorageDynamicData().setAvailableDiskSize(null);
             getStorageDomain().getStorageDynamicData().setUsedDiskSize(null);
         }
@@ -198,26 +197,31 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                             getStoragePool().getmaster_domain_version()));
         }
         freeLock();
+
+        if (_isLastMaster) {
+            if (spm != null) {
+                final VDSReturnValue stopSpmReturnValue = runVdsCommand(VDSCommandType.SpmStopOnIrs,
+                        new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
+                if (!stopSpmReturnValue.getSucceeded()) {
+                    // no need to continue because DisconnectStoragePool will
+                    // fail if host is SPM
+                    log.error("Aborting execution due to failure stopping SPM." +
+                            " Stop SPM failed due to "
+                            + stopSpmReturnValue.getExceptionString());
+                    setSucceeded(false);
+                    return;
+                }
+                runVdsCommand(VDSCommandType.DisconnectStoragePool,
+                        new DisconnectStoragePoolVDSCommandParameters(spm.getId(),
+                                getStoragePool().getId(), spm.getVdsSpmId()));
+            }
+            runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
+        }
+
         if (!getParameters().isInactive()) {
             runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
                     _isLastMaster,
                     _newMasterStorageDomainId);
-        }
-        if (_isLastMaster && spm != null) {
-            final VDSReturnValue stopSpmReturnValue = runVdsCommand(VDSCommandType.SpmStopOnIrs,
-                    new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
-            if (!stopSpmReturnValue.getSucceeded()) {
-                // no need to continue because DisconnectStoragePool will
-                // fail if host is SPM
-                log.error("Aborting execution due to failure stopping SPM." +
-                        " Stop SPM failed due to "
-                        + stopSpmReturnValue.getExceptionString());
-                setSucceeded(false);
-                return;
-            }
-            runVdsCommand(VDSCommandType.DisconnectStoragePool,
-                    new DisconnectStoragePoolVDSCommandParameters(spm.getId(),
-                            getStoragePool().getId(), spm.getVdsSpmId()));
         }
 
         if (!getParameters().isInactive() && spm != null) {
