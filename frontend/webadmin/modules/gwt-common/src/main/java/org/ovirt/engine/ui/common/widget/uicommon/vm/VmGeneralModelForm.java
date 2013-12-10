@@ -75,13 +75,13 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
             public boolean getIsAvailable() {
                 return getModel().isQuotaAvailable();
             }
-        }).withDefaultValue(constants.notConfigured(), new DefaultValueCondition() {
+        }.withDefaultValue(constants.notConfigured(), new DefaultValueCondition() {
             @Override
             public boolean showDefaultValue() {
                 String quotaName = getModel().getQuotaName();
                 return quotaName == null || "".equals(quotaName);
             }
-        });
+        }));
         formBuilder.addFormItem(new FormItem(constants.domainVm(), domain, 6, 2) {
             @Override
             public boolean getIsAvailable() {

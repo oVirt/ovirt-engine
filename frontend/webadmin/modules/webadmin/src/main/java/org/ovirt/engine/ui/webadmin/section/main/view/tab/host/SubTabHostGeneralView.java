@@ -136,29 +136,29 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 7);
 
-        formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 2, 0, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.libvirtVersionHostGeneral(), libvirtVersion, 3, 0, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 5, 0, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 6, 0, glusterSupported));
+        formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 0).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 0, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.libvirtVersionHostGeneral(), libvirtVersion, 0, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 0).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 0, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 0, glusterSupported).withAutoPlacement());
 
-        formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, 1, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.cpuNameHostGeneral(), cpuName, 2, 1, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 3, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 4, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 5, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 6, 1));
+        formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.cpuNameHostGeneral(), cpuName, 1, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 1).withAutoPlacement());
 
-        formBuilder.addFormItem(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 0, 2));
-        formBuilder.addFormItem(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 1, 2));
-        formBuilder.addFormItem(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 2, 2));
-        formBuilder.addFormItem(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 3, 2, virtSupported));
-        formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 4, 2));
-        formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 5, 2));
-        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 6, 2, virtSupported));
+        formBuilder.addFormItem(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 2).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 2).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 2).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 2, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 2, virtSupported).withAutoPlacement());
     }
 
     void initMemorySizeLabels() {

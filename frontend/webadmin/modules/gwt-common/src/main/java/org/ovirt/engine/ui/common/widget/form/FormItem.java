@@ -18,9 +18,11 @@ public class FormItem {
 
     }
 
+    private static final int UNASSIGNED_ROW = -1;
+
     private AbstractFormPanel formPanel;
 
-    private final int row;
+    private int row;
     private final int column;
 
     private final String isAvailablePropertyName;
@@ -32,8 +34,21 @@ public class FormItem {
     private TextBoxLabel defaultValueLabel;
     private DefaultValueCondition defaultValueCondition;
 
+    private boolean autoPlacement = false;
+    private int autoPlacementRow = UNASSIGNED_ROW;
+
     public FormItem(int row, int column) {
         this("", new TextBoxLabel(), row, column); //$NON-NLS-1$
+    }
+
+    public FormItem(String name, Widget valueWidget, int column) {
+        this(name, valueWidget, 0 , column, null, true);
+        withAutoPlacement();
+    }
+
+    public FormItem(String name, Widget valueWidget, int column, boolean isAvailable) {
+        this(name, valueWidget, 0 , column, null, isAvailable);
+        withAutoPlacement();
     }
 
     public FormItem(String name, Widget valueWidget, int row, int column) {
@@ -68,14 +83,46 @@ public class FormItem {
         }
     }
 
+    /**
+     * Use {@code defaultValue} based on dynamic {@code defaultValueCondition}.
+     */
     public FormItem withDefaultValue(String defaultValue, DefaultValueCondition defaultValueCondition) {
         this.defaultValueLabel = new TextBoxLabel(defaultValue);
         this.defaultValueCondition = defaultValueCondition;
         return this;
     }
 
+    /**
+     * Automatically place this form item into next available row for the given column.
+     * <p>
+     * This works only when the form item is {@linkplain #getIsAvailable available} when being added to the
+     * {@link AbstractFormPanel}. Otherwise, the form item is marked as dead and will be discarded by the form panel.
+     *
+     * @see #setFormPanel(AbstractFormPanel)
+     */
+    public FormItem withAutoPlacement() {
+        this.autoPlacement = true;
+        return this;
+    }
+
     public void setFormPanel(AbstractFormPanel formPanel) {
         this.formPanel = formPanel;
+
+        // Compute autoPlacementRow if this item is available
+        if (autoPlacement && getIsAvailable()) {
+            this.autoPlacementRow = formPanel.getNextAvailableRow(column);
+        }
+    }
+
+    /**
+     * If {@code false}, this form item shouldn't be processed by the {@link AbstractFormPanel}.
+     */
+    public boolean isValid() {
+        if (autoPlacement && autoPlacementRow == UNASSIGNED_ROW) {
+            // Failed to assign autoPlacementRow
+            return false;
+        }
+        return true;
     }
 
     public void update() {
@@ -84,7 +131,7 @@ public class FormItem {
     }
 
     public int getRow() {
-        return row;
+        return (autoPlacement && autoPlacementRow != UNASSIGNED_ROW) ? autoPlacementRow : row;
     }
 
     public int getColumn() {
@@ -106,10 +153,6 @@ public class FormItem {
 
     public String getName() {
         return name;
-    }
-
-    public Widget getValueWidget() {
-        return valueWidget;
     }
 
     /**

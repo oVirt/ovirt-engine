@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.widget.form;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -21,6 +23,21 @@ public abstract class AbstractFormPanel extends Composite {
     // List of detail views, each one representing a column of form items
     private final List<Grid> detailViews = new ArrayList<Grid>();
 
+    // Used with form item auto placement feature
+    private Map<Integer, Integer> nextAvailableRowForColumn = new HashMap<Integer, Integer>();
+
+    public int getNextAvailableRow(int column) {
+        if(!nextAvailableRowForColumn.containsKey(column)) {
+            nextAvailableRowForColumn.put(column, 0);
+        }
+        return nextAvailableRowForColumn.get(column);
+    }
+
+    void incNextAvailableRow(int column) {
+        int curRow = getNextAvailableRow(column);
+        nextAvailableRowForColumn.put(column, curRow + 1);
+    }
+
     /**
      * Adds new detail view (column) to the form panel.
      */
@@ -38,9 +55,6 @@ public abstract class AbstractFormPanel extends Composite {
      * Adds new item to the form panel.
      */
     public void addFormItem(FormItem item) {
-        // Adopt item
-        item.setFormPanel(this);
-
         // Create item label
         Label itemLabel = new Label(item.getName());
         itemLabel.setStyleName("formPanel_detailViewItemName"); //$NON-NLS-1$
@@ -51,6 +65,9 @@ public abstract class AbstractFormPanel extends Composite {
 
         // Update the item
         updateFormItem(item);
+
+        // Update auto placement data
+        incNextAvailableRow(item.getColumn());
     }
 
     /**

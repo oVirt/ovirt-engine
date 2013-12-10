@@ -85,13 +85,13 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
             public boolean getIsAvailable() {
                 return getModel().isQuotaAvailable();
             }
-        }).withDefaultValue(constants.notConfigured(), new DefaultValueCondition() {
+        }.withDefaultValue(constants.notConfigured(), new DefaultValueCondition() {
             @Override
             public boolean showDefaultValue() {
                 String quotaName = getModel().getQuotaName();
                 return quotaName == null || "".equals(quotaName);
             }
-        });
+        }));
     }
 
     @Override

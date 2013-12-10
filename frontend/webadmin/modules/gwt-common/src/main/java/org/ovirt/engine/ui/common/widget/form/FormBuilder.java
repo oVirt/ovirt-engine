@@ -34,17 +34,21 @@ public class FormBuilder {
     /**
      * Adds new item to the form panel.
      */
-    public FormItem addFormItem(FormItem item) {
-        formPanel.addFormItem(item);
-        items.add(item);
+    public void addFormItem(FormItem item) {
+        // Adopt item
+        item.setFormPanel(formPanel);
 
-        // Update property name mapping, if necessary
-        String isAvailablePropertyName = item.getIsAvailablePropertyName();
-        if (isAvailablePropertyName != null) {
-            getItemsForPropertyName(isAvailablePropertyName).add(item);
+        // Validate and add item
+        if (item.isValid()) {
+            formPanel.addFormItem(item);
+            items.add(item);
+
+            // Update property name mapping, if necessary
+            String isAvailablePropertyName = item.getIsAvailablePropertyName();
+            if (isAvailablePropertyName != null) {
+                getItemsForPropertyName(isAvailablePropertyName).add(item);
+            }
         }
-
-        return item;
     }
 
     List<FormItem> getItemsForPropertyName(String propertyName) {
