@@ -404,7 +404,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
                 GlusterAsyncTask asyncTask = volume.getAsyncTask();
                 if (asyncTask != null) {
-                    allowStartRebalance = allowStartRebalance && asyncTask.getStatus() != JobExecutionStatus.STARTED;
+                    allowStartRebalance =
+                            allowStartRebalance &&
+                                    asyncTask.getStatus() == null ? asyncTask.getJobStatus() != JobExecutionStatus.STARTED
+                                    : asyncTask.getStatus() != JobExecutionStatus.STARTED;
                 }
             }
 
