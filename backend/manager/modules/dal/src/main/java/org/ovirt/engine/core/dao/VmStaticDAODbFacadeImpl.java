@@ -94,7 +94,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("instance_type_id", vm.getInstanceTypeId())
                 .addValue("image_type_id", vm.getImageTypeId())
                 .addValue("original_template_name", vm.getOriginalTemplateName())
-                .addValue("original_template_id", vm.getOriginalTemplateGuid());
+                .addValue("original_template_id", vm.getOriginalTemplateGuid())
+                .addValue("migration_downtime", vm.getMigrationDowntime());
     }
 
     @Override

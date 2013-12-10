@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -181,6 +182,17 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     // not persisted to db
     private Date exportDate;
 
+    /**
+     * Maximum allowed downtime for live migration in milliseconds.
+     * Value of null indicates that the {@link ConfigValues.DefaultMaximumMigrationDowntime} value will be used.
+     *
+     * Special value of 0 for migration downtime specifies that no value will be sent to VDSM and the default
+     * VDSM behavior will be used.
+     */
+    @EditableField
+    @Min(value = 0, message = "VALIDATION.VM.MIGRATION_DOWNTIME_RANGE")
+    private Integer migrationDowntime;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<VmNetworkInterface>();
@@ -286,7 +298,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getMigrationSupport(),
                 vmBase.isAllowConsoleReconnect(),
                 vmBase.getDedicatedVmForVds(),
-                vmBase.getDefaultDisplayType());
+                vmBase.getDefaultDisplayType(),
+                vmBase.getMigrationDowntime());
     }
 
     public VmBase(
@@ -330,7 +343,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             MigrationSupport migrationSupport,
             boolean allowConsoleReconnect,
             Guid dedicatedVmForVds,
-            DisplayType defaultDisplayType) {
+            DisplayType defaultDisplayType,
+            Integer migrationDowntime) {
         this();
         this.name = name;
         this.id = id;
@@ -373,6 +387,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.migrationSupport = migrationSupport;
         this.allowConsoleReconnect = allowConsoleReconnect;
         this.dedicatedVmForVds = dedicatedVmForVds;
+        this.migrationDowntime = migrationDowntime;
     }
 
     public long getDbGeneration() {
@@ -716,6 +731,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
         result = prime * result + ((createdByUserId == null) ? 0 : createdByUserId.hashCode());
         result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
+        result = prime * result + ((migrationDowntime == null) ? 0 : migrationDowntime.hashCode());
         return result;
     }
 
@@ -765,7 +781,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(tunnelMigration, other.tunnelMigration)
                 && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
                 && ObjectUtils.objectsEqual(createdByUserId, other.createdByUserId)
-                && cpuShares == other.cpuShares);
+                && cpuShares == other.cpuShares
+                && ObjectUtils.objectsEqual(migrationDowntime, other.migrationDowntime));
     }
 
     public Guid getQuotaId() {
@@ -887,5 +904,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setSsoMethod(SsoMethod ssoMethod) {
         this.ssoMethod = ssoMethod;
+    }
+
+    public void setMigrationDowntime(Integer migrationDowntime) {
+        this.migrationDowntime = migrationDowntime;
+    }
+
+    public Integer getMigrationDowntime() {
+        return this.migrationDowntime;
     }
 }

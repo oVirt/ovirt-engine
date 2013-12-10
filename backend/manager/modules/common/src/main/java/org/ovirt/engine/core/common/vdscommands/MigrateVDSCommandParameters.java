@@ -12,9 +12,10 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private boolean tunnelMigration;
     private String dstQemu;
     private Version clusterVersion;
+    private Integer migrationDowntime;
 
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId, String dstHost,
-            MigrationMethod migrationMethod, boolean tunnelMigration, String dstQemu, Version clusterVersion) {
+            MigrationMethod migrationMethod, boolean tunnelMigration, String dstQemu, Version clusterVersion, int migrationDowntime) {
         super(vdsId, vmId);
         _srcHost = srcHost;
         _dstVdsId = dstVdsId;
@@ -23,6 +24,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.tunnelMigration = tunnelMigration;
         this.dstQemu = dstQemu;
         this.clusterVersion = clusterVersion;
+        this.migrationDowntime = migrationDowntime;
     }
 
     public String getSrcHost() {
@@ -49,19 +51,24 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return dstQemu;
     }
 
+    public int getMigrationDowntime() {
+        return migrationDowntime;
+    }
+
     public MigrateVDSCommandParameters() {
         _migrationMethod = MigrationMethod.OFFLINE;
     }
 
     @Override
     public String toString() {
-        return String.format("%s, srcHost=%s, dstVdsId=%s, dstHost=%s, migrationMethod=%s, tunnelMigration=%s",
+        return String.format("%s, srcHost=%s, dstVdsId=%s, dstHost=%s, migrationMethod=%s, tunnelMigration=%s, migrationDowntime=%s",
                 super.toString(),
                 getSrcHost(),
                 getDstVdsId(),
                 getDstHost(),
                 getMigrationMethod(),
-                isTunnelMigration());
+                isTunnelMigration(),
+                getMigrationDowntime());
     }
 
     public void setClusterVersion(Version clusterVersion) {

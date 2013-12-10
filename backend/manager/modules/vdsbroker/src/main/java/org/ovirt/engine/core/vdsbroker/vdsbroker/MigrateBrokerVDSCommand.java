@@ -33,6 +33,10 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         if (Config.<Boolean> getValue(ConfigValues.AbortMigrationOnError, parameters.getClusterVersion().getValue())) {
             migrationInfo.put("abortOnError", Boolean.TRUE.toString());
         }
+
+        if (parameters.getMigrationDowntime() != 0) {
+            migrationInfo.put(VdsProperties.MIGRATION_DOWNTIME, Integer.toString(parameters.getMigrationDowntime()));
+        }
     }
 
     @Override

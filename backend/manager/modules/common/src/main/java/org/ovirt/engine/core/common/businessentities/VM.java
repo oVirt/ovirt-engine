@@ -1675,4 +1675,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         getDiskList().clear();
         getDiskMap().clear();
     }
+
+    public void setMigrationDowntime(Integer migrationDowntime) {
+        vmStatic.setMigrationDowntime(migrationDowntime);
+    }
+
+    public Integer getMigrationDowntime() {
+        return vmStatic.getMigrationDowntime();
+    }
 }

@@ -192,7 +192,8 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("min_allocated_mem", template.getMinAllocatedMem())
                 .addValue("is_run_and_pause", template.isRunAndPause())
                 .addValue("created_by_user_id", template.getCreatedByUserId())
-                .addValue("template_type", template.getTemplateType().name());
+                .addValue("template_type", template.getTemplateType().name())
+                .addValue("migration_downtime", template.getMigrationDowntime());
     }
 
     @Override
