@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -41,7 +41,7 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
         for (Permissions permission : DbFacade.getInstance()
                 .getPermissionDao()
                 .getAllDirectPermissionsForAdElement(getAdUserId())) {
-            PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes(permission);
+            PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters(permission);
             tempVar.setShouldBeLogged(false);
             Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
                     tempVar,

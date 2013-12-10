@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemovePermissionCommand<T extends PermissionsOperationsParametes> extends PermissionsCommandBase<T> {
+public class RemovePermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
 
     /**
      * Constructor for command creation when compensation is applied on startup

@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
@@ -109,7 +109,7 @@ public class BackendAssignedPermissionsResource
 
     @Override
     public Response performRemove(String id) {
-        return performAction(VdcActionType.RemovePermission, new PermissionsOperationsParametes(getPermissions(id)));
+        return performAction(VdcActionType.RemovePermission, new PermissionsOperationsParameters(getPermissions(id)));
     }
 
     @Override
@@ -192,22 +192,22 @@ public class BackendAssignedPermissionsResource
      * @pre completeness of "user|group.id" already validated if not
      * user sub-collection
      */
-    protected PermissionsOperationsParametes getPrincipal(Permissions entity, Permission permission) {
-        PermissionsOperationsParametes ret = null;
+    protected PermissionsOperationsParameters getPrincipal(Permissions entity, Permission permission) {
+        PermissionsOperationsParameters ret = null;
         if (isUserSubCollection() || permission.isSetUser()) {
             DbUser user = new DbUser();
             user.setId(isUserSubCollection()
                            ? targetId
                            : asGuid(permission.getUser().getId()));
             user.setDomain(getCurrent().get(Principal.class).getDomain());
-            ret = new PermissionsOperationsParametes(entity, user);
+            ret = new PermissionsOperationsParameters(entity, user);
         } else if (isGroupSubCollection() || permission.isSetGroup()) {
             LdapGroup group = new LdapGroup();
             group.setid(isGroupSubCollection()
                         ? targetId
                         : asGuid(permission.getGroup().getId()));
             group.setdomain(getCurrent().get(Principal.class).getDomain());
-            ret = new PermissionsOperationsParametes(entity, group);
+            ret = new PermissionsOperationsParameters(entity, group);
         }
         return ret;
     }

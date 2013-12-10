@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -183,7 +183,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                 setVmId(vmToAttach);
                 Permissions perm = new Permissions(getAdUserId(), PredefinedRoles.ENGINE_USER.getId(), vmToAttach,
                         VdcObjectType.VM);
-                PermissionsOperationsParametes permParams = new PermissionsOperationsParametes(perm);
+                PermissionsOperationsParameters permParams = new PermissionsOperationsParameters(perm);
                 permParams.setShouldBeLogged(false);
                 permParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
                 VdcReturnValueBase vdcReturnValueFromAddPerm = Backend.getInstance().runInternalAction(VdcActionType.AddPermission,

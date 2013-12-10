@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 
-public class RemoveSystemPermissionCommand<T extends PermissionsOperationsParametes> extends RemovePermissionCommand<T> {
+public class RemoveSystemPermissionCommand<T extends PermissionsOperationsParameters> extends RemovePermissionCommand<T> {
 
     public RemoveSystemPermissionCommand(T parameters) {
         super(parameters);

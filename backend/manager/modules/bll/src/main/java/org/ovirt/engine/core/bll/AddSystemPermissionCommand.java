@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 
-public class AddSystemPermissionCommand<T extends PermissionsOperationsParametes> extends AddPermissionCommand<T> {
+public class AddSystemPermissionCommand<T extends PermissionsOperationsParameters> extends AddPermissionCommand<T> {
 
     public AddSystemPermissionCommand(T parameters) {
         super(parameters);

@@ -13,7 +13,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
@@ -69,7 +69,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
                                    new Object[] {"users:", SearchType.DBUser},
                                    getUsers());
         setUriInfo(setUpActionExpectations(VdcActionType.RemovePermission,
-                                           PermissionsOperationsParametes.class,
+                                           PermissionsOperationsParameters.class,
                                            new String[] { "Permission.Id" },
                                            new Object[] { GUIDS[0] },
                                            true,
@@ -113,7 +113,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(2, GUIDS[0], getEntity(0));
         setUriInfo(setUpActionExpectations(VdcActionType.RemovePermission,
-                                           PermissionsOperationsParametes.class,
+                                           PermissionsOperationsParameters.class,
                                            new String[] { "Permission.Id" },
                                            new Object[] { GUIDS[0] },
                                            canDo,
@@ -130,7 +130,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     public void testAddPermission() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(VdcActionType.AddPermission,
-                                  PermissionsOperationsParametes.class,
+                                  PermissionsOperationsParameters.class,
                                   new String[] { principalParameterName,
                                                  "Permission.ad_element_id",
                                                  "Permission.ObjectId",

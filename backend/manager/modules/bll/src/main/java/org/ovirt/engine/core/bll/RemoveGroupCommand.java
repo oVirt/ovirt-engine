@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -29,7 +29,7 @@ public class RemoveGroupCommand<T extends AdElementParametersBase> extends AdGro
     @Override
     protected void executeCommand() {
         for (Permissions permission : getPermissionDAO().getAllDirectPermissionsForAdElement(getAdGroup().getid())) {
-            PermissionsOperationsParametes param = new PermissionsOperationsParametes(permission);
+            PermissionsOperationsParameters param = new PermissionsOperationsParameters(permission);
             param.setSessionId(getParameters().getSessionId());
             getBackend().runInternalAction(VdcActionType.RemovePermission,
                     param,

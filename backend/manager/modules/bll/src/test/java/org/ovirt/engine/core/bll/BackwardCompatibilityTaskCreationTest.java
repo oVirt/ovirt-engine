@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
@@ -176,9 +176,9 @@ public class BackwardCompatibilityTaskCreationTest {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testExceptionForCommandWithNoTasks() {
-        PermissionsOperationsParametes params = new PermissionsOperationsParametes();
-        AddPermissionCommand<PermissionsOperationsParametes> cmd = spy(
-                new AddPermissionCommand<PermissionsOperationsParametes>(params));
+        PermissionsOperationsParameters params = new PermissionsOperationsParameters();
+        AddPermissionCommand<PermissionsOperationsParameters> cmd = spy(
+                new AddPermissionCommand<PermissionsOperationsParameters>(params));
         cmd.concreteCreateTask(Guid.Empty, nextAsyncTaskCreationInfo(), VdcActionType.Unknown);
     }
 

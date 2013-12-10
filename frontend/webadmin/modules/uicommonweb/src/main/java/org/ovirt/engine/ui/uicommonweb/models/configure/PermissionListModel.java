@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.configure;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -176,7 +176,7 @@ public class PermissionListModel extends SearchableListModel
             ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object perm : getSelectedItems())
             {
-                PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();
+                PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permissions) perm);
                 list.add(tempVar);
             }
@@ -247,14 +247,14 @@ public class PermissionListModel extends SearchableListModel
 
             if (user.isGroup())
             {
-                PermissionsOperationsParametes tempVar3 = new PermissionsOperationsParametes();
+                PermissionsOperationsParameters tempVar3 = new PermissionsOperationsParameters();
                 tempVar3.setPermission(perm);
-                tempVar3.setAdGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
+                tempVar3.setGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
                 list.add(tempVar3);
             }
             else
             {
-                PermissionsOperationsParametes tempVar4 = new PermissionsOperationsParametes();
+                PermissionsOperationsParameters tempVar4 = new PermissionsOperationsParameters();
                 tempVar4.setPermission(perm);
                 tempVar4.setUser(user);
                 list.add(tempVar4);

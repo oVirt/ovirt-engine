@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class PermissionsCommandBase<T extends PermissionsOperationsParametes> extends CommandBase<T> {
+public abstract class PermissionsCommandBase<T extends PermissionsOperationsParameters> extends CommandBase<T> {
 
     /**
      * Constructor for command creation when compensation is applied on startup

@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public class AddPermissionCommand<T extends PermissionsOperationsParametes> extends PermissionsCommandBase<T> {
+public class AddPermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
 
     public AddPermissionCommand(T parameters) {
         super(parameters);
@@ -54,14 +54,14 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
                 || (getParameters().getUser() != null && !getParameters().getUser()
                         .getId()
                         .equals(adElementId))
-                || (getParameters().getAdGroup() != null && !getParameters().getAdGroup().getid().equals(adElementId))) {
+                || (getParameters().getGroup() != null && !getParameters().getGroup().getid().equals(adElementId))) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_USER_ID_MISMATCH);
             return false;
         }
         // if user and group not sent check user/group is in the db in order to
         // give permission
         if (getParameters().getUser() == null
-                && getParameters().getAdGroup() == null
+                && getParameters().getGroup() == null
                 && getDbUserDAO().get(adElementId) == null
                 && getAdGroupDAO().get(adElementId) == null) {
             getReturnValue().getCanDoActionMessages().add(VdcBllMessages.USER_MUST_EXIST_IN_DB.toString());
@@ -104,8 +104,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
                  );
             }
             // try to add group to db if adGroup sent
-            else if (getParameters().getAdGroup() != null) {
-                _adGroup = AdGroupsHandlingCommandBase.initAdGroup(getParameters().getAdGroup());
+            else if (getParameters().getGroup() != null) {
+                _adGroup = AdGroupsHandlingCommandBase.initAdGroup(getParameters().getGroup());
             }
 
             paramPermission.setId(Guid.newGuid());

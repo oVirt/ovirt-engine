@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -246,7 +246,7 @@ public class QuotaUserListModel extends SearchableListModel {
         model.startProgress(null);
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        PermissionsOperationsParametes permissionParams;
+        PermissionsOperationsParameters permissionParams;
         for (DbUser user : items)
         {
             Permissions tempVar2 = new Permissions();
@@ -256,10 +256,10 @@ public class QuotaUserListModel extends SearchableListModel {
             perm.setObjectId(((Quota) getEntity()).getId());
             perm.setObjectType(VdcObjectType.Quota);
 
-            permissionParams = new PermissionsOperationsParametes();
+            permissionParams = new PermissionsOperationsParameters();
             if (user.isGroup())
             {
-                permissionParams.setAdGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
+                permissionParams.setGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
             }
             else
             {
@@ -297,7 +297,7 @@ public class QuotaUserListModel extends SearchableListModel {
             ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object perm : getSelectedItems())
             {
-                PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();
+                PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permissions) perm);
                 list.add(tempVar);
             }
