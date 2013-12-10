@@ -310,7 +310,13 @@ public class VolumeModel extends Model {
         volumeBrickModel.getStripeCount().setIsChangable(true);
         volumeBrickModel.getStripeCount().setIsAvailable(getStripeCount().getIsAvailable());
 
-        volumeBrickModel.getForce().setEntity(isForceAddBricks());
+        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        if (cluster != null) {
+            boolean isForceAddBrickSupported =
+                    GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getcompatibility_version());
+            volumeBrickModel.getForce().setIsAvailable(isForceAddBrickSupported);
+            volumeBrickModel.getForce().setEntity(isForceAddBricks() && isForceAddBrickSupported);
+        }
 
         setWindow(volumeBrickModel);
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());

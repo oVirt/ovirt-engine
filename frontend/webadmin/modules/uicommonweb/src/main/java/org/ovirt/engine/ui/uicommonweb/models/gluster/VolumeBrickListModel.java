@@ -321,7 +321,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     private void addBricks(GlusterVolumeEntity volumeEntity) {
 
-        VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
+        final VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
 
         volumeBrickModel.getReplicaCount().setEntity(volumeEntity.getReplicaCount());
         volumeBrickModel.getReplicaCount().setIsChangable(true);
@@ -344,6 +344,8 @@ public class VolumeBrickListModel extends SearchableListModel {
             public void onSuccess(Object model, Object result)
             {
                 VDSGroup cluster = (VDSGroup) result;
+                volumeBrickModel.getForce()
+                        .setIsAvailable(GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getcompatibility_version()));
 
                 AsyncQuery _asyncQueryInner = new AsyncQuery();
                 _asyncQueryInner.setModel(model);
