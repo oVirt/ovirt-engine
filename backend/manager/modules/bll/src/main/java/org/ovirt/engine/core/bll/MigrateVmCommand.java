@@ -87,7 +87,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     protected void failedToMigrate() {
         try {
             determineMigrationFailureForAuditLog();
-            decreasePendingVms(getDestinationVds().getId());
             _isRerun = false;
             setSucceeded(false);
             log();
@@ -131,14 +130,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     protected void executeVmCommand() {
         initVdss();
         perform();
-        processVm();
         setSucceeded(true);
-    }
-
-    private void processVm() {
-        if (getVm().getStatus() != VMStatus.Up) {
-            decreasePendingVms(getVds().getId());
-        }
     }
 
     private void perform() {
@@ -378,6 +370,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             super.reportCompleted();
         }
         finally {
+            /*
+             * Decrement the pending counters here as this is the only place which
+             * is called consistently regardless of the migration result.
+             */
+            decreasePendingVms(getVdsDestinationId());
+
             freeLock();
         }
     }

@@ -217,6 +217,12 @@ public class VdsEventListener implements IVdsEventListener {
     public void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port) {
         IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmid);
 
+        /*
+         * XXX: command is null after successful migration, because runningSucceeded removes the
+         *      MigrateVmCommand instance from the async cache too early.
+         *      See the order of succeededToRunVm and processOnVmPoweringUp
+         *      in VdsUpdateRunTimeInfo.afterRefreshTreatment
+         */
         if (command != null) {
             command.onPowerringUp();
             if (command.getAutoStart() && command.getAutoStartVdsId() != null) {
