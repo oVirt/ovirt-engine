@@ -203,6 +203,9 @@ Requires:	xmlrpc-client
 # of the update process implemented in the engine-upgrade script:
 Requires:	%{name}-setup >= %{version}-%{release}
 
+# rhbz#1028966
+Conflicts:	java-1.7.0-openjdk = 1:1.7.0.45-2.4.3.3.el6
+
 # We can drop these conflicts when
 # we drop Requires: mod_ssl
 Conflicts:	freeipa-server
