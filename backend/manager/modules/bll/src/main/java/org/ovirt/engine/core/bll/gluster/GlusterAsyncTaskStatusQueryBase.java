@@ -109,11 +109,12 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
 
     private void updateLatestStatus(GlusterVolumeTaskStatusEntity status) {
         GlusterAsyncTask asyncTask = volume.getAsyncTask();
-        GlusterTaskParameters taskParameters = new GlusterTaskParameters();
-        taskParameters.setVolumeName(volume.getName());
-        asyncTask.setTaskParameters(taskParameters);
 
         if (asyncTask != null && asyncTask.getTaskId() != null) {
+            GlusterTaskParameters taskParameters = new GlusterTaskParameters();
+            taskParameters.setVolumeName(volume.getName());
+            asyncTask.setTaskParameters(taskParameters);
+
             List<Step> stepsList = getStepDao().getStepsByExternalId(asyncTask.getTaskId());
 
             asyncTask.setStatus(status.getStatusSummary().getStatus());
