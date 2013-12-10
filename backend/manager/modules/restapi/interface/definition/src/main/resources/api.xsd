@@ -610,7 +610,7 @@
           <xs:element ref="watchdog_models" minOccurs="0"/>
           <xs:element ref="watchdog_actions" minOccurs="0"/>
           <xs:element ref="authentication_methods" minOccurs="0"/>
-          <!--  Extrenal tasks -->
+          <!--  External tasks -->
           <xs:element ref="step_types" minOccurs="0"/>
           <xs:element ref="payload_encodings" minOccurs="0"/>
           <!-- Gluster related -->
