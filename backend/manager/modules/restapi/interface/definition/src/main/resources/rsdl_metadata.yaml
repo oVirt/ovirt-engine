@@ -3764,7 +3764,8 @@ actions:
           gluster_volume.stripe_count: 'xs:unsignedShort'
           gluster_volume.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}
         description: add a new gluster volume to the cluster with bricks
-    urlparams: {}
+    urlparams: 
+      force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
@@ -3878,7 +3879,8 @@ actions:
           brick--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
         optionalArguments: {replica_count: 'xs:unsignedShort', stripe_count: 'xs:unsignedShort'}
         description: add a new brick to the gluster volume attached to the cluster
-    urlparams: {}
+    urlparams: 
+      force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}

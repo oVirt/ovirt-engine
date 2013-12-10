@@ -93,7 +93,7 @@ public class BackendGlusterVolumesResource
         mapBricks(volume, volumeEntity);
 
         return performCreate(VdcActionType.CreateGlusterVolume,
-                new CreateGlusterVolumeParameters(volumeEntity),
+                new CreateGlusterVolumeParameters(volumeEntity, isForce()),
                 new QueryIdResolver<Guid>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class),
                 true);
     }

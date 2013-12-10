@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
+import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -149,10 +150,56 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
     @Test
     public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
+        setUpVolumeCreationExpectations(false);
+
+        collection.setParent(parentMock);
+        Response response = collection.add(createModel());
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof GlusterVolume);
+        verifyModel((GlusterVolume) response.getEntity(), 1);
+    }
+
+    @Test
+    public void testAddForce() {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        setUriInfo(setUpGetMatrixConstraintsExpectations(
+                BackendResource.FORCE_CONSTRAINT,
+                true,
+                "true",
+                uriInfo,
+                false));
+        setUpVolumeCreationExpectations(true);
+
+        collection.setParent(parentMock);
+        Response response = collection.add(createModel());
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof GlusterVolume);
+        verifyModel((GlusterVolume) response.getEntity(), 1);
+    }
+
+    @Test
+    public void testAddForceFalse() {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        setUriInfo(setUpGetMatrixConstraintsExpectations(
+                BackendResource.FORCE_CONSTRAINT,
+                false,
+                "false",
+                uriInfo,
+                false));
+        setUpVolumeCreationExpectations(false);
+
+        collection.setParent(parentMock);
+        Response response = collection.add(createModel());
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof GlusterVolume);
+        verifyModel((GlusterVolume) response.getEntity(), 1);
+    }
+
+    private void setUpVolumeCreationExpectations(boolean force) {
         setUpCreationExpectations(VdcActionType.CreateGlusterVolume,
                                   CreateGlusterVolumeParameters.class,
-                                  new String[] { "Volume.Name", "Volume.VolumeType" },
-                                  new Object[] { "testVol1", GlusterVolumeType.DISTRIBUTE },
+                new String[] { "Volume.Name", "Volume.VolumeType", "Force" },
+                new Object[] { "testVol1", GlusterVolumeType.DISTRIBUTE, force },
                                   true,
                                   true,
                                   volumeId,
@@ -161,12 +208,6 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
                                   new String[] { "Id" },
                                   new Object[] { volumeId },
                                   getEntity(1));
-
-        collection.setParent(parentMock);
-        Response response = collection.add(createModel());
-        assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof GlusterVolume);
-        verifyModel((GlusterVolume) response.getEntity(), 1);
     }
 
     @Test

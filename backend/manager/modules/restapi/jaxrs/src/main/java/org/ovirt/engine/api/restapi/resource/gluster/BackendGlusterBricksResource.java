@@ -99,7 +99,11 @@ public class BackendGlusterBricksResource
         int stripeCount = bricks.isSetStripeCount() ? bricks.getStripeCount() : 0;
 
         return performCreationMultiple(VdcActionType.AddBricksToGlusterVolume,
-                new GlusterVolumeBricksActionParameters(asGuid(getVolumeId()), brickEntities, replicaCount, stripeCount),
+                new GlusterVolumeBricksActionParameters(asGuid(getVolumeId()),
+                        brickEntities,
+                        replicaCount,
+                        stripeCount,
+                        isForce()),
                 new QueryIdResolver<Guid>(VdcQueryType.GetGlusterBrickById, IdQueryParameters.class));
     }
 

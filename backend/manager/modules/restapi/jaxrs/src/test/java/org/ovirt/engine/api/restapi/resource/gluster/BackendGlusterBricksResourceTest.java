@@ -27,6 +27,7 @@ import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendResource;
+import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -155,10 +156,54 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         expect(uriInfo.getPath()).andReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks")
                 .anyTimes();
         setUriInfo(uriInfo);
+        setUpBrickCreationExpectation(false);
+        Response response = collection.add(createModel());
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof GlusterBricks);
+        verifyModel(((GlusterBricks) response.getEntity()).getGlusterBricks().get(0), 0);
+    }
+
+    @Test
+    public void testAddForce() throws Exception {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        expect(uriInfo.getPath()).andReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks")
+                .anyTimes();
+        setUriInfo(setUpGetMatrixConstraintsExpectations(
+                BackendResource.FORCE_CONSTRAINT,
+                true,
+                "true",
+                uriInfo,
+                false));
+        setUpBrickCreationExpectation(true);
+        Response response = collection.add(createModel());
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof GlusterBricks);
+        verifyModel(((GlusterBricks) response.getEntity()).getGlusterBricks().get(0), 0);
+    }
+
+    @Test
+    public void testAddForceFalse() throws Exception {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        expect(uriInfo.getPath()).andReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks")
+                .anyTimes();
+        setUriInfo(setUpGetMatrixConstraintsExpectations(
+                BackendResource.FORCE_CONSTRAINT,
+                false,
+                "false",
+                uriInfo,
+                false));
+        setUpBrickCreationExpectation(false);
+        Response response = collection.add(createModel());
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof GlusterBricks);
+        verifyModel(((GlusterBricks) response.getEntity()).getGlusterBricks().get(0), 0);
+    }
+
+    private void setUpBrickCreationExpectation(boolean force) {
         setUpCreationExpectations(VdcActionType.AddBricksToGlusterVolume,
                 GlusterVolumeBricksActionParameters.class,
-                new String[] { "VolumeId", "Bricks" },
-                new Object[] { volumeId, getBricks() },
+                new String[] { "VolumeId", "Bricks", "Force" },
+                new Object[] { volumeId, getBricks(), force },
                 true,
                 true,
                 getBrickIds(),
@@ -167,10 +212,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
-        Response response = collection.add(createModel());
-        assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof GlusterBricks);
-        verifyModel(((GlusterBricks) response.getEntity()).getGlusterBricks().get(0), 0);
     }
 
     @Test
