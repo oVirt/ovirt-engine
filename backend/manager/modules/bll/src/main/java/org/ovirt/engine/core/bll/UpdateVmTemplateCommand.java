@@ -49,7 +49,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected boolean canDoAction() {
-        if (VmTemplateHandler.BlankVmTemplateId.equals(getVmTemplate().getId())) {
+        if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVmTemplate().getId())) {
             return failCanDoAction(VdcBllMessages.VMT_CANNOT_EDIT_BLANK_TEMPLATE);
         }
         boolean returnValue = false;

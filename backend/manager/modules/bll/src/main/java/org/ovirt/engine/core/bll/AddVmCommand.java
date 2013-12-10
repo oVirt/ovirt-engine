@@ -264,7 +264,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected boolean shouldCheckSpaceInStorageDomains() {
         return !getImagesToCheckDestinationStorageDomains().isEmpty()
                 && !LinqUtils.firstOrNull(getImagesToCheckDestinationStorageDomains(), new All<DiskImage>())
-                        .getImageId().equals(VmTemplateHandler.BlankVmTemplateId);
+                        .getImageId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
     }
 
     protected Guid getStoragePoolIdFromSourceImageContainer() {
@@ -918,7 +918,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     getVmId(), VdcObjectType.VM);
         }
 
-        if (getParameters().isCopyTemplatePermissions() && !getVmTemplateId().equals(VmTemplateHandler.BlankVmTemplateId)) {
+        if (getParameters().isCopyTemplatePermissions() && !getVmTemplateId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID)) {
             copyTemplatePermissions(permissionsToAdd);
         }
 

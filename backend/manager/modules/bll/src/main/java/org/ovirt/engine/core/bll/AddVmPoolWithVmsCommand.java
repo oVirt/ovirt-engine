@@ -40,7 +40,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction();
 
-        if (returnValue && VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVmStaticData().getVmtGuid())) {
+        if (returnValue && VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getParameters().getVmStaticData().getVmtGuid())) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE);
 

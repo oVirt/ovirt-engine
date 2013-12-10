@@ -38,7 +38,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     protected void executeVmCommand() {
         super.executeVmCommand();
         getParameters().originalTemplate = getVm().getVmtGuid();
-        getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
+        getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
         DbFacade.getInstance().getVmStaticDao().update(getVm().getStaticData());
         // if there are no tasks, we can end the command right away.

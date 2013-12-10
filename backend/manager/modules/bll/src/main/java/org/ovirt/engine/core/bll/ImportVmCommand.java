@@ -359,7 +359,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             return false;
         }
 
-        if (!VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid())
+        if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
                 && getVmTemplate() != null
                 && getVmTemplate().getStatus() == VmTemplateStatus.Locked) {
             return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
@@ -545,7 +545,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     private boolean isTemplateExistsOnExportDomain() {
-        if (VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVm().getVmtGuid())) {
+        if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getParameters().getVm().getVmtGuid())) {
             return true;
         }
 
@@ -568,7 +568,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     protected boolean checkTemplateInStorageDomain() {
         boolean retValue = getParameters().isImportAsNewEntity() || checkIfDisksExist(imageList);
-        if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid())
+        if (retValue && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
                 && !getParameters().getCopyCollapse()) {
             List<StorageDomain> domains = Backend.getInstance()
                     .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
@@ -807,8 +807,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
                 DiskImage disk = getActiveVolumeDisk(diskList);
-                disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
-                disk.setImageTemplateId(VmTemplateHandler.BlankVmTemplateId);
+                disk.setParentId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+                disk.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
                 disk.setVmSnapshotId(snapshotId);
                 disk.setActive(true);
 
@@ -985,7 +985,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         getVm().getStaticData().setMinAllocatedMem(computeMinAllocatedMem());
         getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
         if (getParameters().getCopyCollapse()) {
-            getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
+            getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         }
         getVmStaticDAO().save(getVm().getStaticData());
         getCompensationContext().snapshotNewEntity(getVm().getStaticData());

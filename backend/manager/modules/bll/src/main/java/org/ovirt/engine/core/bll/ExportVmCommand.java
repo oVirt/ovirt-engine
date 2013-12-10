@@ -249,8 +249,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         List<Guid> imageGroupIds = new ArrayList<>();
         for (Disk disk : getDisksBasedOnImage()) {
                 DiskImage diskImage = (DiskImage) disk;
-                diskImage.setParentId(VmTemplateHandler.BlankVmTemplateId);
-                diskImage.setImageTemplateId(VmTemplateHandler.BlankVmTemplateId);
+                diskImage.setParentId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+                diskImage.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
                 diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
                 DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
                 diskImage.setvolumeFormat(diskForVolumeInfo.getVolumeFormat());
@@ -274,7 +274,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             VmTemplate t = getDbFacade().getVmTemplateDao().get(vm.getVmtGuid());
             vm.setVmtName(t.getName());
         }
-        getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
+        getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         String vmMeta = ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
 
         vmsAndMetaDictionary
@@ -457,7 +457,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 tempVar);
 
         if (qretVal.getSucceeded()) {
-            if (!VmTemplateHandler.BlankVmTemplateId.equals(tmplId)) {
+            if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(tmplId)) {
                 Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
                 VmTemplate tmpl = LinqUtils.firstOrNull(templates.keySet(), new Predicate<VmTemplate>() {
                     @Override
@@ -519,7 +519,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     private void endCopyCollapseOperations(VM vm) {
-        vm.setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
+        vm.setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         vm.setVmtName(null);
         Snapshot activeSnapshot = getDbFacade().getSnapshotDao().get(
                 getDbFacade().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));

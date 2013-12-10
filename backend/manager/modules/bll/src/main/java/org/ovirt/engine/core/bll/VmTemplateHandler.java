@@ -21,7 +21,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class VmTemplateHandler {
-    protected static Guid BlankVmTemplateId = Guid.Empty;
+    protected final static Guid BLANK_VM_TEMPLATE_ID = Guid.Empty;
     protected final static String BLANK_VM_TEMPLATE_NAME = "Blank";
     private static ObjectIdentityChecker mUpdateVmTemplate;
 
@@ -34,7 +34,6 @@ public class VmTemplateHandler {
     public static void Init() {
         final Class<?>[] inspectedClassNames = new Class<?>[] { VmBase.class, VmTemplate.class };
         mUpdateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
-        BlankVmTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
 
         for (Pair<EditableField, String> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
                                                                                    (inspectedClassNames))) {

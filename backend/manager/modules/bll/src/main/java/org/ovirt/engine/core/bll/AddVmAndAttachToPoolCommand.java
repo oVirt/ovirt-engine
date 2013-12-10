@@ -27,7 +27,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         VmStatic vmStatic = getParameters().getVmStaticData();
         VdcReturnValueBase returnValueFromAddVm;
 
-        if (VmTemplateHandler.BlankVmTemplateId.equals(vmStatic.getVmtGuid())) {
+        if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(vmStatic.getVmtGuid())) {
             returnValueFromAddVm = addVmFromScratch(vmStatic);
         } else {
             returnValueFromAddVm = addVm(vmStatic);

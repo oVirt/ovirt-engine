@@ -71,7 +71,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
         }
         // check not blank template
-        if (VmTemplateHandler.BlankVmTemplateId.equals(vmTemplateId)) {
+        if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(vmTemplateId)) {
             return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_BLANK_TEMPLATE);
         }
 

@@ -28,7 +28,7 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
         if (returnValue != null && returnValue.getSucceeded()) {
             List<VmTemplate> templateList = returnValue.getReturnValue();
             VmTemplate blank = DbFacade.getInstance().getVmTemplateDao()
-                    .get(VmTemplateHandler.BlankVmTemplateId);
+                    .get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
             if (!templateList.contains(blank)) {
                 templateList.add(0, blank);
             }
