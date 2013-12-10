@@ -36,7 +36,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
     @Override
     protected void executeVmCommand() {
         Set<Guid> mImagesToBeRemoved = new HashSet<Guid>();
-        List<DiskImage> images = getParameters().Images;
+        List<DiskImage> images = getParameters().images;
         if (images == null) {
             images =
                     ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),

@@ -5,11 +5,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveAllVmImagesParameters extends VmOperationParameterBase implements java.io.Serializable {
     private static final long serialVersionUID = 7211692656127711421L;
-    public java.util.List<DiskImage> Images;
+    public java.util.List<DiskImage> images;
 
     public RemoveAllVmImagesParameters(Guid vmId, java.util.List<DiskImage> images) {
         super(vmId);
-        this.Images = images;
+        this.images = images;
         setForceDelete(false);
     }
 

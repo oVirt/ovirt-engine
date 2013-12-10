@@ -37,7 +37,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     @Override
     protected void executeVmCommand() {
         super.executeVmCommand();
-        getParameters().OriginalTemplate = getVm().getVmtGuid();
+        getParameters().originalTemplate = getVm().getVmtGuid();
         getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
         DbFacade.getInstance().getVmStaticDao().update(getVm().getStaticData());
