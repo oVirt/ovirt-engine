@@ -667,6 +667,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VM_SET_TICKET, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_SET_TICKET_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.VM_CONSOLE_CONNECTED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VM_CONSOLE_DISCONNECTED, AuditLogSeverity.NORMAL);
     }
 
     private static void initClusterSeverities() {
