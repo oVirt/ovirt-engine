@@ -86,6 +86,9 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteEndElement();
         }
 
+        _writer.WriteStartElement("AutoStartup");
+        _writer.WriteRaw(String.valueOf(_vm.isAutoStartup()));
+        _writer.WriteEndElement();
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
         // Gets a map that its keys are aliases to fields that should be OVF
         // logged.

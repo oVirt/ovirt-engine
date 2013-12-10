@@ -238,6 +238,11 @@ public class OvfVmReader extends OvfReader {
         if (node != null) {
             _vm.getStaticData().setOriginalTemplateName(node.innerText);
         }
+
+        node = content.SelectSingleNode("AutoStartup");
+        if (node != null) {
+           _vm.setAutoStartup(Boolean.parseBoolean(node.innerText));
+        }
     }
 
     @Override
