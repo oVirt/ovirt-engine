@@ -43,7 +43,8 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
                 task.setException(ex);
             }
 
-            task.setResult((AsyncTaskResultEnum.valueOf(taskStatus.mTaskResult)));
+            task.setResult(taskStatus != null ? (AsyncTaskResultEnum.valueOf(taskStatus.mTaskResult))
+                    : AsyncTaskResultEnum.unknown);
 
             // Normally, when the result is not 'success', there is an
             // exception.

@@ -4,7 +4,8 @@ public enum AsyncTaskResultEnum {
     success,
     failure,
     cleanSuccess,
-    cleanFailure;
+    cleanFailure,
+    unknown;
 
     public int getValue() {
         return this.ordinal();
