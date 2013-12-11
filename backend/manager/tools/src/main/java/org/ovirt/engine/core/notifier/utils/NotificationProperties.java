@@ -35,6 +35,11 @@ public class NotificationProperties extends LocalConfig {
     public static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
 
     /**
+     * SMTP transport encryption using TLS (SMTP with STARTTLS)
+     */
+    public static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
+
+    /**
      * Service parameters
      */
     public static final String DAYS_TO_KEEP_HISTORY = "DAYS_TO_KEEP_HISTORY";
@@ -137,10 +142,11 @@ public class NotificationProperties extends LocalConfig {
         if (!isSmtpEncryptionOptionValid()) {
             throw new IllegalArgumentException(
                     String.format(
-                        "Check configuration file, '%s' value has to be one of: '%s', '%s'.",
+                        "Check configuration file, '%s' value has to be one of: '%s', '%s', '%s'.",
                         NotificationProperties.MAIL_SMTP_ENCRYPTION,
                         NotificationProperties.MAIL_SMTP_ENCRYPTION_NONE,
-                        NotificationProperties.MAIL_SMTP_ENCRYPTION_SSL
+                        NotificationProperties.MAIL_SMTP_ENCRYPTION_SSL,
+                        NotificationProperties.MAIL_SMTP_ENCRYPTION_TLS
                     ));
         }
 
@@ -178,10 +184,11 @@ public class NotificationProperties extends LocalConfig {
         String emailUser = getProperty(NotificationProperties.MAIL_USER, true);
         if (StringUtils.isEmpty(emailUser)
                 && (MAIL_SMTP_ENCRYPTION_SSL.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
+                        || MAIL_SMTP_ENCRYPTION_TLS.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
                         || StringUtils.isNotEmpty(getProperty(NotificationProperties.MAIL_PASSWORD, true)))) {
                 throw new IllegalArgumentException(
                         String.format(
-                                "'%s' must be set when SSL is enabled or when password is set",
+                                "'%s' must be set when SSL or TLS is enabled or when password is set",
                                 NotificationProperties.MAIL_USER));
         }
     }
@@ -192,6 +199,7 @@ public class NotificationProperties extends LocalConfig {
      */
     public boolean isSmtpEncryptionOptionValid() {
         return MAIL_SMTP_ENCRYPTION_NONE.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
-                || MAIL_SMTP_ENCRYPTION_SSL.equals(getProperty(MAIL_SMTP_ENCRYPTION, true));
+                || MAIL_SMTP_ENCRYPTION_SSL.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
+                || MAIL_SMTP_ENCRYPTION_TLS.equals(getProperty(MAIL_SMTP_ENCRYPTION, true));
     }
 }

@@ -46,18 +46,18 @@ INTERVAL_IN_SECONDS=120
 # The SMTP mail server address. Required.
 MAIL_SERVER=
 
-# The SMTP port (usually 25 for plain SMTP, 465 for SMTP with SSL)
+# The SMTP port (usually 25 for plain SMTP, 465 for SMTP with SSL, 587 for SMTP with TLS)
 MAIL_PORT=25
 
-# Required if SSL enabled to authenticate the user. Used also to specify 'from' user address if mail server
+# Required if SSL or TLS enabled to authenticate the user. Used also to specify 'from' user address if mail server
 # supports, when MAIL_FROM is not set. Address is in RFC822 format
 MAIL_USER=
 
-# Required to authenticate the user if mail server requires authentication or if SSL is enabled
+# Required to authenticate the user if mail server requires authentication or if SSL or TLS is enabled
 SENSITIVE_KEYS="${SENSITIVE_KEYS},MAIL_PASSWORD"
 MAIL_PASSWORD=
 
-# Indicates type of encryption (none or ssl) should be used to communicate with mail server.
+# Indicates type of encryption (none, ssl or tls) should be used to communicate with mail server.
 MAIL_SMTP_ENCRYPTION=none
 
 # If set to true, sends a message in HTML format.
