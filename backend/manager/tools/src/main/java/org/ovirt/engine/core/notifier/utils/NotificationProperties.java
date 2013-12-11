@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.notifier.utils;
 
+import java.net.InetAddress;
+
+import javax.mail.internet.InternetAddress;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.LocalConfig;
 
@@ -96,4 +101,68 @@ public class NotificationProperties extends LocalConfig {
         loadConfig(defaultsPath, varsPath);
     }
 
+    /**
+     * Validates properties values.
+     * @throws IllegalArgumentException if some properties has invalid values
+     */
+    public void validate() {
+        // validate mandatory properties
+        for (String property : new String[] {
+                NotificationProperties.DAYS_TO_KEEP_HISTORY,
+                NotificationProperties.ENGINE_INTERVAL_IN_SECONDS,
+                NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS,
+                NotificationProperties.INTERVAL_IN_SECONDS,
+                NotificationProperties.IS_HTTPS_PROTOCOL,
+                NotificationProperties.MAIL_PORT,
+                NotificationProperties.MAIL_SERVER,
+                NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION }) {
+            if (StringUtils.isEmpty(getProperty(property))) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "Check configuration file, '%s' is missing",
+                                property));
+            }
+        }
+
+        // try to resolve MAIL_SERVER host
+        try {
+            InetAddress.getAllByName(getProperty(NotificationProperties.MAIL_SERVER));
+        } catch (Exception ex) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Check configuration file, cannot verify '%s' value",
+                            NotificationProperties.MAIL_SERVER),
+                    ex);
+        }
+
+        // validate email addresses
+        for (String property : new String[] {
+                NotificationProperties.MAIL_USER,
+                NotificationProperties.MAIL_FROM,
+                NotificationProperties.MAIL_REPLY_TO }) {
+            String candidate = getProperty(property);
+            if (!StringUtils.isEmpty(candidate)) {
+                try {
+                    new InternetAddress(candidate);
+                } catch(Exception ex) {
+                    throw new IllegalArgumentException(
+                            String.format(
+                                    "Check configuration file, invalid format in '%s'",
+                                    property),
+                            ex);
+                }
+            }
+        }
+
+        // validate mail user value
+        String emailUser = getProperty(NotificationProperties.MAIL_USER, true);
+        if (StringUtils.isEmpty(emailUser)
+                && (getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false)
+                        || StringUtils.isNotEmpty(getProperty(NotificationProperties.MAIL_PASSWORD, true)))) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "'%s' must be set when SSL is enabled or when password is set",
+                                NotificationProperties.MAIL_USER));
+        }
+    }
 }

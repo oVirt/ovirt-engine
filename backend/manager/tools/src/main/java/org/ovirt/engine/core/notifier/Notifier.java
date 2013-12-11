@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.notifier;
 
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.mail.internet.InternetAddress;
 import javax.xml.parsers.FactoryConfigurationError;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,50 +58,7 @@ public class Notifier {
         EngineMonitorService engineMonitorService = null;
         try {
             NotificationProperties prop = NotificationProperties.getInstance();
-
-            for (String property : new String[] {
-                NotificationProperties.DAYS_TO_KEEP_HISTORY,
-                NotificationProperties.ENGINE_INTERVAL_IN_SECONDS,
-                NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS,
-                NotificationProperties.INTERVAL_IN_SECONDS,
-                NotificationProperties.IS_HTTPS_PROTOCOL,
-                NotificationProperties.MAIL_PORT,
-                NotificationProperties.MAIL_SERVER,
-                NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION,
-            }) {
-                if (StringUtils.isEmpty(prop.getProperty(property))) {
-                    throw new IllegalArgumentException(
-                        String.format(
-                            "Check configuration file, '%s' is missing",
-                            property
-                        )
-                    );
-                }
-            }
-
-            InetAddress.getAllByName(prop.getProperty(NotificationProperties.MAIL_SERVER));
-
-            for (String property : new String[] {
-                NotificationProperties.MAIL_USER,
-                NotificationProperties.MAIL_FROM,
-                NotificationProperties.MAIL_REPLY_TO,
-            }) {
-                String candidate = prop.getProperty(property);
-                if (!StringUtils.isEmpty(candidate)) {
-                    try {
-                        new InternetAddress(candidate);
-                    }
-                    catch(Exception e) {
-                        throw new IllegalArgumentException(
-                            String.format(
-                                "Check configuration file, invalid format in '%s'",
-                                property
-                            ),
-                            e
-                        );
-                    }
-                }
-            }
+            prop.validate();
 
             notificationService = new NotificationService(prop);
             engineMonitorService = new EngineMonitorService(prop);

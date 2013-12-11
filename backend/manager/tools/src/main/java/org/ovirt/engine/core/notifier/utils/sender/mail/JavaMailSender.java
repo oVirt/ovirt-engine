@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.notifier.utils.sender.mail;
 
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Properties;
 
@@ -11,7 +10,6 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -71,48 +69,6 @@ public class JavaMailSender {
         Properties mailSessionProps = new Properties();
         if (log.isTraceEnabled()) {
             mailSessionProps.put("mail.debug", "true");
-        }
-
-        String emailUser = aMailProps.getProperty(NotificationProperties.MAIL_USER, true);
-        if (StringUtils.isEmpty(emailUser)) {
-            if (aMailProps.getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false) ||
-                    StringUtils.isNotEmpty(aMailProps.getProperty(NotificationProperties.MAIL_PASSWORD, true))) {
-                throw new IllegalArgumentException(NotificationProperties.MAIL_USER
-                        + " must be set when SSL is enabled or when password is set");
-            } else {
-                log.warn(NotificationProperties.MAIL_USER
-                        + " property is empty in notification service configuration file");
-            }
-        }
-
-        if (StringUtils.isNotEmpty(aMailProps.getProperty(NotificationProperties.MAIL_FROM, true))) {
-            try {
-                from = new InternetAddress(aMailProps.getProperty(NotificationProperties.MAIL_FROM));
-            } catch (AddressException e) {
-                log.error(MessageFormat.format("Failed to parse 'from' user {0} provided by property {1}",
-                        aMailProps.getProperty(NotificationProperties.MAIL_FROM),
-                        NotificationProperties.MAIL_FROM), e);
-            }
-        } else {
-            try {
-                if (StringUtils.isNotEmpty(emailUser)) {
-                    from = new InternetAddress(emailUser);
-                }
-            } catch (AddressException e) {
-                log.error(MessageFormat.format("Failed to parse 'email user' {0} provided by property {1}",
-                        emailUser,
-                        NotificationProperties.MAIL_USER), e);
-            }
-        }
-
-        if (StringUtils.isNotEmpty(aMailProps.getProperty(NotificationProperties.MAIL_REPLY_TO, true))) {
-            try {
-                replyTo = new InternetAddress(aMailProps.getProperty(NotificationProperties.MAIL_REPLY_TO));
-            } catch (AddressException e) {
-                log.error(MessageFormat.format("Failed to parse 'replyTo' email {0} provided by property {1}",
-                        aMailProps.getProperty(NotificationProperties.MAIL_REPLY_TO),
-                        NotificationProperties.MAIL_REPLY_TO), e);
-            }
         }
 
         isBodyHtml = aMailProps.getBoolean(NotificationProperties.HTML_MESSAGE_FORMAT, false);
