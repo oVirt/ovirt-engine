@@ -30,7 +30,7 @@ public class VdsFenceOptions implements Serializable {
     private static final String MAPPING_FORMAT_ERROR = "Illegal fencing mapping format {0}";
 
     private static Log log = LogFactory.getLog(VdsFenceOptions.class);
-    private static HashMap<String, HashMap<String, String>> fencingOptionMapping;
+    private HashMap<String, HashMap<String, String>> fencingOptionMapping;
     private static HashMap<String, String> fencingOptionTypes;
 
     private String fenceAgent = "";
