@@ -959,10 +959,10 @@ public class VmMapper {
             entity.setRegenerateKeys(model.isRegenerateSshKeys());
         }
 
-        if (model.isSetNetwork()) {
-            if (model.getNetwork().isSetNics()) {
+        if (model.isSetNetworkConfiguration()) {
+            if (model.getNetworkConfiguration().isSetNics()) {
                 Map<String, VdsNetworkInterface> interfaces = new HashMap<>();
-                for (NIC iface : model.getNetwork().getNics().getNics()) {
+                for (NIC iface : model.getNetworkConfiguration().getNics().getNics()) {
                     VdsNetworkInterface vdsNetworkInterface = new VdsNetworkInterface();
                     if (iface.isSetBootProtocol()) {
                         NetworkBootProtocol protocol = HostNicMapper.map(BootProtocol.fromValue(iface.getBootProtocol()), null);
@@ -992,12 +992,12 @@ public class VmMapper {
 
                 entity.setInterfaces(interfaces);
             }
-            if (model.getNetwork().isSetDns()) {
-                if (model.getNetwork().getDns().isSetServers()
-                        && model.getNetwork().getDns().getServers().isSetHosts()
-                        && !model.getNetwork().getDns().getServers().getHosts().isEmpty()) {
+            if (model.getNetworkConfiguration().isSetDns()) {
+                if (model.getNetworkConfiguration().getDns().isSetServers()
+                        && model.getNetworkConfiguration().getDns().getServers().isSetHosts()
+                        && !model.getNetworkConfiguration().getDns().getServers().getHosts().isEmpty()) {
                     List<String> dnsServers = new ArrayList<>();
-                    for (Host host : model.getNetwork().getDns().getServers().getHosts()) {
+                    for (Host host : model.getNetworkConfiguration().getDns().getServers().getHosts()) {
                         if (host.isSetAddress()) {
                             dnsServers.add(host.getAddress());
                         }
@@ -1005,11 +1005,11 @@ public class VmMapper {
                     entity.setDnsServers(dnsServers);
                 }
 
-                if (model.getNetwork().getDns().isSetSearchDomains()
-                        && model.getNetwork().getDns().getSearchDomains().isSetHosts()
-                        && !model.getNetwork().getDns().getSearchDomains().getHosts().isEmpty()) {
+                if (model.getNetworkConfiguration().getDns().isSetSearchDomains()
+                        && model.getNetworkConfiguration().getDns().getSearchDomains().isSetHosts()
+                        && !model.getNetworkConfiguration().getDns().getSearchDomains().getHosts().isEmpty()) {
                     List<String> searchDomains = new ArrayList<>();
-                    for (Host host : model.getNetwork().getDns().getSearchDomains().getHosts()) {
+                    for (Host host : model.getNetworkConfiguration().getDns().getSearchDomains().getHosts()) {
                         if (host.isSetAddress()) {
                             searchDomains.add(host.getAddress());
                         }
