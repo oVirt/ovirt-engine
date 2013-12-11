@@ -46,7 +46,7 @@ public class UserQuotaListModel extends SearchableListModel
         }
         super.syncSearch();
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.Model = this;
+        asyncQuery.model = this;
         asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override

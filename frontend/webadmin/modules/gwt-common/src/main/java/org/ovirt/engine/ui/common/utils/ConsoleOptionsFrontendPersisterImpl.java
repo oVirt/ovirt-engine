@@ -13,6 +13,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import com.google.inject.Inject;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFrontendPersister {
 
     private final ClientStorage clientStorage;
@@ -37,6 +40,8 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
     // common options
     private static final String SELECTED_PROTOCOL = "_selectedProtocol"; //$NON-NLS-1$
+
+    private final Logger logger = Logger.getLogger(ConsoleOptionsFrontendPersisterImpl.class.getName());
 
     @Inject
     public ConsoleOptionsFrontendPersisterImpl(ClientStorage clientStorage, ConsoleUtils consoleUtils) {
@@ -99,6 +104,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
             vmConsoles.getConsoleModel(VncConsoleModel.class).setVncImplementation(VncConsoleModel.ClientConsoleMode
                     .valueOf(clientStorage.getLocalItem(keyMaker.make(VNC_CLIENT_MODE))));
         } catch (Exception e) {
+            logger.log(Level.WARNING, "Failed loading VNC data. Exception message: " + e.getMessage()); //$NON-NLS-1$
         }
     }
 
@@ -132,6 +138,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
                     RdpConsoleModel.ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(RDP_CLIENT_MODE)));
             vmConsoles.getConsoleModel(RdpConsoleModel.class).setRdpImplementation(consoleMode);
         } catch (Exception e) {
+            logger.log(Level.WARNING, "Failed loading RDP data. Exception message: " + e.getMessage()); //$NON-NLS-1$
         }
 
         IRdp rdp = vmConsoles.getConsoleModel(RdpConsoleModel.class).getrdp();
@@ -146,6 +153,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
             SpiceConsoleModel.ClientConsoleMode consoleMode = SpiceConsoleModel.ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(SPICE_CLIENT_MODE)));
             vmConsoles.getConsoleModel(SpiceConsoleModel.class).setConsoleClientMode(consoleMode);
         } catch (Exception e) {
+            logger.log(Level.WARNING, "Failed loading SPICE data. Exception message: " + e.getMessage()); //$NON-NLS-1$
         }
 
         ISpice spice = asSpice(vmConsoles);

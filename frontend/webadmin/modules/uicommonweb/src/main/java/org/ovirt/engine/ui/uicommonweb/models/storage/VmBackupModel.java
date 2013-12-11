@@ -127,7 +127,7 @@ public class VmBackupModel extends ManageBackupModel {
         model.startProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.Model = this;
+        _asyncQuery.model = this;
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override

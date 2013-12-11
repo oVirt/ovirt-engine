@@ -401,7 +401,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         qModel.getCommands().add(command);
 
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.Model = this;
+        asyncQuery.model = this;
         asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override

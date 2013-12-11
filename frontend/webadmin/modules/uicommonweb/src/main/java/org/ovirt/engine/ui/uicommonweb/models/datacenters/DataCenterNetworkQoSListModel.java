@@ -54,7 +54,7 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel {
             return;
         }
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.Model = this;
+        asyncQuery.model = this;
         asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override

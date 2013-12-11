@@ -1246,7 +1246,7 @@ public final class AsyncDataProvider {
     public static void getVolumeList(AsyncQuery aQuery, String clusterName) {
 
         if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.GlusterOnly.getValue()) == 0) {
-            aQuery.asyncCallback.onSuccess(aQuery.Model, new ArrayList<GlusterVolumeEntity>());
+            aQuery.asyncCallback.onSuccess(aQuery.model, new ArrayList<GlusterVolumeEntity>());
             return;
         }
         aQuery.converterCallback = new IAsyncConverter() {
@@ -1808,7 +1808,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                String pmtype = (String) _asyncQuery.Data[0];
+                String pmtype = (String) _asyncQuery.data[0];
                 HashMap<String, ArrayList<String>> cachedPmMap =
                         new HashMap<String, ArrayList<String>>();
                 HashMap<String, HashMap<String, Object>> dict =
@@ -2668,7 +2668,7 @@ public final class AsyncDataProvider {
                     ifacesOptions.add(originalInterface);
                     defaultInterfaceName.append(originalInterface.getName());
 
-                    asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
+                    asyncQuery.asyncCallback.onSuccess(asyncQuery.model, ifacesOptions);
                 }
             });
 
@@ -2713,7 +2713,7 @@ public final class AsyncDataProvider {
                                         // (since it has no network_name or bond_name).
                                         defaultInterfaceName.append(vlanParent.getName());
 
-                                        asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
+                                        asyncQuery.asyncCallback.onSuccess(asyncQuery.model, ifacesOptions);
 
                                     }
                                 }));
@@ -2722,7 +2722,7 @@ public final class AsyncDataProvider {
                         // (since it has no network_name or bond_name).
                         if (vlanParent != null)
                             defaultInterfaceName.append(vlanParent.getName());
-                        asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
+                        asyncQuery.asyncCallback.onSuccess(asyncQuery.model, ifacesOptions);
                     }
                 }
             }));

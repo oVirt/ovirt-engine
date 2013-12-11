@@ -14,12 +14,12 @@ public class AsyncQuery {
         }
     };
 
-    public Object Model;
+    public Object model;
     public INewAsyncCallback asyncCallback;
     public IAsyncConverter converterCallback = null;
     private boolean handleFailure;
-    public VdcQueryReturnValue OriginalReturnValue;
-    public Object[] Data;
+    public VdcQueryReturnValue originalReturnValue;
+    public Object[] data;
     private String context;
 
     public AsyncQuery() {
@@ -44,19 +44,19 @@ public class AsyncQuery {
     }
 
     public Object[] getData() {
-        return Data;
+        return data;
     }
 
     public void setData(Object[] data) {
-        this.Data = data;
+        this.data = data;
     }
 
     public VdcQueryReturnValue getOriginalReturnValue() {
-        return OriginalReturnValue;
+        return originalReturnValue;
     }
 
     public void setOriginalReturnValue(VdcQueryReturnValue originalReturnValue) {
-        this.OriginalReturnValue = originalReturnValue;
+        this.originalReturnValue = originalReturnValue;
     }
 
     public String getContext() {
@@ -76,11 +76,11 @@ public class AsyncQuery {
     }
 
     public Object getModel() {
-        return Model;
+        return model;
     }
 
     public void setModel(Object model) {
-        this.Model = model;
+        this.model = model;
     }
 
     public INewAsyncCallback getDel() {

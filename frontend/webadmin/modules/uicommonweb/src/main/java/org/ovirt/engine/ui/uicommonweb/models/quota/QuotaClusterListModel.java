@@ -23,7 +23,7 @@ public class QuotaClusterListModel extends SearchableListModel {
     protected void syncSearch() {
         super.syncSearch();
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.Model = this;
+        asyncQuery.model = this;
         asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override
