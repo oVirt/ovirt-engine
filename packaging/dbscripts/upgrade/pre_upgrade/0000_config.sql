@@ -152,6 +152,10 @@ select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','genera
 select fn_db_add_config_value('GlusterVolumeOptionOwnerUserVirtValue','36','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerGroupVirtValue','36','general');
 select fn_db_add_config_value('GlusterRefreshRateTasks', '60', 'general');
+select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.0');
+select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.1');
+select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.2');
+select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.3');
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');
