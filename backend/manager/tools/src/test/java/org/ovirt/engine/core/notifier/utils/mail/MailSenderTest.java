@@ -106,6 +106,7 @@ public class MailSenderTest {
         prop.put(NotificationProperties.MAIL_SERVER, "smtp.redhat.com");
         prop.put(NotificationProperties.MAIL_USER, "dev-null@redhat.com");
         prop.put(NotificationProperties.HTML_MESSAGE_FORMAT, "true");
+        prop.put(NotificationProperties.MAIL_SMTP_ENCRYPTION, NotificationProperties.MAIL_SMTP_ENCRYPTION_NONE);
 
         return prop;
     }
@@ -117,7 +118,7 @@ public class MailSenderTest {
         prop.put(NotificationProperties.MAIL_USER, "mailtest.redhat@gmail.com");
         prop.put(NotificationProperties.MAIL_PASSWORD, "q1!w2@e3#!");
         prop.put(NotificationProperties.MAIL_FROM, "dev-null@redhat.com");
-        prop.put(NotificationProperties.MAIL_ENABLE_SSL, "true");
+        prop.put(NotificationProperties.MAIL_SMTP_ENCRYPTION, NotificationProperties.MAIL_SMTP_ENCRYPTION_SSL);
         return prop;
     }
 

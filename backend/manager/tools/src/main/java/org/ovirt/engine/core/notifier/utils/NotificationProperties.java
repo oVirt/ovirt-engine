@@ -19,10 +19,20 @@ public class NotificationProperties extends LocalConfig {
     public static final String MAIL_PORT = "MAIL_PORT";
     public static final String MAIL_USER = "MAIL_USER";
     public static final String MAIL_PASSWORD = "MAIL_PASSWORD";
-    public static final String MAIL_ENABLE_SSL = "MAIL_ENABLE_SSL";
+    public static final String MAIL_SMTP_ENCRYPTION = "MAIL_SMTP_ENCRYPTION";
     public static final String MAIL_FROM = "MAIL_FROM";
     public static final String MAIL_REPLY_TO = "MAIL_REPLY_TO";
     public static final String HTML_MESSAGE_FORMAT = "HTML_MESSAGE_FORMAT";
+
+    /**
+     * No SMTP transport encryption (plain SMTP)
+     */
+    public static final String MAIL_SMTP_ENCRYPTION_NONE = "none";
+
+    /**
+     * SMTP transport encryption using SSL (SMTPS)
+     */
+    public static final String MAIL_SMTP_ENCRYPTION_SSL = "ssl";
 
     /**
      * Service parameters
@@ -102,6 +112,7 @@ public class NotificationProperties extends LocalConfig {
 
     /**
      * Validates properties values.
+     *
      * @throws IllegalArgumentException if some properties has invalid values
      */
     public void validate() {
@@ -121,6 +132,16 @@ public class NotificationProperties extends LocalConfig {
                                 "Check configuration file, '%s' is missing",
                                 property));
             }
+        }
+
+        if (!isSmtpEncryptionOptionValid()) {
+            throw new IllegalArgumentException(
+                    String.format(
+                        "Check configuration file, '%s' value has to be one of: '%s', '%s'.",
+                        NotificationProperties.MAIL_SMTP_ENCRYPTION,
+                        NotificationProperties.MAIL_SMTP_ENCRYPTION_NONE,
+                        NotificationProperties.MAIL_SMTP_ENCRYPTION_SSL
+                    ));
         }
 
         // try to resolve MAIL_SERVER host
@@ -156,12 +177,21 @@ public class NotificationProperties extends LocalConfig {
         // validate mail user value
         String emailUser = getProperty(NotificationProperties.MAIL_USER, true);
         if (StringUtils.isEmpty(emailUser)
-                && (getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false)
+                && (MAIL_SMTP_ENCRYPTION_SSL.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
                         || StringUtils.isNotEmpty(getProperty(NotificationProperties.MAIL_PASSWORD, true)))) {
                 throw new IllegalArgumentException(
                         String.format(
                                 "'%s' must be set when SSL is enabled or when password is set",
                                 NotificationProperties.MAIL_USER));
         }
+    }
+
+    /**
+     * Returns {@code true} if mail transport encryption type {@link MAIL_SMTP_ENCRYPTION} is correctly specified,
+     * otherwise {@code false}
+     */
+    public boolean isSmtpEncryptionOptionValid() {
+        return MAIL_SMTP_ENCRYPTION_NONE.equals(getProperty(MAIL_SMTP_ENCRYPTION, true))
+                || MAIL_SMTP_ENCRYPTION_SSL.equals(getProperty(MAIL_SMTP_ENCRYPTION, true));
     }
 }

@@ -40,7 +40,8 @@ public class JavaMailSender {
         mailSessionProps.put("mail.smtp.host", aMailProps.getProperty(NotificationProperties.MAIL_SERVER));
         mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT));
         // enable SSL
-        if (aMailProps.getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false)) {
+        if (NotificationProperties.MAIL_SMTP_ENCRYPTION_SSL.equals(
+                aMailProps.getProperty(NotificationProperties.MAIL_SMTP_ENCRYPTION, true))) {
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             mailSessionProps.put("mail.smtp.socketFactory.fallback", false);
