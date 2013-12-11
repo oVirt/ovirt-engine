@@ -364,7 +364,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     private int getInt(String value, int defaultValue) {
-        return value == null ? defaultValue : Integer.parseInt(value);
+        try {
+            return value == null ? defaultValue : Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            return defaultValue;
+        }
     }
 
     /**
