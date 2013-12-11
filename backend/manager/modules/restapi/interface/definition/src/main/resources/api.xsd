@@ -2436,21 +2436,23 @@
   <xs:complexType name="CloudInit">
     <xs:sequence>
       <xs:element ref="host" minOccurs="0"/>
-      <xs:element name="network" minOccurs="0">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element ref="nics" minOccurs="0"/>
-            <xs:element ref="dns" minOccurs="0"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element> <!-- </network> -->
       <xs:element ref="authorized_keys" minOccurs="0"/>
+      <xs:element ref="network_configuration" minOccurs="0"/>
       <xs:element name="regenerate_ssh_keys" type="xs:boolean" minOccurs="0"/>
       <xs:element name="timezone" type="xs:string" minOccurs="0"/>
       <xs:element ref="users" minOccurs="0"/>
       <xs:element ref="files" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:complexType name="NetworkConfiguration">
+    <xs:sequence>
+      <xs:element ref="nics" minOccurs="0"/>
+      <xs:element ref="dns" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="network_configuration" type="NetworkConfiguration"/>
 
   <xs:complexType name="VmPlacementPolicy">
     <xs:sequence>

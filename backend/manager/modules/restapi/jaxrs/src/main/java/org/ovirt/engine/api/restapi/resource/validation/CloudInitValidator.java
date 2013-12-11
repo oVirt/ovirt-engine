@@ -14,10 +14,10 @@ public class CloudInitValidator implements Validator<CloudInit> {
     @Override
     public void validateEnums(CloudInit model) {
         if (model != null) {
-            if (model.isSetNetwork()) {
-                if (model.getNetwork().isSetNics()
-                        && !model.getNetwork().getNics().getNics().isEmpty()) {
-                    for (NIC iface : model.getNetwork().getNics().getNics()) {
+            if (model.isSetNetworkConfiguration()) {
+                if (model.getNetworkConfiguration().isSetNics()
+                        && !model.getNetworkConfiguration().getNics().getNics().isEmpty()) {
+                    for (NIC iface : model.getNetworkConfiguration().getNics().getNics()) {
                         validateEnum(BootProtocol.class, iface.getBootProtocol(), true);
                     }
                 }
