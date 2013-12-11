@@ -2308,6 +2308,7 @@
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
           <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <!-- also rel="cdroms/disks/nics/watchdogs" links, see Devices below -->
@@ -2619,6 +2620,7 @@
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
           <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">

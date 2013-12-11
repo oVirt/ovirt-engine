@@ -26,6 +26,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 
+import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne;
+import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
+
 public class TemplateMapper {
 
     private static final int BYTES_PER_MB = 1024 * 1024;
@@ -152,6 +155,9 @@ public class TemplateMapper {
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());
         }
+        if (model.isSetMigrationDowntime()) {
+            entity.setMigrationDowntime(mapMinusOneToNull(model.getMigrationDowntime()));
+        }
         return entity;
     }
 
@@ -266,6 +272,9 @@ public class TemplateMapper {
         if (model.isSetTunnelMigration()) {
             staticVm.setTunnelMigration(model.isTunnelMigration());
         }
+        if (model.isSetMigrationDowntime()) {
+            staticVm.setMigrationDowntime(mapMinusOneToNull(model.getMigrationDowntime()));
+        }
         return staticVm;
     }
 
@@ -352,6 +361,8 @@ public class TemplateMapper {
         }
         model.setTimezone(entity.getTimeZone());
         model.setTunnelMigration(entity.getTunnelMigration());
+        model.setMigrationDowntime(mapNullToMinusOne(entity.getMigrationDowntime()));
+
         return model;
     }
 
