@@ -135,6 +135,7 @@ public class VmMapperTest extends
         assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
         assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
+        assertEquals(model.getMigrationDowntime(), transform.getMigrationDowntime());
     }
 
     @Test

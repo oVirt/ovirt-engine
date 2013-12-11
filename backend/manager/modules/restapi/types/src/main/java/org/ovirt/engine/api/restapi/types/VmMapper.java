@@ -75,6 +75,9 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
+import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne;
+import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
+
 public class VmMapper {
 
     private static final int BYTES_PER_MB = 1024 * 1024;
@@ -117,6 +120,7 @@ public class VmMapper {
         staticVm.setUsbPolicy(entity.getUsbPolicy());
         staticVm.setTunnelMigration(entity.getTunnelMigration());
         staticVm.setVncKeyboardLayout(entity.getVncKeyboardLayout());
+        staticVm.setMigrationDowntime(entity.getMigrationDowntime());
         return staticVm;
     }
 
@@ -270,6 +274,9 @@ public class VmMapper {
         }
         if (vm.isSetTunnelMigration()) {
             staticVm.setTunnelMigration(vm.isTunnelMigration());
+        }
+        if (vm.isSetMigrationDowntime()) {
+            staticVm.setMigrationDowntime(mapMinusOneToNull(vm.getMigrationDowntime()));
         }
         return staticVm;
     }
@@ -489,6 +496,7 @@ public class VmMapper {
             model.setQuota(quota);
         }
         model.setTunnelMigration(entity.getTunnelMigration());
+        model.setMigrationDowntime(mapNullToMinusOne(entity.getMigrationDowntime()));
         return model;
     }
 

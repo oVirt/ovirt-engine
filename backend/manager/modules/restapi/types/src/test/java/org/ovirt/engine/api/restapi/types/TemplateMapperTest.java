@@ -79,5 +79,6 @@ public class TemplateMapperTest
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
         assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
+        assertEquals(model.getMigrationDowntime(), transform.getMigrationDowntime());
     }
 }
