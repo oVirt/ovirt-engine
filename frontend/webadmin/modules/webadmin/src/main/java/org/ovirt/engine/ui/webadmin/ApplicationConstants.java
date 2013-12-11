@@ -3400,4 +3400,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Guaranty Resources")
     String guarantyResourcesLabel();
+
+    @DefaultStringValue("Error getting status of Reports Webapp")
+    String reportsWebAppErrorMsg();
+
+    @DefaultStringValue("Reports Webapp not deployed, please try later.")
+    String reportsWebAppNotDeployedMsg();
 }
