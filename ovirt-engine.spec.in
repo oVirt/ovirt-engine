@@ -156,6 +156,7 @@ BuildArch:	noarch
 BuildRequires:	java-devel
 BuildRequires:	jpackage-utils
 BuildRequires:	make
+BuildRequires:	python
 %if %{ovirt_require_maven}
 BuildRequires:	maven
 %endif
@@ -502,6 +503,10 @@ make %{make_common_opts}
 %install
 rm -fr "%{buildroot}"
 make %{make_common_opts} install DESTDIR="%{buildroot}"
+
+# Compile python files
+%{__python} -m compileall -f -q -d / "%{buildroot}"
+%{__python} -O -m compileall -f -q -d / "%{buildroot}"
 
 #
 # /var creation
