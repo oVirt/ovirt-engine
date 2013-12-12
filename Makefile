@@ -31,7 +31,7 @@ BUILD_LOCALES=0
 BUILD_DEV=0
 BUILD_UT=1
 EXTRA_BUILD_FLAGS=
-BUILD_PYTHON_VALIDATION=1
+BUILD_VALIDATION=1
 DEV_REBUILD=1
 DEV_BUILD_GWT_DRAFT=0
 DEV_EXTRA_BUILD_FLAGS=
@@ -191,8 +191,7 @@ GENERATED = \
 
 all: \
 	generated-files \
-	python-validation \
-	dbscripts-validations \
+	validations \
 	$(BUILD_FILE) \
 	$(NULL)
 
@@ -310,13 +309,13 @@ copy-recursive:
 		install -m "$${MASK}" "$(SOURCEDIR)/$${f}" "$$(dirname "$(TARGETDIR)/$${f}")"; \
 	done
 
-python-validation:	generated-files
-	if [ "$(BUILD_PYTHON_VALIDATION)" != 0 ]; then \
-		build/python-check.sh; \
-	fi
 
-dbscripts-validations:
-	build/dbscripts/check_for_duplicate_upgrade_scripts.sh
+validations:	generated-files
+	if [ "$(BUILD_VALIDATION)" != 0 ]; then \
+		build/shell-check.sh && \
+		build/python-check.sh && \
+		build/dbscripts/check_for_duplicate_upgrade_scripts.sh; \
+	fi
 
 install_artifacts:
 	# we must exclude tmp.repos directory so we
@@ -433,7 +432,7 @@ install-dev:	\
 	$(MAKE) \
 		install \
 		BUILD_DEV=1 \
-		BUILD_PYTHON_VALIDATION=0 \
+		BUILD_VALIDATION=0 \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		$(NULL)
 

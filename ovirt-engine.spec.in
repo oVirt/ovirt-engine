@@ -111,7 +111,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	BUILD_GWT=%{ovirt_build_gwt} \\\
 	BUILD_LOCALES=%{ovirt_build_locales} \\\
 	BUILD_UT=%{ovirt_build_ut} \\\
-	BUILD_PYTHON_VALIDATION=0 \\\
+	BUILD_VALIDATION=0 \\\
 	PACKAGE_NAME=%{name} \\\
 	RPM_VERSION=%{version} \\\
 	RPM_RELEASE=%{release} \\\

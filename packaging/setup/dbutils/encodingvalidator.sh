@@ -1,3 +1,4 @@
+#!/bin/bash
 ###############################################################################################################
 # The purpose of this utility is to find not UTF8 template1 encoding , display it and enable to fix it
 # Only support may access this utility with care
@@ -6,7 +7,6 @@
 # It is highly recomended to backup the database before using this utility.
 ###############################################################################################################
 
-#!/bin/bash
 #include db general functions
 pushd $(dirname ${0})>/dev/null
 source ./common.sh
