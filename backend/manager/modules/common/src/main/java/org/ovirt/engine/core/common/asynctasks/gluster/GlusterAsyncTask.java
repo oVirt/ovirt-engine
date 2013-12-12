@@ -115,4 +115,10 @@ public class GlusterAsyncTask implements Serializable{
                 && jobStatus == other.jobStatus);
     }
 
+    @Override
+    public String toString() {
+        return "GlusterAsyncTask[" + getTaskId() + "-" + getType() + "-" + getStatus() + "]";
+    }
+
+
 }

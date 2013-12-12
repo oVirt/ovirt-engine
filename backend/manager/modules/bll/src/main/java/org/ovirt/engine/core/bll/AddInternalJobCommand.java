@@ -40,9 +40,15 @@ public class AddInternalJobCommand<T extends AddInternalJobParameters> extends A
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject>  permissionList = new ArrayList<PermissionSubject>();
-        permissionList.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+        if (getParameters().getJobEntityType() != null && getParameters().getJobEntityId() != null) {
+            permissionList.add(new PermissionSubject(getParameters().getJobEntityId(),
+                    getParameters().getJobEntityType(),
+                    getParameters().getActionType().getActionGroup()));
+        } else {
+            permissionList.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 getParameters().getActionType().getActionGroup()));
+        }
         return permissionList;
     }
 
