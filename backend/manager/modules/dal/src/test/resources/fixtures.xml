@@ -5151,6 +5151,7 @@
         <column>id</column>
         <column>volume_id</column>
         <column>server_id</column>
+        <column>task_id</column>
         <column>brick_dir</column>
         <column>status</column>
         <column>brick_order</column>
@@ -5162,6 +5163,7 @@
             <value>6ccdc294-d77b-4929-809d-8afe7634b47d</value>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a763</value>
             <value>/export/test-vol-distribute-1/dir1</value>
             <value>UP</value>
             <value>0</value>
@@ -5172,6 +5174,7 @@
             <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a754</value>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a763</value>
             <value>/export/test-vol-distribute-1/dir2</value>
             <value>UP</value>
             <value>1</value>
@@ -5184,6 +5187,7 @@
             <value>65d327f8-5864-4330-be04-fe27e1ffb553</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a764</value>
             <value>/export/test-vol-replicate-1/r1dir1</value>
             <value>UP</value>
             <value>0</value>
@@ -5194,6 +5198,7 @@
             <value>2ab384da-6190-4668-aa2e-37bc5c5ff014</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a764</value>
             <value>/export/test-vol-replicate-1/r1dir2</value>
             <value>UP</value>
             <value>1</value>
@@ -5204,6 +5209,7 @@
             <value>2702bb49-3037-405c-81c5-14a38793164e</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a764</value>
             <value>/export/test-vol-replicate-1/r2dir1</value>
             <value>UP</value>
             <value>2</value>
@@ -5214,6 +5220,7 @@
             <value>41eb430f-c2ed-435c-b4eb-e1e19173754e</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a764</value>
             <value>/export/test-vol-replicate-1/r2dir2</value>
             <value>UP</value>
             <value>3</value>

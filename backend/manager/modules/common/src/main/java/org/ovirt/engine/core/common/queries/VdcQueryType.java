@@ -260,6 +260,7 @@ public enum VdcQueryType implements Serializable {
     GetGlusterVolumeOptionsInfo,
     GetGlusterVolumeBricks,
     GetGlusterVolumeBricksByServerId,
+    GetGlusterVolumeBricksByTaskId,
     GetGlusterBrickById,
     GetGlusterServersForImport,
     GetAddedGlusterServers,

@@ -135,6 +135,13 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
+    public List<GlusterBrickEntity> getGlusterVolumeBricksByTaskId(Guid taskId) {
+        return getCallsHandler().executeReadList("GetBricksByTaskId",
+                brickRowMapper,
+                getCustomMapSqlParameterSource().addValue("task_id", taskId));
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(GlusterBrickEntity brick) {
         return createBrickParams(brick);
     }
