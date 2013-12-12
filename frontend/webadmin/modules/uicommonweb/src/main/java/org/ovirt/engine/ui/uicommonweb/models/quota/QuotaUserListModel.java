@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -259,7 +259,11 @@ public class QuotaUserListModel extends SearchableListModel {
             permissionParams = new PermissionsOperationsParameters();
             if (user.isGroup())
             {
-                permissionParams.setGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
+                DbGroup group = new DbGroup();
+                group.setId(user.getId());
+                group.setName(user.getFirstName());
+                group.setDomain(user.getDomain());
+                permissionParams.setGroup(group);
             }
             else
             {

@@ -52,15 +52,6 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
         return getAdGroupName();
     }
 
-    public static LdapGroup initAdGroup(LdapGroup adGroup) {
-        DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(adGroup.getid());
-        if (dbGroup == null) {
-            dbGroup = new DbGroup(adGroup);
-            DbFacade.getInstance().getDbGroupDao().save(dbGroup);
-        }
-        return new LdapGroup(dbGroup);
-    }
-
     // TODO to be removed
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {

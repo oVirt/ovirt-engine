@@ -20,7 +20,7 @@ public class BackendGroupAssignedPermissionsResourceTest
               VdcQueryType.GetPermissionsByAdElementId,
               new IdQueryParameters(GUIDS[1]),
               Group.class,
-              "Group.id",
+              "Group.Id",
               "Id");
     }
 

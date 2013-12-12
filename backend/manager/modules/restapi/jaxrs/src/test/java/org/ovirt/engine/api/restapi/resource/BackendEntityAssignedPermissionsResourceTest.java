@@ -70,7 +70,7 @@ public class BackendEntityAssignedPermissionsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(VdcActionType.AddPermission,
                                   PermissionsOperationsParameters.class,
-                                  new String[] { "Group.id",
+                                  new String[] { "Group.Id",
                                                  "Permission.ad_element_id",
                                                  "Permission.ObjectId",
                                                  "Permission.role_id" },

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -167,9 +167,13 @@ public class SystemPermissionListModel extends SearchableListModel
 
             if (user.isGroup())
             {
+                DbGroup group = new DbGroup();
+                group.setId(user.getId());
+                group.setName(user.getFirstName());
+                group.setDomain(user.getDomain());
                 PermissionsOperationsParameters tempVar2 = new PermissionsOperationsParameters();
                 tempVar2.setPermission(perm);
-                tempVar2.setGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
+                tempVar2.setGroup(group);
                 list.add(tempVar2);
             }
             else

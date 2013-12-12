@@ -8,6 +8,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.Permissions;
@@ -54,7 +56,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 || (getParameters().getUser() != null && !getParameters().getUser()
                         .getId()
                         .equals(adElementId))
-                || (getParameters().getGroup() != null && !getParameters().getGroup().getid().equals(adElementId))) {
+                || (getParameters().getGroup() != null && !getParameters().getGroup().getId().equals(adElementId))) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_USER_ID_MISMATCH);
             return false;
         }
@@ -88,26 +90,32 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
 
     @Override
     protected void executeCommand() {
-        final Permissions paramPermission = getParameters().getPermission();
+        // Get the parameters:
+        T parameters = getParameters();
+
+        // The user or group given in the parameters may haven't been added to
+        // the database yet, this will be the case if they don't have an
+        // internal identifier, if this is the case then they need to be
+        // added to the database now, before the permission:
+        final DbUser user = parameters.getUser();
+        if (user != null && user.getId() == null) {
+            user.setId(Guid.newGuid());
+            getDbUserDAO().save(user);
+        }
+        final DbGroup group = parameters.getGroup();
+        if (group != null && group.getId() == null) {
+            group.setId(Guid.newGuid());
+            getAdGroupDAO().save(group);
+        }
+
+        final Permissions paramPermission = parameters.getPermission();
+
         Permissions permission =
                 getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getrole_id(),
                         paramPermission.getad_element_id(),
                         paramPermission.getObjectId());
 
         if (permission == null) {
-            // try to add user to db if vdcUser sent
-            if (getParameters().getUser() != null && _dbUser == null) {
-                _dbUser = UserCommandBase.initUser(
-                    getParameters().getSessionId(),
-                    getParameters().getUser().getDomain(),
-                    getParameters().getUser().getId()
-                 );
-            }
-            // try to add group to db if adGroup sent
-            else if (getParameters().getGroup() != null) {
-                _adGroup = AdGroupsHandlingCommandBase.initAdGroup(getParameters().getGroup());
-            }
-
             paramPermission.setId(Guid.newGuid());
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -124,7 +132,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
 
         getReturnValue().setActionReturnValue(permission.getId());
 
-        if (_dbUser != null) {
+        if (user != null) {
             updateAdminStatus(permission);
         }
         setSucceeded(true);
