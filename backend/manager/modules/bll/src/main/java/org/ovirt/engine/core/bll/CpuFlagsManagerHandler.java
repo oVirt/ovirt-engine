@@ -361,5 +361,16 @@ public final class CpuFlagsManagerHandler {
         return server1Level - server2Level;
     }
 
+    public static boolean isCpuUpdatable(String cpuName, Version ver) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        ServerCpu server = null;
+
+        if (cpuFlagsManager != null) {
+            server = cpuFlagsManager.getServerCpuByName(cpuName);
+        }
+
+        int serverLevel = (server != null) ? server.getLevel() : 0;
+        return serverLevel != 0;
+    }
 
 }

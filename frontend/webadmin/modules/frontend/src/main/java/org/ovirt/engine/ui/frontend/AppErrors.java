@@ -166,6 +166,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot switch Host to Maintenance mode. Host is already in Maintenance mode.")
     String VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE();
 
+    @DefaultStringValue("Host CPU type is not supported in this cluster compatibility version or is not supported at all.")
+    String CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION();
+
+    @DefaultStringValue("The host and destination cluster architectures do not match.")
+    String ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES();
+
     @DefaultStringValue("Cannot switch Host to Maintenance mode. Host has asynchronous running tasks,\nwait for operation to complete and retry.")
     String VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS();
 
@@ -964,6 +970,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk is Illegal. Illegal disks can only be deleted.")
     String ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Architecture does not match the expected value.")
+    String ACTION_TYPE_FAILED_ILLEGAL_ARCHITECTURE_TYPE_INCOMPATIBLE();
+
     @DefaultStringValue("Cannot ${action} ${type}. The disk is already detached from VM.")
     String ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED();
 
@@ -1083,6 +1092,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot change Cluster CPU type when there are Hosts attached to this Cluster.")
     String VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL();
+
+    @DefaultStringValue("Cannot change Cluster CPU architecture when there are Hosts or VMs attached to this Cluster.")
+    String VDS_GROUP_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL();
 
     @DefaultStringValue("Cannot change Cluster CPU to higher CPU type when there are active Hosts with lower CPU type.\n-Please move Hosts with lower CPU to maintenance first.")
     String VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS();
@@ -2028,6 +2040,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot update Cluster and change CPU Cluster level if there are suspended VMs in the Cluster")
     String VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS();
+
+    @DefaultStringValue("Cannot update Cluster and change CPU Cluster name if there are hosts or virtual machines in the Cluster. This CPU name is incompatible with all other available CPUs")
+    String VDS_GROUP_CPU_IS_NOT_UPDATABLE();
 
     @DefaultStringValue("Cannot update Cluster, custom properties are not supported under current Cluster version")
     String CUSTOM_PROPERTIES_INVALID_VALUES_NOT_ALLOWED_IN_CURRENT_CLUSTER();

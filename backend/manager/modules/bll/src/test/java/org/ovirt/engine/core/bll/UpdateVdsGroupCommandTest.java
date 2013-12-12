@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -78,6 +79,47 @@ public class UpdateVdsGroupCommandTest {
     }
 
     @Test
+    public void legalArchitectureChange() {
+        createCommandWithDefaultVdsGroup();
+        cpuExists();
+        architectureIsUpdatable();
+        assertTrue(cmd.canDoAction());
+    }
+
+    @Test
+    public void illegalArchitectureChange() {
+        createCommandWithDefaultVdsGroup();
+        clusterHasVMs();
+        cpuExists();
+        architectureIsNotUpdatable();
+        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL);
+    }
+
+    @Test
+    public void illegalCpuUpdate() {
+        createCommandWithDifferentCpuName();
+        cpuIsNotUpdatable();
+        cpuManufacturersMatch();
+        cpuExists();
+        clusterHasVMs();
+        clusterHasVds();
+        architectureIsUpdatable();
+        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CPU_IS_NOT_UPDATABLE);
+    }
+
+    @Test
+    public void legalCpuUpdate() {
+        createCommandWithDifferentCpuName();
+        cpuExists();
+        architectureIsUpdatable();
+        assertTrue(cmd.canDoAction());
+    }
+
+    private void cpuIsNotUpdatable() {
+        doReturn(false).when(cmd).isCpuUpdatable(any(VDSGroup.class));
+    }
+
+    @Test
     public void invalidCpuSelection() {
         createCommandWithDefaultVdsGroup();
         canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
@@ -114,6 +156,7 @@ public class UpdateVdsGroupCommandTest {
         cpuExists();
         cpuManufacturersMatch();
         VdsExistWithHigherVersion();
+        architectureIsUpdatable();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
     }
 
@@ -124,6 +167,7 @@ public class UpdateVdsGroupCommandTest {
         cpuManufacturersMatch();
         clusterHasVds();
         cpuFlagsMissing();
+        architectureIsUpdatable();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
     }
 
@@ -146,6 +190,7 @@ public class UpdateVdsGroupCommandTest {
         cpuManufacturersMatch();
         allQueriesForVms();
         storagePoolAlreadyHasCluster();
+        architectureIsUpdatable();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
     }
 
@@ -158,6 +203,7 @@ public class UpdateVdsGroupCommandTest {
         cpuExists();
         cpuManufacturersMatch();
         allQueriesForVms();
+        architectureIsUpdatable();
         canDoActionFailedWithReason(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
     }
 
@@ -208,8 +254,8 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void disableVirtWhenVmsExist() {
         createCommandWithGlusterEnabled();
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
         mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.TRUE);
         cpuExists();
         cpuFlagsNotMissing();
@@ -251,6 +297,10 @@ public class UpdateVdsGroupCommandTest {
 
     private void createCommandWithDefaultVdsGroup() {
         createCommand(createDefaultVdsGroup());
+    }
+
+    private void createCommandWithDifferentCpuName() {
+        createCommand(createDefaultVdsGroupWithDifferentCpuName());
     }
 
     private void createCommandWithNoCpuName() {
@@ -318,6 +368,15 @@ public class UpdateVdsGroupCommandTest {
         group.setcpu_name("Intel Conroe");
         group.setcompatibility_version(VERSION_1_1);
         group.setStoragePoolId(STORAGE_POOL_ID);
+        group.setArchitecture(ArchitectureType.x86_64);
+        return group;
+    }
+
+    private static VDSGroup createDefaultVdsGroupWithDifferentCpuName() {
+        VDSGroup group = createDefaultVdsGroup();
+
+        group.setcpu_name("Another CPU name");
+
         return group;
     }
 
@@ -327,6 +386,7 @@ public class UpdateVdsGroupCommandTest {
         group.setId(DEFAULT_VDS_GROUP_ID);
         group.setcompatibility_version(VERSION_1_1);
         group.setStoragePoolId(STORAGE_POOL_ID);
+        group.setArchitecture(ArchitectureType.undefined);
         return group;
     }
 
@@ -445,6 +505,14 @@ public class UpdateVdsGroupCommandTest {
 
     private void cpuExists() {
         doReturn(true).when(cmd).checkIfCpusExist();
+    }
+
+    private void architectureIsUpdatable() {
+        doReturn(true).when(cmd).isArchitectureUpdatable();
+    }
+
+    private void architectureIsNotUpdatable() {
+        doReturn(ArchitectureType.ppc64).when(cmd).getArchitecture();
     }
 
     private static void setValidCpuVersionMap() {

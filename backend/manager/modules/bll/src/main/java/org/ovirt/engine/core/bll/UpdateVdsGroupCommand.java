@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -144,6 +145,11 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     protected boolean canDoAction() {
         boolean result = true;
         boolean hasVms = false;
+        boolean hasVmOrHost = false;
+        boolean sameCpuNames = false;
+
+        List<VM> vmList = null;
+
         oldGroup = getVdsGroupDAO().get(getVdsGroup().getId());
         if (oldGroup == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
@@ -196,6 +202,33 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 }
             }
         }
+
+        if (result) {
+            vmList = getVmDAO().getAllForVdsGroup(oldGroup.getId());
+            hasVmOrHost = !vmList.isEmpty() || !allForVdsGroup.isEmpty();
+        }
+
+        // cannot change the the processor architecture while there are attached hosts or VMs to the cluster
+        if (result  && getVdsGroup().supportsVirtService()
+                && !isArchitectureUpdatable()
+                && hasVmOrHost) {
+            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL);
+            result = false;
+        }
+
+        if (result) {
+            sameCpuNames = StringUtils.equals(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
+        }
+
+        if (result) {
+            boolean isOldCPUEmpty = StringUtils.isEmpty(oldGroup.getcpu_name());
+
+            if (!isOldCPUEmpty && !sameCpuNames && !isCpuUpdatable(oldGroup) && hasVmOrHost) {
+                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CPU_IS_NOT_UPDATABLE);
+                result = false;
+            }
+        }
+
         if (result) {
             List<VDS> vdss = new ArrayList<VDS>();
             boolean isAddedToStoragePool = oldGroup.getStoragePoolId() == null
@@ -223,11 +256,10 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 }
             }
             if (result) {
-                List<VM> vmList = getVmDAO().getAllForVdsGroup(oldGroup.getId());
                 boolean notDownVms = false;
                 boolean suspendedVms = false;
                 hasVms = vmList.size() > 0;
-                boolean sameCpuNames = StringUtils.equals(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
+
                 if (!sameCpuNames) {
                     for (VM vm : vmList) {
                         if (vm.getStatus() == VMStatus.Suspended) {
@@ -327,6 +359,11 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
     }
 
+    protected boolean isArchitectureUpdatable() {
+        return oldGroup.getArchitecture() == ArchitectureType.undefined ? true
+                : getArchitecture() == oldGroup.getArchitecture();
+    }
+
     protected boolean checkIfCpusSameManufacture(VDSGroup group) {
         return CpuFlagsManagerHandler.CheckIfCpusSameManufacture(group.getcpu_name(),
                 getVdsGroup().getcpu_name(),
@@ -343,6 +380,10 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 getVdsGroup().getcpu_name(),
                 vds.getCpuFlags(),
                 getVdsGroup().getcompatibility_version());
+    }
+
+    protected boolean isCpuUpdatable(VDSGroup cluster) {
+        return CpuFlagsManagerHandler.isCpuUpdatable(cluster.getcpu_name(), cluster.getcompatibility_version());
     }
 
     protected int compareCpuLevels(VDSGroup otherGroup) {

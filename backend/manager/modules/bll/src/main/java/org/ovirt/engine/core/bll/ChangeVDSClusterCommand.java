@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -92,6 +93,19 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         if (getTargetCluster().supportsGlusterService() && !hasUpServerInTarget(getTargetCluster())) {
             return false;
         }
+
+        vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getCpuFlags(),
+                getTargetCluster().getcompatibility_version()));
+
+        if (vds.getCpuName() == null) {
+            return failCanDoAction(VdcBllMessages.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
+        }
+
+        if (getTargetCluster().getArchitecture() != ArchitectureType.undefined &&
+                getTargetCluster().getArchitecture() != vds.getCpuName().getArchitecture()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES);
+        }
+
         return true;
     }
 
