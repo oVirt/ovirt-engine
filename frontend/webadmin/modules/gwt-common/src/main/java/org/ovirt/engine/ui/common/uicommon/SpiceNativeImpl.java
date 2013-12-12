@@ -77,7 +77,20 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
             configBuilder.append("\nproxy=").append(getSpiceProxy()); //$NON-NLS-1$
         }
 
+        if (!StringHelper.isNullOrEmpty(getSslChanels())) {
+            configBuilder.append("\nsecure-channels=").append(formatSecureChannels(getSslChanels())); //$NON-NLS-1$
+        }
+
         ConsoleModel.makeConsoleConfigRequest("console.vv", "application/x-virt-viewer; charset=UTF-8", configBuilder.toString()); //$NON-NLS-1$ $NON-NLS-2$
+    }
+
+    /**
+     * Reformats the secure channels - the .vv file accepts semicolon-separated values (unlike SPICE browser plugin).
+     */
+    private static String formatSecureChannels(String sslChanels) {
+        return (sslChanels == null)
+                ? "" //$NON-NLS-1$
+                : sslChanels.replace(',', ';');
     }
 
     @Override
