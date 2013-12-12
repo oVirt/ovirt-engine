@@ -829,6 +829,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                     getVmValuesForMsgResolving()));
             // This is needed in order to end the job upon exextuion of the steps of the child command
             runStatelessVmCtx.setShouldEndJob(true);
+            runStatelessVmCtx.setJob(job);
             // Since run stateless step involves invocation of command, we should set the run stateless vm step as
             // the "beginning step" of the child command.
             runStatelessVmCtx.setStep(runStatelessStep);
