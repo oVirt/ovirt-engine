@@ -922,6 +922,15 @@ fi
 %endif
 
 %changelog
+* Thu Dec 12 2013 Sandro Bonazzola <sbonazzo@redhat.com> - 3.3.2-1
+- Bump version to 3.3.2
+
+* Thu Nov 14 2013 Sandro Bonazzola <sbonazzo@redhat.com> - 3.3.1-2
+- Respin including blockers found while testing 3.3.1-1
+
+* Wed Oct 30 2013 Sandro Bonazzola <sbonazzo@redhat.com> - 3.3.1-1
+- Bump version to 3.3.1
+
 * Thu Jan 17 2013 Juan Hernandez <juan.hernandez@redhat.com> - 3.3.0-1
 - Bump version to 3.3.0
 
