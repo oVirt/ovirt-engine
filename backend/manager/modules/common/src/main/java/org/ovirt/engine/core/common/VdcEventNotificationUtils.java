@@ -46,6 +46,8 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_CONSOLE_DISCONNECTED);
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_SET_TICKET);
 
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_DOWN_ERROR);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VDS_INITIATED_RUN_VM_FAILED);
         // IRS
         AddEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.VDS_SLOW_STORAGE_RESPONSE_TIME);
         AddEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.IRS_FAILURE);

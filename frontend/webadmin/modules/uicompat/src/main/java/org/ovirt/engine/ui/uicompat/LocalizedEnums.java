@@ -223,6 +223,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___VDS_INSTALL_FAILED();
 
+    String AuditLogType___VDS_INITIATED_RUN_VM_FAILED();
+
     String AuditLogType___VM_FAILURE();
 
     String AuditLogType___VM_MIGRATION_START();
@@ -230,6 +232,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___VM_MIGRATION_FAILED();
 
     String AuditLogType___VM_NOT_RESPONDING();
+
+    String AuditLogType___VM_DOWN_ERROR();
 
     String AuditLogType___IRS_FAILURE();
 
