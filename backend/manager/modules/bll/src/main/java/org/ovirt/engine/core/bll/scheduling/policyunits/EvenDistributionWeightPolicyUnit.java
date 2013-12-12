@@ -46,8 +46,9 @@ public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
         if (effectiveCpuCores != null
                 && vds.getUsageCpuPercent() != null
                 && vds.getPendingVcpusCount() != null) {
-            // round up result, fractions matters
-            score = Math.min((int) Math.ceil(calcDistributeMetric(vds, vm, effectiveCpuCores)), MaxSchedulerWeight);
+            // round the result and adding one to avoid zero
+            score = Math.min((int) Math.round(
+                    calcDistributeMetric(vds, vm, effectiveCpuCores)) + 1, MaxSchedulerWeight);
         }
         return score;
     }
