@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.template;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.VmCommand;
@@ -59,8 +58,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
         VmTemplateHandler.updateDisksFromDb(getVmTemplate());
 
+        List<VmNic> interfacesForCheckPciLimit = new ArrayList<VmNic>(interfaces);
+        interfacesForCheckPciLimit.add(getParameters().getInterface());
         if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getNumOfMonitors(),
-                Collections.<VmNic>singletonList(getParameters().getInterface()),
+                interfacesForCheckPciLimit,
                 new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
                     VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
                     getReturnValue().getCanDoActionMessages())) {
