@@ -3,7 +3,7 @@ package org.ovirt.engine.core.searchbackend;
 public class VmCrossRefAutoCompleter extends SearchObjectsBaseAutoCompleter {
     public VmCrossRefAutoCompleter() {
         super(new String[] {
-                SearchObjects.VDS_PLU_OBJ_NAME,
+                SearchObjects.VDS_OBJ_NAME,
                 SearchObjects.TEMPLATE_PLU_OBJ_NAME,
                 SearchObjects.AUDIT_PLU_OBJ_NAME,
                 SearchObjects.VDC_USER_PLU_OBJ_NAME,
