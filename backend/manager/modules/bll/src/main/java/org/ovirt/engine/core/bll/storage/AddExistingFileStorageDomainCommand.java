@@ -81,8 +81,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
                 new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(), getStorageDomain().getId())
         ).getReturnValue();
 
-        if (domainFromIrs != null
-                && domainFromIrs.getFirst().getStorageDomainType() != getStorageDomain().getStorageDomainType()) {
+        if (domainFromIrs.getFirst().getStorageDomainType() != getStorageDomain().getStorageDomainType()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
         }
 
@@ -91,19 +90,16 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
 
     protected boolean concreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domain) {
         boolean returnValue = false;
-
-        if (domain != null) {
-            StorageDomainStatic domainFromIrs = domain.getFirst();
-            if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
-                    && StringUtils.isEmpty(domainFromIrs.getStorage()) && domainFromIrs.getConnection() != null
-                    && getStorageDomain().getStorageStaticData().getConnection() != null) {
-                returnValue = (StringUtils.equals(domainFromIrs.getConnection().getconnection(), getStorageDomain()
-                        .getStorageStaticData().getConnection().getconnection()));
-            } else if (!StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
-                    && !StringUtils.isEmpty(domainFromIrs.getStorage())) {
-                returnValue = (StringUtils.equals(domainFromIrs.getStorage(), getStorageDomain().getStorageStaticData()
-                        .getStorage()));
-            }
+        StorageDomainStatic domainFromIrs = domain.getFirst();
+        if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
+                && StringUtils.isEmpty(domainFromIrs.getStorage()) && domainFromIrs.getConnection() != null
+                && getStorageDomain().getStorageStaticData().getConnection() != null) {
+            returnValue = (StringUtils.equals(domainFromIrs.getConnection().getconnection(), getStorageDomain()
+                    .getStorageStaticData().getConnection().getconnection()));
+        } else if (!StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
+                && !StringUtils.isEmpty(domainFromIrs.getStorage())) {
+            returnValue = (StringUtils.equals(domainFromIrs.getStorage(), getStorageDomain().getStorageStaticData()
+                    .getStorage()));
         }
         if (!returnValue) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);
