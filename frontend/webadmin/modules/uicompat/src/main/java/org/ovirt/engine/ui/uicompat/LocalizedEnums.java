@@ -368,6 +368,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_BRICK_STATUS_CHANGED();
 
+    String AuditLogType___GLUSTER_VOLUME_REBALANCE_NOT_FOUND_FROM_CLI();
+
+    String AuditLogType___REMOVE_GLUSTER_VOLUME_BRICKS_NOT_FOUND_FROM_CLI();
+
     String VdcActionType___ActivateVds();
 
     String VdcActionType___RecoveryStoragePool();

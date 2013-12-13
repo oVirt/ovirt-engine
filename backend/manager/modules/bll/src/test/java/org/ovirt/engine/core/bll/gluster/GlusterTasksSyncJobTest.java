@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -88,6 +89,7 @@ public class GlusterTasksSyncJobTest {
 
     private GlusterTaskUtils taskUtils;
 
+    @Mock
     private GlusterAuditLogUtil logUtil;
 
     private GlusterTasksSyncJob tasksSyncJob;
@@ -104,7 +106,6 @@ public class GlusterTasksSyncJobTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
         tasksSyncJob = Mockito.spy(GlusterTasksSyncJob.getInstance());
-        logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
         taskUtils = Mockito.spy(GlusterTaskUtils.getInstance());
         doNothing().when(logUtil).logClusterMessage(any(Guid.class),
                                 any(AuditLogType.class));
@@ -118,10 +119,16 @@ public class GlusterTasksSyncJobTest {
         doReturn(jobRepository).when(taskUtils).getJobRepository();
         doReturn(backend).when(tasksSyncJob).getBackend();
         doReturn(taskUtils).when(tasksSyncJob).getGlusterTaskUtils();
+        doReturn(logUtil).when(tasksSyncJob).getGlusterLogUtil();
         doNothing().when(taskUtils).releaseLock(any(Guid.class));
         doNothing().when(taskUtils).endStepJob(any(Step.class));
         doReturn(null).when(provider).getMonitoredTaskIDsInDB();
         doNothing().when(taskUtils).logEventMessage(any(GlusterAsyncTask.class), any(JobExecutionStatus.class), any(VDSGroup.class));
+        doNothing().when(logUtil).logAuditMessage(any(Guid.class),
+                any(GlusterVolumeEntity.class),
+                any(VDS.class),
+                any(AuditLogType.class),
+                any(HashMap.class));
     }
 
     @Test

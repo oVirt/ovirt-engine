@@ -276,6 +276,22 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         getGlusterLogUtil().logAuditMessage(cluster.getId(), vol, null, logType, values);
     }
 
+    private void logTaskStoppedFromCLI(Step step, GlusterVolumeEntity vol) {
+        AuditLogType logType;
+        switch (step.getStepType()) {
+        case REBALANCING_VOLUME:
+            logType = AuditLogType.GLUSTER_VOLUME_REBALANCE_NOT_FOUND_FROM_CLI;
+            break;
+        case REMOVING_BRICKS:
+            logType = AuditLogType.REMOVE_GLUSTER_VOLUME_BRICKS_NOT_FOUND_FROM_CLI;
+             break;
+         default:
+            logType = AuditLogType.UNASSIGNED;
+            break;
+        }
+        getGlusterLogUtil().logAuditMessage(vol.getClusterId(), vol, null, logType, null);
+    }
+
     protected GlusterAuditLogUtil getGlusterLogUtil() {
         return GlusterAuditLogUtil.getInstance();
     }
@@ -329,10 +345,20 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             //Volume is up, but gluster does not know of task
             //will mark job ended with status unknown.
             List<Step> steps = getStepDao().getStepsByExternalId(taskId);
+            Map<String, String> values = new HashMap<String, String>();
+            values.put(GlusterConstants.CLUSTER, vol == null ? "" :vol.getVdsGroupName());
+            values.put(GlusterConstants.VOLUME, vol == null ? "" : vol.getName());
+            values.put(GlusterConstants.JOB_STATUS, JobExecutionStatus.UNKNOWN.toString());
+            values.put(GlusterConstants.JOB_INFO, " ");
+
             for (Step step: steps) {
                 step.markStepEnded(JobExecutionStatus.UNKNOWN);
                 step.setStatus(JobExecutionStatus.UNKNOWN);
+                step.setDescription(ExecutionMessageDirector.resolveStepMessage(step.getStepType(), values));
                 getGlusterTaskUtils().endStepJob(step);
+                if (vol != null) {
+                    logTaskStoppedFromCLI(step, vol);
+                }
             }
             getGlusterTaskUtils().releaseVolumeLock(taskId);
         }

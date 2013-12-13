@@ -162,6 +162,10 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_HOST_UUID_NOT_FOUND, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_HOST_UUID_ALREADY_EXISTS, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_BRICK_STATUS_CHANGED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.GLUSTER_VOLUME_REBALANCE_START_DETECTED_FROM_CLI, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.START_REMOVING_GLUSTER_VOLUME_BRICKS_DETECTED_FROM_CLI, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_VOLUME_REBALANCE_NOT_FOUND_FROM_CLI, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.REMOVE_GLUSTER_VOLUME_BRICKS_NOT_FOUND_FROM_CLI, AuditLogSeverity.WARNING);
     }
 
     private static void initDefaultSeverities() {

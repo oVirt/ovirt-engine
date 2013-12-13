@@ -85,6 +85,8 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_REPLACE_BRICK_START_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_REBALANCE_START_DETECTED_FROM_CLI);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.START_REMOVING_GLUSTER_VOLUME_BRICKS_DETECTED_FROM_CLI);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_REBALANCE_NOT_FOUND_FROM_CLI);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.REMOVE_GLUSTER_VOLUME_BRICKS_NOT_FOUND_FROM_CLI);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.GLUSTER_SERVER_ADD_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.GLUSTER_SERVER_REMOVE);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.GLUSTER_SERVER_REMOVE_FAILED);
