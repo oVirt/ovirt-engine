@@ -831,6 +831,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field must contain an IP address in format xxx.xxx.xxx.xxx")
     String thisFieldMustContainIPaddressInFormatMsg();
 
+    @DefaultStringValue("This field must contain a CIDR in format xxx.xxx.xxx.xxx/yy")
+    String thisFieldMustContainCidrInFormatMsg();
+
     @DefaultStringValue("This field can't contain spaces.")
     String thisFieldCantConatainSpacesMsg();
 

@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.CidrValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -464,7 +465,8 @@ public abstract class NetworkModel extends Model
 
         getSubnetName().validateEntity(new IValidation[] { new AsciiNameValidation() });
         if (getSubnetName().getEntity() != null && !getSubnetName().getEntity().isEmpty()) {
-            getSubnetCidr().validateEntity(new IValidation[] { new NotEmptyValidation() });
+            getSubnetCidr().validateEntity(new IValidation[] { getSubnetIpVersion().getSelectedItem() == IpVersion.IPV4 ? new CidrValidation()
+                    : new NotEmptyValidation() });
             getSubnetIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
