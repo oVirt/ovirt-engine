@@ -223,7 +223,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 NetworkStatus.OPERATIONAL,
                 false,
                 networkCluster.isRequired(),
-                networkCluster.isMigration()));
+                false));
 
         if (network.getCluster().isDisplay()) {
             final DisplayNetworkClusterHelper displayNetworkClusterHelper = new DisplayNetworkClusterHelper(

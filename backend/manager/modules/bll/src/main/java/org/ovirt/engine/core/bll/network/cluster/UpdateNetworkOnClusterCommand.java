@@ -23,6 +23,8 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         VdsGroupCommandBase<T> {
 
     private Network network;
+    private Network mgmtNetwork;
+    private NetworkCluster oldNetworkCluster;
 
     public UpdateNetworkOnClusterCommand(T parameters) {
         super(parameters);
@@ -35,6 +37,22 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         }
 
         return network;
+    }
+
+    private Network getManagementNetwork() {
+        if (mgmtNetwork == null) {
+            mgmtNetwork = getNetworkDAO().getByNameAndCluster(NetworkUtils.getEngineNetwork(), getVdsGroupId());
+        }
+
+        return mgmtNetwork;
+    }
+
+    private NetworkCluster getOldNetworkCluster() {
+        if (oldNetworkCluster == null) {
+            oldNetworkCluster = getNetworkClusterDAO().get(getNetworkCluster().getId());
+        }
+
+        return oldNetworkCluster;
     }
 
     private NetworkCluster getNetworkCluster() {
@@ -65,11 +83,14 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
         getNetworkClusterDAO().update(getNetworkCluster());
 
-        if (getNetworkCluster().isDisplay()) {
-            getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
+        if (getNetworkCluster().isDisplay() != getOldNetworkCluster().isDisplay()) {
+            getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(),
+                    getNetworkCluster().isDisplay() ? getNetwork().getId() : getManagementNetwork().getId());
         }
-        if (getNetworkCluster().isMigration()) {
-            getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(), getNetwork().getId());
+
+        if (getNetworkCluster().isMigration() != getOldNetworkCluster().isMigration()) {
+            getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(),
+                    getNetworkCluster().isMigration() ? getNetwork().getId() : getManagementNetwork().getId());
         }
 
         NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
@@ -98,7 +119,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     }
 
     private ValidationResult networkClusterAttachmentExists() {
-        return getNetworkClusterDAO().get(getNetworkCluster().getId()) == null ?
+        return getOldNetworkCluster() == null ?
                 new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER) : ValidationResult.VALID;
     }
 

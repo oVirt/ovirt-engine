@@ -57,7 +57,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             if (net != null) {
                 DbFacade.getInstance().getNetworkClusterDao().save(
                         new NetworkCluster(getParameters().getVdsGroup().getId(), net.getId(),
-                                NetworkStatus.OPERATIONAL, false, true, false));
+                                NetworkStatus.OPERATIONAL, true, true, true));
             }
         }
         setActionReturnValue(getVdsGroup().getId());

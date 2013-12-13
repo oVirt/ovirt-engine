@@ -126,7 +126,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 for (Network net : storagePoolNets) {
                     if (StringUtils.equals(net.getName(), managementNetwork)) {
                         getNetworkClusterDAO().save(new NetworkCluster(getVdsGroup().getId(), net.getId(),
-                                NetworkStatus.OPERATIONAL, true, true, false));
+                                NetworkStatus.OPERATIONAL, true, true, true));
                     }
                 }
             }
