@@ -149,6 +149,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
         // provider - network
         addJoin(SearchObjects.PROVIDER_OBJ_NAME, "id", SearchObjects.NETWORK_OBJ_NAME, "provider_network_provider_id");
+
+        //users - template
+        addJoin(SearchObjects.VDC_USER_OBJ_NAME, "vm_guid", SearchObjects.TEMPLATE_OBJ_NAME, "vmt_guid");
     }
 
     private void addJoin(String firstObj, String firstColumnName, String secondObj, String secondColumnName) {
