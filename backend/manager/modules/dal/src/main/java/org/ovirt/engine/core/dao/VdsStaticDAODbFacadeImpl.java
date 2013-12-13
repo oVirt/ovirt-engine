@@ -98,7 +98,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("console_address", vds.getConsoleAddress())
                 .addValue("sshKeyFingerprint", vds.getSshKeyFingerprint())
                 .addValue("ssh_port", vds.getSshPort())
-                .addValue("ssh_username", vds.getSshUsername());
+                .addValue("ssh_username", vds.getSshUsername())
+                .addValue("disable_auto_pm", vds.isDisablePowerManagementPolicy());
     }
 
     @Override
@@ -156,6 +157,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
             entity.setConsoleAddress(rs.getString("console_address"));
+            entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
 
             return entity;
         }

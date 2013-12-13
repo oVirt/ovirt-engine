@@ -288,6 +288,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     EntityModelCheckBoxEditor pmSecondarySecureEditor;
 
     @UiField
+    @Path(value = "disableAutomaticPowerManagement.entity")
+    @WithElementId("disableAutomaticPowerManagementEditor")
+    org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor disableAutomaticPowerManagementEditor;
+
+    @UiField
     UiCommandButton testButton;
 
     @UiField
@@ -562,6 +567,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         pmSecondarySecureEditor.setLabel(constants.hostPopupPmSecureLabel());
         consoleAddress.setLabel(constants.consoleAddress());
         consoleAddressLabel.setText(constants.enableConsoleAddressOverride());
+
+        // Auto PM
+        disableAutomaticPowerManagementEditor.setLabel(constants.hostPopupPmDisableAutoPM());
 
         // SPM tab
         spmTab.setLabel(constants.spmTestButtonLabel());

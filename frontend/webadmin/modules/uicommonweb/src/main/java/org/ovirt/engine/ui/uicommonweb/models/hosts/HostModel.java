@@ -563,6 +563,15 @@ public abstract class HostModel extends Model
         pmVariants = value;
     }
 
+    private EntityModel<Boolean> disableAutomaticPowerManagement;
+
+    public EntityModel<Boolean> getDisableAutomaticPowerManagement() {
+        return disableAutomaticPowerManagement;
+    }
+
+    private void setDisableAutomaticPowerManagement(EntityModel<Boolean> value) {
+        disableAutomaticPowerManagement = value;
+    }
 
     private boolean isGeneralTabValid;
 
@@ -926,6 +935,8 @@ public abstract class HostModel extends Model
         // Initialize other PM fields.
         setPmSecondaryConcurrent(new EntityModel());
         getPmSecondaryConcurrent().setEntity(false);
+        setDisableAutomaticPowerManagement(new EntityModel());
+        getDisableAutomaticPowerManagement().setEntity(false);
 
         setPmVariants(new ListModel());
         List<String> pmVariants = new ArrayList<String>();
@@ -1414,6 +1425,8 @@ public abstract class HostModel extends Model
         getPmSecondaryOptions().setIsChangable(isPm);
         getPmSecondaryOptions().setIsValid(true);
         getPmSecondarySecure().setIsChangable(isPm);
+        getDisableAutomaticPowerManagement().setIsValid(true);
+        getDisableAutomaticPowerManagement().setIsChangable(isPm);
 
         String pmSecondaryType = (String) getPmSecondaryType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmSecondaryType)) {
@@ -1674,6 +1687,7 @@ public abstract class HostModel extends Model
         }
 
         getPmSecondaryConcurrent().setEntity(vds.isPmSecondaryConcurrent());
+        getDisableAutomaticPowerManagement().setEntity(vds.isDisablePowerManagementPolicy());
 
         updateModelDataCenterFromVds(dataCenters, vds);
 

@@ -490,7 +490,7 @@ public class ClusterGuideModel extends GuideModel
         // Save other PM parameters.
         host.setpm_enabled((Boolean) model.getIsPm().getEntity());
         host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
-
+        host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
 
         AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
         vdsActionParams.setvds(host);

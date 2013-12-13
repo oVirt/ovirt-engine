@@ -893,7 +893,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         // Save other PM parameters.
         host.setpm_enabled((Boolean) model.getIsPm().getEntity());
         host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
-
+        host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
 
         cancelConfirm();
         model.startProgress(null);

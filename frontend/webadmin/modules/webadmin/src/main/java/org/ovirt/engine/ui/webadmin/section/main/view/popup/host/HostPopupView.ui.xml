@@ -5,6 +5,7 @@
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
              xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider">
 
@@ -320,6 +321,7 @@
                                         <g:Label ui:field="testMessage" addStyleNames="{style.testMessage}"/>
                                     </g:HTMLPanel>
                                 </g:FlowPanel>
+                                <ge:EntityModelCheckBoxEditor ui:field="disableAutomaticPowerManagementEditor"/>
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>

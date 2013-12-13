@@ -142,6 +142,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableField
     private HashMap<String, String> pmSecondaryOptionsMap;
 
+
+    /**
+     * When this flag is true, the automatic power management
+     * is not allowed to touch this host.
+     */
+    @EditableField
+    private boolean disablePowerManagementPolicy;
+
     @EditableField
     private long otpValidity;
 
@@ -176,6 +184,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         comment = "";
         vdsType = VDSType.VDS;
         autoRecoverable = true;
+        disablePowerManagementPolicy = false;
     }
 
     public VdsStatic(String host_name, String ip, String uniqueId, int port, int ssh_port, String ssh_username, Guid vds_group_id, Guid vds_id,
@@ -438,6 +447,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         pmSecondaryOptions = pmOptionsMapToString(value);
     }
 
+    public boolean isDisablePowerManagementPolicy() {
+        return disablePowerManagementPolicy;
+    }
+
+    public void setDisablePowerManagementPolicy(boolean disablePowerManagementPolicy) {
+        this.disablePowerManagementPolicy = disablePowerManagementPolicy;
+    }
+
     public long getOtpValidity() {
         return otpValidity;
     }
@@ -554,6 +571,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
         result = prime * result + ((vdsStrength == null) ? 0 : vdsStrength.hashCode());
         result = prime * result + ((vdsType == null) ? 0 : vdsType.hashCode());
+        result = prime * result + (disablePowerManagementPolicy ? 0 : 1);
         return result;
     }
 
@@ -598,6 +616,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
                 && ObjectUtils.objectsEqual(vdsStrength, other.vdsStrength)
                 && vdsType == other.vdsType
-                && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint));
+                && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint))
+                && disablePowerManagementPolicy == other.disablePowerManagementPolicy;
     }
 }

@@ -28,4 +28,11 @@ public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAware
      * @param vmsCoresCount - a new value will be GREATEST(vms_cores_count + v_vmsCoresCount, 0)
      */
     void updatePartialVdsDynamicCalc(Guid id, int vmCount, int pendingVcpusCount, int pendingVmemSize, int memCommited, int vmsCoresCount);
+
+    /**
+     * This method will update the controlled_by_pm_policy flag in DB.
+     * @param id - id or record to be updated
+     * @param controlledByPmPolicy - a new value for the flag
+     */
+    void updateVdsDynamicPowerManagementPolicyFlag(Guid id, boolean controlledByPmPolicy);
 }

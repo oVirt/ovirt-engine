@@ -169,6 +169,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setGlusterVersion(getGlusterVersion());
         vds.setHooksStr(getHooksStr());
         vds.setActiveNic(getActiveNic());
+        vds.setPowerManagementControlledByPolicy(isPowerManagementControlledByPolicy());
+        vds.setDisablePowerManagementPolicy(isDisablePowerManagementPolicy());
 
         return vds;
     }
@@ -1256,5 +1258,21 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public String getSupportedEmulatedMachines() {
         return mVdsDynamic.getSupportedEmulatedMachines();
+    }
+
+    public boolean isPowerManagementControlledByPolicy() {
+        return mVdsDynamic.isPowerManagementControlledByPolicy();
+    }
+
+    public void setPowerManagementControlledByPolicy(boolean powerManagementControlledByPolicy) {
+        mVdsDynamic.setPowerManagementControlledByPolicy(powerManagementControlledByPolicy);
+    }
+
+    public boolean isDisablePowerManagementPolicy() {
+        return mVdsStatic.isDisablePowerManagementPolicy();
+    }
+
+    public void setDisablePowerManagementPolicy(boolean disablePowerManagementPolicy) {
+        mVdsStatic.setDisablePowerManagementPolicy(disablePowerManagementPolicy);
     }
 }

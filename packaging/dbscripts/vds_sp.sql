@@ -187,14 +187,15 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_hw_uuid VARCHAR(255),
  v_hw_family VARCHAR(255),
  v_hbas VARCHAR(255),
- v_supported_emulated_machines VARCHAR(255))
+ v_supported_emulated_machines VARCHAR(255),
+ v_controlled_by_pm_policy BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines)
-	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines);
+INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy)
+	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy);
    END;
 
    RETURN;
@@ -202,7 +203,19 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
+CREATE OR REPLACE FUNCTION UpdateVdsDynamicPowerManagementPolicyFlag(
+ v_vds_id UUID,
+ v_controlled_by_pm_policy BOOLEAN
+) RETURNS VOID AS $procedure$
+BEGIN
+  BEGIN
+    UPDATE vds_dynamic
+    SET controlled_by_pm_policy = v_controlled_by_pm_policy
+    WHERE vds_id = v_vds_id;
+  END;
+  RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
@@ -377,7 +390,8 @@ Create or replace FUNCTION InsertVdsStatic(
     v_sshKeyFingerprint VARCHAR(128),
     v_console_address VARCHAR(255),
     v_ssh_port INTEGER,
-    v_ssh_username VARCHAR(255))
+    v_ssh_username VARCHAR(255),
+    v_disable_auto_pm BOOLEAN)
 RETURNS VOID
 
    AS $procedure$
@@ -388,12 +402,12 @@ BEGIN
                                vds_type,vds_strength,pm_type,pm_user,pm_password,pm_port,pm_options,pm_enabled,
                                pm_proxy_preferences, pm_secondary_ip, pm_secondary_type, pm_secondary_user,
                                pm_secondary_password, pm_secondary_port, pm_secondary_options, pm_secondary_concurrent,
-                               vds_spm_priority, sshKeyFingerprint, console_address, ssh_port, ssh_username)
+                               vds_spm_priority, sshKeyFingerprint, console_address, ssh_port, ssh_username, disable_auto_pm)
 			VALUES(v_vds_id,v_host_name, v_free_text_comment, v_ip, v_vds_unique_id, v_port, v_vds_group_id, v_vds_name, v_server_SSL_enabled,
                                v_vds_type,v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port,v_pm_options,v_pm_enabled,
                                v_pm_proxy_preferences, v_pm_secondary_ip, v_pm_secondary_type, v_pm_secondary_user,
                                v_pm_secondary_password, v_pm_secondary_port, v_pm_secondary_options, v_pm_secondary_concurrent,
-                               v_vds_spm_priority, v_sshKeyFingerprint, v_console_address, v_ssh_port, v_ssh_username);
+                               v_vds_spm_priority, v_sshKeyFingerprint, v_console_address, v_ssh_port, v_ssh_username, v_disable_auto_pm);
       END;
    end if;
    RETURN;
@@ -434,7 +448,8 @@ Create or replace FUNCTION UpdateVdsStatic(v_host_name VARCHAR(255),
     v_sshKeyFingerprint VARCHAR(128),
     v_console_address VARCHAR(255),
     v_ssh_port INTEGER,
-    v_ssh_username VARCHAR(255))
+    v_ssh_username VARCHAR(255),
+    v_disable_auto_pm BOOLEAN)
 RETURNS VOID
 
 	--The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -454,7 +469,7 @@ BEGIN
       pm_secondary_port = v_pm_secondary_port, pm_secondary_options = v_pm_secondary_options,
       pm_secondary_concurrent = v_pm_secondary_concurrent,
       otp_validity = v_otp_validity, vds_spm_priority = v_vds_spm_priority, sshKeyFingerprint = v_sshKeyFingerprint,
-      console_address = v_console_address, ssh_port = v_ssh_port, ssh_username = v_ssh_username
+      console_address = v_console_address, ssh_port = v_ssh_port, ssh_username = v_ssh_username, disable_auto_pm = v_disable_auto_pm
       WHERE vds_id = v_vds_id;
    END;
 

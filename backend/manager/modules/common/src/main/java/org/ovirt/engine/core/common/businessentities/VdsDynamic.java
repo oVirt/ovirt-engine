@@ -129,6 +129,19 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     private java.util.HashSet<Version> _supportedENGINESVersionsSet;
 
     /**
+     * This flag is set to true if the host PM can be controlled
+     * by policy. If a user triggered action puts the host
+     * to maintenance or shuts it down, this flag is cleared.
+     *
+     * The flag should be re-set only by transitioning the host
+     * back to Up state.
+     *
+     * In other words - all writes should behave as logical AND op,
+     * except the one in InitVdsOnUp command.
+     */
+    private boolean powerManagementControlledByPolicy;
+
+    /**
      * comma separated list of emulated machines the host supports
      */
     private String supportedEmulatedMachines;
@@ -165,6 +178,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         vm_count = 0;
         vms_cores_count = 0;
         guest_overhead = 0;
+        powerManagementControlledByPolicy = false;
     }
 
     public Integer getcpu_cores() {
@@ -563,6 +577,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.nonOperationalReason = (nonOperationalReason == null ? NonOperationalReason.NONE : nonOperationalReason);
     }
 
+    public boolean isPowerManagementControlledByPolicy() {
+        return powerManagementControlledByPolicy;
+    }
+
+    public void setPowerManagementControlledByPolicy(boolean powerManagementControlledByPolicy) {
+        this.powerManagementControlledByPolicy = powerManagementControlledByPolicy;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -615,6 +637,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((hwUUID == null) ? 0 : hwUUID.hashCode());
         result = prime * result + ((hwFamily == null) ? 0 : hwFamily.hashCode());
         result = prime * result + ((HBAs == null) ? 0 : HBAs.hashCode());
+        result = prime * result + (powerManagementControlledByPolicy ? 0 : 1);
+
         return result;
     }
 
@@ -678,7 +702,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(hwUUID, other.hwUUID)
                 && ObjectUtils.objectsEqual(hwFamily, other.hwFamily)
                 && ObjectUtils.objectsEqual(HBAs, other.HBAs)
-                && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines));
+                && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines))
+                && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy;
     }
 
 }

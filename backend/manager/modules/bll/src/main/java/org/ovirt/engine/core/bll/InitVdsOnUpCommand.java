@@ -114,6 +114,12 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
         boolean initSucceeded = true;
 
+        /* Host is UP, re-set the policy controlled power management flag */
+        getVds().setPowerManagementControlledByPolicy(true);
+        DbFacade.getInstance().getVdsDynamicDao().updateVdsDynamicPowerManagementPolicyFlag(
+                getVds().getId(),
+                getVds().isPowerManagementControlledByPolicy());
+
         if (vdsGroup.supportsTrustedService()) {
             initSucceeded = initTrustedService();
         }
