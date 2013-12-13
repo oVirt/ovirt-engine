@@ -9,13 +9,17 @@ import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddUserParameters;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDAO;
 
-public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> {
+public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase<T> {
+    // We save a reference to the directory user to avoid looking it up once when checking the conditions and another
+    // time when actually adding the user to the database:
+    private LdapUser directoryUser;
 
     public AddUserCommand(T params) {
         super(params);
@@ -28,62 +32,45 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
 
     @Override
     protected boolean canDoAction() {
-        Guid userId = null;
-        String domain = null;
-        if (getParameters().getUser() != null) {
-            addCustomValue("NewUserName", getParameters().getUser().getLoginName());
-            userId = getParameters().getUser().getId();
-            domain = getParameters().getUser().getDomain();
-            LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).runAdAction(AdActionType.GetAdUserByUserId,
-                    new LdapSearchByIdParameters(domain, userId)).getReturnValue();
-            if (adUser == null) {
-                addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-                return false;
-            }
-            // set the AD user on the parameters to save another roundtrip to the AD when adding the user
-            getParameters().setAdUser(adUser);
-        }
-        else if (getParameters().getAdUser() != null) {
-            addCustomValue("NewUserName", getParameters().getAdUser().getUserName());
-            userId = getParameters().getAdUser().getUserId();
-            domain = getParameters().getAdUser().getDomainControler();
-            LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).runAdAction(AdActionType.GetAdUserByUserId,
-                    new LdapSearchByIdParameters(domain, userId)).getReturnValue();
-            if (adUser == null) {
-                addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-                return false;
-            }
-        }
-        else if (getParameters().getAdGroup() != null) {
-            addCustomValue("NewUserName", getParameters().getAdGroup().getname());
-            userId = getParameters().getAdGroup().getid();
-            domain = getParameters().getAdGroup().getdomain();
-            LdapGroup adGroup =
-                    (LdapGroup) LdapFactory.getInstance(domain).runAdAction(AdActionType.GetAdGroupByGroupId,
-                            new LdapSearchByIdParameters(domain, userId)).getReturnValue();
-            if (adGroup == null) {
-                addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-                return false;
-            }
-        }
+        // Get the name of the directory and the identifier of the user from the parameters:
+        String directory = getParameters().getDirectory();
+        Guid id = getParameters().getId();
 
-        if (userId == null) {
-            addCanDoActionMessage(VdcBllMessages.MISSING_DIRECTORY_ELEMENT_ID);
+        // Check that the user is available in the directory (and save the reference to avoid looking it up later when
+        // actually adding the user to the database):
+        directoryUser = (LdapUser) LdapFactory.getInstance(directory).runAdAction(
+            AdActionType.GetAdUserByUserId,
+            new LdapSearchByIdParameters(directory, id)
+        ).getReturnValue();
+        if (directoryUser == null) {
+            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;
         }
+
+        // Populate information for the audit log:
+        addCustomValue("NewUserName", directoryUser.getUserName());
 
         return true;
     }
 
     @Override
     protected void executeCommand() {
-        if (getParameters().getAdUser() != null) {
-            UserCommandBase.persistAuthenticatedUser(getParameters().getAdUser());
+        DbUserDAO dao = getDbUserDAO();
+
+        // First check if the user is already in the database, if it is we need to update, if not we need to insert:
+        DbUser dbUser = dao.get(directoryUser.getUserId());
+        if (dbUser == null) {
+            dbUser = new DbUser(directoryUser);
+            dbUser.setId(Guid.newGuid());
+            dao.save(dbUser);
         }
-        // try to add group to db if adGroup sent
-        else if (getParameters().getAdGroup() != null) {
-            AdGroupsHandlingCommandBase.initAdGroup(getParameters().getAdGroup());
+        else {
+            Guid id = dbUser.getId();
+            dbUser = new DbUser(directoryUser);
+            dbUser.setId(id);
+            dao.update(dbUser);
         }
+
         setSucceeded(true);
     }
 

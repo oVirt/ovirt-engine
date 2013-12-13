@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public abstract class UserCommandBase<T extends AdElementParametersBase> extends CommandBase<T> {
+public abstract class UserCommandBase<T extends IdParameters> extends CommandBase<T> {
     public UserCommandBase() {
     }
 
@@ -51,7 +51,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
     }
 
     protected Guid getAdUserId() {
-        return getParameters().getAdElementId();
+        return getParameters().getId();
     }
 
     @SuppressWarnings("deprecation")

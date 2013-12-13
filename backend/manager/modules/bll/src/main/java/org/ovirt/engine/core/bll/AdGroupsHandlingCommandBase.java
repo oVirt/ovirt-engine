@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersBase> extends CommandBase<T> {
+public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extends CommandBase<T> {
     private LdapGroup mGroup;
     private String mGroupName;
 
@@ -29,7 +29,7 @@ public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersB
     }
 
     protected Guid getGroupId() {
-        return getParameters().getAdElementId();
+        return getParameters().getId();
     }
 
     public String getAdGroupName() {

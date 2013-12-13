@@ -14,8 +14,8 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.AddUserParameters;
+import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
@@ -53,8 +53,8 @@ public class BackendUsersResourceTest
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.RemoveUser,
-                AdElementParametersBase.class,
-                new String[] { "AdElementId" },
+                IdParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 true,
                 true
@@ -108,8 +108,8 @@ public class BackendUsersResourceTest
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.RemoveUser,
-                AdElementParametersBase.class,
-                new String[] { "AdElementId" },
+                IdParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 canDo,
                 success
@@ -185,9 +185,9 @@ public class BackendUsersResourceTest
         );
         setUpCreationExpectations(
             VdcActionType.AddUser,
-            AddUserParameters.class,
-            new String[] { "AdUser.UserId" },
-            new Object[] { GUIDS[0] },
+            DirectoryIdParameters.class,
+            new String[] { "Directory", "Id" },
+            new Object[] { DOMAIN, GUIDS[0] },
             true,
             true,
             null,

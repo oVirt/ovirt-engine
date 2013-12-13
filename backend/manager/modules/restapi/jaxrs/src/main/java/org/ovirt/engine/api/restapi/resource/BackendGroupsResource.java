@@ -13,8 +13,8 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.api.resource.GroupsResource;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.AddGroupParameters;
+import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
@@ -186,11 +186,12 @@ public class BackendGroupsResource
                 .entity("No such group: " + group.getName() + " in directory " + directoryName)
                 .build();
         }
-        AddGroupParameters newGroup = new AddGroupParameters();
-        newGroup.setGroup(directoryGroup);
+        DirectoryIdParameters addGroup = new DirectoryIdParameters();
+        addGroup.setDirectory(directoryName);
+        addGroup.setId(directoryGroup.getid());
         return performCreate(
             VdcActionType.AddGroup,
-            newGroup,
+            addGroup,
             new GroupIdResolver(directoryGroup.getid()),
             BaseResource.class
         );
@@ -230,7 +231,7 @@ public class BackendGroupsResource
 
     @Override
     public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveGroup, new AdElementParametersBase(asGuid(id)));
+        return performAction(VdcActionType.RemoveGroup, new IdParameters(asGuid(id)));
     }
 
     private boolean isNameContainsDomain(Group group) {

@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.test.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,7 +57,16 @@ public class TestHelper {
             if (matches) {
                 matches = count == llhs.size();
             }
-        } else {
+        }
+        else if (lhs instanceof byte[] && rhs instanceof byte[]) {
+            byte[] lhsBytes = (byte[]) lhs;
+            byte[] rhsBytes = (byte[]) rhs;
+            matches = lhsBytes.length == rhsBytes.length;
+            if (matches) {
+                matches = matches && Arrays.equals(lhsBytes, rhsBytes);
+            }
+        }
+        else {
             matches = lhs.equals(rhs);
         }
         return matches;

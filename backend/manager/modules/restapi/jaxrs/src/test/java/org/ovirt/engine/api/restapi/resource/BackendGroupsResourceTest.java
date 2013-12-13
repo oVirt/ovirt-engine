@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.AddGroupParameters;
+import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
@@ -124,8 +124,8 @@ public class BackendGroupsResourceTest
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.RemoveGroup,
-                AdElementParametersBase.class,
-                new String[] { "AdElementId" },
+                IdParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 true,
                 true
@@ -177,8 +177,8 @@ public class BackendGroupsResourceTest
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.RemoveGroup,
-                AdElementParametersBase.class,
-                new String[] { "AdElementId" },
+                IdParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 canDo,
                 success
@@ -207,9 +207,9 @@ public class BackendGroupsResourceTest
         );
         setUpCreationExpectations(
             VdcActionType.AddGroup,
-            AddGroupParameters.class,
-            new String[] { "Group.id" },
-            new Object[] { GUIDS[0] },
+            DirectoryIdParameters.class,
+            new String[] { "Directory", "Id" },
+            new Object[] { DOMAIN, GUIDS[0] },
             true,
             true,
             null,
@@ -246,9 +246,9 @@ public class BackendGroupsResourceTest
         );
         setUpCreationExpectations(
             VdcActionType.AddGroup,
-            AddGroupParameters.class,
-            new String[] { "Group.id" },
-            new Object[] { GUIDS[0] },
+            DirectoryIdParameters.class,
+            new String[] { "Directory", "Id" },
+            new Object[] { DOMAIN, GUIDS[0] },
             true,
             true,
             null,
@@ -304,9 +304,9 @@ public class BackendGroupsResourceTest
         );
         setUpCreationExpectations(
             VdcActionType.AddGroup,
-            AddGroupParameters.class,
-            new String[] { "Group.id" },
-            new Object[] { GUIDS[0] },
+            DirectoryIdParameters.class,
+            new String[] { "Directory", "Id" },
+            new Object[] { DOMAIN, GUIDS[0] },
             true,
             true,
             null,

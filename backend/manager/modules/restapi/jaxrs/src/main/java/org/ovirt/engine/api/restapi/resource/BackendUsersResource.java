@@ -17,8 +17,8 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.api.resource.UsersResource;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.AddUserParameters;
+import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
@@ -143,7 +143,7 @@ public class BackendUsersResource
 
     @Override
     public Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveUser, new AdElementParametersBase(asGuid(id)));
+        return performAction(VdcActionType.RemoveUser, new IdParameters(asGuid(id)));
     }
 
     protected Users mapDbUserCollection(List<DbUser> entities) {
@@ -215,17 +215,20 @@ public class BackendUsersResource
             validateParameters(user, "domain.id|name");
         }
         String domain = getDomain(user);
-        LdapUser adUser = getEntity(LdapUser.class,
-                                  SearchType.AdUser,
-                                  getDirectoryUserSearchPattern(user.getUserName(), domain));
-        if (adUser == null) {
+        LdapUser directoryUser = getEntity(
+            LdapUser.class,
+            SearchType.AdUser,
+            getDirectoryUserSearchPattern(user.getUserName(), domain)
+        );
+        if (directoryUser == null) {
             return Response.status(Status.BAD_REQUEST)
                     .entity("No such user: " + user.getUserName() + " in domain " + domain)
                     .build();
         }
-        AddUserParameters newUser = new AddUserParameters();
-        newUser.setAdUser(adUser);
-        return performCreate(VdcActionType.AddUser, newUser, new UserIdResolver(adUser.getUserId()), BaseResource.class);
+        DirectoryIdParameters addUser = new DirectoryIdParameters();
+        addUser.setDirectory(directoryUser.getDomainControler());
+        addUser.setId(directoryUser.getUserId());
+        return performCreate(VdcActionType.AddUser, addUser, new UserIdResolver(directoryUser.getUserId()), BaseResource.class);
     }
 
     private boolean isNameContainsDomain(User user) {

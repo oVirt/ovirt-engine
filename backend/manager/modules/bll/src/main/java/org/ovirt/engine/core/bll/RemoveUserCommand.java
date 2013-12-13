@@ -7,15 +7,16 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCommandBase<T> {
+public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T> {
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -38,44 +39,52 @@ public class RemoveUserCommand<T extends AdElementParametersBase> extends UserCo
 
     @Override
     protected void executeCommand() {
+        // Get the identifier of the user to be removed from the parameters:
+        Guid id = getParameters().getId();
+
+        // Delete all the permissions of the user:
+        // TODO: This should be done without invoking the command to avoid the overhead.
         for (Permissions permission : DbFacade.getInstance()
                 .getPermissionDao()
-                .getAllDirectPermissionsForAdElement(getAdUserId())) {
+                .getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters(permission);
             tempVar.setShouldBeLogged(false);
             Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
                     tempVar,
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         }
-        DbFacade.getInstance().getDbUserDao().remove(getAdUserId());
-        setSucceeded(true);
-    }
 
-    public static boolean canRemoveUser(Guid user_guid, java.util.ArrayList<String> errors) {
-        boolean returnValue = true;
-        // check that the user exists in DB
-        if (DbFacade.getInstance().getDbUserDao().get(user_guid) == null) {
-            errors.add(VdcBllMessages.USER_MUST_EXIST_IN_DB.toString());
-            returnValue = false;
-        }
-        return returnValue;
+        // Delete the user itself:
+        getDbUserDAO().remove(id);
+
+        setSucceeded(true);
     }
 
     @Override
     protected boolean canDoAction() {
-        boolean result = true;
-        if (getParameters().getAdElementId().equals(PredefinedUsers.ADMIN_USER.getId())) {
+        // Get the identifier of the user to be removed:
+        Guid id = getParameters().getId();
+
+        // Check that we are not trying to remove the built-in admin user:
+        if (PredefinedUsers.ADMIN_USER.getId().equals(id)) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
-            result = false;
-        } else {
-            if (getCurrentUser().getId().equals(getParameters().getAdElementId())) {
-                addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_HIMSELF);
-                result = false;
-            } else {
-                result = canRemoveUser(getParameters().getAdElementId(), getReturnValue().getCanDoActionMessages());
-            }
+            return false;
         }
-        return result;
+
+        // Check that the current user isn't trying to remove himself:
+        if (getCurrentUser().getId().equals(id)) {
+            addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_HIMSELF);
+            return false;
+        }
+
+        // Check that the user exists in the database:
+        DbUser dbUser = getDbUserDAO().get(id);
+        if (dbUser == null) {
+            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
+            return false;
+        }
+
+        return true;
     }
 
     @Override

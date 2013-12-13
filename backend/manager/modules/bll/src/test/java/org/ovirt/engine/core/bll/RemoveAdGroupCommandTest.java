@@ -7,7 +7,7 @@ import static org.mockito.Mockito.spy;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -16,20 +16,20 @@ public class RemoveAdGroupCommandTest {
     /**
      * The command under test.
      */
-    private RemoveGroupCommand<AdElementParametersBase> command;
+    private RemoveGroupCommand<IdParameters> command;
     private Guid adElementId = Guid.newGuid();
 
     @Before
     public void initializeCommand() {
-        AdElementParametersBase parameters = createParameters();
-        command = spy(new RemoveGroupCommand<AdElementParametersBase>(parameters));
+        IdParameters parameters = createParameters();
+        command = spy(new RemoveGroupCommand<IdParameters>(parameters));
     }
 
     /**
      * @return Valid parameters for the command.
      */
-    private AdElementParametersBase createParameters() {
-        return new AdElementParametersBase(adElementId);
+    private IdParameters createParameters() {
+        return new IdParameters(adElementId);
     }
 
     @Test

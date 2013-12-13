@@ -5,13 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
+import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -33,8 +32,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 public class UserListModel extends ListWithDetailsModel
@@ -447,36 +446,43 @@ public class UserListModel extends ListWithDetailsModel
             }
         }
 
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionsList = new ArrayList<VdcActionType>(items.size());
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>(items.size());
+        ArrayList<IFrontendActionAsyncCallback> callbacksList = new ArrayList<IFrontendActionAsyncCallback>(items.size());
         for (DbUser item : items)
         {
-            if (!item.isGroup())
+            if (item.isGroup())
             {
-                AddUserParameters tempVar = new AddUserParameters();
-                tempVar.setUser(item);
-                parameters.add(tempVar);
+                actionsList.add(VdcActionType.AddGroup);
+
             }
             else
             {
-                AddUserParameters tempVar2 = new AddUserParameters();
-                tempVar2.setAdGroup(new LdapGroup(item.getId(), item.getFirstName(), item.getDomain()));
-                parameters.add(tempVar2);
+                actionsList.add(VdcActionType.AddUser);
             }
+            DirectoryIdParameters parameters = new DirectoryIdParameters();
+            parameters.setDirectory(item.getDomain());
+            parameters.setId(item.getId());
+            parametersList.add(parameters);
+            callbacksList.add(null);
         }
 
         model.startProgress(null);
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.AddUser, parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+        IFrontendActionAsyncCallback lastCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                AdElementListModel localModel = (AdElementListModel) result.getState();
+                localModel.stopProgress();
+                cancel();
+            }
+        };
 
-                        AdElementListModel localModel = (AdElementListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+        if (callbacksList.size() > 0) {
+            callbacksList.set(callbacksList.size() - 1, lastCallback);
+        }
 
-                    }
-                }, model);
+        Frontend.getInstance().runMultipleActions(actionsList, parametersList, callbacksList, lastCallback, model);
     }
 
     public void onRemove()
@@ -489,11 +495,11 @@ public class UserListModel extends ListWithDetailsModel
         {
             if (!item.isGroup())
             {
-                userPrms.add(new AdElementParametersBase(item.getId()));
+                userPrms.add(new IdParameters(item.getId()));
             }
             else
             {
-                groupPrms.add(new AdElementParametersBase(item.getId()));
+                groupPrms.add(new IdParameters(item.getId()));
             }
         }
 
