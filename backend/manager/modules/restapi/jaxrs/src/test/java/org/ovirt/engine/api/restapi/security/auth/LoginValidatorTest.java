@@ -157,6 +157,13 @@ public class LoginValidatorTest extends Assert {
         expect(queryReturnValue.getSucceeded()).andReturn(success).anyTimes();
         if (success) {
             expect(queryReturnValue.getReturnValue()).andReturn(user);
+
+            VdcQueryReturnValue appModeResult = new VdcQueryReturnValue();
+            appModeResult.setReturnValue(255);
+            appModeResult.setSucceeded(true);
+            expect(backend.runPublicQuery(eq(VdcQueryType.GetConfigurationValue),
+                    eqQueryParams(GetConfigurationValueParameters.class, new String[] { "ConfigValue" },
+                            new Object[] { ConfigurationValues.ApplicationMode }))).andReturn(appModeResult);
             current.set(user);
             EasyMock.expectLastCall();
         }

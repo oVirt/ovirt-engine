@@ -137,6 +137,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         // cache user in Current so that it will be available
         // for logoff action on postProcess() traversal
         current.set(ret.getReturnValue());
+        current.set(getApplicationMode());
     }
 
     private boolean loginFailure(Principal principal, List<String> reasons) {
