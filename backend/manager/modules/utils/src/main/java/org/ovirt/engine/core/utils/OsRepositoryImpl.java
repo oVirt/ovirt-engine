@@ -353,7 +353,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public String getSysprepPath(int osId, Version version) {
-        return getValueByVersion(idToUnameLookup.get(osId), "sysprepPath", version);
+        return EngineLocalConfig.getInstance().expandString(getValueByVersion(idToUnameLookup.get(osId), "sysprepPath", version));
     }
 
     @Override
