@@ -19,7 +19,6 @@
 """options plugin."""
 
 
-import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -185,76 +184,6 @@ class Plugin(plugin.PluginBase):
                 {
                     'name': 'DataDir',
                     'value': osetupcons.FileLocations.DATADIR,
-                },
-                {
-                    'name': 'SysPrepXPPath',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.xp',
-                    ),
-                },
-                {
-                    'name': 'SysPrep2K3Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.2k3',
-                    ),
-                },
-                {
-                    'name': 'SysPrep2K8Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.2k8x86',
-                    ),
-                },
-                {
-                    'name': 'SysPrep2K8x64Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.2k8',
-                    ),
-                },
-                {
-                    'name': 'SysPrep2K8R2Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.2k8',
-                    ),
-                },
-                {
-                    'name': 'SysPrepWindows7Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.w7',
-                    ),
-                },
-                {
-                    'name': 'SysPrepWindows7x64Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.w7x64',
-                    ),
-                },
-                {
-                    'name': 'SysPrepWindows8Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.w8',
-                    ),
-                },
-                {
-                    'name': 'SysPrepWindows8x64Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.w8x64',
-                    ),
-                },
-                {
-                    'name': 'SysPrepWindows2012x64Path',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.OVIRT_ENGINE_SYSCONFDIR,
-                        'gsysprep/sysprep.2k12x64',
-                    ),
                 },
             ),
         )

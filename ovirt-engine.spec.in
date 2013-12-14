@@ -715,6 +715,10 @@ touch "%{buildroot}%{engine_pki}/cacert.template"
 touch "%{buildroot}%{engine_pki}/cert.template"
 touch "%{buildroot}%{engine_pki}/database.txt"
 touch "%{buildroot}%{engine_pki}/serial.txt"
+install -d "%{buildroot}%{engine_etc}/sysprep"
+for f in 2k12x64 2k3 2k8 2k8x86 2k8x64 w7 w7x64 w8 w8x64 xp; do
+	touch "%{buildroot}%{engine_etc}/sysprep/sysprep.${f}"
+done
 install -d "%{buildroot}%{_sysconfdir}/firewalld/services"
 touch "%{buildroot}%{_sysconfdir}/firewalld/services/ovirt.xml"
 
@@ -802,12 +806,12 @@ fi
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/deployments
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
-%config(noreplace) %{engine_etc}/sysprep
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
 %dir %{engine_data}/bin
 %dir %{engine_data}/ui-plugins
 %dir %{engine_ear}
 %{engine_data}/conf/osinfo-defaults.properties
+%{engine_data}/conf/sysprep/
 %{engine_data}/files/
 %{engine_data}/manual/
 %{engine_ear}/META-INF
@@ -912,6 +916,8 @@ fi
 %{engine_data}/setup/plugins/ovirt-engine-rename/
 
 # backward compatibility
+# backward compatibility (pre-3.4)
+%ghost %config(noreplace) %{engine_etc}/sysprep/
 %ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
 
 %files setup-plugin-ovirt-engine-common
