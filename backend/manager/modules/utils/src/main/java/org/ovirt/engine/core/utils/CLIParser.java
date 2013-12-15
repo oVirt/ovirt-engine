@@ -7,7 +7,6 @@ import java.util.Vector;
 public class CLIParser {
     private final Vector<String> argv = new Vector<String>();
     private final HashMap<String, String> argsMap = new HashMap<String, String>();
-    private int argvIndex = 0;
 
     public CLIParser(String[] args) {
         for (int i = 0; i < args.length; i++) {
