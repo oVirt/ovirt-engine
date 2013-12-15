@@ -883,8 +883,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     .runInternalAction(getActionType(), getParameters(), new CommandContext(runStatelessVmCtx))
                     .getSucceeded());
             if (!getSucceeded()) {
-                // could not run the vm don't try to run the end action again
+                getParameters().setShouldBeLogged(true);
                 log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getName());
+                // could not run the vm don't try to run the end action again
                 getReturnValue().setEndActionTryAgain(false);
             }
         }
