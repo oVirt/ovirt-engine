@@ -414,6 +414,17 @@ public class VdsFenceOptions implements Serializable {
     }
 
     /**
+     * Checks if the agent is supported on the version that was set in object constructor
+     * @param agent
+     *            The agent.
+     * @return <c>true</c> if the specified agent is supported; otherwise, <c>false</c>.
+     */
+
+    public boolean isAgentSupported(String agent) {
+        return fencingOptionMapping.containsKey(agent);
+    }
+
+    /**
      * Gets the current agent supported options.
      *
      * @return

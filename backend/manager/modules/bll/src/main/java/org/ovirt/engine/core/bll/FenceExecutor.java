@@ -283,6 +283,9 @@ public class FenceExecutor {
         VDS proxyHost = LinqUtils.firstOrNull(hosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS vds) {
+                if (!isAgentSupported(vds)) {
+                    return false;
+                }
                 if (proxyOptions == PMProxyOptions.CLUSTER) {
                     if (onlyUpHost) {
                         if (filterSelf) {
@@ -298,11 +301,12 @@ public class FenceExecutor {
                     else {
                         if (filterSelf) {
                             return !isHostNetworkUnreacable(vds) &&
-                                    !vds.getId().equals(_vds.getId()) && vds.getVdsGroupId().equals(_vds.getVdsGroupId());
+                                    !vds.getId().equals(_vds.getId())
+                                    && vds.getVdsGroupId().equals(_vds.getVdsGroupId());
                         }
                         else {
-                            return !isHostNetworkUnreacable(vds) &&
-                                    vds.getVdsGroupId().equals(_vds.getVdsGroupId());
+                            return !isHostNetworkUnreacable(vds)
+                                    && vds.getVdsGroupId().equals(_vds.getVdsGroupId());
 
                         }
                     }
@@ -321,17 +325,34 @@ public class FenceExecutor {
                     }
                     else {
                         if (filterSelf) {
-                            return !isHostNetworkUnreacable(vds) &&
-                                    !vds.getId().equals(_vds.getId()) && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
+                            return !isHostNetworkUnreacable(vds)
+                                    && !vds.getId().equals(_vds.getId())
+                                    && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                         }
                         else {
-                            return !isHostNetworkUnreacable(vds) &&
-                                    vds.getStoragePoolId().equals(_vds.getStoragePoolId());
-
+                            return !isHostNetworkUnreacable(vds)
+                                    && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                         }
                     }
                 }
                 return false;
+            }
+
+            private boolean isAgentSupported(VDS vds) {
+                boolean ret = false;
+                // Checks if the requested _vds PM agent is supported by the candidate proxy (vds)
+                VdsFenceOptions options = new VdsFenceOptions(vds.getVdsGroupCompatibilityVersion().getValue());
+                if (StringUtils.isNotEmpty(_vds.getManagementIp())) {
+                    ret = options.isAgentSupported(_vds.getPmType());
+                }
+                // In a case that a secondary agent is defined, require the proxy host to be
+                // in a cluster that supports both Primary & Secondary agents since in concurrent
+                // PM devices we need both, and in sequential PM devices Primary might fail and then
+                // Secondary PM agent should attempt to fence the Host
+                if (StringUtils.isNotEmpty(_vds.getPmSecondaryIp())) {
+                    ret = options.isAgentSupported(_vds.getPmSecondaryType());
+                }
+                return ret;
             }
         });
         return proxyHost;
