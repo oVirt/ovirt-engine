@@ -205,7 +205,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             if (getValue() != null) {
                 // something has been there, deleted on click inside and than hidden the box - restoring
                 asSuggestBox().setText(renderer.getReplacementString(getValue()));
-            } else {
+            } else if (!acceptableValues.contains(null)) {
                 // nothing has been there, selecting the first accpetable value
                 setValue(acceptableValues.iterator().next());
             }
@@ -225,7 +225,11 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     @Override
     protected T asEntity(String provided) {
         if (provided == null) {
-            throw new IllegalArgumentException("Only non-null arguments are accepted"); //$NON-NLS-1$
+            if (acceptableValues.contains(null)) {
+                return null;
+            } else {
+                throw new IllegalArgumentException("Only non-null arguments are accepted"); //$NON-NLS-1$
+            }
         }
 
         for (T data : acceptableValues) {
