@@ -95,6 +95,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private boolean memoryFromSnapshotIrrelevant;
 
     public static final String ISO_PREFIX = "iso://";
+    public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -339,28 +340,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (isStatelessSnapshotExistsForVm()) {
             log.errorFormat(
-                    "RunVmAsStateless - {0} - found stateless snapshots for this vm  - skipped creating snapshots.",
-                    getVm().getName());
+                    "VM {0} ({1}) already contains stateless snapshot, removing it",
+                    getVm().getName(), getVm().getId());
             removeVmStatlessImages();
         } else {
-            log.infoFormat("VdcBll.RunVmCommand.RunVmAsStateless - Creating snapshot for stateless vm {0} - {1}",
+            log.infoFormat("Creating stateless snapshot for VM {0} ({1})",
                     getVm().getName(), getVm().getId());
             CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
 
-            Map<String, String> values = getVmValuesForMsgResolving();
-
-            // Creating snapshots as sub step of run stateless
-            Step createSnapshotsStep = addSubStep(StepEnum.EXECUTING,
-                    StepEnum.CREATING_SNAPSHOTS, values);
-
-            // Add the step as the first step of the new context
-            ExecutionContext createSnapshotsCtx = new ExecutionContext();
-            createSnapshotsCtx.setMonitored(true);
-            createSnapshotsCtx.setStep(createSnapshotsStep);
             VdcReturnValueBase vdcReturnValue =
                     getBackend().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
                             createAllSnapshotsFromVmParameters,
-                            new CommandContext(createSnapshotsCtx, getCompensationContext(), getLock()));
+                            createContextForStatelessSnapshotCreation());
 
             // setting lock to null in order not to release lock twice
             setLock(null);
@@ -377,20 +368,40 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 }
                 getReturnValue().setFault(vdcReturnValue.getFault());
-                log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getName());
+                log.errorFormat("Failed to create stateless snapshot for VM {0} ({1})",
+                        getVm().getName(), getVm().getId());
             }
         }
     }
 
+    private CommandContext createContextForStatelessSnapshotCreation() {
+        Map<String, String> values = getVmValuesForMsgResolving();
+        // Creating snapshots as sub step of run stateless
+        Step createSnapshotsStep = addSubStep(StepEnum.EXECUTING,
+                StepEnum.CREATING_SNAPSHOTS, values);
+
+        // Add the step as the first step of the new context
+        ExecutionContext createSnapshotsCtx = new ExecutionContext();
+        createSnapshotsCtx.setMonitored(true);
+        createSnapshotsCtx.setStep(createSnapshotsStep);
+        return new CommandContext(createSnapshotsCtx, getCompensationContext(), getLock());
+    }
+
+    private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParametersForEndAction() {
+        CreateAllSnapshotsFromVmParameters parameters = buildCreateSnapshotParameters();
+        parameters.setImagesParameters(getParameters().getImagesParameters());
+        return parameters;
+    }
+
     private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParameters() {
-        CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters =
-                new CreateAllSnapshotsFromVmParameters(getVm().getId(), "stateless snapshot");
-        createAllSnapshotsFromVmParameters.setShouldBeLogged(false);
-        createAllSnapshotsFromVmParameters.setParentCommand(getActionType());
-        createAllSnapshotsFromVmParameters.setParentParameters(getParameters());
-        createAllSnapshotsFromVmParameters.setEntityInfo(getParameters().getEntityInfo());
-        createAllSnapshotsFromVmParameters.setSnapshotType(SnapshotType.STATELESS);
-        return createAllSnapshotsFromVmParameters;
+        CreateAllSnapshotsFromVmParameters parameters =
+                new CreateAllSnapshotsFromVmParameters(getVm().getId(), STATELESS_SNAPSHOT_DESCRIPTION);
+        parameters.setShouldBeLogged(false);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEntityInfo(getParameters().getEntityInfo());
+        parameters.setSnapshotType(SnapshotType.STATELESS);
+        return parameters;
     }
 
     private boolean areDisksLocked(VdcReturnValueBase vdcReturnValue) {
@@ -804,41 +815,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endSuccessfully() {
         if (isVmRunningStateless()) {
-            CreateAllSnapshotsFromVmParameters createSnapshotParameters = buildCreateSnapshotParameters();
-            createSnapshotParameters.setImagesParameters(getParameters().getImagesParameters());
-            getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
+            getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm, buildCreateSnapshotParametersForEndAction());
 
             getParameters().setShouldBeLogged(false);
             getParameters().setRunAsStateless(false);
-            ExecutionContext runStatelessVmCtx = new ExecutionContext();
-            Step step = getExecutionContext().getStep();
-            // Retrieve the job object and its steps as this the endSuccessfully stage of command execution -
-            // at this is a new instance of the command is used
-            // (comparing with the execution state) so all information on the job and steps should be retrieved.
-            Job job = JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId());
-            Step executingStep = job.getDirectStep(StepEnum.EXECUTING);
-            // We would like to to set the run stateless step as substep of executing step
-            setInternalExecution(true);
-            // The internal command should be monitored for tasks
-            runStatelessVmCtx.setMonitored(true);
-            Step runStatelessStep =
-                    ExecutionHandler.addSubStep(getExecutionContext(),
-                            executingStep,
-                            StepEnum.RUN_STATELESS_VM,
-                            ExecutionMessageDirector.resolveStepMessage(StepEnum.RUN_STATELESS_VM,
-                                    getVmValuesForMsgResolving()));
-            // This is needed in order to end the job upon exextuion of the steps of the child command
-            runStatelessVmCtx.setShouldEndJob(true);
-            runStatelessVmCtx.setJob(job);
-            // Since run stateless step involves invocation of command, we should set the run stateless vm step as
-            // the "beginning step" of the child command.
-            runStatelessVmCtx.setStep(runStatelessStep);
-            setSucceeded(getBackend()
-                    .runInternalAction(getActionType(), getParameters(), new CommandContext(runStatelessVmCtx))
-                    .getSucceeded());
+
+            setSucceeded(getBackend().runInternalAction(
+                    getActionType(), getParameters(), createContextForRunStatelessVm()).getSucceeded());
             if (!getSucceeded()) {
                 // could not run the vm don't try to run the end action again
-                log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getName());
+                log.errorFormat("Could not run VM {0} ({1}) in stateless mode",
+                        getVm().getName(), getVm().getId());
                 getReturnValue().setEndActionTryAgain(false);
             }
         }
@@ -849,13 +836,39 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
+    private CommandContext createContextForRunStatelessVm() {
+        Step step = getExecutionContext().getStep();
+        // Retrieve the job object and its steps as this the endSuccessfully stage of command execution -
+        // at this is a new instance of the command is used
+        // (comparing with the execution state) so all information on the job and steps should be retrieved.
+        Job job = JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId());
+        Step executingStep = job.getDirectStep(StepEnum.EXECUTING);
+        // We would like to to set the run stateless step as substep of executing step
+        setInternalExecution(true);
+
+        ExecutionContext runStatelessVmCtx = new ExecutionContext();
+        // The internal command should be monitored for tasks
+        runStatelessVmCtx.setMonitored(true);
+        Step runStatelessStep =
+                ExecutionHandler.addSubStep(getExecutionContext(),
+                        executingStep,
+                        StepEnum.RUN_STATELESS_VM,
+                        ExecutionMessageDirector.resolveStepMessage(StepEnum.RUN_STATELESS_VM,
+                                getVmValuesForMsgResolving()));
+        // This is needed in order to end the job upon execution of the steps of the child command
+        runStatelessVmCtx.setShouldEndJob(true);
+        runStatelessVmCtx.setJob(job);
+        // Since run stateless step involves invocation of command, we should set the run stateless vm step as
+        // the "beginning step" of the child command.
+        runStatelessVmCtx.setStep(runStatelessStep);
+        return new CommandContext(runStatelessVmCtx);
+    }
+
     @Override
     protected void endWithFailure() {
         if (isVmRunningStateless()) {
-            CreateAllSnapshotsFromVmParameters createSnapshotParameters = buildCreateSnapshotParameters();
-            createSnapshotParameters.setImagesParameters(getParameters().getImagesParameters());
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                    createSnapshotParameters, new CommandContext(getCompensationContext()));
+                    buildCreateSnapshotParametersForEndAction(), new CommandContext(getCompensationContext()));
 
             setSucceeded(vdcReturnValue.getSucceeded());
             // we are not running the VM, of course,

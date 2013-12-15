@@ -112,14 +112,11 @@ public class VmPoolMonitor {
      * @return whether or not succeeded to prestart the Vm
      */
     private boolean prestartVm(Guid vmGuid) {
-        boolean prestartVmSucceeded = false;
         if (VmPoolCommandBase.canAttachNonPrestartedVmToUser(vmGuid)) {
             VM vmToPrestart = DbFacade.getInstance().getVmDao().get(vmGuid);
-            if (runVmAsStateless(vmToPrestart)) {
-                prestartVmSucceeded = true;
-            }
+            return runVmAsStateless(vmToPrestart);
         }
-        return prestartVmSucceeded;
+        return false;
     }
 
     /**
@@ -129,18 +126,14 @@ public class VmPoolMonitor {
      */
     private boolean runVmAsStateless(VM vmToRunAsStateless) {
         log.infoFormat("Running Vm {0} as stateless", vmToRunAsStateless);
-        boolean prestartingVmSucceeded = false;
         RunVmParams runVmParams = new RunVmParams(vmToRunAsStateless.getId());
         runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRunAsStateless.getId()));
         runVmParams.setRunAsStateless(true);
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
                 runVmParams, ExecutionHandler.createInternalJobContext());
-        prestartingVmSucceeded = vdcReturnValue.getSucceeded();
-        if (prestartingVmSucceeded) {
-            log.infoFormat("Running Vm {0} as stateless succeeded", vmToRunAsStateless);
-        } else {
-            log.infoFormat("Running Vm {0} as stateless failed", vmToRunAsStateless);
-        }
+        boolean prestartingVmSucceeded = vdcReturnValue.getSucceeded();
+        log.infoFormat("Running Vm {0} as stateless {1}",
+                vmToRunAsStateless, prestartingVmSucceeded ? "succeeded" : "failed");
         return prestartingVmSucceeded;
     }
 
