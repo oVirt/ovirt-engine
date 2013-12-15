@@ -193,33 +193,18 @@
     </Match>
 
     <Match>
-        <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$18" />
+        <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$17" />
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$21" />
+       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$20" />
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$22" />
+       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$23" />
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$24" />
-       <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$25" />
-       <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$26" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
@@ -288,7 +273,7 @@
     </Match>
 
     <Match>
-      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmRunOncePopupWidget$14" />
+      <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmRunOncePopupWidget$13" />
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
