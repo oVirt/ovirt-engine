@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.qos;
 
 
+import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.NetworkQoSParametersBase;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -14,8 +15,9 @@ public class AddNetworkQoSCommand extends NetworkQoSCommandBase {
 
     @Override
     protected boolean canDoAction() {
+        NetworkQosValidator validator = new NetworkQosValidator(getNetworkQoS());
         return validateParameters()
-                && validateNameNotExistInDC()
+                && validate(validator.nameNotTakenInDc())
                 && validateValues();
     }
 

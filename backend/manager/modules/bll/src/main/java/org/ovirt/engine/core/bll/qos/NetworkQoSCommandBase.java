@@ -45,19 +45,6 @@ public abstract class NetworkQoSCommandBase extends CommandBase<NetworkQoSParame
         return true;
     }
 
-    protected boolean validateNameNotExistInDC() {
-        //check for duplicate name in DC
-        List<NetworkQoS> networkQoSes =  getNetworkQoSDao().getAllForStoragePoolId(getStoragePoolId());
-        if (networkQoSes != null) {
-            for (NetworkQoS networkQoS : networkQoSes) {
-                if (networkQoS.getName().equals(getNetworkQoS().getName())) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NAME_EXIST);
-                }
-            }
-        }
-        return true;
-    }
-
     protected boolean validateValues() {
         if(missingValues()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES);

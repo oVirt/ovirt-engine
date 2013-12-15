@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.bll.qos;
 
-
+import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.NetworkQoSParametersBase;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class RemoveNetworkQoSCommand extends NetworkQoSCommandBase {
@@ -15,12 +14,8 @@ public class RemoveNetworkQoSCommand extends NetworkQoSCommandBase {
     @Override
     protected boolean canDoAction() {
         if (validateParameters()) {
-            NetworkQoS oldNetworkQoS =  getNetworkQoSDao().get(getNetworkQoS().getId());
-            if (oldNetworkQoS == null) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_FOUND);
-            } else if (!oldNetworkQoS.getStoragePoolId().equals(getNetworkQoS().getStoragePoolId())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_INVALID_DC_ID);
-            }
+            NetworkQosValidator validator = new NetworkQosValidator(getNetworkQoS());
+            return validate(validator.qosExists()) && validate(validator.consistentDataCenter());
         }
         return true;
     }
