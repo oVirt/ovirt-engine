@@ -53,13 +53,6 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         return parameters;
     }
 
-    private void propagateFailure(VdcReturnValueBase internalReturnValue) {
-        getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
-        getReturnValue().setFault(internalReturnValue.getFault());
-        getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
-        getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
-    }
-
     protected boolean addMacToPool(String macAddress) {
         if (MacPoolManager.getInstance().addMac(macAddress)) {
             return true;

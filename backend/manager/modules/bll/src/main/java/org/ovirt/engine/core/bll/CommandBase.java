@@ -2107,4 +2107,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
         super.setCorrelationId(correlationId);
     }
+
+    /**
+     * Propagates an internal command failures into the command which invoked it
+     *
+     * @param internalReturnValue
+     *            the return value of the internal command
+     */
+    protected void propagateFailure(VdcReturnValueBase internalReturnValue) {
+        getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
+        getReturnValue().setFault(internalReturnValue.getFault());
+        getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
+        getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
+    }
 }
