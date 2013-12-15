@@ -823,9 +823,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             setSucceeded(getBackend().runInternalAction(
                     getActionType(), getParameters(), createContextForRunStatelessVm()).getSucceeded());
             if (!getSucceeded()) {
-                // could not run the vm don't try to run the end action again
+                getParameters().setShouldBeLogged(true);
                 log.errorFormat("Could not run VM {0} ({1}) in stateless mode",
                         getVm().getName(), getVm().getId());
+                // could not run the vm don't try to run the end action again
                 getReturnValue().setEndActionTryAgain(false);
             }
         }
