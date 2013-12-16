@@ -9,6 +9,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,6 +90,9 @@ public class UpdateVmCommandTest {
             mockConfig(ConfigValues.MaxNumOfVmCpus, "3.0", 16),
             mockConfig(ConfigValues.MaxNumOfVmSockets, "3.0", 16),
             mockConfig(ConfigValues.MaxNumOfCpuPerSocket, "3.0", 16),
+            mockConfig(ConfigValues.MaxNumOfVmCpus, "3.3", 16),
+            mockConfig(ConfigValues.MaxNumOfVmSockets, "3.3", 16),
+            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, "3.3", 16),
             mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true)
             );
 
@@ -135,6 +139,8 @@ public class UpdateVmCommandTest {
             }
         });
         doReturn(vm).when(command).getVm();
+
+        doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
     }
 
     @Test
@@ -295,6 +301,17 @@ public class UpdateVmCommandTest {
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
+    public void testCannotUpdateOSNotSupportVirtioScsi() {
+        prepareVmToPassCanDoAction();
+        group.setcompatibility_version(Version.v3_3);
+
+        when(command.isVirtioScsiEnabledForVm(any(Guid.class))).thenReturn(true);
+        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+                new ArrayList<>(Arrays.asList("VirtIO")));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
+    }
 
     private void prepareVmToPassCanDoAction() {
         vmStatic.setName("vm1");

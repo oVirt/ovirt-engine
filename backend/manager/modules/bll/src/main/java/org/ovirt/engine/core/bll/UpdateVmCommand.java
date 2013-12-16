@@ -405,9 +405,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
 
-        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
-            return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) || isVirtioScsiEnabledForVm(getVmId())) {
+            // Verify cluster compatibility
+            if (!FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+                return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+            }
+
+            // Verify OS compatibility
+            if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getVdsGroup().getcompatibility_version(),
+                    getReturnValue().getCanDoActionMessages())) {
+                return false;
+            }
         }
 
         if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled())) {
@@ -605,8 +613,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     protected boolean isVirtioScsiEnabled() {
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
-        return virtioScsiEnabled != null ? virtioScsiEnabled :
-                VmDeviceUtils.isVirtioScsiControllerAttached(getVmId());
+        return virtioScsiEnabled != null ? virtioScsiEnabled : isVirtioScsiEnabledForVm(getVmId());
+    }
+
+    public boolean isVirtioScsiEnabledForVm(Guid vmId) {
+        return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
     }
 
     protected boolean isSoundDeviceEnabled() {

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
+import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -515,9 +517,17 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
 
-        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
-            return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled())) {
+            // Verify cluster compatibility
+            if (!FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+                return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+            }
+
+            // Verify OS compatibility
+            if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getVdsGroup().getcompatibility_version(),
+                    getReturnValue().getCanDoActionMessages())) {
+                return false;
+            }
         }
 
         return true;
@@ -1120,8 +1130,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean isVirtioScsiEnabled() {
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
+        boolean isOsSupportedForVirtIoScsi = VmValidationUtils.isDiskInterfaceSupportedByOs(
+                getParameters().getVm().getOs(), getVdsGroup().getcompatibility_version(), DiskInterface.VirtIO_SCSI);
+
         return virtioScsiEnabled != null ? virtioScsiEnabled :
-                FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version());
+                FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version()) && isOsSupportedForVirtIoScsi;
     }
 
     protected boolean isBalloonEnabled() {
