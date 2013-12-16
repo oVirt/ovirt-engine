@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -153,6 +154,33 @@ public class DiskImagesValidator {
         return ValidationResult.VALID;
     }
 
+    /**
+     * checks that the given disks has no derived disks on the given storage domain.
+     * if the provided storage domain id is null, it will be checked that there are no
+     * derived disks on any storage domain.
+     */
+    public ValidationResult diskImagesHaveNoDerivedDisks(Guid storageDomainId) {
+        List<String> disksInfo = new LinkedList<>();
+        for (DiskImage diskImage : diskImages) {
+            if (diskImage.getVmEntityType() != null && diskImage.getVmEntityType().isTemplateType()) {
+                List<DiskImage> basedDisks = getDiskImageDAO().getAllSnapshotsForParent(diskImage.getImageId());
+                for (DiskImage basedDisk : basedDisks) {
+                    if (storageDomainId == null || basedDisk.getStorageIds().contains(storageDomainId)) {
+                        disksInfo.add(String.format("%s  (%s) ", basedDisk.getDiskAlias(), basedDisk.getId()));
+                    }
+                }
+            }
+        }
+
+        if (!disksInfo.isEmpty()) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS,
+                    String.format("$disksInfo %s",
+                            String.format(StringUtils.join(disksInfo, "%n"))));
+        }
+
+        return ValidationResult.VALID;
+    }
+
     private DbFacade getDbFacade() {
        return DbFacade.getInstance();
     }
@@ -167,5 +195,9 @@ public class DiskImagesValidator {
 
     protected SnapshotDao getSnapshotDAO() {
         return getDbFacade().getSnapshotDao();
+    }
+
+    protected DiskImageDAO getDiskImageDAO() {
+        return getDbFacade().getDiskImageDao();
     }
 }

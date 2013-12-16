@@ -180,7 +180,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_LAST_DOMAIN);
         }
 
-        if (!checkDerivedVmFromTemplateExists(diskImage)){
+        if (!checkDerivedVmFromTemplateExists(diskImage) || !checkDerivedDisksFromDiskNotExist(diskImage)){
             return false;
         }
 
@@ -195,6 +195,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return false;
         }
         return true;
+    }
+
+    private DiskImagesValidator createDiskImagesValidator(DiskImage disk) {
+      return new DiskImagesValidator(Arrays.asList(disk));
+    }
+
+    private boolean checkDerivedDisksFromDiskNotExist(DiskImage diskImage) {
+        return validate(createDiskImagesValidator(diskImage).diskImagesHaveNoDerivedDisks(getParameters().getStorageDomainId()));
     }
 
     private List<String> getNamesOfDerivedVmsFromTemplate(DiskImage diskImage) {
