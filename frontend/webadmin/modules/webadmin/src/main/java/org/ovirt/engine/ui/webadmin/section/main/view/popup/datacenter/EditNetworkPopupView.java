@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -19,8 +18,6 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
     }
 
     private final Driver driver = GWT.create(Driver.class);
-
-    private Network network;
 
     @Inject
     public EditNetworkPopupView(EventBus eventBus,
@@ -42,7 +39,6 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
     public void edit(EditNetworkModel object) {
         super.edit(object);
         driver.edit(object);
-        network = object.getNetwork();
     }
 
     @Override
@@ -56,11 +52,6 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
     public EditNetworkModel flush() {
         super.flush();
         return driver.flush();
-    }
-
-    @Override
-    public void toggleProfilesVisibility(boolean visible) {
-        super.toggleProfilesVisibility(visible && !network.isVmNetwork());
     }
 
 }

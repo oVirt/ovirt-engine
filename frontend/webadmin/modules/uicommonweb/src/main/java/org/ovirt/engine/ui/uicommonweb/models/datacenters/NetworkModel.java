@@ -34,7 +34,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -124,6 +123,13 @@ public abstract class NetworkModel extends Model
         EntityModel isVmNetwork = new EntityModel();
         isVmNetwork.setEntity(true);
         setIsVmNetwork(isVmNetwork);
+        isVmNetwork.getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                toggleProfilesAvailability();
+            }
+        });
+
         EntityModel publicUse = new EntityModel();
         publicUse.setEntity(true);
 
@@ -486,19 +492,15 @@ public abstract class NetworkModel extends Model
 
     protected void postSaveAction(Guid networkGuid, boolean succeeded) {
         if (succeeded) {
-            if ((Boolean) getIsVmNetwork().getEntity()) {
-                performProfilesActions(networkGuid);
-                stopProgress();
-            } else {
-                stopProgress();
-                cancel();
-            }
+            performProfilesActions(networkGuid);
+            stopProgress();
+            cancel();
         }
     }
 
     private void performProfilesActions(Guid networkGuid) {
         List<VnicProfileModel> profileModels = (List<VnicProfileModel>) getProfiles().getItems();
-        if (profileModels.isEmpty()) {
+        if (profileModels.isEmpty() || !getProfiles().getIsAvailable()) {
             return;
         }
 
@@ -514,15 +516,13 @@ public abstract class NetworkModel extends Model
                 paramlist.add(parameters);
             }
         }
+        Frontend.getInstance().runMultipleActions(VdcActionType.AddVnicProfile,
+                paramlist,
+                (IFrontendActionAsyncCallback) null); // cast is required to avoid overload ambiguity
+    }
 
-        IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                stopProgress();
-                cancel();
-            }
-        };
-        Frontend.getInstance().runMultipleActions(VdcActionType.AddVnicProfile, paramlist, callback);
+    protected void toggleProfilesAvailability() {
+        getProfiles().setIsAvailable((Boolean) getIsVmNetwork().getEntity());
     }
 
     void cancel() {
