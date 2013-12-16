@@ -14,7 +14,12 @@ set_defaults() {
     DATABASE="engine"
     USERNAME="engine"
     VERBOSE=false
-    LOGFILE="$ME.log"
+    LOGDIR="/var/log/ovirt-engine"
+    if [ -d ${LOGDIR} ]; then
+        LOGFILE="${LOGDIR}/$ME.log"
+    else
+        LOGFILE="$ME.log"
+    fi
     DBOBJECT_OWNER="engine"
     NOMD5="false"
     MD5DIR="$(pwd)"
