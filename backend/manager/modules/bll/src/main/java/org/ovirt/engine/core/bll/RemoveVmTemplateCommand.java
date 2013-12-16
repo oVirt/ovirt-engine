@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -167,7 +168,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
             }
         }
-        return true;
+
+        return validate(checkNoDisksBasedOnTemplateDisks());
+    }
+
+    private ValidationResult checkNoDisksBasedOnTemplateDisks() {
+        return new DiskImagesValidator(imageTemplates).diskImagesHaveNoDerivedDisks(null);
     }
 
     private void fetchImageTemplates() {
