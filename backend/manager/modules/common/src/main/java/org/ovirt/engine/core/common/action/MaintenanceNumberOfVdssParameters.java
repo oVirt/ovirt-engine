@@ -11,9 +11,22 @@ public class MaintenanceNumberOfVdssParameters extends VdcActionParametersBase {
 
     private boolean _isInternal;
 
+    /*
+     * If the power management policy is responsible for this action
+     * pass true so we keep the powerManagementControlledByPolicy flag set.
+     *
+     * If the user triggered this action, clear the flag.
+     */
+    private boolean keepPolicyPMEnabled = false;
+
     public MaintenanceNumberOfVdssParameters(java.util.List<Guid> vdsIdList, boolean isInternal) {
         _vdsIdList = vdsIdList;
         _isInternal = isInternal;
+    }
+
+    public MaintenanceNumberOfVdssParameters(java.util.List<Guid> vdsIdList, boolean isInternal, boolean keepPolicyPMEnabled) {
+        this(vdsIdList, isInternal);
+        this.keepPolicyPMEnabled = keepPolicyPMEnabled;
     }
 
     public Iterable<Guid> getVdsIdList() {
@@ -26,6 +39,14 @@ public class MaintenanceNumberOfVdssParameters extends VdcActionParametersBase {
 
     public boolean getIsInternal() {
         return _isInternal;
+    }
+
+    public boolean getKeepPolicyPMEnabled() {
+        return keepPolicyPMEnabled;
+    }
+
+    public void setKeepPolicyPMEnabled(boolean _keepPolicyPMEnabled) {
+        this.keepPolicyPMEnabled = _keepPolicyPMEnabled;
     }
 
     public MaintenanceNumberOfVdssParameters() {

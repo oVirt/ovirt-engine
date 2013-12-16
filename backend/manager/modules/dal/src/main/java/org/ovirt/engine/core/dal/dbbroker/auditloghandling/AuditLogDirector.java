@@ -62,6 +62,7 @@ public final class AuditLogDirector {
         initClusterPolicySeverities();
         initExtrnalEvents();
         initMomPoliciesSeverities();
+        initPmPolicySeverities();
     }
 
     private static void initProviderSeverities() {
@@ -880,6 +881,12 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_TO_UPDATE_CLUSTER_POLICY, AuditLogSeverity.ERROR);
 
         severities.put(AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY, AuditLogSeverity.ERROR);
+    }
+
+    private static void initPmPolicySeverities() {
+        severities.put(AuditLogType.PM_POLICY_MAINTENANCE_TO_DOWN, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.PM_POLICY_UP_TO_MAINTENANCE, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.PM_POLICY_TO_UP, AuditLogSeverity.NORMAL);
     }
 
     private static void initMessages() {

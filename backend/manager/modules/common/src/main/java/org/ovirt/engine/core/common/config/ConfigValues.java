@@ -408,6 +408,14 @@ public enum ConfigValues {
     LowUtilizationForPowerSave,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("0")
+    HostsInReserve,
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    EnableAutomaticHostPowerManagement,
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     HighUtilizationForEvenlyDistribute,
     @Reloadable

@@ -141,6 +141,18 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 }
             }
         }
+
+        // clear the automatic PM flag unless instructed otherwise
+        if (!getParameters().getKeepPolicyPMEnabled()) {
+            for (Guid vdsId : getParameters().getVdsIdList()) {
+                VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+                vds.setPowerManagementControlledByPolicy(false);
+                getDbFacade().getVdsDynamicDao().updateVdsDynamicPowerManagementPolicyFlag(
+                        getVdsId(),
+                        getVds().getDynamicData().isPowerManagementControlledByPolicy());
+            }
+        }
+
         setSucceeded(true);
     }
 

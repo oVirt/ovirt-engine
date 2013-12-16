@@ -176,6 +176,16 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 setStatus(lastStatus);
                 AlertIfPowerManagementOperationFailed();
             }
+
+            // Successful fencing with reboot or shutdown op. Clear the power management policy flag
+            else if ((getParameters().getAction() == FenceActionType.Restart
+                      || getParameters().getAction() == FenceActionType.Stop)
+                    && getParameters().getKeepPolicyPMEnabled() == false){
+                getVds().setPowerManagementControlledByPolicy(false);
+                getDbFacade().getVdsDynamicDao().updateVdsDynamicPowerManagementPolicyFlag(
+                        getVdsId(),
+                        getVds().getDynamicData().isPowerManagementControlledByPolicy());
+            }
         }
     }
 

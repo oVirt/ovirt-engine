@@ -839,6 +839,11 @@ public enum AuditLogType {
     USER_UPDATED_MOM_POLICIES(10200),
     USER_FAILED_TO_UPDATE_MOM_POLICIES(10201),
 
+    //power management policy
+    PM_POLICY_UP_TO_MAINTENANCE(10250),
+    PM_POLICY_MAINTENANCE_TO_DOWN(10251),
+    PM_POLICY_TO_UP(10252),
+
     // HA Reservation
     CLUSTER_ALERT_HA_RESERVATION(10300, AuditLogTimeInterval.HOUR.getValue());
 
