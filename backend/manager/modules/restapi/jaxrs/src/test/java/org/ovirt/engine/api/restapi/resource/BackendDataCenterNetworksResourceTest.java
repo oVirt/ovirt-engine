@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -30,8 +30,8 @@ public class BackendDataCenterNetworksResourceTest
     @Test
     public void testRemoveNotFound() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
-                                     StorageDomainAndPoolQueryParameters.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { DATA_CENTER_ID },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
@@ -58,8 +58,8 @@ public class BackendDataCenterNetworksResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
-                                     StorageDomainAndPoolQueryParameters.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { DATA_CENTER_ID },
                                      new LinkedList<org.ovirt.engine.core.common.businessentities.network.Network>(),
                                      null);
@@ -111,8 +111,8 @@ public class BackendDataCenterNetworksResourceTest
                                   true,
                                   null, //GUIDS[0],
                                   VdcQueryType.GetNetworksByStoragePoolId,
-                                  StorageDomainAndPoolQueryParameters.class,
-                                  new String[] { "StoragePoolId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { DATA_CENTER_ID },
                                   asList(getEntity(0)));
         Network model = getModel(0);
@@ -175,8 +175,8 @@ public class BackendDataCenterNetworksResourceTest
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
-                                         StorageDomainAndPoolQueryParameters.class,
-                                         new String[] { "StoragePoolId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { DATA_CENTER_ID },
                                          getEntityList(),
                                          failure);
@@ -187,8 +187,8 @@ public class BackendDataCenterNetworksResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
-                                         StorageDomainAndPoolQueryParameters.class,
-                                         new String[] { "StoragePoolId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { DATA_CENTER_ID },
                                          getEntityList(),
                                          failure);

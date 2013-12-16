@@ -1,18 +1,18 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.getModel;
+
 import java.util.ArrayList;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.getModel;
 
 public class BackendDataCenterNetworkResourceTest
     extends AbstractBackendNetworkResourceTest<BackendDataCenterNetworkResource> {
@@ -39,8 +39,8 @@ public class BackendDataCenterNetworkResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
-                                     StorageDomainAndPoolQueryParameters.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
@@ -65,8 +65,8 @@ public class BackendDataCenterNetworkResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
-                                     StorageDomainAndPoolQueryParameters.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
@@ -139,8 +139,8 @@ public class BackendDataCenterNetworkResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
-                                         StorageDomainAndPoolQueryParameters.class,
-                                         new String[] { "StoragePoolId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { dataCenterId },
                                          getEntityList());
         }

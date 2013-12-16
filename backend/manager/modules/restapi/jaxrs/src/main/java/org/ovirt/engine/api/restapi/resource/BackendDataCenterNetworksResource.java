@@ -2,14 +2,15 @@ package org.ovirt.engine.api.restapi.resource;
 
 
 import java.util.List;
-import javax.ws.rs.core.Response;
-import org.ovirt.engine.api.model.DataCenter;
 
+import javax.ws.rs.core.Response;
+
+import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,7 +54,7 @@ public class BackendDataCenterNetworksResource extends BackendNetworksResource {
 
     @Override
     protected VdcQueryParametersBase getQueryParameters() {
-        return new StorageDomainAndPoolQueryParameters(Guid.Empty, dataCenterId);
+        return new IdQueryParameters(dataCenterId);
     }
 
     @Override
