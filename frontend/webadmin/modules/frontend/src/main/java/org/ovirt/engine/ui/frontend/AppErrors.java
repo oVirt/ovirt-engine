@@ -184,7 +184,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot switch the following Hosts to Maintenance mode: ${HostsList}.\nOne or more running VMs are indicated as non-migratable. The non-migratable VMs are: ${VmsList}.")
     String VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM();
 
-    @DefaultStringValue("Cannot switch the following Hosts to Maintenance mode: ${HostsList}.\nThe following VMs cannot be migrated because they have activated Disk Snapshot attached: \n \n ${disksInfo} \n \nplease deactivate/detach the Disk snapshots or turn off those VMs and try again.")
+    @DefaultStringValue("Cannot switch the following Hosts to Maintenance mode: ${HostsList}.\nThe following VMs cannot be migrated because they have activated Disk Snapshot attached (VM/Disk Snapshots): \n \n ${disksInfo} \n \nplease deactivate/detach the Disk snapshots or turn off those VMs and try again.")
     String VDS_CANNOT_MAINTENANCE_VM_HAS_PLUGGED_DISK_SNAPSHOT();
 
     @DefaultStringValue("Cannot remove default Host Cluster.")
@@ -355,13 +355,13 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is previewing a Snapshot.")
     String ACTION_TYPE_FAILED_VM_IN_PREVIEW();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following VM's disks snapshots are attached to other VMs: ${disksInfo} Please detach them from those VMs and try again.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following VM's disks snapshots are attached to other VMs (Disk Alias/Snapshot Description/VM attached to):\n\n ${disksInfo} \n\nPlease detach them from those VMs and try again.")
     String ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following VM's disks snapshots are plugged to other VMs: ${disksInfo} Please deactivate/detach them from those VMs and try again.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following VM's disks snapshots are plugged to other VMs (Disk Alias/Snapshot Description/VM attached to):\n\n ${disksInfo} \n\nPlease deactivate/detach them from those VMs and try again.")
     String ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following VM's activated disks are disk snapshots: \n ${disksInfo}. \nPlease deactivate them and try again.")
+    @DefaultStringValue("Cannot ${action} ${type}. The following VM's activated disks are disk snapshots (VM/Disk Snapshots): \n\n ${disksInfo}. \n\nPlease deactivate them and try again.")
     String ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT();
 
     @DefaultStringValue("Cannot ${action} ${type}. Shareable disks are not supported on Gluster domains.")

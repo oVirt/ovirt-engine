@@ -126,7 +126,7 @@ public class VmValidator {
                     pluggedDiskSnapshotAliases.add(disk.getDiskAlias());
                 }
                 vmPluggedDiskSnapshotsInfo.add(
-                                String.format("VM: %s, Disk(s) Snapshots: %s",
+                                String.format("%s / %s",
                                         vm.getName(),
                                         StringUtils.join(pluggedDiskSnapshotAliases, ",")));
             }

@@ -110,14 +110,13 @@ public class DiskImagesValidator {
                if (device.getSnapshotId() != null && (!onlyPlugged || device.getIsPlugged())) {
                    VM vm = getVmDAO().get(device.getVmId());
                    Snapshot snapshot = getSnapshotDAO().get(device.getSnapshotId());
-                   pluggedDiskSnapshotInfo.add(String.format("%s (from Snapshot: %s VM attached to: %s) %n",
+                   pluggedDiskSnapshotInfo.add(String.format("%s ,%s, %s",
                            diskImage.getDiskAlias(), snapshot.getDescription(), vm.getName()));
                }
             }
         }
 
         if (!pluggedDiskSnapshotInfo.isEmpty()) {
-            pluggedDiskSnapshotInfo.addFirst(String.format("%n"));
             VdcBllMessages message =
                     onlyPlugged ? VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM
                             : VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM;
