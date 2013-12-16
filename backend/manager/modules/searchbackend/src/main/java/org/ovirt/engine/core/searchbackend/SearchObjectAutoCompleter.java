@@ -154,6 +154,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
         //users - template
         addJoin(SearchObjects.VDC_USER_OBJ_NAME, "vm_guid", SearchObjects.TEMPLATE_OBJ_NAME, "vmt_guid");
+
+        //users - host
+        addJoin(SearchObjects.VDC_USER_OBJ_NAME, "vm_guid", SearchObjects.VDS_OBJ_NAME, "vds_id");
     }
 
     private void addJoin(String firstObj, String firstColumnName, String secondObj, String secondColumnName) {

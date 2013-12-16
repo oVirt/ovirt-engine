@@ -719,8 +719,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
             }
             else if (SearchObjects.VDS_OBJ_NAME.equals(searchObjStr)) {
-                if ((refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME))
-                        || (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME))) {
+                if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addFirst(mSearchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME));
                     if (refObjList.contains(SearchObjects.VM_OBJ_NAME)) {
@@ -728,7 +727,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     }
                 }
                 if (refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME)) {
-                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
+                    innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
                             SearchObjects.VDC_USER_OBJ_NAME));
                     refObjList.remove(SearchObjects.VDC_USER_OBJ_NAME);
                 }
