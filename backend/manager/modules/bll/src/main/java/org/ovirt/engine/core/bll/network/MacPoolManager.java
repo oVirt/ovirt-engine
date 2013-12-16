@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.network;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -330,4 +332,23 @@ public class MacPoolManager {
     private void decrementMacInMap(Map<String, Integer> macMap, String mac) {
         macMap.put(mac, macMap.get(mac) - 1);
     }
+
+    /**
+     * Allocates mac addresses according to the input, sorting them in ascending order
+     *
+     * @param numberOfAddresses
+     *            The number of MAC addresses to allocate
+     * @return The list of MAC addresses, sorted in ascending order
+     */
+    public List<String> allocateMacAddresses(int numberOfAddresses) {
+        List<String> macAddresses = new ArrayList<String>(numberOfAddresses);
+
+        for (int i = 0; i < numberOfAddresses; ++i) {
+            macAddresses.add(MacPoolManager.getInstance().allocateNewMac());
+        }
+        Collections.sort(macAddresses);
+
+        return macAddresses;
+    }
+
 }

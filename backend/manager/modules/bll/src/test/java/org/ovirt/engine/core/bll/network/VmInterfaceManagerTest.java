@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.network;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
@@ -9,6 +8,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -93,7 +93,7 @@ public class VmInterfaceManagerTest {
 
     @Test
     public void add() {
-        runAddAndVerify(createNewInterface(), true, times(1), OS_ID, VERSION_3_2);
+        runAddAndVerify(createNewInterface(), false, times(0), OS_ID, VERSION_3_2);
     }
 
     @Test
@@ -103,25 +103,20 @@ public class VmInterfaceManagerTest {
     }
 
     protected void runAddAndVerify(VmNic iface,
-            boolean addMacResult,
+            boolean reserveExistingMac,
             VerificationMode addMacVerification,
             int osId,
             Version version) {
         OsRepository osRepository = mock(OsRepository.class);
         when(vmInterfaceManager.getOsRepository()).thenReturn(osRepository);
         when(osRepository.hasNicHotplugSupport(any(Integer.class), any(Version.class))).thenReturn(true);
-        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), false, osId, version);
-        verify(macPoolManager, times(1)).forceAddMac((iface.getMacAddress()));
+        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reserveExistingMac, osId, version);
+        if (reserveExistingMac) {
+            verify(macPoolManager, times(1)).forceAddMac((iface.getMacAddress()));
+        } else {
+            verifyZeroInteractions(macPoolManager);
+        }
         verifyAddDelegatedCorrectly(iface, addMacVerification);
-    }
-
-    @Test
-    public void addAllocateNewMacAddress() {
-        VmNic iface = createNewInterface();
-        String newMac = RandomUtils.instance().nextString(10);
-        when(macPoolManager.allocateNewMac()).thenReturn(newMac);
-        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), true, OS_ID, VERSION_3_2);
-        assertEquals(newMac, iface.getMacAddress());
     }
 
     @Test

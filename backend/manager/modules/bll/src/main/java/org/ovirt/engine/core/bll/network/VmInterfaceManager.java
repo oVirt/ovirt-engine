@@ -1,14 +1,19 @@
 package org.ovirt.engine.core.bll.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transaction;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -46,24 +51,26 @@ public class VmInterfaceManager {
      *            The interface to save.
      * @param compensationContext
      *            Used to snapshot the saved entities.
+     * @param reserveExistingMac
+     *            Used to denote if we want to reserve the NIC's MAC address in the {@link MacPoolManager}
      * @param clusterCompatibilityVersion
      *            the compatibility version of the cluster
      * @return <code>true</code> if the MAC wasn't used, <code>false</code> if it was.
      */
     public void add(final VmNic iface,
             CompensationContext compensationContext,
-            boolean allocateMac,
+            boolean reserveExistingMac,
             int osId,
             Version clusterCompatibilityVersion) {
 
-        if (allocateMac) {
-            iface.setMacAddress(getMacPoolManager().allocateNewMac());
-        } else if (FeatureSupported.hotPlug(clusterCompatibilityVersion)
+        if (reserveExistingMac) {
+            if (FeatureSupported.hotPlug(clusterCompatibilityVersion)
                 && getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
-            getMacPoolManager().forceAddMac(iface.getMacAddress());
-        } else if (!getMacPoolManager().addMac(iface.getMacAddress())) {
-            auditLogMacInUse(iface);
-            throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
+                getMacPoolManager().forceAddMac(iface.getMacAddress());
+            } else if (!getMacPoolManager().addMac(iface.getMacAddress())) {
+                auditLogMacInUse(iface);
+                throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
+            }
         }
 
         getVmNicDao().save(iface);
@@ -171,6 +178,40 @@ public class VmInterfaceManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Sorts the list of NICs. The comparison is done either via PCI address, MAC address, or name, depending
+     * on the information we have available
+     *
+     * @param nics
+     *            The list of NICs to sort
+     * @param vmInterfaceDevices
+     *            The device information we have on those NICs
+     */
+    public void sortVmNics(List<? extends VmNic> nics, final Map<Guid, VmDevice> vmInterfaceDevices) {
+        Collections.sort(nics, new Comparator<VmNic>() {
+            @Override
+            public int compare(VmNic nic1, VmNic nic2) {
+                if (vmInterfaceDevices != null) {
+                    // If both devices have a PCI address then we compare by it
+                    // Otherwise if both devices have a MAC address then we compare by it
+                    // Otherwise we compare by name
+                    VmDevice nic1Device = vmInterfaceDevices.get(nic1.getId());
+                    VmDevice nic2Device = vmInterfaceDevices.get(nic2.getId());
+
+                    if (nic1Device != null && nic2Device != null) {
+                        if (StringUtils.isNotEmpty(nic1Device.getAddress()) && StringUtils.isNotEmpty(nic2Device.getAddress())) {
+                            return nic1Device.getAddress().compareTo(nic2Device.getAddress());
+                        }
+                    }
+                }
+                if (StringUtils.isNotEmpty(nic1.getMacAddress()) && StringUtils.isNotEmpty(nic2.getMacAddress())) {
+                    return nic1.getMacAddress().compareTo(nic2.getMacAddress());
+                }
+                return nic1.getName().compareTo(nic2.getName());
+            }
+        });
     }
 
     /**

@@ -1054,14 +1054,27 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                         getVdsGroup().getcompatibility_version(),
                         AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES);
 
+        List<VmNetworkInterface> nics = getVm().getInterfaces();
+
+        vmInterfaceManager.sortVmNics(nics, getVm().getStaticData().getManagedDeviceMap());
+
+        // If we import it as a new entity, then we allocate all MAC addresses in advance
+        if (getParameters().isImportAsNewEntity()) {
+            List<String> macAddresses = MacPoolManager.getInstance().allocateMacAddresses(nics.size());
+            for (int i = 0; i < nics.size(); ++i) {
+                nics.get(i).setMacAddress(macAddresses.get(i));
+            }
+        }
+
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
             vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
+
             vmInterfaceManager.add(iface,
-                    getCompensationContext(),
-                    getParameters().isImportAsNewEntity(),
-                    getVm().getOs(),
-                    getVdsGroup().getcompatibility_version());
+                                   getCompensationContext(),
+                                   !getParameters().isImportAsNewEntity(),
+                                   getVm().getOs(),
+                                   getVdsGroup().getcompatibility_version());
             macsAdded.add(iface.getMacAddress());
         }
 

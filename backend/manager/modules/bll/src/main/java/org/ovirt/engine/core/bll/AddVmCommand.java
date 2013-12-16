@@ -12,6 +12,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -209,6 +211,15 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             _vmInterfaces = vmNetworkInterfaces == null ? new ArrayList<VmNic>() : vmNetworkInterfaces;
         }
         return _vmInterfaces;
+    }
+
+    protected Map<Guid, VmDevice> getVmInterfaceDevices() {
+        List<VmDevice> vmInterfaceDevicesList = getVmDeviceDao().getVmDeviceByVmIdAndType(vmInterfacesSourceId, VmDeviceGeneralType.INTERFACE);
+        Map<Guid, VmDevice> vmInterfaceDevices = new HashMap();
+        for (VmDevice device : vmInterfaceDevicesList) {
+            vmInterfaceDevices.put(device.getDeviceId(), device);
+        }
+        return vmInterfaceDevices;
     }
 
     protected List<? extends Disk> _vmDisks;
@@ -711,12 +722,19 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected void addVmNetwork() {
+        List<VmNic> nics = getVmInterfaces();
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
+        vmInterfaceManager.sortVmNics(nics, getVmInterfaceDevices());
+
+        List<String> macAddresses = MacPoolManager.getInstance().allocateMacAddresses(nics.size());
+
         // Add interfaces from template
-        for (VmNic iface : getVmInterfaces()) {
+        for (int i = 0; i < nics.size(); ++i) {
+            VmNic iface = nics.get(i);
             Guid id = Guid.newGuid();
             srcVmNicIdToTargetVmNicIdMapping.put(iface.getId(), id);
             iface.setId(id);
-            iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
+            iface.setMacAddress(macAddresses.get(i));
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iface.setVmTemplateId(null);
             iface.setVmId(getParameters().getVmStaticData().getId());
