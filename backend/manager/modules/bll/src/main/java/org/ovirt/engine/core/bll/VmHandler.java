@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVm;
@@ -453,6 +454,27 @@ public class VmHandler {
         boolean result = VmValidationUtils.isDisplayTypeSupported(osId, clusterVersion, defaultDisplayType);
         if (!result) {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
+        }
+        return result;
+    }
+
+    /**
+     * Check if the OS type is supported for VirtIO-SCSI.
+     *
+     * @param osId
+     *            Type of the OS
+     * @param clusterVersion
+     *            Cluster's version
+     * @param reasons
+     *            Reasons List
+     * @return
+     */
+    public static boolean isOsTypeSupportedForVirtioScsi(int osId,
+                                            Version clusterVersion,
+                                            List<String> reasons) {
+        boolean result = VmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, DiskInterface.VirtIO_SCSI);
+        if (!result) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI.name());
         }
         return result;
     }

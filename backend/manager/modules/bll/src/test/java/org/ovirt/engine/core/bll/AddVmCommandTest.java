@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -225,10 +226,50 @@ public class AddVmCommandTest {
     }
 
     @Test
+    public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
+        VM vm = createVm();
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
+
+        VDSGroup vdsGroup = createVdsGroup();
+
+        mockOsRepository();
+        mockStorageDomainDAOGetForStoragePool();
+        mockVmTemplateDAOReturnVmTemplate();
+        mockDiskImageDAOGetSnapshotById();
+        mockVerifyAddVM(cmd);
+        mockConfig();
+        mockConfigSizeDefaults();
+        mockMaxPciSlots();
+        mockStorageDomainDaoGetAllStoragesForPool(20);
+        mockUninterestingMethods(cmd);
+        mockDisplayTypes(vm.getOs(), vdsGroup.getcompatibility_version());
+        doReturn(true).when(cmd).checkCpuSockets();
+
+        doReturn(vdsGroup).when(cmd).getVdsGroup();
+        cmd.getParameters().setVirtioScsiEnabled(true);
+        when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
+        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+                new ArrayList<>(Arrays.asList("VirtIO")));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
+    }
+
+    @Test
     public void isVirtioScsiEnabledDefaultedToTrue() {
+        mockOsRepository();
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(0, 0);
         doReturn(createVdsGroup()).when(cmd).getVdsGroup();
+        when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
+                new ArrayList<>(Arrays.asList("VirtIO_SCSI")));
         assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
+    }
+
+    private void mockDisplayTypes(int osId, Version clusterVersion) {
+        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
+        displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
+        displayTypeMap.get(osId).put(clusterVersion, Arrays.asList(DisplayType.qxl));
+        when(osRepository.getDisplayTypes()).thenReturn(displayTypeMap);
     }
 
     protected void mockNonInterestingMethodsForCloneVmFromSnapshot(AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd) {

@@ -95,9 +95,17 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                     return false;
                 }
 
-                if (VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId()) &&
-                        !FeatureSupported.virtIoScsi(targetCluster.getcompatibility_version())) {
-                    return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                if (VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId())) {
+                    // Verify cluster compatibility
+                    if (!FeatureSupported.virtIoScsi(targetCluster.getcompatibility_version())) {
+                        return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                    }
+
+                    // Verify OS compatibility
+                    if (!VmHandler.isOsTypeSupportedForVirtioScsi(vm.getOs(), targetCluster.getcompatibility_version(),
+                            getReturnValue().getCanDoActionMessages())) {
+                        return false;
+                    }
                 }
 
                 // A existing VM cannot be changed into a cluster without a defined architecture
