@@ -181,7 +181,7 @@ public class MoveOrCopyDiskCommandTest {
         VmDevice device2 = new VmDevice();
         device2.setIsPlugged(true);
         vmList.add(new Pair<>(vm1, device1));
-        vmList.add(new Pair<>(vm1, device2));
+        vmList.add(new Pair<>(vm2, device2));
 
         when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
     }
