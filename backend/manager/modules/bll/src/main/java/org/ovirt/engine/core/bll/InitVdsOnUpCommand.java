@@ -449,8 +449,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private boolean hostUuidExists(Guid addedServerUuid) {
         GlusterServerDao glusterServerDao = DbFacade.getInstance().getGlusterServerDao();
         GlusterServer glusterServer = glusterServerDao.getByGlusterServerUuid(addedServerUuid);
-        if ((glusterServer == null) ||
-                (glusterServer != null && glusterServer.getId().equals(getVds().getId()))) {
+        if (glusterServer == null || glusterServer.getId().equals(getVds().getId())) {
             return false;
         }
         return true;
