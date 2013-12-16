@@ -38,6 +38,7 @@ public class EditNetworkModel extends NetworkModel {
         getExport().setIsChangable(false);
         getExternalProviders().setIsChangable(false);
         getNetworkLabel().setIsChangable(false);
+        toggleProfilesAvailability();
     }
 
     @Override
@@ -92,5 +93,10 @@ public class EditNetworkModel extends NetworkModel {
                     }
                 },
                 null);
+    }
+
+    @Override
+    protected void toggleProfilesAvailability() {
+        getProfiles().setIsAvailable((Boolean) getIsVmNetwork().getEntity() && !getNetwork().isVmNetwork());
     }
 }

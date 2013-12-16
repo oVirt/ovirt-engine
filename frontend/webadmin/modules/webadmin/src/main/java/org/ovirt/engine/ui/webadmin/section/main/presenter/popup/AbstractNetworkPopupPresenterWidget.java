@@ -50,11 +50,13 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
             }
         });
 
-        getView().toggleProfilesVisibility((Boolean) model.getIsVmNetwork().getEntity());
-        model.getIsVmNetwork().getEntityChangedEvent().addListener(new IEventListener() {
+        getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
+        model.getProfiles().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getView().toggleProfilesVisibility((Boolean) model.getIsVmNetwork().getEntity());
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
+                }
             }
         });
 
