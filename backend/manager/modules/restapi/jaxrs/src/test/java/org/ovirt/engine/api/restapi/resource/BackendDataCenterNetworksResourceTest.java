@@ -29,7 +29,7 @@ public class BackendDataCenterNetworksResourceTest
 
     @Test
     public void testRemoveNotFound() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
+        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { DATA_CENTER_ID },
@@ -57,7 +57,7 @@ public class BackendDataCenterNetworksResourceTest
 
     @Test
     public void testRemoveNonExistant() throws Exception{
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
+        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { DATA_CENTER_ID },
@@ -110,7 +110,7 @@ public class BackendDataCenterNetworksResourceTest
                                   true,
                                   true,
                                   null, //GUIDS[0],
-                                  VdcQueryType.GetNetworksByStoragePoolId,
+                                  VdcQueryType.GetNetworksByDataCenterId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { DATA_CENTER_ID },
@@ -174,7 +174,7 @@ public class BackendDataCenterNetworksResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
+        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { DATA_CENTER_ID },
@@ -186,7 +186,7 @@ public class BackendDataCenterNetworksResourceTest
     @Override
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
+            setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { DATA_CENTER_ID },

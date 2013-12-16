@@ -20,7 +20,7 @@ public class BackendDataCenterNetworksResource extends BackendNetworksResource {
     protected Guid dataCenterId;
 
     public BackendDataCenterNetworksResource(String dataCenterId) {
-        super(VdcQueryType.GetNetworksByStoragePoolId);
+        super(VdcQueryType.GetNetworksByDataCenterId);
         this.dataCenterId = asGuid(dataCenterId);
     }
 
@@ -49,7 +49,7 @@ public class BackendDataCenterNetworksResource extends BackendNetworksResource {
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks() {
-        return getBackendCollection(VdcQueryType.GetNetworksByStoragePoolId, getQueryParameters());
+        return getBackendCollection(VdcQueryType.GetNetworksByDataCenterId, getQueryParameters());
     }
 
     @Override

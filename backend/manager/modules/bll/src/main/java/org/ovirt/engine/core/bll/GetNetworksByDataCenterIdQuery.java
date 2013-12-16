@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetNetworksByStoragePoolIdQuery<P extends IdQueryParameters>
+public class GetNetworksByDataCenterIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
-    public GetNetworksByStoragePoolIdQuery(P parameters) {
+    public GetNetworksByDataCenterIdQuery(P parameters) {
         super(parameters);
     }
 

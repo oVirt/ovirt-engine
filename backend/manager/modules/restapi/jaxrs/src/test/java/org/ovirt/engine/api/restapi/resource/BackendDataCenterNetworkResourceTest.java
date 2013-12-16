@@ -38,7 +38,7 @@ public class BackendDataCenterNetworkResourceTest
     @Test
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
+        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { dataCenterId },
@@ -64,7 +64,7 @@ public class BackendDataCenterNetworkResourceTest
     @Test
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
+        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { dataCenterId },
@@ -138,7 +138,7 @@ public class BackendDataCenterNetworkResourceTest
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetNetworksByStoragePoolId,
+            setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { dataCenterId },
