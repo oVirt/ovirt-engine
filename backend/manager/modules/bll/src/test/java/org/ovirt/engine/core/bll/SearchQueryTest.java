@@ -15,10 +15,10 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -149,9 +149,15 @@ public class SearchQueryTest {
     }
 
     private static String getQuotaRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.QUOTA_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.QUOTA_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.QUOTA_OBJ_NAME) + ".*";
+        StringBuilder query = new StringBuilder();
+
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.QUOTA_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableNameWithOutTags(SearchObjects.QUOTA_OBJ_NAME))
+                .append(".* ");
+        return query.toString();
+
     }
 
     /**
@@ -211,9 +217,14 @@ public class SearchQueryTest {
      * @param search
      */
     private static String getDiskImageRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.DISK_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.DISK_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.DISK_OBJ_NAME) + ".*";
+        StringBuilder query = new StringBuilder();
+
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.DISK_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableNameWithOutTags(SearchObjects.DISK_OBJ_NAME))
+                .append(".* ");
+        return query.toString();
     }
 
     /**
@@ -252,9 +263,13 @@ public class SearchQueryTest {
      * @param search
      */
     private static String getVMRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.VM_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.VM_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.VM_OBJ_NAME) + ".*";
+        StringBuilder query = new StringBuilder();
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.VM_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableNameWithOutTags(SearchObjects.VM_OBJ_NAME))
+                .append(".* ");
+        return query.toString();
     }
 
     /**
@@ -263,20 +278,29 @@ public class SearchQueryTest {
      * @param search
      */
     private static String getVdsRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.VDS_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.VDS_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.VDS_OBJ_NAME) + ".*";
+        StringBuilder query = new StringBuilder();
+
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.VDS_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableNameWithOutTags(SearchObjects.VDS_OBJ_NAME))
+                .append(".* ");
+        return query.toString();
     }
 
     /**
      * Regex string which contains all of the Vds group properties.
-     *
      * @param search
      */
     private static String getVdsGroupRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.VDC_CLUSTER_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.VDC_CLUSTER_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.VDC_CLUSTER_OBJ_NAME) + ".*";
+        StringBuilder query = new StringBuilder();
+
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.VDC_CLUSTER_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableNameWithOutTags(SearchObjects.VDC_CLUSTER_OBJ_NAME))
+                .append(".* ");
+        return query.toString();
     }
 
     /**
@@ -285,9 +309,14 @@ public class SearchQueryTest {
      * @param search
      */
     private static String getStoragePoolRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".*";
+        StringBuilder query = new StringBuilder();
+
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableNameWithOutTags(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME))
+                .append(".* ");
+        return query.toString();
     }
 
     /**
@@ -296,9 +325,14 @@ public class SearchQueryTest {
      * @param search
      */
     private static String getGlusterVolumeRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".*";
+        StringBuilder query = new StringBuilder();
+
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.GLUSTER_VOLUME_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableNameWithOutTags(SearchObjects.GLUSTER_VOLUME_OBJ_NAME))
+                .append(".* ");
+        return query.toString();
     }
 
     /**
@@ -307,9 +341,13 @@ public class SearchQueryTest {
      * @param search
      */
     private static String getNetworkRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.NETWORK_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.NETWORK_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.NETWORK_OBJ_NAME) + ".*";
+        StringBuilder query = new StringBuilder();
+        query.append(".*")
+                .append(search.getDefaultSort(SearchObjects.NETWORK_OBJ_NAME))
+                .append(".*")
+                .append(search.getRelatedTableNameWithOutTags(SearchObjects.NETWORK_OBJ_NAME))
+                .append(".* ");
+        return query.toString();
     }
 
     private SearchQuery<SearchParameters> spySearchQuery(SearchParameters searchParam) {

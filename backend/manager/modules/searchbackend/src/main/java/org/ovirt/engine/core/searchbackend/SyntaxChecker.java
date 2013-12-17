@@ -20,6 +20,7 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class SyntaxChecker implements ISyntaxChecker {
+    public static final String TAG_COLUMN_NAME_IN_CRITERIA = "tag_name";
     private SearchObjectAutoCompleter mSearchObjectAC;
     private BaseAutoCompleter mColonAC;
     private BaseAutoCompleter mPluralAC;
@@ -688,6 +689,10 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private String generateFromStatement(SyntaxContainer syntax) {
+        return generateFromStatement(syntax, true);
+    }
+
+    private String generateFromStatement(SyntaxContainer syntax, boolean useTags) {
         LinkedList<String> innerJoins = new LinkedList<String>();
         ArrayList<String> refObjList = syntax.getCrossRefObjList();
         String searchObjStr = syntax.getSearchObjectStr();
@@ -777,7 +782,11 @@ public class SyntaxChecker implements ISyntaxChecker {
         for (String cro : refObjList) {
             innerJoins.addLast(mSearchObjectAC.getInnerJoin(searchObjStr, cro));
         }
-        innerJoins.addFirst(mSearchObjectAC.getRelatedTableName(searchObjStr));
+        if (useTags) {
+            innerJoins.addFirst(mSearchObjectAC.getRelatedTableName(searchObjStr));
+        } else {
+            innerJoins.addFirst(mSearchObjectAC.getRelatedTableNameWithOutTags(searchObjStr));
+        }
         StringBuilder sb = new StringBuilder();
         for (String part : innerJoins) {
             sb.append(" ");
@@ -879,9 +888,18 @@ public class SyntaxChecker implements ISyntaxChecker {
             String tableName = mSearchObjectAC.getRelatedTableName(searchObjStr);
             String tableNameWithOutTags = mSearchObjectAC.getRelatedTableNameWithOutTags(searchObjStr);
 
-            String innerQuery =
-                    StringFormat.format("SELECT %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement,
+            boolean generalQuery = false;
+            String innerQuery;
+            if (!wherePhrase.toString().contains(TAG_COLUMN_NAME_IN_CRITERIA)
+                    && !wherePhrase.toString().contains(".")
+                    && (searchObjStr.equals(SearchObjects.VDS_OBJ_NAME) || searchObjStr.equals(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME))) {
+                innerQuery = getInnerQuery(tableNameWithOutTags, "*", generateFromStatement(syntax, false),
+                        wherePhrase);
+                generalQuery = true;
+            } else {
+                innerQuery = getInnerQuery(tableName, primeryKey, fromStatement,
                             wherePhrase);
+            }
             // adding a secondary default sort by entity name
             StringBuilder sortExpr = new StringBuilder();
             sortExpr.append(sortByPhrase);
@@ -925,6 +943,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                         .format("(SELECT * FROM %1$s %2$s",
                                 tableNameWithOutTags, wherePhrase.toString().replace(tableName, tableNameWithOutTags));
 
+            } else if (generalQuery) {
+                inQuery = "(" + innerQuery;
             } else {
                 inQuery = StringFormat.format(
                         "SELECT * FROM %1$s WHERE ( %2$s IN (%3$s)",
@@ -944,6 +964,11 @@ public class SyntaxChecker implements ISyntaxChecker {
             log.trace("Search: " + retval);
         }
         return retval;
+    }
+
+    private String getInnerQuery(String tableName, String primeryKey, String fromStatement, StringBuilder wherePhrase) {
+        return StringFormat.format("SELECT %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement,
+                wherePhrase);
     }
 
     protected String getPagePhrase(SyntaxContainer syntax, String pageNumber) {

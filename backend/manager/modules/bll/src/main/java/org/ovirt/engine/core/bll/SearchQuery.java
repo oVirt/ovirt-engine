@@ -263,6 +263,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             return new ArrayList<T>();
         }
 
+        log.debug("Executing generic query: " + data.getQuery());
         return ListUtils.filter(dao.getAllWithQuery(data.getQuery()), filter);
     }
 
