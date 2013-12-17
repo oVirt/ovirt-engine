@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -32,7 +33,19 @@ public final class ValidationResult
 
     public ValidationResult()
     {
-        setSuccess(true);
-        setReasons(new ArrayList<String>());
+        this(true, new ArrayList<String>());
+    }
+
+    public ValidationResult(boolean success, List<String> reasons) {
+        setSuccess(success);
+        setReasons(reasons);
+    }
+
+    public static ValidationResult ok() {
+        return new ValidationResult();
+    }
+
+    public static ValidationResult fail(String... reasons) {
+        return new ValidationResult(false, Arrays.asList(reasons));
     }
 }

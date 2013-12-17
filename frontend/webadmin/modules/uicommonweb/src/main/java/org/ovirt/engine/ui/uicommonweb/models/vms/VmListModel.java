@@ -1338,6 +1338,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setDedicatedVmForVds(vm.getDedicatedVmForVds());
         tempVar.setMigrationSupport(vm.getMigrationSupport());
         tempVar.setDefaultVncKeyboardLayout(vm.getDefaultVncKeyboardLayout());
+        tempVar.setMigrationDowntime(vm.getMigrationDowntime());
 
         VM newvm = tempVar;
 
@@ -1939,6 +1940,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         getcurrentVm().setMigrationSupport(model.getMigrationMode().getSelectedItem());
+        getcurrentVm().setMigrationDowntime(model.getSelectedMigrationDowntime());
 
         getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
 

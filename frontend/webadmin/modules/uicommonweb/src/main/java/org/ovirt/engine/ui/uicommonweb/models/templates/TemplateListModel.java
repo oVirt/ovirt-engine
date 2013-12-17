@@ -461,6 +461,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
         template.setCreatedByUserId(selectedItem.getCreatedByUserId());
         template.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
+        template.setMigrationDowntime(model.getSelectedMigrationDowntime());
 
         if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
             template.setQuotaId(model.getQuota().getSelectedItem().getId());

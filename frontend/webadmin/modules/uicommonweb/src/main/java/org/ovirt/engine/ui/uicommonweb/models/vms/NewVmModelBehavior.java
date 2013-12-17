@@ -110,6 +110,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
             getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
             getModel().selectSsoMethod(template.getSsoMethod());
+            getModel().setSelectedMigrationDowntime(template.getMigrationDowntime());
 
             getModel().getIsStateless().setEntity(template.isStateless());
 

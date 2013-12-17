@@ -262,6 +262,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getCpuPinning().setEntity(vm.getCpuPinning());
         initPriority(vm.getPriority());
+
+        getModel().setSelectedMigrationDowntime(vm.getMigrationDowntime());
     }
 
     @Override

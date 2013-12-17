@@ -171,6 +171,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().selectSsoMethod(this.template.getSsoMethod());
         getModel().getIsSmartcardEnabled().setEntity(this.template.isSmartcardEnabled());
         getModel().getVncKeyboardLayout().setSelectedItem(this.template.getVncKeyboardLayout());
+        getModel().setSelectedMigrationDowntime(this.template.getMigrationDowntime());
 
         getModel().getKernel_parameters().setEntity(this.template.getKernelParams());
         getModel().getKernel_path().setEntity(this.template.getKernelUrl());

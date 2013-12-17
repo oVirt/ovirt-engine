@@ -213,6 +213,7 @@ public final class Cloner
         vm.setClusterArch(instance.getClusterArch());
         vm.setOriginalTemplateGuid(instance.getOriginalTemplateGuid());
         vm.setOriginalTemplateName(instance.getOriginalTemplateName());
+        vm.setMigrationDowntime(instance.getMigrationDowntime());
 
         return vm;
     }

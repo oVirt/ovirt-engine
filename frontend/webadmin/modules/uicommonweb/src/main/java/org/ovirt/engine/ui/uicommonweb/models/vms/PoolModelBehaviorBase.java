@@ -158,6 +158,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getUsbPolicy().setSelectedItem(vmBase.getUsbPolicy());
             getModel().getVncKeyboardLayout().setSelectedItem(vmBase.getVncKeyboardLayout());
             getModel().getIsSmartcardEnabled().setEntity(vmBase.isSmartcardEnabled());
+            getModel().setSelectedMigrationDowntime(vmBase.getMigrationDowntime());
 
             // By default, take kernel params from template.
             getModel().getKernel_path().setEntity(vmBase.getKernelUrl());

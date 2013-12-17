@@ -650,6 +650,8 @@ public class VmSnapshotListModel extends SearchableListModel
 
         getcurrentVm().setDefaultVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
 
+        getcurrentVm().setMigrationDowntime(model.getSelectedMigrationDowntime());
+
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
         getcurrentVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
 

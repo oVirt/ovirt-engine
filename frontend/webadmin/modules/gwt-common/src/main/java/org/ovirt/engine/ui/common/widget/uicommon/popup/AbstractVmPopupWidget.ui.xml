@@ -15,36 +15,68 @@
 
     <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget.Style">
 
-		.sectionPanel {
-			margin-bottom: 20px;
-		}
+      .sectionPanel {
+        margin-bottom: 20px;
+      }
 
-        .sectionPanelTight {
-            margin-bottom: 6px;
-            float: left;
-            width: 100%;
-        }
+      .sectionPanelTight {
+        margin-bottom: 6px;
+        float: left;
+        width: 100%;
+      }
 
-		.sectionLabel {
-			font-weight: bold;
-			margin-top: 10px;
-			margin-bottom: 5px;
-		}
+      .sectionLabel {
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 5px;
+      }
 
-		.sectionComment {
-			margin-top: 10px;
-			margin-left: 5px;
-			font-style: italic;
-		}
+      .sectionComment {
+        margin-top: 10px;
+        margin-left: 5px;
+        font-style: italic;
+      }
 
-		.horizontallyAlignedCheckBox {
-			float: left;
-			padding-right: 15px;
-		}
+      .horizontallyAlignedCheckBox {
+        float: left;
+        padding-right: 15px;
+      }
 
-		.horizontallyAlignedCheckBoxContent {
-<!-- 			turns off the original styles -->
-		}
+      .horizontallyAlignedCheckBoxContent {
+      }
+
+      .migrationDowntimePanel {
+        padding-left: 1px;
+        line-height: 30px;
+      }
+
+      .overrideMigrationDowntime {
+        display: inline;
+        float: left;
+        width: 20px;
+      }
+
+      .overrideMigrationDowntime div {
+        width: 20px;
+      }
+
+      .migrationDowntimeLabel {
+        display: inline-block;
+        float: left;
+        max-width: 200px;
+      }
+
+      .migrationDowntimeInfoIcon {
+        display: inline;
+        float: left;
+      }
+
+      .migrationDowntime {
+        display: inline;
+        float: right;
+        padding-right: 9px;
+      }
+      <!-- 			turns off the original styles -->
 
 		.checkboxWithLongLabel,.checkbox {
 			margin-left: -9px;
@@ -495,6 +527,12 @@
 						<g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
 							<e:ListModelListBoxEditor ui:field="migrationModeEditor" addStyleNames="{style.migrationSelect}"/>
 							<ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}" />
+              <g:FlowPanel addStyleNames="{style.migrationDowntimePanel}">
+                <ge:EntityModelCheckBoxOnlyEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.overrideMigrationDowntime}" />
+                <g:Label text="{constants.overrideMigrationDowntimeLabel}" addStyleNames="{style.migrationDowntimeLabel}" />
+                <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.migrationDowntimeInfoIcon}" />
+                <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationDowntime}" />
+              </g:FlowPanel>
 						</g:VerticalPanel>
 					</g:FlowPanel>
 				</t:content>

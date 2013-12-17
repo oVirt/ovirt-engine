@@ -144,4 +144,6 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("{0} or {1}")
     String or(String a, String b);
 
+    @DefaultMessage("Represents maximum number of milliseconds the VM can be down during live migration. Value of 0 means that VDSM default will be used. (Current engine-wide default is {0}ms)")
+    String migrationDowntimeInfo(Integer milliseconds);
 }
