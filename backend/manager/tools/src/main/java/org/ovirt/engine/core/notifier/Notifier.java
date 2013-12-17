@@ -20,10 +20,9 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 /**
  * Main class of event notification service. Initiate the service and handles termination signals
  */
-@SuppressWarnings("restriction")
 public class Notifier {
-
     private static final Logger log = Logger.getLogger(Notifier.class);
+
     private static ScheduledExecutorService notifyScheduler = Executors.newSingleThreadScheduledExecutor();
     private static ScheduledExecutorService monitorScheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -49,19 +48,18 @@ public class Notifier {
      */
     public static void main(String[] args) {
         initLogging();
+
         NotifierSignalHandler handler = new NotifierSignalHandler();
         handler.addScheduledExecutorService(notifyScheduler);
         handler.addScheduledExecutorService(monitorScheduler);
         Runtime.getRuntime().addShutdownHook(handler);
 
-        NotificationService notificationService = null;
-        EngineMonitorService engineMonitorService = null;
         try {
             NotificationProperties prop = NotificationProperties.getInstance();
             prop.validate();
 
-            notificationService = new NotificationService(prop);
-            engineMonitorService = new EngineMonitorService(prop);
+            NotificationService notificationService = new NotificationService(prop);
+            EngineMonitorService engineMonitorService = new EngineMonitorService(prop);
 
             // add notification service to scheduler with its configurable interval
             handler.addServiceHandler(notifyScheduler.scheduleWithFixedDelay(notificationService,
@@ -86,7 +84,6 @@ public class Notifier {
      * program.
      */
     public static class NotifierSignalHandler extends Thread {
-
         private List<ScheduledFuture<?>> serviceHandler = new ArrayList<ScheduledFuture<?>>();
         private List<ScheduledExecutorService> scheduler = new ArrayList<ScheduledExecutorService>();
 

@@ -58,8 +58,8 @@ public class EngineMonitorService implements Runnable {
     private boolean sslIgnoreCertErrors;
     private SSLSocketFactory sslFactory = null;
     private boolean sslIgnoreHostVerification;
-    private String pidFile;
     private static final HostnameVerifier IgnoredHostnameVerifier = new HostnameVerifier() {
+        @Override
         public boolean verify(String hostname, SSLSession session) {
             return true;
         }
@@ -77,8 +77,6 @@ public class EngineMonitorService implements Runnable {
         initServerConnectivity();
         initServerMonitorInterval();
         serverMonitorRetries = prop.getInteger(NotificationProperties.ENGINE_MONITOR_RETRIES);
-        pidFile = prop.getProperty(NotificationProperties.ENGINE_PID);
-        // Boolean.valueOf always returns false unless gets a true expression.
         repeatNonResponsiveNotification = this.prop.getBoolean(NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION);
         if (log.isDebugEnabled()) {
             log.debug(MessageFormat.format("Checking server status using {0}, {1}ignoring SSL errors.",

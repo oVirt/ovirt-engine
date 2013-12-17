@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.LocalConfig;
 
 /**
@@ -73,8 +72,6 @@ public class NotificationProperties extends LocalConfig {
      * and then once every failedQueriesNotificationThreshold times.
      */
     public static final String FAILED_QUERIES_NOTIFICATION_THRESHOLD = "FAILED_QUERIES_NOTIFICATION_THRESHOLD";
-
-    private static final Logger log = Logger.getLogger(NotificationProperties.class);
 
     // Default files for defaults and overridden values:
     private static String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/notifier.conf.defaults";
