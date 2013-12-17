@@ -24,7 +24,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabSto
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -73,8 +72,6 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
 
     void initVmTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
-
-        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
