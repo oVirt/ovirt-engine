@@ -51,7 +51,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
 
     @Override
     protected boolean canDoAction() {
-        if (getParameters().getId() == null || !entityExists()) {
+        if (!entityExists()) {
             return failCanDoAction(getParameters().isVm() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND
                     : VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
@@ -60,9 +60,11 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
 
     protected boolean entityExists() {
         if (getParameters().isVm()) {
-            return getVmDAO().get(getParameters().getId()) != null;
+            setVmId(getParameters().getId());
+            return getVm() != null;
         } else {
-            return getVmTemplateDAO().get(getParameters().getId()) != null;
+            setVmTemplateId(getParameters().getId());
+            return getVmTemplate() != null;
         }
     }
 }
