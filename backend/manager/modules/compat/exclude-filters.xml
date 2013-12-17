@@ -52,4 +52,9 @@
        <Field name="attributes"/>
        <Bug code="UrF"/>
      </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.compat.Guid" />
+       <Bug pattern="SI_INSTANCE_BEFORE_FINALS_ASSIGNED"/>
+     </Match>
 </FindBugsFilter>

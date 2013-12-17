@@ -26,4 +26,15 @@
        <Method name="Task"/>
        <Bug code="UwF"/>
      </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs" />
+       <Bug pattern="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"/>
+     </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs" />
+       <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
+     </Match>
+
  </FindBugsFilter>
