@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotNullIntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
@@ -1030,6 +1031,26 @@ public class UnitVmModel extends Model {
         migrationMode = value;
     }
 
+    private NotChangableForVmInPoolEntityModel<Boolean> overrideMigrationDowntime;
+
+    public EntityModel<Boolean> getOverrideMigrationDowntime() {
+        return overrideMigrationDowntime;
+    }
+
+    private void setOverrideMigrationDowntime(NotChangableForVmInPoolEntityModel<Boolean> value) {
+        overrideMigrationDowntime = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Integer> migrationDowntime;
+
+    public EntityModel<Integer> getMigrationDowntime() {
+        return migrationDowntime;
+    }
+
+    private void setMigrationDowntime(NotChangableForVmInPoolEntityModel<Integer> value) {
+        migrationDowntime = value;
+    }
+
     private NotChangableForVmInPoolEntityModel<Boolean> privateIsTemplatePublic;
 
     public EntityModel<Boolean> getIsTemplatePublic()
@@ -1322,6 +1343,12 @@ public class UnitVmModel extends Model {
         setMigrationMode(new NotChangableForVmInPoolListModel<MigrationSupport>());
         getMigrationMode().getSelectedItemChangedEvent().addListener(this);
 
+        setOverrideMigrationDowntime(new NotChangableForVmInPoolEntityModel<Boolean>());
+        getOverrideMigrationDowntime().getEntityChangedEvent().addListener(this);
+
+        setMigrationDowntime(new NotChangableForVmInPoolEntityModel<Integer>());
+        getMigrationDowntime().getEntityChangedEvent().addListener(this);
+
         setHostCpu(new NotChangableForVmInPoolEntityModel<Boolean>());
         getHostCpu().getEntityChangedEvent().addListener(this);
 
@@ -1556,7 +1583,10 @@ public class UnitVmModel extends Model {
                 WatchdogModel_EntityChanged(sender, args);
             } else if (sender == getIsHighlyAvailable()) {
                 behavior.updateMigrationAvailability();
+            } else if (sender == getOverrideMigrationDowntime()) {
+                overrideMigrationDowntimeChanged();
             }
+
         }
     }
 
@@ -1607,25 +1637,23 @@ public class UnitVmModel extends Model {
     protected void initNumOfMonitors()
     {
         AsyncDataProvider.getNumOfMonitorList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                                                             new INewAsyncCallback() {
+                                                                 @Override
+                                                                 public void onSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel model = (UnitVmModel) target;
-                        Integer oldNumOfMonitors = null;
-                        if (model.getNumOfMonitors().getSelectedItem() != null)
-                        {
-                            oldNumOfMonitors = model.getNumOfMonitors().getSelectedItem();
-                        }
-                        ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
-                        model.getNumOfMonitors().setItems(numOfMonitors);
-                        if (oldNumOfMonitors != null)
-                        {
-                            model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
-                        }
+                                                                     UnitVmModel model = (UnitVmModel) target;
+                                                                     Integer oldNumOfMonitors = null;
+                                                                     if (model.getNumOfMonitors().getSelectedItem() != null) {
+                                                                         oldNumOfMonitors = model.getNumOfMonitors().getSelectedItem();
+                                                                     }
+                                                                     ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
+                                                                     model.getNumOfMonitors().setItems(numOfMonitors);
+                                                                     if (oldNumOfMonitors != null) {
+                                                                         model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
+                                                                     }
 
-                    }
-                }, getHash()));
+                                                                 }
+                                                             }, getHash()));
 
     }
 
@@ -1683,29 +1711,29 @@ public class UnitVmModel extends Model {
     private void initMinimalVmMemSize()
     {
         AsyncDataProvider.getMinimalVmMemSize(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                                                             new INewAsyncCallback() {
+                                                                 @Override
+                                                                 public void onSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel vmModel = (UnitVmModel) target;
-                        vmModel.set_MinMemSize((Integer) returnValue);
+                                                                     UnitVmModel vmModel = (UnitVmModel) target;
+                                                                     vmModel.set_MinMemSize((Integer) returnValue);
 
-                    }
-                }, getHash()));
+                                                                 }
+                                                             }, getHash()));
     }
 
     private void initMaximalVmMemSize32OS()
     {
         AsyncDataProvider.getMaximalVmMemSize32OS(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                                                                 new INewAsyncCallback() {
+                                                                     @Override
+                                                                     public void onSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel vmModel = (UnitVmModel) target;
-                        vmModel.set_MaxMemSize32((Integer) returnValue);
+                                                                         UnitVmModel vmModel = (UnitVmModel) target;
+                                                                         vmModel.set_MaxMemSize32((Integer) returnValue);
 
-                    }
-                }, getHash()));
+                                                                     }
+                                                                 }, getHash()));
     }
 
     private void updateMaximalVmMemSize()
@@ -1897,7 +1925,7 @@ public class UnitVmModel extends Model {
                 }
             };
             AsyncDataProvider.getVmWatchdogTypes(osType,
-                    cluster.getcompatibility_version(), asyncQuery);
+                                                 cluster.getcompatibility_version(), asyncQuery);
         }
     }
 
@@ -1943,6 +1971,11 @@ public class UnitVmModel extends Model {
     private void provisioning_SelectedItemChanged(Object sender, EventArgs args)
     {
         behavior.provisioning_SelectedItemChanged();
+    }
+
+    private void overrideMigrationDowntimeChanged() {
+        Boolean entity = getOverrideMigrationDowntime().getEntity();
+        getMigrationDowntime().setIsChangable(Boolean.TRUE.equals(entity));
     }
 
     private DisplayType getDisplayType() {
@@ -2316,6 +2349,8 @@ public class UnitVmModel extends Model {
             getCdImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
+        getMigrationDowntime().validateEntity(new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
+
         if (getIsLinuxOS()) {
             getKernel_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
             getInitrd_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
@@ -2362,7 +2397,7 @@ public class UnitVmModel extends Model {
 
         setIsFirstRunTabValid(getDomain().getIsValid() && getTimeZone().getIsValid());
         setIsDisplayTabValid(getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
-        setIsHostTabValid(getDefaultHost().getIsValid());
+        setIsHostTabValid(getDefaultHost().getIsValid() && getMigrationDowntime().getIsValid());
         setIsAllocationTabValid(getDisksAllocationModel().getIsValid() && getMinAllocatedMemory().getIsValid()
                 && getCpuSharesAmount().getIsValid());
         setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
@@ -2378,7 +2413,8 @@ public class UnitVmModel extends Model {
                 && getKernel_parameters().getIsValid()
                 && getCpuSharesAmount().getIsValid()
                 && behaviorValid
-                && customPropertySheetValid && getQuota().getIsValid();
+                && customPropertySheetValid && getQuota().getIsValid()
+                && getMigrationDowntime().getIsValid();
 
     }
 
@@ -2610,5 +2646,18 @@ public class UnitVmModel extends Model {
         public int getValue() {
             return value;
         }
+    }
+
+    public Integer getSelectedMigrationDowntime() {
+        if (Boolean.TRUE.equals(getOverrideMigrationDowntime().getEntity())) {
+            return getMigrationDowntime().getEntity();
+        } else {
+            return null;
+        }
+    }
+
+    public void setSelectedMigrationDowntime(Integer value) {
+        getOverrideMigrationDowntime().setEntity(value != null);
+        getMigrationDowntime().setEntity(value);
     }
 }

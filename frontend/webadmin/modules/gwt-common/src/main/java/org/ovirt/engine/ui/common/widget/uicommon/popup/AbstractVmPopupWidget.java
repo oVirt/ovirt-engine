@@ -454,6 +454,19 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<MigrationSupport> migrationModeEditor;
 
     @UiField(provided = true)
+    @Path(value = "overrideMigrationDowntime.entity")
+    @WithElementId("overrideMigrationDowntime")
+    public EntityModelCheckBoxOnlyEditor overrideMigrationDowntimeEditor;
+
+    @UiField(provided = true)
+    public InfoIcon migrationDowntimeInfoIcon;
+
+    @UiField(provided = true)
+    @Path(value = "migrationDowntime.entity")
+    @WithElementId("migrationDowntime")
+    public IntegerEntityModelTextBoxOnlyEditor migrationDowntimeEditor;
+
+    @UiField(provided = true)
     @Ignore
     @WithElementId("specificHost")
     public RadioButton specificHost;
@@ -698,6 +711,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nonEditableWhileVmNotDownInfo =
                 new InfoIcon(applicationTemplates.italicText(constants.nonEditableMigrationFieldsWhileVmNotDownInfo()),
                         resources);
+        final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
+        migrationDowntimeInfoIcon = new InfoIcon(applicationTemplates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)), resources);
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
@@ -939,6 +954,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         migrationModeEditor =
                 new ListModelListBoxEditor<MigrationSupport>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+
+        overrideMigrationDowntimeEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer(), false);
+        migrationDowntimeEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
 
         // Resource Allocation
         provisioningThinEditor =
@@ -1483,6 +1501,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         specificHost.setTabIndex(nextTabIndex++);
         defaultHostEditor.setTabIndex(nextTabIndex++);
         migrationModeEditor.setTabIndex(nextTabIndex++);
+        overrideMigrationDowntimeEditor.setTabIndex(nextTabIndex++);
+        migrationDowntimeEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
 
         // ==High Availability Tab==

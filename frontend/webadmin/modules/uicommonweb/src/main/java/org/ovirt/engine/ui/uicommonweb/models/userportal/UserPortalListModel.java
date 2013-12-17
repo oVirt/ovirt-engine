@@ -623,6 +623,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         tempVar.setKernelUrl(vm.getKernelUrl());
         tempVar.setKernelParams(vm.getKernelParams());
         tempVar.setDefaultVncKeyboardLayout(vm.getDefaultVncKeyboardLayout());
+        tempVar.setMigrationDowntime(vm.getMigrationDowntime());
         VM newvm = tempVar;
 
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
@@ -1085,6 +1086,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
 
         gettempVm().setCpuPinning(model.getCpuPinning().getEntity());
+        gettempVm().setMigrationDowntime(model.getSelectedMigrationDowntime());
 
         VDS defaultHost = model.getDefaultHost().getSelectedItem();
         if (model.getIsAutoAssign().getEntity())

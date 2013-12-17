@@ -241,6 +241,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getUsbPolicy().setSelectedItem(this.vm.getUsbPolicy());
         getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
         getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getDefaultVncKeyboardLayout());
+        getModel().setSelectedMigrationDowntime(this.vm.getMigrationDowntime());
 
         initPriority(this.vm.getPriority());
     }

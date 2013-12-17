@@ -1656,4 +1656,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("IQN")
     String iqn();
+
+    @DefaultStringValue("Use custom migration downtime")
+    String overrideMigrationDowntimeLabel();
+
+    @DefaultStringValue("Migration downtime (ms)")
+    String migrationDowntimeLabel();
 }
