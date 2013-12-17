@@ -383,6 +383,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetHostNetworksByCluster(v_cluster_id UUID)
+RETURNS TABLE(vds_id UUID, network_name VARCHAR) STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vds_static.vds_id, vds_interface.network_name
+   FROM vds_static
+   JOIN vds_interface ON vds_interface.vds_id = vds_static.vds_id
+   AND vds_static.vds_group_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION Getinterface_viewByAddr(v_cluster_id UUID, v_addr VARCHAR(50))
 RETURNS SETOF vds_interface_view STABLE

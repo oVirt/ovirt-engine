@@ -4,8 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.Bond;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
@@ -148,6 +151,26 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     @Override
     public List<VdsNetworkInterface> getAllInterfacesForVds(Guid id) {
         return getAllInterfacesForVds(id, null, false);
+    }
+
+    @Override
+    public Map<Guid, List<String>> getHostNetworksByCluster(Guid clusterId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId);
+
+        List<Pair<Guid, String>> hostNetworks =
+                getCallsHandler().executeReadList("GetHostNetworksByCluster", hostNetworkNameMapper, parameterSource);
+
+        Map<Guid, List<String>> neworksByHost = new HashMap<>();
+        for (Pair<Guid, String> pair : hostNetworks) {
+            if (!neworksByHost.containsKey(pair.getFirst())) {
+                neworksByHost.put(pair.getFirst(), new ArrayList<String>());
+            }
+
+            neworksByHost.get(pair.getFirst()).add(pair.getSecond());
+        }
+
+        return neworksByHost;
     }
 
     @Override
@@ -321,4 +344,13 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     return iface;
                 }
             };
+
+    private static final RowMapper<Pair<Guid, String>> hostNetworkNameMapper =
+            new RowMapper<Pair<Guid, String>>() {
+
+        @Override
+        public Pair<Guid, String> mapRow(ResultSet rs, int arg1) throws SQLException {
+            return new Pair<Guid, String>(getGuid(rs, "vds_id"), rs.getString("network_name"));
+        }
+    };
 }

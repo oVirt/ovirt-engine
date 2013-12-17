@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -360,5 +361,14 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         Set<String> result = dao.getAllNetworkLabelsForDataCenter(FixturesTool.DATA_CENTER);
         assertNotNull(result);
         assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void testGetHostNetworksByCluster() {
+        Map<Guid, List<String>> map = dao.getHostNetworksByCluster(CLUSTER_ID);
+        assertNotNull(map);
+        assertFalse(map.isEmpty());
+        assertNotNull(map.get(VDS_ID));
+        assertFalse(map.get(VDS_ID).isEmpty());
     }
 }

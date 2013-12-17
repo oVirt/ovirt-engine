@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.network;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -68,6 +69,16 @@ public interface InterfaceDao extends DAO {
      * @return the list of interfaces
      */
     List<VdsNetworkInterface> getAllInterfacesForVds(Guid id);
+
+    /**
+     * Retrieves all networks names for the given Cluster id,
+     * aggregated by its hosts.
+     *
+     * @param clusterId
+     *            the cluster id
+     * @return map of host uuid and host's network names.
+     */
+    Map<Guid, List<String>> getHostNetworksByCluster(Guid clusterId);
 
     /**
      * Retrieves all interfaces for the given VDS id with optional filtering.
