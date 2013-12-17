@@ -26,6 +26,7 @@ public class OsRepositoryImplTest {
     public static final String PATH_TO_SYSPREP = "/path/to/sysprep";
     public static final String SOME_PRODUCT_KEY = "some-product-key";
     public static final String SOUND_DEVICE = "ac97";
+    public static final String CD_INTERFACE = "ide";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -45,6 +46,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/sysprepPath").put("value", PATH_TO_SYSPREP);
         preferences.node("/os/rhel7/productKey").put("value", SOME_PRODUCT_KEY);
         preferences.node("/os/rhel7/devices/audio").put("value", SOUND_DEVICE);
+        preferences.node("/os/rhel7/devices/cdInterface").put("value", CD_INTERFACE);
         preferences.node("/os/rhel7/isTimezoneTypeInteger").put("value", "false");
         preferences.node("/os/bados/id").put("value", "666");
         preferences.node("/os/bados/derivedFrom").put("value", "nonExistingOs");
@@ -166,6 +168,11 @@ public class OsRepositoryImplTest {
     @Test
     public void testGetSoundDevice() throws Exception {
         assertTrue(OsRepositoryImpl.INSTANCE.getSoundDevice(777, null).equals(SOUND_DEVICE));
+    }
+
+    @Test
+    public void testGetCdInterface() throws Exception {
+        assertTrue(OsRepositoryImpl.INSTANCE.getCdInterface(777, null).equals(CD_INTERFACE));
     }
 
     @Test

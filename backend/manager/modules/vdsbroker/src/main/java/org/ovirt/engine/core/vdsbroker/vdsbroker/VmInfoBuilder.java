@@ -90,7 +90,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         devices.add(struct);
     }
 
-    private OsRepository getOsRepository() {
+    private static OsRepository getOsRepository() {
         return SimpleDependecyInjector.getInstance().get(OsRepository.class);
     }
 
@@ -138,7 +138,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             null,
                             null);
             struct = new HashMap<String, Object>();
-            addCdDetails(vmDevice, struct);
+            addCdDetails(vmDevice, struct, vm);
             addDevice(struct, vmDevice, "");
         }
         // check first if CD was given as a parameter
@@ -157,7 +157,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             null,
                             null);
             struct = new HashMap<String, Object>();
-            addCdDetails(vmDevice, struct);
+            addCdDetails(vmDevice, struct, vm);
             addDevice(struct, vmDevice, vm.getCdPath());
         } else {
             // get vm device for this CD from DB
@@ -174,7 +174,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 }
                 struct = new HashMap<String, Object>();
                 String cdPath = vm.getCdPath();
-                addCdDetails(vmDevice, struct);
+                addCdDetails(vmDevice, struct, vm);
                 addAddress(vmDevice, struct);
                 addDevice(struct, vmDevice, cdPath == null ? "" : cdPath);
             }
@@ -199,7 +199,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             null,
                             null);
             Map<String, Object> struct = new HashMap<String, Object>();
-            addCdDetails(vmDevice, struct);
+            addCdDetails(vmDevice, struct, vm);
             addDevice(struct, vmDevice, "");
         }
         // check first if Floppy was given as a parameter
@@ -507,7 +507,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         null,
                         null);
         Map<String, Object> struct = new HashMap<String, Object>();
-        addCdDetails(vmDevice, struct);
+        addCdDetails(vmDevice, struct, vm);
         addDevice(struct, vmDevice, "");
     }
 
@@ -700,11 +700,22 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
 
-    private static void addCdDetails(VmDevice vmDevice, Map<String, Object> struct) {
+    private static void addCdDetails(VmDevice vmDevice, Map<String, Object> struct, VM vm) {
+        OsRepository osRepository = getOsRepository();
+
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
-        struct.put(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
-        struct.put(VdsProperties.INTERFACE, VdsProperties.Ide);
+
+        String cdInterface = osRepository.getCdInterface(vm.getOs(),
+                vm.getVdsGroupCompatibilityVersion());
+
+        if ("scsi".equals(cdInterface)) {
+            struct.put(VdsProperties.Index, "0"); // SCSI unit 0 is reserved by VDSM to CDROM
+        } else if ("ide".equals(cdInterface)) {
+            struct.put(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
+        }
+
+        struct.put(VdsProperties.INTERFACE, cdInterface);
         struct.put(VdsProperties.ReadOnly, Boolean.TRUE.toString());
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
     }

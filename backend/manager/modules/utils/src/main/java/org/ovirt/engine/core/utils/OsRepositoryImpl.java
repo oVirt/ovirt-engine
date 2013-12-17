@@ -360,6 +360,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public String getCdInterface(int osId, Version version) {
+        return getValueByVersion(idToUnameLookup.get(osId), "devices.cdInterface", version);
+    }
+
+    @Override
     public boolean isTimezoneValueInteger(int osId, Version version) {
         return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "isTimezoneTypeInteger", version), false);
     }

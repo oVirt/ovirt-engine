@@ -190,6 +190,13 @@ public interface OsRepository {
     String getSoundDevice(int osId, Version version);
 
     /**
+     * @param osId
+     * @param version
+     * @return a specific Cd Interface for the given os.
+     */
+    String getCdInterface(int osId, Version version);
+
+    /**
      * early windows versions require a numeric identifier for sysprep to tell
      * the timezone. In later versions this was rectified and they use a universal name.
      * @param osId
