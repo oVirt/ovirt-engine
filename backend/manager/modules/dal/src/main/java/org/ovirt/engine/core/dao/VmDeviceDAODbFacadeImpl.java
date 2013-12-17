@@ -151,8 +151,12 @@ public class VmDeviceDAODbFacadeImpl extends
             vmDevice.setSpecParams(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("spec_params"), HashMap.class));
             vmDevice.setIsManaged(rs.getBoolean("is_managed"));
+
+            // note - those columns are being used also in DiskVmRowMapper, therefore any related
+            // change should be done there as well.
             vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
             vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
+
             vmDevice.setAlias(rs.getString("alias"));
             vmDevice.setCustomProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));

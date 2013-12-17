@@ -279,6 +279,15 @@ FROM all_disks_including_snapshots
 WHERE active IS NULL OR active = TRUE;
 
 
+CREATE OR REPLACE VIEW all_disks_for_vms
+AS
+SELECT all_disks_including_snapshots.*, vm_device.is_plugged, vm_device.is_readonly, vm_device.logical_name, vm_device.vm_id
+FROM all_disks_including_snapshots
+JOIN vm_device ON vm_device.device_id = all_disks_including_snapshots.image_group_id
+WHERE ((vm_device.snapshot_id IS NULL AND all_disks_including_snapshots.active IS NOT FALSE)
+OR vm_device.snapshot_id = all_disks_including_snapshots.vm_snapshot_id);
+
+
 CREATE OR REPLACE VIEW storage_domains
 AS
 SELECT

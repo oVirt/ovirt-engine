@@ -48,7 +48,7 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
                         .addValue("only_plugged", onlyPluggedDisks)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetDisksVmGuid", DiskRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetDisksVmGuid", DiskForVmRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -125,6 +125,23 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
                 break;
             }
 
+            return disk;
+        }
+    }
+
+    private static class DiskForVmRowMapper implements RowMapper<Disk> {
+
+        public static final DiskForVmRowMapper instance = new DiskForVmRowMapper();
+
+        private DiskForVmRowMapper() {
+        }
+
+        @Override
+        public Disk mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Disk disk = DiskRowMapper.instance.mapRow(rs, rowNum);
+            disk.setPlugged(rs.getBoolean("is_plugged"));
+            disk.setReadOnly(rs.getBoolean("is_readonly"));
+            disk.setLogicalName(rs.getString("logical_name"));
             return disk;
         }
     }
