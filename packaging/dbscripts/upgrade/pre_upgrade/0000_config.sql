@@ -160,6 +160,8 @@ select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.0');
 select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.1');
 select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.2');
 select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.3');
+select fn_db_add_config_value('GlusterPeerStatusRetries', '2', 'general');
+
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');

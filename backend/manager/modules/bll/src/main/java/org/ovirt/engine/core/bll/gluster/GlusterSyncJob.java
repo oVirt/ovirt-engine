@@ -775,7 +775,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void refreshClusterHeavyWeightData(VDSGroup cluster) {
-        VDS upServer = getClusterUtils().getUpServer(cluster.getId());
+        VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
         if (upServer == null) {
             log.debugFormat("No server UP in cluster {0}. Can't refresh it's data at this point.", cluster.getName());
             return;

@@ -80,12 +80,12 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     /**
-     * This server is chosen randomly from all the Up servers.
+     * This server is chosen as random from all the Up servers.
      *
      * @return One of the servers in up status
      */
     protected VDS getUpServer() {
-        return getClusterUtils().getUpServer(getVdsGroupId());
+        return getClusterUtils().getRandomUpServer(getVdsGroupId());
     }
 
     protected ClusterUtils getClusterUtils() {

@@ -238,6 +238,7 @@ public class GlusterSyncJobTest {
 
         doReturn(clusterUtils).when(glusterManager).getClusterUtils();
         doReturn(existingServer1).when(clusterUtils).getUpServer(any(Guid.class));
+        doReturn(existingServer1).when(clusterUtils).getRandomUpServer(any(Guid.class));
 
         doNothing().when(logUtil).logServerMessage(any(VDS.class), any(AuditLogType.class));
         doNothing().when(logUtil).logVolumeMessage(any(GlusterVolumeEntity.class), any(AuditLogType.class));
@@ -614,7 +615,7 @@ public class GlusterSyncJobTest {
         }
 
         // get the UP server from cluster
-        inOrder.verify(clusterUtils, mode).getUpServer(CLUSTER_ID);
+        inOrder.verify(clusterUtils, mode).getRandomUpServer(CLUSTER_ID);
 
         // get volumes of the cluster
         inOrder.verify(volumeDao, mode).getByClusterId(CLUSTER_ID);

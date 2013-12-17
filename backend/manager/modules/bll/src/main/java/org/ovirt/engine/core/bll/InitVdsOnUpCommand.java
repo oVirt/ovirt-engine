@@ -35,6 +35,8 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -79,6 +81,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private boolean connectPoolSucceeded;
     private boolean glusterHostUuidFound, glusterPeerListSucceeded, glusterPeerProbeSucceeded;
     private FenceStatusReturnValue fenceStatusReturnValue;
+    private static int MAX_RETRIES_GLUSTER_PROBE_STATUS = Config.<Integer> getValue(ConfigValues.GlusterPeerStatusRetries);
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);
@@ -406,11 +409,53 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                             setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                             return false;
                         }
+
+                        int retries = 0;
+                        while (retries < MAX_RETRIES_GLUSTER_PROBE_STATUS) {
+                            // though gluster peer probe succeeds, it takes some time for the host to be
+                            // listed as a peer. Return success only when the host is acknowledged as peer
+                            // from another upServer.
+                            VDS newUpServer =  getNewUpServer(upServer);
+                            if (newUpServer == null) {
+                                //there's no other up server. so there's no issue with peer status results
+                                return true;
+                            }
+                            List<GlusterServerInfo> newGlusterServers = getGlusterPeers(newUpServer.getId());
+                            if (!hostExists(newGlusterServers, getVds())) {
+                                log.infoFormat("Failed to find host {0} in gluster peer list from {1} on attempt {2}" , getVds(), newUpServer, ++retries);
+                                // if num of attempts done
+                                if (retries == MAX_RETRIES_GLUSTER_PROBE_STATUS) {
+                                    customLogValues.put("Command", "gluster peer status " + getVds().getHostName());
+                                    setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
+                                    return false;
+                                }
+                                try { //give time for gluster peer probe to propogate to servers.
+                                    Thread.sleep(1000);
+                                } catch (Exception e) {
+                                    log.error(e.getMessage());
+                                    break;
+                                }
+                            } else {
+                                return true;
+                            }
+                        }
                     }
                 }
             }
             return true;
         }
+    }
+
+    private VDS getNewUpServer(VDS upServer) {
+        List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
+        VDS newUpServer = null;
+        for (VDS vds : vdsList) {
+            if (!getVdsId().equals(vds.getId()) && !upServer.getId().equals(vds.getId())) {
+                newUpServer = vds;
+                break;
+            }
+        }
+        return newUpServer;
     }
 
     private boolean hostExists(List<GlusterServerInfo> glusterServers, VDS server) {

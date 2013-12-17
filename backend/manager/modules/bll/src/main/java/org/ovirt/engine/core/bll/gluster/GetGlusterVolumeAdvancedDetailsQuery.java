@@ -131,7 +131,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
      */
     protected Guid getUpServerId() {
         if (brick == null) {
-            return getUpServerId(clusterId);
+            return getRandomUpServerId(clusterId);
         }
 
         VDS brickServer = getVdsDao().get(brick.getServerId());
@@ -140,7 +140,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
         }
 
         // brick server is down
-        return super.getUpServerId(clusterId);
+        return super.getRandomUpServerId(clusterId);
     }
 
     private GlusterVolumeAdvancedDetails fetchAdvancedDetails(String volumeName) {

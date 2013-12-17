@@ -815,7 +815,8 @@ BEGIN
     BEGIN
         RETURN QUERY SELECT vds.*
         FROM vds
-        WHERE (status = v_status) AND (vds_group_id = v_vds_group_id);
+        WHERE (status = v_status) AND (vds_group_id = v_vds_group_id)
+        ORDER BY vds.vds_id ASC;
     END;
     RETURN;
 END; $procedure$

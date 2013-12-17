@@ -64,6 +64,14 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
         return vds.getId();
     }
 
+    protected Guid getRandomUpServerId(Guid clusterId) {
+        VDS vds = getClusterUtils().getRandomUpServer(clusterId);
+        if (vds == null) {
+            throw new RuntimeException("No up server found");
+        }
+        return vds.getId();
+    }
+
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
             throws VdcBLLException {
         VDSReturnValue returnValue = getBackendResourceManager().RunVdsCommand(commandType, parameters);

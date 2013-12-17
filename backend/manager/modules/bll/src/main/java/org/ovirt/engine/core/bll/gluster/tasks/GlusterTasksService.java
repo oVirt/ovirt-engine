@@ -24,7 +24,7 @@ public class GlusterTasksService {
     private static final Log log = LogFactory.getLog(GlusterTasksService.class);
 
     public Map<Guid, GlusterAsyncTask> getTaskListForCluster(Guid id) {
-        VDS upServer = ClusterUtils.getInstance().getUpServer(id);
+        VDS upServer = ClusterUtils.getInstance().getRandomUpServer(id);
         if (upServer == null) {
             log.info("No up server in cluster");
             throw new VdcBLLException(VdcBllErrors.NO_UP_SERVER_FOUND);

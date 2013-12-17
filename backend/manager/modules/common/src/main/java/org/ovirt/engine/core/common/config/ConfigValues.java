@@ -1557,5 +1557,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterSupportForceCreateVolume,
 
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("2")
+    GlusterPeerStatusRetries,
+
     Invalid;
 }

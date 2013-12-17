@@ -205,7 +205,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
         doReturn(null).when(getQueryParameters()).getBrickId();
         doReturn(clusterUtils).when(getQuery()).getClusterUtils();
-        doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getUpServer(CLUSTER_ID);
+        doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getRandomUpServer(CLUSTER_ID);
 
         getQuery().executeQueryCommand();
         GlusterVolumeAdvancedDetails volumeAdvancedDetails =
@@ -216,6 +216,6 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
 
         // Brick's server is not fetched, rather clusterUtil is used to fetch a random UP server
         verifyZeroInteractions(vdsDao);
-        verify(clusterUtils, times(1)).getUpServer(CLUSTER_ID);
+        verify(clusterUtils, times(1)).getRandomUpServer(CLUSTER_ID);
     }
 }

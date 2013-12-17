@@ -28,12 +28,27 @@ public class ClusterUtils {
      * @param clusterId
      * @return One of the servers in up status
      */
-    public VDS getUpServer(Guid clusterId) {
+    public VDS getRandomUpServer(Guid clusterId) {
         List<VDS> servers = getAllUpServers(clusterId);
         if (servers == null || servers.isEmpty()) {
             return null;
         }
         return RandomUtils.instance().pickRandom(servers);
+    }
+
+    /**
+     * Returns a server that is in {@link VDSStatus#Up} status.<br>
+     * This server is returned as first from list of the Up servers.
+     *
+     * @param clusterId
+     * @return One of the servers in up status
+     */
+    public VDS getUpServer(Guid clusterId) {
+        List<VDS> servers = getAllUpServers(clusterId);
+        if (servers == null || servers.isEmpty()) {
+            return null;
+        }
+        return servers.get(0);
     }
 
     public List<VDS> getAllUpServers(Guid clusterId) {
