@@ -138,6 +138,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     ListModelListBoxEditor<Object> storageTypeEditor;
 
     @UiField(provided = true)
+    @Path(value = "isPlugged.entity")
+    @WithElementId("plugDiskToVm")
+    EntityModelCheckBoxEditor plugDiskToVmEditor;
+
+    @UiField(provided = true)
     @Path("isWipeAfterDelete.entity")
     @WithElementId("wipeAfterDelete")
     EntityModelCheckBoxEditor wipeAfterDeleteEditor;
@@ -263,6 +268,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         interfaceEditor.setLabel(constants.interfaceVmDiskPopup());
         volumeTypeEditor.setLabel(constants.allocationDisk());
         storageTypeEditor.setLabel(constants.storageTypeVmDiskPopup());
+        plugDiskToVmEditor.setLabel(constants.activateVmDiskPopup());
         wipeAfterDeleteEditor.setLabel(constants.wipeAfterDeleteVmDiskPopup());
         isBootableEditor.setLabel(constants.isBootableVmDiskPopup());
         isShareableEditor.setLabel(constants.isShareableVmDiskPopup());
@@ -303,6 +309,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         volumeTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
         storageTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        plugDiskToVmEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isBootableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -791,6 +798,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         quotaEditor.setTabIndex(nextTabIndex++);
         hostListEditor.setTabIndex(nextTabIndex++);
         storageTypeEditor.setTabIndex(nextTabIndex++);
+        plugDiskToVmEditor.setTabIndex(nextTabIndex++);
         wipeAfterDeleteEditor.setTabIndex(nextTabIndex++);
         isBootableEditor.setTabIndex(nextTabIndex++);
         isShareableEditor.setTabIndex(nextTabIndex++);

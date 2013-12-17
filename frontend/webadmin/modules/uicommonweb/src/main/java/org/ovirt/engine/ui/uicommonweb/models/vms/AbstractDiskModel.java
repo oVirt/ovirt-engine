@@ -278,6 +278,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setIsPlugged(new EntityModel());
         getIsPlugged().setEntity(true);
+        getIsPlugged().setIsAvailable(false);
 
         setIsReadOnly(new EntityModel());
         getIsReadOnly().setEntity(false);
@@ -669,6 +670,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private void attachDisk_EntityChanged(EventArgs e) {
         if ((Boolean) getIsAttachDisk().getEntity())
         {
+            getIsPlugged().setIsAvailable(true);
             // Get internal attachable disks
             AsyncDataProvider.getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override

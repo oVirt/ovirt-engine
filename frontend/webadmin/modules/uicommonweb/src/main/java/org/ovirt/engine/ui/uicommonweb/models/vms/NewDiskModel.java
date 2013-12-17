@@ -45,9 +45,11 @@ public class NewDiskModel extends AbstractDiskModel
 
         if (getVm() != null) {
             updateSuggestedDiskAlias();
+            getIsPlugged().setIsAvailable(true);
         } else {
             // Read only disk can be created only in the scope of VM.
             getIsReadOnly().setIsAvailable(false);
+            getIsPlugged().setEntity(false);
         }
 
         getSizeExtend().setIsAvailable(false);
@@ -185,6 +187,7 @@ public class NewDiskModel extends AbstractDiskModel
         startProgress(null);
 
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
+        parameters.setPlugDiskToVm((Boolean)getIsPlugged().getEntity());
         if ((Boolean) getIsInternal().getEntity()) {
             StorageDomain storageDomain = (StorageDomain) getStorageDomain().getSelectedItem();
             parameters.setStorageDomainId(storageDomain.getId());

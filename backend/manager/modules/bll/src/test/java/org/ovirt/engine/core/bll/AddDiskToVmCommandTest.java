@@ -716,6 +716,36 @@ public class AddDiskToVmCommandTest {
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
+    @Test
+    public void testCanDoFailOnAddFloatingDiskWithPlugSet() {
+        DiskImage disk = createDiskImage(1);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        parameters.setVmId(Guid.Empty);
+        parameters.setPlugDiskToVm(true);
+
+        initializeCommand(null, parameters);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
+    }
+
+    @Test
+    public void testCanDoSuccessOnAddFloatingDiskWithPlugUnset() {
+        DiskImage disk = createDiskImage(1);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        parameters.setVmId(Guid.Empty);
+        parameters.setPlugDiskToVm(false);
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId, parameters);
+        mockStorageDomain(storageId);
+        mockStoragePoolIsoMap();
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
     private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {
         Map<Guid, Disk> diskMap = new HashMap<Guid, Disk>();
         for (int i = 0; i < expectedMapSize; i++) {

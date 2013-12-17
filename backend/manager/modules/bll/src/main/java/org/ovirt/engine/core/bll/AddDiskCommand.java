@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
+import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -51,6 +52,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -72,8 +74,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     public AddDiskCommand(T parameters) {
         super(parameters);
-        parameters.getDiskInfo().setId(Guid.newGuid());
-        parameters.setEntityInfo(new EntityInfo(VdcObjectType.Disk, parameters.getDiskInfo().getId()));
     }
 
     @Override
@@ -95,6 +95,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     !isDiskPassPciAndIdeLimit(getParameters().getDiskInfo())) {
                 return false;
             }
+        }
+        else if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm())) {
+            return failCanDoAction(VdcBllMessages.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
         }
 
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
@@ -328,6 +331,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected void executeVmCommand() {
+        getParameters().getDiskInfo().setId(Guid.newGuid());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getDiskInfo().getId()));
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             createDiskBasedOnImage();
@@ -349,7 +354,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                             VmDeviceGeneralType.DISK,
                             VmDeviceType.DISK,
                             null,
-                            getVm().getStatus() == VMStatus.Down,
+                            shouldDiskBePlugged(),
                             Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
                             null);
                 }
@@ -357,7 +362,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             }
         });
         getReturnValue().setActionReturnValue(getParameters().getDiskInfo().getId());
+        plugDiskToVmIfNeeded();
         setSucceeded(true);
+    }
+
+    private boolean shouldDiskBePlugged() {
+        return getVm().getStatus() == VMStatus.Down && !Boolean.FALSE.equals(getParameters().getPlugDiskToVm());
     }
 
     private void createDiskBasedOnImage() {
@@ -385,7 +395,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     VmDeviceGeneralType.DISK,
                     VmDeviceType.DISK,
                     null,
-                    getVm().getStatus() == VMStatus.Down,
+                    shouldDiskBePlugged(),
                     Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
                     null));
             getCompensationContext().stateChanged();
@@ -520,6 +530,23 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             }
         }
         return null;
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        plugDiskToVmIfNeeded();
+        super.endSuccessfully();
+    }
+
+    private void plugDiskToVmIfNeeded() {
+        if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm()) && getVm() != null &&  getVm().getStatus() != VMStatus.Down)    {
+            HotPlugDiskToVmParameters params = new HotPlugDiskToVmParameters(getVmId(), getParameters().getDiskInfo().getId());
+            params.setShouldBeLogged(false);
+            VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(VdcActionType.HotPlugDiskToVm, params);
+            if (!returnValue.getSucceeded()) {
+                AuditLogDirector.log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
+            }
+        }
     }
 
     @Override

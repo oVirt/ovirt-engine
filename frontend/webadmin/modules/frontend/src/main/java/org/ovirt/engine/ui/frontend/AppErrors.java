@@ -2350,6 +2350,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Disk is already activated.")
     String HOT_PLUG_DISK_IS_NOT_UNPLUGGED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. A disk configured with the \"Activate\" setting cannot be created as a floating disk.")
+    String CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET();
+
     @DefaultStringValue("Cannot activate/deactivate interface due to VM status. The VM status must be Down or Up.")
     String ACTIVATE_DEACTIVATE_NIC_VM_STATUS_ILLEGAL();
 

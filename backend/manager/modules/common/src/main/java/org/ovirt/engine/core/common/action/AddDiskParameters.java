@@ -7,6 +7,7 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
     private static final long serialVersionUID = -7832310521101821905L;
     private Guid vmSnapshotId;
     private Guid storageDomainId;
+    private Boolean plugDiskToVm;
 
     public AddDiskParameters() {
         storageDomainId = Guid.Empty;
@@ -31,5 +32,13 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
 
     public void setVmSnapshotId(Guid value) {
         vmSnapshotId = value;
+    }
+
+    public Boolean getPlugDiskToVm() {
+        return plugDiskToVm;
+    }
+
+    public void setPlugDiskToVm(Boolean plugDiskToVm) {
+        this.plugDiskToVm = plugDiskToVm;
     }
 }
