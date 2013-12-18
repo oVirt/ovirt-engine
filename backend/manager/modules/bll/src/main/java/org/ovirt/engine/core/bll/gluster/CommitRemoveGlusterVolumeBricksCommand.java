@@ -43,8 +43,8 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
             return false;
         }
 
-        if (getParameters().getBricks().isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+        if (!validate(getBrickValidator().canStopOrCommitRemoveBrick(volume, getParameters().getBricks()))) {
+            return false;
         }
 
         if (!(getGlusterTaskUtils().isTaskOfType(volume, GlusterTaskType.REMOVE_BRICK))

@@ -3,9 +3,13 @@ package org.ovirt.engine.core.bll.validator.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
 /**
  * Helps to validate the details of the bricks.
@@ -94,5 +98,79 @@ public class GlusterBrickValidator {
         }
 
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult canStopOrCommitRemoveBrick(GlusterVolumeEntity volumeEntity,
+            List<GlusterBrickEntity> paramBricks) {
+        GlusterAsyncTask asyncTask = volumeEntity.getAsyncTask();
+        if (asyncTask == null || asyncTask.getType() != GlusterTaskType.REMOVE_BRICK) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID_TASK_TYPE);
+        }
+
+        if (paramBricks.isEmpty()) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
+        }
+
+        List<GlusterBrickEntity> bricksForTask =
+                getGlusterBrickDao().getGlusterVolumeBricksByTaskId(asyncTask.getTaskId());
+
+
+        if (paramBricks.size() != bricksForTask.size() || !areBricksInTheList(volumeEntity, paramBricks, bricksForTask)) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_PARAMS_INVALID,
+                    String.format("$validBricks [%s]", getValidBrickNames(bricksForTask)));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private boolean areBricksInTheList(GlusterVolumeEntity volumeEntity,
+            final List<GlusterBrickEntity> bricks,
+            final List<GlusterBrickEntity> searchBricks) {
+        boolean found = false;
+
+        for (GlusterBrickEntity paramBrick : bricks) {
+            GlusterBrickEntity paramBrickFromVolume = volumeEntity.getBrickWithId(paramBrick.getId());
+            if (paramBrickFromVolume == null) {
+                paramBrickFromVolume = volumeEntity.getBrickWithQualifiedName(paramBrick.getQualifiedName());
+            }
+
+            // reset the flag for next round
+            found = false;
+            for (GlusterBrickEntity brick : searchBricks) {
+                if (paramBrickFromVolume == null || paramBrickFromVolume.getId() == null) {
+                    return false;
+                }
+
+                // If parameter brick directory matches with any brick no need to continue further to check
+                if (paramBrickFromVolume.getId().equals(brick.getId())) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                return false;
+            }
+        }
+
+        return found;
+    }
+
+    public GlusterBrickDao getGlusterBrickDao() {
+        return DbFacade.getInstance().getGlusterBrickDao();
+    }
+
+    private String getValidBrickNames(List<GlusterBrickEntity> bricksForTask) {
+        if (bricksForTask.size() == 0) {
+            return "";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (GlusterBrickEntity brick : bricksForTask) {
+            builder.append(brick.getQualifiedName());
+            builder.append(", ");
+        }
+
+        return builder.substring(0, builder.length() - 2).toString();
     }
 }

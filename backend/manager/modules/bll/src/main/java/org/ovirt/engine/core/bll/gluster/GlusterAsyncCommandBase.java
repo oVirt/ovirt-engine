@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -119,8 +120,12 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         freeLock();
     }
 
-
     public GlusterTaskUtils getGlusterTaskUtils() {
         return GlusterTaskUtils.getInstance();
+    }
+
+
+    public GlusterBrickValidator getBrickValidator() {
+        return new GlusterBrickValidator();
     }
 }

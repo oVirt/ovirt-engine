@@ -2543,6 +2543,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Remove brick not started.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_STARTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Invalid task type.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID_TASK_TYPE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The list of bricks does not match with the bricks used while starting the action. Valid bricks: ${validBricks}")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_PARAMS_INVALID();
+
     @DefaultStringValue("Cannot ${action} ${type}. Remove brick not finished.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_FINISHED();
 
