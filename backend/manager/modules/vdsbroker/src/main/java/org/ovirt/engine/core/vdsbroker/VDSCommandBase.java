@@ -79,7 +79,7 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     }
 
     private void logException(RuntimeException ex) {
-        log.errorFormat("Command {0} execution failed. Exception: {1}", getCommandName(), ExceptionUtils.getMessage(ex));
+        log.errorFormat("Command {0} execution failed. Exception: {1}", this, ExceptionUtils.getMessage(ex));
         if (log.isDebugEnabled()) {
             log.debugFormat("Detailed stacktrace:", ex);
         }
