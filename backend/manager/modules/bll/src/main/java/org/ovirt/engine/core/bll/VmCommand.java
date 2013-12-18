@@ -111,10 +111,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @param monitorsNumber
      * @param interfaces
      * @param disks
-     * @return
+     * @param virtioScsiEnabled
+     * @param hasWatchdog
+     * @param messages
+     * @return a boolean
      */
-    public static <T extends Disk> boolean checkPciAndIdeLimit(int monitorsNumber, List<VmNic> interfaces,
-            List<T> disks, boolean virtioScsiEnabled, ArrayList<String> messages) {
+    public static <T extends Disk> boolean checkPciAndIdeLimit(int monitorsNumber,
+            List<VmNic> interfaces,
+            List<T> disks,
+            boolean virtioScsiEnabled,
+            boolean hasWatchdog,
+            ArrayList<String> messages) {
         boolean result = true;
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
         // interfaces) + (all disks that are not IDE)
@@ -137,6 +144,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         // VirtIO SCSI controller requires one PCI slot
         pciInUse += virtioScsiEnabled ? 1 : 0;
+
+        // VmWatchdog controller requires one PCI slot
+        pciInUse += hasWatchdog ? 1 : 0;
 
         if (pciInUse > MAX_PCI_SLOTS) {
             result = false;

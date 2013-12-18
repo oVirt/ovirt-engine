@@ -242,6 +242,7 @@ public class UpdateVmCommandTest {
         mockVmDaoGetVm();
         mockSameNameQuery(false);
         mockValidateCustomProperties();
+        mockValidatePciAndIdeLimit();
     }
 
     private void assertCanDoActionMessage(VdcBllMessages msg) {
@@ -263,6 +264,10 @@ public class UpdateVmCommandTest {
 
     private void mockValidateCustomProperties() {
         doReturn(Collections.<ValidationError> emptyList()).when(command).validateCustomProperties(any(VmStatic.class));
+    }
+
+    private void mockValidatePciAndIdeLimit() {
+        doReturn(true).when(command).isValidPciAndIdeLimit(any(VM.class));
     }
 
     private void mockSameNameQuery(boolean result) {

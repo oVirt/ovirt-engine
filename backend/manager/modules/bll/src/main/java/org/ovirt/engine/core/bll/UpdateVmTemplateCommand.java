@@ -18,9 +18,11 @@ import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -116,7 +118,27 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             returnValue = false;
         }
 
+        // Check PCI and IDE limits are ok
+        if (returnValue) {
+
+            List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
+
+            if (!VmCommand.checkPciAndIdeLimit(getParameters().getVmTemplateData().getNumOfMonitors(),
+                            interfaces,
+                            new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
+                            VmDeviceUtils.isVirtioScsiControllerAttached(getParameters().getVmTemplateData().getId()),
+                            hasWatchdog(getParameters().getVmTemplateData().getId()),
+                            getReturnValue().getCanDoActionMessages())) {
+                returnValue = false;
+            }
+        }
+
         return returnValue;
+    }
+
+    protected boolean hasWatchdog(Guid templateId) {
+        return getParameters().getWatchdog() != null ? true :
+            VmDeviceUtils.hasWatchdog(templateId);
     }
 
     @Override

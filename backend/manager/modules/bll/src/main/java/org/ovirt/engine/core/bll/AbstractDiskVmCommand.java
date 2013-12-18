@@ -109,11 +109,16 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 vmInterfaces,
                 allVmDisks,
                 isVirtioScsiControllerAttached(getVmId()),
+                hasWatchdog(getVmId()),
                 getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {
         return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
+    }
+
+    protected boolean hasWatchdog(Guid vmId) {
+        return VmDeviceUtils.hasWatchdog(vmId);
     }
 
     protected boolean isDiskCanBeAddedToVm(Disk diskInfo, VM vm) {

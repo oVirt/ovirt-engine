@@ -1007,6 +1007,15 @@ public class VmDeviceUtils {
         return !getVirtioScsiControllers(vmId).isEmpty();
     }
 
+    public static boolean hasWatchdog(Guid vmId) {
+        return !getWatchdogs(vmId).isEmpty();
+    }
+
+    public static List<VmDevice> getWatchdogs(Guid vmId) {
+        return DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
+                VmDeviceGeneralType.WATCHDOG);
+    }
+
     public static List<VmDevice> getVirtioScsiControllers(Guid vmId) {
         return getVirtioScsiControllers(vmId, null, false);
     }

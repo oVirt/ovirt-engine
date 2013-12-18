@@ -78,6 +78,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
 
         return checkPciAndIdeLimit(vm.getNumOfMonitors(), allInterfaces, allDisks,
                 VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
+                VmDeviceUtils.hasWatchdog(getVmId()),
                 getReturnValue().getCanDoActionMessages());
     }
 

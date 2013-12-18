@@ -64,6 +64,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 interfacesForCheckPciLimit,
                 new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
                     VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
+                    VmDeviceUtils.hasWatchdog(getVmId()),
                     getReturnValue().getCanDoActionMessages())) {
             return false;
         }

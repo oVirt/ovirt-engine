@@ -289,6 +289,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                                 getVmInterfaces(),
                                 getVmDisks(),
                                 isVirtioScsiEnabled(),
+                                hasWatchdog(),
                                 getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
@@ -1049,6 +1050,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
         return virtioScsiEnabled != null ? virtioScsiEnabled :
                 FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version());
+    }
+
+    protected boolean hasWatchdog() {
+        return getParameters().getWatchdog() != null;
     }
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {

@@ -323,6 +323,7 @@ public class AddDiskToVmCommandTest {
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(mockSnapshotValidator()).when(command).getSnapshotsValidator();
         doReturn(false).when(command).isVirtioScsiControllerAttached(any(Guid.class));
+        doReturn(false).when(command).hasWatchdog(any(Guid.class));
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 

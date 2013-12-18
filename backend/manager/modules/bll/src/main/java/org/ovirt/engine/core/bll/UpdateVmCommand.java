@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -288,17 +287,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        // if number of monitors has increased, check PCI and IDE limits are ok
-        if (vmFromDB.getNumOfMonitors() < vmFromParams.getNumOfMonitors()) {
-            List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
-            List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
-            if (!checkPciAndIdeLimit(vmFromParams.getNumOfMonitors(),
-                    interfaces,
-                    allDisks,
-                    isVirtioScsiEnabled(),
-                    getReturnValue().getCanDoActionMessages())) {
-                return false;
-            }
+        // Check PCI and IDE limits are ok
+        if (!isValidPciAndIdeLimit(vmFromParams)) {
+            return false;
         }
 
         if (!VmTemplateCommand.isVmPriorityValueLegal(vmFromParams.getPriority(),
@@ -397,6 +388,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         return true;
+    }
+
+    protected boolean isValidPciAndIdeLimit(VM vmFromParams) {
+        List<Disk> allDisks = getDbFacade().getDiskDao().getAllForVm(getVmId());
+        List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
+
+        return checkPciAndIdeLimit(vmFromParams.getNumOfMonitors(),
+                interfaces,
+                allDisks,
+                isVirtioScsiEnabled(),
+                hasWatchdog(),
+                getReturnValue().getCanDoActionMessages());
     }
 
     private boolean vmDeviceChanged(VmDeviceGeneralType deviceType, boolean deviceEnabled) {
@@ -545,4 +548,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return virtioScsiEnabled != null ? virtioScsiEnabled :
                 VmDeviceUtils.isVirtioScsiControllerAttached(getVmId());
     }
+
+    protected boolean hasWatchdog() {
+        return getParameters().getWatchdog() != null ? true :
+            VmDeviceUtils.hasWatchdog(getVmId());
+    }
+
 }
