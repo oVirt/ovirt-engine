@@ -33,7 +33,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
     //timeo nfs option max value
     private final static short TIMEOUT_MAX = 6000;
 
-    public static EventDefinition PathChangedEventDefinition;
+    public static EventDefinition pathChangedEventDefinition;
     private Event pathChangedEvent;
 
     public Event getPathChangedEvent() {
@@ -135,12 +135,12 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
     static {
 
-        PathChangedEventDefinition = new EventDefinition("PathChanged", NfsStorageModel.class); //$NON-NLS-1$
+        pathChangedEventDefinition = new EventDefinition("PathChanged", NfsStorageModel.class); //$NON-NLS-1$
     }
 
     public NfsStorageModel() {
 
-        setPathChangedEvent(new Event(PathChangedEventDefinition));
+        setPathChangedEvent(new Event(pathChangedEventDefinition));
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
 

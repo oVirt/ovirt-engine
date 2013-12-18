@@ -255,7 +255,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 }
             }
         }
-        else if (ev.matchesDefinition(NfsStorageModel.PathChangedEventDefinition))
+        else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition))
         {
             nfsStorageModel_PathChanged(sender, args);
         }
