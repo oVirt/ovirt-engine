@@ -130,6 +130,11 @@ public final class VdsProperties {
     public static final String spiceServerPackageName = "spice-server";
     public static final String GLUSTER_PACKAGE_NAME = "glusterfs";
 
+    // Addressing related strings
+    public static final String Controller = "controller";
+    public static final String Drive = "drive";
+    public static final String spapr_vio = "spapr-vio";
+
     public static final String mem_available = "memAvailable";
     public static final String memFree = "memFree";
     public static final String mem_shared = "memShared";
@@ -242,6 +247,7 @@ public final class VdsProperties {
     public static final String Device = "device";
     public static final String DeviceType = "deviceType";
     public static final String Devices = "devices";
+
     public static final String Index = "index";
     public static final String PoolId = "poolID";
     public static final String DomainId = "domainID";

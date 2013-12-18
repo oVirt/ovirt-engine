@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -37,6 +38,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllers;
+import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -250,7 +253,16 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmDrives() {
         boolean bootDiskFound = false;
         List<Disk> disks = getSortedDisks();
-        Map<VmDevice, Integer> vmDeviceUnitMap = getVmDeviceUnitMapForVirtioScsiDisks(vm);
+        Map<VmDevice, Integer> vmDeviceVirtioScsiUnitMap = getVmDeviceUnitMapForVirtioScsiDisks(vm);
+
+        Map<VmDevice, Integer> vmDeviceSpaprVscsiUnitMap = getVmDeviceUnitMapForSpaprScsiDisks(vm);
+
+        Map<DiskInterface, Integer> controllerIndexMap =
+                ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
+
+        int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
+        int sPaprVscsiIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
+
         for (Disk disk : disks) {
             Map<String, Object> struct = new HashMap<String, Object>();
             // get vm device for this disk from DB
@@ -277,8 +289,17 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     }
                     if (StringUtils.isEmpty(vmDevice.getAddress())) {
                         // Explicitly define device's address if missing
-                        int unit = vmDeviceUnitMap.get(vmDevice);
-                        vmDevice.setAddress(createAddressForVirtioScsiDisk(unit).toString());
+                        int unit = vmDeviceVirtioScsiUnitMap.get(vmDevice);
+                        vmDevice.setAddress(createAddressForScsiDisk(virtioScsiIndex, unit).toString());
+                    }
+                    break;
+                case SPAPR_VSCSI:
+                    struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);
+
+                    if (StringUtils.isEmpty(vmDevice.getAddress())) {
+                        // Explicitly define device's address if missing
+                        int unit = vmDeviceSpaprVscsiUnitMap.get(vmDevice);
+                        vmDevice.setAddress(createAddressForScsiDisk(sPaprVscsiIndex, unit).toString());
                     }
                     break;
                 default:
@@ -321,6 +342,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 addToManagedDevices(vmDevice);
             }
         }
+
+        ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllers(devices));
     }
 
     @Override
@@ -711,11 +734,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         if ("scsi".equals(cdInterface)) {
             struct.put(VdsProperties.Index, "0"); // SCSI unit 0 is reserved by VDSM to CDROM
+            struct.put(VdsProperties.Address, createAddressForScsiDisk(0, 0));
         } else if ("ide".equals(cdInterface)) {
             struct.put(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
         }
 
         struct.put(VdsProperties.INTERFACE, cdInterface);
+
         struct.put(VdsProperties.ReadOnly, Boolean.TRUE.toString());
         struct.put(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
@@ -925,12 +950,21 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                                 VmDeviceGeneralType.CONTROLLER,
                                 VmDeviceType.VIRTIOSCSI.getName());
 
+        Map<DiskInterface, Integer> controllerIndexMap =
+                ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
+
+        int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
+
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
             struct.put(VdsProperties.Device, VdsProperties.Scsi);
             struct.put(VdsProperties.Model, VdsProperties.VirtioScsi);
+            struct.put(VdsProperties.Index, Integer.toString(virtioScsiIndex));
             addAddress(vmDevice, struct);
+
+            virtioScsiIndex++;
+
             addDevice(struct, vmDevice, null);
         }
     }
@@ -939,12 +973,25 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      * @return a map containing an appropriate unit (disk's index in VirtIO-SCSI controller) for each vm device.
      */
     public static Map<VmDevice, Integer> getVmDeviceUnitMapForVirtioScsiDisks(VM vm) {
+        return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false);
+    }
+
+    /**
+     * @return a map containing an appropriate unit (disk's index in sPAPR VSCSI controller) for each vm device.
+     */
+    public static Map<VmDevice, Integer> getVmDeviceUnitMapForSpaprScsiDisks(VM vm) {
+        return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.SPAPR_VSCSI, true);
+    }
+
+    public static Map<VmDevice, Integer> getVmDeviceUnitMapForScsiDisks(VM vm,
+            DiskInterface scsiInterface,
+            boolean reserveFirstLun) {
         List<Disk> disks = new ArrayList<Disk>(vm.getDiskMap().values());
         Map<VmDevice, Integer> vmDeviceUnitMap = new HashMap<>();
         Map<VmDevice, Disk> vmDeviceDiskMap = new HashMap<>();
 
         for (Disk disk : disks) {
-            if (disk.getDiskInterface() == DiskInterface.VirtIO_SCSI) {
+            if (disk.getDiskInterface() == scsiInterface) {
                 VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
                 Map<String, String> address = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
                 String unitStr = address.get(VdsProperties.Unit);
@@ -962,24 +1009,25 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address
         for (Entry<VmDevice, Disk> entry : vmDeviceDiskMap.entrySet()) {
-            int unit = getAvailableUnitForVirtioScsiDisk(vmDeviceUnitMap);
+            int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstLun);
             vmDeviceUnitMap.put(entry.getKey(), unit);
         }
 
         return vmDeviceUnitMap;
     }
 
-    public static int getAvailableUnitForVirtioScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap) {
-        int unit = 0;
+    public static int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstLun) {
+        int unit = reserveFirstLun ? 1 : 0;
         while (vmDeviceUnitMap.containsValue(unit)) {
             unit++;
         }
         return unit;
     }
 
-    public static Map<String, String> createAddressForVirtioScsiDisk(int unit) {
+    public static Map<String, String> createAddressForScsiDisk(int controller, int unit) {
         Map<String, String> addressMap = new HashMap<>();
         addressMap.put(VdsProperties.Type, "drive");
+        addressMap.put(VdsProperties.Controller, String.valueOf(controller));
         addressMap.put(VdsProperties.Bus, "0");
         addressMap.put(VdsProperties.target, "0");
         addressMap.put(VdsProperties.Unit, String.valueOf(unit));

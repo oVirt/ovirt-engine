@@ -7,7 +7,8 @@ public enum DiskInterface {
 
     IDE("ide"),
     VirtIO_SCSI("scsi"),
-    VirtIO("virtio");
+    VirtIO("virtio"),
+    SPAPR_VSCSI("scsi");
 
     private String name;
     private static Map<String, DiskInterface> mappings;

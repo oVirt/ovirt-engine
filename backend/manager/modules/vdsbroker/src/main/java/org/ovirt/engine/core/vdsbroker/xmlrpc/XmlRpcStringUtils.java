@@ -31,9 +31,9 @@ public class XmlRpcStringUtils {
                 for (String pair : keyValPairs) {
                     String[] keyval = pair.split(KEY_VALUE_SEPARATOR);
                     if (keyval.length == 2)
-                        map.put(keyval[0], keyval[1]);
+                        map.put(keyval[0].trim(), keyval[1].trim());
                     else if (keyval.length == 1)
-                        map.put(keyval[0], "");
+                        map.put(keyval[0].trim(), "");
                 }
             }
         }
