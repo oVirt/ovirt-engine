@@ -14,8 +14,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class EditNetworkModel extends NetworkModel {
 
+    private final boolean originallyVmNetwork;
+
     public EditNetworkModel(Network network, ListModel sourceListModel) {
         super(network, sourceListModel);
+        originallyVmNetwork = network.isVmNetwork();
         getDataCenters().setIsChangable(false);
         init();
     }
@@ -97,6 +100,6 @@ public class EditNetworkModel extends NetworkModel {
 
     @Override
     protected void toggleProfilesAvailability() {
-        getProfiles().setIsAvailable((Boolean) getIsVmNetwork().getEntity() && !getNetwork().isVmNetwork());
+        getProfiles().setIsAvailable((Boolean) getIsVmNetwork().getEntity() && !originallyVmNetwork);
     }
 }
