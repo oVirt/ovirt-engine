@@ -47,7 +47,7 @@ public class HostGeneralModel extends EntityModel
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
-    public static EventDefinition RequestEditEventDefinition;
+    public static EventDefinition requestEditEventDefinition;
     private Event privateRequestEditEvent;
 
     public Event getRequestEditEvent()
@@ -60,7 +60,7 @@ public class HostGeneralModel extends EntityModel
         privateRequestEditEvent = value;
     }
 
-    public static EventDefinition RequestGOToEventsTabEventDefinition;
+    public static EventDefinition requestGOToEventsTabEventDefinition;
     private Event privateRequestGOToEventsTabEvent;
 
     public Event getRequestGOToEventsTabEvent()
@@ -837,14 +837,14 @@ public class HostGeneralModel extends EntityModel
 
     static
     {
-        RequestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
-        RequestGOToEventsTabEventDefinition = new EventDefinition("RequestGOToEventsTabEvent", HostGeneralModel.class); //$NON-NLS-1$
+        requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
+        requestGOToEventsTabEventDefinition = new EventDefinition("RequestGOToEventsTabEvent", HostGeneralModel.class); //$NON-NLS-1$
     }
 
     public HostGeneralModel()
     {
-        setRequestEditEvent(new Event(RequestEditEventDefinition));
-        setRequestGOToEventsTabEvent(new Event(RequestGOToEventsTabEventDefinition));
+        setRequestEditEvent(new Event(requestEditEventDefinition));
+        setRequestGOToEventsTabEvent(new Event(requestGOToEventsTabEventDefinition));
         setTitle(constants.generalTitle());
         setHashName("general"); //$NON-NLS-1$
 

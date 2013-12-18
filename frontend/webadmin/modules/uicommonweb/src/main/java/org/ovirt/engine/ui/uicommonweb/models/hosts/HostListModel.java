@@ -1541,11 +1541,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(HostGeneralModel.RequestEditEventDefinition))
+        if (ev.matchesDefinition(HostGeneralModel.requestEditEventDefinition))
         {
             getEditWithPMemphasisCommand().execute();
         }
-        if (ev.matchesDefinition(HostGeneralModel.RequestGOToEventsTabEventDefinition))
+        if (ev.matchesDefinition(HostGeneralModel.requestGOToEventsTabEventDefinition))
         {
             goToEventsTab();
         }
