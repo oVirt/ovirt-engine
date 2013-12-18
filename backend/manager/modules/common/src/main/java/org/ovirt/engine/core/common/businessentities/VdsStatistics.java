@@ -24,11 +24,16 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Integer ksm_cpu_percent;
     private Long ksm_pages;
     private Boolean ksm_state;
-    // Score in a hosted engine environment
-    // Score 0 means no HA agents are on this host
-    // Positive score means there is an agent
-    private Integer highlyAvailableScore;
     private int anonymousHugePages;
+    // The following values store the state of the Hosted Engine HA environment
+    // for each host and allow the user to see/change that state through the
+    // engine UI.  They originate in the HA agent and are updated with the other
+    // stats in vdsm's getVdsStats call.
+    private int highlyAvailableScore;
+    private boolean highlyAvailableIsConfigured;
+    private boolean highlyAvailableIsActive;
+    private boolean highlyAvailableGlobalMaintenance;
+    private boolean highlyAvailableLocalMaintenance;
 
     public VdsStatistics() {
         this.cpu_idle = BigDecimal.ZERO;
@@ -42,6 +47,10 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         swap_total = 0L;
         ksm_pages = 0L;
         highlyAvailableScore = 0;
+        highlyAvailableIsConfigured = false;
+        highlyAvailableIsActive = false;
+        highlyAvailableGlobalMaintenance = false;
+        highlyAvailableLocalMaintenance = false;
     }
 
     public int getAnonymousHugePages() {
@@ -71,8 +80,12 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         result = prime * result + ((ksm_cpu_percent == null) ? 0 : ksm_cpu_percent.hashCode());
         result = prime * result + ((swap_total == null) ? 0 : swap_total.hashCode());
         result = prime * result + ((swap_free == null) ? 0 : swap_free.hashCode());
-        result = prime * result + ((highlyAvailableScore == null) ? 0 : highlyAvailableScore.hashCode());
         result = prime * result + anonymousHugePages;
+        result = prime * result + highlyAvailableScore;
+        result = prime * result + (highlyAvailableIsConfigured ? 1231 : 1237);
+        result = prime * result + (highlyAvailableIsActive ? 1231 : 1237);
+        result = prime * result + (highlyAvailableGlobalMaintenance ? 1231 : 1237);
+        result = prime * result + (highlyAvailableLocalMaintenance ? 1231 : 1237);
         return result;
     }
 
@@ -103,8 +116,12 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(ksm_cpu_percent, other.ksm_cpu_percent)
                 && ObjectUtils.objectsEqual(swap_total, other.swap_total)
                 && ObjectUtils.objectsEqual(swap_free, other.swap_free)
-                && ObjectUtils.objectsEqual(highlyAvailableScore, other.highlyAvailableScore)
-                && (anonymousHugePages == other.anonymousHugePages));
+                && (anonymousHugePages == other.anonymousHugePages)
+                && (highlyAvailableScore == other.highlyAvailableScore)
+                && (highlyAvailableIsConfigured == other.highlyAvailableIsConfigured)
+                && (highlyAvailableIsActive == other.highlyAvailableIsActive)
+                && (highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance)
+                && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance));
     }
 
     public Double getcpu_idle() {
@@ -250,12 +267,44 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.ksm_state = value;
     }
 
-    public Integer getHighlyAvailableScore() {
+    public int getHighlyAvailableScore() {
         return highlyAvailableScore;
     }
 
-    public void setHighlyAvailableScore(Integer value) {
+    public void setHighlyAvailableScore(int value) {
         highlyAvailableScore = value;
+    }
+
+    public boolean getHighlyAvailableIsConfigured() {
+        return highlyAvailableIsConfigured;
+    }
+
+    public void setHighlyAvailableIsConfigured(boolean value) {
+        highlyAvailableIsConfigured = value;
+    }
+
+    public boolean getHighlyAvailableIsActive() {
+        return highlyAvailableIsActive;
+    }
+
+    public void setHighlyAvailableIsActive(boolean value) {
+        highlyAvailableIsActive = value;
+    }
+
+    public boolean getHighlyAvailableGlobalMaintenance() {
+        return highlyAvailableGlobalMaintenance;
+    }
+
+    public void setHighlyAvailableGlobalMaintenance(boolean value) {
+        highlyAvailableGlobalMaintenance = value;
+    }
+
+    public boolean getHighlyAvailableLocalMaintenance() {
+        return highlyAvailableLocalMaintenance;
+    }
+
+    public void setHighlyAvailableLocalMaintenance(boolean value) {
+        highlyAvailableLocalMaintenance = value;
     }
 
 }

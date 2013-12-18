@@ -46,6 +46,11 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
             entity.setksm_pages(rs.getLong("ksm_pages"));
             entity.setksm_state((Boolean) rs.getObject("ksm_state"));
             entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
+            entity.setHighlyAvailableScore(rs.getInt("ha_score"));
+            entity.setHighlyAvailableIsConfigured(rs.getBoolean("ha_configured"));
+            entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
+            entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
+            entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
             return entity;
         }
     }
@@ -80,8 +85,12 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                 .addValue("ksm_cpu_percent", stats.getksm_cpu_percent())
                 .addValue("ksm_pages", stats.getksm_pages())
                 .addValue("ksm_state", stats.getksm_state())
+                .addValue("anonymous_hugepages", stats.getAnonymousHugePages())
                 .addValue("ha_score", stats.getHighlyAvailableScore())
-                .addValue("anonymous_hugepages", stats.getAnonymousHugePages());
+                .addValue("ha_configured", stats.getHighlyAvailableIsConfigured())
+                .addValue("ha_active", stats.getHighlyAvailableIsActive())
+                .addValue("ha_global_maintenance", stats.getHighlyAvailableGlobalMaintenance())
+                .addValue("ha_local_maintenance", stats.getHighlyAvailableLocalMaintenance());
 
         getCallsHandler().executeModification("InsertVdsStatistics", parameterSource);
     }
@@ -106,8 +115,12 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                 .addValue("ksm_cpu_percent", stats.getksm_cpu_percent())
                 .addValue("ksm_pages", stats.getksm_pages())
                 .addValue("ksm_state", stats.getksm_state())
+                .addValue("anonymous_hugepages", stats.getAnonymousHugePages())
                 .addValue("ha_score", stats.getHighlyAvailableScore())
-                .addValue("anonymous_hugepages", stats.getAnonymousHugePages());
+                .addValue("ha_configured", stats.getHighlyAvailableIsConfigured())
+                .addValue("ha_active", stats.getHighlyAvailableIsActive())
+                .addValue("ha_global_maintenance", stats.getHighlyAvailableGlobalMaintenance())
+                .addValue("ha_local_maintenance", stats.getHighlyAvailableLocalMaintenance());
 
         getCallsHandler().executeModification("UpdateVdsStatistics", parameterSource);
     }
