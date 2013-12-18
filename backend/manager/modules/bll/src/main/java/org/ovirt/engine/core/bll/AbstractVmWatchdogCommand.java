@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -25,7 +27,6 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
         return getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getId(),
                 VmDeviceGeneralType.WATCHDOG);
     }
-
     protected VmDeviceDAO getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
@@ -67,4 +68,23 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
             return getVmTemplate() != null;
         }
     }
+
+    protected VmWatchdogValidator getVmWatchdogValidator() {
+        VmWatchdogValidator vmWatchdogValidator = null;
+        VmWatchdog watchdog = new VmWatchdog();
+        watchdog.setAction(getParameters().getAction());
+        watchdog.setModel(getParameters().getModel());
+        watchdog.setVmId(getParameters().getId());
+
+        if (getParameters().isVm()) {
+            vmWatchdogValidator = new VmWatchdogValidator(getVm().getOs(), watchdog,
+                    getVm().getVdsGroupCompatibilityVersion());
+        } else {
+            vmWatchdogValidator = new VmWatchdogValidator(getVmTemplate().getOsId(), watchdog,
+                    (getVdsGroupDAO().get(getVmTemplate().getVdsGroupId())).getcompatibility_version());
+        }
+
+        return vmWatchdogValidator;
+    }
+
 }

@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -292,6 +293,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
                 !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
             return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+        }
+
+        // Check if the watchdog model is supported
+        if (getParameters().getWatchdog() != null) {
+            if (!validate((new VmWatchdogValidator(getParameters().getMasterVm().getOsId(),
+                    getParameters().getWatchdog(),
+                    getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs())) {
+                return false;
+            }
         }
 
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),

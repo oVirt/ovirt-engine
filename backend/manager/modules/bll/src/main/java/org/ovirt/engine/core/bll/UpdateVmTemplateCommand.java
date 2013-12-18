@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -92,6 +93,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     VmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
                             getVdsGroup().getArchitecture(),
                             getReturnValue().getCanDoActionMessages());
+        }
+
+        // Check if the watchdog model is supported
+        if (returnValue) {
+            returnValue = validate((new VmWatchdogValidator(getParameters().getVmTemplateData().getOsId(),
+                    getParameters().getWatchdog(),
+                    getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs());
         }
 
         if (returnValue) {

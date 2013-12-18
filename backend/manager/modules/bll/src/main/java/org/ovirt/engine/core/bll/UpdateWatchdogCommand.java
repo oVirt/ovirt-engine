@@ -22,6 +22,7 @@ public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
         setSucceeded(true);
     }
 
+    @Override
     protected boolean canDoAction() {
         if (!super.canDoAction()) {
             return false;
@@ -30,6 +31,11 @@ public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
         if (watchdogs.isEmpty()) {
             return failCanDoAction(VdcBllMessages.WATCHDOG_NOT_FOUND);
         }
+
+        if (!validate(getVmWatchdogValidator().isModelCompatibleWithOs())) {
+            return false;
+        }
+
         return true;
     }
 

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -405,6 +406,15 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             // otherwise, we save the content in base64 string
             for (Map.Entry<String, String> entry : getParameters().getVmPayload().getFiles().entrySet()) {
                 entry.setValue(Base64.encodeBase64String(entry.getValue().getBytes()));
+            }
+        }
+
+        // check for Vm Watchdog Model
+        if (getParameters().getWatchdog() != null) {
+            if (!validate((new VmWatchdogValidator(vmFromParams.getOs(),
+                    getParameters().getWatchdog(),
+                    getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs())) {
+                return false;
             }
         }
 
