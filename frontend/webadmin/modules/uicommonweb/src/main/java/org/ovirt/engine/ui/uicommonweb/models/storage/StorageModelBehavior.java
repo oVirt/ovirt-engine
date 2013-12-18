@@ -74,12 +74,12 @@ public abstract class StorageModelBehavior extends Model
     public void onStorageModelUpdated(IStorageModel model)
     {
         // Update models list (the list is used for checking update completion)
-        getModel().UpdatedStorageModels.add(model);
+        getModel().updatedStorageModels.add(model);
 
         // Filter UnSelectable model from AvailableStorageItems list
-        if (getModel().UpdatedStorageModels.size() == Linq.<IStorageModel> cast(getModel().getItems()).size())
+        if (getModel().updatedStorageModels.size() == Linq.<IStorageModel> cast(getModel().getItems()).size())
         {
-            getModel().UpdatedStorageModels.clear();
+            getModel().updatedStorageModels.clear();
 
             getModel().getHost().setItems(new ArrayList<HostModel>());
             getModel().getHost().setSelectedItem(null);

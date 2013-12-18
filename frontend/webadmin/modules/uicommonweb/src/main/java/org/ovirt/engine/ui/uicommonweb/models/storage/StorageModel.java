@@ -77,7 +77,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         privateStorage = value;
     }
 
-    public ArrayList<IStorageModel> UpdatedStorageModels = new ArrayList<IStorageModel>();
+    public ArrayList<IStorageModel> updatedStorageModels = new ArrayList<IStorageModel>();
     private String privateOriginalName;
 
     public String getOriginalName()
