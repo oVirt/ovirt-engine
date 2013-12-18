@@ -10,14 +10,15 @@ import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VmInterfaceCreatingManager {
 
@@ -37,7 +38,7 @@ public class VmInterfaceCreatingManager {
         void queryFailed();
     }
 
-    public void updateVnics(final Guid vmId, final Iterable<VnicInstanceType> vnicsWithProfiles) {
+    public void updateVnics(final Guid vmId, final Iterable<VnicInstanceType> vnicsWithProfiles, final boolean isAddingNewVm) {
         AsyncQuery getVmNicsQuery = new AsyncQuery();
         getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
             @Override
@@ -87,25 +88,34 @@ public class VmInterfaceCreatingManager {
                     }
                 }
 
-                Frontend.getInstance().runMultipleAction(VdcActionType.AddVmInterface,
+                Frontend.getInstance().runMultipleActions(VdcActionType.AddVmInterface,
                         createVnicParameters,
-                        new IFrontendMultipleActionAsyncCallback() {
+                        new IFrontendActionAsyncCallback() {
 
                     @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                                Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmInterface,
+                    public void executed(FrontendActionAsyncResult result) {
+                                Frontend.getInstance().runMultipleActions(VdcActionType.UpdateVmInterface,
                                         updateVnicParameters,
-                                        new IFrontendMultipleActionAsyncCallback() {
+                                        new IFrontendActionAsyncCallback() {
 
                             @Override
-                            public void executed(FrontendMultipleActionAsyncResult result) {
-                                                Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmInterface,
+                            public void executed(FrontendActionAsyncResult result) {
+                                                Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVmInterface,
                                                         removeVnicParameters,
-                                                        new IFrontendMultipleActionAsyncCallback() {
+                                                        new IFrontendActionAsyncCallback() {
 
                                     @Override
-                                    public void executed(FrontendMultipleActionAsyncResult result) {
-                                        callback.vnicCreated(vmId);
+                                    public void executed(FrontendActionAsyncResult result) {
+                                        if (isAddingNewVm) {
+                                            VmOperationParameterBase reorderParams = new VmOperationParameterBase(vmId);
+                                            Frontend.getInstance().runAction(VdcActionType.ReorderVmNics, reorderParams, new IFrontendActionAsyncCallback() {
+                                                public void executed(FrontendActionAsyncResult result) {
+                                                    callback.vnicCreated(vmId);
+                                                }
+                                            });
+                                        } else {
+                                            callback.vnicCreated(vmId);
+                                        }
                                     }
                                 }, this);
                             }

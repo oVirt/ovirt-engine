@@ -72,7 +72,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         }
 
         VmDynamic vm = getVmDynamicDao().get(getParameters().getVmId());
-        if (vm.getStatus() != VMStatus.Down
+        if (vm.getStatus() != VMStatus.Down && vm.getStatus() != VMStatus.ImageLocked
                 && getDbFacade().getVmDeviceDao()
                         .get(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()))
                         .getIsPlugged()) {

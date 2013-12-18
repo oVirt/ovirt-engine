@@ -31,7 +31,7 @@ public class UnitVmModelNetworkAsyncCallback implements IFrontendActionAsyncCall
         VdcReturnValueBase returnValue = result.getReturnValue();
         if (returnValue != null && returnValue.getSucceeded()) {
             networkCreatingManager.updateVnics((idToUpdate == null) ? (Guid) returnValue.getActionReturnValue()
-                    : idToUpdate, unitVmModel.getNicsWithLogicalNetworks().getItems());
+                    : idToUpdate, unitVmModel.getNicsWithLogicalNetworks().getItems(), unitVmModel.getIsNew());
         } else {
             networkCreatingManager.getCallback().queryFailed();
         }

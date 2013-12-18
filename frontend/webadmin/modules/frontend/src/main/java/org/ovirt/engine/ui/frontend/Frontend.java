@@ -597,12 +597,17 @@ public class Frontend implements HasHandlers {
      * @param parameters The parameters of each action.
      * @param successCallback The callback to be executed when all actions have succeeded.
      * @param state State object
+     * @param runCallbacksOnEmptyRun Whether to run the callback or not even if no commands were run
      */
     public void runMultipleActions(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
             final IFrontendActionAsyncCallback successCallback,
-            final Object state) {
+            final Object state,
+            final boolean runCallbacksOnEmptyRun) {
         if (parameters == null || parameters.isEmpty()) {
+            if (runCallbacksOnEmptyRun && successCallback != null) {
+                successCallback.executed(new FrontendActionAsyncResult(actionType, null, null, state));
+            }
             return;
         }
 
@@ -615,7 +620,23 @@ public class Frontend implements HasHandlers {
     }
 
     /**
-     * Overloaded method for {@link #runMultipleActions(VdcActionType, List, IFrontendActionAsyncCallback, Object)} with
+     * A convenience method that calls {@link #runMultipleActions(VdcActionType, List, List, Object)} with
+     * running callbacks even on empty run
+     *
+     * @param actionType The action to be repeated.
+     * @param parameters The parameters of each action.
+     * @param successCallback The callback to be executed when all actions have succeeded.
+     * @param state State object
+     */
+    public void runMultipleActions(final VdcActionType actionType,
+                                   final List<VdcActionParametersBase> parameters,
+                                   final IFrontendActionAsyncCallback successCallback,
+                                   final Object state) {
+        runMultipleActions(actionType, parameters, successCallback, state, true);
+    }
+
+    /**
+     * Overloaded method for {@link #runMultipleActions(VdcActionType, List, IFrontendActionAsyncCallback, Object, boolean)} with
      * state = null.
      * @param actionType The action type of the actions.
      * @param parameters A list of parameters, once for each action.
@@ -624,7 +645,7 @@ public class Frontend implements HasHandlers {
     public void runMultipleActions(final VdcActionType actionType,
             final List<VdcActionParametersBase> parameters,
             final IFrontendActionAsyncCallback successCallback) {
-        runMultipleActions(actionType, parameters, successCallback, null);
+        runMultipleActions(actionType, parameters, successCallback, null, true);
     }
 
     /**
