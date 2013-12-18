@@ -67,6 +67,12 @@ public final class VdsProperties {
     public static final String images_last_check = "imagesLastCheck";
     public static final String images_last_delay = "imagesLastDelay";
     public static final String ha_score = "haScore";
+    public static final String ha_stats = "haStats";
+    public static final String ha_stats_score = "score";
+    public static final String ha_stats_is_configured = "configured";
+    public static final String ha_stats_is_active = "active";
+    public static final String ha_stats_global_maintenance = "globalMaintenance";
+    public static final String ha_stats_local_maintenance = "localMaintenance";
 
     public static final String INTERFACE = "iface";
 

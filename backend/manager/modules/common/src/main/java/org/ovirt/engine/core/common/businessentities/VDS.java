@@ -171,6 +171,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setActiveNic(getActiveNic());
         vds.setPowerManagementControlledByPolicy(isPowerManagementControlledByPolicy());
         vds.setDisablePowerManagementPolicy(isDisablePowerManagementPolicy());
+        vds.setHighlyAvailableScore(getHighlyAvailableScore());
+        vds.setHighlyAvailableIsConfigured(getHighlyAvailableIsConfigured());
+        vds.setHighlyAvailableIsActive(getHighlyAvailableIsActive());
+        vds.setHighlyAvailableGlobalMaintenance(getHighlyAvailableGlobalMaintenance());
+        vds.setHighlyAvailableLocalMaintenance(getHighlyAvailableLocalMaintenance());
 
         return vds;
     }
@@ -551,12 +556,44 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         this.mVdsDynamic.setvm_active(value);
     }
 
-    public Integer getHighlyAvailableScore() {
+    public int getHighlyAvailableScore() {
         return this.mVdsStatistics.getHighlyAvailableScore();
     }
 
-    public void setHighlyAvailableScore(Integer value) {
+    public void setHighlyAvailableScore(int value) {
         this.mVdsStatistics.setHighlyAvailableScore(value);
+    }
+
+    public boolean getHighlyAvailableIsConfigured() {
+        return this.mVdsStatistics.getHighlyAvailableIsConfigured();
+    }
+
+    public void setHighlyAvailableIsConfigured(boolean value) {
+        this.mVdsStatistics.setHighlyAvailableIsConfigured(value);
+    }
+
+    public boolean getHighlyAvailableIsActive() {
+        return this.mVdsStatistics.getHighlyAvailableIsActive();
+    }
+
+    public void setHighlyAvailableIsActive(boolean value) {
+        this.mVdsStatistics.setHighlyAvailableIsActive(value);
+    }
+
+    public boolean getHighlyAvailableGlobalMaintenance() {
+        return this.mVdsStatistics.getHighlyAvailableGlobalMaintenance();
+    }
+
+    public void setHighlyAvailableGlobalMaintenance(boolean value) {
+        this.mVdsStatistics.setHighlyAvailableGlobalMaintenance(value);
+    }
+
+    public boolean getHighlyAvailableLocalMaintenance() {
+        return this.mVdsStatistics.getHighlyAvailableLocalMaintenance();
+    }
+
+    public void setHighlyAvailableLocalMaintenance(boolean value) {
+        this.mVdsStatistics.setHighlyAvailableLocalMaintenance(value);
     }
 
     public int getVmCount() {

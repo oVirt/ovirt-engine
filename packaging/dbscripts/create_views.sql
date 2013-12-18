@@ -721,7 +721,8 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
 			vds_static.recoverable as recoverable, vds_static.sshKeyFingerprint as sshKeyFingerprint, vds_dynamic.hw_manufacturer as hw_manufacturer, vds_dynamic.hw_product_name as hw_product_name, vds_dynamic.hw_version as hw_version,
                       vds_dynamic.hw_serial_number as hw_serial_number, vds_dynamic.hw_uuid as hw_uuid, vds_dynamic.hw_family as hw_family, vds_static.console_address as console_address,
                       vds_dynamic.hbas as hbas, vds_dynamic.supported_emulated_machines as supported_emulated_machines, vds_static.ssh_port as ssh_port, vds_static.ssh_username as ssh_username, vds_statistics.ha_score as ha_score,
-                      vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy
+                      vds_statistics.ha_configured as ha_configured, vds_statistics.ha_active as ha_active, vds_statistics.ha_global_maintenance as ha_global_maintenance,
+                      vds_statistics.ha_local_maintenance as ha_local_maintenance, vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
@@ -762,7 +763,8 @@ spm_status, vds_dynamic.supported_cluster_levels, vds_dynamic.supported_engines,
                       vds_groups.compatibility_version AS vds_group_compatibility_version, vds_dynamic.host_os, vds_dynamic.kvm_version, vds_dynamic.libvirt_version,
                       vds_dynamic.spice_version, vds_dynamic.gluster_version, vds_dynamic.kernel_version, vds_dynamic.iscsi_initiator_name,
                       vds_dynamic.transparent_hugepages_state, vds_statistics.anonymous_hugepages, vds_dynamic.non_operational_reason,
-                      storage_pool_iso_map.storage_id, vds_static.ssh_port, vds_static.ssh_username, vds_statistics.ha_score as ha_score,
+                      storage_pool_iso_map.storage_id, vds_static.ssh_port, vds_static.ssh_username, vds_statistics.ha_score,
+                      vds_statistics.ha_configured, vds_statistics.ha_active, vds_statistics.ha_global_maintenance, vds_statistics.ha_local_maintenance,
                       vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN

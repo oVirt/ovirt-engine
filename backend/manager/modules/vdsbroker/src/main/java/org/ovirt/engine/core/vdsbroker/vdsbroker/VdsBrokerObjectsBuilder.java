@@ -633,8 +633,36 @@ public class VdsBrokerObjectsBuilder {
         vds.setVmMigrating(AssignIntValue(xmlRpcStruct, VdsProperties.vm_migrating));
         updateVDSDomainData(vds, xmlRpcStruct);
         updateLocalDisksUsage(vds, xmlRpcStruct);
-        Integer haScore = AssignIntValue(xmlRpcStruct, VdsProperties.ha_score);
+
+        // hosted engine
+        Integer haScore = null;
+        Boolean haIsConfigured = null;
+        Boolean haIsActive = null;
+        Boolean haGlobalMaint = null;
+        Boolean haLocalMaint = null;
+        if (xmlRpcStruct.containsKey(VdsProperties.ha_stats)) {
+            Map<String, Object> haStats = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.ha_stats);
+            if (haStats != null) {
+                haScore = AssignIntValue(haStats, VdsProperties.ha_stats_score);
+                haIsConfigured = AssignBoolValue(haStats, VdsProperties.ha_stats_is_configured);
+                haIsActive = AssignBoolValue(haStats, VdsProperties.ha_stats_is_active);
+                haGlobalMaint = AssignBoolValue(haStats, VdsProperties.ha_stats_global_maintenance);
+                haLocalMaint = AssignBoolValue(haStats, VdsProperties.ha_stats_local_maintenance);
+            }
+        } else {
+            haScore = AssignIntValue(xmlRpcStruct, VdsProperties.ha_score);
+            // prior to 3.4, haScore was returned if ha was installed; assume active if > 0
+            if (haScore != null) {
+                haIsConfigured = true;
+                haIsActive = (haScore > 0);
+            }
+        }
         vds.setHighlyAvailableScore(haScore != null ? haScore : 0);
+        vds.setHighlyAvailableIsConfigured(haIsConfigured != null ? haIsConfigured : false);
+        vds.setHighlyAvailableIsActive(haIsActive != null ? haIsActive : false);
+        vds.setHighlyAvailableGlobalMaintenance(haGlobalMaint != null ? haGlobalMaint : false);
+        vds.setHighlyAvailableLocalMaintenance(haLocalMaint != null ? haLocalMaint : false);
+
     }
 
     /**

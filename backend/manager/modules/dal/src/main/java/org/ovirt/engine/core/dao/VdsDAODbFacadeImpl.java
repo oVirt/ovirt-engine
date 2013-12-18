@@ -341,6 +341,10 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setHighlyAvailableScore(rs.getInt("ha_score"));
             entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
             entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
+            entity.setHighlyAvailableIsConfigured(rs.getBoolean("ha_configured"));
+            entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
+            entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
+            entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
             entity.calculateFreeVirtualMemory();
             return entity;
         }
