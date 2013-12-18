@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
@@ -233,7 +235,28 @@ public abstract class AbstractSpice {
     }
 
     public void setSslChanels(String sslChanels) {
-        this.sslChanels = sslChanels;
+        this.sslChanels = adjustLegacySecureChannels(sslChanels);
+    }
+
+    /**
+     * Reformat secure channels string if they are in legacy ('s'-prefixed) format.
+     * @param legacySecureChannels (e.g. "smain,sinput")
+     * @return secure channels in correct format (e.g. "main,input")
+     */
+    static String adjustLegacySecureChannels(String legacySecureChannels) {
+        if (StringHelper.isNullOrEmpty(legacySecureChannels)) {
+            return legacySecureChannels;
+        }
+
+        String secureChannels = legacySecureChannels;
+        List<String> legacyChannels = Arrays.asList(
+                new String[]{"smain", "sdisplay", "sinputs", "scursor", "splayback", "srecord", "ssmartcard", "susbredir"}); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$ $NON-NLS-4$ $NON-NLS-5$ $NON-NLS-6$ $NON-NLS-7$ $NON-NLS-8$
+
+        for (String channel : legacyChannels) {
+            secureChannels = secureChannels.replace(channel, channel.substring(1));
+        }
+
+        return secureChannels;
     }
 
     public String getCipherSuite() {
