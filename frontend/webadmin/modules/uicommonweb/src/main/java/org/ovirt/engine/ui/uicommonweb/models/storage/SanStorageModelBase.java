@@ -293,7 +293,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(SanTargetModel.LoggedInEventDefinition))
+        if (ev.matchesDefinition(SanTargetModel.loggedInEventDefinition))
         {
             sanTargetModel_LoggedIn(sender, args);
         }

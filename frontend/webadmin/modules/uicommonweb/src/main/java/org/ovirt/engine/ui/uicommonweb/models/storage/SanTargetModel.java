@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class SanTargetModel extends EntityModel
 {
 
-    public static EventDefinition LoggedInEventDefinition;
+    public static EventDefinition loggedInEventDefinition;
     private Event privateLoggedInEvent;
 
     public Event getLoggedInEvent()
@@ -139,12 +139,12 @@ public class SanTargetModel extends EntityModel
 
     static
     {
-        LoggedInEventDefinition = new EventDefinition("LoggedIn", SanTargetModel.class); //$NON-NLS-1$
+        loggedInEventDefinition = new EventDefinition("LoggedIn", SanTargetModel.class); //$NON-NLS-1$
     }
 
     public SanTargetModel()
     {
-        setLoggedInEvent(new Event(LoggedInEventDefinition));
+        setLoggedInEvent(new Event(loggedInEventDefinition));
         setLoginCommand(new UICommand("", this)); //$NON-NLS-1$
         setLunsList(new ListModel());
     }
