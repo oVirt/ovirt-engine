@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -39,10 +40,9 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private Integer bondType;
     private String bondOptions;
     private int mtu;
-
     private boolean bridged;
-
     private NetworkImplementationDetails networkImplementationDetails;
+    private Set<String> labels;
 
     public VdsNetworkInterface() {
         super(new VdsNetworkStatistics(), VdsInterfaceType.NONE.getValue());
@@ -323,6 +323,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.networkImplementationDetails = networkImplementationDetails;
     }
 
+    public Set<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<String> labels) {
+        this.labels = labels;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -361,6 +369,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 .append(getType())
                 .append(", networkImplementationDetails=")
                 .append(getNetworkImplementationDetails())
+                .append(", labels=")
+                .append(getLabels())
                 .append("}");
         return builder.toString();
     }
@@ -382,6 +392,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
         result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
         result = prime * result + ((vlanId == null) ? 0 : vlanId.hashCode());
+        result = prime * result + ((labels == null) ? 0 : labels.hashCode());
         return result;
     }
 
@@ -472,6 +483,10 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         } else if (!vlanId.equals(other.vlanId)) {
             return false;
         }
+        if (!ObjectUtils.objectsEqual(labels, other.labels)) {
+            return false;
+        }
+
         return true;
     }
 

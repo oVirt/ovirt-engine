@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.Bond;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -56,7 +58,8 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                         .addValue("vds_id", entity.getVdsId())
                         .addValue("vlan_id", entity.getVlanId())
                         .addValue("mtu", entity.getMtu())
-                        .addValue("bridged", entity.isBridged());
+                        .addValue("bridged", entity.isBridged())
+                        .addValue("labels", SerializationFactory.getSerializer().serialize(entity.getLabels()));
                 return paramValue;
             }
         });
@@ -89,7 +92,8 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("vds_id", entity.getVdsId())
                 .addValue("vlan_id", entity.getVlanId())
                 .addValue("mtu", entity.getMtu())
-                .addValue("bridged", entity.isBridged());
+                .addValue("bridged", entity.isBridged())
+                .addValue("labels", SerializationFactory.getSerializer().serialize(entity.getLabels()));
 
         getCallsHandler().executeModification("Insertvds_interface", parameterSource);
     }
@@ -157,7 +161,8 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("vds_id", entity.getVdsId())
                 .addValue("vlan_id", entity.getVlanId())
                 .addValue("mtu", entity.getMtu())
-                .addValue("bridged", entity.isBridged());
+                .addValue("bridged", entity.isBridged())
+                .addValue("labels", SerializationFactory.getSerializer().serialize(entity.getLabels()));
 
         getCallsHandler().executeModification("Updatevds_interface", parameterSource);
     }
@@ -228,6 +233,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
 
     private static final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
             new RowMapper<VdsNetworkInterface>() {
+                @SuppressWarnings("unchecked")
                 @Override
                 public VdsNetworkInterface mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
@@ -251,6 +257,8 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
+                    entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
+                            HashSet.class));
                     return entity;
                 }
 
