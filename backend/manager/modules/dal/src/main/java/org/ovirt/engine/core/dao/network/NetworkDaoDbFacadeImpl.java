@@ -2,7 +2,9 @@ package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, Guid> implements NetworkDao {
@@ -92,6 +95,13 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     }
 
     @Override
+    public Set<String> getAllNetworkLabelsForDataCenter(Guid id) {
+        return new HashSet<>(getCallsHandler().executeReadList("GetAllNetworkLabelsByDataCenterId",
+                new SingleColumnRowMapper<String>(),
+                createIdParameterMapper(id)));
+    }
+
+    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("id", id);
     }
@@ -115,7 +125,8 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
                 .addValue("provider_network_provider_id",
                         network.getProvidedBy() == null ? null : network.getProvidedBy().getProviderId())
                 .addValue("provider_network_external_id",
-                        network.getProvidedBy() == null ? null : network.getProvidedBy().getExternalId());
+                        network.getProvidedBy() == null ? null : network.getProvidedBy().getExternalId())
+                .addValue("label", network.getLabel());
     }
 
     @Override
@@ -165,6 +176,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
                         rs.getString("provider_network_external_id")));
             }
 
+            entity.setLabel(rs.getString("label"));
             return entity;
         }
 

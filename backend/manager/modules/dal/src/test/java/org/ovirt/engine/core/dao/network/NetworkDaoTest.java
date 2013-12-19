@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -276,6 +277,15 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         for (Network network : result) {
             assertEquals(FixturesTool.PROVIDER_ID, network.getProvidedBy().getProviderId());
         }
+    }
+
+    /**
+     * Ensures a list of networks labels is returned for a given data-center
+     */
+    public void testGetAllNetworkLabelsForDataCenter() {
+        Set<String> result = dao.getAllNetworkLabelsForDataCenter(datacenter);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
     }
 
     /**

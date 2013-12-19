@@ -20,12 +20,13 @@ Create or replace FUNCTION Insertnetwork(v_addr VARCHAR(50) ,
 	v_mtu INTEGER,
 	v_vm_network BOOLEAN,
 	v_provider_network_provider_id UUID,
-	v_provider_network_external_id TEXT)
+	v_provider_network_external_id TEXT,
+	v_label TEXT)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO network(addr, description, free_text_comment, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu, vm_network, provider_network_provider_id, provider_network_external_id)
-	VALUES(v_addr, v_description, v_free_text_comment, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu, v_vm_network, v_provider_network_provider_id, v_provider_network_external_id);
+INSERT INTO network(addr, description, free_text_comment, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu, vm_network, provider_network_provider_id, provider_network_external_id, label)
+	VALUES(v_addr, v_description, v_free_text_comment, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu, v_vm_network, v_provider_network_provider_id, v_provider_network_external_id, v_label);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -46,7 +47,8 @@ Create or replace FUNCTION Updatenetwork(v_addr VARCHAR(50) ,
 	v_mtu INTEGER,
 	v_vm_network BOOLEAN,
 	v_provider_network_provider_id UUID,
-	v_provider_network_external_id TEXT)
+	v_provider_network_external_id TEXT,
+	v_label TEXT)
 RETURNS VOID
 
 	--The [network] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -58,7 +60,8 @@ BEGIN
       stp = v_stp,storage_pool_id = v_storage_pool_id, mtu = v_mtu,
       vm_network = v_vm_network,
       provider_network_provider_id = v_provider_network_provider_id,
-      provider_network_external_id = v_provider_network_external_id
+      provider_network_external_id = v_provider_network_external_id,
+      label = v_label
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -184,7 +187,7 @@ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
 CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000), free_text_comment text, type INTEGER,
             addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,
-	    mtu INTEGER, vm_network BOOLEAN,
+	    mtu INTEGER, vm_network BOOLEAN, label TEXT,
 	    provider_network_provider_id UUID, provider_network_external_id TEXT,
 	    network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN,
 	    required BOOLEAN, migration BOOLEAN);
@@ -207,6 +210,7 @@ RETURN QUERY SELECT
     network.storage_pool_id,
     network.mtu,
     network.vm_network,
+    network.label,
     network.provider_network_provider_id,
     network.provider_network_external_id,
     network_cluster.network_id,
@@ -255,7 +259,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
+Create or replace FUNCTION GetAllNetworkLabelsByDataCenterId(v_id UUID)
+RETURNS SETOF TEXT STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT DISTINCT label
+    FROM network
+    WHERE network.storage_pool_id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 --The GetByFK stored procedure cannot be created because the [network] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
 

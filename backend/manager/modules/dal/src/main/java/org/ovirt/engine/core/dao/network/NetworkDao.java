@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao.network;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
@@ -102,4 +103,13 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return the list of networks
      */
     List<Network> getAllForProvider(Guid id);
+
+    /**
+     * Retrieves all network labels defined on networks in a specific data-center
+     *
+     * @param id
+     *            the data-center id
+     * @return all labels defined for the data-center's networks
+     */
+    Set<String> getAllNetworkLabelsForDataCenter(Guid id);
 }
