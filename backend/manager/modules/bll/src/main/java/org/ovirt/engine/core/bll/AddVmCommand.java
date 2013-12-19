@@ -302,6 +302,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                                 getVmDisks(),
                                 isVirtioScsiEnabled(),
                                 hasWatchdog(),
+                                getParameters().isBalloonEnabled(),
+                                getParameters().isSoundDeviceEnabled(),
                                 getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();

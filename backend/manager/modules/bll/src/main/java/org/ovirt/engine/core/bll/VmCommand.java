@@ -113,6 +113,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @param disks
      * @param virtioScsiEnabled
      * @param hasWatchdog
+     * @param isBalloonEnabled
+     * @param isSoundDeviceEnabled
      * @param messages
      * @return a boolean
      */
@@ -121,6 +123,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             List<T> disks,
             boolean virtioScsiEnabled,
             boolean hasWatchdog,
+            boolean isBalloonEnabled,
+            boolean isSoundDeviceEnabled,
             ArrayList<String> messages) {
         boolean result = true;
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
@@ -147,6 +151,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         // VmWatchdog controller requires one PCI slot
         pciInUse += hasWatchdog ? 1 : 0;
+
+        // Balloon controller requires one PCI slot
+        pciInUse += isBalloonEnabled ? 1 : 0;
+
+        // Sound device controller requires one PCI slot
+        pciInUse += isSoundDeviceEnabled ? 1 : 0;
 
         if (pciInUse > MAX_PCI_SLOTS) {
             result = false;

@@ -1011,6 +1011,24 @@ public class VmDeviceUtils {
         return !getWatchdogs(vmId).isEmpty();
     }
 
+    public static boolean isBalloonEnabled(Guid vmId) {
+        return !getBalloonDevices(vmId).isEmpty();
+    }
+
+    public static boolean isSoundDeviceEnabled(Guid vmId) {
+        return !getSoundDevices(vmId).isEmpty();
+    }
+
+    public static List<VmDevice> getSoundDevices(Guid vmId) {
+        return DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
+                VmDeviceGeneralType.SOUND);
+    }
+
+    public static List<VmDevice> getBalloonDevices(Guid vmId) {
+        return DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
+                VmDeviceGeneralType.BALLOON);
+    }
+
     public static List<VmDevice> getWatchdogs(Guid vmId) {
         return DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
                 VmDeviceGeneralType.WATCHDOG);

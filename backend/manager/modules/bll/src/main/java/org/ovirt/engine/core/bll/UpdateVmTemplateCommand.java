@@ -128,6 +128,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                             new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
                             VmDeviceUtils.isVirtioScsiControllerAttached(getParameters().getVmTemplateData().getId()),
                             hasWatchdog(getParameters().getVmTemplateData().getId()),
+                            VmDeviceUtils.isBalloonEnabled(getParameters().getVmTemplateData().getId()),
+                            getParameters().isSoundDeviceEnabled(),
                             getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
             }
@@ -137,8 +139,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     protected boolean hasWatchdog(Guid templateId) {
-        return getParameters().getWatchdog() != null ? true :
-            VmDeviceUtils.hasWatchdog(templateId);
+        return getParameters().getWatchdog() != null;
     }
 
     @Override

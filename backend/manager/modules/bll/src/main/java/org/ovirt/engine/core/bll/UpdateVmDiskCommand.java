@@ -175,6 +175,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             if (!checkPciAndIdeLimit(vm.getNumOfMonitors(), allVmInterfaces, allVmDisks,
                     VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId()),
                     VmDeviceUtils.hasWatchdog(vm.getId()),
+                    VmDeviceUtils.isBalloonEnabled(vm.getId()),
+                    VmDeviceUtils.isSoundDeviceEnabled(vm.getId()),
                     getReturnValue().getCanDoActionMessages())) {
                 return false;
             }

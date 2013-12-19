@@ -399,6 +399,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 allDisks,
                 isVirtioScsiEnabled(),
                 hasWatchdog(),
+                getParameters().isBalloonEnabled(),
+                getParameters().isSoundDeviceEnabled(),
                 getReturnValue().getCanDoActionMessages());
     }
 
@@ -550,8 +552,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     protected boolean hasWatchdog() {
-        return getParameters().getWatchdog() != null ? true :
-            VmDeviceUtils.hasWatchdog(getVmId());
+        return getParameters().getWatchdog() != null;
     }
 
 }

@@ -65,6 +65,8 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
                     VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
                     VmDeviceUtils.hasWatchdog(getVmId()),
+                    VmDeviceUtils.isBalloonEnabled(getVmId()),
+                    VmDeviceUtils.isSoundDeviceEnabled(getVmId()),
                     getReturnValue().getCanDoActionMessages())) {
             return false;
         }
