@@ -98,7 +98,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         // Check if the watchdog model is supported
-        if (returnValue) {
+        if (returnValue && getParameters().getWatchdog() != null) {
             returnValue = validate((new VmWatchdogValidator(getParameters().getVmTemplateData().getOsId(),
                     getParameters().getWatchdog(),
                     getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs());
