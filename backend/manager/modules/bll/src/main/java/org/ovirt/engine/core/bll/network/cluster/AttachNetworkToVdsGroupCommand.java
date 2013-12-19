@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -16,7 +17,10 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
         VdsGroupCommandBase<T> {
 
@@ -50,22 +54,33 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected void executeCommand() {
-        if (networkExists()) {
-            getNetworkClusterDAO().update(getNetworkCluster());
-        } else {
-            getNetworkClusterDAO().save(new NetworkCluster(getVdsGroupId(), getNetwork().getId(),
-                    NetworkStatus.OPERATIONAL,
-                    false,
-                    getNetworkCluster().isRequired(),
-                    getNetworkCluster().isMigration()));
-        }
-        if (getNetwork().getCluster().isDisplay()) {
-            getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
-        }
-        if (getNetwork().getCluster().isMigration()) {
-            getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(), getNetwork().getId());
-        }
-        NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                if (networkExists()) {
+                    getNetworkClusterDAO().update(getNetworkCluster());
+                } else {
+                    getNetworkClusterDAO().save(new NetworkCluster(getVdsGroupId(), getNetwork().getId(),
+                            NetworkStatus.OPERATIONAL,
+                            false,
+                            getNetworkCluster().isRequired(),
+                            getNetworkCluster().isMigration()));
+                }
+
+                if (getNetwork().getCluster().isDisplay()) {
+                    getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
+                }
+
+                if (getNetwork().getCluster().isMigration()) {
+                    getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(), getNetwork().getId());
+                }
+
+                NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
+                return null;
+            }
+        });
+
         setSucceeded(true);
     }
 
