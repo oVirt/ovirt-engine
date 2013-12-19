@@ -236,8 +236,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
    protected void addStyles() {
-        vlanTag.addContentWidgetStyleName(style.vlanEditor());
-        mtuEditor.addContentWidgetStyleName(style.mtuEditor());
+        vlanTag.addContentWidgetStyleName(style.valueBox());
+        mtuEditor.addContentWidgetStyleName(style.valueBox());
         isVmNetworkEditor.addContentWidgetStyleName(style.checkBox());
         isVmNetworkEditor.asCheckBox().addStyleName(style.checkBox());
         vlanTagging.addContentWidgetStyleName(style.checkBox());
@@ -414,9 +414,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     interface WidgetStyle extends CssResource {
-        String mtuEditor();
-
-        String vlanEditor();
+        String valueBox();
 
         String checkBox();
     }

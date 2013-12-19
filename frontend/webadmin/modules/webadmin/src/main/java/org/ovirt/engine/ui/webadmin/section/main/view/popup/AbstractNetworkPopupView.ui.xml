@@ -35,12 +35,8 @@
 			padding-left: 10px;
 		}
 
-		.mtuEditor {
+		.valueBox {
 			width: 100px;
-		}
-
-		.vlanEditor {
-			width:100px;
 		}
 
 		.checkBox {
