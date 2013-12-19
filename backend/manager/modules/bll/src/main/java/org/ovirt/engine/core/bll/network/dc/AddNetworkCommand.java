@@ -27,7 +27,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute
-public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
+public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> {
     public AddNetworkCommand(T parameters) {
         super(parameters);
     }

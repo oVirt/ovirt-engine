@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -75,7 +75,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
         for (Object a : sourceListModel.getSelectedItems())
         {
             Network network = (Network) a;
-            pb.add(new AddNetworkStoragePoolParameters(network.getDataCenterId(), network));
+            pb.add(new RemoveNetworkParameters(network.getId()));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveNetwork, pb);
 

@@ -6,21 +6,23 @@ import java.util.List;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends CommandBase<T> {
-    public NetworkCommon(T parameters) {
-        super(parameters);
-        this.setStoragePoolId(getNetwork().getDataCenterId());
+public abstract class NetworkCommon<T extends VdcActionParametersBase> extends CommandBase<T> {
+
+    public NetworkCommon(Guid id) {
+        super(id);
     }
 
-    protected Network getNetwork() {
-        return getParameters().getNetwork();
+    public NetworkCommon(T parameters) {
+        super(parameters);
     }
+
+    protected abstract Network getNetwork();
 
     public String getNetworkName() {
         return getNetwork().getName();
@@ -29,6 +31,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     protected void removeVnicProfiles() {
         List<VnicProfile> profiles = getVnicProfileDao().getAllForNetwork(getNetwork().getId());
         for (VnicProfile vnicProfile : profiles) {
+            getCompensationContext().snapshotEntity(vnicProfile);
             getVnicProfileDao().remove(vnicProfile.getId());
         }
     }

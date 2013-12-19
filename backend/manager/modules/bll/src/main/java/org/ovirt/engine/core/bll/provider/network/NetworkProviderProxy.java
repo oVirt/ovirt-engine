@@ -19,6 +19,14 @@ public interface NetworkProviderProxy extends ProviderProxy {
     String add(Network network);
 
     /**
+     * Remove the network from the external provider.
+     *
+     * @param id
+     *            The external ID of the network to remove.
+     */
+    void remove(String id);
+
+    /**
      * Retrieve a list of all the networks that this provider can provide.
      *
      * @return A list of the networks available from the provider.

@@ -93,6 +93,15 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
+    public void remove(String id) {
+        try {
+            getClient().networks().delete(id).execute();
+        } catch (RuntimeException e) {
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+        }
+    }
+
+    @Override
     public List<Network> getAll() {
         try {
             Networks networks = getClient().networks().list().execute();

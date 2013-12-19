@@ -1,20 +1,74 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
+@NonTransactiveCommandAttribute(forceCompensation = true)
+public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends NetworkCommon<T> {
+    private Network network;
+
+    private Provider<?> provider;
+
+    public RemoveNetworkCommand(Guid id) {
+        super(id);
+    }
+
     public RemoveNetworkCommand(T parameters) {
         super(parameters);
     }
 
     @Override
+    protected Network getNetwork() {
+        if (network == null) {
+            network = getNetworkDAO().get(getParameters().getId());
+        }
+
+        return network;
+    }
+
+    private Provider<?> getProvider() {
+        if (provider == null) {
+            provider = getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
+        }
+
+        return provider;
+    }
+
+    @Override
     protected void executeCommand() {
-        removeVnicProfiles();
-        getNetworkDAO().remove(getNetwork().getId());
+        setStoragePoolId(getNetwork().getDataCenterId());
+
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void> () {
+            @Override
+            public Void runInTransaction() {
+                removeVnicProfiles();
+                getCompensationContext().snapshotEntity(getNetwork());
+                getNetworkDAO().remove(getNetwork().getId());
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
+
+        if (getParameters().isRemoveFromNetworkProvider() && getNetwork().isExternal()) {
+            removeExternalNetwork();
+        }
+
         setSucceeded(true);
+    }
+
+    private void removeExternalNetwork() {
+        NetworkProviderProxy proxy = ProviderProxyFactory.getInstance().create(getProvider());
+        proxy.remove(getNetwork().getProvidedBy().getExternalId());
     }
 
     @Override
