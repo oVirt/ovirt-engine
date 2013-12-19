@@ -39,7 +39,6 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
         return getCallsHandler().executeRead("Getnetwork_clusterBycluster_idAndBynetwork_id", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<NetworkCluster> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
@@ -47,7 +46,6 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
         return getCallsHandler().executeReadList("GetAllFromnetwork_cluster", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<NetworkCluster> getAllForCluster(Guid clusterid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -57,7 +55,6 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                 parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<NetworkCluster> getAllForNetwork(Guid network) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
