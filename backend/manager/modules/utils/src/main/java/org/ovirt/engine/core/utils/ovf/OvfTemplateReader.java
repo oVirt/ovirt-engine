@@ -196,6 +196,24 @@ public class OvfTemplateReader extends OvfReader {
         if (node != null) {
             _vmTemplate.setTemplateType(VmEntityType.valueOf(node.innerText));
         }
+
+        node = content.SelectSingleNode("BaseTemplateId");
+        if (node != null) {
+            _vmTemplate.setBaseTemplateId(Guid.createGuidFromString(node.innerText));
+        } else {
+            // in case base template is missing, we assume it is a base template
+            _vmTemplate.setBaseTemplateId(_vmTemplate.getId());
+        }
+
+        node = content.SelectSingleNode("TemplateVersionNumber");
+        if (node != null) {
+            _vmTemplate.setTemplateVersionNumber(Integer.parseInt(node.innerText));
+        }
+
+        node = content.SelectSingleNode("TemplateVersionName");
+        if (node != null) {
+            _vmTemplate.setTemplateVersionName(node.innerText);
+        }
     }
 
     @Override
