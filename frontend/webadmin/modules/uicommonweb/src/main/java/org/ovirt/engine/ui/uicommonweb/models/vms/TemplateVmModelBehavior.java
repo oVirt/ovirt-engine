@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -51,13 +52,18 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                                             UnitVmModel model = (UnitVmModel) target;
 
                                             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                                            ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
+                                            ArrayList<VDSGroup> clustersSupportingVirt = new ArrayList<VDSGroup>();
                                             // filter clusters supporting virt service only
                                             for (VDSGroup cluster : clusters) {
                                                 if (cluster.supportsVirtService()) {
-                                                    filteredClusters.add(cluster);
+                                                    clustersSupportingVirt.add(cluster);
                                                 }
                                             }
+
+                                            List<VDSGroup> filteredClusters =
+                                                    AsyncDataProvider.filterByArchitecture(clustersSupportingVirt,
+                                                            template.getClusterArch());
+
                                             model.setDataCentersAndClusters(model,
                                                     new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })),
                                                     filteredClusters,

@@ -65,9 +65,12 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                                         @Override
                                         public void onSuccess(Object target, Object returnValue) {
                                             UnitVmModel model = (UnitVmModel) target;
+                                            List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                                            // filter clusters without cpu name
+                                            clusters = AsyncDataProvider.filterClustersWithoutArchitecture(clusters);
                                             model.setDataCentersAndClusters(model,
                                                     dataCenters,
-                                                    (List<VDSGroup>) returnValue, null);
+                                                    clusters, null);
                                         }
                                     }, getModel().getHash()),
                                     CREATE_VM, true, false);

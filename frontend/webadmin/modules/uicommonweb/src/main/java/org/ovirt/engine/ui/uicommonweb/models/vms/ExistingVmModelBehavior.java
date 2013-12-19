@@ -127,9 +127,15 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         UnitVmModel model = (UnitVmModel) target;
+
+                        List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+
+                        List<VDSGroup> filteredClusters =
+                                AsyncDataProvider.filterByArchitecture(clusters, vm.getClusterArch());
+
                         model.setDataCentersAndClusters(model,
                                 dataCenters,
-                                (List<VDSGroup>) returnValue, vm.getVdsGroupId());
+                                filteredClusters, vm.getVdsGroupId());
                         initTemplate();
                         initCdImage();
                         initSoundCard(vm.getId());

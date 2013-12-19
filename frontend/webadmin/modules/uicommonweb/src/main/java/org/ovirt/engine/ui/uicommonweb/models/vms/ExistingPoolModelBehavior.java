@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -143,5 +144,10 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         }
 
         return parentValidation;
+    }
+
+    @Override
+    protected List<VDSGroup> filterClusters(List<VDSGroup> clusters) {
+        return AsyncDataProvider.filterByArchitecture(clusters, pool.getClusterArch());
     }
 }

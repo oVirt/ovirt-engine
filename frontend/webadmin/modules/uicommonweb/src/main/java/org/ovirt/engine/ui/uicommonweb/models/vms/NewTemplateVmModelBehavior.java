@@ -73,9 +73,14 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             UnitVmModel model = (UnitVmModel) target;
 
                                             List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+
+                                            List<VDSGroup> filteredClusters =
+                                                    AsyncDataProvider.filterByArchitecture(clusters,
+                                                            vm.getClusterArch());
+
                                             model.setDataCentersAndClusters(model,
                                                     Arrays.asList(dataCenter),
-                                                    clusters,
+                                                    filteredClusters,
                                                     vm.getVdsGroupId());
 
                                             initTemplate();

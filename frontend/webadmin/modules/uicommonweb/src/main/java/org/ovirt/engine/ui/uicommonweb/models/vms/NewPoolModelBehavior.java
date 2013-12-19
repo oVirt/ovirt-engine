@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -90,6 +91,10 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                  }
              }
          }));
+    }
 
+    @Override
+    protected List<VDSGroup> filterClusters(List<VDSGroup> clusters) {
+        return AsyncDataProvider.filterClustersWithoutArchitecture(clusters);
     }
 }

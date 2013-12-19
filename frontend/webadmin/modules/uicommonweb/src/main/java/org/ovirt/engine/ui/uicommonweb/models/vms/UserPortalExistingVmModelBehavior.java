@@ -50,6 +50,9 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         UnitVmModel model = (UnitVmModel) array[1];
                         List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
 
+                        // filter clusters by architecture
+                        clusters = AsyncDataProvider.filterByArchitecture(clusters, vm.getClusterArch());
+
                         if (containsVmCluster(clusters)) {
                             Collections.sort(clusters, new NameableComparator());
                             model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId());

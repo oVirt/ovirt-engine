@@ -58,9 +58,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                         @Override
                                         public void onSuccess(Object target, Object returnValue) {
                                             UnitVmModel model = (UnitVmModel) target;
+                                            List<VDSGroup> clusterList = (List<VDSGroup>) returnValue;
+                                            List<VDSGroup> filteredClusterList = AsyncDataProvider.filterClustersWithoutArchitecture(clusterList);
                                             model.setDataCentersAndClusters(model,
                                                     dataCenters,
-                                                    (List<VDSGroup>) returnValue, null);
+                                                    filteredClusterList, null);
                                             initCdImage();
                                         }
                                     }, getModel().getHash()),

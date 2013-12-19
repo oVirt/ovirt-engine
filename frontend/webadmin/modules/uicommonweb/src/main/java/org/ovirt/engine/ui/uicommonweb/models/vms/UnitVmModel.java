@@ -2087,8 +2087,10 @@ public class UnitVmModel extends Model {
                 new ArrayList<DataCenterWithCluster>();
 
         for (StoragePool dataCenter : dataCenters) {
-            for (VDSGroup cluster : dataCenterToCluster.get(dataCenter.getId())) {
-                dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
+            if (dataCenterToCluster.containsKey(dataCenter.getId())) {
+                for (VDSGroup cluster : dataCenterToCluster.get(dataCenter.getId())) {
+                    dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
+                }
             }
         }
         getDataCenterWithClustersList().setItems(dataCentersWithClusters);

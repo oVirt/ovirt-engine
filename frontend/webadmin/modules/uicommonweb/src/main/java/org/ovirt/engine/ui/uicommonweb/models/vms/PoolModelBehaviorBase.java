@@ -91,15 +91,19 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         UnitVmModel model = (UnitVmModel) target;
+                        List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                        List<VDSGroup> filteredClusters = filterClusters(clusters);
                         model.setDataCentersAndClusters(model,
                                 dataCenters,
-                                (List<VDSGroup>) returnValue, null);
+                                filteredClusters, null);
                         initCdImage();
                         getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.EMPTY);
                     }
                 }, getModel().getHash()),
                 true, false);
     }
+
+    protected abstract List<VDSGroup> filterClusters(List<VDSGroup> clusters);
 
     protected void setupWindowModelFrom(VmBase vmBase) {
         if (vmBase != null) {
