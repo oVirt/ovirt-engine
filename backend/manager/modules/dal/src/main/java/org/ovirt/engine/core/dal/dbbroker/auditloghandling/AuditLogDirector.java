@@ -279,6 +279,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_RUN_IN_NO_KVM_MODE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_CLUSTER_VERSION_NOT_SUPPORTED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.VDS_ARCHITECTURE_NOT_SUPPORTED_FOR_CLUSTER, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_CPU_LOWER_THAN_CLUSTER, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.CPU_FLAGS_NX_IS_MISSING, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_CPU_RETRIEVE_FAILED, AuditLogSeverity.WARNING);

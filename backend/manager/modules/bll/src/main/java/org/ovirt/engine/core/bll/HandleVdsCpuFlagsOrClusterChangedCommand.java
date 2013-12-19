@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -22,6 +23,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     private boolean _hasFlags = true;
+    private boolean architectureMatch = true;
+    private boolean foundCPU = true;
 
     public HandleVdsCpuFlagsOrClusterChangedCommand(T parameters) {
         super(parameters);
@@ -40,62 +43,99 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
     @Override
     protected void executeCommand() {
         String vdsGroupCpuName = getVds().getVdsGroupCpuName();
-        boolean foundCPU = true;
-        // if cluster doesn't have cpu then get the cpu from the vds
-        if (StringUtils.isEmpty(vdsGroupCpuName)) {
-            ServerCpu sc = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
-                    .getVdsGroupCompatibilityVersion());
-            if (sc == null) {
-                // if there are flags and no cpu found, mark to be non
-                // operational
-                if (!StringUtils.isEmpty(getVds().getCpuFlags())) {
-                    foundCPU = false;
-                } else {
-                    _hasFlags = false;
-                }
-                log.errorFormat("Could not find server cpu for server {0}:{1}, flags: {2}", getVdsId(), getVds()
-                        .getName(), getVds().getCpuFlags());
+
+        VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getVdsGroupId());
+
+        ServerCpu sc = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
+                .getVdsGroupCompatibilityVersion());
+
+        if (sc == null) {
+            // if there are flags and no cpu found, mark to be non
+            // operational
+            if (!StringUtils.isEmpty(getVds().getCpuFlags())) {
+                foundCPU = false;
             } else {
-                // update group with the cpu name
-                VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getVdsGroupId());
-                grp.setcpu_name(sc.getCpuName());
+                _hasFlags = false;
+            }
+            log.errorFormat("Could not find server cpu for server {0}:{1}, flags: {2}", getVdsId(), getVds()
+                    .getName(), getVds().getCpuFlags());
+        }
 
-                // use suppress in order to update group even if action fails
-                // (out of the transaction)
-                VdsGroupOperationParameters tempVar = new VdsGroupOperationParameters(grp);
-                tempVar.setTransactionScopeOption(TransactionScopeOption.Suppress);
-                tempVar.setIsInternalCommand(true);
-                Backend.getInstance().runInternalAction(VdcActionType.UpdateVdsGroup, tempVar);
+        // Checks whether the host and the cluster have the same architecture
+        if (_hasFlags && foundCPU) {
+            if (grp.getArchitecture() != ArchitectureType.undefined &&
+                    sc.getArchitecture() != grp.getArchitecture()) {
+                architectureMatch = false;
 
-                vdsGroupCpuName = sc.getCpuName();
+                addCustomValue("VdsArchitecture", sc.getArchitecture().name());
+                addCustomValue("VdsGroupArchitecture", grp.getArchitecture().name());
+
+                SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
+                        NonOperationalReason.ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER);
+
+                tempVar.setSaveToDb(true);
+                Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
+                        tempVar,
+                        ExecutionHandler.createInternalJobContext());
+            } else {
+                // if cluster doesn't have cpu then get the cpu from the vds
+                if (StringUtils.isEmpty(vdsGroupCpuName)) {
+                    // update group with the cpu name
+
+                    grp.setcpu_name(sc.getCpuName());
+                    grp.setArchitecture(ArchitectureType.undefined);
+
+                    // use suppress in order to update group even if action fails
+                    // (out of the transaction)
+                    VdsGroupOperationParameters tempVar = new VdsGroupOperationParameters(grp);
+                    tempVar.setTransactionScopeOption(TransactionScopeOption.Suppress);
+                    tempVar.setIsInternalCommand(true);
+                    Backend.getInstance().runInternalAction(VdcActionType.UpdateVdsGroup, tempVar);
+
+                    vdsGroupCpuName = sc.getCpuName();
+                }
             }
         }
 
-        List<String> missingFlags = CpuFlagsManagerHandler.missingServerCpuFlags(vdsGroupCpuName, getVds()
-                .getCpuFlags(), getVds().getVdsGroupCompatibilityVersion());
-        if (!StringUtils.isEmpty(getVds().getCpuFlags()) && (!foundCPU || missingFlags != null)) {
-            if (missingFlags != null) {
-                addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
-                if (missingFlags.contains("nx")) {
-                    AuditLogableBase logable = new AuditLogableBase(getVds().getId());
-                    AuditLogDirector.log(logable, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
+        // If the host CPU name is not found by the CpuFlagsManagerHandler class, report an error
+        if (architectureMatch) {
+            List<String> missingFlags = CpuFlagsManagerHandler.missingServerCpuFlags(vdsGroupCpuName, getVds()
+                    .getCpuFlags(), getVds().getVdsGroupCompatibilityVersion());
+            if (!StringUtils.isEmpty(getVds().getCpuFlags())
+                    && (!foundCPU || missingFlags != null)) {
+                if (missingFlags != null) {
+                    addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
+                    if (missingFlags.contains("nx")) {
+                        AuditLogableBase logable = new AuditLogableBase(getVds().getId());
+                        AuditLogDirector.log(logable, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
+                    }
                 }
-            }
 
-            SetNonOperationalVdsParameters tempVar2 = new SetNonOperationalVdsParameters(getVdsId(),
-                    NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
-            tempVar2.setSaveToDb(true);
-            Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar2,  ExecutionHandler.createInternalJobContext());
-        } else {
-            // if no need to change to non operational then don't log the command
-            setCommandShouldBeLogged(false);
+                SetNonOperationalVdsParameters tempVar2 = new SetNonOperationalVdsParameters(getVdsId(),
+                        NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
+                tempVar2.setSaveToDb(true);
+                Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
+                        tempVar2,
+                        ExecutionHandler.createInternalJobContext());
+            } else {
+                // if no need to change to non operational then don't log the command
+                setCommandShouldBeLogged(false);
+            }
         }
         setSucceeded(true);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        // check first if no flags and then if succeeded
-        return (!_hasFlags) ? AuditLogType.VDS_CPU_RETRIEVE_FAILED : AuditLogType.VDS_CPU_LOWER_THAN_CLUSTER;
+        if (!foundCPU) {
+            return AuditLogType.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION;
+        } else if (!architectureMatch) {
+            return AuditLogType.VDS_ARCHITECTURE_NOT_SUPPORTED_FOR_CLUSTER;
+        } else if (!_hasFlags) {
+            return AuditLogType.VDS_CPU_RETRIEVE_FAILED;
+        } else {
+            return AuditLogType.VDS_CPU_LOWER_THAN_CLUSTER;
+        }
     }
 }
+
