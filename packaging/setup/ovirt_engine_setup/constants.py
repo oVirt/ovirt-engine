@@ -645,6 +645,7 @@ class Const(object):
     FIREWALL_MANAGER_HUMAN = 'skip'
     FIREWALL_MANAGER_IPTABLES = 'iptables'
     FIREWALL_MANAGER_FIREWALLD = 'firewalld'
+    ISO_DOMAIN_NFS_DEFAULT_ACL = '0.0.0.0/0.0.0.0(rw)'
 
 
 @util.export
@@ -923,6 +924,15 @@ class ConfigEnv(object):
     )
     def ISO_DOMAIN_NFS_MOUNT_POINT(self):
         return 'OVESETUP_CONFIG/isoDomainMountPoint'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('NFS export ACL'),
+        postinstallfile=True,
+    )
+    def ISO_DOMAIN_NFS_ACL(self):
+        return 'OVESETUP_CONFIG/isoDomainACL'
 
     @osetupattrs(
         answerfile=True,

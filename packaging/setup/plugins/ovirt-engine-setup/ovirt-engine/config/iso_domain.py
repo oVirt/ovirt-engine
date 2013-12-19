@@ -360,6 +360,19 @@ class Plugin(plugin.PluginBase):
         ].append(path)
 
         if self.environment[
+            osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
+        ] is None:
+            self.environment[
+                osetupcons.ConfigEnv.ISO_DOMAIN_NFS_ACL
+            ] = self.dialog.queryString(
+                name='ISO_DOMAIN_ACL',
+                note=_('Local ISO domain ACL [@DEFAULT@]: '),
+                prompt=True,
+                caseSensitive=True,
+                default=osetupcons.Const.ISO_DOMAIN_NFS_DEFAULT_ACL,
+            )
+
+        if self.environment[
             osetupcons.ConfigEnv.ISO_DOMAIN_NAME
         ] is None:
             self.environment[
