@@ -3,4 +3,15 @@
           <Class name="com.google.gwt.core.client.GWTBridge" />
           <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
     </Match>
+    <!--
+      findbugs complain of unused field in class.
+      This is a GWT class and use to generate code
+
+      findbugs reason:
+      UuF: Unused field (UUF_UNUSED_FIELD)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.frontend.communication.RefreshActiveModel" />
+       <Bug code="UuF"/>
+     </Match>
 </FindBugsFilter>
