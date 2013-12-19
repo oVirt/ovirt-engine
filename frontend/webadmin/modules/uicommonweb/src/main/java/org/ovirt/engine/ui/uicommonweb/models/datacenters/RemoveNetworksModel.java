@@ -26,7 +26,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
         setHashName("remove_logical_network"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
-        boolean hasNetworkWithProvider = false;
+        boolean externalNetworksWillBeRemoved = false;
         for (Network network : (Iterable<Network>) sourceListModel.getSelectedItems())
         {
             if (network instanceof NetworkView) {
@@ -52,11 +52,17 @@ public class RemoveNetworksModel extends ConfirmationModel {
                 }
             }
 
-            if (network.isExternal()) {
-                setNote(ConstantsManager.getInstance().getConstants().removeProvidedNetworksNote());
+            if (network.isExternal() && !externalNetworksWillBeRemoved) {
+                externalNetworksWillBeRemoved = true;
             }
         }
         setItems(list);
+
+        if (externalNetworksWillBeRemoved) {
+            getForce().setIsAvailable(true);
+            getForce().setEntity(true);
+            setForceLabel(ConstantsManager.getInstance().getConstants().removeNetworkFromProvider());
+        }
 
         UICommand tempVar = new UICommand("onRemove", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -75,7 +81,11 @@ public class RemoveNetworksModel extends ConfirmationModel {
         for (Object a : sourceListModel.getSelectedItems())
         {
             Network network = (Network) a;
-            pb.add(new RemoveNetworkParameters(network.getId()));
+            if (network.isExternal()) {
+                pb.add(new RemoveNetworkParameters(network.getId(), (Boolean) getForce().getEntity()));
+            } else {
+                pb.add(new RemoveNetworkParameters(network.getId()));
+            }
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveNetwork, pb);
 
