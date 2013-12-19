@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
@@ -21,7 +22,10 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 @LockIdNameAttribute
 public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
     public AddNetworkCommand(T parameters) {
@@ -31,13 +35,22 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     @Override
     protected void executeCommand() {
         getNetwork().setId(Guid.newGuid());
-        getNetworkDAO().save(getNetwork());
 
-        if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
-            getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork()));
-        }
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-        NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), getNetwork().getId());
+            @Override
+            public Void runInTransaction() {
+                getNetworkDAO().save(getNetwork());
+
+                if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
+                    getVnicProfileDao().save(NetworkHelper.createVnicProfile(getNetwork()));
+                }
+
+                NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getId(), getNetwork().getId());
+                return null;
+            }
+        });
+
         getReturnValue().setActionReturnValue(getNetwork().getId());
         setSucceeded(true);
     }
