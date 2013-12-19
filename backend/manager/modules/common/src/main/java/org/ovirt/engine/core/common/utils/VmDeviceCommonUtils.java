@@ -1,7 +1,12 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -9,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -87,15 +93,15 @@ public class VmDeviceCommonUtils {
         case CDN:
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case CN:
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case CND:
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case D:
@@ -108,35 +114,35 @@ public class VmDeviceCommonUtils {
         case DCN:
             bootOrder = setCDBootOrder(devices, bootOrder);
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case DN:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case DNC:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
         case N:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             break;
         case NC:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
         case NCD:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case ND:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case NDC:
-            bootOrder = setNetworkBootOrder(devices, bootOrder);
+            bootOrder = setNetworkBootOrder(vm, devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
@@ -150,15 +156,47 @@ public class VmDeviceCommonUtils {
      * @param bootOrder
      * @return
      */
-    private static int setNetworkBootOrder(List<VmDevice> devices, int bootOrder) {
+    private static int setNetworkBootOrder(VM vm, List<VmDevice> devices, int bootOrder) {
+        for (VmDevice pluggedInterface : sortInterfacesByName(vm, getPluggedInterfaces(devices))) {
+            pluggedInterface.setBootOrder(++bootOrder);
+        }
+
+        return bootOrder;
+    }
+
+    private static List<VmDevice> getPluggedInterfaces(List<VmDevice> devices) {
+        List<VmDevice> result = new ArrayList<VmDevice>();
         for (VmDevice device : devices) {
-            if (isBridge(device)) {
-                if (device.getIsPlugged()) {
-                    device.setBootOrder(++bootOrder);
-                }
+            if (isBridge(device) && device.getIsPlugged()) {
+                result.add(device);
             }
         }
-        return bootOrder;
+
+        return result;
+    }
+
+    private static List<VmDevice> sortInterfacesByName(VM vm, List<VmDevice> pluggedInterfaces) {
+        if (pluggedInterfaces.size() < 2) {
+            return pluggedInterfaces;
+        }
+
+        final Map<Guid, String> deviceIdToIfaceName = new HashMap<Guid, String>();
+        for (VmNetworkInterface iface : vm.getInterfaces()) {
+            deviceIdToIfaceName.put(iface.getId(), iface.getName());
+        }
+
+        Collections.sort(pluggedInterfaces, new Comparator<VmDevice>() {
+            @Override
+            public int compare(VmDevice first, VmDevice second) {
+                Guid firstDeviceId = first.getId().getDeviceId();
+                Guid secondDeviceId = second.getId().getDeviceId();
+                String firstIfaceName = deviceIdToIfaceName.get(firstDeviceId);
+                String secondIfaceName = deviceIdToIfaceName.get(secondDeviceId);
+                return firstIfaceName.compareTo(secondIfaceName);
+            }
+        });
+
+        return pluggedInterfaces;
     }
 
     /**

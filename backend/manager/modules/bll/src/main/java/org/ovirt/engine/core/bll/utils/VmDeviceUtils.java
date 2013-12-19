@@ -618,6 +618,7 @@ public class VmDeviceUtils {
             }
             VM vm = DbFacade.getInstance().getVmDao().get(vmBase.getId());
             VmHandler.updateDisksForVm(vm, DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()));
+            VmHandler.updateNetworkInterfacesFromDb(vm);
             boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getVdsGroupCompatibilityVersion());
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
             return devices;

@@ -456,7 +456,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmBootSequence() {
-        // Check if boot sequence in parameters is diffrent from default boot sequence
+        // Check if boot sequence in parameters is different from default boot sequence
         if (managedDevices != null) {
             // recalculate boot order from source devices and set it to target devices
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm,
