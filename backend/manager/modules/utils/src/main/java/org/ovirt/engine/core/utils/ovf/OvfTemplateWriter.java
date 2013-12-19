@@ -46,6 +46,15 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement("TemplateType");
         _writer.WriteRaw(_vmTemplate.getTemplateType().name());
         _writer.WriteEndElement();
+        _writer.WriteStartElement("BaseTemplateId");
+        _writer.WriteRaw(_vmTemplate.getBaseTemplateId().toString());
+        _writer.WriteEndElement();
+        _writer.WriteStartElement("TemplateVersionNumber");
+        _writer.WriteRaw(String.valueOf(_vmTemplate.getTemplateVersionNumber()));
+        _writer.WriteEndElement();
+        _writer.WriteStartElement("TemplateVersionName");
+        _writer.WriteRaw(_vmTemplate.getTemplateVersionName());
+        _writer.WriteEndElement();
     }
 
     @Override

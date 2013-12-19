@@ -200,6 +200,15 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         if (retVal) {
             retVal = validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVmTemplate().getInterfaces()));
         }
+
+        // if this is a template version, check base template exist
+        if (retVal && !getVmTemplate().isBaseTemplate()) {
+            VmTemplate baseTemplate = getVmTemplateDAO().get(getVmTemplate().getBaseTemplateId());
+            if (baseTemplate == null) {
+                retVal = false;
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            }
+        }
         if (!retVal) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);

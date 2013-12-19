@@ -2530,6 +2530,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Template disks cannot be moved.")
     String ACTION_TYPE_FAILED_CANNOT_MOVE_TEMPLATE_DISK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Base Template does not exist for this Template Version.")
+    String ACTION_TYPE_FAILED_BASE_TEMPLATE_DOES_NOT_EXIST();
+
     @DefaultStringValue("Failed ${action} ${type}. The following networks (${networks}) are not defined as VM networks.")
     String ACTION_TYPE_FAILED_NOT_A_VM_NETWORK();
 
