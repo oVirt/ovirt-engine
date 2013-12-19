@@ -25,14 +25,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
 
     @Override
     public void saveStatisticsForVds(VdsNetworkStatistics stats) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", stats.getId())
-                .addValue("rx_drop", stats.getReceiveDropRate())
-                .addValue("rx_rate", stats.getReceiveRate())
-                .addValue("tx_drop", stats.getTransmitDropRate())
-                .addValue("tx_rate", stats.getTransmitRate())
-                .addValue("iface_status", stats.getStatus())
-                .addValue("vds_id", stats.getVdsId());
+        MapSqlParameterSource parameterSource = createStatisticsParametersMapper(stats);
         getCallsHandler().executeModification("Insertvds_interface_statistics", parameterSource);
     }
 
@@ -40,27 +33,8 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     public void massUpdateInterfacesForVds(List<VdsNetworkInterface> dbIfacesToBatch) {
         updateAllInBatch("Updatevds_interface", dbIfacesToBatch, new MapSqlParameterMapper<VdsNetworkInterface>() {
             @Override
-            public MapSqlParameterSource map(VdsNetworkInterface entity) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource().addValue("addr", entity.getAddress())
-                        .addValue("bond_name", entity.getBondName())
-                        .addValue("bond_type", entity.getBondType())
-                        .addValue("gateway", entity.getGateway())
-                        .addValue("id", entity.getId())
-                        .addValue("is_bond", entity.getBonded())
-                        .addValue("bond_opts", entity.getBondOptions())
-                        .addValue("mac_addr", entity.getMacAddress())
-                        .addValue("name", entity.getName())
-                        .addValue("network_name", entity.getNetworkName())
-                        .addValue("speed", entity.getSpeed())
-                        .addValue("subnet", entity.getSubnet())
-                        .addValue("boot_protocol", entity.getBootProtocol())
-                        .addValue("type", entity.getType())
-                        .addValue("vds_id", entity.getVdsId())
-                        .addValue("vlan_id", entity.getVlanId())
-                        .addValue("mtu", entity.getMtu())
-                        .addValue("bridged", entity.isBridged())
-                        .addValue("labels", SerializationFactory.getSerializer().serialize(entity.getLabels()));
-                return paramValue;
+            public MapSqlParameterSource map(VdsNetworkInterface nic) {
+                return createInterfaceParametersMapper(nic);
             }
         });
     }
@@ -68,33 +42,12 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     public void updateAllInBatch(String procedureName,
             Collection<VdsNetworkInterface> paramValues,
             MapSqlParameterMapper<VdsNetworkInterface> mapper) {
-        getCallsHandler().executeStoredProcAsBatch(procedureName,
-                paramValues, mapper);
+        getCallsHandler().executeStoredProcAsBatch(procedureName, paramValues, mapper);
     }
 
     @Override
-    public void saveInterfaceForVds(VdsNetworkInterface entity) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("addr", entity.getAddress())
-                .addValue("bond_name", entity.getBondName())
-                .addValue("bond_type", entity.getBondType())
-                .addValue("gateway", entity.getGateway())
-                .addValue("id", entity.getId())
-                .addValue("is_bond", entity.getBonded())
-                .addValue("bond_opts", entity.getBondOptions())
-                .addValue("mac_addr", entity.getMacAddress())
-                .addValue("name", entity.getName())
-                .addValue("network_name", entity.getNetworkName())
-                .addValue("speed", entity.getSpeed())
-                .addValue("subnet", entity.getSubnet())
-                .addValue("boot_protocol", entity.getBootProtocol())
-                .addValue("type", entity.getType())
-                .addValue("vds_id", entity.getVdsId())
-                .addValue("vlan_id", entity.getVlanId())
-                .addValue("mtu", entity.getMtu())
-                .addValue("bridged", entity.isBridged())
-                .addValue("labels", SerializationFactory.getSerializer().serialize(entity.getLabels()));
-
+    public void saveInterfaceForVds(VdsNetworkInterface nic) {
+        MapSqlParameterSource parameterSource = createInterfaceParametersMapper(nic);
         getCallsHandler().executeModification("Insertvds_interface", parameterSource);
     }
 
@@ -107,17 +60,10 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     public void massUpdateStatisticsForVds(Collection<VdsNetworkStatistics> statistics) {
         List<MapSqlParameterSource> executions = new ArrayList<>(statistics.size());
         for (VdsNetworkStatistics stats : statistics) {
-            executions.add(getCustomMapSqlParameterSource()
-                    .addValue("id", stats.getId())
-                    .addValue("rx_drop", stats.getReceiveDropRate())
-                    .addValue("rx_rate", stats.getReceiveRate())
-                    .addValue("tx_drop", stats.getTransmitDropRate())
-                    .addValue("tx_rate", stats.getTransmitRate())
-                    .addValue("iface_status", stats.getStatus())
-                    .addValue("vds_id", stats.getVdsId()));
+            executions.add(createStatisticsParametersMapper(stats));
         }
-        getCallsHandler().executeStoredProcAsBatch("Updatevds_interface_statistics",
-                executions);
+
+        getCallsHandler().executeStoredProcAsBatch("Updatevds_interface_statistics", executions);
     }
 
     /**
@@ -129,7 +75,11 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
      *            The host's network statistics data.
      */
     private void update(VdsNetworkStatistics stats) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        getCallsHandler().executeModification("Updatevds_interface_statistics", createStatisticsParametersMapper(stats));
+    }
+
+    private MapSqlParameterSource createStatisticsParametersMapper(VdsNetworkStatistics stats) {
+        return getCustomMapSqlParameterSource()
                 .addValue("id", stats.getId())
                 .addValue("rx_drop", stats.getReceiveDropRate())
                 .addValue("rx_rate", stats.getReceiveRate())
@@ -137,34 +87,34 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("tx_rate", stats.getTransmitRate())
                 .addValue("iface_status", stats.getStatus())
                 .addValue("vds_id", stats.getVdsId());
-
-        getCallsHandler().executeModification("Updatevds_interface_statistics", parameterSource);
     }
 
     @Override
-    public void updateInterfaceForVds(VdsNetworkInterface entity) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("addr", entity.getAddress())
-                .addValue("bond_name", entity.getBondName())
-                .addValue("bond_type", entity.getBondType())
-                .addValue("gateway", entity.getGateway())
-                .addValue("id", entity.getId())
-                .addValue("is_bond", entity.getBonded())
-                .addValue("bond_opts", entity.getBondOptions())
-                .addValue("mac_addr", entity.getMacAddress())
-                .addValue("name", entity.getName())
-                .addValue("network_name", entity.getNetworkName())
-                .addValue("speed", entity.getSpeed())
-                .addValue("subnet", entity.getSubnet())
-                .addValue("boot_protocol", entity.getBootProtocol())
-                .addValue("type", entity.getType())
-                .addValue("vds_id", entity.getVdsId())
-                .addValue("vlan_id", entity.getVlanId())
-                .addValue("mtu", entity.getMtu())
-                .addValue("bridged", entity.isBridged())
-                .addValue("labels", SerializationFactory.getSerializer().serialize(entity.getLabels()));
+    public void updateInterfaceForVds(VdsNetworkInterface nic) {
+        getCallsHandler().executeModification("Updatevds_interface", createInterfaceParametersMapper(nic));
+    }
 
-        getCallsHandler().executeModification("Updatevds_interface", parameterSource);
+    private MapSqlParameterSource createInterfaceParametersMapper(VdsNetworkInterface nic) {
+        return getCustomMapSqlParameterSource()
+                .addValue("addr", nic.getAddress())
+                .addValue("bond_name", nic.getBondName())
+                .addValue("bond_type", nic.getBondType())
+                .addValue("gateway", nic.getGateway())
+                .addValue("id", nic.getId())
+                .addValue("is_bond", nic.getBonded())
+                .addValue("bond_opts", nic.getBondOptions())
+                .addValue("mac_addr", nic.getMacAddress())
+                .addValue("name", nic.getName())
+                .addValue("network_name", nic.getNetworkName())
+                .addValue("speed", nic.getSpeed())
+                .addValue("subnet", nic.getSubnet())
+                .addValue("boot_protocol", nic.getBootProtocol())
+                .addValue("type", nic.getType())
+                .addValue("vds_id", nic.getVdsId())
+                .addValue("vlan_id", nic.getVlanId())
+                .addValue("mtu", nic.getMtu())
+                .addValue("bridged", nic.isBridged())
+                .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()));
     }
 
     @Override
