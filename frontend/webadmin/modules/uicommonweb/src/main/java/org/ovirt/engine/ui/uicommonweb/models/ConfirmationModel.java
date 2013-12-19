@@ -32,6 +32,20 @@ public class ConfirmationModel extends ListModel
         force = value;
     }
 
+    private String forceLabel;
+
+    public String getForceLabel() {
+        return forceLabel;
+    }
+
+    public void setForceLabel(String forceLabel) {
+        if (!StringHelper.stringsEqual(getForceLabel(), forceLabel))
+        {
+            this.forceLabel = forceLabel;
+            onPropertyChanged(new PropertyChangedEventArgs("ForceLabel")); //$NON-NLS-1$
+        }
+    }
+
     private String note;
 
     public String getNote()

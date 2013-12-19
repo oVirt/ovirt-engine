@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -74,6 +75,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         latch.setLabel(constants.approveOperation());
         force = new EntityModelCheckBoxEditor(Align.RIGHT);
         force.setLabel(constants.forceRemove());
+        force.getContentWidgetContainer().getElement().getStyle().setWidth(90, Unit.PCT);
         this.constants= constants;
         this.messages = messages;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -136,6 +138,22 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
                     if (entity.getIsAvailable()) {
                         latch.setVisible(true);
                     }
+                }
+            }
+        });
+
+        if (object.getForceLabel() != null) {
+            force.setLabel(object.getForceLabel());
+        }
+
+        force.asCheckBox().setValue((Boolean) object.getForce().getEntity());
+        // Bind "Force.Label"
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("ForceLabel".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    ConfirmationModel entity = (ConfirmationModel) sender;
+                    force.setLabel(entity.getForceLabel());
                 }
             }
         });
