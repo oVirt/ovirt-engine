@@ -154,6 +154,32 @@ public class NetworkQoS extends IVdcQueryable implements Serializable, BusinessE
     }
 
     @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[")
+               .append("inbound ")
+               .append("{")
+               .append("average=")
+               .append(getInboundAverage())
+               .append(", peak=")
+               .append(getInboundPeak())
+               .append(", burst=")
+               .append(getInboundBurst())
+               .append("}, ")
+               .append("outbound ")
+               .append("{")
+               .append("average=")
+               .append(getOutboundAverage())
+               .append(", peak=")
+               .append(getOutboundPeak())
+               .append(", burst=")
+               .append(getOutboundBurst())
+               .append("}")
+               .append("]");
+        return builder.toString();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
