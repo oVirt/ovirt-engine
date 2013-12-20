@@ -339,6 +339,7 @@
           <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="brick" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="step" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="gluster_volume" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

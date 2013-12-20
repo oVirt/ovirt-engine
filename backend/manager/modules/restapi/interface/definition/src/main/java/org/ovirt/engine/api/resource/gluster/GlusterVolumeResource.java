@@ -14,12 +14,13 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ApiMediaType;
+import org.ovirt.engine.api.resource.MeasurableResource;
 
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes/{volume_id}" resource
  */
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
-public interface GlusterVolumeResource {
+public interface GlusterVolumeResource extends MeasurableResource {
     @GET
     @Formatted
     public GlusterVolume get();

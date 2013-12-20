@@ -1,13 +1,17 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Option;
+import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
+import org.ovirt.engine.api.restapi.resource.BackendStatisticsResource;
+import org.ovirt.engine.api.restapi.resource.VolumeStatisticalQuery;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
@@ -17,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Implementation of the "glustervolumes/{id}" resource
@@ -126,5 +131,17 @@ public class BackendGlusterVolumeResource
 
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    @Path("statistics")
+    public StatisticsResource getStatisticsResource() {
+
+        EntityIdResolver<Guid> resolver =
+                new QueryIdResolver<Guid>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class);
+        VolumeStatisticalQuery query = new VolumeStatisticalQuery(resolver, newModel(id));
+        return inject(new BackendStatisticsResource<GlusterVolume, GlusterVolumeEntity>(entityType,
+                guid,
+                query));
     }
 }
