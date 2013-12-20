@@ -984,10 +984,11 @@ public class VolumeBrickListModel extends SearchableListModel {
             }
         }
         final ConfirmationModel cModel = new ConfirmationModel();
+        cModel.setHashName("volume_remove_bricks_status"); ////$NON-NLS-1$
+
         UICommand removeBrickStatusOk = new UICommand("CancelConfirmation", VolumeBrickListModel.this);//$NON-NLS-1$
         removeBrickStatusOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
         removeBrickStatusOk.setIsCancel(true);
-
         cModel.startProgress(ConstantsManager.getInstance().getConstants().rebalanceStatusFetchMessage());
         cModel.getCommands().add(removeBrickStatusOk);
         cModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksStatusTitle());
@@ -1027,7 +1028,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                         removeBrickStatusModel.setTitle(ConstantsManager.getInstance()
                                 .getConstants()
                                 .removeBricksStatusTitle());
-                        removeBrickStatusModel.setHashName("remove_bricks_status"); ////$NON-NLS-1$
+                        removeBrickStatusModel.setHashName("volume_remove_bricks_status"); ////$NON-NLS-1$
 
                         setWindow(removeBrickStatusModel);
 

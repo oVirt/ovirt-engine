@@ -605,7 +605,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 .getConstants()
                                 .volumeRebalanceStatusTitle());
                         setWindow(rebalanceStatusModel);
-
+                        rebalanceStatusModel.setHashName("volume_rebalance_status"); //$NON-NLS-1$
                         rebalanceStatusModel.getVolume().setEntity(volumeEntity.getName());
                         rebalanceStatusModel.getCluster().setEntity(volumeEntity.getVdsGroupName());
 
