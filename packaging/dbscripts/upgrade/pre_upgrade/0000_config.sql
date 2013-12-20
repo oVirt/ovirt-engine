@@ -842,7 +842,7 @@ select fn_db_delete_config_value('ENMailPort','general');
 select fn_db_delete_config_value('ENMailUseDefaultCredentials','general');
 select fn_db_delete_config_value('ENMailUser','general');
 select fn_db_delete_config_value('FreeSpaceCriticalLow','general');
-select fn_db_delete_config_value('HotPlugSupportedOsList','general');
+select fn_db_delete_config_value('HotPlugUnsupportedOsList','general');
 select fn_db_delete_config_value('ImagesSyncronizationTimeout','general');
 select fn_db_delete_config_value('keystorePass','general');
 select fn_db_delete_config_value('keystoreUrl','general');
