@@ -100,6 +100,9 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(nameColumn, constants.nameHost(), "150px"); //$NON-NLS-1$
 
+        CommentColumn<VDS> commentColumn = new CommentColumn<VDS>();
+        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
@@ -189,8 +192,6 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             };
             getTable().addColumn(spmColumn, constants.spmPriorityHost(), "100px"); //$NON-NLS-1$
         }
-
-        getTable().addColumn(new CommentColumn<VDS>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {
             @Override

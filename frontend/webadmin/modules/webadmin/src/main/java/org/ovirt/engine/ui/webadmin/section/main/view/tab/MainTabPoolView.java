@@ -42,6 +42,9 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         };
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
+        CommentColumn<VmPool> commentColumn = new CommentColumn<VmPool>();
+        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VmPool> assignedColumn = new TextColumnWithTooltip<VmPool>() {
             @Override
             public String getValue(VmPool object) {
@@ -73,8 +76,6 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
             }
         };
         getTable().addColumn(descColumn, constants.descriptionPool(), "300px"); //$NON-NLS-1$
-
-        getTable().addColumn(new CommentColumn<VmPool>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
             @Override

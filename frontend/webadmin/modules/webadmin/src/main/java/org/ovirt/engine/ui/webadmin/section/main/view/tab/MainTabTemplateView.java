@@ -45,6 +45,9 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
+        CommentColumn<VmTemplate> commentColumn = new CommentColumn<VmTemplate>();
+        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VmTemplate> creationDateColumn = new GeneralDateTimeColumn<VmTemplate>() {
             @Override
             protected Date getRawValue(VmTemplate object) {
@@ -84,8 +87,6 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
             }
         };
         getTable().addColumn(descriptionColumn, constants.descriptionTemplate(), "150px"); //$NON-NLS-1$
-
-        getTable().addColumn(new CommentColumn<VmTemplate>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.editTemplate()) {
             @Override

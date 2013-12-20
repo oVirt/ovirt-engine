@@ -56,6 +56,9 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         };
         getTable().addColumn(nameColumn, constants.nameDc(), "150px"); //$NON-NLS-1$
 
+        CommentColumn<StoragePool> commentColumn = new CommentColumn<StoragePool>();
+        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<StoragePool> storageTypeColumn = new EnumColumn<StoragePool, StorageType>() {
             @Override
             public StorageType getRawValue(StoragePool object) {
@@ -87,8 +90,6 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
             }
         };
         getTable().addColumn(descColumn, constants.descriptionDc(), "300px"); //$NON-NLS-1$
-
-        getTable().addColumn(new CommentColumn<StoragePool>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {
             @Override

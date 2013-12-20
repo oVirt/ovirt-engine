@@ -68,6 +68,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$
 
+        CommentColumn<VM> commentColumn = new CommentColumn<VM>();
+        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+
+
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
@@ -167,8 +171,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "120px"); //$NON-NLS-1$
-
-        getTable().addColumn(new CommentColumn<VM>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newVm()) {
 

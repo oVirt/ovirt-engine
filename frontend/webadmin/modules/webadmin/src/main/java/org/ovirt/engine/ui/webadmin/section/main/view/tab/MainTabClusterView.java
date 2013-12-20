@@ -51,6 +51,9 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
+        CommentColumn<VDSGroup> commentColumn = new CommentColumn<VDSGroup>();
+        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             TextColumnWithTooltip<VDSGroup> dataCenterColumn = new TextColumnWithTooltip<VDSGroup>() {
                 @Override
@@ -86,8 +89,6 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             };
             getTable().addColumn(cpuNameColumn, constants.cpuNameCluster(), "150px"); //$NON-NLS-1$
         }
-
-        getTable().addColumn(new CommentColumn<VDSGroup>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.newCluster()) {
             @Override

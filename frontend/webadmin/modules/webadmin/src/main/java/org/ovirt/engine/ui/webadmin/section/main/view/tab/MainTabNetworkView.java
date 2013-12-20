@@ -73,6 +73,9 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
         getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
+        CommentColumn<NetworkView> commentColumn = new CommentColumn<NetworkView>();
+        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<NetworkView> dcColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
@@ -89,8 +92,6 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "300px"); //$NON-NLS-1$
-
-        getTable().addColumn(new CommentColumn<NetworkView>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<NetworkView> roleColumn =
                 new SafeHtmlWithSafeHtmlTooltipColumn<NetworkView>() {

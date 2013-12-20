@@ -57,6 +57,9 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
 
+        CommentColumn<StorageDomain> commentColumn = new CommentColumn<StorageDomain>();
+        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<StorageDomain> domainTypeColumn = new EnumColumn<StorageDomain, StorageDomainType>() {
             @Override
             protected StorageDomainType getRawValue(StorageDomain object) {
@@ -119,8 +122,6 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
             }
         };
         getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "200px"); //$NON-NLS-1$
-
-        getTable().addColumn(new CommentColumn<StorageDomain>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.newDomainStorage()) {
             @Override

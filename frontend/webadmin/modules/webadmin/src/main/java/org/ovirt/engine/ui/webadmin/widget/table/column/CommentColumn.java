@@ -14,4 +14,14 @@ public class CommentColumn<T extends Commented> extends WebAdminImageResourceCol
         }
         return null;
     }
+
+    @Override
+    public ImageResource getDefaultImage() {
+        return getApplicationResources().commentImage();
+    }
+
+    @Override
+    public String getDefaultTitle() {
+        return CONSTANTS.commentLabel();
+    }
 }

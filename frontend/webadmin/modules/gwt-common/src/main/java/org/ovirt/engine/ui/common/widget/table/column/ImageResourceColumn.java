@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public abstract class ImageResourceColumn<T> extends Column<T, ImageResource> {
 
     private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
-    private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
+    protected static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
     private static final CommonApplicationTemplates TEMPLATES = GWT.create(CommonApplicationTemplates.class);
 
     public ImageResourceColumn() {
