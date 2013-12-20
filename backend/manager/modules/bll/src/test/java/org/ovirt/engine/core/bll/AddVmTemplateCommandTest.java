@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -60,12 +61,15 @@ public class AddVmTemplateCommandTest {
 
         // The cluster to use
         vdsGroup = new VDSGroup();
+        vdsGroup.setcpu_name("Intel Conroe Family");
+        vdsGroup.setArchitecture(ArchitectureType.x86_64);
         vdsGroup.setId(vdsGroupId);
         vdsGroup.setStoragePoolId(spId);
         vdsGroup.setcompatibility_version(Version.v3_2);
         when(vdsGroupDao.get(vdsGroupId)).thenReturn(vdsGroup);
         when(osRepository.getMinimumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(0);
         when(osRepository.getMaximumRam(vm.getVmOsId(), Version.v3_2)).thenReturn(100);
+        when(osRepository.getArchitectureFromOS(14)).thenReturn(ArchitectureType.x86_64);
         AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");
 
         // init the injector with the osRepository instance

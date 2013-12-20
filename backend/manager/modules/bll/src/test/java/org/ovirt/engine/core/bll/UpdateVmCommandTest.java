@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -89,15 +90,19 @@ public class UpdateVmCommandTest {
         when(osRepository.getMaximumRam(0, Version.v3_0)).thenReturn(256);
         when(osRepository.getMaximumRam(0, null)).thenReturn(256);
         when(osRepository.isWindows(0)).thenReturn(false);
+        when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
 
         VmHandler.init();
         vm = new VM();
         vmStatic = new VmStatic();
         group = new VDSGroup();
+        group.setcpu_name("Intel Conroe Family");
         group.setId(Guid.newGuid());
         group.setcompatibility_version(Version.v3_0);
+        group.setArchitecture(ArchitectureType.x86_64);
 
         vm.setVdsGroupId(group.getId());
+        vm.setClusterArch(ArchitectureType.x86_64);
         vmStatic.setVdsGroupId(group.getId());
 
         VmManagementParametersBase params = new VmManagementParametersBase();

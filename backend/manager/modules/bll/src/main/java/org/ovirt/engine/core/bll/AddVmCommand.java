@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageType;
@@ -385,6 +386,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED);
         }
 
+        // A VM cannot be added in a cluster without a defined architecture
+        if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+        }
+
         if (!buildAndCheckDestStorageDomains()) {
             return false;
         }
@@ -398,6 +404,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         VM vmFromParams = getParameters().getVm();
+
+        // check if the selected template is compatible with Cluster architecture.
+        if (!getVmTemplate().getId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID)
+                && getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
+        }
 
         if (StringUtils.isEmpty(vmFromParams.getName())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);

@@ -169,6 +169,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Host CPU type is not supported in this cluster compatibility version or is not supported at all.")
     String CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The VM and the destination cluster architectures do not match.")
+    String ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES();
+
     @DefaultStringValue("The host and destination cluster architectures do not match.")
     String ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES();
 
@@ -274,6 +277,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot fence Host, Host fence is disabled.")
     String VDS_FENCE_DISABLED();
 
+
     @DefaultStringValue("Fence is disabled due to the Engine Service start up sequence.")
     String VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL();
 
@@ -375,6 +379,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The following disks already exist: ${diskAliases}. Please import as a clone.")
     String ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The cluster has an empty processor name.")
+    String ACTION_TYPE_FAILED_CLUSTER_EMPTY_PROCESSOR_NAME();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The cluster does not have a defined architecture.")
+    String ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE();
 
     @DefaultStringValue("Cannot ${action} ${type}: VM is locked. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_VM_IS_LOCKED();
@@ -2085,6 +2095,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Can not ${action} ${type}. The given name is empty.")
     String ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY();
+
+    @DefaultStringValue("Can not ${action} ${type}. The selected template is not compatible with Cluster architecture.")
+    String ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE();
 
     @DefaultStringValue("Can not ${action} ${type}. The given name contains special characters. Only lower-case and upper-case letters, numbers, '_', '-', '.' are allowed.")
     String ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS();

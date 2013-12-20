@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -202,6 +203,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         vm.setStatus(VMStatus.Down);
         vm.setVmtGuid(vmTemplateId);
         vm.setStaticData(getVmStatic());
+        vm.setClusterArch(ArchitectureType.x86_64);
         return vm;
     }
 
@@ -239,6 +241,8 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         group.setvds_group_id(vdsGroupId);
         group.setcompatibility_version(new Version());
         group.setStoragePoolId(storagePoolId);
+        group.setcpu_name("Intel Conroe Family");
+        group.setArchitecture(ArchitectureType.x86_64);
         return group;
     }
 
@@ -249,6 +253,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         VmTemplate template = new VmTemplate();
         template.setId(vmTemplateId);
         template.setStoragePoolId(storagePoolId);
+        template.setClusterArch(ArchitectureType.x86_64);
         setDiskList(template);
 
         return template;

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -107,6 +108,7 @@ public class AddVmCommandTest {
 
         mockOsRepository();
         mockStorageDomainDAOGetForStoragePool();
+        mockVdsGroupDAOReturnVdsGroup();
         mockVmTemplateDAOReturnVmTemplate();
         mockDiskImageDAOGetSnapshotById();
         mockVerifyAddVM(cmd);
@@ -402,6 +404,10 @@ public class AddVmCommandTest {
         when(vmTemplateDAO.get(Matchers.<Guid> any(Guid.class))).thenReturn(createVmTemplate());
     }
 
+    private void mockVdsGroupDAOReturnVdsGroup() {
+        when(vdsGroupDao.get(Matchers.<Guid> any(Guid.class))).thenReturn(createVdsGroup());
+    }
+
     private VmTemplate createVmTemplate() {
         if (vmTemplate == null) {
             vmTemplate = new VmTemplate();
@@ -419,8 +425,12 @@ public class AddVmCommandTest {
     private VDSGroup createVdsGroup() {
         if (vdsGroup == null) {
             vdsGroup = new VDSGroup();
+            vdsGroup.setvds_group_id(Guid.newGuid());
             vdsGroup.setcompatibility_version(Version.v3_3);
+            vdsGroup.setcpu_name("Intel Conroe Family");
+            vdsGroup.setArchitecture(ArchitectureType.x86_64);
         }
+
         return vdsGroup;
     }
 

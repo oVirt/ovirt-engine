@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -191,6 +192,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
+        // A Pool cannot be added in a cluster without a defined architecture
+        if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+        }
+
         VmPool pool = getVmPoolDAO().getByName(getParameters().getVmPool().getName());
         if (pool != null
                 && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getVmPoolId().equals(
@@ -202,6 +208,12 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
+        }
+
+        // check if the selected template is compatible with Cluster architecture.
+        if (!getVmTemplate().getId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID)
+                && getVdsGroup().getArchitecture() != getVmTemplate().getClusterArch()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
         }
 
         if (!verifyAddVM()) {

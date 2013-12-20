@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -88,6 +89,13 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 if (VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId()) &&
                         !FeatureSupported.virtIoScsi(targetCluster.getcompatibility_version())) {
                     return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                }
+
+                // A existing VM cannot be changed into a cluster without a defined architecture
+                if (targetCluster.getArchitecture() == ArchitectureType.undefined) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+                } else if (targetCluster.getArchitecture() != vm.getClusterArch()) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES);
                 }
             } else {
                 addCanDoActionMessage(VdcBllMessages.VM_STATUS_NOT_VALID_FOR_UPDATE);

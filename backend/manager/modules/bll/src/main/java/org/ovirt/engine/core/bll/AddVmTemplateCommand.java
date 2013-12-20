@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -254,6 +255,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
+
+        // A Template cannot be added in a cluster without a defined architecture
+        if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+        }
+
         if (!VmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
                 getVdsGroup().getArchitecture(), getReturnValue().getCanDoActionMessages())) {
             return false;
