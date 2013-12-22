@@ -31,7 +31,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     private String device;
 
     /**
-     * The device name.
+     * The device type.
      */
     private VmDeviceGeneralType type;
 
