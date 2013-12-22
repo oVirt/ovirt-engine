@@ -122,6 +122,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 .addValue("vlan_id", nic.getVlanId())
                 .addValue("mtu", nic.getMtu())
                 .addValue("bridged", nic.isBridged())
+                .addValue("qos_overridden", nic.isQosOverridden())
                 .addValue("labels", SerializationFactory.getSerializer().serialize(nic.getLabels()));
     }
 
@@ -274,6 +275,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
                     entity.setQos(DbFacade.getInstance().getQosDao().get(entity.getId()));
+                    entity.setQosOverridden(rs.getBoolean("qos_overridden"));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                             HashSet.class));
                     return entity;
