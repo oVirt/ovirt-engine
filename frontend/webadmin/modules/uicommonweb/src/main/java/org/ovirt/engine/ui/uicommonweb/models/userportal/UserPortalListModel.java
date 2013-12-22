@@ -623,7 +623,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         tempVar.setInitrdUrl(vm.getInitrdUrl());
         tempVar.setKernelUrl(vm.getKernelUrl());
         tempVar.setKernelParams(vm.getKernelParams());
-        tempVar.setVncKeyboardLayout(vm.getVncKeyboardLayout());
+        tempVar.setDefaultVncKeyboardLayout(vm.getDefaultVncKeyboardLayout());
         VM newvm = tempVar;
 
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
@@ -1050,7 +1050,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         gettempVm().setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage()
                 .getSelectedItem() : ""); //$NON-NLS-1$
         gettempVm().setAutoStartup(model.getIsHighlyAvailable().getEntity());
-        gettempVm().setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
+        gettempVm().setDefaultVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
 
         gettempVm().setInitrdUrl(model.getInitrd_path().getEntity());
         gettempVm().setKernelUrl(model.getKernel_path().getEntity());

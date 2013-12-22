@@ -1,9 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -13,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -32,6 +32,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
@@ -206,6 +208,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     EntityModelRadioButtonEditor displayConsoleVncEditor;
 
     @UiField(provided = true)
+    @Path(value = "vncKeyboardLayout.selectedItem")
+    @WithElementId("vncKeyboardLayout")
+    public ListModelListBoxEditor<String> vncKeyboardLayoutEditor;
+
+    @UiField(provided = true)
     @Path(value = "displayConsole_Spice_IsSelected.entity")
     @WithElementId("displayConsoleSpice")
     EntityModelRadioButtonEditor displayConsoleSpiceEditor;
@@ -255,17 +262,20 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     private final CommonApplicationResources resources;
     private final CommonApplicationConstants constants;
+    private final CommonApplicationMessages messages;
 
     @UiFactory
     protected DisclosurePanel createPanel(String label) {
         return new DisclosurePanel(resources.decreaseIcon(), resources.increaseIcon(), label);
     }
 
-    public VmRunOncePopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources) {
+    public VmRunOncePopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages) {
         this.constants = constants;
         this.resources = resources;
+        this.messages = messages;
         initCheckBoxEditors();
         initRadioButtonEditors();
+        initListBoxEditors();
         initComboBox();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initBootSequenceBox();
@@ -301,6 +311,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
         // Display Protocol
         displayConsoleVncEditor.setLabel(constants.runOncePopupDisplayConsoleVncLabel());
+        vncKeyboardLayoutEditor.setLabel(constants.vncKeyboardLayoutVmPopup());
+
         displayConsoleSpiceEditor.setLabel(constants.runOncePopupDisplayConsoleSpiceLabel());
 
         // Host Tab
@@ -314,6 +326,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         runAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         useAlternateCredentialsEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         cloudInitEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+    }
+
+    void initListBoxEditors() {
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new VncKeyMapRenderer(messages));
     }
 
     void initRadioButtonEditors() {

@@ -3,12 +3,14 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -357,6 +359,16 @@ public abstract class RunOnceModel extends Model
         privateDisplayConsole_Vnc_IsSelected = value;
     }
 
+    private ListModel<String> vncKeyboardLayout;
+
+    public ListModel<String> getVncKeyboardLayout() {
+        return vncKeyboardLayout;
+    }
+
+    public void setVncKeyboardLayout(ListModel<String> vncKeyboardLayout) {
+        this.vncKeyboardLayout = vncKeyboardLayout;
+    }
+
     // Display Protocol tab
 
     private EntityModel privateDisplayConsole_Spice_IsSelected;
@@ -582,6 +594,11 @@ public abstract class RunOnceModel extends Model
         setDisplayConsole_Vnc_IsSelected(new EntityModel());
         getDisplayConsole_Vnc_IsSelected().getEntityChangedEvent().addListener(this);
 
+        setVncKeyboardLayout(new ListModel<String>());
+        getVncKeyboardLayout().getSelectedItemChangedEvent().addListener(this);
+        initVncKeyboardLayout();
+        getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
+
         // Host tab
         setDefaultHost(new ListModel());
         getDefaultHost().getSelectedItemChangedEvent().addListener(this);
@@ -703,6 +720,8 @@ public abstract class RunOnceModel extends Model
         {
             params.setUseVnc((Boolean) getDisplayConsole_Vnc_IsSelected().getEntity());
         }
+
+        params.setVncKeyboardLayout(getVncKeyboardLayout().getSelectedItem());
 
         String selectedDomain = (String) getSysPrepSelectedDomainName().getEntity();
         if (!StringHelper.isNullOrEmpty(selectedDomain)) {
@@ -898,10 +917,12 @@ public abstract class RunOnceModel extends Model
             else if (sender == getDisplayConsole_Vnc_IsSelected() && (Boolean) ((EntityModel) sender).getEntity())
             {
                 getDisplayConsole_Spice_IsSelected().setEntity(false);
+                getVncKeyboardLayout().setIsChangable(true);
             }
             else if (sender == getDisplayConsole_Spice_IsSelected() && (Boolean) ((EntityModel) sender).getEntity())
             {
                 getDisplayConsole_Vnc_IsSelected().setEntity(false);
+                getVncKeyboardLayout().setIsChangable(false);
             }
             else if (sender == getIsAutoAssign())
             {
@@ -1039,4 +1060,17 @@ public abstract class RunOnceModel extends Model
     }
 
     protected abstract void onRunOnce();
+
+    private void initVncKeyboardLayout() {
+
+        List<String> layouts =
+                (List<String>) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
+        List<String> vncKeyboardLayoutItems = new ArrayList<String>();
+        vncKeyboardLayoutItems.add(null);
+        vncKeyboardLayoutItems.addAll(layouts);
+        getVncKeyboardLayout().setItems(vncKeyboardLayoutItems);
+
+        getVncKeyboardLayout().setIsChangable(false);
+    }
+
 }

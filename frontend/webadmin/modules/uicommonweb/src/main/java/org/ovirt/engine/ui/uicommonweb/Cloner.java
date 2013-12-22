@@ -131,6 +131,7 @@ public final class Cloner
         vm.setDisplayIp(instance.getDisplayIp());
         vm.setDisplaySecurePort(instance.getDisplaySecurePort());
         vm.setDisplayType(instance.getDisplayType());
+        vm.getDynamicData().setVncKeyboardLayout(instance.getDynamicData().getVncKeyboardLayout());
         vm.setElapsedTime(instance.getElapsedTime());
         vm.setRoundedElapsedTime(instance.getRoundedElapsedTime());
         vm.setExitMessage(instance.getExitMessage());

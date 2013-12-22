@@ -497,7 +497,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setKernelParams(model.getKernel_parameters().getEntity());
                         vm.setInitrdUrl(model.getInitrd_path().getEntity());
                         vm.setMigrationSupport(model.getMigrationMode().getSelectedItem());
-                        vm.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
+                        vm.setDefaultVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
 
                         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
                         vm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());

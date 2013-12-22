@@ -357,11 +357,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         return vmStatic.getSsoMethod();
     }
 
-    public String getVncKeyboardLayout() {
+    public String getDefaultVncKeyboardLayout() {
         return vmStatic.getVncKeyboardLayout();
     }
 
-    public void setVncKeyboardLayout(String vncKeyboardLayout) {
+    public void setDefaultVncKeyboardLayout(String vncKeyboardLayout) {
         vmStatic.setVncKeyboardLayout(vncKeyboardLayout);
     }
 
@@ -1240,6 +1240,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         // }
         setGuestOs(vm.getGuestOs());
         setDisplayType(vm.getDisplayType());
+        getDynamicData().setVncKeyboardLayout(vm.getVncKeyboardLayout());
         setDisplayIp(vm.getDisplayIp());
         setKvmEnable(vm.getKvmEnable());
         setAcpiEnable(vm.getAcpiEnable());

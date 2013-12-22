@@ -216,7 +216,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         updateVirtioScsiEnabled(getVm().getId());
 
-        getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
+        getModel().getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
 
         Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
                 new INewAsyncCallback() {

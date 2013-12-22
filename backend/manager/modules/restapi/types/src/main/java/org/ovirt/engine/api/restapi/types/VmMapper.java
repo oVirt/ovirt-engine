@@ -430,7 +430,7 @@ public class VmMapper {
             model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
             model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
-            model.getDisplay().setKeyboardLayout(entity.getVncKeyboardLayout());
+            model.getDisplay().setKeyboardLayout(entity.getDefaultVncKeyboardLayout());
         }
         model.setType(map(entity.getVmType(), null));
         model.setStateless(entity.isStateless());
@@ -491,10 +491,16 @@ public class VmMapper {
         if (vm.isSetStateless() && vm.isStateless()) {
             params.setRunAsStateless(true);
         }
-        if (vm.isSetDisplay() && vm.getDisplay().isSetType()) {
-            DisplayType displayType = DisplayType.fromValue(vm.getDisplay().getType());
-            if (displayType != null) {
-                params.setUseVnc(displayType == DisplayType.VNC);
+        if (vm.isSetDisplay()) {
+            if (vm.getDisplay().isSetType()) {
+                DisplayType displayType = DisplayType.fromValue(vm.getDisplay().getType());
+                if (displayType != null) {
+                    params.setUseVnc(displayType == DisplayType.VNC);
+                }
+            }
+            if (vm.getDisplay().isSetKeyboardLayout()) {
+                String vncKeyboardLayout = vm.getDisplay().getKeyboardLayout();
+                params.setVncKeyboardLayout(vncKeyboardLayout);
             }
         }
         if (vm.isSetOs() && vm.getOs().getBoot().size() > 0) {

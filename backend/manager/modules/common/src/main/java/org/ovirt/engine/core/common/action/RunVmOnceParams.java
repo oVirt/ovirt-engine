@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
+import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RunVmOnceParams extends RunVmParams {
@@ -13,6 +16,10 @@ public class RunVmOnceParams extends RunVmParams {
     private String sysPrepPassword;
 
     private CloudInitParameters cloudInitParameters;
+
+    @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
+            groups = { StartEntity.class }, message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
+    private String vncKeyboardLayout;
 
     public RunVmOnceParams() {
     }
@@ -55,6 +62,14 @@ public class RunVmOnceParams extends RunVmParams {
 
     public CloudInitParameters getCloudInitParameters() {
         return cloudInitParameters;
+    }
+
+    public String getVncKeyboardLayout() {
+        return vncKeyboardLayout;
+    }
+
+    public void setVncKeyboardLayout(String vncKeyboardLayout) {
+        this.vncKeyboardLayout = vncKeyboardLayout;
     }
 
 }

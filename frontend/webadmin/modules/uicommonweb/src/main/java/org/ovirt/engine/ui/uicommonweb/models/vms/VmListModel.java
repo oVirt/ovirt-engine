@@ -1324,7 +1324,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setKernelParams(vm.getKernelParams());
         tempVar.setDedicatedVmForVds(vm.getDedicatedVmForVds());
         tempVar.setMigrationSupport(vm.getMigrationSupport());
-        tempVar.setVncKeyboardLayout(vm.getVncKeyboardLayout());
+        tempVar.setDefaultVncKeyboardLayout(vm.getDefaultVncKeyboardLayout());
 
         VM newvm = tempVar;
 
@@ -1922,7 +1922,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setPriority(prioritySelectedItem.getEntity());
 
         getcurrentVm().setCpuPinning(model.getCpuPinning().getEntity());
-        getcurrentVm().setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
+        getcurrentVm().setDefaultVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
 
         if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) {  // $NON-NLS-1$
             getcurrentVm().setCpuShares(model.getCpuSharesAmount().getEntity());

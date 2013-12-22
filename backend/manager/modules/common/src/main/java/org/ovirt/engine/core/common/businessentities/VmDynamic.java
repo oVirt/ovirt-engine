@@ -32,6 +32,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private SessionState session;
     private String displayIp;
     private DisplayType displayType;
+    private String vncKeyboardLayout;
     private Boolean kvmEnable;
     private Integer displaySecurePort;
     private Integer utcDiff;
@@ -65,6 +66,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + ((displayIp == null) ? 0 : displayIp.hashCode());
         result = prime * result + ((displaySecurePort == null) ? 0 : displaySecurePort.hashCode());
         result = prime * result + displayType.hashCode();
+        result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
         result = prime * result + ((consoleCurUserName == null) ? 0 : consoleCurUserName.hashCode());
         result = prime * result + ((guestCurUserName == null) ? 0 : guestCurUserName.hashCode());
         result = prime * result + ((consoleUserId == null) ? 0 : consoleUserId.hashCode());
@@ -119,6 +121,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(displayIp, other.displayIp)
                 && ObjectUtils.objectsEqual(displaySecurePort, other.displaySecurePort)
                 && displayType == other.displayType
+                && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
                 && ObjectUtils.objectsEqual(consoleCurUserName, other.consoleCurUserName)
                 && ObjectUtils.objectsEqual(guestCurUserName, other.guestCurUserName)
                 && ObjectUtils.objectsEqual(consoleUserId, other.consoleUserId)
@@ -382,6 +385,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setDisplayType(DisplayType value) {
         this.displayType = value;
+    }
+
+    public String getVncKeyboardLayout() {
+        return vncKeyboardLayout;
+    }
+
+    public void setVncKeyboardLayout(String vncKeyboardLayout) {
+        this.vncKeyboardLayout = vncKeyboardLayout;
     }
 
     public Boolean getKvmEnable() {

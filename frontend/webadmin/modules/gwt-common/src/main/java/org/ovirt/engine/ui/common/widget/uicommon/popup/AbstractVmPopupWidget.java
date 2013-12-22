@@ -1,31 +1,12 @@
 
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.ButtonBase;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ValueLabel;
-import com.google.gwt.user.client.ui.Widget;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -58,6 +39,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -89,7 +71,29 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ValueLabel;
+import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel> {
 
@@ -910,20 +914,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new AbstractRenderer<String>() {
-
-            final String globalLayout =
-                    (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
-
-            @Override
-            public String render(String object) {
-                if (object == null) {
-                    return messages.globalVncKeyboardLayoutCaption(globalLayout);
-                } else {
-                    return object;
-                }
-            };
-        }, new ModeSwitchingVisibilityRenderer());
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new VncKeyMapRenderer(messages));
 
         // Host Tab
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$

@@ -117,4 +117,18 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
         return super.getVdsWhiteList();
     }
+
+    @Override
+    protected void initVm() {
+        super.initVm();
+
+        if (getParameters().getVncKeyboardLayout() == null) {
+            getVm().getDynamicData().setVncKeyboardLayout(getVm().getDefaultVncKeyboardLayout());
+        } else {
+            // if is not null it means runVM was launch from the run once command, thus
+            // the VM can run with keyboard layout type which is different from its default display type
+            getVm().getDynamicData().setVncKeyboardLayout(getParameters().getVncKeyboardLayout());
+        }
+    }
+
 }

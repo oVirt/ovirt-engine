@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundWidgetPopupView;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmRunOncePopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 
@@ -19,8 +20,8 @@ public class VmRunOncePopupView extends AbstractModelBoundWidgetPopupView<RunOnc
     }
 
     @Inject
-    public VmRunOncePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, new VmRunOncePopupWidget(constants, resources), "490px", "540px"); //$NON-NLS-1$ //$NON-NLS-2$
+    public VmRunOncePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages) {
+        super(eventBus, resources, new VmRunOncePopupWidget(constants, resources, messages), "490px", "540px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

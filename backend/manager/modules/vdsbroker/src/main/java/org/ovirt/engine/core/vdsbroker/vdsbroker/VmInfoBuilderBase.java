@@ -114,10 +114,15 @@ public abstract class VmInfoBuilderBase {
             createInfo.put(VdsProperties.hiberVolHandle,
                     vm.getHibernationVolHandle());
         }
-        String keyboardLayout = vm.getVncKeyboardLayout(); // if set per VM use that value
-        if (keyboardLayout == null) { // otherwise fall back to global setting
-            keyboardLayout = Config.<String> getValue(ConfigValues.VncKeyboardLayout);
+
+        String keyboardLayout = vm.getDynamicData().getVncKeyboardLayout();
+        if (keyboardLayout == null) {
+            keyboardLayout = vm.getDefaultVncKeyboardLayout();
+            if (keyboardLayout == null) {
+                keyboardLayout = Config.<String> getValue(ConfigValues.VncKeyboardLayout);
+            }
         }
+
         createInfo.put(VdsProperties.KeyboardLayout, keyboardLayout);
         if (osRepository.isLinux(vm.getVmOsId())) {
             createInfo.put(VdsProperties.PitReinjection, "false");

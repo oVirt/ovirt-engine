@@ -229,6 +229,7 @@
 		<g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.runOncePopupDisplayProtocolLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel>
 				<e:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
+				<e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
 				<e:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
