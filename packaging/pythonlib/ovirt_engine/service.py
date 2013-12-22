@@ -16,10 +16,12 @@
 
 import logging
 import logging.handlers
+import contextlib
 import optparse
 import os
 import shutil
 import signal
+import socket
 import subprocess
 import sys
 import time
@@ -370,6 +372,25 @@ class Daemon(base.Base):
 
             raise
 
+    def _sd_notify_ready(self):
+        """
+        NOTICE: systemd-notify is not working!
+        SEE: rhbz#820448
+        """
+        with contextlib.closing(
+            socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+        ) as s:
+            e = os.getenv('NOTIFY_SOCKET')
+            if e.startswith('@'):
+                # abstract namespace socket
+                e = '\0%s' % e[1:]
+            s.connect(e)
+            s.sendall('READY=1')
+
+    def _daemonReady(self):
+        if self._options.systemd == 'notify':
+            self._sd_notify_ready()
+
     def _daemon(self):
 
         self.logger.debug('daemon entry pid=%s', os.getpid())
@@ -378,6 +399,8 @@ class Daemon(base.Base):
         os.umask(0o022)
 
         self.daemonSetup()
+
+        self._daemonReady()
 
         stdout, stderr = (sys.stdout, sys.stderr)
         if self._options.redirectOutput:
@@ -446,6 +469,13 @@ class Daemon(base.Base):
             action='store_true',
             default=False,
             help=_('Go into the background'),
+        )
+        parser.add_option(
+            '--systemd',
+            dest='systemd',
+            default='simple',
+            choices=['simple', 'notify'],
+            help=_('Systemd type simple|notify'),
         )
         parser.add_option(
             '--redirect-output',
