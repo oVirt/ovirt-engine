@@ -29,7 +29,7 @@ public class ListModel<T> extends EntityModel<T>
         privateSelectedItemChangedEvent = value;
     }
 
-    public static EventDefinition SelectedItemsChangedEventDefinition;
+    public static EventDefinition selectedItemsChangedEventDefinition;
     private Event privateSelectedItemsChangedEvent;
 
     public Event getSelectedItemsChangedEvent()
@@ -42,7 +42,7 @@ public class ListModel<T> extends EntityModel<T>
         privateSelectedItemsChangedEvent = value;
     }
 
-    public static EventDefinition ItemsChangedEventDefinition;
+    public static EventDefinition itemsChangedEventDefinition;
     private Event privateItemsChangedEvent;
 
     public Event getItemsChangedEvent()
@@ -145,15 +145,15 @@ public class ListModel<T> extends EntityModel<T>
     static
     {
         selectedItemChangedEventDefinition = new EventDefinition("SelectedItemChanged", ListModel.class); //$NON-NLS-1$
-        SelectedItemsChangedEventDefinition = new EventDefinition("SelectedItemsChanged", ListModel.class); //$NON-NLS-1$
-        ItemsChangedEventDefinition = new EventDefinition("ItemsChanged", ListModel.class); //$NON-NLS-1$
+        selectedItemsChangedEventDefinition = new EventDefinition("SelectedItemsChanged", ListModel.class); //$NON-NLS-1$
+        itemsChangedEventDefinition = new EventDefinition("ItemsChanged", ListModel.class); //$NON-NLS-1$
     }
 
     public ListModel()
     {
         setSelectedItemChangedEvent(new Event(selectedItemChangedEventDefinition));
-        setSelectedItemsChangedEvent(new Event(SelectedItemsChangedEventDefinition));
-        setItemsChangedEvent(new Event(ItemsChangedEventDefinition));
+        setSelectedItemsChangedEvent(new Event(selectedItemsChangedEventDefinition));
+        setItemsChangedEvent(new Event(itemsChangedEventDefinition));
     }
 
     protected void onSelectedItemChanging(T newValue, T oldValue)

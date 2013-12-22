@@ -587,7 +587,7 @@ public class CommonModel extends ListModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(SelectedItemsChangedEventDefinition) && sender == getTagList())
+        if (ev.matchesDefinition(selectedItemsChangedEventDefinition) && sender == getTagList())
         {
             tagListModel_SelectedItemsChanged(sender, args);
         }

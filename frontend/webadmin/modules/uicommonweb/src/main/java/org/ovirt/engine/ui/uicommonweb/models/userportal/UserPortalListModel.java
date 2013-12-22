@@ -1325,23 +1325,23 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         super.eventRaised(ev, sender, args);
 
         UnitVmModel model = (UnitVmModel) getWindow();
-        if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDataCenterWithClustersList())
+        if (ev.matchesDefinition(itemsChangedEventDefinition) && sender == model.getDataCenterWithClustersList())
         {
             updateDataCenterWithCluster();
         }
-        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDefaultHost())
+        else if (ev.matchesDefinition(itemsChangedEventDefinition) && sender == model.getDefaultHost())
         {
             vmModel_DefaultHost_ItemsChanged();
         }
-        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDisplayProtocol())
+        else if (ev.matchesDefinition(itemsChangedEventDefinition) && sender == model.getDisplayProtocol())
         {
             vmModel_DisplayProtocol_ItemsChanged();
         }
-        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getPriority())
+        else if (ev.matchesDefinition(itemsChangedEventDefinition) && sender == model.getPriority())
         {
             vmModel_Priority_ItemsChanged();
         }
-        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getTimeZone())
+        else if (ev.matchesDefinition(itemsChangedEventDefinition) && sender == model.getTimeZone())
         {
             vmModel_TimeZone_ItemsChanged();
         }
