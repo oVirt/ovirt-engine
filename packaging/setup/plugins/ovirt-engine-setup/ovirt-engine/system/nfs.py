@@ -33,9 +33,6 @@ from otopi import constants as otopicons
 from otopi import filetransaction
 
 
-from ovirt_engine import configfile
-
-
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import dialog
@@ -46,6 +43,15 @@ class Plugin(plugin.PluginBase):
     """
     NFS and RPCbind services configuration plugin.
     """
+
+    SYSCONFIG_NFS_PARAMS = {
+        'RPCNFSDCOUNT':     '8',
+        'LOCKD_TCPPORT':    '32803',
+        'LOCKD_UDPPORT':    '32769',
+        'RPCMOUNTDOPTS':    '"-p 892"',
+        'RPCRQUOTADOPTS':   '"-p 875"',
+        'STATDARG':         '"-p 662 -o 2020"',
+    }
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -164,9 +170,6 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc(self):
-        config = configfile.ConfigFile([
-            osetupcons.FileLocations.OVIRT_NFS_RHEL_CONFIG
-        ])
         changed_lines = []
         content = []
         if os.path.exists(osetupcons.FileLocations.NFS_RHEL_CONFIG):
@@ -177,9 +180,9 @@ class Plugin(plugin.PluginBase):
                 name=osetupcons.FileLocations.NFS_RHEL_CONFIG,
                 content=osetuputil.editConfigContent(
                     content=content,
-                    params=config.values,
+                    params=self.SYSCONFIG_NFS_PARAMS,
                     changed_lines=changed_lines,
-                    new_line_tpl='{spaces}{param}="{value}"',
+                    new_line_tpl='{spaces}{param}={value}',
                 )
             )
         )

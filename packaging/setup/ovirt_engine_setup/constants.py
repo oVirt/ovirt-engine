@@ -346,11 +346,6 @@ class FileLocations(object):
         'sysconfig',
         'nfs',
     )
-    OVIRT_NFS_RHEL_CONFIG = os.path.join(
-        OVIRT_ENGINE_DATADIR,
-        'conf',
-        'nfs.sysconfig.in'
-    )
     NFS_EXPORT_FILE = os.path.join(
         SYSCONFDIR,
         'exports',

@@ -1,9 +1,0 @@
-# Options specific to ovirt engine.
-# Changing this file will make engine-setup change /etc/sysconfig/nfs.
-# You might want to also change iptables/firewalld.
-RPCNFSDCOUNT=8
-LOCKD_TCPPORT=32803
-LOCKD_UDPPORT=32769
-RPCMOUNTDOPTS="-p 892"
-RPCRQUOTADOPTS="-p 875"
-STATDARG="-p 662 -o 2020"
