@@ -42,7 +42,7 @@ public class DbGroup extends IVdcQueryable {
         name = ldapGroup.getname();
         distinguishedName = ldapGroup.getDistinguishedName();
         active = ldapGroup.isActive();
-        memberOf = new HashSet<String>(ldapGroup.getMemberOf());
+        memberOf = ldapGroup.getMemberOf() != null ? new HashSet<String>(ldapGroup.getMemberOf()) : null;
     }
 
     public Guid getId() {

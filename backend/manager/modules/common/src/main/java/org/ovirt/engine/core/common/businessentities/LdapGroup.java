@@ -34,7 +34,7 @@ public class LdapGroup extends IVdcQueryable {
         domain = dbGroup.getDomain();
         active = dbGroup.isActive();
         distinguishedName = dbGroup.getDistinguishedName();
-        memberOf = new ArrayList<String>(dbGroup.getMemberOf());
+        memberOf = dbGroup.getMemberOf() != null ? new ArrayList<String>(dbGroup.getMemberOf()) : null;
     }
 
     public Guid getid() {
