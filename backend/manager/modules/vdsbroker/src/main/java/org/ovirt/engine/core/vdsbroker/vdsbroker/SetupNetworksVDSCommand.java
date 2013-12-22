@@ -59,11 +59,13 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.STP, network.getStp() ? "yes" : "no");
             }
 
-            if (network.getQosId() != null
-                    && FeatureSupported.hostNetworkQos(getVds().getVdsGroupCompatibilityVersion())) {
+            if (qosConfiguredOnInterface(iface, network)
+                    && FeatureSupported.hostNetworkQos(getDbFacade().getVdsDao()
+                            .get(getParameters().getVdsId())
+                            .getVdsGroupCompatibilityVersion())) {
                 NetworkQosMapper qosMapper =
                         new NetworkQosMapper(opts, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
-                qosMapper.serialize(qosDao.get(network.getQosId()));
+                qosMapper.serialize(iface.isQosOverridden() ? iface.getQos() : qosDao.get(network.getQosId()));
             }
 
             networks.put(network.getName(), opts);
@@ -74,6 +76,14 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         }
 
         return networks;
+    }
+
+    private boolean qosConfiguredOnInterface(VdsNetworkInterface iface, Network network) {
+        if (iface.isQosOverridden()) {
+            return iface.getQos() != null;
+        } else {
+            return network.getQosId() != null;
+        }
     }
 
     private void addBootProtocol(Map<String, Object> opts, VdsNetworkInterface iface) {

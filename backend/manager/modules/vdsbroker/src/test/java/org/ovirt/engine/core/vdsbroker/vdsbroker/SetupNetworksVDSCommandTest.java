@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameter
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -201,6 +202,19 @@ public class SetupNetworksVDSCommandTest {
         qos(network, iface, qos, true);
     }
 
+    @Test
+    public void qosOnInterface() {
+        Network network = createNetwork(null);
+        VdsNetworkInterface iface = createNic("eth0", null, null, network.getName());
+
+        NetworkQoS qos = createQos();
+        iface.setQos(qos);
+        iface.setQosOverridden(true);
+        when(qosDao.get(any(Guid.class))).thenReturn(createQos());
+
+        qos(network, iface, qos, true);
+    }
+
     /**
      * Verify that the method on the host was called, capturing the sent arguments for tests done later.
      */
@@ -259,9 +273,13 @@ public class SetupNetworksVDSCommandTest {
             SetupNetworksVdsCommandParameters parameters) {
         final DbFacade dbFacade = mock(DbFacade.class);
         final VdsStaticDAO vdsStaticDao = mock(VdsStaticDAO.class);
+        final VdsDAO vdsDao = mock(VdsDAO.class);
 
         when(dbFacade.getVdsStaticDao()).thenReturn(vdsStaticDao);
+        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
         when(dbFacade.getQosDao()).thenReturn(qosDao);
+
+        when(vdsDao.get(any(Guid.class))).thenReturn(host);
 
         // No way to avoid these calls by regular mocking, so must implement anonymously.
         return new SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters>(parameters) {
@@ -274,11 +292,6 @@ public class SetupNetworksVDSCommandTest {
             @Override
             protected DbFacade getDbFacade() {
                 return dbFacade;
-            }
-
-            @Override
-            protected VDS getVds() {
-                return host;
             }
         };
     }

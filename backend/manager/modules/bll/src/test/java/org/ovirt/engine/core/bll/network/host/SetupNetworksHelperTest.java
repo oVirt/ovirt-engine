@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -52,7 +53,10 @@ public class SetupNetworksHelperTest {
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
             MANAGEMENT_NETWORK_NAME),
             mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_3.toString(), true),
-            mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_2.toString(), false));
+            mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_2.toString(), false),
+            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_2.toString(), false),
+            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_3.toString(), false),
+            mockConfig(ConfigValues.HostNetworkQosSupported, new Version(3, 4).toString(), true));
 
     @Mock
     private NetworkDao networkDAO;
@@ -204,9 +208,9 @@ public class SetupNetworksHelperTest {
 
         VDS vds = mock(VDS.class);
         when(vds.getId()).thenReturn(Guid.Empty);
-        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_2);
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
+        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_2);
 
         validateAndExpectViolation(helper, VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY, nic.getNetworkName());
     }
@@ -340,6 +344,58 @@ public class SetupNetworksHelperTest {
 
         validateAndExpectViolation(helper,
                 VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED);
+    }
+
+    @Test
+    public void qosNotSupported() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        mockExistingIfaces(iface);
+        iface.setQosOverridden(true);
+
+        VDS host = mock(VDS.class);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), host);
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                MANAGEMENT_NETWORK_NAME);
+    }
+
+    @Test
+    public void qosOverridden() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        mockExistingIfaces(iface);
+        iface.setQosOverridden(true);
+
+        VDS host = mock(VDS.class);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), host);
+        when(host.getVdsGroupCompatibilityVersion()).thenReturn(new Version(3, 4));
+
+        validateAndAssertQosOverridden(helper, iface);
+    }
+
+    @Test
+    public void qosValuesModified() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        iface.setQosOverridden(true);
+        mockExistingIfaces(iface);
+
+        NetworkQoS qos = new NetworkQoS();
+        qos.setInboundAverage(30);
+        qos.setInboundPeak(30);
+        qos.setInboundBurst(30);
+        iface.setQos(qos);
+
+        VDS host = mock(VDS.class);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), host);
+        when(host.getVdsGroupCompatibilityVersion()).thenReturn(new Version(3, 4));
+
+        validateAndAssertNetworkModified(helper, network);
     }
 
     /* --- Tests for external networks --- */
@@ -522,6 +578,27 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForSync(nic));
 
         validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void syncNetworkQosOverridden() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        iface.setBridged(!network.isVmNetwork());
+        mockExistingIfaces(iface);
+        iface.setQosOverridden(true);
+
+        VDS host = mock(VDS.class);
+        SetupNetworksHelper helper = createHelper(createParametersForSync(iface), host);
+        when(host.getVdsGroupCompatibilityVersion()).thenReturn(new Version(3, 4));
+
+        validateAndExpectNoViolations(helper);
+        assertNoBondsRemoved(helper);
+        assertNoBondsModified(helper);
+        assertNoNetworksRemoved(helper);
+        assertNetworkModified(helper, network);
+        assertInterfaceModified(helper, iface);
     }
 
     @Test
@@ -1324,6 +1401,7 @@ public class SetupNetworksHelperTest {
         assertNoNetworksModified(helper);
         assertNoNetworksRemoved(helper);
         assertNoBondsRemoved(helper);
+        assertNoInterfacesModified(helper);
     }
 
     private void validateAndAssertNetworkModified(SetupNetworksHelper helper, Network net) {
@@ -1332,6 +1410,16 @@ public class SetupNetworksHelperTest {
         assertNetworkModified(helper, net);
         assertNoNetworksRemoved(helper);
         assertNoBondsRemoved(helper);
+        assertNoInterfacesModified(helper);
+    }
+
+    private void validateAndAssertQosOverridden(SetupNetworksHelper helper, VdsNetworkInterface iface) {
+        validateAndExpectNoViolations(helper);
+        assertNoBondsModified(helper);
+        assertNoNetworksModified(helper);
+        assertNoNetworksRemoved(helper);
+        assertNoBondsRemoved(helper);
+        assertInterfaceModified(helper, iface);
     }
 
     private void assertBondRemoved(SetupNetworksHelper helper, String expectedBondName) {
@@ -1390,6 +1478,23 @@ public class SetupNetworksHelperTest {
                 0, helper.getBonds().size());
     }
 
+    private void assertInterfaceModified(SetupNetworksHelper helper, VdsNetworkInterface iface) {
+        Set<String> modifiedNames = new HashSet<String>();
+        for (VdsNetworkInterface modifiedIface : helper.getModifiedInterfaces()) {
+            modifiedNames.add(modifiedIface.getName());
+        }
+        assertTrue(MessageFormat.format("Expected interface ''{0}'' to be modified but it wasn''t. Modified interfaces: {1}",
+                iface, helper.getModifiedInterfaces()),
+                modifiedNames.contains(iface.getName()));
+    }
+
+    private void assertNoInterfacesModified(SetupNetworksHelper helper) {
+        assertEquals(MessageFormat.format("Expected no interfaces to be modified, but the following interfaces were: {0}",
+                helper.getModifiedInterfaces()),
+                0,
+                helper.getModifiedInterfaces().size());
+    }
+
     /**
      * @param networkName
      *            The network's name.
@@ -1433,6 +1538,7 @@ public class SetupNetworksHelperTest {
             String networkName,
             boolean bridged,
             String address,
+            boolean qosOverridden,
             Set<String> labels) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setId(id);
@@ -1443,6 +1549,7 @@ public class SetupNetworksHelperTest {
         iface.setNetworkName(networkName);
         iface.setBridged(bridged);
         iface.setAddress(address);
+        iface.setQosOverridden(qosOverridden);
         iface.setLabels(labels);
         return iface;
     }
@@ -1455,7 +1562,7 @@ public class SetupNetworksHelperTest {
      * @return {@link VdsNetworkInterface} representing a regular NIC with the given parameters.
      */
     private VdsNetworkInterface createNic(String nicName, String networkName) {
-        return createVdsInterface(Guid.newGuid(), nicName, false, null, null, networkName, true, null, null);
+        return createVdsInterface(Guid.newGuid(), nicName, false, null, null, networkName, true, null, false, null);
     }
 
     /**
@@ -1489,6 +1596,7 @@ public class SetupNetworksHelperTest {
                 network.getName(),
                 network.isVmNetwork(),
                 network.getAddr(),
+                false,
                 null);
         return nic;
     }
@@ -1515,7 +1623,7 @@ public class SetupNetworksHelperTest {
      * @return Bond with the given parameters.
      */
     private VdsNetworkInterface createBond(String name, String networkName) {
-        return createVdsInterface(Guid.newGuid(), name, true, null, null, networkName, true, null, null);
+        return createVdsInterface(Guid.newGuid(), name, true, null, null, networkName, true, null, false, null);
     }
 
     /**
@@ -1536,6 +1644,7 @@ public class SetupNetworksHelperTest {
                 networkName,
                 true,
                 null,
+                false,
                 null);
     }
 
@@ -1549,7 +1658,7 @@ public class SetupNetworksHelperTest {
      * @return NIC from given NIC which is either enslaved or freed.
      */
     private VdsNetworkInterface enslaveOrReleaseNIC(VdsNetworkInterface iface, String bondName) {
-        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null, true, null, null);
+        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null, true, null, false, null);
     }
 
     /**
@@ -1667,6 +1776,7 @@ public class SetupNetworksHelperTest {
                     nics[i].getNetworkName(),
                     nics[i].isBridged(),
                     nics[i].getAddress(),
+                    nics[i].isQosOverridden(),
                     nics[i].getLabels()));
         }
         when(interfaceDAO.getAllInterfacesForVds(any(Guid.class))).thenReturn(existingIfaces);
@@ -1679,6 +1789,8 @@ public class SetupNetworksHelperTest {
     }
 
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds) {
+        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_3);
+
         SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, vds));
 
         when(helper.getVmInterfaceManager()).thenReturn(vmInterfaceManager);

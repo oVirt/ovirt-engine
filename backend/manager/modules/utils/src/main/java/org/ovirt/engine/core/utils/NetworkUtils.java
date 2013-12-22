@@ -172,7 +172,7 @@ public final class NetworkUtils {
         return (network.getMtu() == 0 || iface.getMtu() == network.getMtu())
                 && Objects.equals(iface.getVlanId(), network.getVlanId())
                 && iface.isBridged() == network.isVmNetwork()
-                && isQosInSync(iface, qos);
+                && (isQosInSync(iface, qos) || iface.isQosOverridden());
     }
 
     private static boolean isQosInSync(VdsNetworkInterface iface, NetworkQoS networkQos) {

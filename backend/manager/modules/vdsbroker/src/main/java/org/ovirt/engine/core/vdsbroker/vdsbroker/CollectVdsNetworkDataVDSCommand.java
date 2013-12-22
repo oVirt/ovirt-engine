@@ -190,6 +190,7 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
                 // everything else is what we got from getVdsCapabilities
                 vdsIface.setId(dbIface.getId());
                 vdsIface.setLabels(dbIface.getLabels());
+                vdsIface.setQosOverridden(dbIface.isQosOverridden());
                 dbIfacesToBatch.add(vdsIface);
                 updatedIfaces.add(vdsIface.getName());
             } else {
@@ -222,6 +223,7 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
             if (nicsByName.containsKey(nicForUpdate.getName())) {
                 VdsNetworkInterface nic = nicsByName.get(nicForUpdate.getName());
                 nicForUpdate.setLabels(nic.getLabels());
+                nicForUpdate.setQosOverridden(nic.isQosOverridden());
             }
         }
     }

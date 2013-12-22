@@ -12,7 +12,9 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -37,7 +39,7 @@ public class SetupNetworksHelper {
     private List<String> removedNetworks = new ArrayList<String>();
     private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
     private Set<String> removedBonds = new HashSet<String>();
-    private List<VdsNetworkInterface> modifiedLabeledInterfaces = new ArrayList<>();
+    private List<VdsNetworkInterface> modifiedInterfaces = new ArrayList<>();
 
     /** All interface`s names that were processed by the helper. */
     private Set<String> ifaceNames = new HashSet<String>();
@@ -91,9 +93,10 @@ public class SetupNetworksHelper {
         validateBondSlavesCount();
         extractRemovedNetworks();
         extractRemovedBonds();
-        extractModifiedLabeledInterfaces();
+        extractModifiedInterfaces();
         detectSlaveChanges();
         validateMTU();
+        validateNetworkQos();
         validateNotRemovingLabeledNetworks();
 
         return translateViolations();
@@ -123,16 +126,18 @@ public class SetupNetworksHelper {
         }
     }
 
-    private void extractModifiedLabeledInterfaces() {
+    private void extractModifiedInterfaces() {
         for (VdsNetworkInterface nic : params.getInterfaces()) {
             VdsNetworkInterface existingNic = getExistingIfaces().get(nic.getName());
             if (existingNic != null) {
                 Set<String> newLabels = nic.getLabels() == null ? Collections.<String> emptySet() : nic.getLabels();
                 Set<String> existingLabels =
                         existingNic.getLabels() == null ? Collections.<String> emptySet() : existingNic.getLabels();
-                if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)) {
+                if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)
+                        || nic.isQosOverridden() != existingNic.isQosOverridden()) {
                     existingNic.setLabels(newLabels);
-                    modifiedLabeledInterfaces.add(existingNic);
+                    existingNic.setQosOverridden(nic.isQosOverridden());
+                    modifiedInterfaces.add(existingNic);
                 }
             }
         }
@@ -185,6 +190,29 @@ public class SetupNetworksHelper {
         }
         addViolation(VdcBllMessages.NETWORK_MTU_DIFFERENCES,
                 String.format("[%s]", StringUtils.join(mtuDiffNetworks, ", ")));
+    }
+
+    /**
+     * Validates that the feature is supported if any QoS configuration was specified, and that the values associated
+     * with it are valid.
+     */
+    private void validateNetworkQos() {
+        boolean featureSupported = FeatureSupported.hostNetworkQos(vds.getVdsGroupCompatibilityVersion());
+        for (VdsNetworkInterface iface : params.getInterfaces()) {
+            if (iface.isQosOverridden()) {
+                if (!featureSupported) {
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, iface.getNetworkName());
+                }
+
+                NetworkQosValidator qosValidator = new NetworkQosValidator(iface.getQos());
+                if (qosValidator.allValuesPresent() != ValidationResult.VALID) {
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES, iface.getNetworkName());
+                }
+                if (qosValidator.peakConsistentWithAverage() != ValidationResult.VALID) {
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE, iface.getNetworkName());
+                }
+            }
+        }
     }
 
     /**
@@ -470,7 +498,8 @@ public class SetupNetworksHelper {
 
         return !ObjectUtils.equals(iface.getNetworkName(), existingIface.getNetworkName())
                 || iface.getBootProtocol() != existingIface.getBootProtocol()
-                || staticBootProtoPropertiesChanged(iface, existingIface);
+                || staticBootProtoPropertiesChanged(iface, existingIface)
+                || !ObjectUtils.equals(iface.getQos(), existingIface.getQos());
     }
 
     /**
@@ -634,8 +663,8 @@ public class SetupNetworksHelper {
         return removedBonds;
     }
 
-    public List<VdsNetworkInterface> getModifiedLabeledInterfaces() {
-        return modifiedLabeledInterfaces;
+    public List<VdsNetworkInterface> getModifiedInterfaces() {
+        return modifiedInterfaces;
     }
 
     public VmInterfaceManager getVmInterfaceManager() {

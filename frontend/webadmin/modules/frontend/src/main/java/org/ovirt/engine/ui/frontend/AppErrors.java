@@ -2396,6 +2396,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There is Network QoS on the profile, this is not supported for clusters of version ${clusterVersion}.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_IS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Host Network QoS is not supported in this host's cluster compatibility version, but QoS was configured on the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST}.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Updating the virtual machine interface while the virtual machine is running is not supported for clusters of version ${clusterVersion}.")
     String HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED();
 
@@ -2825,6 +2828,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Peak cannot be set lower than Average.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. All three QoS parameters are required to configure QoS in a certain direction, but the following network(s) are missing some of them: ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES_LIST}.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. QoS cannot be configured such that Peak is set lower than Average, but it was configured so on the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE_LIST}.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE();
 
     @DefaultStringValue("QoS name cannot be empty.")
     String QOS_NAME_NOT_NULL();

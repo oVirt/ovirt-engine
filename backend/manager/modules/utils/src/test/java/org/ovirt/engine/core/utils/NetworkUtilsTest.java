@@ -189,6 +189,19 @@ public class NetworkUtilsTest {
     }
 
     @Test
+    public void calculateNetworkImplementationDetailsNetworkQosOverridden() throws Exception {
+        VdsNetworkInterface iface = createNetworkDevice();
+        iface.setQosOverridden(true);
+        calculateNetworkImplementationDetailsAndAssertSync(iface,
+                true,
+                iface.getNetworkName(),
+                iface.isBridged(),
+                iface.getMtu(),
+                iface.getVlanId(),
+                new NetworkQoS());
+    }
+
+    @Test
     public void interfaceBasedOn() {
         assertTrue(NetworkUtils.interfaceBasedOn(generateVlanName(IFACE_NAME), IFACE_NAME));
     }
