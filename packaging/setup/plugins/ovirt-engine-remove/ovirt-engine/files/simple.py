@@ -83,13 +83,65 @@ class Plugin(plugin.PluginBase):
                 just_add.append(c['removed'])
             else:
                 replace[c['added']] = c['removed']
+        # For checking if remove/replace lines were found, we work on copies,
+        # because there might be duplicate lines in the file.
+        remove_unremoved = just_remove[:]
+        replace_unremoved = replace.copy()
         for line in old_content:
-            if line not in just_remove:
+            if line in just_remove:
+                if line in remove_unremoved:
+                    remove_unremoved.remove(line)
+            else:
                 # should be updated or added
                 if line in replace:
+                    orig_line = line
                     line = replace[line]
+                    if orig_line in replace_unremoved:
+                        del replace_unremoved[orig_line]
                 new_content.append(line)
         new_content.extend(just_add)
+        if remove_unremoved or replace_unremoved:
+            self.logger.warning(
+                _(
+                    'Some changes to {file} could not be reverted. More '
+                    'details can be found in the log.'
+                ).format(
+                    file=filename,
+                )
+            )
+        if remove_unremoved:
+            self.logger.debug(
+                (
+                    'The following lines were not found in {file} and so '
+                    'were not removed:\n{lines}'
+                ).format(
+                    file=filename,
+                    lines='\n'.join(
+                        [
+                            '\t{line}'.format(line=line)
+                            for line in remove_unremoved
+                        ]
+                    ),
+                )
+            )
+        if replace_unremoved:
+            self.logger.debug(
+                (
+                    'The following lines were not found in {file} and so '
+                    'were not reverted to their old content:\n{lines}'
+                ).format(
+                    file=filename,
+                    lines='\n'.join(
+                        [
+                            '\tnew:\t{new}\n\told:\t{old}\n'.format(
+                                new=new,
+                                old=old,
+                            )
+                            for new, old in replace_unremoved.items()
+                        ]
+                    ),
+                )
+            )
 
         if new_content != old_content:
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
