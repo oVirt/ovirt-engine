@@ -25,7 +25,7 @@ public class LoginModel extends Model
     public static final String BeginLoginStage = "BeginTest"; //$NON-NLS-1$
     public static final String EndLoginStage = "EndTest"; //$NON-NLS-1$
 
-    public static EventDefinition LoggedInEventDefinition;
+    public static EventDefinition loggedInEventDefinition;
     private Event privateLoggedInEvent;
 
     public Event getLoggedInEvent()
@@ -38,7 +38,7 @@ public class LoginModel extends Model
         privateLoggedInEvent = value;
     }
 
-    public static EventDefinition LoginFailedEventDefinition;
+    public static EventDefinition loginFailedEventDefinition;
     private Event privateLoginFailedEvent;
 
     public Event getLoginFailedEvent()
@@ -132,14 +132,14 @@ public class LoginModel extends Model
 
     static
     {
-        LoggedInEventDefinition = new EventDefinition("LoggedIn", LoginModel.class); //$NON-NLS-1$
-        LoginFailedEventDefinition = new EventDefinition("LoginFailed", LoginModel.class); //$NON-NLS-1$
+        loggedInEventDefinition = new EventDefinition("LoggedIn", LoginModel.class); //$NON-NLS-1$
+        loginFailedEventDefinition = new EventDefinition("LoginFailed", LoginModel.class); //$NON-NLS-1$
     }
 
     public LoginModel()
     {
-        setLoggedInEvent(new Event(LoggedInEventDefinition));
-        setLoginFailedEvent(new Event(LoginFailedEventDefinition));
+        setLoggedInEvent(new Event(loggedInEventDefinition));
+        setLoginFailedEvent(new Event(loginFailedEventDefinition));
 
         UICommand tempVar = new UICommand("Login", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(false);
