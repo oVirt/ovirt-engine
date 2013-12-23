@@ -248,6 +248,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     EntityModelCheckBoxEditor enableTrustedServiceEditor;
 
     @UiField(provided = true)
+    @Path(value = "enableHaReservation.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor enableHaReservationEditor;
+
+    @UiField(provided = true)
     @Path(value = "clusterPolicy.selectedItem")
     @WithElementId
     ListModelListBoxEditor<ClusterPolicy> clusterPolicyEditor;
@@ -341,6 +346,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
         enableTrustedServiceEditor.setContentWidgetStyleName(style.fullWidth());
+        enableHaReservationEditor.setContentWidgetStyleName(style.fullWidth());
     }
 
     private void localize(ApplicationConstants constants) {
@@ -383,6 +389,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         additionPropsPanelTitle.setText(constants.clusterPolicyAdditionalPropsPanelTitle());
         enableTrustedServiceEditor.setLabel(constants.clusterPolicyEnableTrustedServiceLabel());
+        enableHaReservationEditor.setLabel(constants.clusterPolicyEnableHaReservationLabel());
         clusterPolicyEditor.setLabel(constants.clusterPolicySelectPolicyLabel());
 
         enableBallooning.setLabel(constants.enableBallooningLabel());
@@ -462,6 +469,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableTrustedServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        enableHaReservationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableBallooning = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableBallooning.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$

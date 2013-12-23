@@ -13,7 +13,8 @@ public enum EventNotificationEntity {
     GlusterVolume(ApplicationMode.GlusterOnly),
     GlusterHook(ApplicationMode.GlusterOnly),
     GlusterService(ApplicationMode.GlusterOnly),
-    DWH(ApplicationMode.VirtOnly);
+    DWH(ApplicationMode.VirtOnly),
+    VdsGroup(ApplicationMode.VirtOnly);
 
 
     private int availableInModes;

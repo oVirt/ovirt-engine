@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -35,6 +36,8 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -58,6 +61,7 @@ public class SchedulingManager {
                 if (instance == null) {
                     instance = new SchedulingManager();
                     enableLoadBalancer();
+                    enableHaReservationCheck();
                 }
             }
         }
@@ -742,6 +746,53 @@ public class SchedulingManager {
             log.info("Finished scheduling to enable vds load balancer");
         }
     }
+
+    public static void enableHaReservationCheck() {
+
+        if (Config.<Boolean> getValue(ConfigValues.EnableVdsLoadBalancing)) {
+            log.info("Start HA Reservation check");
+            Integer interval = Config.<Integer> getValue(ConfigValues.VdsHaReservationIntervalInMinutes);
+            SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance,
+                    "performHaResevationCheck",
+                    new Class[] {},
+                    new Object[] {},
+                    interval,
+                    interval,
+                    TimeUnit.MINUTES);
+            log.info("Finished HA Reservation check");
+        }
+
+    }
+
+    @OnTimerMethodAnnotation("performHaResevationCheck")
+    public void performHaResevationCheck() {
+
+        log.debug("HA Reservation check timer entered.");
+        List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAll();
+        if (clusters != null) {
+            HaReservationHandling haReservationHandling = new HaReservationHandling();
+            for (VDSGroup cluster : clusters) {
+                if (cluster.supportsHaReservation()) {
+                    List<VDS> returnedFailedHosts = new ArrayList<VDS>();
+                    boolean status =
+                            haReservationHandling.checkHaReservationStatusForCluster(cluster, returnedFailedHosts);
+                    if (!status) {
+                        // create Alert using returnedFailedHosts
+                        AuditLogableBase logable = new AuditLogableBase();
+                        logable.setVdsGroupId(cluster.getId());
+                        logable.addCustomValue("ClusterName", cluster.getName());
+
+                        String failedHostsStr = StringUtils.join(returnedFailedHosts, ", ");
+                        logable.addCustomValue("Hosts", failedHostsStr);
+                        AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
+                        log.infoFormat("Cluster: {0} fail to pass HA reservation check.", cluster.getName());
+                    }
+                }
+            }
+        }
+        log.debug("HA Reservation check timer finished.");
+    }
+
 
     @OnTimerMethodAnnotation("performLoadBalancing")
     public void performLoadBalancing() {

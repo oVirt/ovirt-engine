@@ -1537,7 +1537,7 @@ actions:
         optionalArguments: {cluster.description: 'xs:string', cluster.comment: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
         cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
-        cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string'}
+        cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean',  cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string'}
         description: add a new cluster to the system
     urlparams: {}
     headers:
@@ -1865,7 +1865,7 @@ actions:
         optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
-        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean',
+        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean',
         cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string'}
         description: update specified cluster in the data center
     urlparams: {}

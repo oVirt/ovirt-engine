@@ -836,7 +836,10 @@ public enum AuditLogType {
 
     //mom policies
     USER_UPDATED_MOM_POLICIES(10200),
-    USER_FAILED_TO_UPDATE_MOM_POLICIES(10201);
+    USER_FAILED_TO_UPDATE_MOM_POLICIES(10201),
+
+    // HA Reservation
+    CLUSTER_ALERT_HA_RESERVATION(10300, AuditLogTimeInterval.HOUR.getValue());
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.

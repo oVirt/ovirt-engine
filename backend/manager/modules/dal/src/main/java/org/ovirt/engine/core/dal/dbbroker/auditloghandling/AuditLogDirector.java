@@ -694,6 +694,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.CLUSTER_ALERT_HA_RESERVATION, AuditLogSeverity.ALERT);
     }
 
     private static void initTagSeverities() {

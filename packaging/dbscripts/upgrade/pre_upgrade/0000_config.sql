@@ -602,6 +602,12 @@ select fn_db_add_config_value('DwhHeartBeatInterval', '30', 'general');
 select fn_db_add_config_value('GlanceImageListSize','20','general');
 select fn_db_add_config_value('GlanceImageTotalListSize','500','general');
 
+-- Cluster HA Reservation
+select fn_db_add_config_value('OverUtilizationForHaReservation','200','general');
+select fn_db_add_config_value('ScaleDownForHaReservation','1','general');
+select fn_db_add_config_value('EnableVdsHaReservation','true','general');
+select fn_db_add_config_value('VdsHaReservationIntervalInMinutes','5','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

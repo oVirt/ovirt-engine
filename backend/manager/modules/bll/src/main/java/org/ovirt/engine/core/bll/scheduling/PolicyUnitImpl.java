@@ -9,6 +9,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationBalancePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
@@ -49,6 +51,14 @@ public class PolicyUnitImpl extends PolicyUnit {
             } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
                 return new HostedEngineHAClusterFilterPolicyUnit(policyUnit);
             }
+        case "OptimalForHaReservation":
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+                return new HaReservationWeightPolicyUnit(policyUnit);
+            }
+            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+                return new HaReservationBalancePolicyUnit(policyUnit);
+            }
+            break;
         case "CPU-Level":
             return new CpuLevelFilterPolicyUnit(policyUnit);
         case "None":

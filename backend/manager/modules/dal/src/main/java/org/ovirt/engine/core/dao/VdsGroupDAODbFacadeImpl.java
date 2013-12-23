@@ -181,6 +181,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("emulated_machine", group.getEmulatedMachine())
                 .addValue("detect_emulated_machine", group.isDetectEmulatedMachine())
                 .addValue("trusted_service", group.supportsTrustedService())
+                .addValue("ha_reservation", group.supportsHaReservation())
                 .addValue("cluster_policy_id", group.getClusterPolicyId())
                 .addValue("cluster_policy_custom_properties",
                                 SerializationFactory.getSerializer().serialize(group.getClusterPolicyProperties()))
@@ -222,6 +223,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
             entity.setDetectEmulatedMachine(rs.getBoolean("detect_emulated_machine"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
+            entity.setHaReservation(rs.getBoolean("ha_reservation"));
             entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
             entity.setClusterPolicyName(rs.getString("cluster_policy_name"));
             entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()

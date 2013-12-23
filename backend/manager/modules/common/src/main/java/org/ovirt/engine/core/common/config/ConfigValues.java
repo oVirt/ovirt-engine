@@ -389,9 +389,15 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableVdsLoadBalancing,
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    EnableVdsHaReservation,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     VdsLoadBalancingeIntervalInMinutes,
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    VdsHaReservationIntervalInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
@@ -404,6 +410,13 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     HighUtilizationForEvenlyDistribute,
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("200")
+    OverUtilizationForHaReservation,
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1")
+    ScaleDownForHaReservation,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")

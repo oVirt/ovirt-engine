@@ -139,6 +139,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable Trusted Service")
     String clusterPolicyEnableTrustedServiceLabel();
 
+    @DefaultStringValue("Enable HA Reservation")
+    String clusterPolicyEnableHaReservationLabel();
+
     @DefaultStringValue("Enable Memory Balloon Optimization")
     String enableBallooningLabel();
 

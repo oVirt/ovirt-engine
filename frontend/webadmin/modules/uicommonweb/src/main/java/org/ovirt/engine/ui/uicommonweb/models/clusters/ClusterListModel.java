@@ -341,6 +341,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.setEntity(cluster);
         clusterModel.init(true);
         clusterModel.getEnableTrustedService().setEntity(cluster.supportsTrustedService());
+        clusterModel.getEnableHaReservation().setEntity(cluster.supportsHaReservation());
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
         clusterModel.setHashName("edit_cluster"); //$NON-NLS-1$
@@ -695,6 +696,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
         cluster.setTrustedService(model.getEnableTrustedService().getEntity());
+        cluster.setHaReservation(model.getEnableHaReservation().getEntity());
         cluster.setClusterPolicyId(model.getClusterPolicy().getSelectedItem().getId());
         cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().serialize()));
         if (model.getOptimizeForSpeed().getEntity()) {

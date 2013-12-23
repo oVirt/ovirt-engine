@@ -68,6 +68,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private boolean trustedService;
 
+    private boolean haReservation;
+
     private Guid clusterPolicyId;
 
     private String clusterPolicyName;
@@ -243,6 +245,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         return trustedService;
     }
 
+    public boolean supportsHaReservation() {
+        return haReservation;
+    }
+
+    public void setHaReservation(boolean haReservation) {
+        this.haReservation = haReservation;
+    }
+
     public Guid getClusterPolicyId() {
         return clusterPolicyId;
     }
@@ -328,6 +338,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (tunnelMigration ? 1231 : 1237);
         result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
         result = prime * result + (trustedService ? 1231 : 1237);
+        result = prime * result + (haReservation ? 1231 : 1237);
         result = prime * result + ((clusterPolicyName == null) ? 0 : clusterPolicyName.hashCode());
         result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
         result = prime * result + (enableBallooning ? 1231 : 1237);
@@ -364,6 +375,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && tunnelMigration == other.tunnelMigration
                 && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine)
                 && trustedService == other.trustedService
+                && haReservation == other.haReservation
                 && ObjectUtils.objectsEqual(clusterPolicyId, other.clusterPolicyId)
                 && ObjectUtils.objectsEqual(clusterPolicyName, other.clusterPolicyName)
                 && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties)

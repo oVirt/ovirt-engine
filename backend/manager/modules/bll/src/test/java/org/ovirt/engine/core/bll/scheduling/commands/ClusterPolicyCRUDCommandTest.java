@@ -15,7 +15,8 @@ public class ClusterPolicyCRUDCommandTest {
 
     @Rule
     public MockConfigRule mockConfigRule =
-            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.EnableVdsLoadBalancing, false));
+            new MockConfigRule((MockConfigRule.mockConfig(ConfigValues.EnableVdsLoadBalancing, false)),
+                    (MockConfigRule.mockConfig(ConfigValues.EnableVdsHaReservation, false)));
 
     @Test
     public void testCheckAddEditValidations() {

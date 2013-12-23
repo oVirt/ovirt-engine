@@ -195,6 +195,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String EventNotificationEntity___Host();
 
+    String EventNotificationEntity___VdsGroup();
+
     String EventNotificationEntity___VirtHost();
 
     String EventNotificationEntity___Vm();
@@ -250,6 +252,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___IRS_DISK_SPACE_LOW_ERROR();
 
     String AuditLogType___VDC_STOP();
+
+    String AuditLogType___CLUSTER_ALERT_HA_RESERVATION();
 
     // Gluster Audit log types
     String AuditLogType___GLUSTER_VOLUME_CREATE();

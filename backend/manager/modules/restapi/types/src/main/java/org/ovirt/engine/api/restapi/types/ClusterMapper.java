@@ -89,6 +89,9 @@ public class ClusterMapper {
         if (model.isSetTrustedService()){
             entity.setTrustedService(model.isTrustedService());
         }
+        if (model.isSetHaReservation()) {
+            entity.setHaReservation(model.isHaReservation());
+        }
         if (model.isSetBallooningEnabled()) {
             entity.setEnableBallooning(model.isBallooningEnabled());
         }
@@ -132,6 +135,7 @@ public class ClusterMapper {
         model.setThreadsAsCores(entity.getCountThreadsAsCores());
         model.setTunnelMigration(entity.isTunnelMigration());
         model.setTrustedService(entity.supportsTrustedService());
+        model.setHaReservation(entity.supportsHaReservation());
         model.setBallooningEnabled(entity.isEnableBallooning());
         if (StringUtils.isNotBlank(entity.getSpiceProxy())) {
             Display display = new Display();

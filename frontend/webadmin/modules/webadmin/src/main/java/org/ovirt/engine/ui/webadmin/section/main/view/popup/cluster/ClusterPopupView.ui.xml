@@ -240,6 +240,7 @@
 								<g:FlowPanel ui:field="additionPropsPanel" addStyleNames="{style.nestedSubsequentPanel}">
 									<g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.panelTitle}" />
 									<ge:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" />
+									<ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" />
 								</g:FlowPanel>
 							</g:FlowPanel>
 						</t:content>

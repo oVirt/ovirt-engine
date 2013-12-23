@@ -656,6 +656,16 @@ public class ClusterModel extends EntityModel
 
     private EntityModel<Boolean> privateEnableTrustedService;
 
+    private EntityModel<Boolean> privateEnableHaReservation;
+
+    public EntityModel<Boolean> getEnableHaReservation() {
+        return privateEnableHaReservation;
+    }
+
+    public void setEnableHaReservation(EntityModel<Boolean> value) {
+        this.privateEnableHaReservation = value;
+    }
+
     public EntityModel<Boolean> getEnableTrustedService() {
         return privateEnableTrustedService;
     }
@@ -730,6 +740,7 @@ public class ClusterModel extends EntityModel
         setDescription(new EntityModel<String>());
         setComment(new EntityModel<String>());
         setEnableTrustedService(new EntityModel<Boolean>(false));
+        setEnableHaReservation(new EntityModel<Boolean>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
