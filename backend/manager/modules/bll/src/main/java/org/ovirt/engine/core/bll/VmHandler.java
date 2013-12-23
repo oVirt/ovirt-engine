@@ -114,6 +114,7 @@ public class VmHandler {
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.StopVm);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.ShutdownVm);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.RemoveVm);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.RebootVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.MigrateVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.MigrateVmToServer);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.InternalMigrateVm);

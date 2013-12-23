@@ -12,6 +12,7 @@ public enum VdcActionType {
     AddVmFromScratch(3, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     RemoveVm(4, ActionGroup.DELETE_VM, QuotaDependency.STORAGE),
     UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.VDS_GROUP),
+    RebootVm(6, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.NONE),
     StopVm(7, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.BOTH),
     ShutdownVm(8, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.VDS_GROUP),
     ChangeDisk(9, ActionGroup.CHANGE_VM_CD, QuotaDependency.NONE),

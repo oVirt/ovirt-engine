@@ -560,6 +560,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_STOP_SUSPENDED_VM_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_SUSPEND_VM_OK, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_STOP_VM, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_REBOOT_VM, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_REBOOT_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ADD_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_VM_STARTED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_VM_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
