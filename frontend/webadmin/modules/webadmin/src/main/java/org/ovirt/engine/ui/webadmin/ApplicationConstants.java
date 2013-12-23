@@ -1331,6 +1331,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Refresh Capabilities")
     String refreshHostCapabilities();
 
+    @DefaultStringValue("Host HA Maintenance")
+    String hostHaMaintenance();
+
     // host- general
     @DefaultStringValue("OS Version")
     String osVersionHostGeneral();
@@ -1613,6 +1616,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Assign Tags")
     String assignTagsVm();
+
+    @DefaultStringValue("Enable Global HA Maintenance")
+    String enableGlobalHaMaintenanceVm();
+
+    @DefaultStringValue("Disable Global HA Maintenance")
+    String disableGlobalHaMaintenanceVm();
 
     @DefaultStringValue("Show Report")
     String showReportVm();

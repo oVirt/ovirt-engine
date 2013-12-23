@@ -203,7 +203,9 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
                         List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
                         for (VM vm : vms) {
-                            if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
+                            // The Hosted Engine VM is migrated by the HA agent;
+                            // other non-migratable VMs are reported
+                            if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE && !vm.isHostedEngine()) {
                                 nonMigratableVmDescriptionsToFrontEnd.add(vm.getName());
                             }
                         }

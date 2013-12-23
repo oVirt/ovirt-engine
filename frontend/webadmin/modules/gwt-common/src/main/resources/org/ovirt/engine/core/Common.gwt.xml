@@ -56,6 +56,7 @@
         <include name="common/businessentities/VmBalloonInfo.java" />
 		<include name="common/businessentities/ArchitectureType.java" />
         <include name="common/businessentities/IscsiBond.java" />
+        <include name="common/businessentities/HaMaintenanceMode.java" />
 
 		<!-- Network business entities -->
 		<include name="common/businessentities/network/VdsNetworkInterface.java" />

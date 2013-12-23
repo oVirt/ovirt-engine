@@ -1379,6 +1379,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc setHaMaintenanceMode(String mode, boolean enabled) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.setHaMaintenanceMode(mode, enabled);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public GlusterTasksListReturnForXmlRpc glusterTasksList() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterTasksList();

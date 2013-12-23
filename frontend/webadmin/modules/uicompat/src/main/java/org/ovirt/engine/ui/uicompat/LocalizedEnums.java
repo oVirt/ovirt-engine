@@ -218,11 +218,19 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___USER_VDS_MAINTENANCE();
 
+    String AuditLogType___USER_VDS_MAINTENANCE_MANUAL_HA();
+
     String AuditLogType___USER_VDS_MAINTENANCE_MIGRATION_FAILED();
 
     String AuditLogType___VDS_MAINTENANCE();
 
+    String AuditLogType___VDS_MAINTENANCE_MANUAL_HA();
+
     String AuditLogType___VDS_MAINTENANCE_FAILED();
+
+    String AuditLogType___VDS_ACTIVATE_MANUAL_HA();
+
+    String AuditLogType___VDS_ACTIVATE_MANUAL_HA_ASYNC();
 
     String AuditLogType___VDS_ACTIVATE_FAILED();
 

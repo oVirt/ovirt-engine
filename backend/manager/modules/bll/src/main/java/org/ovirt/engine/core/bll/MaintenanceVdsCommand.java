@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -47,10 +49,12 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     private final boolean _isInternal;
     private List<VM> vms;
+    private boolean haMaintenanceFailed;
 
     public MaintenanceVdsCommand(T parameters) {
         super(parameters);
         _isInternal = parameters.getIsInternal();
+        haMaintenanceFailed = false;
     }
 
     @Override
@@ -60,6 +64,22 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             setSucceeded(true);
         } else {
             orderListOfRunningVmsOnVds(getVdsId());
+
+            if (getVds().getHighlyAvailableIsConfigured()) {
+                SetHaMaintenanceModeVDSCommandParameters params
+                        = new SetHaMaintenanceModeVDSCommandParameters(getVds(), HaMaintenanceMode.LOCAL, true);
+                if (!runVdsCommand(VDSCommandType.SetHaMaintenanceMode, params).getSucceeded()) {
+                    // HA maintenance failure is fatal only if the Hosted Engine vm is running on this host
+                    for (VM vm : vms) {
+                        if (vm.isHostedEngine()) {
+                            setSucceeded(false);
+                            return;
+                        }
+                    }
+                    haMaintenanceFailed = true;
+                }
+            }
+
             setSucceeded(migrateAllVms(getExecutionContext()));
 
             // if non responsive move directly to maintenance
@@ -103,6 +123,10 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         boolean succeeded = true;
 
         for (VM vm : vms) {
+            if (vm.isHostedEngine()) {
+                // The Hosted Engine vm is migrated by the HA agent
+                continue;
+            }
             // if HAOnly is true check that vm is HA (auto_startup should be true)
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.isAutoStartup()))) {
                 VdcReturnValueBase result =
@@ -145,14 +169,18 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (_isInternal) {
-            if (getSucceeded()) {
+            if (getSucceeded() && !haMaintenanceFailed) {
                 return AuditLogType.VDS_MAINTENANCE;
+            } else if (getSucceeded()) {
+                return AuditLogType.VDS_MAINTENANCE_MANUAL_HA;
             } else {
                 return AuditLogType.VDS_MAINTENANCE_FAILED;
             }
         } else {
-            if (getSucceeded()) {
+            if (getSucceeded() && !haMaintenanceFailed) {
                 return AuditLogType.USER_VDS_MAINTENANCE;
+            } else if (getSucceeded()) {
+                return AuditLogType.USER_VDS_MAINTENANCE_MANUAL_HA;
             } else {
                 return AuditLogType.USER_VDS_MAINTENANCE_MIGRATION_FAILED;
             }
@@ -174,6 +202,10 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         orderListOfRunningVmsOnVds(vdsId);
 
         for (VM vm : vms) {
+            if (vm.isHostedEngine()) {
+                // The Hosted Engine vm is migrated by the HA agent
+                continue;
+            }
             if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
                 reasons.add(VdcBllMessages.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM.toString());
                 return false;

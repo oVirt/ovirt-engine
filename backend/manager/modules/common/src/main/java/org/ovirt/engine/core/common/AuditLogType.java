@@ -16,6 +16,7 @@ public enum AuditLogType {
     VDS_RECOVER(14), // When VDS changes status down->up
     VDS_MAINTENANCE(15), // When VDS is transferred to maintenance mode
     VDS_ACTIVATE(16), // When VDS is reactivated
+    VDS_ACTIVATE_MANUAL_HA(10454), // When VDS is reactivated
     VDS_MAINTENANCE_FAILED(17, AuditLogTimeInterval.MINUTE.getValue()), // When VDS is transferred to maintenance mode
     VDS_ACTIVATE_FAILED(18, AuditLogTimeInterval.MINUTE.getValue()), // When VDS is reactivated
     VDS_RECOVER_FAILED(19, AuditLogTimeInterval.MINUTE.getValue()), // When VDS changes status down->up
@@ -68,6 +69,8 @@ public enum AuditLogType {
     CPU_FLAGS_NX_IS_MISSING(601),
     // maintenance mode
     USER_VDS_MAINTENANCE_MIGRATION_FAILED(602),
+    VDS_MAINTENANCE_MANUAL_HA(10452, AuditLogTimeInterval.MINUTE.getValue()),
+    USER_VDS_MAINTENANCE_MANUAL_HA(10453),
 
     SYSTEM_VDS_RESTART(121, AuditLogTimeInterval.MINUTE.getValue()),
     SYSTEM_FAILED_VDS_RESTART(122, AuditLogTimeInterval.MINUTE.getValue()),
@@ -776,6 +779,7 @@ public enum AuditLogType {
     TASK_CLEARING_ASYNC_TASK(9501, AuditLogTimeInterval.MINUTE.getValue()),
 
     VDS_ACTIVATE_ASYNC(9502, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
+    VDS_ACTIVATE_MANUAL_HA_ASYNC(10455, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
     VDS_ACTIVATE_FAILED_ASYNC(9503, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated
     STORAGE_ACTIVATE_ASYNC(9504, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
 
@@ -874,7 +878,11 @@ public enum AuditLogType {
     ISCSI_BOND_EDIT_SUCCESS(10402),
     ISCSI_BOND_EDIT_FAILED(10403),
     ISCSI_BOND_REMOVE_SUCCESS(10404),
-    ISCSI_BOND_REMOVE_FAILED(10405);
+    ISCSI_BOND_REMOVE_FAILED(10405),
+
+    // Hosted Engine
+    USER_SET_HOSTED_ENGINE_MAINTENANCE(10450),
+    USER_FAILED_TO_SET_HOSTED_ENGINE_MAINTENANCE(10451);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.

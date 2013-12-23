@@ -118,6 +118,7 @@ public enum VDSCommandType {
     ExtendImageSize("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ExtendVmDiskSize("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetMOMPolicyParameters("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    SetHaMaintenanceMode("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     // Gluster VDS commands
     CreateGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     SetGlusterVolumeOption("org.ovirt.engine.core.vdsbroker.gluster"),

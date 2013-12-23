@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ActivateVdsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -28,8 +30,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
+    private boolean haMaintenanceFailed;
+
     public ActivateVdsCommand(T parameters) {
         super(parameters);
+        haMaintenanceFailed = false;
     }
 
     /**
@@ -39,6 +44,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
      */
     protected ActivateVdsCommand(Guid commandId) {
         super(commandId);
+        haMaintenanceFailed = false;
     }
 
     @Override
@@ -67,6 +73,14 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                         return null;
                     }
                 });
+
+                if (vds.getHighlyAvailableIsConfigured()) {
+                    SetHaMaintenanceModeVDSCommandParameters param
+                            = new SetHaMaintenanceModeVDSCommandParameters(vds, HaMaintenanceMode.LOCAL, false);
+                    if (!runVdsCommand(VDSCommandType.SetHaMaintenanceMode, param).getSucceeded()) {
+                        haMaintenanceFailed = true;
+                    }
+                }
             } else {
                 // We didn't manage to activate host. Set its status to Error
                 runVdsCommand(VDSCommandType.SetVdsStatus,
@@ -100,9 +114,17 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getParameters().isRunSilent()) {
-            return getSucceeded() ? AuditLogType.VDS_ACTIVATE_ASYNC : AuditLogType.VDS_ACTIVATE_FAILED_ASYNC;
+            return getSucceeded()
+                    ? (haMaintenanceFailed
+                            ? AuditLogType.VDS_ACTIVATE_MANUAL_HA_ASYNC
+                            : AuditLogType.VDS_ACTIVATE_ASYNC)
+                    : AuditLogType.VDS_ACTIVATE_FAILED_ASYNC;
         } else {
-            return getSucceeded() ? AuditLogType.VDS_ACTIVATE : AuditLogType.VDS_ACTIVATE_FAILED;
+            return getSucceeded()
+                    ? (haMaintenanceFailed
+                            ? AuditLogType.VDS_ACTIVATE_MANUAL_HA
+                            : AuditLogType.VDS_ACTIVATE)
+                    : AuditLogType.VDS_ACTIVATE_FAILED;
         }
     }
 }

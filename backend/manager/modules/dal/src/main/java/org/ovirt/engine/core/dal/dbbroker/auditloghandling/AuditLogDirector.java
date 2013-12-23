@@ -64,6 +64,7 @@ public final class AuditLogDirector {
         initMomPoliciesSeverities();
         initPmPolicySeverities();
         initIscsiBondSeverities();
+        initHostedEngineSeverities();
     }
 
     private static void initProviderSeverities() {
@@ -299,12 +300,15 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_RECOVER_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_RECOVER_FAILED_VMS_UNKNOWN, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_MAINTENANCE, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.VDS_MAINTENANCE_MANUAL_HA, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_MAINTENANCE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_STATUS_CHANGE_FAILED_DUE_TO_STOP_SPM_FAILURE, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_VDS_MAINTENANCE_MANUAL_HA, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_VDS_MAINTENANCE_MIGRATION_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.SYSTEM_VDS_RESTART, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.SYSTEM_FAILED_VDS_RESTART, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_ACTIVATE, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VDS_ACTIVATE_MANUAL_HA, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_ACTIVATE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.HOST_REFRESHED_CAPABILITIES, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.HOST_REFRESH_CAPABILITIES_FAILED, AuditLogSeverity.ERROR);
@@ -358,6 +362,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_LOW_DISK_SPACE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_LOW_DISK_SPACE_ERROR, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_ACTIVATE_ASYNC, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VDS_ACTIVATE_MANUAL_HA_ASYNC, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_ACTIVATE_FAILED_ASYNC, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER, AuditLogSeverity.WARNING);
@@ -510,6 +515,11 @@ public final class AuditLogDirector {
     private static void initMomPoliciesSeverities() {
         severities.put(AuditLogType.USER_UPDATED_MOM_POLICIES, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_TO_UPDATE_MOM_POLICIES, AuditLogSeverity.WARNING);
+    }
+
+    private static void initHostedEngineSeverities() {
+        severities.put(AuditLogType.USER_SET_HOSTED_ENGINE_MAINTENANCE, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_TO_SET_HOSTED_ENGINE_MAINTENANCE, AuditLogSeverity.WARNING);
     }
 
     private static void initVMSeverities() {
