@@ -105,33 +105,28 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             });
 
             if (!activeDomains.isEmpty() && dataDomains.isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS);
-                return false;
+                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS);
             }
 
             if (!filterDomainsByStatus(domains, StorageDomainStatus.Locked).isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
-                return false;
+                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
             }
         }
         if (!getParameters().getIsInternal()
                 && !getVmDAO()
                         .getAllActiveForStorageDomain(getStorageDomain().getId())
                         .isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
         }
         if (getStoragePool().getspm_vds_id() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
                     getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId()).size() > 0) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
-                return false;
+                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
             } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO &&
                     !getParameters().getIsInternal()
                     && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
-               addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
-               return false;
+               return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
             }
         }
         return true;
