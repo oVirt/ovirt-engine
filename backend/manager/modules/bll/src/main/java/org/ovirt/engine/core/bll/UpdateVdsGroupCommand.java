@@ -75,6 +75,12 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 getParameters().getVdsGroup().setEmulatedMachine(emulatedMachine);
             }
         }
+        else if (oldGroup.getArchitecture() != getVdsGroup().getArchitecture()) {
+            // if architecture was changed, emulated machines must be updated when adding new host.
+            // At this point the cluster is empty and have changed CPU name
+            getParameters().getVdsGroup().setDetectEmulatedMachine(true);
+            getParameters().getVdsGroup().setEmulatedMachine(null);
+        }
 
         getVdsGroupDAO().update(getParameters().getVdsGroup());
 
