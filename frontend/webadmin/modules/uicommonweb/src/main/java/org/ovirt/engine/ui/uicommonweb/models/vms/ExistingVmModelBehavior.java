@@ -225,7 +225,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         updateConsoleDevice(getVm().getId());
 
-        updateVirtioScsiEnabled(getVm().getId());
+        updateVirtioScsiEnabled(getVm().getId(), getVm().getVmOsId());
 
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
 
@@ -329,6 +329,12 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     @Override
     public void provisioning_SelectedItemChanged()
     {
+    }
+
+    @Override
+    public void oSType_SelectedItemChanged() {
+        int osType = getModel().getOSType().getSelectedItem();
+        updateVirtioScsiEnabled(vm.getId(), osType);
     }
 
     @Override

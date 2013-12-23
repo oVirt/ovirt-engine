@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -119,6 +120,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public abstract void defaultHost_SelectedItemChanged();
 
     public abstract void provisioning_SelectedItemChanged();
+
+    public abstract void oSType_SelectedItemChanged();
 
     public abstract void updateMinAllocatedMemory();
 
@@ -1141,22 +1144,41 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }));
     }
 
-    protected void updateVirtioScsiEnabled(Guid vmId) {
-        if (Guid.isNullOrEmpty(vmId)) {
-            VDSGroup cluster = getModel().getSelectedCluster();
-            boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
-                    ConfigurationValues.VirtIoScsiEnabled, cluster.getcompatibility_version().getValue());
-            getModel().getIsVirtioScsiEnabled().setEntity(isVirtioScsiEnabled);
-            return;
-        }
+    protected void updateVirtioScsiEnabled(final Guid vmId, int osId) {
+        VDSGroup cluster = getModel().getSelectedCluster();
+        Version clusterVersion = cluster != null ? cluster.getcompatibility_version() : null;
 
-        AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getDiskInterfaceList(osId, clusterVersion,
+            new AsyncQuery(getModel(), new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    ArrayList<DiskInterface> diskInterfaces = (ArrayList<DiskInterface>) returnValue;
+                    boolean isOsSupportVirtioScsi = diskInterfaces.contains(DiskInterface.VirtIO_SCSI);
 
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
-            }
-        }), vmId);
+                    getModel().getIsVirtioScsiEnabled().setIsChangable(isOsSupportVirtioScsi);
+
+                    if (!isOsSupportVirtioScsi) {
+                        getModel().getIsVirtioScsiEnabled().setEntity(false);
+                        getModel().getIsVirtioScsiEnabled().setChangeProhibitionReason(constants.cannotEnableVirtioScsiForOs());
+                    }
+                    else {
+                        if (Guid.isNullOrEmpty(vmId)) {
+                            VDSGroup cluster = getModel().getSelectedCluster();
+                            boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                                    ConfigurationValues.VirtIoScsiEnabled, cluster.getcompatibility_version().getValue());
+                            getModel().getIsVirtioScsiEnabled().setEntity(isVirtioScsiEnabled);
+                        }
+                        else {
+                            AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
+                                @Override
+                                public void onSuccess(Object model, Object returnValue) {
+                                    getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
+                                }
+                            }), vmId);
+                        }
+                    }
+                }
+            }));
     }
 
     public void vmTypeChanged(VmType vmType) {

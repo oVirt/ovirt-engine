@@ -1553,6 +1553,7 @@ public class UnitVmModel extends Model {
             else if (sender == getOSType())
             {
                 oSType_SelectedItemChanged(sender, args);
+                getBehavior().oSType_SelectedItemChanged();
                 getVmInitModel().osTypeChanged(getOSType().getSelectedItem());
                 updateDisplayProtocol();
                 initUsbPolicy();

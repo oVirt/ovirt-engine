@@ -2167,5 +2167,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("In case the vm is stateless, vm will be re-created with the LATEST template version")
     String latestTemplateVersionDescription();
+
+    @DefaultStringValue("VirtIO-SCSI is not supported for the selected OS")
+    String cannotEnableVirtioScsiForOs();
 }
 
