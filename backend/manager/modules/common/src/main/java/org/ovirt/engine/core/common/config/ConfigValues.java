@@ -902,7 +902,7 @@ public enum ConfigValues {
     OriginType,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     HotPlugEnabled,
 
     @Reloadable
@@ -950,7 +950,7 @@ public enum ConfigValues {
     VmPoolMonitorMaxAttempts,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     LiveSnapshotEnabled,
 
     @TypeConverterAttribute(Integer.class)
@@ -958,11 +958,11 @@ public enum ConfigValues {
     MaxMTU,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     PosixStorageEnabled,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     SendVmTicketUID,
 
     @DefaultValueAttribute("")
@@ -970,7 +970,7 @@ public enum ConfigValues {
     LDAPProviderTypes,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     AdvancedNFSOptionsEnabled,
 
     @TypeConverterAttribute(Integer.class)
@@ -990,15 +990,15 @@ public enum ConfigValues {
     NativeUSBEnabled,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     ShareableDiskEnabled,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     CpuPinningEnabled,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     DirectLUNDiskEnabled,
 
     @TypeConverterAttribute(Boolean.class)
@@ -1022,7 +1022,7 @@ public enum ConfigValues {
     CpuPinMigrationEnabled,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     SupportForceCreateVG,
 
     @TypeConverterAttribute(Boolean.class)
@@ -1217,7 +1217,7 @@ public enum ConfigValues {
 
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     NetworkLinkingSupported,
 
     @TypeConverterAttribute(Integer.class)
@@ -1230,7 +1230,7 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     HardwareInfoEnabled,
 
     @Reloadable
@@ -1259,7 +1259,7 @@ public enum ConfigValues {
     LogMaxSwapUsedThresholdInPercentage,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     TunnelMigrationEnabled,
 
     @TypeConverterAttribute(Boolean.class)
@@ -1281,7 +1281,7 @@ public enum ConfigValues {
     SpiceProxyDefault,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     GlusterFsStorageEnabled,
 
     @TypeConverterAttribute(Boolean.class)
@@ -1362,7 +1362,7 @@ public enum ConfigValues {
     ClientModeVncDefault,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     MigrationNetworkEnabled,
 
     @Reloadable
@@ -1401,11 +1401,11 @@ public enum ConfigValues {
     CustomDeviceProperties,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     MultipleGatewaysSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     MemorySnapshotSupported,
 
     @TypeConverterAttribute(String.class)
@@ -1413,7 +1413,7 @@ public enum ConfigValues {
     OsRepositoryConfDir,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     VirtIoScsiEnabled,
 
     @TypeConverterAttribute(String.class)
@@ -1450,7 +1450,7 @@ public enum ConfigValues {
     QoSInboundBurstDefaultValue,
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
+    @DefaultValueAttribute("true")
     SingleQxlPciEnabled,
 
     @TypeConverterAttribute(String.class)
