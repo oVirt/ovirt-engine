@@ -29,7 +29,7 @@ public abstract class NetworkQoSModel extends Model {
         EMPTY_QOS.setId(Guid.Empty);
     }
 
-    private final ListModel sourceListModel;
+    private final Model sourceModel;
     private ListModel dataCenters;
 
     private EntityModel name;
@@ -44,11 +44,11 @@ public abstract class NetworkQoSModel extends Model {
 
     protected NetworkQoS networkQoS = new NetworkQoS();
 
-    public NetworkQoSModel(DataCenterNetworkQoSListModel sourceListModel) {
-        this.sourceListModel = sourceListModel;
+    public NetworkQoSModel(Model sourceModel, StoragePool dataCenter) {
+        this.sourceModel = sourceModel;
         setName(new EntityModel());
         setDataCenters(new ListModel());
-        getDataCenters().setSelectedItem(sourceListModel.getDataCenter());
+        getDataCenters().setSelectedItem(dataCenter);
         getDataCenters().setIsChangable(false);
         setInboundAverage(new EntityModel(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundAverageDefaultValue)));
         setInboundPeak(new EntityModel(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundPeakDefaultValue)));
@@ -61,10 +61,6 @@ public abstract class NetworkQoSModel extends Model {
         setOutboundEnabled(new EntityModel(Boolean.TRUE));
         getInboundEnabled().getEntityChangedEvent().addListener(this);
         getOutboundEnabled().getEntityChangedEvent().addListener(this);
-    }
-
-    public ListModel getSourceListModel() {
-        return sourceListModel;
     }
 
     public boolean validate() {
@@ -143,8 +139,8 @@ public abstract class NetworkQoSModel extends Model {
     protected abstract void executeSave();
 
     private void cancel() {
-        sourceListModel.setWindow(null);
-        sourceListModel.setConfirmWindow(null);
+        sourceModel.setWindow(null);
+        sourceModel.setConfirmWindow(null);
     }
 
     public void onSave() {

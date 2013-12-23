@@ -4,16 +4,18 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import org.ovirt.engine.core.common.action.NetworkQoSParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class EditNetworkQoSModel extends NetworkQoSModel {
 
-    public EditNetworkQoSModel(NetworkQoS networkQoS, DataCenterNetworkQoSListModel sourceListModel) {
-        super(sourceListModel);
+    public EditNetworkQoSModel(NetworkQoS networkQoS, Model sourceModel, StoragePool dataCenter) {
+        super(sourceModel, dataCenter);
         this.networkQoS = networkQoS;
         init();
     }

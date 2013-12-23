@@ -138,7 +138,7 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel {
             return;
         }
 
-        final NetworkQoSModel networkQoSModel = new EditNetworkQoSModel(networkQoS, this);
+        final NetworkQoSModel networkQoSModel = new EditNetworkQoSModel(networkQoS, this, getEntity());
         setWindow(networkQoSModel);
 
         networkQoSModel.getDataCenters().setItems(Arrays.asList(getEntity()));
@@ -170,14 +170,10 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel {
             return;
         }
 
-        final NewNetworkQoSModel newNetworkQoSModel = new NewNetworkQoSModel(this);
+        final NewNetworkQoSModel newNetworkQoSModel = new NewNetworkQoSModel(this, getEntity());
         setWindow(newNetworkQoSModel);
 
         newNetworkQoSModel.getDataCenters().setItems(Arrays.asList(getEntity()));
         newNetworkQoSModel.getDataCenters().setSelectedItem(getEntity());
-    }
-
-    public Object getDataCenter() {
-        return getEntity();
     }
 }
