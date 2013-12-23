@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
+import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -63,6 +64,7 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     private ProviderNetwork providedBy;
 
+    @ValidName(message = "NETWORK_LABEL_FORMAT_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String label;
 
     @MTU
