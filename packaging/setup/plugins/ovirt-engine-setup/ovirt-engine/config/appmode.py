@@ -99,12 +99,15 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.DBEnv.STATEMENT].execute(
             statement="""
                 select inst_update_service_type(
-                    null,
+                    %(clusterId)s,
                     %(virt)s,
                     %(gluster)s
                 )
             """,
             args=dict(
+                clusterId=self.environment[
+                    osetupcons.DBEnv.STATEMENT
+                ].getVdcOption(name='AutoRegistrationDefaultVdsGroupID'),
                 virt=(v in ('both', 'virt')),
                 gluster=(v == 'gluster'),
             ),
