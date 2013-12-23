@@ -283,8 +283,8 @@ public class ListModel<T> extends EntityModel<T>
         }
 
         // Track property change on all items as necessary.
-        unsubscribeList(e.OldItems);
-        subscribeList(e.NewItems);
+        unsubscribeList(e.oldItems);
+        subscribeList(e.newItems);
     }
 
     public void validateSelectedItem(IValidation[] validations)
