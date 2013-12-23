@@ -103,7 +103,7 @@ public class RsdlBuilder {
                  Constructor constructor = new CustomClassLoaderConstructor(Thread.currentThread().getContextClassLoader());
                  Object result = new Yaml(constructor).load(stream);
                  for (Action action : ((MetaData)result).getActions()) {
-                     parametersMetaData.put(action.getName(), action);
+                    parametersMetaData.put(apiResource.getUriInfo().getBaseUri().getPath() + action.getName(), action);
                  }
             } else {
                 LOG.error("Parameters metatdata file not found.");
