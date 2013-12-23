@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -120,8 +121,13 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         }
 
-        if (!validate(new StoragePoolValidator(getStoragePoolDao().get(getStoragePoolId())).isUp())) {
+        StoragePool sp = getStoragePoolDao().get(getStoragePoolId());
+        if (!validate(new StoragePoolValidator(sp).isUp())) {
             return false;
+        }
+
+        if (!sp.getStorageType().isBlockDomain()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
         }
 
         return true;

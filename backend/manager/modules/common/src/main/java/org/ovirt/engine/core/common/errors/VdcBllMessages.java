@@ -863,6 +863,7 @@ public enum VdcBllMessages {
 
     // Alignment scan
     ERROR_CANNOT_RUN_ALIGNMENT_SCAN_VM_IS_RUNNING(ErrorType.CONFLICT),
+    ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE(ErrorType.NOT_SUPPORTED),
 
     //exteral scheduler
     EXTERNAL_SCHEDULER_FAIL(ErrorType.INTERNAL_ERROR),
