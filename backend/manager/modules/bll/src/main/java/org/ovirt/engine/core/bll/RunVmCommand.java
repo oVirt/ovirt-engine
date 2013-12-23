@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -82,10 +83,25 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
 
-    private boolean mResume;
-    /** Note: this field should not be used directly, use {@link #isVmRunningStateless()} instead */
-    private Boolean cachedVmIsRunningStateless;
-    private boolean isFailedStatlessSnapshot;
+    enum RunVmFlow {
+        /** regular flow */
+        RUN,
+        /** run VM which is paused */
+        RESUME_PAUSE,
+        /** run VM which is suspended */
+        RESUME_HIBERNATE,
+        /** create the stateless images in order to run the VM as stateless */
+        CREATE_STATELESS_IMAGES,
+        /** remove stateless images that remained from last time the VM ran as stateless */
+        REMOVE_STATELESS_IMAGES,
+        /** wrap things up after the VM reach UP state */
+        RUNNING_SUCCEEDED
+    }
+
+    /** Cache the current flow the command is in. use {@link #getFlow()} to retrieve the flow */
+    private RunVmFlow cachedFlow;
+    /** Note: this field should not be used directly, use {@link #isStatelessSnapshotExistsForVm()} instead */
+    private Boolean cachedStatelessSnapshotExistsForVm;
     /** Indicates whether restoration of memory from snapshot is supported for the VM */
     private boolean memorySnapshotSupported;
     /** The memory volume which is stored in the active snapshot of the VM */
@@ -181,7 +197,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     private void resumeVm() {
-        mResume = true;
         setVdsId(getVm().getRunOnVds());
         if (getVds() != null) {
             try {
@@ -257,32 +272,90 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         VmDeviceUtils.updateVmDevices(getVm().getStaticData());
         setActionReturnValue(VMStatus.Down);
         initVm();
-        if (getVm().getStatus() == VMStatus.Paused) { // resume
-            resumeVm();
-        } else { // run vm
-            if (!_isRerun && Boolean.TRUE.equals(getParameters().getRunAsStateless())
-                    && getVm().getStatus() != VMStatus.Suspended) {
-                if (getVm().getDiskList().isEmpty()) { // If there are no snappable disks, there is no meaning for
-                    // running as stateless, log a warning and run normally
-                    warnIfNotAllDisksPermitSnapshots();
-                    runVm();
-                }
-                else {
-                    statelessVmTreatment();
-                }
-            } else if (!isInternalExecution() && !_isRerun
-                    && getVm().getStatus() != VMStatus.Suspended
-                    && isStatelessSnapshotExistsForVm()
-                    && !isVmPartOfManualPool()) {
-                removeVmStatlessImages();
-            } else {
-                runVm();
+        perform();
+    }
+
+    @Override
+    public void rerun() {
+        setFlow(null);
+        super.rerun();
+    }
+
+    private RunVmFlow setFlow(RunVmFlow flow) {
+        return cachedFlow = flow;
+    }
+
+    /**
+     * Determine the flow in which the command should be operating or
+     * return the cached flow if it was already computed
+     *
+     * @return the flow in which the command is operating
+     */
+    protected RunVmFlow getFlow() {
+        if (cachedFlow != null) {
+            return cachedFlow;
+        }
+
+        switch(getVm().getStatus()) {
+        case Paused:
+            return setFlow(RunVmFlow.RESUME_PAUSE);
+
+        case Suspended:
+            return setFlow(RunVmFlow.RESUME_HIBERNATE);
+
+        default:
+        }
+
+        if (isRunAsStateless()) {
+            fetchVmDisksFromDb();
+            if (getVm().getDiskList().isEmpty()) {
+                // If there are no snappable disks, there is no meaning for
+                // running as stateless, log a warning and run normally
+                warnIfNotAllDisksPermitSnapshots();
+                return setFlow(RunVmFlow.RUN);
             }
+
+            return setFlow(RunVmFlow.CREATE_STATELESS_IMAGES);
+        }
+
+        if (!isInternalExecution()
+                && isStatelessSnapshotExistsForVm()
+                && !isVmPartOfManualPool()) {
+            return setFlow(RunVmFlow.REMOVE_STATELESS_IMAGES);
+        }
+
+        return setFlow(RunVmFlow.RUN);
+    }
+
+    protected void perform() {
+        switch(getFlow()) {
+        case RESUME_PAUSE:
+            resumeVm();
+            break;
+
+        case REMOVE_STATELESS_IMAGES:
+            removeVmStatlessImages();
+            break;
+
+        case CREATE_STATELESS_IMAGES:
+            statelessVmTreatment();
+            break;
+
+        case RESUME_HIBERNATE:
+        case RUN:
+        default:
+            runVm();
         }
     }
 
-    private boolean isStatelessSnapshotExistsForVm() {
-        return getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
+    /**
+     * @return true if a stateless snapshot exists for the VM, false otherwise
+     */
+    protected boolean isStatelessSnapshotExistsForVm() {
+        if (cachedStatelessSnapshotExistsForVm == null) {
+            cachedStatelessSnapshotExistsForVm = getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
+        }
+        return cachedStatelessSnapshotExistsForVm;
     }
 
     /**
@@ -402,7 +475,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     private void removeVmStatlessImages() {
-        isFailedStatlessSnapshot = true;
         VmPoolHandler.processVmPoolOnStopVm(getVm().getId(), new CommandContext(getExecutionContext(), getLock()));
         // setting lock to null in order not to release lock twice
         setLock(null);
@@ -502,10 +574,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            if (isFailedStatlessSnapshot) {
+            if (getFlow() == RunVmFlow.REMOVE_STATELESS_IMAGES) {
                 return AuditLogType.USER_RUN_VM_FAILURE_STATELESS_SNAPSHOT_LEFT;
             }
-            if (mResume) {
+            if (getFlow() == RunVmFlow.RESUME_PAUSE) {
                 return getSucceeded() ? AuditLogType.USER_RESUME_VM : AuditLogType.USER_FAILED_RESUME_VM;
             } else if (isInternalExecution()) {
                 if (getSucceeded()) {
@@ -543,14 +615,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // if not running as stateless, or if succeeded running as
             // stateless,
             // command should be with 'CommandShouldBeLogged = false':
-            return isVmRunningStateless() && !getSucceeded() ? AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE
-                    : AuditLogType.UNASSIGNED;
+            return isStatelessSnapshotExistsForVm() && !getSucceeded() ?
+                    AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE : AuditLogType.UNASSIGNED;
 
         case END_FAILURE:
             // if not running as stateless, command should
             // be with 'CommandShouldBeLogged = false':
-            return isVmRunningStateless() ? AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE
-                    : AuditLogType.UNASSIGNED;
+            return isStatelessSnapshotExistsForVm() ?
+                    AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE : AuditLogType.UNASSIGNED;
 
         default:
             // all other cases should be with 'CommandShouldBeLogged =
@@ -565,15 +637,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected void initVm() {
-        VmHandler.updateDisksFromDb(getVm());
+        if (!EnumSet.of(RunVmFlow.RUN, RunVmFlow.RESUME_HIBERNATE).contains(getFlow())) {
+            return;
+        }
+
+        fetchVmDisksFromDb();
         getVm().setKvmEnable(getParameters().getKvmEnable());
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
         getVm().setAcpiEnable(getParameters().getAcpiEnable());
 
         // Clear the first user:
         getVm().setConsoleUserId(null);
-        getParameters().setRunAsStateless(getParameters().getRunAsStateless() != null ? getParameters().getRunAsStateless()
-                : getVm().isStateless());
 
         getVm().setDisplayType(getParameters().getUseVnc() == null ?
                 getVm().getDefaultDisplayType() :
@@ -608,6 +682,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getVm().setVdsGroupCpuFlagsData(
                 CpuFlagsManagerHandler.GetVDSVerbDataByCpuName(getVm().getVdsGroupCpuName(), getVm()
                         .getVdsGroupCompatibilityVersion()));
+    }
+
+    protected void fetchVmDisksFromDb() {
+        if (getVm().getDiskMap().isEmpty()) {
+            VmHandler.updateDisksFromDb(getVm());
+        }
     }
 
     protected boolean getVdsToRunOn() {
@@ -791,7 +871,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void endSuccessfully() {
-        if (isVmRunningStateless()) {
+        if (isStatelessSnapshotExistsForVm()) {
             getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm, buildCreateSnapshotParametersForEndAction());
 
             getParameters().setShouldBeLogged(false);
@@ -844,7 +924,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void endWithFailure() {
-        if (isVmRunningStateless()) {
+        if (isStatelessSnapshotExistsForVm()) {
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
                     buildCreateSnapshotParametersForEndAction(), new CommandContext(getCompensationContext()));
 
@@ -860,6 +940,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public void runningSucceded() {
+        setFlow(RunVmFlow.RUNNING_SUCCEEDED);
         removeMemoryFromActiveSnapshot();
         super.runningSucceded();
     }
@@ -884,11 +965,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
     }
 
-    private boolean isVmRunningStateless() {
-        if (cachedVmIsRunningStateless == null) {
-            cachedVmIsRunningStateless = isStatelessSnapshotExistsForVm();
-        }
-        return cachedVmIsRunningStateless;
+    /**
+     * @return true if the VM should run as stateless
+     */
+    protected boolean isRunAsStateless() {
+        return getParameters().getRunAsStateless() != null ?
+                getParameters().getRunAsStateless()
+                : getVm().isStateless();
     }
 
     @Override
@@ -922,7 +1005,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return list;
     }
 
-    private boolean isVmPartOfManualPool() {
+    protected boolean isVmPartOfManualPool() {
         if (getVm().getVmPoolId() == null) {
             return false;
         }

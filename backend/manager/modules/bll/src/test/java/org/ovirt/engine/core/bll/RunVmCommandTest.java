@@ -27,6 +27,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.RunVmCommand.RunVmFlow;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
@@ -332,6 +333,76 @@ public class RunVmCommandTest {
         doReturn(new VDSGroup()).when(command).getVdsGroup();
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
+    }
+
+    @Test
+    public void testFlowOnResume() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Paused);
+        doReturn(vm).when(command).getVm();
+        assertEquals(RunVmFlow.RESUME_PAUSE, command.getFlow());
+    }
+
+    @Test
+    public void testFlowOnDehibernate() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Suspended);
+        doReturn(vm).when(command).getVm();
+        assertEquals(RunVmFlow.RESUME_HIBERNATE, command.getFlow());
+    }
+
+    @Test
+    public void testFlowOnStatelessNoDisks() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        vm.getDiskList().clear();
+        doReturn(vm).when(command).getVm();
+        final RunVmParams params = new RunVmParams();
+        params.setRunAsStateless(true);
+        doReturn(params).when(command).getParameters();
+        doNothing().when(command).fetchVmDisksFromDb();
+        assertEquals(RunVmFlow.RUN, command.getFlow());
+    }
+
+    @Test
+    public void testFlowOnStatelessWithDisks() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        vm.getDiskList().add(new DiskImage());
+        doReturn(vm).when(command).getVm();
+        final RunVmParams params = new RunVmParams();
+        params.setRunAsStateless(true);
+        doReturn(params).when(command).getParameters();
+        doNothing().when(command).fetchVmDisksFromDb();
+        assertEquals(RunVmFlow.CREATE_STATELESS_IMAGES, command.getFlow());
+    }
+
+    @Test
+    public void testFlowOnRemoveStatelessImages() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        doReturn(vm).when(command).getVm();
+        final RunVmParams params = new RunVmParams();
+        params.setRunAsStateless(false);
+        doReturn(params).when(command).getParameters();
+        doReturn(false).when(command).isInternalExecution();
+        doReturn(true).when(command).isStatelessSnapshotExistsForVm();
+        doReturn(false).when(command).isVmPartOfManualPool();
+        assertEquals(RunVmFlow.REMOVE_STATELESS_IMAGES, command.getFlow());
+    }
+
+    @Test
+    public void testFlowOnStatelessExistsForManualPool() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        doReturn(vm).when(command).getVm();
+        final RunVmParams params = new RunVmParams();
+        params.setRunAsStateless(false);
+        doReturn(params).when(command).getParameters();
+        doReturn(false).when(command).isInternalExecution();
+        doReturn(true).when(command).isStatelessSnapshotExistsForVm();
+        doReturn(true).when(command).isVmPartOfManualPool();
+        assertEquals(RunVmFlow.RUN, command.getFlow());
     }
 
     /**
