@@ -36,6 +36,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> setMOMPolicyParameters(Map<String, Object> key_value);
 
+    public Map<String, Object> setHaMaintenanceMode(String mode, boolean enabled);
+
     public Map<String, Object> getAllVmStats();
 
     public Map<String, Object> migrate(Map<String, String> migrationInfo);

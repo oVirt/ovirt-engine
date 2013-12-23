@@ -1654,6 +1654,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The selected Template has undefined architecture")
     String ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Setting hosted engine maintenance mode is only supported on cluster version 3.4 and above.")
+    String ACTION_TYPE_FAILED_VDS_HA_MAINT_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Hosted Engine is not configured on this host.")
+    String ACTION_TYPE_FAILED_VDS_HA_NOT_CONFIGURED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The cluster's compatibility version doesn't support MoM Policy update.")
     String ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION();
 
