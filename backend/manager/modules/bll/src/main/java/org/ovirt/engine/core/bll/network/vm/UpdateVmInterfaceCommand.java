@@ -43,7 +43,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     private VmNic oldIface;
     private VmDevice oldVmDevice;
-    private VnicProfile vnicProfile;
     private boolean macShouldBeChanged;
     private RequiredAction requiredAction = null;
 
@@ -278,17 +277,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         return permissionList;
     }
 
-    private VnicProfile getVnicProfile() {
-        if (getInterface().getVnicProfileId() == null) {
-            return null;
-        }
-
-        if (vnicProfile == null) {
-            vnicProfile = getVnicProfileDao().get(getInterface().getVnicProfileId());
-        }
-        return vnicProfile;
-    }
-
     private boolean isVnicProfileChanged(VmNic oldNic, VmNic newNic) {
         return !ObjectUtils.equals(oldNic.getVnicProfileId(), newNic.getVnicProfileId());
     }
@@ -333,12 +321,18 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 if (!FeatureSupported.networkLinking(version)) {
                     return new ValidationResult(VdcBllMessages.HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED,
                             clusterVersion());
-                } else if (getVnicProfile() != null && getVnicProfile().isPortMirroring()) {
+                } else if (portMirroringEnabled(getInterface().getVnicProfileId())
+                        || portMirroringEnabled(oldIface.getVnicProfileId())) {
                     return new ValidationResult(VdcBllMessages.CANNOT_PERFORM_HOT_UPDATE_WITH_PORT_MIRRORING);
                 }
             }
 
             return ValidationResult.VALID;
+        }
+
+        private boolean portMirroringEnabled(Guid profileId) {
+            VnicProfile vnicProfile = profileId == null ? null : getVnicProfileDao().get(profileId);
+            return vnicProfile != null && vnicProfile.isPortMirroring();
         }
 
         /**
