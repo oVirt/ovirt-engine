@@ -817,6 +817,12 @@ public class VmDiskListModel extends VmDiskListModelBase
                 VmDiskListModel model = (VmDiskListModel) target;
                 StoragePool dataCenter = (StoragePool) returnValue;
 
+                if (!dataCenter.getStorageType().isBlockDomain()) {
+                    // scan alignment is applicable only for block storage domains
+                    model.setIsScanAlignmentEnabled(false);
+                    return;
+                }
+
                 Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
                 Version minDcVersion = dataCenter.getcompatibility_version();
 
