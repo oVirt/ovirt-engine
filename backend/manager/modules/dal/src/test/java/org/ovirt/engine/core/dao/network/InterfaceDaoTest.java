@@ -25,6 +25,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
     private static final String IP_ADDR = "10.35.110.10";
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final String LABEL = "abc";
 
     private InterfaceDao dao;
     private VdsNetworkInterface existingVdsInterface;
@@ -315,5 +316,23 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         assertNotNull(interfaces);
         assertEquals(1, interfaces.size());
         assertGetAllForVdsCorrectResult(interfaces);
+    }
+
+    @Test
+    public void testgetAllInterfacesByClusterId() {
+        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesByClusterId(CLUSTER_ID);
+        assertNotNull(interfaces);
+        assertFalse(interfaces.isEmpty());
+    }
+
+    @Test
+    public void testGetAllInterfacesByLabelForCluster() {
+        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesByLabelForCluster(CLUSTER_ID, LABEL);
+        assertNotNull(interfaces);
+        assertFalse(interfaces.isEmpty());
+
+        for (VdsNetworkInterface nic : interfaces) {
+            assertTrue(nic.getLabels().contains(LABEL));
+        }
     }
 }

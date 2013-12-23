@@ -4020,7 +4020,7 @@
             <value>2010-11-12 10:12:41</value>
             <value>2010-11-12 15:57:01</value>
             <null />
-            <null />
+            <value>[ "aaa", "bbb", "abc" ]</value>
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
@@ -4041,7 +4041,7 @@
             <value>2012-11-12 10:12:41</value>
             <value>2012-11-12 15:57:01</value>
             <null />
-            <null />
+            <value>[ "abc" ]</value>
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9de</value>

@@ -67,7 +67,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     }
 
     /**
-     * Update the {@link VdsNetworkStatistics} in the DB using the given {@link SimpleJdbcCall}.
+     * Update the {@link VdsNetworkStatistics} in the DB
      *
      * @param callToUpdate
      *            The call to use.
@@ -179,6 +179,25 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
         return getCallsHandler().executeRead("GetVdsInterfaceById",
                 vdsNetworkInterfaceRowMapper,
                 getCustomMapSqlParameterSource().addValue("vds_interface_id", id));
+    }
+
+    @Override
+    public List<VdsNetworkInterface> getAllInterfacesByClusterId(Guid clusterId) {
+        return getCallsHandler().executeReadList("GetInterfacesByClusterId",
+                vdsNetworkInterfaceRowMapper,
+                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+    }
+
+    @Override
+    public List<VdsNetworkInterface> getAllInterfacesByLabelForCluster(Guid clusterId, String label) {
+        List<VdsNetworkInterface> labelledNics = new ArrayList<>();
+        for (VdsNetworkInterface nic : getAllInterfacesByClusterId(clusterId)) {
+            if (nic.getLabels() != null && nic.getLabels().contains(label)) {
+                labelledNics.add(nic);
+            }
+        }
+
+        return labelledNics;
     }
 
     private static final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
