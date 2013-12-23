@@ -1,0 +1,61 @@
+package org.ovirt.engine.core.common.utils;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelFormat;
+
+@RunWith(Parameterized.class)
+public class NetworkLabelFormatValidatorTest {
+
+    private Validator validator;
+    private boolean expectedResult;
+    private Set<String> labels;
+
+    public NetworkLabelFormatValidatorTest(Set<String> labels, boolean expectedResult) {
+        this.labels = labels;
+        this.expectedResult = expectedResult;
+        validator = ValidationUtils.getValidator();
+    }
+
+    @Test
+    public void checkNetworkLabelFormat() {
+        Set<ConstraintViolation<NetworkLabelContainer>> validate =
+                validator.validate(new NetworkLabelContainer(labels));
+        assertEquals(expectedResult, validate.isEmpty());
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> ipAddressParams() {
+        return Arrays.asList(new Object[][] {
+                { new HashSet<String>(), true },
+                { null, true },
+                { new HashSet<String>(Arrays.asList("abc")), true },
+                { new HashSet<String>(Arrays.asList("abc", "xyz")), true },
+                { new HashSet<String>(Arrays.asList("abc-_sc")), true },
+                { new HashSet<String>(Arrays.asList("")), false },
+                { new HashSet<String>(Arrays.asList(" ")), false },
+                { new HashSet<String>(Arrays.asList("abc*")), false },
+                { new HashSet<String>(Arrays.asList("aaa", "abc*")), false }
+        });
+    }
+
+    private class NetworkLabelContainer {
+        @ValidNetworkLabelFormat
+        private Set<String> labels;
+
+        public NetworkLabelContainer(Set<String> labels) {
+            this.labels = labels;
+        }
+    }
+}

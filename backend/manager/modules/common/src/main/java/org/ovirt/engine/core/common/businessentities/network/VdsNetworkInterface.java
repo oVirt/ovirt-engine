@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
+import org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelFormat;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -42,6 +43,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private int mtu;
     private boolean bridged;
     private NetworkImplementationDetails networkImplementationDetails;
+
+    @ValidNetworkLabelFormat(message = "NETWORK_LABEL_FORMAT_INVALID")
     private Set<String> labels;
 
     public VdsNetworkInterface() {
