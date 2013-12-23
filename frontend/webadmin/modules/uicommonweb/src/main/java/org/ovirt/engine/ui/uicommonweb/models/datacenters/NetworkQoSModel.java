@@ -138,7 +138,7 @@ public abstract class NetworkQoSModel extends Model {
 
     protected abstract void executeSave();
 
-    private void cancel() {
+    protected void cancel() {
         sourceModel.setWindow(null);
         sourceModel.setConfirmWindow(null);
     }

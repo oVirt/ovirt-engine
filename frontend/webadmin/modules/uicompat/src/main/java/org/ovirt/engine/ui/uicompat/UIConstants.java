@@ -196,6 +196,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("New Logical Network")
     String newLogicalNetworkTitle();
 
+    @DefaultStringValue("New")
+    String newNetworkQosButton();
+
     @DefaultStringValue("Attach/Detach Network to/from Clusters")
     String attachDetachNetworkToFromClustersTitle();
 

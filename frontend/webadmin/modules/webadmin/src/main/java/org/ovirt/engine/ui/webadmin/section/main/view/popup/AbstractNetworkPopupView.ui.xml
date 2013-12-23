@@ -7,7 +7,8 @@
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
 	xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
 	xmlns:v="urn:import:org.ovirt.engine.ui.webadmin.widget.vnicProfile"
-	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
@@ -56,6 +57,7 @@
 
 		.qosStyle {
 			float: left;
+			margin-right: 20px;
 		}
 
 		.qosLabel {
@@ -95,7 +97,10 @@
 										<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
 									</g:HorizontalPanel>
-									<e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.qosStyle}" />
+									<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
+										<e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.qosStyle}" />
+										<w:UiCommandButton ui:field="addQosButton" />
+									</g:HorizontalPanel>
 								</g:FlowPanel>
 							</g:FlowPanel>
                         </t:content>

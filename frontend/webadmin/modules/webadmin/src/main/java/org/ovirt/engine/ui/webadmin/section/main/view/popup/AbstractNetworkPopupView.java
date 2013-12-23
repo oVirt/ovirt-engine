@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -119,6 +120,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @UiField(provided = true)
     @Path(value = "qos.selectedItem")
     public ListModelListBoxEditor<NetworkQoS> qosEditor;
+
+    @UiField
+    UiCommandButton addQosButton;
 
     @UiField(provided = true)
     @Ignore
@@ -425,6 +429,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public void toggleProfilesVisibility(boolean visible) {
         profilesTab.setVisible(visible);
+    }
+
+    @Override
+    public UiCommandButton getQosButton() {
+        return addQosButton;
     }
 
     interface WidgetStyle extends CssResource {

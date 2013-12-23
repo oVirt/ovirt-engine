@@ -1,12 +1,15 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 
 public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V extends AbstractNetworkPopupPresenterWidget.ViewDef<T>>
@@ -21,6 +24,8 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         void toggleSubnetVisibility(boolean visible);
 
         void toggleProfilesVisibility(boolean visible);
+
+        UiCommandButton getQosButton();
     }
 
     public AbstractNetworkPopupPresenterWidget(EventBus eventBus, V view) {
@@ -60,6 +65,14 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
                 if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
                 }
+            }
+        });
+
+        getView().getQosButton().setCommand(model.getAddQosCommand());
+        getView().getQosButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                getView().getQosButton().getCommand().execute();
             }
         });
     }

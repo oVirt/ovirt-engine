@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,11 +64,12 @@ public abstract class NetworkModel extends Model
     private boolean mtuOverrideSupported = false;
     private ListModel privateDataCenters;
     private NetworkProfilesModel profiles;
-    private final Network network;
-    private final ListModel sourceListModel;
     private EntityModel<String> subnetName;
     private EntityModel<String> subnetCidr;
     private ListModel<IpVersion> subnetIpVersion;
+    private UICommand addQosCommand;
+    private final Network network;
+    private final ListModel sourceListModel;
 
     public NetworkModel(ListModel sourceListModel)
     {
@@ -419,6 +421,10 @@ public abstract class NetworkModel extends Model
         this.subnetIpVersion = subnetIpVersion;
     }
 
+    public UICommand getAddQosCommand() {
+        return addQosCommand;
+    }
+
     public boolean validate()
     {
         RegexValidation tempVar = new RegexValidation();
@@ -520,6 +526,8 @@ public abstract class NetworkModel extends Model
         tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar3.setIsCancel(true);
         getCommands().add(tempVar3);
+        addQosCommand = new UICommand("AddQos", this); //$NON-NLS-1$
+        addQosCommand.setTitle(ConstantsManager.getInstance().getConstants().newNetworkQosButton());
     }
 
     public StoragePool getSelectedDc() {
@@ -599,6 +607,21 @@ public abstract class NetworkModel extends Model
         sourceListModel.setConfirmWindow(null);
     }
 
+    private void addQos() {
+        NewNetworkQoSModel qosModel = new NewNetworkQoSModel(this, getSelectedDc()) {
+            @Override
+            protected void cancel() {
+                List<NetworkQoS> qosItems = new ArrayList<NetworkQoS>((Collection<NetworkQoS>) getQos().getItems());
+                qosItems.add(1, networkQoS);
+                getQos().setItems(qosItems);
+                getQos().setSelectedItem(networkQoS);
+                sourceListModel.setConfirmWindow(null);
+            }
+        };
+        qosModel.getDataCenters().setIsChangable(false);
+        sourceListModel.setConfirmWindow(qosModel);
+    }
+
     public void onSave()
     {
         if (!validate())
@@ -618,13 +641,12 @@ public abstract class NetworkModel extends Model
     {
         super.executeCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
-        {
+        if (StringHelper.stringsEqual(command.getName(), "OnSave")) { //$NON-NLS-1$
             onSave();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
-        {
+        } else if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
             cancel();
+        } else if (command == getAddQosCommand()) {
+            addQos();
         }
     }
 
@@ -639,7 +661,9 @@ public abstract class NetworkModel extends Model
     protected abstract void selectExternalProvider();
 
     protected void onExportChanged() {
-        getQos().setIsChangable(!(Boolean) getExport().getEntity());
+        boolean externalNetwork = (Boolean) getExport().getEntity();
+        getQos().setIsChangable(!externalNetwork);
+        getAddQosCommand().setIsExecutionAllowed(!externalNetwork);
     }
 
     private void updateVlanTagChangeability() {
