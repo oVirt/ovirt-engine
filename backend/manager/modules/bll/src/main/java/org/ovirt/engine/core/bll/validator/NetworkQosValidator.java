@@ -74,4 +74,33 @@ public class NetworkQosValidator {
         }
     }
 
+    /**
+     * Verify that if any inbound/outbound capping was specified, that all three parameters are present.
+     */
+    public ValidationResult allValuesPresent() {
+        return (qos != null)
+                && (missingValue(qos.getInboundAverage(), qos.getInboundPeak(), qos.getInboundBurst())
+                        || missingValue(qos.getOutboundAverage(), qos.getOutboundPeak(), qos.getOutboundBurst()))
+                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES)
+                : ValidationResult.VALID;
+    }
+
+    private boolean missingValue(Integer average, Integer peak, Integer burst) {
+        return (average != null || peak != null || burst != null) && (average == null || peak == null || burst == null);
+    }
+
+    /**
+     * Verify that the specified peak value isn't lower than the specified average value.
+     */
+    public ValidationResult peakConsistentWithAverage() {
+        return (qos != null) && (peakLowerThanAverage(qos.getInboundAverage(), qos.getInboundPeak())
+                || peakLowerThanAverage(qos.getOutboundAverage(), qos.getOutboundPeak()))
+                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE)
+                : ValidationResult.VALID;
+    }
+
+    private boolean peakLowerThanAverage(Integer average, Integer peak) {
+        return peak != null && peak < average;
+    }
+
 }

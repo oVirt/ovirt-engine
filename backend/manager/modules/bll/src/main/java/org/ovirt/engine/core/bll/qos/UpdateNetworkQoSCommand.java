@@ -18,7 +18,8 @@ public class UpdateNetworkQoSCommand extends NetworkQoSCommandBase {
         return (validateParameters()
                 && validate(validator.qosExists())
                 && validate(validator.consistentDataCenter())
-                && validateValues()
+                && validate(validator.allValuesPresent())
+                && validate(validator.peakConsistentWithAverage())
                 && validate(validator.nameNotChangedOrNotTaken()));
     }
 

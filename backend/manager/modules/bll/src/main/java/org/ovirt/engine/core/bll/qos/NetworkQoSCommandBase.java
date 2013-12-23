@@ -45,39 +45,6 @@ public abstract class NetworkQoSCommandBase extends CommandBase<NetworkQoSParame
         return true;
     }
 
-    protected boolean validateValues() {
-        if(missingValues()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES);
-        }
-
-        if (peakLowerThanAverage()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE);
-        }
-
-        return true;
-    }
-
-    protected  boolean peakLowerThanAverage() {
-        return (getNetworkQoS().getInboundPeak() != null
-                && getNetworkQoS().getInboundPeak() < getNetworkQoS().getInboundAverage())
-                || (getNetworkQoS().getOutboundPeak() != null
-                && getNetworkQoS().getOutboundPeak() < getNetworkQoS().getOutboundAverage());
-    }
-
-    protected boolean missingValues() {
-        return missingValue(getNetworkQoS().getInboundAverage(),
-                getNetworkQoS().getInboundPeak(),
-                getNetworkQoS().getInboundBurst())
-                || missingValue(getNetworkQoS().getOutboundAverage(),
-                getNetworkQoS().getOutboundPeak(),
-                getNetworkQoS().getOutboundBurst());
-    }
-
-    private boolean missingValue(Integer average, Integer peak, Integer burst) {
-        return (average != null || peak != null || burst != null)
-                && (average == null || peak == null || burst == null);
-    }
-
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getStoragePoolId(),

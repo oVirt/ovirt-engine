@@ -18,7 +18,8 @@ public class AddNetworkQoSCommand extends NetworkQoSCommandBase {
         NetworkQosValidator validator = new NetworkQosValidator(getNetworkQoS());
         return validateParameters()
                 && validate(validator.nameNotTakenInDc())
-                && validateValues();
+                && validate(validator.allValuesPresent())
+                && validate(validator.peakConsistentWithAverage());
     }
 
     @Override

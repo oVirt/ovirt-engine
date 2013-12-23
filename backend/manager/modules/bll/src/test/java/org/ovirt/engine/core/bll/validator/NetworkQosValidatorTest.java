@@ -21,6 +21,9 @@ public class NetworkQosValidatorTest {
 
     private static final Guid DEFAULT_GUID = Guid.newGuid();
     private static final Guid OTHER_GUID = Guid.newGuid();
+    private static final Integer BANDWIDTH_LOW = 10;
+    private static final Integer BANDWIDTH_MEDIUM = 100;
+    private static final Integer BANDWIDTH_HIGH = 1000;
 
     private NetworkQoS qos;
     private NetworkQoS oldQos;
@@ -116,5 +119,163 @@ public class NetworkQosValidatorTest {
     public void NameTaken() {
         qos.setName("foo");
         nameNotChangedOrNotTakenTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NAME_EXIST));
+    }
+
+    private void valuesPresentTest(Matcher<ValidationResult> matcher) {
+        assertThat(validator.allValuesPresent(), matcher);
+    }
+
+    @Test
+    public void valuesPresentNullInput() {
+        assertThat(nullValidator.allValuesPresent(), isValid());
+    }
+
+    @Test
+    public void noValuePresent() {
+        valuesPresentTest(isValid());
+    }
+
+    @Test
+    public void allValuesPresent() {
+        qos.setInboundAverage(BANDWIDTH_MEDIUM);
+        qos.setInboundPeak(BANDWIDTH_MEDIUM);
+        qos.setInboundBurst(BANDWIDTH_MEDIUM);
+        qos.setOutboundAverage(BANDWIDTH_MEDIUM);
+        qos.setOutboundPeak(BANDWIDTH_MEDIUM);
+        qos.setOutboundBurst(BANDWIDTH_MEDIUM);
+        valuesPresentTest(isValid());
+    }
+
+    @Test
+    public void allInboundValuesPresent() {
+        qos.setInboundAverage(BANDWIDTH_MEDIUM);
+        qos.setInboundPeak(BANDWIDTH_MEDIUM);
+        qos.setInboundBurst(BANDWIDTH_MEDIUM);
+        valuesPresentTest(isValid());
+    }
+
+    @Test
+    public void allOutboundValuesPresent() {
+        qos.setOutboundAverage(BANDWIDTH_MEDIUM);
+        qos.setOutboundPeak(BANDWIDTH_MEDIUM);
+        qos.setOutboundBurst(BANDWIDTH_MEDIUM);
+        valuesPresentTest(isValid());
+    }
+
+    @Test
+    public void onlyInboundAveragePresent() {
+        qos.setInboundAverage(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void onlyInboundPeakPresent() {
+        qos.setInboundPeak(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void onlyInboundBurstPresent() {
+        qos.setInboundBurst(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void onlyOutboundAveragePresent() {
+        qos.setOutboundAverage(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void onlyOutboundPeakPresent() {
+        qos.setOutboundPeak(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void onlyOutboundBurstPresent() {
+        qos.setOutboundBurst(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void inboundBurstMissing() {
+        qos.setInboundAverage(BANDWIDTH_MEDIUM);
+        qos.setInboundPeak(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void inboundPeakMissing() {
+        qos.setInboundBurst(BANDWIDTH_MEDIUM);
+        qos.setInboundAverage(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void inboundAverageMissing() {
+        qos.setInboundPeak(BANDWIDTH_MEDIUM);
+        qos.setInboundBurst(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void outboundBurstMissing() {
+        qos.setOutboundAverage(BANDWIDTH_MEDIUM);
+        qos.setOutboundPeak(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void outboundPeakMissing() {
+        qos.setOutboundBurst(BANDWIDTH_MEDIUM);
+        qos.setOutboundAverage(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    @Test
+    public void outboundAverageMissing() {
+        qos.setOutboundPeak(BANDWIDTH_MEDIUM);
+        qos.setOutboundBurst(BANDWIDTH_MEDIUM);
+        valuesPresentTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES));
+    }
+
+    private void peakConsistentWithAverageTest(Matcher<ValidationResult> matcher) {
+        qos.setInboundAverage(BANDWIDTH_MEDIUM);
+        qos.setOutboundAverage(BANDWIDTH_MEDIUM);
+        assertThat(validator.peakConsistentWithAverage(), matcher);
+    }
+
+    @Test
+    public void peakConsistentWithAverageNullInput() {
+        assertThat(nullValidator.peakConsistentWithAverage(), isValid());
+    }
+
+    @Test
+    public void peakHigherThanAverage() {
+        qos.setInboundPeak(BANDWIDTH_HIGH);
+        qos.setOutboundPeak(BANDWIDTH_HIGH);
+        peakConsistentWithAverageTest(isValid());
+    }
+
+    @Test
+    public void peakEqualToAverage() {
+        qos.setInboundPeak(BANDWIDTH_MEDIUM);
+        qos.setOutboundPeak(BANDWIDTH_MEDIUM);
+        peakConsistentWithAverageTest(isValid());
+    }
+
+    @Test
+    public void inboundPeakLowerThanAverage() {
+        qos.setInboundPeak(BANDWIDTH_LOW);
+        qos.setOutboundPeak(BANDWIDTH_HIGH);
+        peakConsistentWithAverageTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE));
+    }
+
+    @Test
+    public void outboundPeakLowerThanAverage() {
+        qos.setInboundPeak(BANDWIDTH_HIGH);
+        qos.setOutboundPeak(BANDWIDTH_LOW);
+        peakConsistentWithAverageTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE));
     }
 }
