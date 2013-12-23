@@ -123,7 +123,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             }
 
             updateConsoleDevice(template.getId());
-            updateVirtioScsiEnabled(template.getId());
+            updateVirtioScsiEnabled(template.getId(), template.getOsId());
             updateTimeZone(template.getTimeZone());
 
             // Update domain list
@@ -266,6 +266,15 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         getModel().getDisksAllocationModel().setIsAliasChangable(true);
 
         initStorageDomains();
+    }
+
+    @Override
+    public void oSType_SelectedItemChanged() {
+        VmTemplate template = getModel().getTemplate().getSelectedItem();
+        Integer osType = getModel().getOSType().getSelectedItem();
+        if (template != null && osType != null) {
+            updateVirtioScsiEnabled(template.getId(), osType);
+        }
     }
 
     @Override

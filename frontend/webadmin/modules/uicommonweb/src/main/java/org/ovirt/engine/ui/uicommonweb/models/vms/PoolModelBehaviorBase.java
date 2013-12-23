@@ -129,7 +129,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             updateTimeZone(vmBase.getTimeZone());
             updateConsoleDevice(vmBase.getId());
-            updateVirtioScsiEnabled(vmBase.getId());
+            updateVirtioScsiEnabled(vmBase.getId(), vmBase.getOsId());
 
             // Update domain list
             updateDomain();
@@ -233,6 +233,15 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     @Override
     public void provisioning_SelectedItemChanged()
     {
+    }
+
+    @Override
+    public void oSType_SelectedItemChanged() {
+        VmTemplate template = getModel().getTemplate().getSelectedItem();
+        Integer osType = getModel().getOSType().getSelectedItem();
+        if (template != null && osType != null) {
+            updateVirtioScsiEnabled(template.getId(), osType);
+        }
     }
 
     @Override

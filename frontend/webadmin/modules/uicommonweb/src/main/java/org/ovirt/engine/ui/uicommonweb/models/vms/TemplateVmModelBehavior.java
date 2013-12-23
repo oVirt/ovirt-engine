@@ -144,6 +144,11 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
+    public void oSType_SelectedItemChanged()
+    {
+    }
+
+    @Override
     public void updateMinAllocatedMemory()
     {
     }
