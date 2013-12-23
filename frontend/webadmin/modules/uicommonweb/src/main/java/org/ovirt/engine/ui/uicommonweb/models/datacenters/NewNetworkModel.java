@@ -73,11 +73,6 @@ public class NewNetworkModel extends NetworkModel {
             items.add(createNetworkClusterModel(cluster));
         }
         getNetworkClusterList().setItems(items);
-
-        if (firstInit) {
-            firstInit = false;
-            addCommands();
-        }
     }
 
     protected NetworkClusterModel createNetworkClusterModel(VDSGroup cluster) {

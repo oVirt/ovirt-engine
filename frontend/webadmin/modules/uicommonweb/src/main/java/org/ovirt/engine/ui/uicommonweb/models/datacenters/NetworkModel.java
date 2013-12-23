@@ -76,6 +76,7 @@ public abstract class NetworkModel extends Model
 
     public NetworkModel(Network network, ListModel sourceListModel)
     {
+        addCommands();
         this.network = network;
         this.sourceListModel = sourceListModel;
         setName(new EntityModel());
@@ -475,8 +476,6 @@ public abstract class NetworkModel extends Model
                 && profilesValid;
     }
 
-    protected boolean firstInit = true;
-
     public void syncWithBackend() {
         final StoragePool dc = getSelectedDc();
         if (dc == null) {
@@ -512,7 +511,7 @@ public abstract class NetworkModel extends Model
         getProfiles().updateDcId(dc.getId());
     }
 
-    protected void addCommands() {
+    private void addCommands() {
         UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar2.setIsDefault(true);

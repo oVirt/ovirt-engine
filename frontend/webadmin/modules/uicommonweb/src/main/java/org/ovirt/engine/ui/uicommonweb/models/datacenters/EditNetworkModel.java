@@ -47,10 +47,6 @@ public class EditNetworkModel extends NetworkModel {
     @Override
     public void syncWithBackend() {
         super.syncWithBackend();
-        if (firstInit) {
-            firstInit = false;
-            addCommands();
-        }
     }
 
     @Override
