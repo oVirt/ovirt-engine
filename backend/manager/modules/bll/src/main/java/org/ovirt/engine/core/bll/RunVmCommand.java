@@ -348,9 +348,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (vdcReturnValue.getSucceeded()) {
 
                 getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-                // save RunVmParams so we'll know how to run
-                // the stateless VM in the endAction part.
-                VmHandler.updateDisksFromDb(getVm());
             } else {
                 if (areDisksLocked(vdcReturnValue)) {
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
