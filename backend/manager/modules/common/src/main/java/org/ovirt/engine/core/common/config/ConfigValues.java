@@ -716,11 +716,6 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("default,ich6")
-    DesktopAudioDeviceType,
-
-    @Reloadable
-    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("0")
     SupportedStorageFormats,
 

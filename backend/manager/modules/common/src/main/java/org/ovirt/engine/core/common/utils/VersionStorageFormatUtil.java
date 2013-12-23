@@ -57,6 +57,7 @@ public class VersionStorageFormatUtil {
                     put(Version.v3_1, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
                     put(Version.v3_2, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
                     put(Version.v3_3, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
+                    put(Version.v3_4, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
                 }
             };
 
