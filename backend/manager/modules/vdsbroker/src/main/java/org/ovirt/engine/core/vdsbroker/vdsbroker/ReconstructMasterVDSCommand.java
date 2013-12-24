@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.StoragePoolDomainHelper;
 import org.ovirt.engine.core.common.vdscommands.ReconstructMasterVDSCommandParameters;
 
 public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -16,15 +14,8 @@ public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandPa
 
     @Override
     protected void executeVdsBrokerCommand() {
-        final Map<String, String> domains = new HashMap<String, String>();
-
-        for (StoragePoolIsoMap domain : getParameters().getDomainsList()) {
-            if (domain.getStatus() == StorageDomainStatus.Maintenance) {
-                domains.put(domain.getstorage_id().toString(), "attached");
-            } else {
-                domains.put(domain.getstorage_id().toString(), StorageDomainStatus.Active.toString().toLowerCase());
-            }
-        }
+        final Map<String, String> domains =
+                StoragePoolDomainHelper.buildStoragePoolDomainsMap(getParameters().getDomainsList());
 
         status = getBroker().reconstructMaster(getParameters().getStoragePoolId().toString(),
             getParameters().getStoragePoolName(),
