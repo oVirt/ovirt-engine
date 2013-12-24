@@ -188,23 +188,6 @@ public class DBConfigUtils extends ConfigUtilsBase {
         }
     }
 
-    private static String getValueFromDBDefault(ConfigValues name) {
-        String returnValue = null;
-        Map<String, Object> values = null;
-        if ((values = _vdcOptionCache.get(name.toString())) != null
-                && values.containsKey(ConfigCommon.defaultConfigurationVersion)) {
-            returnValue = (String) values.get(ConfigCommon.defaultConfigurationVersion);
-        } else {
-            VdcOption option = DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion(name.name(),
-                    ConfigCommon.defaultConfigurationVersion);
-            if (option != null) {
-                returnValue = option.getoption_value();
-            }
-        }
-
-        return returnValue;
-    }
-
     @Override
     protected Object getValue(DataType type, String name, String defaultValue) {
         // Note that the type parameter is useless, it should be removed (and
