@@ -39,7 +39,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             Boolean bonded = findInterfaceByName(ifaceNameWithoutVlan).getBonded();
             String type = (bonded != null && bonded) ? "bonding" : "nic";
             opts.put(type, ifaceNameWithoutVlan);
-            if (isVlan(network)) {
+            if (NetworkUtils.isVlan(network)) {
                 opts.put("vlan", network.getVlanId().toString());
             }
 
@@ -79,10 +79,6 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         default:
             break;
         }
-    }
-
-    private static boolean isVlan(Network net) {
-        return net.getVlanId() != null;
     }
 
     private Map<String, Object> generateBonds() {

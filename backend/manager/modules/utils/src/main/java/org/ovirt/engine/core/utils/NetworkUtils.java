@@ -180,7 +180,7 @@ public final class NetworkUtils {
      *            The network to check
      */
     public static boolean isNonVmNonVlanNetwork(Network network) {
-        return !network.isVmNetwork() && network.getVlanId() == null;
+        return !network.isVmNetwork() && !isVlan(network);
     }
 
     /**
@@ -203,5 +203,16 @@ public final class NetworkUtils {
      */
     public static boolean isManagementNetwork(String networkName) {
         return getEngineNetwork().equals(networkName);
+    }
+
+    /**
+     * Determine if a given network is configured as a vlan
+     *
+     * @param network
+     *            the network to check.
+     * @return <code>true</code> iff the network is a vlan.
+     */
+    public static boolean isVlan(Network network) {
+        return network.getVlanId() != null;
     }
 }
