@@ -175,7 +175,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
             public UserPortalItemModel getValue(UserPortalItemModel object) {
                 return object;
             }
-        }, constants.empty(), "130px"); //$NON-NLS-1$
+        }, constants.empty(), "154px"); //$NON-NLS-1$
 
         ConsoleButtonCell openConsoleCell = new ConsoleButtonCell(
                 applicationResources.sideTabExtendedVmStyle().enabledConsoleButton(),
@@ -354,12 +354,30 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         };
         stopCell.setElementIdPrefix(elementIdPrefix);
         stopCell.setColumnId("stopButton"); //$NON-NLS-1$
+
+        ImageButtonCell<UserPortalItemModel> rebootCell = new VmButtonsImageButtonCell(
+                applicationResources.rebootIcon(), applicationResources.rebootDisabledIcon()) {
+
+            @Override
+            protected String getTitle(UserPortalItemModel value) {
+                return constants.rebootVm();
+            }
+
+            @Override
+            protected UICommand resolveCommand(UserPortalItemModel value) {
+                return value.getRebootCommand();
+            }
+        };
+        rebootCell.setElementIdPrefix(elementIdPrefix);
+        rebootCell.setColumnId("rebootColumn"); //$NON-NLS-1$
+
         CompositeCell<UserPortalItemModel> compositeCell = new BorderedCompositeCell<UserPortalItemModel>(
                 new ArrayList<HasCell<UserPortalItemModel, ?>>(Arrays.asList(
                         new UserPortalItemSimpleColumn(runCell),
                         new UserPortalItemSimpleColumn(shutdownCell),
                         new UserPortalItemSimpleColumn(suspendCell),
-                        new UserPortalItemSimpleColumn(stopCell))));
+                        new UserPortalItemSimpleColumn(stopCell),
+                        new UserPortalItemSimpleColumn(rebootCell))));
 
         return compositeCell;
     }

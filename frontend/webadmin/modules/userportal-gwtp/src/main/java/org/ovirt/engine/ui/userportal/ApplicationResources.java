@@ -54,6 +54,13 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/actions/power_Disabled.png")
     ImageResource powerDisabledIcon();
 
+    @Source("images/actions/Reboot-24X24.png")
+    ImageResource rebootIcon();
+
+    @Source("images/actions/Reboot-disabled-24X24.png")
+    ImageResource rebootDisabledIcon();
+
+
     // status images
     @Source("images/status/suspendedOverlay.png")
     ImageResource suspendedIcon();

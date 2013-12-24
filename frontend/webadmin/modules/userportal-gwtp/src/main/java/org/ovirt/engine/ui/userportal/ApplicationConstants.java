@@ -314,6 +314,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Run VM")
     String runVm();
 
+    @DefaultStringValue("Reboot VM")
+    String rebootVm();
+
     @DefaultStringValue("Double Click for Console")
     String doubleClickForConsole();
 

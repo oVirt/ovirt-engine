@@ -169,6 +169,12 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/icn_stop.png")
     ImageResource stopVmImage();
 
+    @Source("images/Reboot-13X13.png")
+    ImageResource rebootImage();
+
+    @Source("images/Reboot-disabled-13X13.png")
+    ImageResource rebootDisabledImage();
+
     @Source("images/storages.png")
     ImageResource storagesImage();
 

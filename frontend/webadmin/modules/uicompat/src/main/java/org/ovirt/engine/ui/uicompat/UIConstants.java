@@ -651,6 +651,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Power Off Virtual Machine(s)")
     String stopVirtualMachinesTitle();
 
+    @DefaultStringValue("Reboot Virtual Machine(s)")
+    String rebootVirtualMachinesTitle();
+
     @DefaultStringValue("Change CD")
     String changeCDTitle();
 
@@ -829,6 +832,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to Power Off the following Virtual Machines?")
     String areYouSureYouWantToStopTheFollowingVirtualMachinesMsg();
+
+    @DefaultStringValue("Are you sure you want to Reboot the following Virtual Machines?")
+    String areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg();
 
     @DefaultStringValue("This field must contain an IP address in format xxx.xxx.xxx.xxx")
     String thisFieldMustContainIPaddressInFormatMsg();

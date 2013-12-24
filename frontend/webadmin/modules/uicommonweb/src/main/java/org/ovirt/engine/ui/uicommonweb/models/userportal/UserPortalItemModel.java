@@ -105,6 +105,18 @@ public class UserPortalItemModel extends EntityModel {
         returnVmCommand = value;
     }
 
+    private UICommand rebootCommand;
+
+    public UICommand getRebootCommand() {
+        return rebootCommand;
+    }
+
+    public void setRebootCommand(UICommand value) {
+        getCommands().remove(rebootCommand);
+        getCommands().add(value);
+        rebootCommand = value;
+    }
+
     private String name;
 
     public String getName()
@@ -255,6 +267,7 @@ public class UserPortalItemModel extends EntityModel {
         setShutdownCommand(new UICommand("Shutdown", this)); //$NON-NLS-1$
         setTakeVmCommand(new UICommand("TakeVm", this)); //$NON-NLS-1$
         setReturnVmCommand(new UICommand("ReturnVm", this)); //$NON-NLS-1$
+        setRebootCommand(new UICommand("RebootVm", this)); //$NON-NLS-1$
 
         ChangeCDModel tempVar = new ChangeCDModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
@@ -307,6 +320,8 @@ public class UserPortalItemModel extends EntityModel {
         stopCommand = null;
         takeVmCommand.setTarget(null);
         takeVmCommand = null;
+        rebootCommand.setTarget(null);
+        rebootCommand = null;
         setCommands(null);
     }
 
