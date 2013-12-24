@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.network.NetworkConfigurator;
+import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -267,21 +266,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     }
 
-    private class SyncNetworkParametersBuilder {
+    private class SyncNetworkParametersBuilder extends NetworkParametersBuilder{
 
-        private SetupNetworksParameters createSetupNetworksParameters(Guid hostId) {
-            VDS host = new VDS();
-            host.setId(hostId);
-            NetworkConfigurator configurator = new NetworkConfigurator(host);
-            List<VdsNetworkInterface> nics = configurator.filterBondsWithoutSlaves(getHostInterfaces(hostId));
-            return configurator.createSetupNetworkParams(nics);
-        }
-
-        private List<VdsNetworkInterface> getHostInterfaces(Guid hostId) {
-            return getDbFacade().getInterfaceDao().getAllInterfacesForVds(hostId);
-        }
-
-        protected ArrayList<VdcActionParametersBase> buildParameters(Network network) {
+        private ArrayList<VdcActionParametersBase> buildParameters(Network network) {
             ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
             List<VdsNetworkInterface> nics =
                     getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(getNetwork().getId());
