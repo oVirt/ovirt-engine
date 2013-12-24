@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class TagListModel extends SearchableListModel
 {
 
-    public static EventDefinition ResetRequestedEventDefinition;
+    public static EventDefinition resetRequestedEventDefinition;
     private Event privateResetRequestedEvent;
 
     public Event getResetRequestedEvent()
@@ -160,12 +160,12 @@ public class TagListModel extends SearchableListModel
 
     static
     {
-        ResetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
+        resetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
     }
 
     public TagListModel()
     {
-        setResetRequestedEvent(new Event(ResetRequestedEventDefinition));
+        setResetRequestedEvent(new Event(resetRequestedEventDefinition));
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$

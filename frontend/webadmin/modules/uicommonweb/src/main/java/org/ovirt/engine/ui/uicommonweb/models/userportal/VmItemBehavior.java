@@ -73,7 +73,7 @@ public class VmItemBehavior extends ItemBehavior {
 
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args) {
-        if (ev.matchesDefinition(ChangeCDModel.ExecutedEventDefinition))
+        if (ev.matchesDefinition(ChangeCDModel.executedEventDefinition))
         {
             changeCD(sender, args);
         }

@@ -12,7 +12,7 @@ public class ChangeCDModel extends Model
 
     // public event EventHandler Executed = delegate { };
 
-    public static EventDefinition ExecutedEventDefinition;
+    public static EventDefinition executedEventDefinition;
     private Event privateExecutedEvent;
 
     public Event getExecutedEvent()
@@ -39,12 +39,12 @@ public class ChangeCDModel extends Model
 
     static
     {
-        ExecutedEventDefinition = new EventDefinition("Executed", ChangeCDModel.class); //$NON-NLS-1$
+        executedEventDefinition = new EventDefinition("Executed", ChangeCDModel.class); //$NON-NLS-1$
     }
 
     public ChangeCDModel()
     {
-        setExecutedEvent(new Event(ExecutedEventDefinition));
+        setExecutedEvent(new Event(executedEventDefinition));
 
         setDoCommand(new UICommand("Do", this)); //$NON-NLS-1$
     }

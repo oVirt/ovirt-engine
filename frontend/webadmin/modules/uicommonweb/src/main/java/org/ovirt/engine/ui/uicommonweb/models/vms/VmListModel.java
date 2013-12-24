@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import static org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -84,8 +87,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import static org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
@@ -2308,7 +2309,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ChangeCDModel.ExecutedEventDefinition))
+        if (ev.matchesDefinition(ChangeCDModel.executedEventDefinition))
         {
             changeCD(sender, args);
         }
