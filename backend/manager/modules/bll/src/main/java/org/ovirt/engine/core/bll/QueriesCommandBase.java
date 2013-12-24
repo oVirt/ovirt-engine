@@ -18,6 +18,7 @@ import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
@@ -180,6 +181,10 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     public VdsDAO getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
+    }
+
+    protected AffinityGroupDao getAffinityGroupDao() {
+        return DbFacade.getInstance().getAffinityGroupDao();
     }
 
     protected BackendInternal getBackend() {

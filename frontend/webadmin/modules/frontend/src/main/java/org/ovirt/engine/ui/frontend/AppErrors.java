@@ -277,7 +277,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot fence Host, Host fence is disabled.")
     String VDS_FENCE_DISABLED();
 
-
     @DefaultStringValue("Fence is disabled due to the Engine Service start up sequence.")
     String VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL();
 
@@ -733,6 +732,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$type subnet")
     String VAR__TYPE__SUBNET();
+
+    @DefaultStringValue("$type Affinity Group")
+    String VAR__TYPE__AFFINITY_GROUP();
 
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
@@ -2951,4 +2953,37 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The networks represented by label cannot be configured on the same network interface.")
     String NETWORK_LABEL_CONFLICT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Name field input is too long.")
+    String AFFINITY_GROUP_NAME_TOO_LONG();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Name field is invalid.")
+    String AFFINITY_GROUP_NAME_INVALID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Description field is invalid.")
+    String AFFINITY_GROUP_DESCRIPTION_INVALID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cluster is empty.")
+    String ACTION_TYPE_FAILED_AFFINITY_GROUP_INVALID_CLUSTER_ID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Provided Cluster is invalid.")
+    String ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Provided VM is invalid (does not exist).")
+    String ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Provided VM resides in another Cluster.")
+    String ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Duplicate VM.")
+    String ACTION_TYPE_FAILED_DUPLICTE_VM_IN_AFFINITY_GROUP();
+
+    @DefaultStringValue("Cannot ${action} ${type}. No matching Affinity Group.")
+    String ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot change Cluster for Affinity Group.")
+    String ACTION_TYPE_FAILED_CANNOT_CHANGE_CLUSTER_ID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Affinity Group name already exists.")
+    String ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS();
 }

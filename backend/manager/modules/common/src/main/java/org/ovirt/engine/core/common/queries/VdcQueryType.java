@@ -307,6 +307,10 @@ public enum VdcQueryType implements Serializable {
     GetClusterPolicyById,
     GetAllPolicyUnits,
     GetAttachedClustersByClusterPolicyId,
+    GetAffinityGroupById,
+    GetAffinityGroupsByClusterId,
+    GetAffinityGroupsByVmId,
+
     GetAllDisksPartialDataByVmId(VdcQueryAuthType.User),
     GetVmTemplateCount,
     // Default type instead of having to null check

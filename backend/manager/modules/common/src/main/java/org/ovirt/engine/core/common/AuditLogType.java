@@ -845,7 +845,15 @@ public enum AuditLogType {
     PM_POLICY_TO_UP(10252),
 
     // HA Reservation
-    CLUSTER_ALERT_HA_RESERVATION(10300, AuditLogTimeInterval.HOUR.getValue());
+    CLUSTER_ALERT_HA_RESERVATION(10300, AuditLogTimeInterval.HOUR.getValue()),
+
+    //affinity groups
+    USER_ADDED_AFFINITY_GROUP(10350),
+    USER_FAILED_TO_ADD_AFFINITY_GROUP(10351),
+    USER_UPDATED_AFFINITY_GROUP(10352),
+    USER_FAILED_TO_UPDATE_AFFINITY_GROUP(10353),
+    USER_REMOVED_AFFINITY_GROUP(10354),
+    USER_FAILED_TO_REMOVE_AFFINITY_GROUP(10355);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.

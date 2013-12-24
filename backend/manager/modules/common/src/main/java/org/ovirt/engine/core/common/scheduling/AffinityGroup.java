@@ -3,9 +3,14 @@ package org.ovirt.engine.core.common.scheduling;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -21,14 +26,20 @@ public class AffinityGroup extends IVdcQueryable implements BusinessEntity<Guid>
     /**
      * affinity group name
      */
+    @NotNull
+    @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE, message = "AFFINITY_GROUP_NAME_TOO_LONG")
+    @ValidI18NName(message = "AFFINITY_GROUP_NAME_INVALID")
     private String name;
     /**
      * affinity group description
      */
+    @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, message = "AFFINITY_GROUP_DESCRIPTION_INVALID")
+    @ValidI18NName(message = "AFFINITY_GROUP_DESCRIPTION_INVALID")
     private String description;
     /**
      * affinity group associated cluster id
      */
+    @NotNull(message = "ACTION_TYPE_FAILED_AFFINITY_GROUP_INVALID_CLUSTER_ID")
     private Guid clusterId;
     /**
      * affinity group polarity: positive(true)/negative(false- anti-affinity)
