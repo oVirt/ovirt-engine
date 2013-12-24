@@ -280,6 +280,16 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /vms/{vm:id}/reboot|rel=reboot
+  description: reboot a virtual machine in the system identified by the given id
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /vms/{vm:id}/start|rel=start
   description: start a virtual machine in the system identified by the given id
   request:

@@ -76,8 +76,16 @@ public class FeaturesHelper {
             addGlusterBricksFeature(features);
             addFeatureCopyMoveDiskInAdditionalContext(features);
             addNetworkLabelsFeature(features);
+            addRebootFeature(features);
         }
         return features;
+    }
+
+    private void addRebootFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Reboot VM");
+        feature.setDescription("Ability to reboot VM");
+        features.getFeature().add(feature);
     }
 
     private void addSingleQxlPciFeature(Features features) {

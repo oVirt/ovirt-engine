@@ -227,6 +227,13 @@ public class BackendVmResource extends
     }
 
     @Override
+    public Response reboot(Action action) {
+        return doAction(VdcActionType.RebootVm,
+                        new VmOperationParameterBase(guid),
+                        action);
+    }
+
+    @Override
     public Response start(Action action) {
         RunVmParams params;
         VdcActionType actionType;

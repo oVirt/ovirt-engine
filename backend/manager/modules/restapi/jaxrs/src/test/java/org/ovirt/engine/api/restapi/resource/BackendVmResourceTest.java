@@ -577,6 +577,16 @@ public class BackendVmResourceTest
     }
 
     @Test
+    public void testReboot() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.RebootVm,
+                                           VmOperationParameterBase.class,
+                                           new String[] { "VmId" },
+                                           new Object[] { GUIDS[0] }));
+
+        verifyActionResponse(resource.reboot(new Action()));
+    }
+
+    @Test
     public void testStop() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.StopVm,
                                            StopVmParameters.class,
