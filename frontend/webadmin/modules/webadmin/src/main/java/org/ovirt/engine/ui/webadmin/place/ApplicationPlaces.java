@@ -127,6 +127,9 @@ public class ApplicationPlaces {
     public static final String clusterGlusterHookSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "gluster_hooks"; //$NON-NLS-1$
 
+    public static final String clusterAffinityGroupsSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
+            + "affinity_groups"; //$NON-NLS-1$
+
     public static final String clusterPermissionSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 
@@ -146,6 +149,9 @@ public class ApplicationPlaces {
 
     public static final String virtualMachineApplicationSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "applications"; //$NON-NLS-1$
+
+    public static final String virtualMachineAffinityGroupsSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "affinity_groups"; //$NON-NLS-1$
 
     public static final String virtualMachinePermissionSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$

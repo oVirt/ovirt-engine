@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
 import java.util.Map;
+
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -39,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
@@ -177,6 +179,16 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         this.clusterGlusterHookListModel = clusterGlusterHookListModel;
     }
 
+    private ClusterAffinityGroupListModel affinityGroupListModel;
+
+    public ClusterAffinityGroupListModel getAffinityGroupListModel() {
+        return affinityGroupListModel;
+    }
+
+    public void setAffinityGroupListModel(ClusterAffinityGroupListModel affinityGroupListModel) {
+        this.affinityGroupListModel = affinityGroupListModel;
+    }
+
     public ClusterListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
@@ -235,6 +247,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         setClusterVmListModel(new ClusterVmListModel());
         setClusterServiceModel(new ClusterServiceModel());
         setClusterGlusterHookListModel(new ClusterGlusterHookListModel());
+        setAffinityGroupListModel(new ClusterAffinityGroupListModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new ClusterGeneralModel());
@@ -244,6 +257,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         list.add(getClusterServiceModel());
         list.add(getClusterGlusterHookListModel());
         list.add(new PermissionListModel());
+        list.add(getAffinityGroupListModel());
         setDetailModels(list);
     }
 
@@ -256,6 +270,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(vdsGroup.getcompatibility_version()));
         getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
                 && GlusterFeaturesUtil.isGlusterHookSupported(vdsGroup.getcompatibility_version()));
+        getAffinityGroupListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
     }
 
     @Override
@@ -1133,4 +1148,5 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     }
                 }));
     }
+
 }

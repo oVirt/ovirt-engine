@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
@@ -23,11 +23,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVirtualMachinePermissionPresenter extends AbstractSubTabPresenter<VM, VmListModel, PermissionListModel, SubTabVirtualMachinePermissionPresenter.ViewDef, SubTabVirtualMachinePermissionPresenter.ProxyDef> {
+public class SubTabVirtualMachineAffinityGroupPresenter extends AbstractSubTabPresenter<VM, VmListModel, VmAffinityGroupListModel, SubTabVirtualMachineAffinityGroupPresenter.ViewDef, SubTabVirtualMachineAffinityGroupPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.virtualMachinePermissionSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachinePermissionPresenter> {
+    @NameToken(ApplicationPlaces.virtualMachineAffinityGroupsSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineAffinityGroupPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VM> {
@@ -35,14 +35,14 @@ public class SubTabVirtualMachinePermissionPresenter extends AbstractSubTabPrese
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, VmListModel, PermissionListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.virtualMachinePermissionSubTabLabel(), 7, modelProvider);
+            SearchableDetailModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.affinityGroupSubTabLabel(), 6, modelProvider);
     }
 
     @Inject
-    public SubTabVirtualMachinePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabVirtualMachineAffinityGroupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, VmListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }

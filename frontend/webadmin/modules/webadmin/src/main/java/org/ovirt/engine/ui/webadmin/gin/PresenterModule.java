@@ -70,6 +70,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ManagePolicyUnitPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
@@ -118,6 +119,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMac
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGlusterHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
@@ -209,6 +211,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGr
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineApplicationPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineGeneralPresenter;
@@ -283,6 +286,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPop
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.QuotaPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.AffinityGroupPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ManagePolicyUnitPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.DisksAllocationPopupView;
@@ -333,6 +337,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVirtualMachineV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVnicProfileView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVolumeView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.ClusterSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterAffinityGroupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGlusterHookView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterHostView;
@@ -424,6 +429,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserGroupVi
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.UserSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineAffinityGroupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineApplicationView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineGeneralView;
@@ -483,6 +489,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ManagePolicyUnitPopupPresenterWidget.class,
                 ManagePolicyUnitPopupPresenterWidget.ViewDef.class,
                 ManagePolicyUnitPopupView.class);
+        bindPresenterWidget(AffinityGroupPopupPresenterWidget.class,
+                AffinityGroupPopupPresenterWidget.ViewDef.class,
+                AffinityGroupPopupView.class);
 
         // Main section: main tabs
         bindPresenter(MainTabPanelPresenter.class,
@@ -668,6 +677,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabClusterGlusterHookPresenter.ViewDef.class,
                 SubTabClusterGlusterHookView.class,
                 SubTabClusterGlusterHookPresenter.ProxyDef.class);
+        bindPresenter(SubTabClusterAffinityGroupPresenter.class,
+                SubTabClusterAffinityGroupPresenter.ViewDef.class,
+                SubTabClusterAffinityGroupView.class,
+                SubTabClusterAffinityGroupPresenter.ProxyDef.class);
         bindPresenter(SubTabClusterPermissionPresenter.class,
                 SubTabClusterPermissionPresenter.ViewDef.class,
                 SubTabClusterPermissionView.class,
@@ -740,6 +753,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineApplicationPresenter.ViewDef.class,
                 SubTabVirtualMachineApplicationView.class,
                 SubTabVirtualMachineApplicationPresenter.ProxyDef.class);
+        bindPresenter(SubTabVirtualMachineAffinityGroupPresenter.class,
+                SubTabVirtualMachineAffinityGroupPresenter.ViewDef.class,
+                SubTabVirtualMachineAffinityGroupView.class,
+                SubTabVirtualMachineAffinityGroupPresenter.ProxyDef.class);
         bindPresenter(SubTabVirtualMachinePermissionPresenter.class,
                 SubTabVirtualMachinePermissionPresenter.ViewDef.class,
                 SubTabVirtualMachinePermissionView.class,

@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -45,6 +46,8 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -237,6 +240,8 @@ public interface ClientGinjectorExtension {
 
     DetailModelProvider<ClusterListModel, ClusterServiceModel> getSubTabClusterServiceModelProvider();
 
+    SearchableDetailModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel> getSubTabClusterAffinityGroupModelProvider();
+
     SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> getSubTabClusterGlusterHookModelProvider();
 
     SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel> getSubTabClusterPermissionModelProvider();
@@ -252,6 +257,8 @@ public interface ClientGinjectorExtension {
     SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> getSubTabVirtualMachineSnapshotModelProvider();
 
     SearchableDetailModelProvider<String, VmListModel, VmAppListModel> getSubTabVirtualMachineApplicationModelProvider();
+
+    SearchableDetailModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel> getSubTabVirtualMachineAffinityGroupModelProvider();
 
     SearchableDetailModelProvider<Permissions, VmListModel, PermissionListModel> getSubTabVirtualMachinePermissionModelProvider();
 

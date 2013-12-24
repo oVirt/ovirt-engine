@@ -374,6 +374,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Gluster Hooks")
     String clusterGlusterHooksSubTabLabel();
 
+    @DefaultStringValue("Affinity Groups")
+    String affinityGroupSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String clusterPermissionSubTabLabel();
 
@@ -3464,4 +3467,55 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Console")
     String consoleTabLabel();
+
+    @DefaultStringValue("Name")
+    String nameAffinityGroup();
+
+    @DefaultStringValue("Description")
+    String descriptionAffinityGroup();
+
+    @DefaultStringValue("Polarity")
+    String polarityAffinityGroup();
+
+    @DefaultStringValue("Enforcing")
+    String enforceAffinityGroup();
+
+    @DefaultStringValue("Members")
+    String membersAffinityGroup();
+
+    @DefaultStringValue("No Members")
+    String noMembersAffinityGroup();
+
+    @DefaultStringValue("New")
+    String newAffinityGroupLabel();
+
+    @DefaultStringValue("Edit")
+    String editAffinityGroupLabel();
+
+    @DefaultStringValue("Remove")
+    String removeAffinityGroupLabel();
+
+    @DefaultStringValue("Name")
+    String affinityGroupNameLabel();
+
+    @DefaultStringValue("Positive")
+    String affinityGroupPolarityLabel();
+
+    @DefaultStringValue("Enforcing")
+    String affinityGroupEnforceTypeLabel();
+
+    @DefaultStringValue("Description")
+    String affinityDescriptionLabel();
+
+    @DefaultStringValue("Positive")
+    String positiveAffinity();
+
+    @DefaultStringValue("Negative")
+    String negativeAffinity();
+
+    @DefaultStringValue("Hard")
+    String hardEnforcingAffinity();
+
+    @DefaultStringValue("Soft")
+    String softEnforcingAffinity();
 }
