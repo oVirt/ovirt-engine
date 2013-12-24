@@ -351,6 +351,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Shutdown")
     String shutDownVm();
 
+    @DefaultStringValue("Reboot")
+    String rebootVm();
+
     @DefaultStringValue("Name")
     String nameVm();
 

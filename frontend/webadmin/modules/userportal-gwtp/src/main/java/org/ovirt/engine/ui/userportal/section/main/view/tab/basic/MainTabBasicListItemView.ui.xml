@@ -108,8 +108,8 @@
 		}
 
 		.buttonsPanel {
-			margin-left: 40px;
-			width: 78px;
+			margin-left: 29px;
+			width: 104px;
 			height: 30px;
 			float: left;
 		}
@@ -125,6 +125,10 @@
         .suspendButtonAdditionalStyle {
         	float: right;
         }
+
+    .rebootButtonAdditionalStyle {
+      float: right;
+    }
 		
 	</ui:style>
 

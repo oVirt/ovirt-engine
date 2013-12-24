@@ -19,6 +19,7 @@ import java.util.TreeSet;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.TimeZoneType;
+import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -3632,5 +3633,21 @@ public final class AsyncDataProvider {
 
     public static Integer getDefaultOs (ArchitectureType architectureType) {
         return defaultOSes.get(architectureType);
+    }
+
+    public static boolean isRebootCommandExecutionAllowed(List<VM> vms) {
+        if (vms.isEmpty() || !VdcActionUtils.canExecute(vms, VM.class, VdcActionType.RebootVm)) {
+            return false;
+        }
+
+        for (VM vm : vms) {
+            Version version = vm.getVdsGroupCompatibilityVersion();
+            Version anyDcVersion = new Version();
+            // currently on VDSM side reboot is supported only when the guest agent is present and responsive so we need to check for that
+            if (!isCommandCompatible(VdcActionType.RebootVm, version, anyDcVersion) || StringHelper.isNullOrEmpty(vm.getVmIp())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

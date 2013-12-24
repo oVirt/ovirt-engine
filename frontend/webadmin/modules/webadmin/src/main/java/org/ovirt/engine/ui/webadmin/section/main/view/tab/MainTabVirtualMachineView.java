@@ -225,6 +225,13 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getStopCommand();
             }
         });
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.rebootVm(),
+                resources.rebootImage(), resources.rebootDisabledImage()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getRebootCommand();
+            }
+        });
         // TODO: separator
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
                 resources.consoleImage(), resources.consoleDisabledImage()) {

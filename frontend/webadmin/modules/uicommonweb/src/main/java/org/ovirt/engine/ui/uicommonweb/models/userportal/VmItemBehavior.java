@@ -69,6 +69,10 @@ public class VmItemBehavior extends ItemBehavior {
         {
             returnVm();
         }
+        else if (command == getItem().getRebootCommand())
+        {
+            reboot();
+        }
     }
 
     @Override
@@ -108,6 +112,11 @@ public class VmItemBehavior extends ItemBehavior {
     {
         VM entity = (VM) getItem().getEntity();
         Frontend.getInstance().runAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
+    }
+
+    private void reboot() {
+        VM entity = (VM) getItem().getEntity();
+        Frontend.getInstance().runAction(VdcActionType.RebootVm, new VmOperationParameterBase(entity.getId()));
     }
 
     private void stop() {
@@ -158,6 +167,7 @@ public class VmItemBehavior extends ItemBehavior {
         getItem().getStopCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
                 VdcActionType.StopVm));
+        getItem().getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.isRebootCommandExecutionAllowed(entities));
 
         // Check whether a VM is from the manual pool.
         if (entity.getVmPoolId() != null)

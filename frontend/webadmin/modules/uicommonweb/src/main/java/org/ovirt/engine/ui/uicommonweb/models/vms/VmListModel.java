@@ -87,6 +87,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
@@ -172,6 +173,16 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void setShutdownCommand(UICommand value)
     {
         privateShutdownCommand = value;
+    }
+
+    private UICommand privateRebootCommand;
+
+    public UICommand getRebootCommand() {
+        return privateRebootCommand;
+    }
+
+    public void setRebootCommand(UICommand value) {
+        privateRebootCommand = value;
     }
 
     private UICommand privateCancelMigrateCommand;
@@ -387,6 +398,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setPauseCommand(new UICommand("Pause", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setShutdownCommand(new UICommand("Shutdown", this)); //$NON-NLS-1$
+        setRebootCommand(new UICommand("Reboot", this)); //$NON-NLS-1$
         setEditConsoleCommand(new UICommand("EditConsoleCommand", this)); //$NON-NLS-1$
         setConsoleConnectCommand(new UICommand("ConsoleConnectCommand", this)); //$NON-NLS-1$
         setMigrateCommand(new UICommand("Migrate", this)); //$NON-NLS-1$
@@ -1109,14 +1121,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             model.startProgress(null);
 
             Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
-                            ExportVmModel localModel = (ExportVmModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
-                        }
-                    }, model);
+                                                     new IFrontendMultipleActionAsyncCallback() {
+                                                         @Override
+                                                         public void executed(FrontendMultipleActionAsyncResult result) {
+                                                             ExportVmModel localModel = (ExportVmModel) result.getState();
+                                                             localModel.stopProgress();
+                                                             cancel();
+                                                         }
+                                                     }, model);
         }
     }
 
@@ -1158,34 +1170,34 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.startProgress(null);
 
         Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+                                                 new IFrontendMultipleActionAsyncCallback() {
+                                                     @Override
+                                                     public void executed(FrontendMultipleActionAsyncResult result) {
 
-                        ExportVmModel localModel = (ExportVmModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                                                         ExportVmModel localModel = (ExportVmModel) result.getState();
+                                                         localModel.stopProgress();
+                                                         cancel();
 
-                    }
-                }, model);
+                                                     }
+                                                 }, model);
     }
 
     @Override
     protected void sendWarningForNonExportableDisks(VM entity) {
         // load VM disks and check if there is one which doesn't allow snapshot
         AsyncDataProvider.getVmDiskList(new AsyncQuery(getWindow(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        final ExportVmModel model = (ExportVmModel) target;
-                        @SuppressWarnings("unchecked")
-                        final ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
-                        VmModelHelper.sendWarningForNonExportableDisks(model,
-                                vmDisks,
-                                VmModelHelper.WarningType.VM_EXPORT);
-                    }
-                }),
-                entity.getId());
+                                                       new INewAsyncCallback() {
+                                                           @Override
+                                                           public void onSuccess(Object target, Object returnValue) {
+                                                               final ExportVmModel model = (ExportVmModel) target;
+                                                               @SuppressWarnings("unchecked")
+                                                               final ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
+                                                               VmModelHelper.sendWarningForNonExportableDisks(model,
+                                                                                                              vmDisks,
+                                                                                                              VmModelHelper.WarningType.VM_EXPORT);
+                                                           }
+                                                       }),
+                                        entity.getId());
     }
 
     private void runOnce()
@@ -1405,12 +1417,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.CancelMigrateVm, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(
-                            FrontendMultipleActionAsyncResult result) {
-                    }
-                }, null);
+                                                 new IFrontendMultipleActionAsyncCallback() {
+                                                     @Override
+                                                     public void executed(
+                                                             FrontendMultipleActionAsyncResult result) {
+                                                     }
+                                                 }, null);
     }
 
     private void postMigrateGetUpHosts(ArrayList<VDS> hosts)
@@ -1530,28 +1542,25 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVmToServer, list,
-                    new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult result) {
+                                                     new IFrontendMultipleActionAsyncCallback() {
+                                                         @Override
+                                                         public void executed(FrontendMultipleActionAsyncResult result) {
 
-                            MigrateModel localModel = (MigrateModel) result.getState();
-                            localModel.stopProgress();
-                            cancel();
+                                                     MigrateModel localModel = (MigrateModel) result.getState();
+                                                             localModel.stopProgress();
+                                                             cancel();
 
-                        }
-                    }, model);
+                                                         }
+                                                     }, model);
         }
     }
 
-    private void shutdown()
-    {
+    private void powerAction(String actionName, String title, String message) {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().shutdownVirtualMachinesTitle());
-        model.setHashName("shut_down_virtual_machine"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance()
-                .getConstants()
-                .areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg());
+        model.setTitle(title);
+        model.setHashName(actionName + "_virtual_machine"); //$NON-NLS-1$
+        model.setMessage(message);
         // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -1561,7 +1570,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnShutdown", this); //$NON-NLS-1$
+        UICommand tempVar = new UICommand("On" + actionName, this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
@@ -1571,94 +1580,86 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getCommands().add(tempVar2);
     }
 
-    private void onShutdown()
-    {
+    private interface PowerActionParametersFactory<P extends VdcActionParametersBase> {
+        P createActionParameters(VM vm);
+    }
+
+    private void onPowerAction(VdcActionType actionType, PowerActionParametersFactory<?> parametersFactory) {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
 
+
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
-            VM a = (VM) item;
-            list.add(new ShutdownVmParameters(a.getId(), true));
+        for (Object item : getSelectedItems()) {
+            VM vm = (VM) item;
+            list.add(parametersFactory.createActionParameters(vm));
         }
 
         model.startProgress(null);
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ShutdownVm, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
+        Frontend.getInstance().runMultipleAction(actionType, list,
+                                                 new IFrontendMultipleActionAsyncCallback() {
+                                                     @Override
+                                                     public void executed(FrontendMultipleActionAsyncResult result) {
 
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
+                                                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                                                         localModel.stopProgress();
+                                                         cancel();
 
-                    }
-                }, model);
+                                                     }
+                                                 }, model);
+
     }
 
-    private void stop()
-    {
-        ConfirmationModel model = new ConfirmationModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().stopVirtualMachinesTitle());
-        model.setHashName("stop_virtual_machine"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance()
-                .getConstants()
-                .areYouSureYouWantToStopTheFollowingVirtualMachinesMsg());
-        // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
-        ArrayList<String> items = new ArrayList<String>();
-        for (Object item : getSelectedItems())
-        {
-            VM a = (VM) item;
-            items.add(a.getName());
-        }
-        model.setItems(items);
-
-        UICommand tempVar = new UICommand("OnStop", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+    private void shutdown() {
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
+        powerAction("Shutdown", //$NON-NLS-1$
+                    constants.shutdownVirtualMachinesTitle(),
+                    constants.areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg());
     }
 
-    private void onStop()
-    {
-        ConfirmationModel model = (ConfirmationModel) getWindow();
+    private void onShutdown() {
+        onPowerAction(VdcActionType.ShutdownVm, new PowerActionParametersFactory<VdcActionParametersBase>() {
+            @Override
+            public VdcActionParametersBase createActionParameters(VM vm) {
+                return new ShutdownVmParameters(vm.getId(), true);
+            }
+        });
+    }
 
-        if (model.getProgress() != null)
-        {
-            return;
-        }
+    private void stop() {
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
+        powerAction("Stop", //$NON-NLS-1$
+                    constants.stopVirtualMachinesTitle(),
+                    constants.areYouSureYouWantToStopTheFollowingVirtualMachinesMsg());
+    }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
-            VM a = (VM) item;
-            list.add(new StopVmParameters(a.getId(), StopVmTypeEnum.NORMAL));
-        }
+    private void onStop() {
+        onPowerAction(VdcActionType.StopVm, new PowerActionParametersFactory<VdcActionParametersBase>() {
+            @Override
+            public VdcActionParametersBase createActionParameters(VM vm) {
+                return new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL);
+            }
+        });
+    }
 
-        model.startProgress(null);
+    private void reboot() {
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
+        powerAction("Reboot", //$NON-NLS-1$
+                    constants.rebootVirtualMachinesTitle(),
+                    constants.areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg());
+    }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.StopVm, list,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-
-                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-
-                    }
-                }, model);
+    private void onReboot() {
+        onPowerAction(VdcActionType.RebootVm, new PowerActionParametersFactory<VdcActionParametersBase>() {
+            @Override
+            public VdcActionParametersBase createActionParameters(VM vm) {
+                return new VmOperationParameterBase(vm.getId());
+            }
+        });
     }
 
     private void pause()
@@ -2241,6 +2242,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ShutdownVm));
         getStopCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.StopVm));
+        getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.isRebootCommandExecutionAllowed(items));
         getMigrateCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.MigrateVm));
         getCancelMigrateCommand().setIsExecutionAllowed(items.size() > 0
@@ -2351,6 +2353,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             shutdown();
         }
+        else if (command == getRebootCommand()) {
+            reboot();
+        }
         else if (command == getMigrateCommand())
         {
             migrate();
@@ -2439,6 +2444,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             onStop();
         }
+        else if (StringHelper.stringsEqual(command.getName(), "OnReboot")) //$NON-NLS-1$
+        {
+            onReboot();
+        }
         else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
         {
             onChangeCD();
@@ -2507,5 +2516,4 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     protected Guid extractStoragePoolIdNullSafe(VM entity) {
         return entity.getStoragePoolId();
     }
-
 }

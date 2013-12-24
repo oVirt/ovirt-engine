@@ -73,6 +73,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
         String suspendButtonAdditionalStyle();
 
+        String rebootButtonAdditionalStyle();
     }
 
     private final Driver driver = GWT.create(Driver.class);
@@ -119,6 +120,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     private MainTabBasicListItemActionButton runButton;
     private MainTabBasicListItemActionButton shutdownButton;
     private MainTabBasicListItemActionButton suspendButton;
+    private MainTabBasicListItemActionButton rebootButton;
 
     @Inject
     public MainTabBasicListItemView(
@@ -188,6 +190,23 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public void updateSuspendButton(UICommand command) {
         updateButton(suspendButton, command);
+    }
+
+    @Override
+    public HasClickHandlers addRebootButton() {
+        MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
+                constants.rebootVm(),
+                resources.rebootIcon(),
+                resources.rebootDisabledIcon(),
+                style.rebootButtonAdditionalStyle());
+        this.rebootButton = button;
+        addButtonToPanel(button);
+        return button;
+    }
+
+    @Override
+    public void updateRebootButton(UICommand command) {
+        updateButton(rebootButton, command);
     }
 
     void addButtonToPanel(MainTabBasicListItemActionButton button) {
@@ -294,6 +313,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
                 ElementIdUtils.createElementId(elementId, "shutdownButton")); //$NON-NLS-1$
         suspendButton.setElementId(
                 ElementIdUtils.createElementId(elementId, "suspendButton")); //$NON-NLS-1$
+        rebootButton.setElementId(
+                ElementIdUtils.createElementId(elementId, "rebootButton")); //$NON-NLS-1$
     }
 
 }

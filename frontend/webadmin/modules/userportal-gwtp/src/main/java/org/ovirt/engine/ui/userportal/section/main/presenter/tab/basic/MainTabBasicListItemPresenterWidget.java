@@ -64,6 +64,10 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
         void updateSuspendButton(UICommand command);
 
+        HasClickHandlers addRebootButton();
+
+        void updateRebootButton(UICommand command);
+
     }
 
     private final UserPortalBasicListProvider listModelProvider;
@@ -148,6 +152,12 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
                 executeCommand(getSuspendCommand());
             }
         }));
+        registerHandler(getView().addRebootButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                executeCommand(getRebootCommand());
+            }
+        }));
     }
 
     @Override
@@ -174,6 +184,10 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         return model.getPauseCommand();
     }
 
+    UICommand getRebootCommand() {
+        return model.getRebootCommand();
+    }
+
     /**
      * Updates the item presenter widget with new data.
      */
@@ -185,6 +199,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         getView().updateRunButton(getRunCommand(), model.isPool());
         getView().updateShutdownButton(getShutdownCommand());
         getView().updateSuspendButton(getSuspendCommand());
+        getView().updateRebootButton(getRebootCommand());
 
         getView().edit(model);
 
