@@ -48,9 +48,9 @@ public class BookmarkListModel extends SearchableListModel
 
     private static final BookmarksComparator COMPARATOR = new BookmarksComparator();
 
-    public static EventDefinition NavigatedEventDefinition;
+    public static EventDefinition navigatedEventDefinition;
 
-    public static EventDefinition SavedEventDefinition;
+    public static EventDefinition savedEventDefinition;
 
     private Event privateNavigatedEvent;
 
@@ -127,14 +127,14 @@ public class BookmarkListModel extends SearchableListModel
 
     static
     {
-        NavigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class); //$NON-NLS-1$
-        SavedEventDefinition = new EventDefinition("Saved", BookmarkListModel.class); //$NON-NLS-1$
+        navigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class); //$NON-NLS-1$
+        savedEventDefinition = new EventDefinition("Saved", BookmarkListModel.class); //$NON-NLS-1$
     }
 
     public BookmarkListModel()
     {
-        setNavigatedEvent(new Event(NavigatedEventDefinition));
-        setItemSavedEvent(new Event(SavedEventDefinition));
+        setNavigatedEvent(new Event(navigatedEventDefinition));
+        setItemSavedEvent(new Event(savedEventDefinition));
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$

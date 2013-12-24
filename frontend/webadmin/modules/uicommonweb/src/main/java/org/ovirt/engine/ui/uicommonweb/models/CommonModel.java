@@ -591,7 +591,7 @@ public class CommonModel extends ListModel
         {
             tagListModel_SelectedItemsChanged(sender, args);
         }
-        else if (ev.matchesDefinition(BookmarkListModel.NavigatedEventDefinition) && sender == getBookmarkList())
+        else if (ev.matchesDefinition(BookmarkListModel.navigatedEventDefinition) && sender == getBookmarkList())
         {
             bookmarkListModel_Navigated(sender, (BookmarkEventArgs) args);
         }
