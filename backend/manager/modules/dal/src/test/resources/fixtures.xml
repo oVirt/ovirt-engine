@@ -5610,4 +5610,58 @@
             <value>2012-12-31 11:54:27</value>
         </row>
     </table>
+
+    <table name="affinity_groups">
+        <column>id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>cluster_id</column>
+        <column>positive</column>
+        <column>enforcing</column>
+        <row>
+            <value>6d849ebf-0ccc-4552-ad09-ccc90cda105d</value>
+            <value>affinityGroup1</value>
+            <value>desc</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>true</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>6d849ebf-0ccc-4552-ad09-ccc90cda105e</value>
+            <value>affinityGroup2</value>
+            <value>desc</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>false</value>
+            <value>false</value>
+        </row>
+        <row>
+            <value>6d849ebf-0ccc-4552-ad09-ccc90cda105f</value>
+            <value>affinityGroup3</value>
+            <value>desc</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>false</value>
+            <value>true</value>
+        </row>
+    </table>
+
+    <table name="affinity_group_members">
+        <column>affinity_group_id</column>
+        <column>vm_id</column>
+        <row>
+            <value>6d849ebf-0ccc-4552-ad09-ccc90cda105d</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+        </row>
+        <row>
+            <value>6d849ebf-0ccc-4552-ad09-ccc90cda105d</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+        </row>
+        <row>
+            <value>6d849ebf-0ccc-4552-ad09-ccc90cda105e</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+        </row>
+        <row>
+            <value>6d849ebf-0ccc-4552-ad09-ccc90cda105e</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+        </row>
+    </table>
 </dataset>

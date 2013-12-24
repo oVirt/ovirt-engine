@@ -1647,3 +1647,17 @@ SELECT gluster_server_hooks.*,
        vds_static.vds_name AS server_name
 FROM gluster_server_hooks
 INNER JOIN vds_static ON gluster_server_hooks.server_id = vds_static.vds_id;
+
+-- Affinity Groups view, including members
+CREATE OR REPLACE VIEW affinity_groups_view
+AS
+SELECT affinity_groups.*,
+       array_to_string(array_agg(affinity_group_members.vm_id), ',') as vm_ids,
+       array_to_string(array_agg(vm_static.vm_name), ',') as vm_names
+FROM affinity_groups
+LEFT JOIN affinity_group_members ON affinity_group_members.affinity_group_id = affinity_groups.id
+LEFT JOIN vm_static ON vm_static.vm_guid = affinity_group_members.vm_id
+-- postgres 8.X issue, need to group by all fields.
+GROUP BY affinity_groups.id, affinity_groups.name, affinity_groups.description,
+         affinity_groups.cluster_id, affinity_groups.positive, affinity_groups.enforcing,
+         affinity_groups._create_date, affinity_groups._update_date;

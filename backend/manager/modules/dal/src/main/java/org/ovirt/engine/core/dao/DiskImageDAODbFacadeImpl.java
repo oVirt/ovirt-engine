@@ -180,16 +180,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             return new DiskImage();
         }
 
-        private static final String SEPARATOR = ",";
-
-        private ArrayList<String> split(String str) {
-            if (StringUtils.isEmpty(str)) {
-                return null;
-            }
-
-            return new ArrayList<String>(Arrays.asList(str.split(SEPARATOR)));
-        }
-
         /**
          * since quota can be null, we need to preserve null in the list
          *

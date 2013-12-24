@@ -139,6 +139,7 @@ public class FixturesTool {
      * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li></ul>
      */
     protected static final Guid VM_RHEL5_POOL_50 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
+    public static final String VM_RHEL5_POOL_50_NAME = "rhel5-pool-50";
 
     /**
      * Predefined VM for testing with the following properties :
@@ -495,4 +496,6 @@ public class FixturesTool {
     public static final Guid DATA_CENTER = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
     public static final String DATA_CENTER_NAME = "rhel6.iscsi";
+
+    public static final Guid EXISTING_AFFINITY_GROUP_ID = new Guid("6d849ebf-0ccc-4552-ad09-ccc90cda105d");
 }

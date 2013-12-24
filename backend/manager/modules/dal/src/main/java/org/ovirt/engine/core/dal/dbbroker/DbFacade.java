@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
-import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
@@ -55,6 +54,7 @@ import org.ovirt.engine.core.dao.BookmarkDAO;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.DAO;
 import org.ovirt.engine.core.dao.DaoFactory;
+import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -118,6 +118,7 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -949,6 +950,15 @@ public class DbFacade {
      */
     public DwhHistoryTimekeepingDao getDwhHistoryTimekeepingDao() {
         return getDao(DwhHistoryTimekeepingDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link AffinityGroupDao}.
+     *
+     * @return the dao instance
+     */
+    public AffinityGroupDao getAffinityGroupDao() {
+        return getDao(AffinityGroupDao.class);
     }
 
     /**

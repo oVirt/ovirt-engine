@@ -2,8 +2,11 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
@@ -13,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 public abstract class BaseDAODbFacade {
+    protected static final String SEPARATOR = ",";
 
     protected JdbcTemplate jdbcTemplate;
     protected DbEngineDialect dialect;
@@ -166,5 +170,13 @@ public abstract class BaseDAODbFacade {
      */
     protected static Guid getGuidDefaultNewGuid(ResultSet resultSet, String columnName) throws SQLException {
         return getGuid(resultSet, columnName, Guid.newGuid());
+    }
+
+    protected static ArrayList<String> split(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return null;
+        }
+
+        return new ArrayList<String>(Arrays.asList(str.split(SEPARATOR)));
     }
 }
