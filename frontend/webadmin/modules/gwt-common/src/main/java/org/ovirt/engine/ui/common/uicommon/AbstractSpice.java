@@ -17,13 +17,13 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 public abstract class AbstractSpice {
 
     protected Event disconnectedEvent = new Event(
-            SpiceConsoleModel.SpiceDisconnectedEventDefinition);
+            SpiceConsoleModel.spiceDisconnectedEventDefinition);
     protected Event connectedEvent = new Event(
-            SpiceConsoleModel.SpiceConnectedEventDefinition);
+            SpiceConsoleModel.spiceConnectedEventDefinition);
     protected Event menuItemSelectedEvent = new Event(
-            SpiceConsoleModel.SpiceMenuItemSelectedEventDefinition);
+            SpiceConsoleModel.spiceMenuItemSelectedEventDefinition);
     protected Event usbAutoShareChangedEvent = new Event(
-            SpiceConsoleModel.UsbAutoShareChangedEventDefinition);
+            SpiceConsoleModel.usbAutoShareChangedEventDefinition);
     protected final Event wanColorDepthChangedEvent = new Event(
             SpiceConsoleModel.wanColorDepthChangedEventDefinition);
     protected final Event wanDisableEffectsChangeEvent = new Event(

@@ -54,10 +54,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     public enum ClientConsoleMode { Native, Plugin, Auto, Html5 }
 
-    public static EventDefinition SpiceDisconnectedEventDefinition;
-    public static EventDefinition SpiceConnectedEventDefinition;
-    public static EventDefinition SpiceMenuItemSelectedEventDefinition;
-    public static EventDefinition UsbAutoShareChangedEventDefinition;
+    public static EventDefinition spiceDisconnectedEventDefinition;
+    public static EventDefinition spiceConnectedEventDefinition;
+    public static EventDefinition spiceMenuItemSelectedEventDefinition;
+    public static EventDefinition usbAutoShareChangedEventDefinition;
     public static EventDefinition wanColorDepthChangedEventDefinition;
     public static EventDefinition wanDisableEffectsChangeEventDefinition;
 
@@ -74,10 +74,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     }
 
     static {
-        SpiceDisconnectedEventDefinition = new EventDefinition("SpiceDisconnected", SpiceConsoleModel.class); //$NON-NLS-1$
-        SpiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class); //$NON-NLS-1$
-        SpiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class); //$NON-NLS-1$
-        UsbAutoShareChangedEventDefinition = new EventDefinition("UsbAutoShareChanged", SpiceConsoleModel.class); //$NON-NLS-1$
+        spiceDisconnectedEventDefinition = new EventDefinition("SpiceDisconnected", SpiceConsoleModel.class); //$NON-NLS-1$
+        spiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class); //$NON-NLS-1$
+        spiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class); //$NON-NLS-1$
+        usbAutoShareChangedEventDefinition = new EventDefinition("UsbAutoShareChanged", SpiceConsoleModel.class); //$NON-NLS-1$
         wanColorDepthChangedEventDefinition = new EventDefinition("ColorDepthChanged", SpiceConsoleModel.class); //$NON-NLS-1$
         wanDisableEffectsChangeEventDefinition = new EventDefinition("DisableEffectsChange", SpiceConsoleModel.class); //$NON-NLS-1$
     }
