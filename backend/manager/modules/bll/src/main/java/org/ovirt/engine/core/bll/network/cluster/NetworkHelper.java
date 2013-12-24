@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
+import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
@@ -99,5 +102,9 @@ public class NetworkHelper {
         }
 
         return false;
+    }
+
+    public static boolean setupNetworkSupported(Version version) {
+        return VersionSupport.isActionSupported(VdcActionType.SetupNetworks, version);
     }
 }

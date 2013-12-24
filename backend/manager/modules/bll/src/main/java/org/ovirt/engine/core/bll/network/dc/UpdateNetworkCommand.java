@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
-import org.ovirt.engine.core.bll.utils.VersionSupport;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -70,13 +70,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         setSucceeded(true);
     }
 
-    protected boolean setupNetworkSupported() {
-        return VersionSupport.isActionSupported(VdcActionType.SetupNetworks,
-                getStoragePool().getcompatibility_version());
-    }
-
     private boolean applyChangesToHostsRequired() {
-        return !getNetwork().isExternal() && setupNetworkSupported();
+        return !getNetwork().isExternal()
+                && NetworkHelper.setupNetworkSupported(getStoragePool().getcompatibility_version());
     }
 
     private void applyNetworkChangesToHosts() {
