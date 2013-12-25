@@ -52,6 +52,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -64,6 +66,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
+@LockIdNameAttribute
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
@@ -72,6 +75,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;
     private boolean isVmInDb;
+
+    private static final String BASE_TEMPLATE_VERSION_NAME = "base version";
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -192,6 +197,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setVmTemplateId(Guid.newGuid());
         getParameters().setVmTemplateId(getVmTemplateId());
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
+
+        // set template id as base for new templates
+        if (getParameters().getBaseTemplateId() == null) {
+            getParameters().setBaseTemplateId(getVmTemplateId());
+            if (StringUtils.isEmpty(getParameters().getTemplateVersionName())) {
+                getParameters().setTemplateVersionName(BASE_TEMPLATE_VERSION_NAME);
+            }
+        }
 
         final Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping = new HashMap<>();
 
@@ -318,6 +331,17 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     getParameters().getWatchdog(),
                     getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs())) {
                 return false;
+            }
+        }
+
+        if (getParameters().getBaseTemplateId() != null) {
+            VmTemplate userSelectedBaseTemplate = getVmTemplateDAO().get(getParameters().getBaseTemplateId());
+            if (userSelectedBaseTemplate == null) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            } else if (!userSelectedBaseTemplate.isBaseTemplate()) {
+                // currently template version cannot be base template
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_VERSION_CANNOT_BE_BASE_TEMPLATE);
+
             }
         }
 
@@ -463,7 +487,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().isAllowConsoleReconnect(),
                         getParameters().getMasterVm().getIsoPath(),
                         getParameters().getMasterVm().getMigrationDowntime(),
-                        getVmTemplateId(),
+                        getParameters().getBaseTemplateId(),
                         getParameters().getTemplateVersionName()));
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
@@ -698,5 +722,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
         list.add(new QuotaSanityParameter(getQuotaId(), null));
         return list;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        if (getParameters().getBaseTemplateId() != null) {
+            return Collections.singletonMap(getParameters().getBaseTemplateId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        }
+        return super.getSharedLocks();
     }
 }

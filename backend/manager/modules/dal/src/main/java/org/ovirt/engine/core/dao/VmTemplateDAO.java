@@ -154,4 +154,14 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
     ImageType getImageType(Guid id);
 
     int getCount();
+
+    /**
+     * Retrieve the list of template versions for a base template
+     *
+     * @param id
+     *             the base template id to get versions for
+     * @return
+     *             list of template versions for this base template
+     */
+    List<VmTemplate> getTemplateVersionsForBaseTemplate(Guid id);
 }

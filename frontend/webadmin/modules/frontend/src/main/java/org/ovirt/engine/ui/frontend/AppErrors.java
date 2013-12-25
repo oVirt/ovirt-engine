@@ -40,6 +40,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot delete Template. Template is being used by the following VMs: ${vmsList}.")
     String VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM();
 
+    @DefaultStringValue("Cannot delete Base Template that has Template Versions, please first remove all Template Versions for this Template: ${versionsList}.")
+    String VMT_CANNOT_REMOVE_BASE_WITH_VERSIONS();
+
     @DefaultStringValue("Cannot delete Template. The Template does not exist on the following Storage Domains: ${domainsList}.\nEither verify that Template exists on all Storage Domains listed on the domains list,\nor do not send domains list in order to delete all instances of the Template from the system.")
     String VMT_CANNOT_REMOVE_DOMAINS_LIST_MISMATCH();
 
@@ -579,6 +582,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The relevant Template doesn't exist.")
     String ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Only the first template version can be selected as the base template.")
+    String ACTION_TYPE_FAILED_TEMPLATE_VERSION_CANNOT_BE_BASE_TEMPLATE();
 
     @DefaultStringValue("Cannot ${action} ${type}. The relevant Instance Type doesn't exist.")
     String ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST();

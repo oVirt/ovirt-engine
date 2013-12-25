@@ -153,6 +153,20 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
         }
 
+        // for base templates, make sure it has no versions that need to be removed first
+        if (vmTemplateId.equals(template.getBaseTemplateId())) {
+            List<VmTemplate> templateVersions = getVmTemplateDAO().getTemplateVersionsForBaseTemplate(vmTemplateId);
+            if (!templateVersions.isEmpty()) {
+                List<String> templateVersionsNames = new ArrayList<>();
+                for (VmTemplate version : templateVersions) {
+                    templateVersionsNames.add(version.getName());
+                }
+
+            addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_BASE_WITH_VERSIONS);
+            addCanDoActionMessage(String.format("$versionsList %1$s", StringUtils.join(templateVersionsNames, ",")));
+            return false;
+            }
+        }
         return true;
     }
 

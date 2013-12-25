@@ -466,3 +466,25 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetTemplateVersionsForBaseTemplate(v_base_template_id UUID) RETURNS SETOF vm_templates_view STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   from vm_templates_view
+   where base_template_id = v_base_template_id and vmt_guid != v_base_template_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetTemplateWithLatestVersionInChain(v_template_id UUID) RETURNS SETOF vm_templates_view STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   from vm_templates_view
+   where base_template_id =
+      (select vmt_guid from vm_static where vm_guid = v_template_id)
+   order by template_version_number desc
+   limit 1;
+END; $procedure$
+LANGUAGE plpgsql;
