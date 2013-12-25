@@ -191,7 +191,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testUpdateWithClusterId() throws Exception {
-        setUpGetEntityExpectations(2);
+        setUpGetEntityExpectations(3);
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
                 ChangeVDSClusterParameters.class,
                 new String[] { "ClusterId", "VdsId" },
@@ -218,7 +218,7 @@ public class BackendHostResourceTest
     @Test
     public void testUpdateWithClusterName() throws Exception {
         String clusterName = "Default";
-        setUpGetEntityExpectations(2);
+        setUpGetEntityExpectations(3);
         setUpGetEntityExpectations(
                 "Cluster: name=" + clusterName,
                 SearchType.Cluster,
@@ -349,7 +349,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testApproveChangingCluster() throws Exception {
-        setUpGetEntityExpectations(3);
+        setUpGetEntityExpectations(4);
 
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
                                            ChangeVDSClusterParameters.class,

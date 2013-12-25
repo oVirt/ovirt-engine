@@ -86,6 +86,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             if (!clusterId.equals(entity.getVdsGroupId())) {
                 performAction(VdcActionType.ChangeVDSCluster,
                         new ChangeVDSClusterParameters(clusterId, guid));
+
+                // After changing the cluster with the specialized command we need to reload the entity, so that it
+                // contains the new cluster id. If we don't do this the next command will think that we are trying
+                // to change the cluster, and it will explicitly refuse to perform the update.
+                entity = getEntity(hostResolver, true);
             }
         }
         return performUpdate(incoming,
