@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -214,6 +215,18 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
         vm.setVdsGroupId(getParameters().getClusterId());
         DbFacade.getInstance().getVmStaticDao().update(vm.getStaticData());
+
+        // change vm cluster should remove the vm from all associated affinity groups
+        List<AffinityGroup> allAffinityGroupsByVmId =
+                DbFacade.getInstance().getAffinityGroupDao().getAllAffinityGroupsByVmId(vm.getId());
+        if (!allAffinityGroupsByVmId.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (AffinityGroup affinityGroup : allAffinityGroupsByVmId) {
+                sb.append(affinityGroup.getName() + " ");
+            }
+            log.infoFormat("Removing VM from associated affinity groups: {0}", sb.toString());
+            DbFacade.getInstance().getAffinityGroupDao().removeVmFromAffinityGroups(vm.getId());
+        }
         setSucceeded(true);
     }
 
