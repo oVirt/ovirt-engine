@@ -346,7 +346,7 @@ public class TagListModel extends SearchableListModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(TagModel.SelectionChangedEventDefinition))
+        if (ev.matchesDefinition(TagModel.selectionChangedEventDefinition))
         {
             onTagSelectionChanged(sender, args);
         }

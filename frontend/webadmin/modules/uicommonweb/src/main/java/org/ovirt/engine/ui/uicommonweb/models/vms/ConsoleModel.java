@@ -41,7 +41,7 @@ public abstract class ConsoleModel extends EntityModel {
         return EJECT_LABEL;
     }
 
-    public static EventDefinition ErrorEventDefinition;
+    public static EventDefinition errorEventDefinition;
     private Event privateErrorEvent;
 
     public Event getErrorEvent()
@@ -116,14 +116,14 @@ public abstract class ConsoleModel extends EntityModel {
 
     static
     {
-        ErrorEventDefinition = new EventDefinition("Error", ConsoleModel.class); //$NON-NLS-1$
+        errorEventDefinition = new EventDefinition("Error", ConsoleModel.class); //$NON-NLS-1$
     }
 
     protected ConsoleModel(VM myVm, Model parentModel) {
         this.parentModel = parentModel;
         setEntity(myVm);
 
-        setErrorEvent(new Event(ErrorEventDefinition));
+        setErrorEvent(new Event(errorEventDefinition));
 
         setConnectCommand(new UICommand("Connect", this)); //$NON-NLS-1$
     }
