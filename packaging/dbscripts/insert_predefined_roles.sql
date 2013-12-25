@@ -2,9 +2,10 @@ Create or replace FUNCTION insert_predefined_roles()
 RETURNS VOID
    AS $procedure$
    DECLARE
-   v_super_user_id_0001 UUID;
-   v_power_user_id_0002 UUID;
-   v_user_id_1001 UUID;
+   --Roles
+   v_SUPER_USER_ID UUID;
+   v_POWER_USER_ID UUID;
+   v_USER_ID UUID;
    v_CLUSTER_ADMIN_ID UUID;
    v_DATA_CENTER_ADMIN_ID UUID;
    v_STORAGE_ADMIN_ID UUID;
@@ -15,11 +16,75 @@ RETURNS VOID
    v_TEMPLATE_ADMIN_ID UUID;
    v_TEMPLATE_USER_ID UUID;
    v_QUOTA_CONSUMER_USER_ID UUID;
-BEGIN
-   v_super_user_id_0001 := '00000000-0000-0000-0000-000000000001';
-   v_power_user_id_0002 := '00000000-0000-0000-0001-000000000002';
-   v_user_id_1001 := '00000000-0000-0000-0001-000000000001';
+   v_DISK_OPERATOR_USER_ID UUID;
+   v_DISK_CREATOR_USER_ID UUID;
+   v_GLUSTER_ADMIN_ROLE_ID UUID;
+   v_VM_CREATOR_USER_ID UUID;
+   v_TEMPLATE_CREATOR_USER_ID UUID;
+   v_TEMPLATE_OWNER_USER_ID UUID;
+   v_LOCAL_ADMIN_ID UUID;
+   --Permissions
+   v_CREATE_VM INTEGER;
+   v_DELETE_VM INTEGER;
+   v_EDIT_VM_PROPERTIES INTEGER;
+   v_VM_BASIC_OPERATIONS INTEGER;
+   v_CHANGE_VM_CD INTEGER;
+   v_MIGRATE_VM INTEGER;
+   v_CONNECT_TO_VM INTEGER;
+   v_IMPORT_EXPORT_VM INTEGER;
+   v_CONFIGURE_VM_NETWORK INTEGER;
+   v_CONFIGURE_VM_STORAGE INTEGER;
+   v_MOVE_VM INTEGER;
+   v_MANIPULATE_VM_SNAPSHOTS INTEGER;
+   v_FORCE_CONNECT_VM INTEGER;
+   v_CUSTOM_PROPERTIES INTEGER;
+   v_CREATE_HOST INTEGER;
+   v_EDIT_HOST_CONFIGURATION INTEGER;
+   v_DELETE_HOST INTEGER;
+   v_MANIPUTLATE_HOST INTEGER;
+   v_CONFIGURE_HOST_NETWORK INTEGER;
+   v_CREATE_TEMPLATE INTEGER;
+   v_EDIT_TEMPLATE_PROPERTIES INTEGER;
+   v_DELETE_TEMPLATE INTEGER;
+   v_COPY_TEMPLATE INTEGER;
+   v_CONFIGURE_TEMPLATE_NETWORK INTEGER;
+   v_CREATE_VM_POOL INTEGER;
+   v_EDIT_VM_POOL_CONFIGURATION INTEGER;
+   v_DELETE_VM_POOL INTEGER;
+   v_VM_POOL_BASIC_OPERATIONS INTEGER;
+   v_CREATE_CLUSTER INTEGER;
+   v_EDIT_CLUSTER_CONFIGURATION INTEGER;
+   v_DELETE_CLUSTER INTEGER;
+   v_CONFIGURE_CLUSTER_NETWORK INTEGER;
+   v_MANIPULATE_USERS INTEGER;
+   v_MANIPULATE_ROLES INTEGER;
+   v_MANIPULATE_PERMISSIONS INTEGER;
+   v_CREATE_STORAGE_DOMAIN INTEGER;
+   v_EDIT_STORAGE_DOMAIN_CONFIGURATION INTEGER;
+   v_DELETE_STORAGE_DOMAIN INTEGER;
+   v_MANIPULATE_STORAGE_DOMAIN INTEGER;
+   v_CREATE_STORAGE_POOL INTEGER;
+   v_DELETE_STORAGE_POOL INTEGER;
+   v_EDIT_STORAGE_POOL_CONFIGURATION INTEGER;
+   v_CONFIGURE_STORAGE_POOL_NETWORK INTEGER;
+   v_CONFIGURE_ENGINE INTEGER;
+   v_MANIPULATE_QUOTA INTEGER;
+   v_CONSUME_QUOTA INTEGER;
+   v_CREATE_GLUSTER_VOLUME INTEGER;
+   v_MANIPULATE_GLUSTER_VOLUME INTEGER;
+   v_DELETE_GLUSTER_VOLUME INTEGER;
+   v_CREATE_DISK INTEGER;
+   v_ATTACH_DISK INTEGER;
+   v_EDIT_DISK_PROPERTIES INTEGER;
+   v_CONFIGURE_DISK_STORAGE INTEGER;
+   v_DELETE_DISK INTEGER;
+   v_CONFIGURE_STORAGE_POOL_VM_INTERFACE INTEGER;
+   v_LOGIN INTEGER;
 
+BEGIN
+   v_SUPER_USER_ID := '00000000-0000-0000-0000-000000000001';
+   v_POWER_USER_ID := '00000000-0000-0000-0001-000000000002';
+   v_USER_ID := '00000000-0000-0000-0001-000000000001';
    v_CLUSTER_ADMIN_ID := 'DEF00001-0000-0000-0000-DEF000000001';
    v_DATA_CENTER_ADMIN_ID := 'DEF00002-0000-0000-0000-DEF000000002';
    v_STORAGE_ADMIN_ID := 'DEF00003-0000-0000-0000-DEF000000003';
@@ -30,483 +95,479 @@ BEGIN
    v_TEMPLATE_ADMIN_ID := 'DEF00008-0000-0000-0000-DEF000000008';
    v_TEMPLATE_USER_ID := 'DEF00009-0000-0000-0000-DEF000000009';
    v_QUOTA_CONSUMER_USER_ID := 'DEF0000a-0000-0000-0000-DEF00000000a';
+   v_DISK_OPERATOR_USER_ID := 'DEF0000A-0000-0000-0000-DEF00000000B';
+   v_DISK_CREATOR_USER_ID := 'DEF0000A-0000-0000-0000-DEF00000000C';
+   v_GLUSTER_ADMIN_ROLE_ID := 'DEF0000B-0000-0000-0000-DEF00000000B';
+   v_VM_CREATOR_USER_ID := 'DEF0000A-0000-0000-0000-DEF00000000D';
+   v_TEMPLATE_CREATOR_USER_ID := 'DEF0000A-0000-0000-0000-DEF00000000E';
+   v_TEMPLATE_OWNER_USER_ID := 'DEF0000A-0000-0000-0000-DEF00000000F';
+   v_LOCAL_ADMIN_ID := 'FDFC627C-D875-11E0-90F0-83DF133B58CC';
+   v_CREATE_VM := 1;
+   v_DELETE_VM := 2;
+   v_EDIT_VM_PROPERTIES := 3;
+   v_VM_BASIC_OPERATIONS := 4;
+   v_CHANGE_VM_CD := 5;
+   v_MIGRATE_VM := 6;
+   v_CONNECT_TO_VM := 7;
+   v_IMPORT_EXPORT_VM := 8;
+   v_CONFIGURE_VM_NETWORK := 9;
+   v_CONFIGURE_VM_STORAGE := 10;
+   v_MOVE_VM := 11;
+   v_MANIPULATE_VM_SNAPSHOTS := 12;
+   v_FORCE_CONNECT_VM := 13;
+   v_CUSTOM_PROPERTIES := 14;
+   v_CREATE_HOST := 100;
+   v_EDIT_HOST_CONFIGURATION := 101;
+   v_DELETE_HOST := 102;
+   v_MANIPUTLATE_HOST := 103;
+   v_CONFIGURE_HOST_NETWORK := 104;
+   v_CREATE_TEMPLATE := 200;
+   v_EDIT_TEMPLATE_PROPERTIES := 201;
+   v_DELETE_TEMPLATE := 202;
+   v_COPY_TEMPLATE := 203;
+   v_CONFIGURE_TEMPLATE_NETWORK := 204;
+   v_CREATE_VM_POOL := 300;
+   v_EDIT_VM_POOL_CONFIGURATION := 301;
+   v_DELETE_VM_POOL := 302;
+   v_VM_POOL_BASIC_OPERATIONS := 303;
+   v_CREATE_CLUSTER := 400;
+   v_EDIT_CLUSTER_CONFIGURATION := 401;
+   v_DELETE_CLUSTER := 402;
+   v_CONFIGURE_CLUSTER_NETWORK := 403;
+   v_MANIPULATE_USERS := 500;
+   v_MANIPULATE_ROLES := 501;
+   v_MANIPULATE_PERMISSIONS := 502;
+   v_CREATE_STORAGE_DOMAIN := 600;
+   v_EDIT_STORAGE_DOMAIN_CONFIGURATION := 601;
+   v_DELETE_STORAGE_DOMAIN := 602;
+   v_MANIPULATE_STORAGE_DOMAIN := 603;
+   v_CREATE_STORAGE_POOL := 700;
+   v_DELETE_STORAGE_POOL := 701;
+   v_EDIT_STORAGE_POOL_CONFIGURATION := 702;
+   v_CONFIGURE_STORAGE_POOL_NETWORK := 703;
+   v_CONFIGURE_ENGINE := 800;
+   v_MANIPULATE_QUOTA := 900;
+   v_CONSUME_QUOTA := 901;
+   v_CREATE_GLUSTER_VOLUME := 1000;
+   v_MANIPULATE_GLUSTER_VOLUME := 1001;
+   v_DELETE_GLUSTER_VOLUME := 1002;
+   v_CREATE_DISK := 1100;
+   v_ATTACH_DISK := 1101;
+   v_EDIT_DISK_PROPERTIES := 1102;
+   v_CONFIGURE_DISK_STORAGE := 1103;
+   v_DELETE_DISK := 1104;
+   v_CONFIGURE_STORAGE_POOL_VM_INTERFACE := 1200;
+   v_LOGIN := 1300;
 
 
---insert into vdc_options (option_name,option_value,version) select  'DomainName','example.org','general' where not exists (select option_name,version from vdc_options where option_name='DomainName' and version='general');
-
-delete from roles_groups where role_id = v_super_user_id_0001;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select  v_super_user_id_0001,'SuperUser','Roles management administrator',true,1 where not exists (select * from roles where id=v_super_user_id_0001 and name='SuperUser' and description='Roles management administrator' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT  v_SUPER_USER_ID,'SuperUser','Roles management administrator',true,1,true;
 
 ---Vm Groups
---CREATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,1);
---DELETE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,2);
---EDIT_VM_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,3);
---VM_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,4);
---CHANGE_VM_CD
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,5);
---MIGRATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,6);
---CONNECT_TO_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,7);
---IMPORT_EXPORT_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,8);
---CONFIGURE_VM_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,9);
---CONFIGURE_VM_STORAGE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,10);
---MOVE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,11);
---MANIPULATE_VM_SNAPSHOTS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,12);
--- host (vds) actions groups
---CREATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,100);
---EDIT_HOST_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,101);
---DELETE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,102);
---MANIPUTLATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,103);
---CONFIGURE_HOST_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,104);
--- templates actions groups
---CREATE_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,200);
---EDIT_TEMPLATE_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,201);
---DELETE_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,202);
---COPY_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,203);
---CONFIGURE_TEMPLATE_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,204);
--- vm pools actions groups
---CREATE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,300);
---EDIT_VM_POOL_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,301);
---DELETE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,302);
---VM_POOL_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,303);
--- clusters actions groups
---CREATE_CLUSTER
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,400);
---EDIT_CLUSTER_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,401);
---DELETE_CLUSTER
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,402);
---CONFIGURE_CLUSTER_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,403);
--- users and MLA actions groups
---MANIPULATE_USERS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,500);
---MANIPULATE_ROLES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,501);
---MANIPULATE_PERMISSIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,502);
--- storage domains actions groups
---CREATE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,600);
---EDIT_STORAGE_DOMAIN_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,601);
---DELETE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,602);
---MANIPULATE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,603);
--- storage pool actions groups
---CREATE_STORAGE_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,700);
---DELETE_STORAGE_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,701);
---EDIT_STORAGE_POOL_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,702);
---CONFIGURE_STORAGE_POOL_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,703);
-delete from roles_groups where role_id = v_user_id_1001;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_user_id_1001,'UserRole','Standard User Role',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_user_id_1001 and name='UserRole' and description='Standard User Role' and is_readonly=true and role_type=2);
-
--- CONFIGURE_ENGINE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,800);
---VM_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_user_id_1001,4);
---CHANGE_VM_CD
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_user_id_1001,5);
---CONNECT_TO_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_user_id_1001,7);
---VM_POOL_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_user_id_1001,303);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_VM_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_VM_BASIC_OPERATIONS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CHANGE_VM_CD);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MIGRATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONNECT_TO_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_IMPORT_EXPORT_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_VM_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_VM_STORAGE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MOVE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIPULATE_VM_SNAPSHOTS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_HOST_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_HOST_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_TEMPLATE_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_COPY_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_TEMPLATE_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_VM_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_VM_POOL_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_VM_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_VM_POOL_BASIC_OPERATIONS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_CLUSTER);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_CLUSTER_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_CLUSTER);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_CLUSTER_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIPULATE_USERS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIPULATE_ROLES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIPULATE_PERMISSIONS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_STORAGE_DOMAIN);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_STORAGE_DOMAIN_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_STORAGE_DOMAIN);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_MANIPULATE_STORAGE_DOMAIN);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_STORAGE_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_STORAGE_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_STORAGE_POOL_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_STORAGE_POOL_NETWORK);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_USER_ID,'UserRole','Standard User Role',true,2,true;
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_ENGINE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_USER_ID,v_VM_BASIC_OPERATIONS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_USER_ID,v_CHANGE_VM_CD);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_USER_ID,v_CONNECT_TO_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_USER_ID,v_VM_POOL_BASIC_OPERATIONS);
 
 --PoewerUser role
 ---------------
-delete from roles_groups where role_id = v_power_user_id_0002;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_power_user_id_0002,'PowerUserRole','User Role, allowed to create/manage Vms and Templates',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_power_user_id_0002 and name='PowerUserRole' and description='User Role, allowed to create/manage Vms and Templates' and is_readonly=true and role_type=2);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_POWER_USER_ID,'PowerUserRole','User Role, allowed to create VMs, Templates and Disks',true,2,false;
 
 
 ---Vm Groups
---CREATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,1);
---DELETE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,2);
---EDIT_VM_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,3);
---VM_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,4);
---CHANGE_VM_CD
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,5);
---MIGRATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,6);
---CONNECT_TO_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,7);
---IMPORT_EXPORT_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,8);
---CONFIGURE_VM_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,9);
---CONFIGURE_VM_STORAGE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,10);
---MOVE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,11);
---MANIPULATE_VM_SNAPSHOTS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,12);
--- templates actions groups
---CREATE_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,200);
---EDIT_TEMPLATE_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,201);
---DELETE_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,202);
---COPY_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,203);
---CONFIGURE_TEMPLATE_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,204);
--- vm pools actions groups
---CREATE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,300);
---EDIT_VM_POOL_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,301);
---DELETE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,302);
---VM_POOL_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,303);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_POWER_USER_ID,v_CREATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_POWER_USER_ID,v_CREATE_TEMPLATE);
 
 -------------
 --CLUSTER_ADMIN role
 ---------------
-delete from roles_groups where role_id = v_CLUSTER_ADMIN_ID;INSERT INTO roles(id,name,description,is_readonly,role_type) select v_CLUSTER_ADMIN_ID,'ClusterAdmin','Administrator Role, permission for all the objects underneath a specific Cluster',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_CLUSTER_ADMIN_ID and name='ClusterAdmin' and description='Administrator Role, permission for all the objects underneath a specific Cluster' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_CLUSTER_ADMIN_ID,'ClusterAdmin','Administrator Role, permission for all the objects underneath a specific Cluster',true,1,true;
 
 
 ---Vm Groups
---CREATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,1);
---DELETE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,2);
---EDIT_VM_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,3);
---VM_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,4);
---CHANGE_VM_CD
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,5);
---MIGRATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,6);
---CONNECT_TO_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,7);
---IMPORT_EXPORT_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,8);
---CONFIGURE_VM_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,9);
---CONFIGURE_VM_STORAGE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,10);
---MOVE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,11);
---MANIPULATE_VM_SNAPSHOTS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,12);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CREATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_DELETE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_EDIT_VM_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_VM_BASIC_OPERATIONS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CHANGE_VM_CD);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_MIGRATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CONNECT_TO_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_IMPORT_EXPORT_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CONFIGURE_VM_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CONFIGURE_VM_STORAGE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_MOVE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_MANIPULATE_VM_SNAPSHOTS);
 -- vm pools actions groups
---CREATE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,300);
---EDIT_VM_POOL_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,301);
---DELETE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,302);
---VM_POOL_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,303);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CREATE_VM_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_EDIT_VM_POOL_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_DELETE_VM_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_VM_POOL_BASIC_OPERATIONS);
 -- host (vds) actions groups
---CREATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,100);
---EDIT_HOST_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,101);
---DELETE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,102);
---MANIPUTLATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,103);
---CONFIGURE_HOST_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,104);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CREATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_EDIT_HOST_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_DELETE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
 -- clusters actions groups
---CREATE_CLUSTER
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,400);
---EDIT_CLUSTER_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,401);
---DELETE_CLUSTER
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,402);
---CONFIGURE_CLUSTER_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,403);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CREATE_CLUSTER);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_EDIT_CLUSTER_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_DELETE_CLUSTER);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CONFIGURE_CLUSTER_NETWORK);
 
 -------------
 --DATA_CENTER_ADMIN role
 ---------------
-delete from roles_groups where role_id = v_DATA_CENTER_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_DATA_CENTER_ADMIN_ID,'DataCenterAdmin','Administrator Role, permission for all the objects underneath a specific Data Center, except Storage',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_DATA_CENTER_ADMIN_ID and name='DataCenterAdmin' and description='Administrator Role, permission for all the objects underneath a specific Data Center, except Storage' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_DATA_CENTER_ADMIN_ID,'DataCenterAdmin','Administrator Role, permission for all the objects underneath a specific Data Center, except Storage',true,1,true;
 
 ---Vm Groups
---CREATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,1);
---DELETE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,2);
---EDIT_VM_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,3);
---VM_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,4);
---CHANGE_VM_CD
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,5);
---MIGRATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,6);
---CONNECT_TO_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,7);
---IMPORT_EXPORT_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,8);
---CONFIGURE_VM_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,9);
---CONFIGURE_VM_STORAGE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,10);
---MOVE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,11);
---MANIPULATE_VM_SNAPSHOTS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,12);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_VM_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_VM_BASIC_OPERATIONS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CHANGE_VM_CD);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_MIGRATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONNECT_TO_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_IMPORT_EXPORT_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_VM_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_VM_STORAGE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_MOVE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_MANIPULATE_VM_SNAPSHOTS);
 -- templates actions groups
---CREATE_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,200);
---EDIT_TEMPLATE_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,201);
---DELETE_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,202);
---COPY_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,203);
---CONFIGURE_TEMPLATE_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,204);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_TEMPLATE_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_COPY_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_TEMPLATE_NETWORK);
 -- vm pools actions groups
---CREATE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,300);
---EDIT_VM_POOL_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,301);
---DELETE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,302);
---VM_POOL_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,303);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_VM_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_VM_POOL_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_VM_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_VM_POOL_BASIC_OPERATIONS);
 -- host (vds) actions groups
---CREATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,100);
---EDIT_HOST_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,101);
---DELETE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,102);
---MANIPUTLATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,103);
---CONFIGURE_HOST_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,104);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_HOST_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
 -- clusters actions groups
---CREATE_CLUSTER
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,400);
---EDIT_CLUSTER_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,401);
---DELETE_CLUSTER
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,402);
---CONFIGURE_CLUSTER_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,403);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_CLUSTER);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_CLUSTER_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_CLUSTER);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_CLUSTER_NETWORK);
 -- storage pool actions groups
---CREATE_STORAGE_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,700);
---DELETE_STORAGE_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,701);
---EDIT_STORAGE_POOL_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,702);
---CONFIGURE_STORAGE_POOL_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,703);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_STORAGE_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_STORAGE_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_STORAGE_POOL_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_STORAGE_POOL_NETWORK);
 
 -------------
 --STORAGE_ADMIN role
 ---------------
-delete from roles_groups where role_id = v_STORAGE_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_STORAGE_ADMIN_ID,'StorageAdmin','Administrator Role, permission for all operations on a specific Storage Domain',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id=v_STORAGE_ADMIN_ID and name='StorageAdmin' and description='Administrator Role, permission for all operations on a specific Storage Domain' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_STORAGE_ADMIN_ID,'StorageAdmin','Administrator Role, permission for all operations on a specific Storage Domain',true,1,true;
 
 -- storage domains actions groups
---CREATE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,600);
---EDIT_STORAGE_DOMAIN_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,601);
---DELETE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,602);
---MANIPULATE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,603);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_CREATE_STORAGE_DOMAIN);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_EDIT_STORAGE_DOMAIN_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_DELETE_STORAGE_DOMAIN);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_MANIPULATE_STORAGE_DOMAIN);
 
 -------------
 --HOST_ADMIN role
 ---------------
 
-delete from roles_groups where role_id = v_HOST_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_HOST_ADMIN_ID,'HostAdmin','Administrator Role, permission for all operations on a specific Host',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id=v_HOST_ADMIN_ID and name='HostAdmin' and description='Administrator Role, permission for all operations on a specific Host' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_HOST_ADMIN_ID,'HostAdmin','Administrator Role, permission for all operations on a specific Host',true,1,true;
 
 -- host (vds) actions groups
---CREATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,100);
---EDIT_HOST_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,101);
---DELETE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,102);
---MANIPUTLATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,103);
---CONFIGURE_HOST_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,104);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_CREATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_EDIT_HOST_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_DELETE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
 -- storage domains actions groups
---CREATE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,600);
---EDIT_STORAGE_DOMAIN_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,601);
---DELETE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,602);
---MANIPULATE_STORAGE_DOMAIN
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,603);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_CREATE_STORAGE_DOMAIN);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_EDIT_STORAGE_DOMAIN_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_DELETE_STORAGE_DOMAIN);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_MANIPULATE_STORAGE_DOMAIN);
 
 
 -------------
 --NETWORK_ADMIN role
 ---------------
 
-delete from roles_groups where role_id = v_NETWORK_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_NETWORK_ADMIN_ID,'NetworkAdmin','Administrator Role, permission for all operations on a specific Logical Network',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id=v_NETWORK_ADMIN_ID and name='NetworkAdmin' and description='Administrator Role, permission for all operations on a specific Logical Network' and is_readonly=true and role_type=1);
---CONFIGURE_HOST_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,104);
---MANIPUTLATE_HOST
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,103);
---CONFIGURE_CLUSTER_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,403);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_NETWORK_ADMIN_ID,'NetworkAdmin','Administrator Role, permission for all operations on a specific Logical Network',true,1,true;
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_MANIPUTLATE_HOST);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_CONFIGURE_CLUSTER_NETWORK);
 
 -------------
 --VM_ADMIN role
 ---------------
 
-delete from roles_groups where role_id = v_VM_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_VM_ADMIN_ID,'UserVmManager','User Role, with permission for any operation on Vms',true,2 where
-not exists (select id,name,description,is_readonly,role_type from roles where id=v_VM_ADMIN_ID and name='UserVmManager' and description='User Role, with permission for any operation on Vms' and is_readonly=true and role_type=2);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_VM_ADMIN_ID,'UserVmManager','User Role, with permission for any operation on Vms',true,2,true;
 
 -- insert local admin user to users table and assign superuser permissions
-insert into users(user_id,name,domain,username,groups,status)
-        select 'fdfc627c-d875-11e0-90f0-83df133b58cc', 'admin', 'internal', 'admin@internal','',1
-        where not exists (select 1 from users where user_id = 'fdfc627c-d875-11e0-90f0-83df133b58cc');
+INSERT INTO users(user_id,name,domain,username,groups,status)
+        SELECT v_LOCAL_ADMIN_ID, 'admin', 'internal', 'admin@internal','',1;
 
-insert into permissions(id,role_id,ad_element_id,object_id,object_type_id)
-        select uuid_generate_v1(), '00000000-0000-0000-0000-000000000001', 'fdfc627c-d875-11e0-90f0-83df133b58cc', getGlobalIds('system'), 1
-        where not exists
-                (select 1 from permissions
-                 where role_id = '00000000-0000-0000-0000-000000000001' and
-                       ad_element_id = 'fdfc627c-d875-11e0-90f0-83df133b58cc' and
-                       object_id= getGlobalIds('system') and
-                       object_type_id = 1);
+INSERT INTO permissions(id,role_id,ad_element_id,object_id,object_type_id)
+        SELECT uuid_generate_v1(), v_SUPER_USER_ID, v_LOCAL_ADMIN_ID, getGlobalIds('system'), 1;
 
 ---Vm Groups
---CREATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,1);
---DELETE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,2);
---EDIT_VM_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,3);
---VM_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,4);
---CHANGE_VM_CD
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,5);
---MIGRATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,6);
---CONNECT_TO_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,7);
---CONFIGURE_VM_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,9);
---CONFIGURE_VM_STORAGE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,10);
---MOVE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,11);
---MANIPULATE_VM_SNAPSHOTS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,12);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CREATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_DELETE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_EDIT_VM_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_VM_BASIC_OPERATIONS);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CHANGE_VM_CD);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_MIGRATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CONNECT_TO_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CONFIGURE_VM_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CONFIGURE_VM_STORAGE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_MOVE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_MANIPULATE_VM_SNAPSHOTS);
 
 -------------
 --VM_POOL_ADMIN role
 ---------------
-delete from roles_groups where role_id = v_VM_POOL_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_VM_POOL_ADMIN_ID,'VmPoolAdmin','Administrator Role, permission for all operations on a specific VM Pool',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id= v_VM_POOL_ADMIN_ID and name='VmPoolAdmin' and description='Administrator Role, permission for all operations on a specific VM Pool' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_VM_POOL_ADMIN_ID,'VmPoolAdmin','Administrator Role, permission for all operations on a specific VM Pool',true,1,true;
 
 -- vm pools actions groups
---CREATE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,300);
---EDIT_VM_POOL_CONFIGURATION
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,301);
---DELETE_VM_POOL
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,302);
---VM_POOL_BASIC_OPERATIONS
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,303);
---TEMPLATE_ADMIN role
----------------
-delete from roles_groups where role_id = v_TEMPLATE_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_ADMIN_ID,'TemplateAdmin','Administrator Role, permission for all operations on a specific Template',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_ADMIN_ID and name='TemplateAdmin' and description='Administrator Role, permission for all operations on a specific Template' and is_readonly=true and role_type=1);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,v_CREATE_VM_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,v_EDIT_VM_POOL_CONFIGURATION);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,v_DELETE_VM_POOL);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,v_VM_POOL_BASIC_OPERATIONS);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_TEMPLATE_ADMIN_ID,'TemplateAdmin','Administrator Role, permission for all operations on a specific Template',true,1,true;
 -- templates actions groups
---CREATE_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,200);
---EDIT_TEMPLATE_PROPERTIES
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,201);
---DELETE_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,202);
---COPY_TEMPLATE
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,203);
---CONFIGURE_TEMPLATE_NETWORK
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,204);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,v_CREATE_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,v_EDIT_TEMPLATE_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,v_DELETE_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,v_COPY_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,v_CONFIGURE_TEMPLATE_NETWORK);
 
 -------------
 --TEMPLATE_USER role
 ---------------
-delete from roles_groups where role_id = v_TEMPLATE_USER_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_USER_ID,'TemplateUser','Template User',true,2 where
-not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_USER_ID and name='TemplateUser' and description='Template User' and is_readonly=true and role_type=2);
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_TEMPLATE_USER_ID,'TemplateUser','Template User',true,2,false;
+
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_QUOTA_CONSUMER_USER_ID, 'QuotaConsumer','User Role, permissions to consume the Quota resources',true,2,false;
 
 -- MAKE BLANK TEMPLATE PUBLIC
-insert into permissions (id,role_id,ad_element_id,object_id,object_type_id)
- select uuid_generate_v1(),
-'DEF00009-0000-0000-0000-DEF000000009', -- TemplateUser
+INSERT INTO permissions (id,role_id,ad_element_id,object_id,object_type_id)
+ SELECT uuid_generate_v1(),
+ v_TEMPLATE_USER_ID, -- TemplateUser
  getGlobalIds('everyone'),
  '00000000-0000-0000-0000-000000000000',    -- blank template id --
- 4                                          -- template object type id --
- where not exists (
-  select * from permissions where
-  role_id = 'DEF00009-0000-0000-0000-DEF000000009'
-  and
-  ad_element_id = getGlobalIds('everyone')
-  and
-  object_id = '00000000-0000-0000-0000-000000000000'
-  and
-  object_type_id = 4);
+ 4;                                          -- template object type id --
 
----Vm Groups
---CREATE_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_USER_ID,1);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_USER_ID,v_CREATE_VM);
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_DATA_CENTER_ADMIN_ID, v_MANIPULATE_QUOTA;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_SUPER_USER_ID, v_MANIPULATE_QUOTA;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_DATA_CENTER_ADMIN_ID, v_CONSUME_QUOTA;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_SUPER_USER_ID, v_CONSUME_QUOTA;
+INSERT INTO roles_groups (role_id,action_group_id) SELECT v_SUPER_USER_ID, v_FORCE_CONNECT_VM;
+
+-- Disks
+
+-----------------
+---SuperUser role
+-----------------
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_ATTACH_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_DISK_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_DISK_STORAGE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_DISK);
+
+
+----------------
+--PowerUser role
+----------------
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_POWER_USER_ID,v_CREATE_DISK);
+
+--------------------
+--CLUSTER_ADMIN role
+--------------------
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CREATE_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_ATTACH_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_EDIT_DISK_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_CONFIGURE_DISK_STORAGE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,v_DELETE_DISK);
+
+
+------------------------
+--DATA_CENTER_ADMIN role
+------------------------
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_ATTACH_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_DISK_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_DISK_STORAGE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_DISK);
+
+--------------------
+--STORAGE_ADMIN role
+--------------------
+
+-- CREATE_DISK
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_CREATE_DISK);
+-- ATTACH_DISK
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_ATTACH_DISK);
+-- EDIT_DISK_PROPERTIES
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_EDIT_DISK_PROPERTIES);
+-- CONFIGURE_DISK_STORAGE
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_CONFIGURE_DISK_STORAGE);
+-- DELETE_DISK
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,v_DELETE_DISK);
+
+
+---------------
+--VM_ADMIN role
+---------------
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CREATE_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_ATTACH_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_EDIT_DISK_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_DELETE_DISK);
+
+--------------------------
+-- DISK_OPERATOR_USER role
+--------------------------
+DELETE FROM roles_groups WHERE role_id = v_DISK_OPERATOR_USER_ID;
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_DISK_OPERATOR_USER_ID, 'DiskOperator', 'User Role, permissions for all operations on a specific disk', true, 2, true;
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DISK_OPERATOR_USER_ID,v_CREATE_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DISK_OPERATOR_USER_ID,v_ATTACH_DISK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DISK_OPERATOR_USER_ID,v_EDIT_DISK_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DISK_OPERATOR_USER_ID,v_DELETE_DISK);
+
+-------------------------
+-- DISK_CREATOR_USER role
+-------------------------
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_DISK_CREATOR_USER_ID, 'DiskCreator', 'User Role, permission to create Disks', true, 2, false;
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DISK_CREATOR_USER_ID,v_CREATE_DISK);
+
+-- Gluster
+
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_SUPER_USER_ID, v_CREATE_GLUSTER_VOLUME;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_SUPER_USER_ID, v_MANIPULATE_GLUSTER_VOLUME;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_SUPER_USER_ID, v_DELETE_GLUSTER_VOLUME;
+
+--------------
+-- GLUSTER_ADMIN_USER role
+--------------
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_GLUSTER_ADMIN_ROLE_ID, 'GlusterAdmin','Administrator Role, permissions for operations on Gluster objects',true,1,true;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_GLUSTER_ADMIN_ROLE_ID, v_CREATE_GLUSTER_VOLUME;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_GLUSTER_ADMIN_ROLE_ID, v_MANIPULATE_GLUSTER_VOLUME;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_GLUSTER_ADMIN_ROLE_ID, v_DELETE_GLUSTER_VOLUME;
+
+
+-------------------------
+-- VM_CREATOR_USER role
+-------------------------
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_VM_CREATOR_USER_ID, 'VmCreator', 'User Role, permission to create VMs', true, 2, false;
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_CREATOR_USER_ID, v_CREATE_VM);
+
+
+-----------------------------
+-- TEMPALTE_CREATOR_USER role
+-----------------------------
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_TEMPLATE_CREATOR_USER_ID, 'TemplateCreator', 'User Role, permission to create Templates', true, 2, false;
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_CREATOR_USER_ID, v_CREATE_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES( v_DATA_CENTER_ADMIN_ID, v_CONFIGURE_STORAGE_POOL_VM_INTERFACE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES( v_SUPER_USER_ID, v_CONFIGURE_STORAGE_POOL_VM_INTERFACE);
+
+-----------------------------
+-- TEMPALTE_OWNER_USER role
+-----------------------------
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_TEMPLATE_OWNER_USER_ID, 'TemplateOwner', 'User Role, permissions for all operations on Templates', true, 2, true;
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_OWNER_USER_ID, v_EDIT_TEMPLATE_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_OWNER_USER_ID, v_DELETE_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_OWNER_USER_ID, v_COPY_TEMPLATE);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_OWNER_USER_ID, v_CONFIGURE_TEMPLATE_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_OWNER_USER_ID, v_LOGIN);
+
+-- Custom properties
+
+INSERT INTO roles_groups (role_id, action_group_id) values(v_SUPER_USER_ID,v_CUSTOM_PROPERTIES);
+INSERT INTO roles_groups (role_id, action_group_id) values(v_CLUSTER_ADMIN_ID, v_CUSTOM_PROPERTIES);
+INSERT INTO roles_groups (role_id, action_group_id) values(v_DATA_CENTER_ADMIN_ID,v_CUSTOM_PROPERTIES);
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_VM_CREATOR_USER_ID, v_CREATE_DISK;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_CLUSTER_ADMIN_ID, v_MANIPULATE_PERMISSIONS;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_DATA_CENTER_ADMIN_ID, v_MANIPULATE_PERMISSIONS;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_TEMPLATE_OWNER_USER_ID, v_MANIPULATE_PERMISSIONS;
+INSERT INTO roles_groups(role_id,action_group_id) SELECT v_DISK_OPERATOR_USER_ID, v_MANIPULATE_PERMISSIONS;
+INSERT INTO roles_groups(role_id,action_group_id)SELECT v_VM_ADMIN_ID, v_MANIPULATE_PERMISSIONS;
+INSERT INTO roles_groups(role_id,action_group_id)SELECT v_VM_POOL_ADMIN_ID, v_CREATE_VM;
+
+-- Login
+
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_DATA_CENTER_ADMIN_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_POWER_USER_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_DISK_CREATOR_USER_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_TEMPLATE_CREATOR_USER_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_TEMPLATE_ADMIN_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_STORAGE_ADMIN_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_VM_ADMIN_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_SUPER_USER_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_VM_CREATOR_USER_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_DISK_OPERATOR_USER_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_CLUSTER_ADMIN_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_USER_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_HOST_ADMIN_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_VM_POOL_ADMIN_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_NETWORK_ADMIN_ID, v_LOGIN);
+INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_GLUSTER_ADMIN_ROLE_ID, v_LOGIN);
 
  RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
 
-select insert_predefined_roles();
+SELECT insert_predefined_roles();
 drop function insert_predefined_roles();
 

@@ -231,7 +231,7 @@ run_file() {
 }
 
 set_version() {
-    execute_file upgrade/03_01_0000_set_version.sql ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    execute_file upgrade/03_02_0000_set_version.sql ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     if [  -n "${VERSION}" ]; then
         CMD="update schema_version set current=true where version=trim('${VERSION}');"
         execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
@@ -324,7 +324,6 @@ run_upgrade_files() {
         current=$(get_current_version)
         # we should remove leading blank (from select result) and zero in order not to treat number as octal
         last="${current:2:7}"
-        disable_gaps_from="3010910"
         files=$(get_files "upgrade" 1)
         for file in $(ls -1 $files); do
             before=$(get_db_time)
@@ -339,15 +338,13 @@ run_upgrade_files() {
                 lastMajor="${last:0:3}"
 
                 # check for gaps in upgrade
-                if [ "$ver" -gt "$disable_gaps_from" ]; then
-                    # check gaps only for identical major revisions
-                    if [ ${xverMajor} -eq ${lastMajor} ]; then
-                        if [ $(($xver - $last)) -gt 10 ]; then
-                           set_last_version
-                           echo "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}"
-                           echo "Please fix numbering to interval 0$(( $last + 1)) to 0$(( $last + 10)) and run the upgrade script."
-                           exit 1
-                        fi
+                # check gaps only for identical major revisions
+                if [ ${xverMajor} -eq ${lastMajor} ]; then
+                    if [ $(($xver - $last)) -gt 10 ]; then
+                       set_last_version
+                       echo "Illegal script version number ${ver},version should be in max 10 gap from last installed version: 0${last}"
+                       echo "Please fix numbering to interval 0$(( $last + 1)) to 0$(( $last + 10)) and run the upgrade script."
+                       exit 1
                     fi
                 fi
                 # check if script was already installed with other version name.

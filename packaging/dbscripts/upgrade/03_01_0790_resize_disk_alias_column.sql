@@ -1,1 +1,0 @@
-select fn_db_change_column_type('disks','disk_alias','varchar','varchar(255)');
