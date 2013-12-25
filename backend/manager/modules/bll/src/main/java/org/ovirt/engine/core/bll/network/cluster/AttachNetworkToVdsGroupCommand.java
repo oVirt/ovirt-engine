@@ -5,15 +5,19 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
+import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -81,7 +85,25 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
         });
 
+        if (!getNetwork().isExternal() && getNetwork().getLabel() != null
+                && NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
+            addNetworkToHosts();
+        }
+
         setSucceeded(true);
+    }
+
+
+    private void addNetworkToHosts() {
+        List<VdsNetworkInterface> nics =
+                getDbFacade().getInterfaceDao().getAllInterfacesByLabelForCluster(getParameters().getVdsGroupId(),
+                        getNetwork().getLabel());
+        AddNetworkParametersBuilder builder = new AddNetworkParametersBuilder(getNetwork());
+        ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
+
+        if (!parameters.isEmpty()) {
+            getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
+        }
     }
 
     @Override
