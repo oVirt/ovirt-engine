@@ -222,6 +222,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .addValue("guest_agent_nics_hash", entity.getGuestAgentNicsHash())
                         .addValue("last_watchdog_event", entity.getLastWatchdogEvent())
                         .addValue("last_watchdog_action", entity.getLastWatchdogAction())
+                        .addValue("is_run_once", entity.isRunOnce())
                         .addValue("cpu_name", entity.getCpuName());
 
                 return paramValue;
