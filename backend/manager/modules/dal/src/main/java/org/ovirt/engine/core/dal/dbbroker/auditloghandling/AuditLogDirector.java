@@ -61,6 +61,7 @@ public final class AuditLogDirector {
         initCommonSeverities();
         initClusterPolicySeverities();
         initExtrnalEvents();
+        initMomPoliciesSeverities();
     }
 
     private static void initProviderSeverities() {
