@@ -180,6 +180,12 @@ public class PermitMapper {
             return PermitType.INJECT_EXTERNAL_TASKS;
         case ACCESS_IMAGE_STORAGE:
             return PermitType.ACCESS_IMAGE_STORAGE;
+        case TAG_MANAGEMENT:
+            return PermitType.TAG_MANAGEMENT;
+        case BOOKMARK_MANAGEMENT:
+            return PermitType.BOOKMARK_MANAGEMENT;
+        case EVENT_NOTIFICATION_MANAGEMENT:
+            return PermitType.EVENT_NOTIFICATION_MANAGEMENT;
         default:
             return null;
         }
@@ -324,6 +330,12 @@ public class PermitMapper {
             return ActionGroup.INJECT_EXTERNAL_TASKS;
         case ACCESS_IMAGE_STORAGE:
             return ActionGroup.ACCESS_IMAGE_STORAGE;
+        case TAG_MANAGEMENT:
+            return ActionGroup.TAG_MANAGEMENT;
+        case BOOKMARK_MANAGEMENT:
+            return ActionGroup.BOOKMARK_MANAGEMENT;
+        case EVENT_NOTIFICATION_MANAGEMENT:
+            return ActionGroup.EVENT_NOTIFICATION_MANAGEMENT;
         default:
             return null;
         }

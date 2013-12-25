@@ -119,8 +119,16 @@ public enum ActionGroup {
     INJECT_EXTERNAL_EVENTS(1400, RoleType.ADMIN, VdcObjectType.Event, false),
 
     // Inject external tasks action group
-    INJECT_EXTERNAL_TASKS(1500, RoleType.ADMIN, VdcObjectType.ExternalTask, false);
+    INJECT_EXTERNAL_TASKS(1500, RoleType.ADMIN, VdcObjectType.ExternalTask, false),
 
+    // Tag management action group
+    TAG_MANAGEMENT(1301, RoleType.ADMIN, VdcObjectType.Tags, false),
+
+    // Bookmark management action group
+    BOOKMARK_MANAGEMENT(1302, RoleType.ADMIN, VdcObjectType.Bookmarks, false),
+
+    // Event notification management action group
+    EVENT_NOTIFICATION_MANAGEMENT(1303, RoleType.ADMIN, VdcObjectType.EventNotification, false);
 
     private int id;
     private RoleType roleType;

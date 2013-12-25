@@ -1057,6 +1057,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to login to the system")
     String allowToLoginToTheSystemRoleTreeTooltip();
 
+    @DefaultStringValue("Allow to manage Tags")
+    String allowToManageTags();
+
+    @DefaultStringValue("Allow to manage Bookmarks")
+    String allowToManageBookmarks();
+
+    @DefaultStringValue("Allow to manage Event Notifications")
+    String allowToManageEventNotifications();
+
     @DefaultStringValue("Allow to define/configure roles in the System")
     String allowToDefineConfigureRolesInTheSystemRoleTreeTooltip();
 

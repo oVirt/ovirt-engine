@@ -1,21 +1,26 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionParametesBase> extends
-        AdminOperationCommandBase<T> {
+        CommandBase<T> {
     protected EventSubscriptionCommandBase(T parameters) {
         super(parameters);
     }
@@ -160,4 +165,12 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         }
         return retValue;
     }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return Collections.singletonList(new PermissionSubject(Guid.SYSTEM,
+                VdcObjectType.System,
+                ActionGroup.EVENT_NOTIFICATION_MANAGEMENT));
+    }
+
 }
