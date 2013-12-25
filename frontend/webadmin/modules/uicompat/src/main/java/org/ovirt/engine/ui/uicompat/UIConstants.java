@@ -1138,6 +1138,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to edit Logical Networks properties within the Cluster (e.g. non-required or display network)")
     String allowToEditLogicalNetworksForTheClusterRoleTreeTooltip();
 
+    @DefaultStringValue("Allow to add, edit or remove Affinity Groups within the Cluster")
+    String allowToManipulateAffinityGroupsForClusterRoleTreeTooltip();
+
     @DefaultStringValue("Allow to add new Host to the Cluster")
     String allowToAddNewHostToTheClusterRoleTreeTooltip();
 

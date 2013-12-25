@@ -110,7 +110,9 @@ public enum PermitType {
     INJECT_EXTERNAL_TASKS,
     TAG_MANAGEMENT,
     BOOKMARK_MANAGEMENT,
-    EVENT_NOTIFICATION_MANAGEMENT;
+    EVENT_NOTIFICATION_MANAGEMENT,
+    // affinity groups CRUD commands
+    MANIPULATE_AFFINITY_GROUPS;
 
     public String value() {
         return name().toLowerCase();

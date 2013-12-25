@@ -318,10 +318,9 @@ public enum VdcActionType {
     UpdateMomPolicy(1900, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
 
     // Affinity Groups
-    // TODO: new action group for affinity groups
-    AddAffinityGroup(1950, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
-    EditAffinityGroup(1951, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
-    RemoveAffinityGroup(1952, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE);
+    AddAffinityGroup(1950, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    EditAffinityGroup(1951, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    RemoveAffinityGroup(1952, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

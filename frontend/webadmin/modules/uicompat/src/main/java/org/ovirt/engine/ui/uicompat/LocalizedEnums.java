@@ -182,6 +182,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___DELETE_NETWORK_VNIC_PROFILE();
 
+    String ActionGroup___MANIPULATE_AFFINITY_GROUPS();
     // Gluster action groups
     String ActionGroup___CREATE_GLUSTER_VOLUME();
 

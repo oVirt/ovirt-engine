@@ -223,7 +223,9 @@ public class RoleTreeView
                         new RoleNode(ActionGroup.EDIT_CLUSTER_CONFIGURATION,
                                 getConstants().allowToEditClusterPropertiesRoleTreeTooltip()),
                         new RoleNode(ActionGroup.CONFIGURE_CLUSTER_NETWORK,
-                                getConstants().allowToEditLogicalNetworksForTheClusterRoleTreeTooltip()) }));
+                                getConstants().allowToEditLogicalNetworksForTheClusterRoleTreeTooltip()),
+                        new RoleNode(ActionGroup.MANIPULATE_AFFINITY_GROUPS,
+                                getConstants().allowToManipulateAffinityGroupsForClusterRoleTreeTooltip()) }));
     }
 
     protected static RoleNode createStorageDomainRoleTree() {

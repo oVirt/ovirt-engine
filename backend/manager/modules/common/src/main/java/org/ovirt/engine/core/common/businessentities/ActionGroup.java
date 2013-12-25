@@ -128,7 +128,9 @@ public enum ActionGroup {
     BOOKMARK_MANAGEMENT(1302, RoleType.ADMIN, VdcObjectType.Bookmarks, false),
 
     // Event notification management action group
-    EVENT_NOTIFICATION_MANAGEMENT(1303, RoleType.ADMIN, VdcObjectType.EventNotification, false);
+    EVENT_NOTIFICATION_MANAGEMENT(1303, RoleType.ADMIN, VdcObjectType.EventNotification, false),
+    // affinity group CRUD commands
+    MANIPULATE_AFFINITY_GROUPS(1550, RoleType.ADMIN, VdcObjectType.VdsGroups, true, ApplicationMode.VirtOnly);
 
     private int id;
     private RoleType roleType;

@@ -186,6 +186,8 @@ public class PermitMapper {
             return PermitType.BOOKMARK_MANAGEMENT;
         case EVENT_NOTIFICATION_MANAGEMENT:
             return PermitType.EVENT_NOTIFICATION_MANAGEMENT;
+        case MANIPULATE_AFFINITY_GROUPS:
+            return PermitType.MANIPULATE_AFFINITY_GROUPS;
         default:
             return null;
         }
@@ -336,6 +338,8 @@ public class PermitMapper {
             return ActionGroup.BOOKMARK_MANAGEMENT;
         case EVENT_NOTIFICATION_MANAGEMENT:
             return ActionGroup.EVENT_NOTIFICATION_MANAGEMENT;
+        case MANIPULATE_AFFINITY_GROUPS:
+            return ActionGroup.MANIPULATE_AFFINITY_GROUPS;
         default:
             return null;
         }
