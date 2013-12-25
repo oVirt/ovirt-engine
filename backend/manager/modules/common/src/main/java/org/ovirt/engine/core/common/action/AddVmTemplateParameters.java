@@ -53,6 +53,8 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
 
     private String templateVersionName;
 
+    private Guid baseTemplateId;
+
     public AddVmTemplateParameters(VmStatic masterVm, String name, String description) {
         this();
         _masterVm = masterVm;
@@ -169,5 +171,13 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
 
     public void setTemplateVersionName(String templateVersionName) {
         this.templateVersionName = templateVersionName;
+    }
+
+    public Guid getBaseTemplateId() {
+        return baseTemplateId;
+    }
+
+    public void setBaseTemplateId(Guid baseTemplateId) {
+        this.baseTemplateId = baseTemplateId;
     }
 }
