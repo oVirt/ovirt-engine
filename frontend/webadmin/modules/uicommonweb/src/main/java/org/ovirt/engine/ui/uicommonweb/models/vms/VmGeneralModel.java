@@ -33,7 +33,7 @@ public class VmGeneralModel extends EntityModel
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
-    public static EventDefinition UpdateCompleteEventDefinition;
+    public static EventDefinition updateCompleteEventDefinition;
     private Event privateUpdateCompleteEvent;
 
     public Event getUpdateCompleteEvent()
@@ -500,12 +500,12 @@ public class VmGeneralModel extends EntityModel
 
     static
     {
-        UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class); //$NON-NLS-1$
+        updateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class); //$NON-NLS-1$
     }
 
     public VmGeneralModel()
     {
-        setUpdateCompleteEvent(new Event(UpdateCompleteEventDefinition));
+        setUpdateCompleteEvent(new Event(updateCompleteEventDefinition));
 
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHashName("general"); //$NON-NLS-1$
