@@ -67,6 +67,7 @@ public enum ConfigurationValues {
     ProductRPMVersion(ConfigAuthType.User),
     RhevhLocalFSPath,
     HotPlugEnabled(ConfigAuthType.User),
+    HotPlugCpuSupported(ConfigAuthType.User),
     NetworkLinkingSupported(ConfigAuthType.User),
     SupportBridgesReportByVDSM(ConfigAuthType.User),
     MaxMTU,

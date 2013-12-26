@@ -471,6 +471,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_EXPORT_IMAGE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_EXPORT_IMAGE_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_EXPORT_IMAGE_FINISHED_FAILURE, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.HOT_SET_NUMBER_OF_CPUS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS, AuditLogSeverity.ERROR);
     }
 
     private static void initQuotaSeverities() {

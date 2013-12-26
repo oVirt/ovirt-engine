@@ -101,6 +101,7 @@ public enum VdcBllMessages {
     VAR__ACTION__EXTEND_IMAGE_SIZE,
     VAR__ACTION__REMOVE_BRICKS_STOP,
     VAR__ACTION__REMOVE_BRICKS_COMMIT,
+    VAR__ACTION__HOT_SET_CPUS,
 
     // Host statuses replacements
     VAR__HOST_STATUS__UP,

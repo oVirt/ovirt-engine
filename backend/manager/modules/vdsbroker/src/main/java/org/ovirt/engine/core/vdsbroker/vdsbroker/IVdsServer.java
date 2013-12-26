@@ -297,4 +297,6 @@ public interface IVdsServer {
     GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStatus(String volumeName);
 
     GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
+
+    StatusOnlyReturnForXmlRpc setNumberOfCpus(String vmId, String numberOfCpus);
 }
