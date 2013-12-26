@@ -33,7 +33,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
             @Override
             public Void runInTransaction() {
-                getNetworkClusterDAO().remove(getParameters().getVdsGroupId(), getParameters().getNetwork().getId());
+                getNetworkClusterDAO().remove(getParameters().getVdsGroupId(), getNetwork().getId());
                 return null;
             }
         });
@@ -44,7 +44,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     @Override
     protected boolean canDoAction() {
         DetachNetworkValidator validator =
-                new DetachNetworkValidator(getParameters().getNetwork(), getParameters().getNetworkCluster());
+                new DetachNetworkValidator(getNetwork(), getParameters().getNetworkCluster());
         return validate(validator.notManagementNetwork())
                 && validate(validator.clusterNetworkNotUsedByVms())
                 && validate(validator.clusterNetworkNotUsedByTemplates());
@@ -57,7 +57,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     public String getNetworkName() {
-        return getParameters().getNetwork().getName();
+        return getNetwork().getName();
     }
 
     @Override
@@ -68,10 +68,14 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        Guid networkId = getParameters().getNetwork() == null ? null : getParameters().getNetwork().getId();
+        Guid networkId = getNetwork() == null ? null : getNetwork().getId();
         return Collections.singletonList(new PermissionSubject(networkId,
                 VdcObjectType.Network,
                 getActionType().getActionGroup()));
+    }
+
+    private Network getNetwork() {
+        return getParameters().getNetwork();
     }
 
     private class DetachNetworkValidator extends NetworkValidator {
