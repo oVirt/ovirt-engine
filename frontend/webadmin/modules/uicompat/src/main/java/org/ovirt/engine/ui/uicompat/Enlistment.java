@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicompat;
 
 public class Enlistment {
 
-    public static EventDefinition DoneEventDefinition;
+    public static EventDefinition doneEventDefinition;
     private Event doneEvent;
 
     protected Event getDoneEvent() {
@@ -18,12 +18,12 @@ public class Enlistment {
 
     static {
 
-        DoneEventDefinition = new EventDefinition("Done", PreparingEnlistment.class); //$NON-NLS-1$
+        doneEventDefinition = new EventDefinition("Done", PreparingEnlistment.class); //$NON-NLS-1$
     }
 
     public Enlistment(Object context) {
 
-        doneEvent = new Event(DoneEventDefinition);
+        doneEvent = new Event(doneEventDefinition);
         this.context = context;
     }
 
