@@ -262,4 +262,7 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/dropdown_arrow.png")
     ImageResource dropdownArrow();
+
+    @Source("images/triangle_down.gif")
+    ImageResource triangle_down();
 }
