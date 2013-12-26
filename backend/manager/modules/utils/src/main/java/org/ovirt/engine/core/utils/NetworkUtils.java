@@ -226,4 +226,17 @@ public final class NetworkUtils {
     public static boolean isVlan(VdsNetworkInterface nic) {
         return nic.getVlanId() != null;
     }
+
+    /**
+     * Constructs the vlan device name in the format of "{nic name}.{vlan-id}"
+     *
+     * @param underlyingNic
+     *            the device on top the vlan device is created
+     * @param network
+     *            the network which holds the vlan-id
+     * @return a name representing the vlan device
+     */
+    public static String getVlanDeviceName(VdsNetworkInterface underlyingNic, Network network) {
+        return underlyingNic.getName() + "." + network.getVlanId();
+    }
 }

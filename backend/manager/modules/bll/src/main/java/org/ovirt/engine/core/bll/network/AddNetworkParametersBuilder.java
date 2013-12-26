@@ -37,7 +37,7 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
             VdsNetworkInterface nicToConfigure = getNicToConfigure(setupNetworkParams.getInterfaces(), nic.getId());
 
             if (vlanNetwork) {
-                VdsNetworkInterface vlan = createVlanDevice(nic.getName(), nicToConfigure.getVdsId(), network);
+                VdsNetworkInterface vlan = createVlanDevice(nic, nicToConfigure.getVdsId(), network);
                 setupNetworkParams.getInterfaces().add(vlan);
             } else if (nicToConfigure.getNetworkName() == null) {
                 nicToConfigure.setNetworkName(network.getName());
@@ -72,11 +72,11 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
         AuditLogDirector.log(logable, AuditLogType.ADD_NETWORK_BY_LABEL_FAILED);
     }
 
-    private VdsNetworkInterface createVlanDevice(String underlyingNic, Guid hostId, Network network) {
+    private VdsNetworkInterface createVlanDevice(VdsNetworkInterface nic, Guid hostId, Network network) {
         VdsNetworkInterface vlan = new Vlan();
         vlan.setNetworkName(network.getName());
         vlan.setVdsId(hostId);
-        vlan.setName(underlyingNic + "." + network.getVlanId());
+        vlan.setName(NetworkUtils.getVlanDeviceName(nic, network));
         vlan.setBootProtocol(NetworkBootProtocol.NONE);
         return vlan;
     }
