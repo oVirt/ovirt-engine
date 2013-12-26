@@ -1471,7 +1471,7 @@ public class UnitVmModel extends Model {
                 behavior.updateCpuSharesAmountChangeability();
             }
         }
-        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
         {
             if (sender == getMemSize())
             {

@@ -297,7 +297,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         {
             sanTargetModel_LoggedIn(sender, args);
         }
-        else if (ev.matchesDefinition(EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(entityChangedEventDefinition))
         {
             useUserAuth_EntityChanged(sender, args);
         }

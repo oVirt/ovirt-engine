@@ -180,11 +180,11 @@ public class NfsStorageModel extends Model implements IStorageModel {
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
-        if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getPath()) {
+        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getPath()) {
             // Notify about path change.
             getPathChangedEvent().raise(this, EventArgs.Empty);
         }
-        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getOverride()) {
+        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getOverride()) {
             override_EntityChanged(args);
         }
     }

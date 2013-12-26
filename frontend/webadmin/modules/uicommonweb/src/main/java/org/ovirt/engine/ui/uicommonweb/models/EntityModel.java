@@ -28,7 +28,7 @@ public class EntityModel<T> extends Model implements HasHandlers
 
     private final List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
-    public static EventDefinition EntityChangedEventDefinition;
+    public static EventDefinition entityChangedEventDefinition;
     private Event privateEntityChangedEvent;
 
     public Event getEntityChangedEvent()
@@ -84,12 +84,12 @@ public class EntityModel<T> extends Model implements HasHandlers
 
     static
     {
-        EntityChangedEventDefinition = new EventDefinition("EntityChanged", EntityModel.class); //$NON-NLS-1$
+        entityChangedEventDefinition = new EventDefinition("EntityChanged", EntityModel.class); //$NON-NLS-1$
     }
 
     public EntityModel()
     {
-        setEntityChangedEvent(new Event(EntityChangedEventDefinition));
+        setEntityChangedEvent(new Event(entityChangedEventDefinition));
     }
 
     public EntityModel(T entity) {
@@ -137,7 +137,7 @@ public class EntityModel<T> extends Model implements HasHandlers
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(EntityChangedEventDefinition))
+        if (ev.matchesDefinition(entityChangedEventDefinition))
         {
             onEntityChanged();
         }

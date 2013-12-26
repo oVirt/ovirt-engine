@@ -598,7 +598,7 @@ public class CloudInitModel extends Model {
                 attachmentList_SelectedItemChanged();
             }
         }
-        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition)) {
+        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
             if (sender == getNetworkSelectedName()) {
                 networkSelectedName_SelectionChanged();
             }

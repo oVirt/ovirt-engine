@@ -1205,7 +1205,7 @@ public class ClusterModel extends EntityModel
                 clusterPolicyChanged();
             }
         }
-        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
         {
             EntityModel senderEntityModel = (EntityModel) sender;
 

@@ -843,15 +843,15 @@ public abstract class AbstractDiskModel extends DiskModel
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getIsWipeAfterDelete())
+        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getIsWipeAfterDelete())
         {
             wipeAfterDelete_EntityChanged(args);
         }
-        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getIsAttachDisk())
+        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getIsAttachDisk())
         {
             attachDisk_EntityChanged(args);
         }
-        else if (ev.matchesDefinition(ListModel.EntityChangedEventDefinition) && sender == getIsInternal())
+        else if (ev.matchesDefinition(ListModel.entityChangedEventDefinition) && sender == getIsInternal())
         {
             isInternal_EntityChanged();
         }

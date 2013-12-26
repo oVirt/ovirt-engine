@@ -877,7 +877,7 @@ public abstract class RunOnceModel extends Model
                 floppyImage_SelectedItemChanged();
             }
         }
-        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
         {
             if (sender == getAttachFloppy())
             {

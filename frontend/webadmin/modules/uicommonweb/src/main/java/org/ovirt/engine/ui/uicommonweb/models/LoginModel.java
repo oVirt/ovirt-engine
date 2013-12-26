@@ -200,7 +200,7 @@ public class LoginModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getUserName())
+        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getUserName())
         {
             userName_EntityChanged();
         }
