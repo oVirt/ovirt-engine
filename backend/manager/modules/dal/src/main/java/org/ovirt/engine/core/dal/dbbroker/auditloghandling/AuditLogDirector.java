@@ -822,6 +822,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.NETWORK_WITHOUT_INTERFACES, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.ADD_NETWORK_BY_LABEL_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.REMOVE_NETWORK_BY_LABEL_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initExtrnalEvents() {

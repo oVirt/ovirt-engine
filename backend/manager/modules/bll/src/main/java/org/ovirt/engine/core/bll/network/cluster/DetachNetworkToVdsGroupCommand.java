@@ -7,14 +7,18 @@ import java.util.List;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
+import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,6 +41,11 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 return null;
             }
         });
+
+        if (!getNetwork().isExternal() && getNetwork().getLabel() != null
+                && NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
+            removeNetworkFromHosts();
+        }
 
         setSucceeded(true);
     }
@@ -76,6 +85,18 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     private Network getNetwork() {
         return getParameters().getNetwork();
+    }
+
+    private void removeNetworkFromHosts() {
+        List<VdsNetworkInterface> nics =
+                getDbFacade().getInterfaceDao().getAllInterfacesByLabelForCluster(getParameters().getVdsGroupId(),
+                        getNetwork().getLabel());
+        RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getNetwork());
+        ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
+
+        if (!parameters.isEmpty()) {
+            getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
+        }
     }
 
     private class DetachNetworkValidator extends NetworkValidator {
