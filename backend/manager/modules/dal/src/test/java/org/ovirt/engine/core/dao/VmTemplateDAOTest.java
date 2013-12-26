@@ -366,4 +366,12 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         assertEquals(1, tVersions.size());
         assertEquals(FixturesTool.VM_TEMPLATE_RHEL5_V2, tVersions.get(0).getId());
     }
+
+    /**
+     * Assert that latest version (VM_TEMPLATE_RHEL5_V2) returns for base template (VM_TEMPLATE_RHEL5)
+     */
+    @Test
+    public void testGetTemplateWithLatestVersionInChain() {
+        assertEquals(FixturesTool.VM_TEMPLATE_RHEL5_V2, dao.getTemplateWithLatestVersionInChain(FixturesTool.VM_TEMPLATE_RHEL5).getId());
+    }
 }

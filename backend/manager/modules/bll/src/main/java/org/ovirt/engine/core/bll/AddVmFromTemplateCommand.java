@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -125,6 +126,11 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 if (!retValue) {
                     break;
                 }
+            }
+
+            if (getVm().isUseLatestVersion()) {
+                retValue = false;
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE);
             }
         }
         return retValue;
