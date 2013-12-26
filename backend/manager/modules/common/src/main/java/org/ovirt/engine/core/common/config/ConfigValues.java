@@ -1614,5 +1614,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("0")
     DefaultMaximumMigrationDowntime,
 
+    @TypeConverterAttribute(Map.class)
+    @DefaultValueAttribute("{\"x86_64\":\"true\",\"ppc64\":\"false\"}")
+    HotPlugCpuSupported,
+
     Invalid;
 }

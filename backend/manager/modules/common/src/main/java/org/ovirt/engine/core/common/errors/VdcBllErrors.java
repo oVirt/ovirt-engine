@@ -55,6 +55,7 @@ public enum VdcBllErrors {
     UpdateDevice(56),
     hwInfoErr(57),
     ResizeErr(58),
+    HOT_PLUG_UNPLUG_CPU_ERROR(60),
     recovery(99),
     GeneralException(100),
     StorageException(200),

@@ -12,6 +12,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -70,6 +71,11 @@ public abstract class VmInfoBuilderBase {
         if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
             createInfo.put(VdsProperties.cores_per_socket,
                     (Integer.toString(vm.getCpuPerSocket())));
+            if (FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported,
+                    vm.getVdsGroupCompatibilityVersion(), vm.getClusterArch())) {
+                createInfo.put(VdsProperties.max_number_of_cpus,
+                        String.valueOf(Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, vm.getVdsGroupCompatibilityVersion().getValue())));
+            }
         }
         final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
         addCpuPinning(compatibilityVersion);

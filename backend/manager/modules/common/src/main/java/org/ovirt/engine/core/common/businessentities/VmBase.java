@@ -70,7 +70,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private int memSizeMb;
 
     @CopyOnNewVersion
-    @EditableOnVmStatusField
+    @EditableOnVmStatusField(statuses = {VMStatus.Down, VMStatus.Up} )
     @EditableOnTemplate
     private int numOfSockets;
 

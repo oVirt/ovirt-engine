@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.common;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
+
+import java.util.Map;
 
 /**
  * Convenience class to check if a feature is supported or not in any given version.<br>
@@ -12,6 +15,11 @@ public class FeatureSupported {
 
     public static boolean supportedInConfig(ConfigValues feature, Version version) {
         return Config.<Boolean> getValue(feature, version.getValue());
+    }
+
+    public static boolean supportedInConfig(ConfigValues feature, Version version, ArchitectureType arch) {
+        return Boolean.parseBoolean(
+                ((Map<String, String>) Config.<Map>getValue(feature, version.getValue())).get(arch.name()));
     }
 
     /**
@@ -198,5 +206,9 @@ public class FeatureSupported {
     */
     public static boolean hotPlugDiskSnapshot(Version version) {
         return supportedInConfig(ConfigValues.HotPlugDiskSnapshotSupported, version);
+    }
+
+    public static boolean hotPlugCpu(Version version, ArchitectureType arch) {
+        return supportedInConfig(ConfigValues.HotPlugCpuSupported, version, arch);
     }
 }

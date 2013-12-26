@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -60,6 +62,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
     private VM oldVm;
     private boolean quotaSanityOnly = false;
+    private VmStatic newVmStatic;
+    private VdcReturnValueBase setNumberOfCpusResult;
 
     public UpdateVmCommand(T parameters) {
         super(parameters);
@@ -83,12 +87,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         oldVm = getVm();
         VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getcompatibility_version());
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
-        VmStatic newVmStatic = getParameters().getVmStaticData();
+        newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
         if (newVmStatic.getCreationDate().equals(DateTime.getMinValue())) {
             newVmStatic.setCreationDate(new Date());
         }
         UpdateVmNetworks();
+        hotSetCpus();
         getVmStaticDAO().update(newVmStatic);
         updateVmPayload();
         VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
@@ -96,6 +101,28 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         checkTrustedService();
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
         setSucceeded(true);
+    }
+
+    private void hotSetCpus() {
+        int currentSockets = getVm().getNumOfSockets();
+        int newSockets = newVmStatic.getNumOfSockets();
+
+        if (getVm().getStatus() == VMStatus.Up && currentSockets != newSockets) {
+            setNumberOfCpusResult = getBackend().runInternalAction(
+                    VdcActionType.HotSetNumberOfCpus, new VmManagementParametersBase(newVmStatic));
+            newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newSockets : currentSockets);
+            auditLogHotSetCpusCandos();
+        }
+    }
+
+    private void auditLogHotSetCpusCandos() {
+        if (!setNumberOfCpusResult.getCanDoAction()) {
+            AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(new VmManagementParametersBase(newVmStatic));
+            List<String> canDos = getBackend().getErrorsTranslator().
+                    TranslateErrorText(setNumberOfCpusResult.getCanDoActionMessages());
+            logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
+            AuditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
+        }
     }
 
     private void checkTrustedService() {
@@ -199,6 +226,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
     }
+
 
     @Override
     protected List<Class<?>> getValidationGroups() {
