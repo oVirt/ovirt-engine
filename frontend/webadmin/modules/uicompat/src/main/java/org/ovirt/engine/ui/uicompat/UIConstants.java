@@ -592,6 +592,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Preview Snapshot")
     String previewSnapshotTitle();
 
+    @DefaultStringValue("Custom Preview Snapshot")
+    String customPreviewSnapshotTitle();
+
     @DefaultStringValue("Applications")
     String applicationsTitle();
 

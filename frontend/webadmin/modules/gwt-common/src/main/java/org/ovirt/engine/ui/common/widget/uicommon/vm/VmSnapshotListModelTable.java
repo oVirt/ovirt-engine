@@ -18,6 +18,8 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
@@ -31,6 +33,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends AbstractModelBoundTableWidget<Snapshot, L> {
 
@@ -79,14 +83,14 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
         getTable().setMultiSelectionDisabled(true);
 
         initActionButtons(constants);
+
+        // Add event listeners
         getModel().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 updateMemoryColumnVisibility();
             }
         });
-
-        // Add selection listener
         getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -147,10 +151,27 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 return getModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.previewSnapshot()) {
+
+        List<ActionButtonDefinition<Snapshot>> previewSubActions = new LinkedList<ActionButtonDefinition<Snapshot>>();
+        previewSubActions.add(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.customPreviewSnapshot()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getCustomPreviewCommand();
+            }
+        });
+        getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(
+                getEventBus(), constants.previewSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getPreviewCommand();
+            }
+        }, new DropdownActionButton<Snapshot>(previewSubActions, getModel().getSelectedItems()));
+
+
+        getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.commitSnapshot()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getCommitCommand();
             }
         });
         getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.commitSnapshot()) {
@@ -191,5 +212,4 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             }
         });
     }
-
 }

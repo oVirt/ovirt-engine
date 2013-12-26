@@ -265,4 +265,16 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/triangle_down.gif")
     ImageResource triangle_down();
+
+    @Source("images/memory_icon.png")
+    ImageResource memorySmallIcon();
+
+    @Source("images/disk_icon.png")
+    ImageResource diskIcon();
+
+    @Source("images/vm_conf_icon.png")
+    ImageResource vmConfIcon();
+
+    @Source("images/separator.gif")
+    ImageResource separator();
 }

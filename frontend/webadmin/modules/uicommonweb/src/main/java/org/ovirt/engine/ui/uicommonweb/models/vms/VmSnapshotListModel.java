@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -68,6 +69,18 @@ public class VmSnapshotListModel extends SearchableListModel
     private void setPreviewCommand(UICommand value)
     {
         privatePreviewCommand = value;
+    }
+
+    private UICommand customPreviewCommand;
+
+    public UICommand getCustomPreviewCommand()
+    {
+        return customPreviewCommand;
+    }
+
+    private void setCustomPreviewCommand(UICommand value)
+    {
+        customPreviewCommand = value;
     }
 
     private UICommand privateCommitCommand;
@@ -203,6 +216,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setPreviewCommand(new UICommand("Preview", this)); //$NON-NLS-1$
+        setCustomPreviewCommand(new UICommand("CustomPreview", this)); //$NON-NLS-1$
         setCommitCommand(new UICommand("Commit", this)); //$NON-NLS-1$
         setUndoCommand(new UICommand("Undo", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
@@ -409,21 +423,36 @@ public class VmSnapshotListModel extends SearchableListModel
             model.setTitle(ConstantsManager.getInstance().getConstants().previewSnapshotTitle());
             model.setHashName("preview_snapshot"); //$NON-NLS-1$
 
-            model.getCommands().add(new UICommand("OnPreview", this) //$NON-NLS-1$
-               .setTitle(ConstantsManager.getInstance().getConstants().ok())
-               .setIsDefault(true));
-            UICommand cancelCommand = new UICommand("Cancel", this) //$NON-NLS-1$
-               .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-               .setIsCancel(true);
-            model.getCommands().add(cancelCommand);
-            model.setCancelCommand(cancelCommand);
-            model.setCloseCommand(new UICommand("Cancel", this) //$NON-NLS-1$
-               .setTitle(ConstantsManager.getInstance().getConstants().close())
-               .setIsCancel(true));
+            addCommands(model, "OnPreview"); //$NON-NLS-1$
         }
     }
 
-    private void OnPreview() {
+    private void customPreview()
+    {
+        VM vm = (VM) getEntity();
+        if (vm == null) {
+            return;
+        }
+
+        PreviewSnapshotModel model = new PreviewSnapshotModel();
+        model.setVmId(vm.getId());
+        model.initialize();
+
+        // Update according to the selected snapshot
+        Snapshot selectedSnapshot = (Snapshot) getSelectedItem();
+        if (selectedSnapshot != null) {
+            model.setSnapshotModel(getSnapshotsMap().get(selectedSnapshot.getId()));
+        }
+
+        setWindow(model);
+
+        model.setTitle(ConstantsManager.getInstance().getConstants().customPreviewSnapshotTitle());
+        model.setHashName("custom_preview_snapshot"); //$NON-NLS-1$
+
+        addCommands(model, "OnCustomPreview"); //$NON-NLS-1$
+    }
+
+    private void onPreview() {
         Snapshot snapshot = (Snapshot) getSelectedItem();
 
         if (snapshot == null) {
@@ -432,21 +461,33 @@ public class VmSnapshotListModel extends SearchableListModel
         }
 
         VM vm = (VM) getEntity();
-        final SnapshotModel model = (SnapshotModel) getWindow();
+        SnapshotModel snapshotModel = (SnapshotModel) getWindow();
+        boolean memory = (Boolean) snapshotModel.getMemory().getEntity();
 
+        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, null);
+    }
+
+    private void onCustomPreview() {
+        VM vm = (VM) getEntity();
+        PreviewSnapshotModel previewSnapshotModel = (PreviewSnapshotModel) getWindow();
+        Snapshot snapshot = previewSnapshotModel.getSnapshotModel().getEntity();
+        boolean memory = Boolean.TRUE.equals(previewSnapshotModel.getSnapshotModel().getMemory().getEntity());
+        List<DiskImage> disks = previewSnapshotModel.getSelectedDisks();
+
+        runTryBackToAllSnapshotsOfVm(previewSnapshotModel, vm, snapshot, memory, disks);
+    }
+
+    private void runTryBackToAllSnapshotsOfVm(final Model model, VM vm, Snapshot snapshot, boolean memory, List<DiskImage> disks) {
         model.startProgress(null);
-
-        Frontend.getInstance().runAction(VdcActionType.TryBackToAllSnapshotsOfVm,
-                new TryBackToAllSnapshotsOfVmParameters(vm.getId(), snapshot.getId(),
-                        (Boolean) model.getMemory().getEntity()),
-                new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        model.stopProgress();
-                        cancel();
-                    }
-                });
+        Frontend.getInstance().runAction(VdcActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(
+            vm.getId(), snapshot.getId(), memory, disks),
+            new IFrontendActionAsyncCallback() {
+                @Override
+                public void executed(FrontendActionAsyncResult result) {
+                    model.stopProgress();
+                    cancel();
+                }
+            });
     }
 
     private void newEntity()
@@ -464,15 +505,9 @@ public class VmSnapshotListModel extends SearchableListModel
         model.setVm(vm);
         model.initialize();
 
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
-        UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
-        closeCommand.setIsCancel(true);
-
-        model.setCancelCommand(cancelCommand);
-        model.setCloseCommand(closeCommand);
+        model.setCancelCommand(new UICommand("Cancel", this) //$NON-NLS-1$
+                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                .setIsCancel(true));
     }
 
     public void postOnNew(List<VdcReturnValueBase> returnValues) {
@@ -484,6 +519,15 @@ public class VmSnapshotListModel extends SearchableListModel
         if (returnValues != null && Linq.all(returnValues, new Linq.CanDoActionSucceedPredicate())) {
             cancel();
         }
+    }
+
+    private void addCommands(Model model, String okCommandName) {
+        model.getCommands().add(new UICommand(okCommandName, this) //$NON-NLS-1$
+                .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                .setIsDefault(true));
+        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
+                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                .setIsCancel(true));
     }
 
     private void cancel()
@@ -671,6 +715,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 && VdcActionUtils.canExecute(vmList, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
+        getCustomPreviewCommand().setIsExecutionAllowed(getPreviewCommand().getIsExecutionAllowed());
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
         getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
         getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
@@ -790,6 +835,10 @@ public class VmSnapshotListModel extends SearchableListModel
         {
             preview();
         }
+        else if (command == getCustomPreviewCommand())
+        {
+            customPreview();
+        }
         else if (command == getCommitCommand())
         {
             commit();
@@ -820,7 +869,11 @@ public class VmSnapshotListModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnPreview")) //$NON-NLS-1$
         {
-            OnPreview();
+            onPreview();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnCustomPreview")) //$NON-NLS-1$
+        {
+            onCustomPreview();
         }
     }
 

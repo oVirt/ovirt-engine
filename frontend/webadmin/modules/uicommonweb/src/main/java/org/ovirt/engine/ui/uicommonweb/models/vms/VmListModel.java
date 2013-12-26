@@ -868,15 +868,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setValidateByVmSnapshots(true);
         model.initialize();
 
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
-        UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
-        closeCommand.setIsCancel(true);
-
-        model.setCancelCommand(cancelCommand);
-        model.setCloseCommand(closeCommand);
+        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
+                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                .setIsCancel(true));
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -144,6 +145,12 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
         setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
     }
 
+    public void selectAll() {
+        for (T item : getVisibleItems()) {
+            getSelectionModel().setSelected(item, true);
+        }
+    }
+
     M getListModel() {
         return asEditor().flush();
     }
@@ -157,6 +164,10 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
     public void addColumn(Column<T, ?> column, String headerText, String width) {
         addColumn(column, headerText);
         setColumnWidth(column, width);
+    }
+
+    public void addColumn(Column column, SafeHtml headerHtml, String width) {
+        addColumnAndSetWidth(column, headerHtml, width);
     }
 
     public void addColumnAt(Column<T, ?> column, String headerText, String width, int position) {

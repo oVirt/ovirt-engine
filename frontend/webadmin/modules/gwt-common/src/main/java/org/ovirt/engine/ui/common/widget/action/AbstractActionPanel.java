@@ -277,14 +277,20 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         return elementId;
     }
 
+
     /**
      * Adds a new button to the action panel.
      * @param buttonDef The button definition.
      */
     @Override
     public void addActionButton(final ActionButtonDefinition<T> buttonDef) {
-        final ActionButton newActionButton = createNewActionButton(buttonDef);
+        addActionButton(buttonDef, createNewActionButton(buttonDef));
+    }
 
+    /**
+     * Adds a new button to the action panel.
+     */
+    public void addActionButton(final ActionButtonDefinition<T> buttonDef, final ActionButton newActionButton) {
         // Configure the button according to its definition
         newActionButton.setEnabledHtml(buttonDef.getEnabledHtml());
         newActionButton.setDisabledHtml(buttonDef.getDisabledHtml());

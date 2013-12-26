@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCustomPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
@@ -23,6 +24,7 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
     private final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider;
     private final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider;
     private final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider;
+    private final Provider<VmSnapshotCustomPreviewPopupPresenterWidget> customPreviewPopupProvider;
 
     @Inject
     public VmSnapshotListModelProvider(EventBus eventBus,
@@ -32,12 +34,14 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
             UserPortalModelResolver resolver,
             Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
             Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider,
+            Provider<VmSnapshotCustomPreviewPopupPresenterWidget> customPreviewPopupProvider,
             Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider, user,
                 parentModelProvider, UserPortalVmSnapshotListModel.class, resolver);
         this.createPopupProvider = createPopupProvider;
         this.cloneVmPopupProvider = cloneVmPopupProvider;
         this.previewPopupProvider = previewPopupProvider;
+        this.customPreviewPopupProvider = customPreviewPopupProvider;
     }
 
     @Override
@@ -54,6 +58,8 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
             return cloneVmPopupProvider.get();
         } else if (lastExecutedCommand == getModel().getPreviewCommand()) {
             return previewPopupProvider.get();
+        } else if (lastExecutedCommand == getModel().getCustomPreviewCommand()) {
+            return customPreviewPopupProvider.get();
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }

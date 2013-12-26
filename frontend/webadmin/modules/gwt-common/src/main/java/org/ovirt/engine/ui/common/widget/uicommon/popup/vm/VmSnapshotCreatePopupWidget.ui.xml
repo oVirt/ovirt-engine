@@ -7,22 +7,40 @@
 		.content {
 		}
 
-		.memoryEditor,.descriptionEditor {
+		.memoryEditor,
+        .descriptionEditor {
 			width: 100%;
 		}
 
 		.messagePanel {
 			color: #CD2127;
-			margin-left: 5px;
-			margin-right: 5px;
+			margin: 5px;
+            bottom: 0px;
+            position: absolute;
+            overflow: auto;
+            max-height: 40px;
 		}
+
+        .disksPanel {
+            height: 200px;
+            margin: 5px;
+        }
+
+        .diskTableLabel {
+            font-size: 13px;
+            padding: 5px 10px 0px 5px;
+            font-family: Verdana,sans-serif;
+        }
 	</ui:style>
 
-	<g:VerticalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.content}">
+	<g:FlowPanel addStyleNames="{style.content}">
 		<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}" />
-		<e:EntityModelCheckBoxEditor ui:field="memoryEditor" addStyleNames="{style.memoryEditor}" />
-		<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}">
-		</g:FlowPanel>
-	</g:VerticalPanel>
+        <g:Label ui:field="disksTableLabel" addStyleNames="{style.diskTableLabel}" />
+        <g:ScrollPanel ui:field="disksPanel" addStyleNames="{style.disksPanel}">
+            <e:ListModelObjectCellTable ui:field="disksTable"/>
+        </g:ScrollPanel>
+        <e:EntityModelCheckBoxEditor ui:field="memoryEditor" addStyleNames="{style.memoryEditor}" />
+        <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}"/>
+	</g:FlowPanel>
 
 </ui:UiBinder>

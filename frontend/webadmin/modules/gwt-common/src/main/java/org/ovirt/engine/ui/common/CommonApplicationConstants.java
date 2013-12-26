@@ -761,6 +761,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Preview")
     String previewSnapshot();
 
+    @DefaultStringValue("Custom...")
+    String customPreviewSnapshot();
+
     @DefaultStringValue("Commit")
     String commitSnapshot();
 
@@ -1603,4 +1606,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Override SPICE proxy")
     String defineSpiceProxyEnable();
 
+    @DefaultStringValue("Disks to include:")
+    String snapshotDisks();
+
+    @DefaultStringValue("VM Configuration")
+    String vmConfiguration();
+
+    @DefaultStringValue("Double-click to select an entire row")
+    String customPreviewSnapshotTableTitle();
 }

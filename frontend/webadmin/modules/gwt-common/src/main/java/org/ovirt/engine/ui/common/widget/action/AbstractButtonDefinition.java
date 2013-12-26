@@ -23,7 +23,7 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
 
     private final List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
-    private final SafeHtml title;
+    protected final SafeHtml title;
 
     // Indicates whether the given feature is implemented in WebAdmin
     private final boolean implInWebAdmin;

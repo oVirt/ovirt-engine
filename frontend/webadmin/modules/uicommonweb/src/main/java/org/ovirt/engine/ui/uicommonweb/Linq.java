@@ -1243,6 +1243,16 @@ public final class Linq
         }
     }
 
+    public final static <T extends Disk> Iterable<T> filterDisksByStorageType(
+            Iterable<Disk> source, final DiskStorageType diskStorageType) {
+        return (Iterable<T>) where(source, new IPredicate<Disk>() {
+            @Override
+            public boolean match(Disk source) {
+                return source.getDiskStorageType() == diskStorageType;
+            }
+        });
+    }
+
     public final static Iterable<Provider> filterProvidersByProvidedType(Iterable<Provider> source,
             final VdcObjectType type) {
         return where(source, new IPredicate<Provider>() {

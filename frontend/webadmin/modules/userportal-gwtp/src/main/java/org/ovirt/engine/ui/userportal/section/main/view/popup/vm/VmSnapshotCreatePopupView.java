@@ -20,7 +20,7 @@ public class VmSnapshotCreatePopupView extends AbstractModelBoundWidgetPopupView
 
     @Inject
     public VmSnapshotCreatePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, new VmSnapshotCreatePopupWidget(constants), "410px", "200px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, resources, new VmSnapshotCreatePopupWidget(constants), "400px", "400px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

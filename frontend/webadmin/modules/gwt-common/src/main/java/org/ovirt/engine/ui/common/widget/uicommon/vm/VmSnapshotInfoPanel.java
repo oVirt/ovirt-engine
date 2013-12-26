@@ -83,7 +83,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void updateTabsData(SnapshotModel snapshotModel) {
+    public void updateTabsData(SnapshotModel snapshotModel) {
         generalForm.update(snapshotModel.getVm());
         disksTable.setRowData((List) snapshotModel.getDisks());
         nicsTable.setRowData((List) snapshotModel.getNics());

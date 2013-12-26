@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePop
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCustomPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
@@ -313,7 +314,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
             final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
-            final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider) {
+            final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider,
+            final Provider<VmSnapshotCustomPreviewPopupPresenterWidget> customPreviewPopupProvider) {
         return new SearchableDetailTabModelProvider<Snapshot, VmListModel, VmSnapshotListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 VmListModel.class,
@@ -328,7 +330,9 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return cloneVmPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getPreviewCommand()) {
                     return previewPopupProvider.get();
-                } else {
+                } else if (lastExecutedCommand == getModel().getCustomPreviewCommand()) {
+                    return customPreviewPopupProvider.get();
+                }else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }

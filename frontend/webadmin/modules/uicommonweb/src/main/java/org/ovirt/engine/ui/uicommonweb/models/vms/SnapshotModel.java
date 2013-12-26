@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -133,25 +135,26 @@ public class SnapshotModel extends EntityModel
         this.validateByVmSnapshots = validateByVmSnapshots;
     }
 
-    private UICommand cancelCommand;
+    private ListModel snapshotDisks;
 
-    public void setCancelCommand(UICommand cancelCommand) {
-        this.cancelCommand = cancelCommand;
+    public ListModel getSnapshotDisks()
+    {
+        return snapshotDisks;
     }
 
-    @Override
+    public void setSnapshotDisks(ListModel value)
+    {
+        snapshotDisks = value;
+    }
+
+    private UICommand cancelCommand;
+
     public UICommand getCancelCommand() {
         return cancelCommand;
     }
 
-    private UICommand closeCommand;
-
-    public void setCloseCommand(UICommand closeCommand) {
-        this.closeCommand = closeCommand;
-    }
-
-    public UICommand getCloseCommand() {
-        return closeCommand;
+    public void setCancelCommand(UICommand cancelCommand) {
+        this.cancelCommand = cancelCommand;
     }
 
     public SnapshotModel()
@@ -161,6 +164,13 @@ public class SnapshotModel extends EntityModel
         setDisks(new ArrayList<DiskImage>());
         setNics(new ArrayList<VmNetworkInterface>());
         setApps(new ArrayList<String>());
+
+        setSnapshotDisks(new ListModel());
+    }
+
+    @Override
+    public Snapshot getEntity() {
+        return (Snapshot) super.getEntity();
     }
 
     @Override
@@ -189,7 +199,9 @@ public class SnapshotModel extends EntityModel
                 ArrayList<Snapshot> snapshots = (ArrayList<Snapshot>) returnValue;
 
                 if (snapshotModel.showWarningForByVmSnapshotsValidation(snapshots)) {
-                    snapshotModel.getCommands().add(getCloseCommand());
+                    UICommand closeCommand = getCancelCommand()
+                            .setTitle(ConstantsManager.getInstance().getConstants().close());
+                    snapshotModel.getCommands().add(closeCommand);
                     snapshotModel.stopProgress();
                 }
                 else {
@@ -205,6 +217,7 @@ public class SnapshotModel extends EntityModel
             public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+                updateSnapshotDisks(disks);
 
                 VmModelHelper.sendWarningForNonExportableDisks(snapshotModel, disks, VmModelHelper.WarningType.VM_SNAPSHOT);
                 snapshotModel.getCommands().add(getOnSaveCommand());
@@ -214,15 +227,29 @@ public class SnapshotModel extends EntityModel
         }), vm.getId());
     }
 
-    public void updateVmConfiguration(final INewAsyncCallback onUpdateAsyncCallback)
-    {
-        Snapshot snapshot = ((Snapshot) getEntity());
+    private void updateSnapshotDisks(ArrayList<Disk> disks) {
+        ArrayList<DiskImage> diskImages =
+                Linq.toList(Linq.<DiskImage>filterDisksByStorageType(disks, Disk.DiskStorageType.IMAGE));
+        Collections.sort(diskImages, new Linq.DiskByAliasComparer());
+        getSnapshotDisks().setItems(diskImages);
+    }
+
+    public void updateModelBySnapshot(Snapshot snapshot) {
+        setDisks(new ArrayList(snapshot.getDiskImages()));
+        getMemory().setEntity(snapshot.containsMemory());
+    }
+
+    public void updateVmConfiguration(final INewAsyncCallback onUpdateAsyncCallback) {
+        Snapshot snapshot = getEntity();
+        if (snapshot == null) {
+            return;
+        }
 
         AsyncDataProvider.getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
-                Snapshot snapshot = ((Snapshot) snapshotModel.getEntity());
+                Snapshot snapshot = snapshotModel.getEntity();
                 VM vm = (VM) returnValue;
 
                 if (vm != null && snapshot != null) {
@@ -239,6 +266,15 @@ public class SnapshotModel extends EntityModel
                 onUpdateAsyncCallback.onSuccess(snapshotModel, null);
             }
         }), snapshot.getId());
+    }
+
+    public DiskImage getImageByDiskId(Guid diskId) {
+        for (DiskImage disk : getEntity().getDiskImages()) {
+            if (disk.getId().equals(diskId)) {
+                return disk;
+            }
+        }
+        return null;
     }
 
     public boolean validate()
@@ -316,7 +352,8 @@ public class SnapshotModel extends EntityModel
         CreateAllSnapshotsFromVmParameters param =
                 new CreateAllSnapshotsFromVmParameters(vm.getId(),
                         (String) getDescription().getEntity(),
-                        (Boolean) getMemory().getEntity());
+                        (Boolean) getMemory().getEntity(),
+                        getSnapshotDisks().getSelectedItems());
         param.setQuotaId(vm.getQuotaId());
         params.add(param);
 

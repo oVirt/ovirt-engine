@@ -98,6 +98,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePop
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCustomPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
@@ -312,6 +313,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPres
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreatePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCustomPreviewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotPreviewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VncInfoPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabClusterView;
@@ -1159,6 +1161,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmSnapshotPreviewPopupPresenterWidget.class,
                 VmSnapshotPreviewPopupPresenterWidget.ViewDef.class,
                 VmSnapshotPreviewPopupView.class);
+        bindPresenterWidget(VmSnapshotCustomPreviewPopupPresenterWidget.class,
+                VmSnapshotCustomPreviewPopupPresenterWidget.ViewDef.class,
+                VmSnapshotCustomPreviewPopupView.class);
 
         // VM Clone from Snapshot
         bindPresenterWidget(VmClonePopupPresenterWidget.class,

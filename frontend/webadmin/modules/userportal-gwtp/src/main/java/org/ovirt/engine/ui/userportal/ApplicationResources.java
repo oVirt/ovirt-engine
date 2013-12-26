@@ -104,7 +104,7 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     // resources tab
     @Source("images/general/vm_icon.png")
-    ImageResource vmIcon();
+    ImageResource vmConfIcon();
 
     @Source("images/general/memory_icon.png")
     ImageResource memoryIcon();

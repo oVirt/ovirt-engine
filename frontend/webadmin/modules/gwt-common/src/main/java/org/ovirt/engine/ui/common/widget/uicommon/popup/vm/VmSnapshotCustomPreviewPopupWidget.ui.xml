@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:style>
+
+        .memoryEditor {
+            width: 100%;
+        }
+
+        .messageLabel {
+            padding-top: 15px;
+            padding-left: 10px;
+            padding-right: 5px;
+            height: 25px;
+        }
+
+        .containerPanel {
+            border: 1px solid #333;
+            margin: 5px;
+        }
+
+        .containerPanelInner {
+            margin: 5px;
+            overflow: auto;
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+
+        .previewTableLabel {
+            color: gray;
+            font-weight: bold;
+            font-size: 13px;
+            padding-bottom: 2px;
+        }
+    </ui:style>
+
+    <g:SplitLayoutPanel ui:field="splitLayoutPanel" width="100%">
+        <g:center>
+            <g:SimplePanel addStyleNames="{style.containerPanel}">
+                <g:FlowPanel addStyleNames="{style.containerPanelInner}">
+                    <g:Label ui:field="previewTableLabel" addStyleNames="{style.previewTableLabel}"/>
+                    <e:EntityModelCellTable ui:field="previewTable"/>
+                </g:FlowPanel>
+            </g:SimplePanel>
+        </g:center>
+        <g:south size="200">
+            <g:SimplePanel addStyleNames="{style.containerPanel}">
+                <g:SimplePanel addStyleNames="{style.containerPanelInner}">
+                    <g:SimplePanel ui:field="snapshotInfoContainer" />
+                </g:SimplePanel>
+            </g:SimplePanel>
+        </g:south>
+    </g:SplitLayoutPanel>
+</ui:UiBinder>

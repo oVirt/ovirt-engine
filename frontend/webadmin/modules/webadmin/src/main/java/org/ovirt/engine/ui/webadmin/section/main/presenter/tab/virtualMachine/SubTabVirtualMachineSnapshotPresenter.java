@@ -57,8 +57,4 @@ public class SubTabVirtualMachineSnapshotPresenter extends AbstractSubTabPresent
         updateMainTabSelection(event.getSelectedItems());
     }
 
-    @Override
-    protected void onDetailModelEntityChange(Object entity) {
-    }
-
 }

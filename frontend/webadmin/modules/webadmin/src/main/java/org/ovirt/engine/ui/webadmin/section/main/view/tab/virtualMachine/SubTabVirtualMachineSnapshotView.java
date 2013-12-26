@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -31,7 +30,6 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetV
     public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage,
-            CommonApplicationResources resources,
             CommonApplicationConstants constants,
             CommonApplicationMessages messages,
             CommonApplicationTemplates templates) {

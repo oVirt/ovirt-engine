@@ -72,6 +72,12 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
         this(eventBus, title, enabledImage, disabledImage, false, false);
     }
 
+    protected ImageUiCommandButtonDefinition(EventBus eventBus, String title, CommandLocation commandLocation) {
+        super(eventBus, title, commandLocation);
+        enabledImage = null;
+        disabledImage = null;
+    }
+
     @Override
     public SafeHtml getEnabledHtml() {
         return !showTitle ? enabledImage
