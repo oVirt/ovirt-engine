@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -17,16 +18,26 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
-        VdsGroupCommandBase<T> {
+@NonTransactiveCommandAttribute
+public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends VdsGroupCommandBase<T> {
     public DetachNetworkToVdsGroupCommand(T parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeCommand() {
-        getNetworkClusterDAO().remove(getParameters().getVdsGroupId(), getParameters().getNetwork().getId());
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                getNetworkClusterDAO().remove(getParameters().getVdsGroupId(), getParameters().getNetwork().getId());
+                return null;
+            }
+        });
+
         setSucceeded(true);
     }
 
