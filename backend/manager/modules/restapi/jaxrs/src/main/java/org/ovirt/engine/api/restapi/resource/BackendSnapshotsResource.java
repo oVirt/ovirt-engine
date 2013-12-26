@@ -1,19 +1,24 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.ConfigurationType;
+import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.SnapshotMapper;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -49,10 +54,25 @@ public class BackendSnapshotsResource
         if (snapshot.isSetPersistMemorystate()) {
             snapshotParams.setSaveMemory(snapshot.isPersistMemorystate());
         }
+        if (snapshot.isSetDisks()) {
+            snapshotParams.setDisks(mapDisks(snapshot.getDisks()));
+        }
         return performCreate(VdcActionType.CreateAllSnapshotsFromVm,
                                snapshotParams,
                                new SnapshotIdResolver(),
                                block);
+    }
+
+    public ArrayList<DiskImage> mapDisks(Disks disks) {
+        ArrayList<DiskImage> diskImages = null;
+        if (disks != null && disks.isSetDisks()) {
+            diskImages = new ArrayList<>();
+            for (Disk disk : disks.getDisks()) {
+                DiskImage diskImage = (DiskImage) DiskMapper.map(disk, null);
+                diskImages.add(diskImage);
+            }
+        }
+        return diskImages;
     }
 
     @Override

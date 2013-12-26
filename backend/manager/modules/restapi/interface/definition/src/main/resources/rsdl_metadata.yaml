@@ -835,6 +835,7 @@ actions:
       - mandatoryArguments: {snapshot.description: 'xs:string'}
         optionalArguments:
           snapshot.persist_memorystate: xs:boolean
+          snapshot.disks.disk--COLLECTION: {disk.id: 'xs:string'}
         description: create a new snapshot for a given virtual machine
     urlparams: {}
     headers:
