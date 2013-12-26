@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -75,6 +77,11 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
      */
     private String memoryVolume;
 
+    /**
+     * Disk images of the snapshots
+     */
+    private List<DiskImage> diskImages;
+
     public Snapshot() {
         this(true);
     }
@@ -82,6 +89,7 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
     public Snapshot(boolean vmConfigurationAvailable) {
         this.vmConfigurationAvailable = vmConfigurationAvailable;
         this.memoryVolume = "";
+        this.diskImages = new ArrayList<DiskImage>();
     }
 
     public Snapshot(Guid id,
@@ -205,6 +213,14 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
         this.memoryVolume = memoryVolume == null ? "" : memoryVolume;
     }
 
+    public List<DiskImage> getDiskImages() {
+        return diskImages;
+    }
+
+    public void setDiskImages(List<DiskImage> diskImages) {
+        this.diskImages = diskImages;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -218,6 +234,7 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((vmConfiguration == null) ? 0 : vmConfiguration.hashCode());
         result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
+        result = prime * result + ((diskImages == null) ? 0 : diskImages.hashCode());
         return result;
     }
 
@@ -241,7 +258,8 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
                 && status == other.status
                 && type == other.type
                 && ObjectUtils.objectsEqual(vmConfiguration, other.vmConfiguration)
-                && ObjectUtils.objectsEqual(vmId, other.vmId));
+                && ObjectUtils.objectsEqual(vmId, other.vmId)
+                && ObjectUtils.objectsEqual(diskImages, other.diskImages));
     }
 
     public enum SnapshotStatus {
