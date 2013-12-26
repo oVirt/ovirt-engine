@@ -34,7 +34,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class SystemTreeModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback {
 
-    public static EventDefinition ResetRequestedEventDefinition;
+    public static EventDefinition resetRequestedEventDefinition;
     private Event privateResetRequestedEvent;
 
     public Event getResetRequestedEvent()
@@ -177,12 +177,12 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
     static
     {
-        ResetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
+        resetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
     }
 
     public SystemTreeModel()
     {
-        setResetRequestedEvent(new Event(ResetRequestedEventDefinition));
+        setResetRequestedEvent(new Event(resetRequestedEventDefinition));
 
         setResetCommand(new UICommand("Reset", this)); //$NON-NLS-1$
         setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$
