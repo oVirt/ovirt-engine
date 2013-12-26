@@ -81,7 +81,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class UserPortalListModel extends AbstractUserPortalListModel {
 
-    public static EventDefinition SearchCompletedEventDefinition;
+    public static EventDefinition searchCompletedEventDefinition;
     private Event privateSearchCompletedEvent;
 
     public Event getSearchCompletedEvent()
@@ -251,12 +251,12 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     static
     {
-        SearchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalListModel.class); //$NON-NLS-1$
+        searchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalListModel.class); //$NON-NLS-1$
     }
 
     public UserPortalListModel()
     {
-        setSearchCompletedEvent(new Event(SearchCompletedEventDefinition));
+        setSearchCompletedEvent(new Event(searchCompletedEventDefinition));
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$

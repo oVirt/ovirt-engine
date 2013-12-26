@@ -34,7 +34,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
-    public static EventDefinition SearchCompletedEventDefinition;
+    public static EventDefinition searchCompletedEventDefinition;
     private Event privateSearchCompletedEvent;
 
     public Event getSearchCompletedEvent()
@@ -108,11 +108,11 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     }
 
     static {
-        SearchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalBasicListModel.class); //$NON-NLS-1$
+        searchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalBasicListModel.class); //$NON-NLS-1$
     }
 
     public UserPortalBasicListModel() {
-        setSearchCompletedEvent(new Event(SearchCompletedEventDefinition));
+        setSearchCompletedEvent(new Event(searchCompletedEventDefinition));
 
         setSelectedItemDefinedMemory(new EntityModel());
         setSelectedItemNumOfCpuCores(new EntityModel());
