@@ -53,6 +53,9 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
         if (action.isSetRestoreMemory()) {
             tryBackParams.setRestoreMemory(action.isRestoreMemory());
         }
+        if (action.isSetDisks()) {
+            tryBackParams.setDisks(collection.mapDisks(action.getDisks()));
+        }
         tryBackParams.setCorrelationId(RESTORE_SNAPSHOT_CORRELATION_ID); //TODO: if user supplied, override with user value
         Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
                 tryBackParams,

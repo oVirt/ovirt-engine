@@ -195,6 +195,8 @@
       <xs:element name="clone" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- indicates whether to restore snapshot's memory on preview/restore snapshot -->
       <xs:element name="restore_memory" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <!-- Custom disks list for preview/restore snapshot -->
+      <xs:element ref="disks" minOccurs="0" maxOccurs="1"/>
       <!-- Used for external job -->
       <xs:element name="succeeded" type="xs:boolean" minOccurs="0"/>
       <!-- resolve GlusterHook using one of the resolution -->

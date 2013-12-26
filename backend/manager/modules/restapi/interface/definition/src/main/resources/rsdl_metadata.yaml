@@ -849,7 +849,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.restore_memory: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments: {action.restore_memory: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.disks.disk--COLLECTION: {disk.id: 'xs:string', disk.image_id: 'xs:string'}}
         description: restore the virtual machine from a given snapshot
     urlparams: {}
     headers:
