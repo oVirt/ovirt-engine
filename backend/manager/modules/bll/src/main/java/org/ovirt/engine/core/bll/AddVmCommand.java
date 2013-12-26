@@ -111,7 +111,25 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         parameters.setVmId(getVmId());
         setStorageDomainId(getParameters().getStorageDomainId());
         if (parameters.getVmStaticData() != null) {
-            setVmTemplateId(parameters.getVmStaticData().getVmtGuid());
+            Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
+
+            if (parameters.getVmStaticData().isUseLatestVersion()) {
+                VmTemplate latest = getVmTemplateDAO().getTemplateWithLatestVersionInChain(templateIdToUse);
+
+                if (latest != null) {
+                    // if not using original template, need to override storage mappings
+                    // as it may have different set of disks
+                    if (!templateIdToUse.equals(latest.getId())) {
+                        getParameters().setDiskInfoDestinationMap(new HashMap<Guid, DiskImage>());
+                    }
+
+                    setVmTemplate(latest);
+                    templateIdToUse = latest.getId();
+                    getParameters().getVmStaticData().setVmtGuid(templateIdToUse);
+                }
+            }
+
+            setVmTemplateId(templateIdToUse);
 
             // API backward compatibility
             if (parameters.isSoundDeviceEnabled() == null) {
@@ -781,6 +799,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void addVmStatic() {
         VmStatic vmStatic = getParameters().getVmStaticData();
+
         if (vmStatic.getOrigin() == null) {
             vmStatic.setOrigin(OriginType.valueOf(Config.<String> getValue(ConfigValues.OriginType)));
         }

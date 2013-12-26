@@ -164,4 +164,14 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      *             list of template versions for this base template
      */
     List<VmTemplate> getTemplateVersionsForBaseTemplate(Guid id);
+
+    /**
+     * Retrieve the id of the latest template for the given template (base or version)
+     *
+     * @param id
+     *             the template id to get latest version for
+     * @return
+     *             id of the latest template version in the chain
+     */
+    VmTemplate getTemplateWithLatestVersionInChain(Guid id);
 }

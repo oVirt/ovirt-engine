@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -66,7 +67,26 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     public CommonVmPoolWithVmsCommand(T parameters) {
         super(parameters);
-        setVmTemplateId(getParameters().getVmStaticData().getVmtGuid());
+
+        Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
+        // if set to use latest version, get it from db and use it as template
+        if (parameters.getVmStaticData().isUseLatestVersion()) {
+            VmTemplate latest = getVmTemplateDAO().getTemplateWithLatestVersionInChain(templateIdToUse);
+
+            if (latest != null) {
+                // if not using original template, need to override storage mappings
+                // as it may have different set of disks
+                if (!templateIdToUse.equals(latest.getId())) {
+                    getParameters().setDiskInfoDestinationMap(null);
+                }
+
+                setVmTemplate(latest);
+                templateIdToUse = latest.getId();
+                getParameters().getVmStaticData().setVmtGuid(templateIdToUse);
+            }
+        }
+
+        setVmTemplateId(templateIdToUse);
         initTemplate();
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {

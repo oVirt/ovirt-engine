@@ -254,6 +254,14 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                         .addValue("base_template_id", id));
     }
 
+    @Override
+    public VmTemplate getTemplateWithLatestVersionInChain(Guid id) {
+        return getCallsHandler().executeRead("GetTemplateWithLatestVersionInChain",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("template_id", id));
+    }
+
     private final static class VMTemplateRowMapper extends AbstractVmRowMapper<VmTemplate> {
         public static final VMTemplateRowMapper instance = new VMTemplateRowMapper();
 
