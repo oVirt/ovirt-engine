@@ -4,24 +4,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
@@ -30,7 +27,6 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  */
 public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmConfigurationBySnapshotQuery<IdQueryParameters>> {
     private SnapshotDao snapshotDaoMock;
-    private DiskImageDAO diskImageDaoMock;
     private Guid existingSnapshotId = Guid.newGuid();
     private Guid existingVmId = Guid.newGuid();
     private Guid existingImageId = Guid.newGuid();
@@ -39,6 +35,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     private VM existingVm = null;
     private SnapshotsManager snapshotsManager;
     private DiskImage existingDiskImage;
+    private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
     private static final String EXISTING_VM_NAME = "Dummy configuration";
 
@@ -50,6 +47,10 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         existingVm = createVm(existingVmId);
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration
         existingDiskImage = createDiskImage(existingImageId, existingImageGroupId);
+        snapshotVmConfigurationHelper = spy(new SnapshotVmConfigurationHelper());
+        when(getQuery().getSnapshotVmConfigurationHelper()).thenReturn(snapshotVmConfigurationHelper);
+        snapshotsManager = mock(SnapshotsManager.class);
+        when(snapshotVmConfigurationHelper.getSnapshotManager()).thenReturn(snapshotsManager);
         setUpDAOMocks();
     }
 
@@ -75,23 +76,9 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     }
 
     private void setUpDAOMocks() {
-        // Mock the DAOs
-        DbFacade dbFacadeMock = getDbFacadeMockInstance();
         snapshotDaoMock = mock(SnapshotDao.class);
-        when(dbFacadeMock.getSnapshotDao()).thenReturn(snapshotDaoMock);
-        diskImageDaoMock = mock(DiskImageDAO.class);
-        when(dbFacadeMock.getDiskImageDao()).thenReturn(diskImageDaoMock);
+        doReturn(snapshotDaoMock).when(getQuery()).getSnapshotDao();
         when(snapshotDaoMock.get(existingSnapshotId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(existingSnapshot);
-        when(diskImageDaoMock.get(existingImageId)).thenReturn(existingDiskImage);
-    }
-
-    @Override
-    protected GetVmConfigurationBySnapshotQuery<IdQueryParameters> setUpSpyQuery(IdQueryParameters params)
-            throws Exception {
-        GetVmConfigurationBySnapshotQuery<IdQueryParameters> result = super.setUpSpyQuery(params);
-        snapshotsManager = mock(SnapshotsManager.class);
-        when(result.getSnapshotManager()).thenReturn(snapshotsManager);
-        return result;
     }
 
     @Test
@@ -99,7 +86,8 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(existingSnapshotId);
         VM vm = new VM();
-        doReturn(vm).when(query).getVmFromConfiguration(any(String.class));
+        doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(
+                any(String.class), any(Guid.class), any(Guid.class));
         query.execute();
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         assertNotNull("Return value from query cannot be null", returnValue);
@@ -115,22 +103,6 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         VM returnedVm = (VM) returnValue.getReturnValue();
         assertNull("Return value from non existent query should be null", returnedVm);
-    }
-
-    @Test
-    public void testIllegalImageReturnedByQuery() throws Exception {
-        GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
-                setupQueryBySnapshotId(existingSnapshotId);
-        existingVm.getDiskMap().put(existingDiskImage.getId(), existingDiskImage);
-        existingVm.getImages().add(existingDiskImage);
-        doReturn(existingVm).when(query).getVmFromConfiguration(anyString());
-        query.execute();
-        VdcQueryReturnValue returnValue = query.getQueryReturnValue();
-        assertNotNull("Return value from query cannot be null", returnValue);
-        VM vm = (VM) returnValue.getReturnValue();
-        for (Disk diskImage : vm.getDiskMap().values()) {
-            assertEquals(((DiskImage)diskImage).getImageStatus(), ImageStatus.ILLEGAL);
-        }
     }
 
     private GetVmConfigurationBySnapshotQuery<IdQueryParameters> setupQueryBySnapshotId(Guid snapshotId) {
