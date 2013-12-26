@@ -2327,6 +2327,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove the default Network.")
     String NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Renaming a network label while configured on hosts interfaces is not supported. Please unlabel the network first and later specify the new one.")
+    String ACTION_TYPE_FAILED_NETWORK_LABEL_RENAMING_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot update default network name.")
     String NETWORK_CAN_NOT_UPDATE_DEFAULT_NETWORK();
 
