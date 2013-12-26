@@ -12,7 +12,7 @@ public class ReversibleFlow {
     int rollbackIndex;
     Object context;
 
-    public static EventDefinition CompleteEventDefinition;
+    public static EventDefinition completeEventDefinition;
     private Event completeEvent;
 
     public Event getCompleteEvent() {
@@ -21,13 +21,13 @@ public class ReversibleFlow {
 
     static {
 
-        CompleteEventDefinition = new EventDefinition("Complete", ReversibleFlow.class); //$NON-NLS-1$
+        completeEventDefinition = new EventDefinition("Complete", ReversibleFlow.class); //$NON-NLS-1$
     }
 
 
     public ReversibleFlow() {
 
-        completeEvent = new Event(CompleteEventDefinition);
+        completeEvent = new Event(completeEventDefinition);
         notifications = new ArrayList<IEnlistmentNotification>();
     }
 

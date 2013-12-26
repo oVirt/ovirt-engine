@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 
 public class AsyncIteratorCallback {
 
-    public static EventDefinition NotifyEventDefinition;
+    public static EventDefinition notifyEventDefinition;
 
     private Event notifyEvent;
 
@@ -36,12 +36,12 @@ public class AsyncIteratorCallback {
     }
 
     static {
-        NotifyEventDefinition = new EventDefinition("Notify", AsyncIteratorCallback.class); //$NON-NLS-1$
+        notifyEventDefinition = new EventDefinition("Notify", AsyncIteratorCallback.class); //$NON-NLS-1$
     }
 
     public AsyncIteratorCallback(String frontendContext) {
 
-        setNotifyEvent(new Event(NotifyEventDefinition));
+        setNotifyEvent(new Event(notifyEventDefinition));
 
         // Set a stub method calling notify event on AsyncQuery complete.
         setAsyncQuery(new AsyncQuery(this,
