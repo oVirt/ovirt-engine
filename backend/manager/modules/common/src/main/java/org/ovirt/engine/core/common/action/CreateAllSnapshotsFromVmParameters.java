@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -33,6 +36,8 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     @JsonIgnore
     private Set<Guid> diskIdsToIgnoreInChecks;
 
+    private List<DiskImage> disks;
+
     public CreateAllSnapshotsFromVmParameters() {
         needsLocking = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
@@ -48,6 +53,11 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory) {
         this(vmId, description);
         this.saveMemory = saveMemory;
+    }
+
+    public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory, List<DiskImage> disks) {
+        this(vmId, description, saveMemory);
+        this.disks = disks;
     }
 
     public String getDescription() {
@@ -89,5 +99,13 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     public void setDiskIdsToIgnoreInChecks(Set<Guid> diskIdsToIgnoreInChecks) {
         this.diskIdsToIgnoreInChecks = diskIdsToIgnoreInChecks;
+    }
+
+    public List<DiskImage> getDisks() {
+        return disks;
+    }
+
+    public void setDisks(List<DiskImage> disks) {
+        this.disks = disks;
     }
 }

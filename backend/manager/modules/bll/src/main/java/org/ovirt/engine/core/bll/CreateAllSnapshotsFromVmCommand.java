@@ -90,27 +90,41 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return jobProperties;
     }
 
+
+    private List<DiskImage> getDiskImagesForVm() {
+        return ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()), true, true, true);
+    }
+
     /**
      * Filter all allowed snapshot disks.
      * @return list of disks to be snapshot.
      */
     protected List<DiskImage> getDisksList() {
         if (cachedSelectedActiveDisks == null) {
-            cachedSelectedActiveDisks = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
-                    true,
-                    true,
-                    true);
+            List<DiskImage> imagesForVm = getDiskImagesForVm();
+
+            // Get disks from the specified parameters or according to the VM
+            if (getParameters().getDisks() == null) {
+                cachedSelectedActiveDisks = imagesForVm;
+            }
+            else {
+                // Get selected images from 'DiskImagesForVm' to ensure disks entities integrity
+                // (i.e. only images' IDs are relevant).
+                cachedSelectedActiveDisks = ImagesHandler.imagesIntersection(imagesForVm, getParameters().getDisks());
+            }
         }
         return cachedSelectedActiveDisks;
     }
 
     protected List<DiskImage> getDisksListForChecks() {
+        List<DiskImage> disksListForChecks = getParameters().getDisks() == null ?
+                getDisksList() : getParameters().getDisks();
         if (getParameters().getDiskIdsToIgnoreInChecks().isEmpty()) {
-            return getDisksList();
+            return disksListForChecks;
         }
 
         List<DiskImage> toReturn = new LinkedList<>();
-        for (DiskImage diskImage : getDisksList()) {
+        for (DiskImage diskImage : disksListForChecks) {
             if (!getParameters().getDiskIdsToIgnoreInChecks().contains(diskImage.getId())) {
                 toReturn.add(diskImage);
             }
@@ -144,6 +158,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         MemoryImageBuilder memoryImageBuilder = createMemoryImageBuilder();
         addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
         createSnapshotsForDisks();
+        fastForwardDisksToActiveSnapshot();
         memoryImageBuilder.build();
 
         if (getTaskIdList().isEmpty()) {
@@ -190,6 +205,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 getVm(),
                 true,
                 memoryImageBuilder.getVolumeStringRepresentation(),
+                getDisksList(),
                 getCompensationContext());
     }
 
@@ -202,6 +218,18 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             } else {
                 throw new VdcBLLException(vdcReturnValue.getFault().getError(),
                         "Failed to create snapshot!");
+            }
+        }
+    }
+
+    private void fastForwardDisksToActiveSnapshot() {
+        if (getParameters().getDisks() != null) {
+            // Remove disks included in snapshot
+            List<DiskImage> diskImagesToUpdate = ImagesHandler.imagesSubtract(getDiskImagesForVm(), getParameters().getDisks());
+
+            // Fast-forward non-included disks to active snapshot
+            for (DiskImage diskImage : diskImagesToUpdate) {
+                getImageDao().updateImageVmSnapshotId(diskImage.getImageId(), newActiveSnapshotId);
             }
         }
     }

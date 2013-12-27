@@ -77,6 +77,7 @@ public class SnapshotsManager {
                 vm,
                 SnapshotStatus.OK,
                 "",
+                null,
                 compensationContext);
     }
 
@@ -103,6 +104,7 @@ public class SnapshotsManager {
                 vm,
                 snapshotStatus,
                 "",
+                null,
                 compensationContext);
     }
 
@@ -129,6 +131,36 @@ public class SnapshotsManager {
                 vm,
                 SnapshotStatus.OK,
                 memoryVolume,
+                null,
+                compensationContext);
+    }
+
+    /**
+     * Save an active snapshot for the VM, without saving the configuration.<br>
+     * The snapshot is created in status {@link SnapshotStatus#OK} by default.
+     *
+     * @param snapshotId
+     *            The ID for the snapshot.
+     * @param vm
+     *            The VM to save the snapshot for.
+     * @param memoryVolume
+     *            The memory state for the created snapshot
+     * @param disks
+     *            The disks contained in the snapshot
+     * @param compensationContext
+     *            Context for saving compensation details.
+     * @return the newly created snapshot
+     */
+    public Snapshot addActiveSnapshot(Guid snapshotId,
+                                      VM vm,
+                                      String memoryVolume,
+                                      List<DiskImage> disks,
+                                      final CompensationContext compensationContext) {
+        return addActiveSnapshot(snapshotId,
+                vm,
+                SnapshotStatus.OK,
+                memoryVolume,
+                disks,
                 compensationContext);
     }
 
@@ -146,9 +178,38 @@ public class SnapshotsManager {
      *            Context for saving compensation details.
      */
     public Snapshot addActiveSnapshot(Guid snapshotId,
+                                      VM vm,
+                                      SnapshotStatus snapshotStatus,
+                                      String memoryVolume,
+                                      final CompensationContext compensationContext) {
+        return addActiveSnapshot(snapshotId,
+                vm,
+                snapshotStatus,
+                memoryVolume,
+                null,
+                compensationContext);
+    }
+
+    /**
+     * Save an active snapshot for the VM, without saving the configuration.<br>
+     * The snapshot is created with the given status {@link SnapshotStatus}.
+     *
+     * @param snapshotId
+     *            The ID for the snapshot.
+     * @param vm
+     *            The VM to save the snapshot for.
+     * @param snapshotStatus
+     *            The initial status of the snapshot
+     * @param disks
+     *            The disks contained in the snapshot
+     * @param compensationContext
+     *            Context for saving compensation details.
+     */
+    public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
             SnapshotStatus snapshotStatus,
             String memoryVolume,
+            List<DiskImage> disks,
             final CompensationContext compensationContext) {
         return addSnapshot(snapshotId,
                 "Active VM",
@@ -157,6 +218,7 @@ public class SnapshotsManager {
                 vm,
                 false,
                 memoryVolume,
+                disks,
                 compensationContext);
     }
 
@@ -186,7 +248,39 @@ public class SnapshotsManager {
             String memoryVolume,
             final CompensationContext compensationContext) {
         return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED,
-                snapshotType, vm, true, memoryVolume, compensationContext);
+                snapshotType, vm, true, memoryVolume, null, compensationContext);
+    }
+
+    /**
+     * Add a new snapshot, saving it to the DB (with compensation). The VM's current configuration (including Disks &
+     * NICs) will be saved in the snapshot.<br>
+     * The snapshot is created in status {@link SnapshotStatus#LOCKED} by default.
+     *
+     * @param snapshotId
+     *            The ID for the snapshot.
+     * @param description
+     *            The snapshot description.
+     * @param snapshotType
+     *            The snapshot type.
+     * @param vm
+     *            The VM to save in configuration.
+     * @param memoryVolume
+     *            the volume in which the snapshot's memory is stored
+     * @param disks
+     *            The disks contained in the snapshot
+     * @param compensationContext
+     *            Context for saving compensation details.
+     * @return the added snapshot
+     */
+    public Snapshot addSnapshot(Guid snapshotId,
+                                String description,
+                                SnapshotType snapshotType,
+                                VM vm,
+                                String memoryVolume,
+                                List<DiskImage> disks,
+                                final CompensationContext compensationContext) {
+        return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED,
+                snapshotType, vm, true, memoryVolume, disks, compensationContext);
     }
 
     /**
@@ -215,11 +309,12 @@ public class SnapshotsManager {
             VM vm,
             boolean saveVmConfiguration,
             String memoryVolume,
+            List<DiskImage> disks,
             final CompensationContext compensationContext) {
         final Snapshot snapshot = new Snapshot(snapshotId,
                 snapshotStatus,
                 vm.getId(),
-                saveVmConfiguration ? generateVmConfiguration(vm) : null,
+                saveVmConfiguration ? generateVmConfiguration(vm, disks) : null,
                 snapshotType,
                 description,
                 new Date(),
@@ -238,7 +333,7 @@ public class SnapshotsManager {
      *            The VM to generate configuration from.
      * @return A String containing the VM configuration.
      */
-    protected String generateVmConfiguration(VM vm) {
+    protected String generateVmConfiguration(VM vm, List<DiskImage> disks) {
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
@@ -249,13 +344,13 @@ public class SnapshotsManager {
         }
 
         VmDeviceUtils.setVmDevices(vm.getStaticData());
-        ArrayList<DiskImage> images =
-                new ArrayList<DiskImage>(ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()),
-                        false, true, true));
-        for (DiskImage image : images) {
+        if (disks == null) {
+            disks = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()), false, true, true);
+        }
+        for (DiskImage image : disks) {
             image.setStorageIds(null);
         }
-        return new OvfManager().ExportVm(vm, images, ClusterUtils.getCompatibilityVersion(vm));
+        return new OvfManager().ExportVm(vm, new ArrayList<>(disks), ClusterUtils.getCompatibilityVersion(vm));
     }
 
     /**

@@ -22,11 +22,13 @@ public class ImagesHandlerTest {
     /** The disks to use for testing */
     private DiskImage disk1;
     private DiskImage disk2;
+    private DiskImage disk3;
 
     @Before
     public void setUp() {
         disk1 = new DiskImage();
         disk2 = new DiskImage();
+        disk3 = new DiskImage();
     }
 
     @Test
@@ -86,5 +88,34 @@ public class ImagesHandlerTest {
 
         assertEquals("Wrong number of Guids returned", 1, result.size());
         assertTrue("The result should contain the active image disk", result.contains(disk1));
+    }
+
+    @Test
+    public void testImagesSubtract() {
+        disk1.setId(Guid.newGuid());
+        disk2.setId(Guid.newGuid());
+        disk3.setId(Guid.newGuid());
+
+        List<DiskImage> list1 = new ArrayList<>(Arrays.asList(disk1, disk2, disk3));
+        List<DiskImage> list2 = new ArrayList<>(Arrays.asList(disk2, disk3));
+
+        List<DiskImage> intersection = ImagesHandler.imagesSubtract(list1, list2);
+
+        assertEquals("Intersection should contain only one disk", intersection.size(), 1);
+        assertTrue("Intersection should contains disk1", intersection.contains(disk1));
+    }
+
+    @Test
+    public void testImagesIntersection() {
+        disk1.setId(Guid.newGuid());
+        disk2.setId(Guid.newGuid());
+        disk3.setId(Guid.newGuid());
+
+        List<DiskImage> list1 = new ArrayList<>(Arrays.asList(disk1, disk2));
+        List<DiskImage> list2 = new ArrayList<>(Arrays.asList(disk1, disk3));
+
+        List<DiskImage> intersection = ImagesHandler.imagesIntersection(list1, list2);
+
+        assertTrue("Intersection should contain only disk1", intersection.size() == 1 && intersection.contains(disk1));
     }
 }

@@ -706,4 +706,45 @@ public final class ImagesHandler {
     public static void updateAllDiskImageSnapshotsStatus(Guid diskId, ImageStatus status) {
         DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
     }
+
+    private static DiskImage getDiskImageById(Guid id, Iterable<DiskImage> diskImages) {
+        for (DiskImage diskImage : diskImages) {
+            if (diskImage.getId().equals(id)) {
+                return diskImage;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the subtraction set of the specified image lists (based on images' IDs)
+     * @param images full list
+     * @param imagesToSubtract images to subtract list
+     * @return the subtraction set
+     */
+    public static List<DiskImage> imagesSubtract(Iterable<DiskImage> images, Iterable<DiskImage> imagesToSubtract) {
+        List<DiskImage> subtract = new ArrayList<>();
+        for (DiskImage image : images) {
+            if (ImagesHandler.getDiskImageById(image.getId(), imagesToSubtract) == null) {
+                subtract.add(image);
+            }
+        }
+        return subtract;
+    }
+
+    /**
+     * Returns the intersection set of the specified image lists (based on images' IDs)
+     * @param images1 1st list
+     * @param images2 2nd list
+     * @return the intersection set
+     */
+    public static List<DiskImage> imagesIntersection(Iterable<DiskImage> images1, Iterable<DiskImage> images2) {
+        List<DiskImage> intersection = new ArrayList<>();
+        for (DiskImage image : images1) {
+            if (ImagesHandler.getDiskImageById(image.getId(), images2) != null) {
+                intersection.add(image);
+            }
+        }
+        return intersection;
+    }
 }
