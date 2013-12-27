@@ -21,11 +21,11 @@ public class GetAllSiblingVlanInterfacesQuery<P extends InterfaceAndIdQueryParam
     @Override
     protected void executeQueryCommand() {
         java.util.ArrayList<VdsNetworkInterface> retVal = new java.util.ArrayList<VdsNetworkInterface>();
-        if ((getParameters().getInterface()).getVlanId() != null) {
+        if (NetworkUtils.isVlan(getParameters().getInterface())) {
             List<VdsNetworkInterface> vdsInterfaces =
                     getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getId());
             for (int i = 0; i < vdsInterfaces.size(); i++) {
-                if (vdsInterfaces.get(i).getVlanId() != null
+                if (NetworkUtils.isVlan(vdsInterfaces.get(i))
                         && !StringUtils.equals(getParameters().getInterface().getName(), vdsInterfaces.get(i)
                                 .getName())) {
                     if (StringUtils.equals(NetworkUtils.stripVlan(getParameters().getInterface().getName()),

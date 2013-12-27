@@ -71,7 +71,7 @@ public final class NetworkUtils {
     public static boolean isBondVlan(List<VdsNetworkInterface> interfaces, VdsNetworkInterface iface) {
         boolean retVal = false;
 
-        if (iface.getVlanId() != null) {
+        if (isVlan(iface)) {
             for (VdsNetworkInterface i : interfaces) {
                 if (i.getBonded() != null && i.getBonded() == true
                         && interfaceBasedOn(iface.getName(), i.getName())) {
@@ -102,7 +102,7 @@ public final class NetworkUtils {
 
     public static boolean interfaceHasVlan(VdsNetworkInterface iface, List<VdsNetworkInterface> allIfaces) {
         for (VdsNetworkInterface i : allIfaces) {
-            if (i.getVlanId() != null && interfaceBasedOn(i.getName(), iface.getName())) {
+            if (isVlan(i) && interfaceBasedOn(i.getName(), iface.getName())) {
                 return true;
             }
         }
@@ -214,5 +214,16 @@ public final class NetworkUtils {
      */
     public static boolean isVlan(Network network) {
         return network.getVlanId() != null;
+    }
+
+    /**
+     * Determine if a given network interface is a vlan device
+     *
+     * @param nic
+     *            the nic to check.
+     * @return <code>true</code> iff the nic is a vlan.
+     */
+    public static boolean isVlan(VdsNetworkInterface nic) {
+        return nic.getVlanId() != null;
     }
 }
