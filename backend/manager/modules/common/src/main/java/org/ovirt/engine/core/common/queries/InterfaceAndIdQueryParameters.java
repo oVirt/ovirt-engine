@@ -1,22 +1,22 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class InterfaceAndIdQueryParameters extends IdQueryParameters {
     private static final long serialVersionUID = 2875732930025180055L;
 
-    private NetworkInterface<?> iface;
+    private VdsNetworkInterface iface;
 
     public InterfaceAndIdQueryParameters() {
     }
 
-    public InterfaceAndIdQueryParameters(Guid vdsId, NetworkInterface<?> iface) {
+    public InterfaceAndIdQueryParameters(Guid vdsId, VdsNetworkInterface iface) {
         super(vdsId);
         this.iface = iface;
     }
 
-    public NetworkInterface<?> getInterface() {
+    public VdsNetworkInterface getInterface() {
         return iface;
     }
 }

@@ -20,7 +20,7 @@ public class GetAllChildVlanInterfacesQuery<P extends InterfaceAndIdQueryParamet
     @Override
     protected void executeQueryCommand() {
         java.util.ArrayList<VdsNetworkInterface> retVal = new java.util.ArrayList<VdsNetworkInterface>();
-        if (((VdsNetworkInterface) getParameters().getInterface()).getVlanId() == null) {
+        if ((getParameters().getInterface()).getVlanId() == null) {
             List<VdsNetworkInterface> vdsInterfaces =
                     getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getId());
             for (int i = 0; i < vdsInterfaces.size(); i++) {
