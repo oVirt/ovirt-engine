@@ -86,9 +86,9 @@ public class NetworkValidator {
      * @return An error iff a different network in the data center is already using the specified VLAN ID.
      */
     public ValidationResult vlanIdNotUsed() {
-        if (network.getVlanId() != null) {
+        if (NetworkUtils.isVlan(network)) {
             for (Network otherNetwork : getNetworks()) {
-                if (otherNetwork.getVlanId() != null
+                if (NetworkUtils.isVlan(otherNetwork)
                         && otherNetwork.getVlanId().equals(network.getVlanId())
                         && !otherNetwork.getId().equals(network.getId())) {
                     return new ValidationResult(VdcBllMessages.NETWORK_VLAN_IN_USE,

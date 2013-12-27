@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
@@ -70,11 +71,11 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         networkForCreate.setName(network.getName());
         if (network.getLabel() != null) {
             networkForCreate.setProviderPhysicalNetwork(network.getLabel());
-            if (network.getVlanId() == null) {
-                networkForCreate.setProviderNetworkType(FLAT_NETWORK);
-            } else {
+            if (NetworkUtils.isVlan(network)) {
                 networkForCreate.setProviderNetworkType(VLAN_NETWORK);
                 networkForCreate.setProviderSegmentationId(network.getVlanId());
+            } else {
+                networkForCreate.setProviderNetworkType(FLAT_NETWORK);
             }
         }
 

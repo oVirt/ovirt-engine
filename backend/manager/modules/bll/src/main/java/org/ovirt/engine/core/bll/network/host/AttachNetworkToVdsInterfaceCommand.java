@@ -223,6 +223,6 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
     }
 
     private boolean vmNetworkNonVlan(Network network) {
-        return network.isVmNetwork() && network.getVlanId() == null;
+        return network.isVmNetwork() && !NetworkUtils.isVlan(network);
     }
 }
