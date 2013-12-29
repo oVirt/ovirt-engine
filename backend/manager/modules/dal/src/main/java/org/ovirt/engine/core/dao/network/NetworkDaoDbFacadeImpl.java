@@ -25,6 +25,20 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     }
 
     @Override
+    public Network get(Guid networkId) {
+        return get(networkId, null, false);
+    }
+
+    @Override
+    public Network get(Guid networkId, Guid userID, boolean isFiltered) {
+        return getCallsHandler().executeRead(getProcedureNameForGet(),
+                NetworkRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("id", networkId)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
+    }
+
+    @Override
     public Network getByName(String name) {
         return getCallsHandler().executeRead("GetnetworkByName",
                 NetworkRowMapper.instance,

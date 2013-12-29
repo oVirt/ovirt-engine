@@ -112,4 +112,17 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return all labels defined for the data-center's networks
      */
     Set<String> getAllNetworkLabelsForDataCenter(Guid id);
+
+    /**
+     * Retrieve a specific network.
+     *
+     * @param id
+     *            the network id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the network
+     */
+    Network get(Guid networkId, Guid userID, boolean isFiltered);
 }

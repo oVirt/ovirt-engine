@@ -70,7 +70,7 @@ public enum VdcQueryType implements Serializable {
     GetVdsWithoutNetwork,
     GetVmsAndNetworkInterfacesByNetworkId,
     GetVmTemplatesAndNetworkInterfacesByNetworkId,
-    GetNetworkById,
+    GetNetworkById(VdcQueryAuthType.User),
 
     // External network providers
     GetAllExternalNetworksOnProvider,

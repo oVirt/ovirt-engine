@@ -10,6 +10,8 @@ public class GetNetworkByIdQuery<P extends IdQueryParameters> extends QueriesCom
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getNetworkDao().get(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getNetworkDao().get(getParameters().getId(),
+                getUserID(),
+                getParameters().isFiltered()));
     }
 }

@@ -110,12 +110,15 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetnetworkByid(v_id UUID) RETURNS SETOF network STABLE
+Create or replace FUNCTION GetnetworkByid(v_id UUID, v_user_id uuid, v_is_filtered boolean) RETURNS SETOF network STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
    FROM network
-   WHERE id = v_id;
+   WHERE id = v_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                    FROM   user_network_permissions_view
+                                    WHERE  user_id = v_user_id AND entity_id = v_id));
 
 END; $procedure$
 LANGUAGE plpgsql;
