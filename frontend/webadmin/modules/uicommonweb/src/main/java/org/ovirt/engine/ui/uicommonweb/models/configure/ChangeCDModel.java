@@ -51,7 +51,7 @@ public class ChangeCDModel extends Model
 
     private void doAction()
     {
-        getExecutedEvent().raise(this, EventArgs.Empty);
+        getExecutedEvent().raise(this, EventArgs.EMPTY);
         // Executed(this, EventArgs.Empty);
     }
 

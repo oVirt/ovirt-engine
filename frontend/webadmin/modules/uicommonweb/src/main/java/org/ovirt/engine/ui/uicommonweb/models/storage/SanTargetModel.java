@@ -151,7 +151,7 @@ public class SanTargetModel extends EntityModel
 
     private void login()
     {
-        getLoggedInEvent().raise(this, EventArgs.Empty);
+        getLoggedInEvent().raise(this, EventArgs.EMPTY);
     }
 
     @Override

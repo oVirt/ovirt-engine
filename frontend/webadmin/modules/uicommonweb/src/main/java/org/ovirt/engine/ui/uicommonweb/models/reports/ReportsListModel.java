@@ -191,7 +191,7 @@ public class ReportsListModel extends SearchableListModel {
         }
         GWT.log("Tree Item changed: " + title); //$NON-NLS-1$
 
-        reportModelRefreshEvent.raise(this, EventArgs.Empty);
+        reportModelRefreshEvent.raise(this, EventArgs.EMPTY);
     }
 
     @Override

@@ -56,7 +56,7 @@ public class EntityModel<T> extends Model implements HasHandlers
             entity = value;
             onEntityChanged();
             // EntityChanged(this, EventArgs.Empty);
-            getEntityChangedEvent().raise(this, EventArgs.Empty);
+            getEntityChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Entity")); //$NON-NLS-1$
         }
     }

@@ -272,7 +272,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
             // If the items are same, just fire the item changed event to make sure that items are displayed
             if (getItems() == glusterVolumeEntity.getBricks()) {
-                getItemsChangedEvent().raise(this, EventArgs.Empty);
+                getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             } else {
                 setItems(glusterVolumeEntity.getBricks());
             }

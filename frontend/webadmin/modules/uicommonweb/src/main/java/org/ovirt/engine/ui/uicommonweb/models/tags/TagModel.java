@@ -155,7 +155,7 @@ public class TagModel extends Model implements TreeNodeInfo {
         if (selection == null || !selection.equals(value))
         {
             selection = value;
-            getSelectionChangedEvent().raise(this, EventArgs.Empty);
+            getSelectionChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Selection")); //$NON-NLS-1$
         }
     }

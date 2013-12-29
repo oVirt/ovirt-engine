@@ -180,7 +180,7 @@ public class UserPortalLoginModel extends LoginModel
         // Completely override the base class functionality.
         if (!validate())
         {
-            getLoginFailedEvent().raise(this, EventArgs.Empty);
+            getLoginFailedEvent().raise(this, EventArgs.EMPTY);
             return;
         }
 
@@ -213,7 +213,7 @@ public class UserPortalLoginModel extends LoginModel
                     loginModel.getDomain().setIsChangable(true);
                     loginModel.getLoginCommand().setIsExecutionAllowed(true);
                     getIsAutoConnect().setIsChangable(true);
-                    loginModel.getLoginFailedEvent().raise(this, EventArgs.Empty);
+                    loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
                 }
                 stopProgress();
             }

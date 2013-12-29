@@ -28,6 +28,6 @@ public class Enlistment {
     }
 
     public void done() {
-        getDoneEvent().raise(this, EventArgs.Empty);
+        getDoneEvent().raise(this, EventArgs.EMPTY);
     }
 }

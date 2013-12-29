@@ -292,7 +292,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         {
             itemsChanging(value, items);
             items = value;
-            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
             UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
@@ -1396,7 +1396,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             setvms(null);
             setpools(null);
 
-            getSearchCompletedEvent().raise(this, EventArgs.Empty);
+            getSearchCompletedEvent().raise(this, EventArgs.EMPTY);
         }
     }
 

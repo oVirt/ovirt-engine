@@ -202,7 +202,7 @@ public final class AsyncDataProvider {
                     _defaultConfigurationVersion = GENERAL;
                 }
                 LoginModel loginModel = (LoginModel) model;
-                loginModel.getLoggedInEvent().raise(loginModel, EventArgs.Empty);
+                loginModel.getLoggedInEvent().raise(loginModel, EventArgs.EMPTY);
             }
         });
         callback.setHandleFailure(true);

@@ -692,7 +692,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
                 items = sortedValue;
             }
             updatePagingAvailability();
-            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
             selectedItem = null;

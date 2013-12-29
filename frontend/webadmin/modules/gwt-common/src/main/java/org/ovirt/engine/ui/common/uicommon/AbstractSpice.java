@@ -81,12 +81,12 @@ public abstract class AbstractSpice {
 
     public void setWANDisableEffects(List<WANDisableEffects> disableEffects) {
         this.wanDisableEffects = disableEffects;
-        getWANDisableEffectsChangeEvent().raise(this, EventArgs.Empty);
+        getWANDisableEffectsChangeEvent().raise(this, EventArgs.EMPTY);
     }
 
     public void setWANColorDepth(WanColorDepth colorDepth) {
         this.wanColorDepth = colorDepth;
-        getWANColorDepthChangedEvent().raise(this, EventArgs.Empty);
+        getWANColorDepthChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     public List<WANDisableEffects> getWANDisableEffects() {
@@ -353,7 +353,7 @@ public abstract class AbstractSpice {
 
     public void setUsbAutoShare(boolean usbAutoShare) {
         this.usbAutoShare = usbAutoShare;
-        getUsbAutoShareChangedEvent().raise(this, EventArgs.Empty);
+        getUsbAutoShareChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     public String getUsbFilter() {

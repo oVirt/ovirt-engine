@@ -510,7 +510,7 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setDefaultHost(null);
                     poolGeneralModel.setIsStateless(false);
 
-                    poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
+                    poolGeneralModel.getUpdateCompleteEvent().raise(this, EventArgs.EMPTY);
                 }
             }
         };

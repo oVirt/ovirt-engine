@@ -32,10 +32,10 @@ public class PreparingEnlistment extends Enlistment {
     }
 
     public void prepared() {
-        getPreparedEvent().raise(this, EventArgs.Empty);
+        getPreparedEvent().raise(this, EventArgs.EMPTY);
     }
 
     public void forceRollback() {
-        getRollbackEvent().raise(this, EventArgs.Empty);
+        getRollbackEvent().raise(this, EventArgs.EMPTY);
     }
 }

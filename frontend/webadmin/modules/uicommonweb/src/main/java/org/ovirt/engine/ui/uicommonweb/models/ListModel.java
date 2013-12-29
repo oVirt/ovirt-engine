@@ -69,7 +69,7 @@ public class ListModel<T> extends EntityModel<T>
             selectedItemsChanging(value, selectedItems);
             selectedItems = value;
             selectedItemsChanged();
-            getSelectedItemsChangedEvent().raise(this, EventArgs.Empty);
+            getSelectedItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("SelectedItems")); //$NON-NLS-1$
         }
     }
@@ -88,7 +88,7 @@ public class ListModel<T> extends EntityModel<T>
             onSelectedItemChanging(value, selectedItem);
             selectedItem = value;
             onSelectedItemChanged();
-            getSelectedItemChangedEvent().raise(this, EventArgs.Empty);
+            getSelectedItemChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("SelectedItem")); //$NON-NLS-1$
         }
     }
@@ -107,7 +107,7 @@ public class ListModel<T> extends EntityModel<T>
             itemsChanging(value, items);
             items = value;
             itemsChanged();
-            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }

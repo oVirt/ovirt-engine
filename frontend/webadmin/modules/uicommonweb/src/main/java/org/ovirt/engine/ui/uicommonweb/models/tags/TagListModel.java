@@ -120,7 +120,7 @@ public class TagListModel extends SearchableListModel
             itemsChanging(value, items);
             items = value;
             itemsChanged();
-            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
@@ -406,7 +406,7 @@ public class TagListModel extends SearchableListModel
         // Async tag search will cause tree selection to be cleared
         // Search();
 
-        getResetRequestedEvent().raise(this, EventArgs.Empty);
+        getResetRequestedEvent().raise(this, EventArgs.EMPTY);
     }
 
     private void resetInternal(TagModel root)

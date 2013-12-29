@@ -948,7 +948,7 @@ public class HostGeneralModel extends EntityModel
     public void editHost()
     {
         // Let's the parent model know about request.
-        getRequestEditEvent().raise(this, EventArgs.Empty);
+        getRequestEditEvent().raise(this, EventArgs.EMPTY);
     }
 
     public void onInstall()

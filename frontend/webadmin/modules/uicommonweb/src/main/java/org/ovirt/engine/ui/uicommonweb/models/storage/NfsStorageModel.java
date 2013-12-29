@@ -182,7 +182,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
         super.eventRaised(ev, sender, args);
         if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getPath()) {
             // Notify about path change.
-            getPathChangedEvent().raise(this, EventArgs.Empty);
+            getPathChangedEvent().raise(this, EventArgs.EMPTY);
         }
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getOverride()) {
             override_EntityChanged(args);

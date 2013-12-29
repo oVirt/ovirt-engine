@@ -2,6 +2,6 @@ package org.ovirt.engine.ui.uicompat;
 
 public class EventArgs {
 
-    public static EventArgs Empty;
+    public static final EventArgs EMPTY = null;
 
 }

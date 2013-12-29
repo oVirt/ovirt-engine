@@ -253,7 +253,7 @@ public class EventListModel extends ListWithDetailsModel
 
             list.add(0, item);
         }
-        getItemsChangedEvent().raise(this, EventArgs.Empty);
+        getItemsChangedEvent().raise(this, EventArgs.EMPTY);
         setLastEvent(Linq.firstOrDefault(list));
 
         // If there are no data for this entity, the LastEvent has to be fired in order

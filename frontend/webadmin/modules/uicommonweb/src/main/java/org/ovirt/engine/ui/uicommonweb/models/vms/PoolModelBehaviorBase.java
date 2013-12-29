@@ -95,7 +95,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                                 dataCenters,
                                 (List<VDSGroup>) returnValue, null);
                         initCdImage();
-                        getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
+                        getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.EMPTY);
                     }
                 }, getModel().getHash()),
                 true, false);

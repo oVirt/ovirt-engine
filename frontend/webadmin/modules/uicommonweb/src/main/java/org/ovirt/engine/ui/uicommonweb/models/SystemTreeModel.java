@@ -96,7 +96,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             itemsChanging(value, items);
             items = value;
             itemsChanged();
-            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
@@ -399,7 +399,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
     private void reset()
     {
-        getResetRequestedEvent().raise(this, EventArgs.Empty);
+        getResetRequestedEvent().raise(this, EventArgs.EMPTY);
     }
 
     @Override

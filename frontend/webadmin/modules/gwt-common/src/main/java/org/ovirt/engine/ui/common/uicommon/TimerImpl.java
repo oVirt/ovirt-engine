@@ -19,7 +19,7 @@ public class TimerImpl implements ITimer {
         @Override
         public void run() {
             logger.info("Timer execution"); //$NON-NLS-1$
-            tickEvent.raise(this, EventArgs.Empty);
+            tickEvent.raise(this, EventArgs.EMPTY);
         }
     });
 

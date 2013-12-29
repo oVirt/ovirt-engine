@@ -449,7 +449,7 @@ public class NewClusterPolicyModel extends Model {
             }
         }
         refreshCustomProperties(null, false);
-        getFiltersChangedEvent().raise(this, EventArgs.Empty);
+        getFiltersChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     public void removeFilter(PolicyUnit policyUnit) {
@@ -461,7 +461,7 @@ public class NewClusterPolicyModel extends Model {
             }
         }
         refreshCustomProperties(policyUnit, false);
-        getFiltersChangedEvent().raise(this, EventArgs.Empty);
+        getFiltersChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     public void addFunction(PolicyUnit policyUnit) {
@@ -473,7 +473,7 @@ public class NewClusterPolicyModel extends Model {
             }
         }
         refreshCustomProperties(null, false);
-        getFunctionsChangedEvent().raise(this, EventArgs.Empty);
+        getFunctionsChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     public void removeFunction(PolicyUnit policyUnit) {
@@ -485,7 +485,7 @@ public class NewClusterPolicyModel extends Model {
             }
         }
         refreshCustomProperties(policyUnit, false);
-        getFunctionsChangedEvent().raise(this, EventArgs.Empty);
+        getFunctionsChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     public void updateFactor(PolicyUnit policyUnit, Integer factor) {
@@ -556,8 +556,8 @@ public class NewClusterPolicyModel extends Model {
         if (clusterPolicy.getBalance() != null) {
             getLoadBalanceList().setSelectedItem(policyUnitsMap.get(clusterPolicy.getBalance()));
         }
-        getFiltersChangedEvent().raise(this, EventArgs.Empty);
-        getFunctionsChangedEvent().raise(this, EventArgs.Empty);
+        getFiltersChangedEvent().raise(this, EventArgs.EMPTY);
+        getFunctionsChangedEvent().raise(this, EventArgs.EMPTY);
         customProperties.clear();
         if (clusterPolicy.getParameterMap() != null) {
             customProperties.putAll(clusterPolicy.getParameterMap());

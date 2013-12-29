@@ -237,7 +237,7 @@ public class LoginModel extends Model
     {
         if (!validate())
         {
-            getLoginFailedEvent().raise(this, EventArgs.Empty);
+            getLoginFailedEvent().raise(this, EventArgs.EMPTY);
             return;
         }
 
@@ -271,7 +271,7 @@ public class LoginModel extends Model
                         loginModel.getPassword().setIsChangable(true);
                         loginModel.getDomain().setIsChangable(true);
                         loginModel.getLoginCommand().setIsExecutionAllowed(true);
-                        loginModel.getLoginFailedEvent().raise(this, EventArgs.Empty);
+                        loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
                     }
                     else
                     {

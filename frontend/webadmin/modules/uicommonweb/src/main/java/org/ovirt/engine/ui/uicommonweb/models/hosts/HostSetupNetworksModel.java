@@ -471,7 +471,7 @@ public class HostSetupNetworksModel extends EntityModel {
         operationFactory = new NetworkOperationFactory(getNetworks(), getNics());
         queryFreeBonds();
         validate();
-        getNetworksChangedEvent().raise(this, EventArgs.Empty);
+        getNetworksChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     private LogicalNetworkModel createUnmanagedNetworkModel(String networkName, VdsNetworkInterface nic) {
@@ -737,7 +737,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private void setNetworks(Map<String, LogicalNetworkModel> networks) {
         networkMap = networks;
-        getNetworksChangedEvent().raise(this, EventArgs.Empty);
+        getNetworksChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     private void setNetworksChangedEvent(Event value) {
@@ -747,7 +747,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private void setNics(Map<String, NetworkInterfaceModel> nics) {
         nicMap = nics;
         onNicsChanged();
-        getNicsChangedEvent().raise(this, EventArgs.Empty);
+        getNicsChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     private void setNicsChangedEvent(Event value) {

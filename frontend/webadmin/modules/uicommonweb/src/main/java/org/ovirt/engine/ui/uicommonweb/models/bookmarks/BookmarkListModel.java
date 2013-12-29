@@ -328,7 +328,7 @@ public class BookmarkListModel extends SearchableListModel
             // getSearchCommand().Execute();
         }
 
-        privateItemSavedEvent.raise(this, EventArgs.Empty);
+        privateItemSavedEvent.raise(this, EventArgs.EMPTY);
     }
 
     public void cancel()

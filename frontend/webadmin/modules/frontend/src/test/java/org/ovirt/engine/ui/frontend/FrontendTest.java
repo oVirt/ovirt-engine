@@ -115,8 +115,8 @@ public class FrontendTest {
     public void tearDown() throws Exception {
         // Make sure that the query start and end have been called at least once.
         // Some of the tests might call it more than once.
-        verify(queryStartEvent, atLeastOnce()).raise(Frontend.class, EventArgs.Empty);
-        verify(queryCompleteEvent, atLeastOnce()).raise(Frontend.class, EventArgs.Empty);
+        verify(queryStartEvent, atLeastOnce()).raise(Frontend.class, EventArgs.EMPTY);
+        verify(queryCompleteEvent, atLeastOnce()).raise(Frontend.class, EventArgs.EMPTY);
 
         // Make sure the context is correct
         assertEquals("Context should be 'test'", frontend.getCurrentContext(), "test"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -306,7 +306,7 @@ public class FrontendTest {
         mockReturnValue.setSucceeded(false);
         callback.getValue().onSuccess(mockReturnValue);
         // Make sure the not logged in event is never called, as the failure is not a USER_IS_NOT_LOGGED_IN
-        verify(mockFrontendNotLoggedInEvent, never()).raise(Frontend.class, EventArgs.Empty);
+        verify(mockFrontendNotLoggedInEvent, never()).raise(Frontend.class, EventArgs.EMPTY);
     }
 
     /**
@@ -330,7 +330,7 @@ public class FrontendTest {
         mockReturnValue.setSucceeded(false);
         callback.getValue().onSuccess(mockReturnValue);
         // Make sure the not logged in event is called
-        verify(mockFrontendNotLoggedInEvent).raise(Frontend.class, EventArgs.Empty);
+        verify(mockFrontendNotLoggedInEvent).raise(Frontend.class, EventArgs.EMPTY);
     }
 
     /**
@@ -358,7 +358,7 @@ public class FrontendTest {
         mockReturnValue.setSucceeded(false);
         callback.getValue().onSuccess(mockReturnValue);
         // Make sure the not logged in event is called
-        verify(mockFrontendNotLoggedInEvent).raise(Frontend.class, EventArgs.Empty);
+        verify(mockFrontendNotLoggedInEvent).raise(Frontend.class, EventArgs.EMPTY);
         verify(mockAsyncCallback).onSuccess(mockModel, mockReturnValue);
     }
 

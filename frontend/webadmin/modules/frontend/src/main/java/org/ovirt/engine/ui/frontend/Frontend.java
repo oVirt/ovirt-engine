@@ -950,7 +950,7 @@ public class Frontend implements HasHandlers {
             for (VdcQueryType vdcQueryType : subscribedQueryTypes) {
                 if (queryType.equals(vdcQueryType)) {
                     currentContext = context;
-                    queryEvent.raise(Frontend.class, EventArgs.Empty);
+                    queryEvent.raise(Frontend.class, EventArgs.EMPTY);
                 }
             }
         }
@@ -1251,7 +1251,7 @@ public class Frontend implements HasHandlers {
      */
     private void handleNotLoggedInEvent(final String errorMessage) {
         if (errorMessage != null && errorMessage.equals("USER_IS_NOT_LOGGED_IN")) { //$NON-NLS-1$
-            frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.Empty);
+            frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.EMPTY);
         }
     }
 

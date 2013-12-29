@@ -540,7 +540,7 @@ public class CommonModel extends ListModel
                 }
             };
             setLoggedInUser(null);
-            getSignedOutEvent().raise(this, EventArgs.Empty);
+            getSignedOutEvent().raise(this, EventArgs.EMPTY);
 
             Frontend.getInstance().logoffAsync(Frontend.getInstance().getLoggedInUser(), _asyncQuery);
         }

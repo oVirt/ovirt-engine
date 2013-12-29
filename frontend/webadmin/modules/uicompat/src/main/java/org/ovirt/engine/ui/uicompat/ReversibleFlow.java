@@ -168,6 +168,6 @@ public class ReversibleFlow {
     }
 
     private void complete() {
-        getCompleteEvent().raise(this, EventArgs.Empty);
+        getCompleteEvent().raise(this, EventArgs.EMPTY);
     }
 }
