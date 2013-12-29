@@ -193,17 +193,17 @@
     </Match>
 
     <Match>
-        <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$21" />
+       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$17" />
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$24" />
+       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$20" />
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$25" />
+       <Class name="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget$23" />
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
