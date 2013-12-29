@@ -489,4 +489,15 @@ public class VmDAOTest extends BaseDAOTestCase {
             assertEquals(expectedTemplateName, dao.get(new Guid(vmId)).getOriginalTemplateName());
         }
     }
+
+    /**
+     * Ensures that it retrieves all running VMs for cluster
+     */
+    @Test
+    public void testAllRunningByCluster() {
+        List<VM> result = dao.getAllRunningByCluster(VDS_GROUP_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
 }

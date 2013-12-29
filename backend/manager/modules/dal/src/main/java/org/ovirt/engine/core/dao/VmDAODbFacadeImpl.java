@@ -269,6 +269,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         );
     }
 
+    @Override
+    public List<VM> getAllRunningByCluster(Guid clusterId) {
+        return getCallsHandler().executeReadList("GetRunningVmsByClusterId",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId));
+    }
+
     static final class VMRowMapper implements RowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 

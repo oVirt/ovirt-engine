@@ -282,4 +282,12 @@ public interface VmDAO extends DAO {
      * @return the list of VMs
      */
     List<VM> getAllFailedAutoStartVms();
+
+    /**
+     * get all running VMs under specified cluster
+     *
+     * @param clusterId
+     * @return
+     */
+    List<VM> getAllRunningByCluster(Guid clusterId);
 }

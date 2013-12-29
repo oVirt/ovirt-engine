@@ -1136,3 +1136,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Get all running vms for cluster
+Create or replace FUNCTION GetRunningVmsByClusterId(v_cluster_id UUID) RETURNS SETOF vms STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT DISTINCT vms.*
+    FROM vms
+    WHERE run_on_vds IS NOT NULL AND
+        vds_group_id = v_cluster_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
