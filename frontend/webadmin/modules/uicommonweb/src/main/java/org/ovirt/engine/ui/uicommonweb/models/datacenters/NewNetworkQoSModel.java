@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-
 import org.ovirt.engine.core.common.action.NetworkQoSParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -21,7 +20,6 @@ public class NewNetworkQoSModel extends NetworkQoSModel {
         setTitle(ConstantsManager.getInstance().getConstants().newNetworkQoSTitle());
         setHashName("new_network_qos"); //$NON-NLS-1$
     }
-
 
     @Override
     protected void executeSave() {

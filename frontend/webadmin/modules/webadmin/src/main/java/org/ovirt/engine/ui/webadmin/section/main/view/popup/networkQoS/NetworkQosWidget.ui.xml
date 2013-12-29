@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQosWidget.WidgetStyle">
+		.labelStyle {
+			font-weight: bold;
+			width: 90%;
+			padding-left: 5px;
+		}
+		.mbpsLabel {
+			text-align: right;
+			font-size: smaller;
+			color: gray;
+		}
+		.valueWidth {
+			width: 60px;
+			padding-left: 5px;
+		}
+		.valuePanelStyle {
+			padding-left: 30px;
+			width: 120px;
+		}
+		.textBoxLabelStyle {
+			padding-left: 5px;
+		}
+	</ui:style>
+
+	<g:FlowPanel>
+		<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="inboundEnabled"/>
+		<g:HorizontalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.averageNetworkQoSPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="inboundAverageEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.peakNetworkQoSPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="inboundPeakEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.burstNetworkQoSPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="inboundBurstEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbLabelQoSPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+		</g:HorizontalPanel>
+		<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="outboundEnabled"/>
+		<g:HorizontalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.averageNetworkQoSPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="outboundAverageEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.peakNetworkQoSPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="outboundPeakEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelQoSPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.burstNetworkQoSPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="outboundBurstEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbLabelQoSPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+		</g:HorizontalPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>

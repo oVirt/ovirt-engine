@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-
 import org.ovirt.engine.core.common.action.NetworkQoSParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -25,24 +24,24 @@ public class EditNetworkQoSModel extends NetworkQoSModel {
         setHashName("edit_network_qos"); //$NON-NLS-1$
         getName().setEntity(networkQoS.getName());
 
-        if(networkQoS.getInboundAverage() == null
+        if (networkQoS.getInboundAverage() == null
                 || networkQoS.getInboundPeak() == null
                 || networkQoS.getInboundBurst() == null) {
-            getInboundEnabled().setEntity(Boolean.FALSE);
+            getInbound().getEnabled().setEntity(false);
         } else {
-            getInboundAverage().setEntity(networkQoS.getInboundAverage().toString());
-            getInboundPeak().setEntity(networkQoS.getInboundPeak().toString());
-            getInboundBurst().setEntity(networkQoS.getInboundBurst().toString());
+            getInbound().getAverage().setEntity(networkQoS.getInboundAverage());
+            getInbound().getPeak().setEntity(networkQoS.getInboundPeak());
+            getInbound().getBurst().setEntity(networkQoS.getInboundBurst());
         }
 
-        if(networkQoS.getOutboundAverage() == null
+        if (networkQoS.getOutboundAverage() == null
                 || networkQoS.getOutboundPeak() == null
                 || networkQoS.getOutboundBurst() == null) {
-            getOutboundEnabled().setEntity(Boolean.FALSE);
+            getOutbound().getEnabled().setEntity(false);
         } else {
-            getOutboundAverage().setEntity(networkQoS.getOutboundAverage().toString());
-            getOutboundPeak().setEntity(networkQoS.getOutboundPeak().toString());
-            getOutboundBurst().setEntity(networkQoS.getOutboundBurst().toString());
+            getOutbound().getAverage().setEntity(networkQoS.getOutboundAverage());
+            getOutbound().getPeak().setEntity(networkQoS.getOutboundPeak());
+            getOutbound().getBurst().setEntity(networkQoS.getOutboundBurst());
         }
     }
 
