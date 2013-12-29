@@ -2986,4 +2986,13 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Affinity Group name already exists.")
     String ACTION_TYPE_FAILED_AFFINITY_GROUP_NAME_EXISTS();
+
+    @DefaultStringValue("VM is associated with a positive Affinity Group (${affinityGroupName}) and require to run on the same Host (${hostName}) as the other group VMs")
+    String ACTION_TYPE_FAILED_POSITIVE_AFFINITY_GROUP();
+
+    @DefaultStringValue("VM is associated with a negative Affinity Group and require to run on separate Host, which doesn't run other group VMs")
+    String ACTION_TYPE_FAILED_NEGATIVE_AFFINITY_GROUP();
+
+    @DefaultStringValue("VM is associated with both positive and negative Affinity Groups, please reconfigure VM's affinity groups")
+    String ACTION_TYPE_FAILED_MIX_POSITIVE_NEGATIVE_AFFINITY_GROUP();
 }

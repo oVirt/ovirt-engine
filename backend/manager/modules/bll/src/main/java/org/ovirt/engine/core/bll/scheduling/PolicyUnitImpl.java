@@ -9,10 +9,10 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationBalancePolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationBalancePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
@@ -22,6 +22,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.NoneWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -95,6 +97,12 @@ public class PolicyUnitImpl extends PolicyUnit {
                     return new EvenGuestDistributionBalancePolicyUnit(policyUnit);
                 }
                 break;
+        case "VmAffinityGroups":
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
+                return new VmAffinityFilterPolicyUnit(policyUnit);
+            } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+                return new VmAffinityWeightPolicyUnit(policyUnit);
+            }
         default:
             break;
         }
