@@ -1149,6 +1149,45 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /datacenters/{datacenter:id}/networks/{network:id}/labels|rel=get
+  description: get the labels of a network
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/networks/{network:id}/labels/|rel=add
+  description: add a new label to the network
+  request:
+    body:
+      parameterType: Label
+      signatures:
+      - mandatoryArguments: {label.id: 'xs:string'}
+        description: add a new label to the network
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=get
+  description: get a specific label of a network
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/networks/{network:id}/labels/{label:id}|rel=delete
+  description: delete the specified label of a network
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
 - name: /storagedomains|rel=get
   description: get storage domains in the system
   request:
@@ -2895,6 +2934,45 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /networks/{network:id}/labels|rel=get
+  description: get the labels of a network
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /networks/{network:id}/labels/|rel=add
+  description: add a new label to the network
+  request:
+    body:
+      parameterType: Label
+      signatures:
+      - mandatoryArguments: {label.id: 'xs:string'}
+        description: add a new label to the network
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /networks/{network:id}/labels/{label:id}|rel=get
+  description: get a specific label of a network
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /networks/{network:id}/labels/{label:id}|rel=delete
+  description: delete the specified label of a network
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /vnicprofiles|rel=get
   description: get the list of all virtual network interface card profiles in the system

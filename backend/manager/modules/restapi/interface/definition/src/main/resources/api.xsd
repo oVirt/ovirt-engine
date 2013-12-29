@@ -1994,6 +1994,35 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="label" type="Label"/>
+
+  <xs:element name="labels" type="Labels"/>
+
+  <xs:complexType name="Label">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Labels">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="Labels"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="label" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- Vnic Profiles -->
   <xs:element name="vnic_profile" type="VnicProfile"/>
 

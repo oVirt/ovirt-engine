@@ -16,21 +16,36 @@
 
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Network;
+import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
+import org.ovirt.engine.api.model.Label;
+import org.ovirt.engine.api.model.Labels;
 
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface NetworkResource extends UpdatableResource<Network> {
+public interface LabelsResource {
 
-    @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
+    @GET
+    @Formatted
+    public Labels list();
 
-    @Path("vnicprofiles")
-    public AssignedVnicProfilesResource getVnicProfilesResource();
+    @POST
+    @Formatted
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    public Response add(Label label);
 
-    @Path("labels")
-    public LabelsResource getLabelsResource();
+    @DELETE
+    @Path("{id}")
+    public Response remove(@PathParam("id") String id);
+
+    @Path("{id}")
+    public LabelResource getLabelSubResource(@PathParam("id") String id);
 }

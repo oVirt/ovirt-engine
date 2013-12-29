@@ -75,6 +75,7 @@ public class FeaturesHelper {
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_4)) {
             addGlusterBricksFeature(features);
             addFeatureCopyMoveDiskInAdditionalContext(features);
+            addNetworkLabelsFeature(features);
         }
         return features;
     }
@@ -398,6 +399,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Copy and Move backend disk");
         feature.setDescription("Support for copy/move disk in additional context.");
+        features.getFeature().add(feature);
+    }
+
+    private void addNetworkLabelsFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Network Labels");
+        feature.setDescription("Abilitiy to provision networks on hosts via labels.");
         features.getFeature().add(feature);
     }
 }

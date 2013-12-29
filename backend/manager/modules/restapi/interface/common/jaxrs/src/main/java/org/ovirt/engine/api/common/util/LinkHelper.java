@@ -48,6 +48,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.Job;
+import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.NIC;
@@ -116,6 +117,8 @@ import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.JobsResource;
+import org.ovirt.engine.api.resource.LabelResource;
+import org.ovirt.engine.api.resource.LabelsResource;
 import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
@@ -363,6 +366,10 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(VnicProfileResource.class, VnicProfilesResource.class);
         TYPES.put(VnicProfile.class, map);
+
+        map = new ParentToCollectionMap(LabelResource.class, LabelsResource.class);
+        map.add(LabelResource.class, LabelsResource.class, Network.class);
+        TYPES.put(Label.class, map);
     }
 
     /**
