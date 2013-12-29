@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
-	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:n="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView.Style">
 		.checkCon{
@@ -15,6 +14,10 @@
 		}
 		.syncInfo {
 			width: 100%;
+		}
+		.sectionStyle {
+			margin-top: 20px;
+			margin-bottom: 20px;
 		}
 	</ui:style>
 
@@ -33,6 +36,10 @@
 						<e:EntityModelTextBoxEditor ui:field="address" />
 						<e:EntityModelTextBoxEditor ui:field="subnet" />
 						<e:EntityModelTextBoxEditor ui:field="gateway" />
+						<g:FlowPanel addStyleNames="{style.sectionStyle}" >
+							<ge:EntityModelCheckBoxEditor ui:field="qosOverridden" />
+							<n:NetworkQosWidget ui:field="qosWidget" />
+						</g:FlowPanel>
 						<g:HorizontalPanel>
 							<e:EntityModelCheckBoxEditor ui:field="isToSync" />
 							<d:InfoIcon ui:field="isToSyncInfo"/>

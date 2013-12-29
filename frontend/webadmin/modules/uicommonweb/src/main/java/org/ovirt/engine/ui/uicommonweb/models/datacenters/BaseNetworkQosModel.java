@@ -1,16 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class BaseNetworkQosModel extends Model {
 
     private NetworkQosParametersModel inbound;
     private NetworkQosParametersModel outbound;
 
-    protected NetworkQoS networkQoS = new NetworkQoS();
+    protected NetworkQoS networkQoS;
 
     public NetworkQosParametersModel getInbound() {
         return inbound;
@@ -31,21 +33,48 @@ public class BaseNetworkQosModel extends Model {
     public BaseNetworkQosModel() {
         setInbound(new NetworkQosParametersModel());
         setOutbound(new NetworkQosParametersModel());
-        getInbound().getAverage()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundAverageDefaultValue));
-        getInbound().getPeak()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundPeakDefaultValue));
-        getInbound().getBurst()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundBurstDefaultValue));
-        getOutbound().getAverage()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundAverageDefaultValue));
-        getOutbound().getPeak()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundPeakDefaultValue));
-        getOutbound().getBurst()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundBurstDefaultValue));
+        getPropertyChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("IsChangable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                    boolean value = getIsChangable();
+                    getInbound().setIsChangable(value);
+                    getOutbound().setIsChangable(value);
+                }
+            }
+        });
     }
 
-    protected boolean validate() {
+    public void init(NetworkQoS qos) {
+        if (qos == null) {
+            networkQoS = new NetworkQoS();
+        } else {
+            networkQoS = qos;
+        }
+
+        if (networkQoS.getInboundAverage() == null
+                || networkQoS.getInboundPeak() == null
+                || networkQoS.getInboundBurst() == null) {
+            getInbound().getEnabled().setEntity(false);
+        } else {
+            getInbound().getAverage().setEntity(networkQoS.getInboundAverage());
+            getInbound().getPeak().setEntity(networkQoS.getInboundPeak());
+            getInbound().getBurst().setEntity(networkQoS.getInboundBurst());
+        }
+
+        if (networkQoS.getOutboundAverage() == null
+                || networkQoS.getOutboundPeak() == null
+                || networkQoS.getOutboundBurst() == null) {
+            getOutbound().getEnabled().setEntity(false);
+        } else {
+            getOutbound().getAverage().setEntity(networkQoS.getOutboundAverage());
+            getOutbound().getPeak().setEntity(networkQoS.getOutboundPeak());
+            getOutbound().getBurst().setEntity(networkQoS.getOutboundBurst());
+        }
+    }
+
+    public boolean validate() {
         getInbound().validate();
         getOutbound().validate();
 
@@ -53,7 +82,7 @@ public class BaseNetworkQosModel extends Model {
         return getIsValid();
     }
 
-    protected void flush() {
+    public NetworkQoS flush() {
         if (getInbound().getEnabled().getEntity()) {
             networkQoS.setInboundAverage(getInbound().getAverage().getEntity());
             networkQoS.setInboundPeak(getInbound().getPeak().getEntity());
@@ -73,6 +102,8 @@ public class BaseNetworkQosModel extends Model {
             networkQoS.setOutboundPeak(null);
             networkQoS.setOutboundBurst(null);
         }
+
+        return networkQoS;
     }
 
 }

@@ -7,6 +7,10 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.BaseNetworkQosModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -37,6 +41,9 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
 
     @UiField
     WidgetStyle style;
+
+    @UiField
+    FlowPanel mainPanel;
 
     @UiField(provided = true)
     @Path(value = "inbound.enabled.entity")
@@ -78,6 +85,9 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
     @WithElementId
     IntegerEntityModelTextBoxOnlyEditor outboundBurstEditor;
 
+    private BaseNetworkQosModel model;
+    private final IEventListener availabilityListener;
+
     public NetworkQosWidget(ApplicationConstants constants) {
         inboundEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         outboundEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -87,6 +97,16 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
         setStyle();
         localize(constants);
         driver.initialize(this);
+
+        availabilityListener = new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                    toggleVisibility();
+                }
+            }
+        };
     }
 
     private void setStyle() {
@@ -109,9 +129,20 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
         outboundBurstEditor.setTitle(constants.burstNetworkQoSPopup() + constants.inMegabytesNetworkQoSPopup());
     }
 
+    private void toggleVisibility() {
+        mainPanel.setVisible(model.getIsAvailable());
+    }
+
     @Override
-    public void edit(BaseNetworkQosModel object) {
-        driver.edit(object);
+    public void edit(BaseNetworkQosModel model) {
+        driver.edit(model);
+
+        if (this.model != null) {
+            this.model.getPropertyChangedEvent().removeListener(availabilityListener);
+        }
+        this.model = model;
+        model.getPropertyChangedEvent().addListener(availabilityListener);
+        toggleVisibility();
     }
 
     @Override

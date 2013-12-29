@@ -3197,6 +3197,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("MiB")
     String mbLabelQoSPopup();
 
+    @DefaultStringValue("Override QoS")
+    String qosOverrideLabel();
+
     @DefaultStringValue("Cluster Policies")
     String configureClusterPolicyTabLabel();
 

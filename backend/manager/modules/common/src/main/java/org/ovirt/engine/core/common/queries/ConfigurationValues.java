@@ -90,6 +90,7 @@ public enum ConfigurationValues {
     VncKeyboardLayoutValidValues(ConfigAuthType.User),
     CustomDeviceProperties(ConfigAuthType.User),
     MultipleGatewaysSupported,
+    HostNetworkQosSupported,
     VirtIoScsiEnabled(ConfigAuthType.User),
     SshSoftFencingCommand,
     MemorySnapshotSupported(ConfigAuthType.User),

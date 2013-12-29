@@ -15,34 +15,10 @@ public class EditNetworkQoSModel extends NetworkQoSModel {
 
     public EditNetworkQoSModel(NetworkQoS networkQoS, Model sourceModel, StoragePool dataCenter) {
         super(sourceModel, dataCenter);
-        this.networkQoS = networkQoS;
-        init();
-    }
-
-    private void init() {
         setTitle(ConstantsManager.getInstance().getConstants().editNetworkQoSTitle());
         setHashName("edit_network_qos"); //$NON-NLS-1$
         getName().setEntity(networkQoS.getName());
-
-        if (networkQoS.getInboundAverage() == null
-                || networkQoS.getInboundPeak() == null
-                || networkQoS.getInboundBurst() == null) {
-            getInbound().getEnabled().setEntity(false);
-        } else {
-            getInbound().getAverage().setEntity(networkQoS.getInboundAverage());
-            getInbound().getPeak().setEntity(networkQoS.getInboundPeak());
-            getInbound().getBurst().setEntity(networkQoS.getInboundBurst());
-        }
-
-        if (networkQoS.getOutboundAverage() == null
-                || networkQoS.getOutboundPeak() == null
-                || networkQoS.getOutboundBurst() == null) {
-            getOutbound().getEnabled().setEntity(false);
-        } else {
-            getOutbound().getAverage().setEntity(networkQoS.getOutboundAverage());
-            getOutbound().getPeak().setEntity(networkQoS.getOutboundPeak());
-            getOutbound().getBurst().setEntity(networkQoS.getOutboundBurst());
-        }
+        init(networkQoS);
     }
 
     @Override

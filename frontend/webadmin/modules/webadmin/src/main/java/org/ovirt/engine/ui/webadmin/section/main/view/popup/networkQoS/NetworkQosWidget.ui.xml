@@ -29,7 +29,7 @@
 		}
 	</ui:style>
 
-	<g:FlowPanel>
+	<g:FlowPanel ui:field="mainPanel" >
 		<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="inboundEnabled"/>
 		<g:HorizontalPanel>
 			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">

@@ -55,6 +55,7 @@ public class NetworkQosParametersModel extends Model {
         setBurst(new EntityModel<Integer>());
         setEnabled(new EntityModel<Boolean>(true));
         getEnabled().getPropertyChangedEvent().addListener(this);
+        getPropertyChangedEvent().addListener(this);
     }
 
     public boolean validate() {
@@ -85,11 +86,13 @@ public class NetworkQosParametersModel extends Model {
 
         if (getEnabled().equals(sender)) {
             updateChangeability();
+        } else if (this.equals(sender)) {
+            getEnabled().setIsChangable(getIsChangable());
         }
     }
 
     private void updateChangeability() {
-        boolean enabled = getEnabled().getEntity();
+        boolean enabled = getIsChangable() && getEnabled().getEntity();
         getAverage().setIsChangable(enabled);
         getPeak().setIsChangable(enabled);
         getBurst().setIsChangable(enabled);

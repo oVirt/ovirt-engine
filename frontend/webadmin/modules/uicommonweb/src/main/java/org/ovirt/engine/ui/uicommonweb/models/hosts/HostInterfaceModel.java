@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.BaseNetworkQosModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -243,6 +244,26 @@ public class HostInterfaceModel extends EntityModel
         updateCanSpecify();
     }
 
+    private EntityModel<Boolean> qosOverridden;
+
+    public EntityModel<Boolean> getQosOverridden() {
+        return qosOverridden;
+    }
+
+    public void setQosOverridden(EntityModel<Boolean> qosOverridden) {
+        this.qosOverridden = qosOverridden;
+    }
+
+    private BaseNetworkQosModel qosModel;
+
+    public BaseNetworkQosModel getQosModel() {
+        return qosModel;
+    }
+
+    private void setQosModel(BaseNetworkQosModel qosModel) {
+        this.qosModel = qosModel;
+    }
+
     public HostInterfaceModel() {
         this(false);
     }
@@ -259,6 +280,8 @@ public class HostInterfaceModel extends EntityModel
         setCheckConnectivity(new EntityModel());
         setBondingOptions(new ListModel());
         setCommitChanges(new EntityModel());
+        setQosOverridden(new EntityModel<Boolean>());
+        setQosModel(new BaseNetworkQosModel());
 
         setIsToSync(new EntityModel(){
             @Override
@@ -283,8 +306,11 @@ public class HostInterfaceModel extends EntityModel
         getAddress().setIsChangable(false);
         getSubnet().setIsChangable(false);
         getGateway().setIsChangable(false);
+        getQosOverridden().setIsAvailable(false);
+        getQosModel().setIsAvailable(false);
 
         getNetwork().getSelectedItemChangedEvent().addListener(this);
+        getQosOverridden().getEntityChangedEvent().addListener(this);
     }
 
     private void revertChanges() {
@@ -301,9 +327,10 @@ public class HostInterfaceModel extends EntityModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getNetwork())
-        {
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getNetwork()) {
             network_SelectedItemChanged(null);
+        } else if (sender == getQosOverridden()) {
+            getQosModel().setIsChangable(getQosOverridden().getEntity());
         }
     }
 
@@ -369,7 +396,9 @@ public class HostInterfaceModel extends EntityModel
             }
         }
 
+        getQosModel().validate();
+
         return getNetwork().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid()
-                && getGateway().getIsValid();
+                && getGateway().getIsValid() && getQosModel().getIsValid();
     }
 }

@@ -2,9 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -33,11 +35,23 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
         setDataCenters(new ListModel<StoragePool>());
         getDataCenters().setSelectedItem(dataCenter);
         getDataCenters().setIsChangable(false);
+        getInbound().getAverage()
+                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundAverageDefaultValue));
+        getInbound().getPeak()
+                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundPeakDefaultValue));
+        getInbound().getBurst()
+                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundBurstDefaultValue));
+        getOutbound().getAverage()
+                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundAverageDefaultValue));
+        getOutbound().getPeak()
+                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundPeakDefaultValue));
+        getOutbound().getBurst()
+                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundBurstDefaultValue));
         addCommands();
     }
 
     @Override
-    protected boolean validate() {
+    public boolean validate() {
         super.validate();
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
 
@@ -61,10 +75,11 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
     }
 
     @Override
-    protected void flush() {
+    public NetworkQoS flush() {
         super.flush();
         networkQoS.setName((String) getName().getEntity());
         networkQoS.setStoragePoolId(((StoragePool)getDataCenters().getSelectedItem()).getId());
+        return networkQoS;
     }
 
     protected abstract void executeSave();

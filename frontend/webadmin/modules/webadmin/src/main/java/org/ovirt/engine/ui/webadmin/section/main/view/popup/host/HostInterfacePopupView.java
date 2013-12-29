@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQosWidget;
 import org.ovirt.engine.ui.webadmin.widget.editor.EnumRadioEditor;
 
 import com.google.gwt.core.client.GWT;
@@ -87,6 +88,14 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @UiField
     @Path(value = "gateway.entity")
     EntityModelTextBoxEditor gateway;
+
+    @UiField(provided = true)
+    @Path(value = "qosOverridden.entity")
+    org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor qosOverridden;
+
+    @UiField(provided = true)
+    @Ignore
+    NetworkQosWidget qosWidget;
 
     @UiField(provided = true)
     @Path(value = "checkConnectivity.entity")
@@ -164,7 +173,9 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             }
         });
         bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class, eventBus);
+        qosWidget = new NetworkQosWidget(constants);
 
+        qosOverridden = new org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor(Align.RIGHT);
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
         isToSync = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -174,6 +185,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         // Set Styles
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
+        qosOverridden.setContentWidgetStyleName(style.syncInfo());
         isToSync.setContentWidgetStyleName(style.syncInfo());
         mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -188,6 +200,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
         subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
         gateway.setLabel(constants.gwHostPopup() + ":"); //$NON-NLS-1$
+        qosOverridden.setLabel(constants.qosOverrideLabel());
         checkConnectivity.setLabel(constants.checkConHostPopup() + ":"); //$NON-NLS-1$
         info.setHTML(constants.changesTempHostPopup());
         isToSync.setLabel(constants.syncNetwork());
@@ -199,6 +212,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @Override
     public void edit(final HostInterfaceModel object) {
         driver.edit(object);
+        qosWidget.edit(object.getQosModel());
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -260,6 +274,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
     @Override
     public HostInterfaceModel flush() {
+        qosWidget.flush();
         return driver.flush();
     }
 

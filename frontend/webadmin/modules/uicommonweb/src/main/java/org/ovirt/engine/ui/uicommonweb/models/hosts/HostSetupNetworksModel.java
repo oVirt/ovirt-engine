@@ -296,6 +296,13 @@ public class HostSetupNetworksModel extends EntityModel {
             networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
             networkDialogModel.getIsToSync()
                     .setEntity(networksToSync.contains(logicalNetwork.getName()));
+            if ((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
+                    getEntity().getVdsGroupCompatibilityVersion().getValue())) {
+                networkDialogModel.getQosOverridden().setIsAvailable(true);
+                networkDialogModel.getQosModel().setIsAvailable(true);
+                networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
+                networkDialogModel.getQosModel().init(entity.getQos());
+            }
             editPopup = networkDialogModel;
 
             // OK Target
@@ -311,6 +318,9 @@ public class HostSetupNetworksModel extends EntityModel {
                         entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
                         entity.setGateway((String) networkDialogModel.getGateway().getEntity());
                     }
+
+                    entity.setQosOverridden(networkDialogModel.getQosOverridden().getEntity());
+                    entity.setQos(networkDialogModel.getQosModel().flush());
 
                     if ((Boolean) networkDialogModel.getIsToSync().getEntity()) {
                         networksToSync.add(logicalNetwork.getName());
