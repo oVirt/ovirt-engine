@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.uicompat;
 
 public final class ProvidePropertyChangedEvent
 {
-    public static EventDefinition Definition;
+    public static EventDefinition definition;
 
     static
     {
-        Definition = new EventDefinition("PropertyChanged", IProvidePropertyChangedEvent.class);
+        definition = new EventDefinition("PropertyChanged", IProvidePropertyChangedEvent.class);
     }
 }

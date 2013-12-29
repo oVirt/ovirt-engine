@@ -401,7 +401,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
     public Model()
     {
-        setPropertyChangedEvent(new Event(ProvidePropertyChangedEvent.Definition));
+        setPropertyChangedEvent(new Event(ProvidePropertyChangedEvent.definition));
 
         // Resolve commonly used types.
         setConfigurator(lookupConfigurator());

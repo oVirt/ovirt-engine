@@ -577,7 +577,7 @@ public class HostInterfaceListModel extends SearchableListModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ProvidePropertyChangedEvent.Definition))
+        if (ev.matchesDefinition(ProvidePropertyChangedEvent.definition))
         {
             model_PropertyChanged(sender, (PropertyChangedEventArgs) args);
         }

@@ -187,7 +187,7 @@ public class ListModel<T> extends EntityModel<T>
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ProvidePropertyChangedEvent.Definition))
+        if (ev.matchesDefinition(ProvidePropertyChangedEvent.definition))
         {
             if (getNotifyPropertyChangeForAnyItem())
             {

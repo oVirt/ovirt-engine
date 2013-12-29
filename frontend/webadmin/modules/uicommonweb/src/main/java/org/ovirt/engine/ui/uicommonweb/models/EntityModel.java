@@ -141,7 +141,7 @@ public class EntityModel<T> extends Model implements HasHandlers
         {
             onEntityChanged();
         }
-        else if (ev.matchesDefinition(ProvidePropertyChangedEvent.Definition))
+        else if (ev.matchesDefinition(ProvidePropertyChangedEvent.definition))
         {
             entityPropertyChanged(sender, (PropertyChangedEventArgs) args);
         }
