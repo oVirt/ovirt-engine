@@ -1307,6 +1307,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Network label must be formed only from: English letters, numbers, hyphen or underscore.")
     String NETWORK_LABEL_FORMAT_INVALID();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The specified network is already labeled.")
+    String ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED();
+
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();
 

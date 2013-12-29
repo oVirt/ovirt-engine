@@ -179,6 +179,11 @@ public class NetworkValidator {
                 VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
     }
 
+    public ValidationResult notLabeled() {
+        return network.getLabel() == null ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED);
+    }
+
     protected List<VM> getVms() {
         if (vms == null) {
             vms = getDbFacade().getVmDao().getAllForNetwork(network.getId());

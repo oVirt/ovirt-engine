@@ -93,6 +93,10 @@ public enum VdcActionType {
     UpdateVnicProfile(161, ActionGroup.CONFIGURE_NETWORK_VNIC_PROFILE, false, QuotaDependency.NONE),
     RemoveVnicProfile(162, ActionGroup.DELETE_NETWORK_VNIC_PROFILE, false, QuotaDependency.NONE),
 
+    // Netowrk labels
+    LabelNetwork(163, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    UnlabelNetwork(164, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+
     // VmTemplatesCommand
     AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE, QuotaDependency.BOTH),
     UpdateVmTemplate(202, ActionGroup.EDIT_TEMPLATE_PROPERTIES, QuotaDependency.VDS_GROUP),

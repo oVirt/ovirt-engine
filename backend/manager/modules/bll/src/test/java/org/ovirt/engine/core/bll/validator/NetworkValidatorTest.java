@@ -21,10 +21,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -37,6 +37,7 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkValidatorTest {
@@ -357,5 +358,16 @@ public class NetworkValidatorTest {
         when(template.getName()).thenReturn(NAMEABLE_NAME);
 
         networkNotUsedByTemplatesTest(failsWithNetworkInUse(), Collections.singletonList(template));
+    }
+
+    @Test
+    public void networkNotLabeled() throws Exception {
+        assertThat(validator.notLabeled(), isValid());
+    }
+
+    @Test
+    public void networkLabeled() throws Exception {
+        when(network.getLabel()).thenReturn(RandomUtils.instance().nextPropertyString(10));
+        assertThat(validator.notLabeled(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED));
     }
 }
