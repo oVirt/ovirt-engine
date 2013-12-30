@@ -14,4 +14,10 @@
        <Class name="org.ovirt.engine.ui.frontend.communication.RefreshActiveModel" />
        <Bug code="UuF"/>
      </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.ui.frontend.AsyncQuery" />
+       <Field name="converterCallback"/>
+       <Bug pattern="UWF_NULL_FIELD"/>
+     </Match>
 </FindBugsFilter>
