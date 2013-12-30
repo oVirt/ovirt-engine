@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -329,7 +328,7 @@ public class ProviderModel extends Model {
                                 sourceListModel.setConfirmWindow(confirmationModel);
                             } else {
                                 stopProgress();
-                                setTestResultValue((VdcQueryReturnValue) result);
+                                getTestResult().setEntity(ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg());
                             }
                         }
                     };
@@ -431,18 +430,5 @@ public class ProviderModel extends Model {
         getTestResult().setEntity(errorMessage);
     }
 
-    private void setTestResultValue(VdcQueryReturnValue result) {
-        String errorMessage = EMPTY_ERROR_MESSAGE;
-        if (result == null) {
-            errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-        } else if (!result.getSucceeded()) {
-            if (result.getExceptionString() != null && !result.getExceptionString().isEmpty()) {
-                errorMessage = result.getExceptionString();
-            } else {
-                errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-            }
-        }
-        getTestResult().setEntity(errorMessage);
-    }
 
 }
