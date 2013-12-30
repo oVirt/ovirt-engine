@@ -29,8 +29,11 @@ from otopi import plugin
 from otopi import constants as otopicons
 from otopi import filetransaction
 
+
+from ovirt_engine import util as outil
+
+
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import firewall_manager_base
 
 
@@ -49,7 +52,7 @@ class Plugin(plugin.PluginBase):
 
         def _get_rules(self):
             if self._rules is None:
-                self._rules = osetuputil.processTemplate(
+                self._rules = outil.processTemplate(
                     osetupcons.FileLocations.OVIRT_IPTABLES_DEFAULT,
                     subst={
                         '@CUSTOM_RULES@': (

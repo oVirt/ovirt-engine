@@ -29,8 +29,10 @@ from otopi import filetransaction
 from otopi import plugin
 
 
+from ovirt_engine import util as outil
+
+
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
 
 
 @util.export
@@ -80,7 +82,7 @@ class Plugin(plugin.PluginBase):
                     host=self.environment[osetupcons.DBEnv.HOST],
                     port=self.environment[osetupcons.DBEnv.PORT],
                     user=self.environment[osetupcons.DBEnv.USER],
-                    password=osetuputil.escape(
+                    password=outil.escape(
                         self.environment[osetupcons.DBEnv.PASSWORD],
                         '"\\$',
                     ),

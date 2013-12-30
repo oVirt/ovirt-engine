@@ -35,8 +35,10 @@ from otopi import transaction
 from otopi import filetransaction
 
 
+from ovirt_engine import util as outil
+
+
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import dialog
 
 
@@ -270,7 +272,7 @@ class Plugin(plugin.PluginBase):
                     self.environment[osetupcons.PKIEnv.STORE_PASS],
                 ),
                 '--subject=%s' % '/' + '/'.join(
-                    osetuputil.escape(s, '/\\')
+                    outil.escape(s, '/\\')
                     for s in subject.as_text(
                         flags=XN_FLAG_SEP_MULTILINE,
                     ).splitlines()

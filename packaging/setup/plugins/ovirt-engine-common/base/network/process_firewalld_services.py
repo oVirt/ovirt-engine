@@ -31,8 +31,10 @@ from otopi import util
 from otopi import constants as otopicons
 
 
+from ovirt_engine import util as outil
+
+
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
 
 
 @util.export
@@ -62,7 +64,7 @@ class Process(object):
                 self.environment[
                     otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX +
                     service['name']
-                ] = osetuputil.processTemplate(
+                ] = outil.processTemplate(
                     template=os.path.join(
                         osetupcons.FileLocations.OVIRT_FIREWALLD_CONFIG,
                         service['directory'],

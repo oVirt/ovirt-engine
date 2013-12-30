@@ -40,4 +40,24 @@ def export(o):
     return o
 
 
+@export
+def escape(s, chars):
+    ret = ''
+    for c in s:
+        if c in chars:
+            ret += '\\'
+        ret += c
+    return ret
+
+
+@export
+def processTemplate(template, subst={}):
+    content = ''
+    with open(template, 'r') as f:
+        content = f.read()
+    for k, v in subst.items():
+        content = content.replace(str(k), str(v))
+    return content
+
+
 # vim: expandtab tabstop=4 shiftwidth=4

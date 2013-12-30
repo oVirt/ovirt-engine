@@ -29,8 +29,10 @@ from otopi import filetransaction
 from otopi import plugin
 
 
+from ovirt_engine import util as outil
+
+
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
 
 
 @util.export
@@ -62,7 +64,7 @@ class Plugin(plugin.PluginBase):
                 name=self.environment[
                     osetupcons.ApacheEnv.HTTPD_CONF_OVIRT_ENGINE
                 ],
-                content=osetuputil.processTemplate(
+                content=outil.processTemplate(
                     template=(
                         osetupcons.FileLocations.
                         HTTPD_CONF_OVIRT_ENGINE_TEMPLATE

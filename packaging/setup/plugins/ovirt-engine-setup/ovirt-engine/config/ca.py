@@ -29,8 +29,10 @@ from otopi import filetransaction
 from otopi import plugin
 
 
+from ovirt_engine import util as outil
+
+
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
 
 
 @util.export
@@ -100,7 +102,7 @@ class Plugin(plugin.PluginBase):
                         osetupcons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE
                     ),
-                    trust_store_password=osetuputil.escape(
+                    trust_store_password=outil.escape(
                         osetupcons.Const.PKI_PASSWORD,
                         '"\\$',
                     ),
@@ -108,7 +110,7 @@ class Plugin(plugin.PluginBase):
                         osetupcons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_STORE
                     ),
-                    engine_store_password=osetuputil.escape(
+                    engine_store_password=outil.escape(
                         osetupcons.Const.PKI_PASSWORD,
                         '"\\$',
                     ),

@@ -36,6 +36,9 @@ from otopi import filetransaction
 from otopi import constants as otopicons
 
 
+from ovirt_engine import util as outil
+
+
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 
@@ -66,7 +69,7 @@ class Plugin(plugin.PluginBase):
             pass
 
     def _subjectComponentEscape(self, s):
-        return osetuputil.escape(s, '/\\')
+        return outil.escape(s, '/\\')
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -184,7 +187,7 @@ class Plugin(plugin.PluginBase):
                 localtransaction.append(
                     filetransaction.FileTransaction(
                         name=name[:-len('.in')],
-                        content=osetuputil.processTemplate(
+                        content=outil.processTemplate(
                             name,
                             {
                                 '@AIA@': 'http://%s:%s%s' % (

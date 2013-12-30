@@ -30,16 +30,6 @@ from otopi import util
 
 
 @util.export
-def processTemplate(template, subst={}):
-    content = ''
-    with open(template, 'r') as f:
-        content = f.read()
-    for k, v in subst.items():
-        content = content.replace(str(k), str(v))
-    return content
-
-
-@util.export
 def editConfigContent(
     content,
     params,
@@ -216,16 +206,6 @@ def parsePort(port):
             )
         )
     return port
-
-
-@util.export
-def escape(s, chars):
-    ret = ''
-    for c in s:
-        if c in chars:
-            ret += '\\'
-        ret += c
-    return ret
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
