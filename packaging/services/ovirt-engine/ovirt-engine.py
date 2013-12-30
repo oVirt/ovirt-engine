@@ -39,6 +39,7 @@ class Daemon(service.Daemon):
 
     def __init__(self):
         super(Daemon, self).__init__()
+        self._tempDir = None
         self._defaults = os.path.abspath(
             os.path.join(
                 os.path.dirname(sys.argv[0]),
@@ -57,7 +58,7 @@ class Daemon(service.Daemon):
             f.write(str(Template(file=template, searchList=[self._config])))
         return out
 
-    def _linkModules(self, modulePath):
+    def _linkModules(self, directory, modulePath):
         """
         Link all the JBoss modules into a temporary directory.
         This required because jboss tries to automatically update
@@ -67,8 +68,7 @@ class Daemon(service.Daemon):
         modifiedModulePath = []
         for index, element in enumerate(modulePath.split(':')):
             modulesTmpDir = os.path.join(
-                self._config.get('ENGINE_TMP'),
-                'modules',
+                directory,
                 '%02d-%s' % (
                     index,
                     '-'.join(element.split(os.sep)[-2:]),
@@ -293,16 +293,20 @@ class Daemon(service.Daemon):
         self._setupEngineApps()
 
         jbossTempDir = os.path.join(
-            self._config.get('ENGINE_TMP'),
+            self._tempDir.directory,
             'tmp',
         )
 
         jbossConfigDir = os.path.join(
-            self._config.get('ENGINE_TMP'),
+            self._tempDir.directory,
             'config',
         )
 
         javaModulePath = self._linkModules(
+            os.path.join(
+                self._tempDir.directory,
+                'modules',
+            ),
             '%s:%s' % (
                 self._config.get('ENGINE_JAVA_MODULEPATH'),
                 os.path.join(
@@ -430,7 +434,7 @@ class Daemon(service.Daemon):
             'ENGINE_VARS': config.ENGINE_VARS,
             'ENGINE_ETC': self._config.get('ENGINE_ETC'),
             'ENGINE_LOG': self._config.get('ENGINE_LOG'),
-            'ENGINE_TMP': self._config.get('ENGINE_TMP'),
+            'ENGINE_TMP': self._tempDir.directory,
             'ENGINE_USR': self._config.get('ENGINE_USR'),
             'ENGINE_VAR': self._config.get('ENGINE_VAR'),
             'ENGINE_CACHE': self._config.get('ENGINE_CACHE'),
@@ -473,7 +477,8 @@ class Daemon(service.Daemon):
                 os.remove(self._config.get('ENGINE_UP_MARK'))
 
     def daemonCleanup(self):
-        self._tempDir.destroy()
+        if self._tempDir:
+            self._tempDir.destroy()
 
 
 if __name__ == '__main__':
