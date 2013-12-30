@@ -23,6 +23,7 @@ import signal
 import subprocess
 import sys
 import time
+import tempfile
 import resource
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
@@ -91,14 +92,20 @@ class TempDir(base.Base):
             pass
     """
 
+    @property
+    def directory(self):
+        return self._dir
+
     def _clear(self):
         self.logger.debug("removing directory '%s'", self._dir)
         if os.path.exists(self._dir):
             shutil.rmtree(self._dir)
 
-    def __init__(self, dir):
+    def __init__(self, dir=None):
         super(TempDir, self).__init__()
         self._dir = dir
+        if self._dir is None:
+            self._dir = tempfile.mkdtemp()
 
     def create(self):
         self._clear()
@@ -118,6 +125,7 @@ class TempDir(base.Base):
 
     def __enter__(self):
         self.create()
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.destroy()
