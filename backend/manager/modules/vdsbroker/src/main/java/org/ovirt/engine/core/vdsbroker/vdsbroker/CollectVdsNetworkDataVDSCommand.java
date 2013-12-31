@@ -173,26 +173,21 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
         InterfaceDao interfaceDAO = DbFacade.getInstance().getInterfaceDao();
         List<VdsNetworkInterface> dbIfaces = interfaceDAO.getAllInterfacesForVds(vds.getId());
         List<String> updatedIfaces = new ArrayList<String>();
-
         List<VdsNetworkInterface> dbIfacesToBatch = new ArrayList<>();
+        Map<String, VdsNetworkInterface> hostNicsByNames = Entities.entitiesByName(vds.getInterfaces());
 
         // First we check what interfaces need to update/delete
         for (VdsNetworkInterface dbIface : dbIfaces) {
-            boolean found = false;
+            if (hostNicsByNames.containsKey(dbIface.getName())) {
+                VdsNetworkInterface vdsIface = hostNicsByNames.get(dbIface.getName());
 
-            for (VdsNetworkInterface vdsIface : vds.getInterfaces()) {
-                if (dbIface.getName().equals(vdsIface.getName())) {
-                    // we preserve only the ID and the labels from the Database
-                    // everything else is what we got from getVdsCapabilities
-                    vdsIface.setId(dbIface.getId());
-                    vdsIface.setLabels(dbIface.getLabels());
-                    dbIfacesToBatch.add(vdsIface);
-                    updatedIfaces.add(vdsIface.getName());
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
+                // we preserve only the ID and the labels from the Database
+                // everything else is what we got from getVdsCapabilities
+                vdsIface.setId(dbIface.getId());
+                vdsIface.setLabels(dbIface.getLabels());
+                dbIfacesToBatch.add(vdsIface);
+                updatedIfaces.add(vdsIface.getName());
+            } else {
                 interfaceDAO.removeInterfaceFromVds(dbIface.getId());
                 interfaceDAO.removeStatisticsForVds(dbIface.getId());
             }
