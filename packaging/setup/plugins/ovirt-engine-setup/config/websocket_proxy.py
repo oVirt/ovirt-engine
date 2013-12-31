@@ -73,6 +73,13 @@ class Plugin(plugin.PluginBase):
         ):
             self._enabled = True
 
+    @plugin.event(
+        stage=plugin.Stages.STAGE_LATE_SETUP,
+        condition=lambda self: not self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ],
+    )
+    def _late_setup_service_state(self):
         self._needStart = self.services.status(
             name='ovirt-websocket-proxy',
         )
