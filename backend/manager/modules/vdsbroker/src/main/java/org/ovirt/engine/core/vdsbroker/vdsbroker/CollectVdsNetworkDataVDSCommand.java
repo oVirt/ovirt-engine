@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
-import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -28,8 +28,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
-public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase> {
-    public CollectVdsNetworkDataVDSCommand(VdsIdAndVdsVDSCommandParametersBase parameters) {
+public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<CollectHostNetworkDataVdsCommandParameters> {
+    public CollectVdsNetworkDataVDSCommand(CollectHostNetworkDataVdsCommandParameters parameters) {
         super(parameters);
     }
 
@@ -40,7 +40,9 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
         updateNetConfigDirtyFlag();
 
         // update to db
-        persistAndEnforceNetworkCompliance(getVds(), skipManagementNetwork());
+        persistAndEnforceNetworkCompliance(getVds(),
+                skipManagementNetwork(),
+                Entities.entitiesByName(getParameters().getInterfaces()));
 
         proceedProxyReturnValue();
     }
@@ -81,10 +83,14 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
      * @param skipManagementNetwork
      *            if <code>true</code> skip validations for the management network (existence on the host or configured
      *            properly)
+     * @param nicsByName
+     *            a map of names to their network interfaces
      * @return The reason for non-operability of the host or <code>NonOperationalReason.NONE</code>
      */
-    public static NonOperationalReason persistAndEnforceNetworkCompliance(VDS vds, boolean skipManagementNetwork) {
-        persistTopology(vds);
+    public static NonOperationalReason persistAndEnforceNetworkCompliance(VDS vds,
+            boolean skipManagementNetwork,
+            Map<String, VdsNetworkInterface> nicsByName) {
+        persistTopology(vds, nicsByName);
 
         if (vds.getStatus() != VDSStatus.Maintenance) {
 
@@ -119,6 +125,10 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
             logUnsynchronizedNetworks(vds, Entities.entitiesByName(clusterNetworks));
         }
         return NonOperationalReason.NONE;
+    }
+
+    public static NonOperationalReason persistAndEnforceNetworkCompliance(VDS host) {
+        return persistAndEnforceNetworkCompliance(host, false, null);
     }
 
     private static void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks) {
@@ -159,7 +169,7 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
         }
     }
 
-    private static void persistTopology(VDS vds) {
+    private static void persistTopology(VDS vds, Map<String, VdsNetworkInterface> nicsByName) {
         InterfaceDao interfaceDAO = DbFacade.getInstance().getInterfaceDao();
         List<VdsNetworkInterface> dbIfaces = interfaceDAO.getAllInterfacesForVds(vds.getId());
         List<String> updatedIfaces = new ArrayList<String>();
@@ -172,9 +182,10 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
 
             for (VdsNetworkInterface vdsIface : vds.getInterfaces()) {
                 if (dbIface.getName().equals(vdsIface.getName())) {
-                    // we preserve only the ID from the Database
+                    // we preserve only the ID and the labels from the Database
                     // everything else is what we got from getVdsCapabilities
                     vdsIface.setId(dbIface.getId());
+                    vdsIface.setLabels(dbIface.getLabels());
                     dbIfacesToBatch.add(vdsIface);
                     updatedIfaces.add(vdsIface.getName());
                     found = true;
@@ -187,6 +198,11 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
             }
         }
 
+        if (nicsByName != null) {
+            updateInterfacesWithUserConfiguration(dbIfacesToBatch, nicsByName);
+            updateInterfacesWithUserConfiguration(vds.getInterfaces(), nicsByName);
+        }
+
         if (!dbIfacesToBatch.isEmpty()) {
             interfaceDAO.massUpdateInterfacesForVds(dbIfacesToBatch);
         }
@@ -196,6 +212,16 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
             if (!updatedIfaces.contains(vdsIface.getName())) {
                 interfaceDAO.saveInterfaceForVds(vdsIface);
                 interfaceDAO.saveStatisticsForVds(vdsIface.getStatistics());
+            }
+        }
+    }
+
+    private static void updateInterfacesWithUserConfiguration(List<VdsNetworkInterface> nicsForUpdate,
+            Map<String, VdsNetworkInterface> nicsByName) {
+        for (VdsNetworkInterface nicForUpdate : nicsForUpdate) {
+            if (nicsByName.containsKey(nicForUpdate.getName())) {
+                VdsNetworkInterface nic = nicsByName.get(nicForUpdate.getName());
+                nicForUpdate.setLabels(nic.getLabels());
             }
         }
     }

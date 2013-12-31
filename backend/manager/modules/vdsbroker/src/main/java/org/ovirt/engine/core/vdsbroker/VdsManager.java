@@ -556,7 +556,7 @@ public class VdsManager {
 
             VDSStatus returnStatus = vds.getStatus();
             NonOperationalReason nonOperationalReason =
-                    CollectVdsNetworkDataVDSCommand.persistAndEnforceNetworkCompliance(vds, false);
+                    CollectVdsNetworkDataVDSCommand.persistAndEnforceNetworkCompliance(vds);
 
             if (nonOperationalReason != NonOperationalReason.NONE) {
                 setIsSetNonOperationalExecuted(true);

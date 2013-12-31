@@ -22,10 +22,10 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
+import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -125,7 +125,7 @@ public class NetworkConfigurator {
             @Override
             public Void runInTransaction() {
                 getBackend().getResourceManager().RunVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
-                        new VdsIdAndVdsVDSCommandParametersBase(host));
+                        new CollectHostNetworkDataVdsCommandParameters(host));
                 return null;
             }
         });

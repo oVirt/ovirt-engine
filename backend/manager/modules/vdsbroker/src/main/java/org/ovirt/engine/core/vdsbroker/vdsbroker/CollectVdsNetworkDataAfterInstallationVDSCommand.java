@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 
 public class CollectVdsNetworkDataAfterInstallationVDSCommand extends CollectVdsNetworkDataVDSCommand {
 
-    public CollectVdsNetworkDataAfterInstallationVDSCommand(VdsIdAndVdsVDSCommandParametersBase parameters) {
+    public CollectVdsNetworkDataAfterInstallationVDSCommand(CollectHostNetworkDataVdsCommandParameters parameters) {
         super(parameters);
     }
 

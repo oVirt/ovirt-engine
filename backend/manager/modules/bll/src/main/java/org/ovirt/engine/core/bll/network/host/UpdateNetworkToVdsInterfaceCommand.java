@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -133,7 +134,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                                new VdsIdAndVdsVDSCommandParametersBase(vds));
+                                new CollectHostNetworkDataVdsCommandParameters(vds));
             } catch (java.lang.Exception e) {
             }
         }
