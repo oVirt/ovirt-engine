@@ -163,15 +163,18 @@ ENGINE_HTTPS_PROTOCOLS=SSLv3,TLSv1,TLSv1.1,TLSv1.2
 ENGINE_FQDN=localhost.localdomain
 
 #
-# Database connection details (note that the password is
-# encrypted):
+# Database connection details
 #
 SENSITIVE_KEYS="${SENSITIVE_KEYS},ENGINE_DB_PASSWORD"
-ENGINE_DB_DRIVER=org.postgresql.Driver
-ENGINE_DB_URL=jdbc:postgresql://localhost/engine
-ENGINE_DB_SSL=false
-ENGINE_DB_USER=engine
+ENGINE_DB_HOST="localhost"
+ENGINE_DB_PORT="5432"
+ENGINE_DB_USER="engine"
 ENGINE_DB_PASSWORD=
+ENGINE_DB_DATABASE="engine"
+ENGINE_DB_SECURED="False"
+ENGINE_DB_SECURED_VALIDATION="False"
+ENGINE_DB_DRIVER=org.postgresql.Driver
+ENGINE_DB_URL="jdbc:postgresql://${ENGINE_DB_HOST}:${ENGINE_DB_PORT}/${ENGINE_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
 
 #
 # Size of the database connection pool:
