@@ -26,6 +26,10 @@ public class AsyncQuery {
         this.asyncCallback = EMPTY_CALLBACK;
     }
 
+    public AsyncQuery(INewAsyncCallback asyncCallback) {
+        this(null, asyncCallback);
+    }
+
     public AsyncQuery(Object target, INewAsyncCallback asyncCallback) {
         setModel(target);
         this.asyncCallback = asyncCallback;
