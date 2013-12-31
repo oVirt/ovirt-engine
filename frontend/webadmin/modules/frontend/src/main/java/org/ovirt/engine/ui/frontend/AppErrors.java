@@ -1892,6 +1892,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("A slave interface is not properly configured. Please verify slaves do not contain any of the following properties: network name, boot protocol, IP address, netmask, gateway or vlan-ID notation (as part of interface's name or explicitly).")
     String SLAVE_INTERFACE_IS_MISCONFIGURED();
 
+    @DefaultStringValue("An improper network interface is labeled. Please verify labels are provided only to interfaces or to bonds (not to slaves nor vlans).")
+    String IMPROPER_INTERFACE_IS_LABELED();
+
     @DefaultStringValue("User/group ID cannot be empty.")
     String MISSING_DIRECTORY_ELEMENT_ID();
 

@@ -42,6 +42,11 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
             return false;
         }
 
+        if (!validateLabel(iface)) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("IMPROPER_INTERFACE_IS_LABELED").addConstraintViolation();
+        }
+
         return true;
     }
 
@@ -69,5 +74,18 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
 
     private static boolean isEmpty(String value) {
         return value == null || value.isEmpty();
+    }
+
+    /**
+     * Checks if a given nic is labeled properly: either an interface or a bond (not a slave nor vlan).
+     *
+     * @param iface
+     *            the nic to check
+     * @return <code>true</code> iff the nic is properly labeled or if no labels provided for it, else
+     *         <code>false</code>
+     */
+    private boolean validateLabel(VdsNetworkInterface iface) {
+        return iface.getLabels() == null || iface.getLabels().isEmpty() ? true : isEmpty(iface.getBondName())
+                && iface.getVlanId() == null;
     }
 }
