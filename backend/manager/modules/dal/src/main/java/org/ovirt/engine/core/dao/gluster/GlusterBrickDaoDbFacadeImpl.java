@@ -6,9 +6,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
+import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
@@ -19,7 +22,7 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
     // There will still be a single instance of it, as the DAO itself will be instantiated only once
     private final RowMapper<GlusterBrickEntity> brickRowMapper = new GlusterBrickRowMapper();
-
+    private final RowMapper<BrickProperties> brickPropertiesRowMappeer = new GlusterBrickPropertiesRowMapper();
     public GlusterBrickDaoDbFacadeImpl() {
         super("GlusterBrick");
         setProcedureNameForGet("GetGlusterBrickById");
@@ -67,6 +70,11 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
+    public void updateBrickProperties(List<GlusterBrickEntity> bricks) {
+        updateAllInBatch("UpdateGlusterVolumeBrickDetails", bricks, getBrickPropertiesMapper());
+    }
+
+    @Override
     public void updateBrickOrder(Guid brickId, int brickOrder) {
         getCallsHandler().executeModification("UpdateGlusterVolumeBrickOrder",
                 getCustomMapSqlParameterSource()
@@ -76,17 +84,46 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
 
     @Override
     public GlusterBrickEntity getById(Guid id) {
-        return getCallsHandler().executeRead(
+        GlusterBrickEntity brick = getCallsHandler().executeRead(
                 "GetGlusterBrickById", brickRowMapper,
                 createIdParameterMapper(id));
+        populateBrickDetails(brick);
+        return brick;
     }
 
     @Override
     public List<GlusterBrickEntity> getBricksOfVolume(Guid volumeId) {
-        return getCallsHandler().executeReadList(
+        List<GlusterBrickEntity> bricks = getCallsHandler().executeReadList(
                 "GetBricksByGlusterVolumeGuid", brickRowMapper,
                 getCustomMapSqlParameterSource().addValue("volume_id", volumeId));
+        populateBrickDetails(bricks);
+        return bricks;
     }
+
+    private void populateBrickDetails(List<GlusterBrickEntity> bricks) {
+        for (GlusterBrickEntity brick : bricks) {
+            populateBrickDetails(brick);
+        }
+    }
+
+    private void populateBrickDetails(GlusterBrickEntity brick) {
+        if (brick != null) {
+            BrickProperties brickProperties = fetchBrickProperties(brick.getId());
+            if (brickProperties != null) {
+                BrickDetails brickDetails = new BrickDetails();
+                brickDetails.setBrickProperties(brickProperties);
+                brick.setBrickDetails(brickDetails);
+            }
+        }
+    }
+
+    private BrickProperties fetchBrickProperties(Guid brickId) {
+        BrickProperties brickProperties = getCallsHandler().executeRead(
+                "GetBrickDetailsByID",
+                brickPropertiesRowMappeer,
+                createBrickIdParams(brickId));
+        return brickProperties;
+     }
 
     private MapSqlParameterSource createBrickParams(GlusterBrickEntity brick) {
         return getCustomMapSqlParameterSource().addValue("id", brick.getId())
@@ -120,9 +157,11 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
 
     @Override
     public List<GlusterBrickEntity> getGlusterVolumeBricksByServerId(Guid serverId) {
-        return getCallsHandler().executeReadList(
+        List<GlusterBrickEntity> bricks = getCallsHandler().executeReadList(
                 "GetGlusterVolumeBricksByServerGuid", brickRowMapper,
                 getCustomMapSqlParameterSource().addValue("server_id", serverId));
+        populateBrickDetails(bricks);
+        return bricks;
     }
 
     @Override
@@ -180,6 +219,25 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         };
     }
 
+    public MapSqlParameterMapper<GlusterBrickEntity> getBrickPropertiesMapper() {
+        return new MapSqlParameterMapper<GlusterBrickEntity>() {
+            @Override
+            public MapSqlParameterSource map(GlusterBrickEntity brick) {
+                return createBrickPropertiesParam(brick.getBrickProperties());
+            }
+        };
+    }
+
+    private static final class GlusterBrickPropertiesRowMapper implements RowMapper<BrickProperties> {
+        @Override
+        public BrickProperties mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            BrickProperties brickProperties = new BrickProperties();
+            brickProperties.setTotalSize(rs.getDouble("total_space") / SizeConverter.BYTES_IN_MB);
+            brickProperties.setFreeSize(rs.getDouble("free_space") / SizeConverter.BYTES_IN_MB);
+            return brickProperties;
+        }
+    }
     @Override
     public void updateBrickTask(Guid brickId, Guid taskId) {
         getCallsHandler().executeModification("UpdateGlusterVolumeBrickAsyncTask",
@@ -208,6 +266,36 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         getCallsHandler().executeStoredProcAsBatch("UpdateGlusterBrickTaskByServerIdBrickDir",
                 bricks, getBatchMapper());
 
+    }
+
+    @Override
+    public void updateBrickProperties(BrickProperties brickProperties) {
+        getCallsHandler().executeModification("UpdateGlusterVolumeBrickDetails",
+                createBrickPropertiesParam(brickProperties));
+    }
+
+    @Override
+    public void addBrickProperties(BrickProperties brickProperties) {
+        getCallsHandler().executeModification("InsertGlusterVolumeBrickDetails",
+                createBrickPropertiesParam(brickProperties));
+    }
+
+    @Override
+    public void addBrickProperties(List<GlusterBrickEntity> bricks) {
+        updateAllInBatch("InsertGlusterVolumeBrickDetails", bricks, getBrickPropertiesMapper());
+    }
+
+    private MapSqlParameterSource createBrickPropertiesParam(BrickProperties brickProperties) {
+        return getCustomMapSqlParameterSource()
+                .addValue("brick_id", brickProperties.getBrickId())
+                .addValue("total_space", brickProperties.getTotalSize() * SizeConverter.BYTES_IN_MB)
+                .addValue("used_space",
+                        (brickProperties.getTotalSize() - brickProperties.getFreeSize()) * SizeConverter.BYTES_IN_MB)
+                .addValue("free_space", brickProperties.getFreeSize() * SizeConverter.BYTES_IN_MB);
+    }
+
+    private MapSqlParameterSource createBrickIdParams(Guid brickId) {
+        return getCustomMapSqlParameterSource().addValue("brick_id", brickId);
     }
 
 }

@@ -25,6 +25,18 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION InsertGlusterVolumeDetails(v_volume_id UUID,
+                                                v_total_space bigint,
+                                                v_used_space bigint,
+                                                v_free_space bigint)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    INSERT INTO gluster_volume_details (volume_id, total_space, used_space, free_space, _update_date)
+    VALUES (v_volume_id, v_total_space, v_used_space, v_free_space, LOCALTIMESTAMP);
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION InsertGlusterVolumeBrick(v_id UUID, v_volume_id UUID,
                                                     v_server_id UUID,
                                                     v_brick_dir VARCHAR(4096),
@@ -38,6 +50,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION InsertGlusterVolumeBrickDetails(v_brick_id UUID,
+                                                v_total_space bigint,
+                                                v_used_space bigint,
+                                                v_free_space bigint)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    INSERT INTO gluster_volume_brick_details (brick_id, total_space, used_space, free_space, _update_date)
+    VALUES (v_brick_id, v_total_space, v_used_space, v_free_space, LOCALTIMESTAMP);
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION InsertGlusterVolumeOption(v_id UUID, v_volume_id UUID,
                                                     v_option_key VARCHAR(8192),
@@ -162,6 +186,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGlusterVolumeDetailsById(v_volume_id UUID)
+    RETURNS SETOF gluster_volume_details STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_volume_details
+    WHERE volume_id = v_volume_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION GetGlusterBrickById(v_id UUID)
     RETURNS SETOF gluster_volume_bricks_view STABLE
     AS $procedure$
@@ -214,6 +248,16 @@ RETURN QUERY SELECT *
 FROM  gluster_volume_bricks_view
 WHERE task_id = v_task_id
 ORDER BY brick_order;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetBrickDetailsById(v_brick_id UUID)
+    RETURNS SETOF gluster_volume_brick_details STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_volume_brick_details
+    WHERE brick_id = v_brick_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -394,6 +438,22 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateGlusterVolumeDetails(v_volume_id UUID,
+                                                v_total_space bigint,
+                                                v_used_space bigint,
+                                                v_free_space bigint)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE gluster_volume_details
+    SET
+        total_space = v_total_space,
+        used_space = v_used_space,
+        free_space = v_free_space,
+        _update_date = LOCALTIMESTAMP
+    WHERE volume_id = v_volume_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateGlusterVolumeBrick(v_id UUID,
                                                     v_new_id UUID,
@@ -413,6 +473,22 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateGlusterVolumeBrickDetails(v_brick_id UUID,
+                                                v_total_space bigint,
+                                                v_used_space bigint,
+                                                v_free_space bigint)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE gluster_volume_brick_details
+    SET
+        total_space = v_total_space,
+        used_space = v_used_space,
+        free_space = v_free_space,
+        _update_date = LOCALTIMESTAMP
+    WHERE brick_id = v_brick_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateGlusterVolumeBrickStatus(v_id UUID,
                                                         v_status VARCHAR(32))

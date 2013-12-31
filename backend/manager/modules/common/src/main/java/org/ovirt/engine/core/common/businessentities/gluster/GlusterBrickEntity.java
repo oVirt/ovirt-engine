@@ -190,6 +190,12 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityW
         this.brickDetails = brickDetails;
     }
 
+    public BrickProperties getBrickProperties() {
+        if (brickDetails != null) {
+            return brickDetails.getBrickProperties();
+        }
+        return null;
+    }
     @Override
     public GlusterAsyncTask getAsyncTask() {
        return asyncTask;

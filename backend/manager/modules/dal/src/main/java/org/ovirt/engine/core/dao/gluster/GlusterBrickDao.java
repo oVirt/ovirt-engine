@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao.gluster;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,4 +54,12 @@ public interface GlusterBrickDao extends DAO, MassOperationsDao<GlusterBrickEnti
      * @param bricks
      */
     public void updateAllBrickTasksByHostIdBrickDirInBatch(Collection<GlusterBrickEntity> bricks);
+
+    public void addBrickProperties(BrickProperties brickProperties);
+
+    public void addBrickProperties(List<GlusterBrickEntity> bricks);
+
+    public void updateBrickProperties(BrickProperties brickProperties);
+
+    public void updateBrickProperties(List<GlusterBrickEntity> bricks);
 }

@@ -12,8 +12,10 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -36,6 +38,8 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     private static final RowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
     private static final RowMapper<TransportType> transportTypeRowMapper = new TransportTypeRowMapper();
     private static final RowMapper<GlusterAsyncTask> glusterAsyncTaskRowMapper = new GlusterAsyncTaskRowMapper();
+    private static final RowMapper<GlusterVolumeAdvancedDetails> glusterVolumesAdvancedDetailsRowMapper =
+            new GlusterVolumeAdvancedDetailsRowMapper();
 
     public GlusterVolumeDaoDbFacadeImpl() {
         super("GlusterVolume");
@@ -316,6 +320,10 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             volume.setOptions(dbFacade.getGlusterOptionDao().getOptionsOfVolume(volume.getId()));
             volume.setAccessProtocols(new HashSet<AccessProtocol>(getAccessProtocolsOfVolume(volume.getId())));
             volume.setTransportTypes(new HashSet<TransportType>(getTransportTypesOfVolume(volume.getId())));
+            GlusterVolumeAdvancedDetails advancedDetails = fetchAdvancedDatails(volume.getId());
+            if (advancedDetails != null) {
+                volume.setAdvancedDetails(advancedDetails);
+            }
             GlusterAsyncTask asyncTask = getAsyncTaskOfVolume(volume.getId());
             if (asyncTask != null) {
                 volume.setAsyncTask(asyncTask);
@@ -333,6 +341,13 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         }
     }
 
+    private GlusterVolumeAdvancedDetails fetchAdvancedDatails(Guid volumeId) {
+        GlusterVolumeAdvancedDetails glusterVolumeAdvancedDetails = getCallsHandler().executeRead(
+                "GetGlusterVolumeDetailsByID",
+                glusterVolumesAdvancedDetailsRowMapper,
+                createVolumeIdParams(volumeId));
+        return glusterVolumeAdvancedDetails;
+    }
     private static final class GlusterVolumeRowMapper implements RowMapper<GlusterVolumeEntity> {
         @Override
         public GlusterVolumeEntity mapRow(ResultSet rs, int rowNum)
@@ -388,6 +403,22 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         }
     }
 
+    private static final class GlusterVolumeAdvancedDetailsRowMapper implements RowMapper<GlusterVolumeAdvancedDetails> {
+        @Override
+        public GlusterVolumeAdvancedDetails mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            GlusterVolumeAdvancedDetails advancedDetails = new GlusterVolumeAdvancedDetails();
+            GlusterVolumeSizeInfo capacityInfo = new GlusterVolumeSizeInfo();
+            capacityInfo.setVolumeId(getGuid(rs, "volume_id"));
+            capacityInfo.setTotalSize(rs.getLong("total_space"));
+            capacityInfo.setUsedSize(rs.getLong("used_space"));
+            capacityInfo.setFreeSize(rs.getLong("free_space"));
+            advancedDetails.setUpdatedAt(rs.getTimestamp("_update_date"));
+            advancedDetails.setCapacityInfo(capacityInfo);
+            return advancedDetails;
+        }
+    }
+
     private MapSqlParameterSource createReplicaCountParams(Guid volumeId, int replicaCount) {
         return createVolumeIdParams(volumeId).addValue("replica_count", replicaCount);
     }
@@ -408,6 +439,26 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                         .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
                         .addValue("replica_count", volume.getReplicaCount())
                         .addValue("stripe_count", volume.getStripeCount()));
+    }
+
+    @Override
+    public void updateVolumeCapacityInfo(GlusterVolumeSizeInfo volumeCapacityInfo) {
+        getCallsHandler().executeModification("UpdateGlusterVolumeDetails",
+                createCapacityInfoParas(volumeCapacityInfo));
+    }
+
+    @Override
+    public void addVolumeCapacityInfo(GlusterVolumeSizeInfo volumeCapacityInfo) {
+        getCallsHandler().executeModification("InsertGlusterVolumeDetails",
+                createCapacityInfoParas(volumeCapacityInfo));
+    }
+
+    private MapSqlParameterSource createCapacityInfoParas(GlusterVolumeSizeInfo volumeCapacityInfo) {
+        return getCustomMapSqlParameterSource()
+                .addValue("volume_id", volumeCapacityInfo.getVolumeId())
+                .addValue("total_space", volumeCapacityInfo.getTotalSize())
+                .addValue("used_space", volumeCapacityInfo.getUsedSize())
+                .addValue("free_space", volumeCapacityInfo.getFreeSize());
     }
 
     @Override

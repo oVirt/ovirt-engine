@@ -5293,6 +5293,20 @@
             <value>2010-11-29 15:57:10</value>
         </row>
     </table>
+    <table name="gluster_volume_details">
+        <column>volume_id</column>
+        <column>total_space</column>
+        <column>used_space</column>
+        <column>free_space</column>
+        <column>_update_date</column>
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>100000</value>
+            <value>60000</value>
+            <value>40000</value>
+            <value>2014-01-21 18:12:33</value>
+        </row>
+    </table>
 
     <table name="gluster_volume_bricks">
         <column>id</column>
@@ -5372,6 +5386,42 @@
             <value>UP</value>
             <value>3</value>
             <value>2010-10-22 03:38:23</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+    </table>
+
+    <table name="gluster_volume_brick_details">
+        <column>brick_id</column>
+        <column>total_space</column>
+        <column>used_space</column>
+        <column>free_space</column>
+        <column>_update_date</column>
+        <row>
+            <value>65d327f8-5864-4330-be04-fe27e1ffb553</value>
+            <value>104857600000</value>
+            <value>62914560000</value>
+            <value>41943040000</value>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>2ab384da-6190-4668-aa2e-37bc5c5ff014</value>
+            <value>104857600000</value>
+            <value>83886080000</value>
+            <value>20971520000</value>
+            <value>2010-11-29 15:57:10</value>
+        </row> 2702bb49-3037-405c-81c5-14a38793164e
+        <row>
+            <value>2702bb49-3037-405c-81c5-14a38793164e</value>
+            <null/>
+            <null/>
+            <null/>
+            <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>41eb430f-c2ed-435c-b4eb-e1e19173754e</value>
+            <value>104857600000</value>
+            <value>62914560000</value>
+            <value>41943040000</value>
             <value>2010-11-29 15:57:10</value>
         </row>
     </table>

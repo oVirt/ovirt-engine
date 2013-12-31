@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -33,6 +36,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VOL_DIST_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid EXISTING_VOL_REPL_ID = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private static final Guid REBALANCING_VOLUME_TASKID = new Guid("44f714ed-2818-4350-b94a-8c3927e53f7c");
+    private final SimpleDateFormat EXPECTED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String EXISTING_VOL_REPL_NAME = "test-vol-replicate-1";
     private static final String NEW_VOL_NAME = "test-new-vol-1";
     private static final String OPTION_KEY_NFS_DISABLE = "nfs.disable";
@@ -81,6 +85,18 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertTrue(volumes.size() == 2);
         assertTrue(volumes.contains(existingDistVol));
         assertTrue(volumes.contains(existingReplVol));
+    }
+
+    @Test
+    public void testGetCapacityInfo() throws ParseException {
+        GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_DIST_ID);
+        assertNotNull("volume capacity info is not available", volume.getAdvancedDetails());
+        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getTotalSize() == 100000);
+        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getUsedSize() == 60000);
+        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getFreeSize() == 40000);
+        assertTrue(EXPECTED_DATE_FORMAT.parse(volume.getAdvancedDetails()
+                .getUpdatedAt().toString())
+                .equals(EXPECTED_DATE_FORMAT.parse("2014-01-21 18:12:33")));
     }
 
     @Test
@@ -146,6 +162,28 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertFalse(volume.equals(existingDistVol));
         existingDistVol.setStatus(GlusterStatus.DOWN);
         assertEquals(existingDistVol, volume);
+    }
+
+    @Test
+    public void testUpdateVolumeCapacityInfo() {
+        GlusterVolumeSizeInfo capacityInfo = new GlusterVolumeSizeInfo();
+        capacityInfo.setVolumeId(existingDistVol.getId());
+        capacityInfo.setTotalSize(Long.valueOf("500000"));
+        capacityInfo.setFreeSize(Long.valueOf("300000"));
+        capacityInfo.setUsedSize(Long.valueOf("200000"));
+
+        dao.updateVolumeCapacityInfo(capacityInfo);
+
+        GlusterVolumeEntity volume = dao.getById(existingDistVol.getId());
+
+        assertNotNull(volume);
+        assertFalse(volume.equals(existingDistVol));
+        assertNotNull("volume capacity info is not available", volume.getAdvancedDetails().getCapacityInfo());
+        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getTotalSize() == 500000);
+        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getUsedSize() == 200000);
+        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getFreeSize() == 300000);
+        assertNotNull(volume.getAdvancedDetails().getUpdatedAt());
+
     }
 
     @Test
@@ -272,6 +310,28 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertFalse(volumeAfter.equals(existingDistVol));
         existingDistVol.addTransportType(TransportType.RDMA);
         assertEquals(volumeAfter, existingDistVol);
+    }
+
+    @Test
+    public void testAddVolumeCapacityInfo() {
+        GlusterVolumeEntity volumeBefore = dao.getById(EXISTING_VOL_REPL_ID);
+        assertNotNull(volumeBefore);
+        assertNull(volumeBefore.getAdvancedDetails().getCapacityInfo());
+
+        GlusterVolumeSizeInfo capacityInfo = new GlusterVolumeSizeInfo();
+        capacityInfo.setVolumeId(EXISTING_VOL_REPL_ID);
+        capacityInfo.setTotalSize(Long.valueOf("250000"));
+        capacityInfo.setUsedSize(Long.valueOf("175000"));
+        capacityInfo.setFreeSize(Long.valueOf("75000"));
+
+        dao.addVolumeCapacityInfo(capacityInfo);
+        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_REPL_ID);
+        assertNotNull(volumeAfter);
+        assertNotNull(volumeAfter.getAdvancedDetails().getCapacityInfo());
+        assertTrue(volumeAfter.getAdvancedDetails().getCapacityInfo().getTotalSize() == 250000);
+        assertTrue(volumeAfter.getAdvancedDetails().getCapacityInfo().getUsedSize() == 175000);
+        assertTrue(volumeAfter.getAdvancedDetails().getCapacityInfo().getFreeSize() == 75000);
+        assertNotNull(volumeAfter.getAdvancedDetails().getUpdatedAt());
     }
 
     @Test

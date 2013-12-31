@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
@@ -69,6 +70,10 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity>, M
     public void updateReplicaCount(Guid volumeId, int replicaCount);
 
     public void updateGlusterVolume(GlusterVolumeEntity volume);
+
+    public void addVolumeCapacityInfo(GlusterVolumeSizeInfo volumeCapacityInfo);
+
+    public void updateVolumeCapacityInfo(GlusterVolumeSizeInfo volumeCapacityInfo);
 
     public void updateVolumeTask(Guid volumeId, Guid taskId);
 
