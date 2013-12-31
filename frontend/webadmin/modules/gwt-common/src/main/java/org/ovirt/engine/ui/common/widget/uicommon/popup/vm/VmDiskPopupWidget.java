@@ -686,7 +686,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         disk.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if (propName.equals("IsValid")) { //$NON-NLS-1$
                     if (disk.getIsValid()) {
                         innerAttachDiskPanel.markAsValid();
@@ -765,7 +765,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-            if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+            if ("Progress".equals(pcArgs.propertyName)) { //$NON-NLS-1$
                 externalDiskPanel.clear();
                 if (sanStorageModel.getProgress() != null) {
                     externalDiskPanel.add(progressContent);

@@ -186,17 +186,17 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 HostInterfaceModel model = (HostInterfaceModel) sender;
-                if ("BootProtocolsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("BootProtocolsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
                     bootProtocolLabel.setEnabled(bootProtocolsAvailable);
                     bootProtocol.setEnabled(bootProtocolsAvailable);
                     bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
                     checkConnectivity.setEnabled(bootProtocolsAvailable);
                 }
-                if ("NoneBootProtocolAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("NoneBootProtocolAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
                 }
-                if ("Message".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("Message".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     message.setText(model.getMessage());
                 }
             }

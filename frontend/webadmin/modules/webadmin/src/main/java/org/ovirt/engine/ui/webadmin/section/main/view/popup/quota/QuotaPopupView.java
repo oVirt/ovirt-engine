@@ -458,7 +458,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("Window".equals(propName) && model.getWindow() == null) { //$NON-NLS-1$
                     if ((Boolean) model.getSpecificClusterQuota().getEntity()) {
                         quotaClusterTable.asEditor().edit(model.getAllDataCenterClusters());

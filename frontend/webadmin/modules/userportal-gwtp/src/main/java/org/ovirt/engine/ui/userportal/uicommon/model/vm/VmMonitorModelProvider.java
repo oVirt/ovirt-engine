@@ -31,7 +31,7 @@ public class VmMonitorModelProvider extends UserPortalDetailModelProvider<UserPo
         getModel().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
 
                 if ("CpuUsage".equals(propName) || "MemoryUsage".equals(propName) || "NetworkUsage".equals(propName)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     VmMonitorValueChangeEvent.fire(getEventBus());

@@ -48,7 +48,7 @@ public class VmAppListModel extends SearchableListModel
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
         super.entityPropertyChanged(sender, e);
-        if (e.PropertyName.equals("appList")) //$NON-NLS-1$
+        if (e.propertyName.equals("appList")) //$NON-NLS-1$
         {
             updateAppList();
         }

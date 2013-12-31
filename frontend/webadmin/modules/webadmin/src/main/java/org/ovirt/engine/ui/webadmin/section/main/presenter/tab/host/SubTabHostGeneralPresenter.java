@@ -98,7 +98,7 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args instanceof PropertyChangedEventArgs) {
                     PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                    if (changedArgs.PropertyName.contains("Alert")) { //$NON-NLS-1$
+                    if (changedArgs.propertyName.contains("Alert")) { //$NON-NLS-1$
                         updateAlerts(getView(), model);
                     }
                 }

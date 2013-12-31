@@ -80,21 +80,21 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
 
                 // Update search string when 'SearchString' property changes
-                if ("SearchString".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+                if ("SearchString".equals(pcArgs.propertyName)) { //$NON-NLS-1$
                     updateViewSearchString();
                 }
 
                 // Update search string prefix when 'SearchStringPrefix' property changes
-                else if ("SearchStringPrefix".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+                else if ("SearchStringPrefix".equals(pcArgs.propertyName)) { //$NON-NLS-1$
                     updateViewSearchStringPrefix();
                 }
 
                 // Update search string prefix visibility when 'HasSearchStringPrefix' property changes
-                else if ("HasSearchStringPrefix".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+                else if ("HasSearchStringPrefix".equals(pcArgs.propertyName)) { //$NON-NLS-1$
                     updateViewHasSearchStringPrefix();
                 }
 
-                else if ("HasSelectedTags".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+                else if ("HasSelectedTags".equals(pcArgs.propertyName)) { //$NON-NLS-1$
                     updateViewHasSelectedTags();
                 }
             }

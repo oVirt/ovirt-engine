@@ -82,7 +82,7 @@ public class FormBuilder {
     private final IEventListener propertyChangedEventListener = new IEventListener() {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+            String propertyName = ((PropertyChangedEventArgs) args).propertyName;
             List<FormItem> formItems = propertyNameMap.get(propertyName);
             if (formItems != null) {
                 for (FormItem item : formItems) {

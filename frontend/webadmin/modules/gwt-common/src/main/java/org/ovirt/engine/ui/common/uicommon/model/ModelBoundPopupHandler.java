@@ -54,7 +54,7 @@ public class ModelBoundPopupHandler<M extends Model> {
         source.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
 
                 if (windowPropertyNames.contains(propName)) {
                     handleWindowModelChange(source, windowPopup, false, propName);
@@ -132,7 +132,7 @@ public class ModelBoundPopupHandler<M extends Model> {
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
 
-                if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+                if ("Progress".equals(pcArgs.propertyName)) { //$NON-NLS-1$
                     updatePopupProgress(model, popup);
                 }
             }

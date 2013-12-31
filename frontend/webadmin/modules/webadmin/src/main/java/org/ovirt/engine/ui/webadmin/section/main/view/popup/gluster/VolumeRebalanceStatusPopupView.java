@@ -208,10 +208,10 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.PropertyName.equals("STATUS_UPDATED")) {//$NON-NLS-1$
+                if (e.propertyName.equals("STATUS_UPDATED")) {//$NON-NLS-1$
                     status.setVisible(object.isStatusAvailable());
                 }
-                else if (e.PropertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
+                else if (e.propertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
                     stopTimePanel.setVisible(object.isStopTimeVisible());
                 }
             }

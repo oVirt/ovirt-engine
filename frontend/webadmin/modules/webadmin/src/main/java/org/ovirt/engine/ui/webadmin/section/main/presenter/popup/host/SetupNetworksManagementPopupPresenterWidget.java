@@ -33,7 +33,7 @@ public class SetupNetworksManagementPopupPresenterWidget extends HostManagementP
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("BootProtocolsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("BootProtocolsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
                     ((ViewDef) getView()).getBootProtocolLabel().setEnabled(bootProtocolsAvailable);
                     ((ViewDef) getView()).getBootProtocol().setEnabled(bootProtocolsAvailable);

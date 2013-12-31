@@ -1112,7 +1112,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("IsHostTabValid".equals(propName)) { //$NON-NLS-1$
                     if (object.getIsHostTabValid()) {
                         hostTab.markAsValid();
@@ -1162,7 +1162,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
 
-                if (e.PropertyName == "IsAvailable") { //$NON-NLS-1$
+                if (e.propertyName == "IsAvailable") { //$NON-NLS-1$
                     isVirtioScsiEnabledInfoIcon.setVisible(object.getIsVirtioScsiEnabled().getIsAvailable());
                 }
             }
@@ -1174,7 +1174,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
 
-                if (e.PropertyName == "SelectedItem") { //$NON-NLS-1$
+                if (e.propertyName == "SelectedItem") { //$NON-NLS-1$
                     updateUsbNativeMessageVisibility(object);
                 }
             }
@@ -1196,7 +1196,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getCpuSharesAmountSelection().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(cpuSharesEditor, object.getCpuSharesAmountSelection().getIsAvailable());
                 }
             }
@@ -1230,7 +1230,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vm.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("IsWindowsOS".equals(propName)) { //$NON-NLS-1$
                     domainEditor.setEnabled(vm.getIsWindowsOS());
                 } else if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
@@ -1291,7 +1291,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vm.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("IsLinuxOS".equals(propName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(linuxBootOptionsPanel, vm.getIsLinuxOS());
                 }

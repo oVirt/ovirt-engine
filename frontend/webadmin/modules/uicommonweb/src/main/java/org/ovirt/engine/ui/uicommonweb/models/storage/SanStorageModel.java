@@ -449,7 +449,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     final IEventListener lunModelEventListener = new IEventListener() {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            String propName = ((PropertyChangedEventArgs) args).PropertyName;
+            String propName = ((PropertyChangedEventArgs) args).propertyName;
             if (propName.equals("IsSelected")) { //$NON-NLS-1$
                 LunModel selectedLunModel = (LunModel) sender;
 

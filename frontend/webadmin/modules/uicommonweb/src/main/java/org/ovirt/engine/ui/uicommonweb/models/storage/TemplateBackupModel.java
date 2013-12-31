@@ -278,7 +278,7 @@ public class TemplateBackupModel extends VmBackupModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
+        if (e.propertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
         {
             getSearchCommand().execute();
         }

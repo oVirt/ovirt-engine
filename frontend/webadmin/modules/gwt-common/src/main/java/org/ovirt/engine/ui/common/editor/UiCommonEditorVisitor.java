@@ -102,7 +102,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                     @Override
                     public void eventRaised(Event ev, Object sender, EventArgs args) {
                         EntityModel ownerModel = (EntityModel) sender;
-                        String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                        String propName = ((PropertyChangedEventArgs) args).propertyName;
 
                         // IsValid
                         if ("IsValid".equals(propName)) { //$NON-NLS-1$

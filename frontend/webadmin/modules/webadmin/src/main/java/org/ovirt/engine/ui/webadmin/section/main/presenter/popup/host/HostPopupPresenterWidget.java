@@ -48,7 +48,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if (!"IsPowerManagementTabSelected".equals(propName)) { //$NON-NLS-1$
                     return;
                 }
@@ -82,7 +82,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     getView().setHostProviderVisibility(model.getProviderSearchFilter().getIsAvailable());
                 }
             }

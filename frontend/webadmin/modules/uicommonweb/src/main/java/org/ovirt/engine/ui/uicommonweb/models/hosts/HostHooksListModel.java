@@ -51,7 +51,7 @@ public class HostHooksListModel extends SearchableListModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status")) //$NON-NLS-1$
+        if (e.propertyName.equals("status")) //$NON-NLS-1$
         {
             getSearchCommand().execute();
         }

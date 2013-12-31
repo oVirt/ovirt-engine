@@ -80,7 +80,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 VolumeGeneralModel model = (VolumeGeneralModel) sender;
-                if ("VolumeType".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("VolumeType".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     translateVolumeType((GlusterVolumeEntity) model.getEntity());
                 }
             }

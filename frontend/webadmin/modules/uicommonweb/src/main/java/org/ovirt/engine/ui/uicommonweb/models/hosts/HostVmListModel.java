@@ -63,7 +63,7 @@ public class HostVmListModel extends VmListModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("vds_name")) //$NON-NLS-1$
+        if (e.propertyName.equals("vds_name")) //$NON-NLS-1$
         {
             search();
         }

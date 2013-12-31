@@ -356,7 +356,7 @@ public class TagListModel extends SearchableListModel
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
         super.entityPropertyChanged(sender, e);
-        if (e.PropertyName.equals("IsSelectedNullable")) //$NON-NLS-1$
+        if (e.propertyName.equals("IsSelectedNullable")) //$NON-NLS-1$
         {
             SelectionTreeNodeModel selectionTreeNodeModel = (SelectionTreeNodeModel) sender;
             TagModel tagModel = (TagModel) selectionTreeNodeModel.getEntity();

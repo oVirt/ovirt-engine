@@ -129,7 +129,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
         if (sender == getPlugged())
         {
             PropertyChangedEventArgs propArgs = (PropertyChangedEventArgs) args;
-            if (propArgs.PropertyName.equals("Entity")) { //$NON-NLS-1$
+            if (propArgs.propertyName.equals("Entity")) { //$NON-NLS-1$
                 onPlugChange();
             }
         }

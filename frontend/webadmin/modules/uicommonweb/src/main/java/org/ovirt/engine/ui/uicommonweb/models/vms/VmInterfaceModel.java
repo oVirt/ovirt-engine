@@ -290,11 +290,11 @@ public abstract class VmInterfaceModel extends Model
         else if (sender == getPlugged())
         {
             PropertyChangedEventArgs propArgs = (PropertyChangedEventArgs) args;
-            if (propArgs.PropertyName.equals("Entity")) { //$NON-NLS-1$
+            if (propArgs.propertyName.equals("Entity")) { //$NON-NLS-1$
                 boolean plugged = (Boolean) getPlugged().getEntity();
                 getPlugged_IsSelected().setEntity(plugged);
                 getUnplugged_IsSelected().setEntity(!plugged);
-            } else if (propArgs.PropertyName.equals("IsChangable")) { //$NON-NLS-1$
+            } else if (propArgs.propertyName.equals("IsChangable")) { //$NON-NLS-1$
 
                 boolean isPlugChangeable = getPlugged().getIsChangable();
 
@@ -303,7 +303,7 @@ public abstract class VmInterfaceModel extends Model
 
                 getUnplugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getUnplugged_IsSelected().setIsChangable(isPlugChangeable);
-            } else if (propArgs.PropertyName.equals("IsAvailable")) { //$NON-NLS-1$
+            } else if (propArgs.propertyName.equals("IsAvailable")) { //$NON-NLS-1$
                 boolean isPlugAvailable = getPlugged().getIsAvailable();
                 getPlugged_IsSelected().setIsAvailable(isPlugAvailable);
                 getUnplugged_IsSelected().setIsAvailable(isPlugAvailable);
@@ -325,11 +325,11 @@ public abstract class VmInterfaceModel extends Model
         else if (sender == getLinked())
         {
             PropertyChangedEventArgs propArgs = (PropertyChangedEventArgs) args;
-            if (propArgs.PropertyName.equals("Entity")) { //$NON-NLS-1$
+            if (propArgs.propertyName.equals("Entity")) { //$NON-NLS-1$
                 boolean linked = (Boolean) getLinked().getEntity();
                 getLinked_IsSelected().setEntity(linked);
                 getUnlinked_IsSelected().setEntity(!linked);
-            } else if (propArgs.PropertyName.equals("IsChangable")) { //$NON-NLS-1$
+            } else if (propArgs.propertyName.equals("IsChangable")) { //$NON-NLS-1$
                 boolean isLinkedChangeable = getLinked().getIsChangable();
 
                 getLinked_IsSelected().setChangeProhibitionReason(getChangeProhibitionReason());
@@ -337,7 +337,7 @@ public abstract class VmInterfaceModel extends Model
 
                 getUnlinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getUnlinked_IsSelected().setIsChangable(isLinkedChangeable);
-            } else if (propArgs.PropertyName.equals("IsAvailable")) { //$NON-NLS-1$
+            } else if (propArgs.propertyName.equals("IsAvailable")) { //$NON-NLS-1$
                 boolean isLinkedAvailable = getLinked().getIsAvailable();
                 getLinked_IsSelected().setIsAvailable(isLinkedAvailable);
                 getUnlinked_IsSelected().setIsAvailable(isLinkedAvailable);
@@ -359,7 +359,7 @@ public abstract class VmInterfaceModel extends Model
 
     private void mAC_PropertyChanged(PropertyChangedEventArgs e)
     {
-        if (e.PropertyName.equals("IsChangeAllowed") && !getMAC().getIsChangable()) //$NON-NLS-1$
+        if (e.propertyName.equals("IsChangeAllowed") && !getMAC().getIsChangable()) //$NON-NLS-1$
         {
             getMAC().setIsValid(true);
         }

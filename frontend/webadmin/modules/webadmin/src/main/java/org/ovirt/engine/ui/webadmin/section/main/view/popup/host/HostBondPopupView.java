@@ -191,7 +191,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 HostBondInterfaceModel model = (HostBondInterfaceModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$
                     bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
                 }

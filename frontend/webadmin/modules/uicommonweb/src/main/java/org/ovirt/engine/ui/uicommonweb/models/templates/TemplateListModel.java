@@ -556,7 +556,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status")) //$NON-NLS-1$
+        if (e.propertyName.equals("status")) //$NON-NLS-1$
         {
             updateActionAvailability();
         }

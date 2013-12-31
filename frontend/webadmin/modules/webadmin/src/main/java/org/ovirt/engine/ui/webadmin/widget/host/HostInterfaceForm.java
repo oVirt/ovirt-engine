@@ -46,7 +46,7 @@ public class HostInterfaceForm extends Composite {
         listModel.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("isSelectionAvailable".equals(propName)) { //$NON-NLS-1$
                     isSelectionAvailable = listModel.getIsSelectionAvailable();
 

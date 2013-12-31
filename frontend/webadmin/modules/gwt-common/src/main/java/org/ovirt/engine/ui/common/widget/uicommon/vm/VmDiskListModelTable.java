@@ -133,7 +133,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                if ("IsDiskHotPlugAvailable".equals(changedArgs.PropertyName)) { //$NON-NLS-1$
+                if ("IsDiskHotPlugAvailable".equals(changedArgs.propertyName)) { //$NON-NLS-1$
                     InitializeEvent.fire(plugButtonDefinition);
                     InitializeEvent.fire(unPlugButtonDefinition);
                 }

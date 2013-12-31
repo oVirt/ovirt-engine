@@ -102,7 +102,7 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         getCommonModel().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("SearchString".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("SearchString".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     clearSelection();
                 }
             }

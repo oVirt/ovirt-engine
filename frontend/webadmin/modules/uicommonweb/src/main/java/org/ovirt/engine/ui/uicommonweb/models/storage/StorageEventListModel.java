@@ -49,7 +49,7 @@ public class StorageEventListModel extends SubTabEventListModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("storage_name")) //$NON-NLS-1$
+        if (e.propertyName.equals("storage_name")) //$NON-NLS-1$
         {
             getSearchCommand().execute();
         }

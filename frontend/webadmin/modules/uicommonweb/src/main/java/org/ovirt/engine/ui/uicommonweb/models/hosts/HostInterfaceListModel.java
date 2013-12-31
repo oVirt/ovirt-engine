@@ -381,7 +381,7 @@ public class HostInterfaceListModel extends SearchableListModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status") || e.PropertyName.equals("net_config_dirty")) //$NON-NLS-1$ //$NON-NLS-2$
+        if (e.propertyName.equals("status") || e.propertyName.equals("net_config_dirty")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             updateActionAvailability();
         }
@@ -599,7 +599,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
     private void model_PropertyChanged(Object sender, PropertyChangedEventArgs args)
     {
-        if (!args.PropertyName.equals("IsSelected")) //$NON-NLS-1$
+        if (!args.propertyName.equals("IsSelected")) //$NON-NLS-1$
         {
             return;
         }

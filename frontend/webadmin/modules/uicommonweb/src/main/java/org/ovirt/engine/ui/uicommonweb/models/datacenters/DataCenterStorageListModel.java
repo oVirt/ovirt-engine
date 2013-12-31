@@ -658,7 +658,7 @@ public class DataCenterStorageListModel extends SearchableListModel
     {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status")) //$NON-NLS-1$
+        if (e.propertyName.equals("status")) //$NON-NLS-1$
         {
             updateActionAvailability();
         }
@@ -669,7 +669,7 @@ public class DataCenterStorageListModel extends SearchableListModel
     {
         super.itemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status")) //$NON-NLS-1$
+        if (e.propertyName.equals("status")) //$NON-NLS-1$
         {
             updateActionAvailability();
         }

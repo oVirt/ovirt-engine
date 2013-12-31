@@ -39,7 +39,7 @@ public class ClusterPopupPresenterWidget extends AbstractModelBoundPopupPresente
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("AllowClusterWithVirtGlusterEnabled".equals(propName)) { //$NON-NLS-1$
                     getView().allowClusterWithVirtGlusterEnabled(model.getAllowClusterWithVirtGlusterEnabled());
                 }

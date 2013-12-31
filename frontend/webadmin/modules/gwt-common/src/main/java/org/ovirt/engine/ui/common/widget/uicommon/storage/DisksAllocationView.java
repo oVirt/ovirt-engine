@@ -123,10 +123,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args instanceof PropertyChangedEventArgs) {
                     PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                    if ("Disks".equals(changedArgs.PropertyName)) { //$NON-NLS-1$
+                    if ("Disks".equals(changedArgs.propertyName)) { //$NON-NLS-1$
                         addDiskList(model);
                     }
-                    else if ("QuotaEnforcmentType".equals(changedArgs.PropertyName)) { //$NON-NLS-1$
+                    else if ("QuotaEnforcmentType".equals(changedArgs.propertyName)) { //$NON-NLS-1$
                         updateColumnsAvailability(model);
                         updateListHeader(model);
                     }

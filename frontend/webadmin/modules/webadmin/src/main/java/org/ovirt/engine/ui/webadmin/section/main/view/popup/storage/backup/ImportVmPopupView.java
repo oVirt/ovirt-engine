@@ -647,12 +647,12 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args instanceof PropertyChangedEventArgs
-                        && ((PropertyChangedEventArgs) args).PropertyName.equals(object.ON_DISK_LOAD)) {
+                        && ((PropertyChangedEventArgs) args).propertyName.equals(object.ON_DISK_LOAD)) {
                     addStorageQuotaColumn();
                     table.redraw();
                     diskTable.asEditor().edit(object.getImportDiskListModel());
                 } else if (args instanceof PropertyChangedEventArgs
-                        && ((PropertyChangedEventArgs) args).PropertyName.equals("Message")) { ////$NON-NLS-1$
+                        && ((PropertyChangedEventArgs) args).propertyName.equals("Message")) { ////$NON-NLS-1$
                     message.setText(object.getMessage());
                 }
             }

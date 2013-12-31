@@ -171,7 +171,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 RoleModel model = (RoleModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("PermissionGroupModels".equals(propertyName)) { //$NON-NLS-1$
                     updateTree(model);
                 }

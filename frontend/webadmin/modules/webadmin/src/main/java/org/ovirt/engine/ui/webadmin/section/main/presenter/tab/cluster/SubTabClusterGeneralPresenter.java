@@ -94,9 +94,9 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args instanceof PropertyChangedEventArgs) {
                     PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                    if (changedArgs.PropertyName.contains("Alert")) { //$NON-NLS-1$
+                    if (changedArgs.propertyName.contains("Alert")) { //$NON-NLS-1$
                         updateAlerts(getView(), model);
-                    } else if (changedArgs.PropertyName.contains("consoleAddressPartiallyOverridden")) { //$NON-NLS-1$
+                    } else if (changedArgs.propertyName.contains("consoleAddressPartiallyOverridden")) { //$NON-NLS-1$
                         updateAlerts(getView(), model);
                     }
                 }

@@ -37,7 +37,7 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
 
                 // For EventListModel classes: update data whenever the last event changes
-                if (getModel() instanceof EventListModel && "LastEvent".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
+                if (getModel() instanceof EventListModel && "LastEvent".equals(pcArgs.propertyName)) { //$NON-NLS-1$
                     EventListModel model = (EventListModel) getModel();
 
                     if (model.getLastEvent() == null && model.isRequestingData()) {

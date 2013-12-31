@@ -184,7 +184,7 @@ public class DisksAllocationModel extends EntityModel
     protected void onPropertyChanged(PropertyChangedEventArgs e)
     {
         super.onPropertyChanged(e);
-        if (e.PropertyName.equals("Disks")) //$NON-NLS-1$
+        if (e.propertyName.equals("Disks")) //$NON-NLS-1$
         {
             updateStorageDomainsAvailability();
             updateQuotaAvailability();

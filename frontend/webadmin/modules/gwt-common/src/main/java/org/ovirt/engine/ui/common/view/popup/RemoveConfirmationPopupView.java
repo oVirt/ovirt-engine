@@ -131,7 +131,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     EntityModel entity = (EntityModel) sender;
                     if (entity.getIsAvailable()) {
                         latch.setVisible(true);
@@ -145,7 +145,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("Note".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("Note".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     ConfirmationModel entity = (ConfirmationModel) sender;
                     setNote(entity.getNote());
                 }

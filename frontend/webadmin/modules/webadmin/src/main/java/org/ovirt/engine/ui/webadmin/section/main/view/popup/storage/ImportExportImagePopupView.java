@@ -158,7 +158,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
                 PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
 
-                if ("ImportExportEntities".equals(changedArgs.PropertyName) //$NON-NLS-1$
+                if ("ImportExportEntities".equals(changedArgs.propertyName) //$NON-NLS-1$
                         && model.getEntities() != null) {
                     imageList.setRowData(model.getEntities());
                 }

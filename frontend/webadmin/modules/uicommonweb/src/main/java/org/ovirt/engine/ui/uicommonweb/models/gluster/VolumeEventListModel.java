@@ -48,7 +48,7 @@ public class VolumeEventListModel extends SubTabEventListModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("gluster_volume_name")) //$NON-NLS-1$
+        if (e.propertyName.equals("gluster_volume_name")) //$NON-NLS-1$
         {
             getSearchCommand().execute();
         }

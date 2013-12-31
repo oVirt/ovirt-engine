@@ -2225,7 +2225,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status")) { //$NON-NLS-1$
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
             updateActionAvailability();
         }
     }

@@ -1609,7 +1609,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status") || e.PropertyName.equals("pm_enabled")) //$NON-NLS-1$ //$NON-NLS-2$
+        if (e.propertyName.equals("status") || e.propertyName.equals("pm_enabled")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             updateActionAvailability();
         }

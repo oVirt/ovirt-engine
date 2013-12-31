@@ -594,7 +594,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
 
                 if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
                     if (object.getIsGeneralTabValid()) {
@@ -623,7 +623,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.PropertyName == "IsAvailable") { //$NON-NLS-1$
+                if (e.propertyName == "IsAvailable") { //$NON-NLS-1$
                     setPkPasswordSectionVisiblity(false);
                 }
             }
@@ -698,7 +698,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.PropertyName == "IsChangable") { //$NON-NLS-1$
+                if (e.propertyName == "IsChangable") { //$NON-NLS-1$
                     proxyListBox.setEnabled(object.getPmProxyPreferencesList().getIsChangable());
                 }
             }

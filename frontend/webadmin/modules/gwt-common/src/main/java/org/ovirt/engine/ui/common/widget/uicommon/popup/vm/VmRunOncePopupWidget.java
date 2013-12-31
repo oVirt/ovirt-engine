@@ -469,7 +469,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("IsHostTabVisible".equals(propName)) { //$NON-NLS-1$
                     hostPanel.setVisible(object.getIsHostTabVisible());
                 } else if ("IsCustomPropertiesSheetVisible".equals(propName)) { //$NON-NLS-1$

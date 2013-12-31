@@ -120,7 +120,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
     final IEventListener lunModelSelectedItemListener = new IEventListener() {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            String propName = ((PropertyChangedEventArgs) args).PropertyName;
+            String propName = ((PropertyChangedEventArgs) args).propertyName;
             EntityModelCellTable<ListModel> table = (EntityModelCellTable<ListModel>) ev.getContext();
 
             if (propName.equals("IsSelected")) { //$NON-NLS-1$

@@ -101,7 +101,7 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
             @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!"Items".equals(((PropertyChangedEventArgs) args).PropertyName)) {//$NON-NLS-1$
+                if (!"Items".equals(((PropertyChangedEventArgs) args).propertyName)) {//$NON-NLS-1$
                     return;
                 }
 

@@ -188,7 +188,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     hideMacWhenNotEnabled(iface);
                 }
             }

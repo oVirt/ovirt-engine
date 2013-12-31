@@ -188,7 +188,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 HostManagementNetworkModel model = (HostManagementNetworkModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$
                     bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
                 }

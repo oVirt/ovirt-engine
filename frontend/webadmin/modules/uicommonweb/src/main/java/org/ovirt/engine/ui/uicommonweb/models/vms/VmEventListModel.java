@@ -44,7 +44,7 @@ public class VmEventListModel extends SubTabEventListModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("vm_name")) //$NON-NLS-1$
+        if (e.propertyName.equals("vm_name")) //$NON-NLS-1$
         {
             getSearchCommand().execute();
         }

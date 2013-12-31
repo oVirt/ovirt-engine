@@ -99,7 +99,7 @@ public class NeutronAgentModel extends EntityModel {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     boolean value = getIsAvailable();
                     getPluginType().setIsAvailable(value);
                     isPluginConfigurationAvailable().setEntity(value

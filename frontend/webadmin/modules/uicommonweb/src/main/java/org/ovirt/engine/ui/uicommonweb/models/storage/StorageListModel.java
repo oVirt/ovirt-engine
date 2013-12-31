@@ -1106,7 +1106,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         super.selectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
+        if (e.propertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
         {
             updateActionAvailability();
         }

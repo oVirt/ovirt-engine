@@ -88,7 +88,7 @@ public class VnicProfileTemplateListModel extends SearchableListModel
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name")) //$NON-NLS-1$
+        if (e.propertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().execute();
         }

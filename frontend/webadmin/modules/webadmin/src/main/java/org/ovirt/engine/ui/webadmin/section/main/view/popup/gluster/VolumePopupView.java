@@ -229,7 +229,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 VolumeModel model = (VolumeModel) sender;
-                if ("Bricks".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("Bricks".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     bricksCountEditor.setText(ConstantsManager.getInstance()
                             .getMessages()
                             .noOfBricksSelected(model.getBricks().getSelectedItems() == null ? 0 : model.getBricks()

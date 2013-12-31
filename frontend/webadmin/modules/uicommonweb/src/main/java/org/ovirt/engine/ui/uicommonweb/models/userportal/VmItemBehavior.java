@@ -41,7 +41,7 @@ public class VmItemBehavior extends ItemBehavior {
     @Override
     public void entityPropertyChanged(PropertyChangedEventArgs e) {
         updateProperties();
-        if (e.PropertyName.equals("status")) //$NON-NLS-1$
+        if (e.propertyName.equals("status")) //$NON-NLS-1$
         {
             updateActionAvailability();
         }

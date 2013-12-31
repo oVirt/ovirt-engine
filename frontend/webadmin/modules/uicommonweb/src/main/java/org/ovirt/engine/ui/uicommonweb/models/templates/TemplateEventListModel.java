@@ -52,7 +52,7 @@ public class TemplateEventListModel extends SubTabEventListModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name")) //$NON-NLS-1$
+        if (e.propertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().execute();
         }

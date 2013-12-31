@@ -1028,19 +1028,19 @@ public class HostGeneralModel extends EntityModel
     {
         super.entityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("net_config_dirty") || e.PropertyName.equals("status") //$NON-NLS-1$ //$NON-NLS-2$
-                || e.PropertyName.equals("spm_status") || e.PropertyName.equals("vm_active")) //$NON-NLS-1$ //$NON-NLS-2$
+        if (e.propertyName.equals("net_config_dirty") || e.propertyName.equals("status") //$NON-NLS-1$ //$NON-NLS-2$
+                || e.propertyName.equals("spm_status") || e.propertyName.equals("vm_active")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             updateUpgradeAlert = true;
             updateAlerts();
         }
 
-        if (e.PropertyName.equals("usage_mem_percent") || e.PropertyName.equals("physical_mem_mb")) //$NON-NLS-1$ //$NON-NLS-2$
+        if (e.propertyName.equals("usage_mem_percent") || e.propertyName.equals("physical_mem_mb")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             updateMemory();
         }
 
-        if (e.PropertyName.equals("swap_total") || e.PropertyName.equals("swap_free")) //$NON-NLS-1$ //$NON-NLS-2$
+        if (e.propertyName.equals("swap_total") || e.propertyName.equals("swap_free")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             updateSwapUsed();
         }

@@ -114,7 +114,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 GuideModel guideModel = (GuideModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
 
                 if ("Progress".equals(propertyName)) { //$NON-NLS-1$
                     if (guideModel.getProgress() == null) {

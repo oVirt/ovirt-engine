@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicPro
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -136,7 +135,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
         profile.getCustomPropertySheet().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
 
                 // IsChangable
                 if ("IsChangable".equals(propName)) { //$NON-NLS-1$

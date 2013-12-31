@@ -35,7 +35,7 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 NetworkModel model = (NetworkModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
+                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
 
                 if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     getView().setMessageLabel(model.getMessage());
@@ -47,7 +47,7 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         model.getProfiles().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
                 }
             }
