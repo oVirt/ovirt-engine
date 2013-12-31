@@ -41,8 +41,8 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__LABEL);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
     }
 
     @Override
