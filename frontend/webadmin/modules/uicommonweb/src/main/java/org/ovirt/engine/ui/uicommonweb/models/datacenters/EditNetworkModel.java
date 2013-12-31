@@ -40,7 +40,7 @@ public class EditNetworkModel extends NetworkModel {
         getExport().setEntity(getNetwork().isExternal());
         getExport().setIsChangable(false);
         getExternalProviders().setIsChangable(false);
-        getNetworkLabel().setIsChangable(false);
+        getNetworkLabel().setSelectedItem(getNetwork().getLabel());
         toggleProfilesAvailability();
     }
 
@@ -75,6 +75,7 @@ public class EditNetworkModel extends NetworkModel {
             getIsVmNetwork().setIsChangable(false);
             getHasMtu().setIsChangable(false);
             getMtu().setIsChangable(false);
+            getNetworkLabel().setIsChangable(false);
         }
         super.onExportChanged();
     }

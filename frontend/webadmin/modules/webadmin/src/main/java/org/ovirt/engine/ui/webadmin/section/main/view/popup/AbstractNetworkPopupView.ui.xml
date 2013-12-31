@@ -60,7 +60,11 @@
 			margin-right: 20px;
 		}
 
-		.qosLabel {
+		.floatLeft {
+			float: left;
+		}
+
+		.inlineLabel {
 			display: inline-block;
 		}
 
@@ -84,7 +88,6 @@
 									<g:Label ui:field="exportLabel" addStyleNames="{style.mainLabel}" />
                         			<e:EntityModelCheckBoxEditor ui:field="exportEditor" />
 									<e:ListModelListBoxEditor ui:field="externalProviderEditor" addStyleNames="{style.dependentField}" />
-									<e:EntityModelTextBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField}" />
 								</g:FlowPanel>
 								<g:FlowPanel addStyleNames="{style.sectionStyle}">
 									<g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
@@ -97,6 +100,7 @@
 										<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
 									</g:HorizontalPanel>
+									<ge:ListModelSuggestBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField} {style.floatLeft}" />
 									<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
 										<e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.qosStyle}" />
 										<w:UiCommandButton ui:field="addQosButton" />

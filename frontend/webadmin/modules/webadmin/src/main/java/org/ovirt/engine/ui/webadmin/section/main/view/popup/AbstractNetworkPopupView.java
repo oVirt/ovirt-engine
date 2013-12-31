@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
@@ -117,6 +118,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "mtu.entity")
     public EntityModelTextBoxOnlyEditor mtuEditor;
 
+    @UiField
+    @Path(value = "networkLabel.selectedItem")
+    public ListModelSuggestBoxEditor networkLabel;
+
     @UiField(provided = true)
     @Path(value = "qos.selectedItem")
     public ListModelListBoxEditor<NetworkQoS> qosEditor;
@@ -137,10 +142,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField
     public WidgetStyle style;
-
-    @UiField
-    @Path(value = "networkLabel.entity")
-    public EntityModelTextBoxEditor networkLabel;
 
     @UiField
     @Path("subnetName.entity")
@@ -253,6 +254,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
    protected void addStyles() {
         vlanTag.addContentWidgetStyleName(style.valueBox());
         mtuEditor.addContentWidgetStyleName(style.valueBox());
+        networkLabel.addContentWidgetStyleName(style.valueBox());
         qosEditor.addContentWidgetStyleName(style.valueBox());
         isVmNetworkEditor.addContentWidgetStyleName(style.checkBox());
         isVmNetworkEditor.asCheckBox().addStyleName(style.checkBox());
@@ -260,8 +262,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging.asCheckBox().addStyleName(style.checkBox());
         hasMtuEditor.addContentWidgetStyleName(style.checkBox());
         hasMtuEditor.asCheckBox().addStyleName(style.checkBox());
+        networkLabel.addLabelStyleName(style.checkBox());
+        networkLabel.addLabelStyleName(style.inlineLabel());
         qosEditor.addLabelStyleName(style.checkBox());
-        qosEditor.addLabelStyleName(style.qosLabel());
+        qosEditor.addLabelStyleName(style.inlineLabel());
     }
 
     @Override
@@ -441,7 +445,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
         String checkBox();
 
-        String qosLabel();
+        String inlineLabel();
     }
 
 }

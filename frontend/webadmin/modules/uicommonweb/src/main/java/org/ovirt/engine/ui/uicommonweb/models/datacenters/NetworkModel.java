@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,7 +53,8 @@ public abstract class NetworkModel extends Model
     private EntityModel privateDescription;
     private EntityModel export;
     private ListModel externalProviders;
-    private EntityModel networkLabel;
+    private ListModel<String> networkLabel;
+    private Iterable<String> dcLabels;
     private EntityModel privateComment;
     private EntityModel privateVLanTag;
     private EntityModel privateIsStpEnabled;
@@ -102,7 +104,7 @@ public abstract class NetworkModel extends Model
             }
         });
 
-        setNetworkLabel(new EntityModel());
+        setNetworkLabel(new ListModel<String>());
         setExternalProviders(new ListModel());
         initExternalProviderList();
 
@@ -160,7 +162,6 @@ public abstract class NetworkModel extends Model
         getSubnetIpVersion().setItems(AsyncDataProvider.getExternalSubnetIpVerionList());
 
         // Update changeability according to initial values
-        onExportChanged();
         updateVlanTagChangeability();
         updateMtuChangeability();
     }
@@ -246,11 +247,11 @@ public abstract class NetworkModel extends Model
         this.externalProviders = externalProviders;
     }
 
-    public EntityModel getNetworkLabel() {
+    public ListModel<String> getNetworkLabel() {
         return networkLabel;
     }
 
-    public void setNetworkLabel(EntityModel networkLabel) {
+    public void setNetworkLabel(ListModel<String> networkLabel) {
         this.networkLabel = networkLabel;
     }
 
@@ -478,10 +479,12 @@ public abstract class NetworkModel extends Model
             }
         }
 
+        getNetworkLabel().validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
+
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
                 && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid()
                 && getSubnetName().getIsValid() && getSubnetCidr().getIsValid() && getSubnetIpVersion().getIsValid()
-                && profilesValid;
+                && profilesValid && getNetworkLabel().getIsValid();
     }
 
     public void syncWithBackend() {
@@ -515,6 +518,8 @@ public abstract class NetworkModel extends Model
         };
         AsyncDataProvider.getAllNetworkQos(dc.getId(), query);
 
+        updateDcLabels();
+
         onExportChanged();
         getProfiles().updateDcId(dc.getId());
     }
@@ -541,9 +546,11 @@ public abstract class NetworkModel extends Model
         network.setName((String) getName().getEntity());
         network.setStp((Boolean) getIsStpEnabled().getEntity());
         network.setDescription((String) getDescription().getEntity());
-        network.setLabel((String) getNetworkLabel().getEntity());
         network.setComment((String) getComment().getEntity());
         network.setVmNetwork((Boolean) getIsVmNetwork().getEntity());
+
+        String label = getNetworkLabel().getSelectedItem();
+        network.setLabel(label == null || !label.isEmpty() ? label : null);
 
         network.setMtu(0);
         if ((Boolean) getHasMtu().getEntity())
@@ -664,8 +671,27 @@ public abstract class NetworkModel extends Model
 
     protected void onExportChanged() {
         boolean externalNetwork = (Boolean) getExport().getEntity();
+
         getQos().setIsChangable(!externalNetwork);
         getAddQosCommand().setIsExecutionAllowed(!externalNetwork);
+
+        String label = getNetworkLabel().getSelectedItem();
+        getNetworkLabel().setItems(externalNetwork ? new HashSet<String>() : dcLabels);
+        getNetworkLabel().setSelectedItem(label);
+    }
+
+    private void updateDcLabels() {
+        startProgress(null);
+        AsyncDataProvider.getNetworkLabelsByDataCenterId(getSelectedDc().getId(),
+                new AsyncQuery(new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        dcLabels = (Iterable<String>) returnValue;
+                        stopProgress();
+                        onExportChanged();
+                    }
+                }));
     }
 
     private void updateVlanTagChangeability() {

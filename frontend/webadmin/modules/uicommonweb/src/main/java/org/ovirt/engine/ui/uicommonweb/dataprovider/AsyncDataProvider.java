@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
@@ -58,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
@@ -1265,6 +1268,20 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolById, new IdQueryParameters(dataCenterId), aQuery);
+    }
+
+    public static void getNetworkLabelsByDataCenterId(Guid dataCenterId, AsyncQuery query) {
+        query.converterCallback = new IAsyncConverter<SortedSet<String>>() {
+            @Override
+            public SortedSet<String> Convert(Object returnValue, AsyncQuery asyncQuery) {
+                SortedSet<String> sortedSet = new TreeSet<String>(new LexoNumericComparator());
+                sortedSet.addAll((Collection<String>) returnValue);
+                return sortedSet;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetNetworkLabelsByDataCenterId,
+                new IdQueryParameters(dataCenterId),
+                query);
     }
 
     public static void getWatchdogByVmId(AsyncQuery aQuery, Guid vmId) {

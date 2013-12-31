@@ -103,7 +103,6 @@ public class NewNetworkModel extends NetworkModel {
     protected void onExportChanged() {
         boolean externalNetwork = (Boolean) getExport().getEntity();
         getExternalProviders().setIsChangable(externalNetwork);
-        getNetworkLabel().setIsChangable(externalNetwork);
         getIsVmNetwork().setIsChangable(!externalNetwork);
         getHasMtu().setIsChangable(!externalNetwork);
         if (externalNetwork) {
