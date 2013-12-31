@@ -199,6 +199,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Label")
     String networkLabel();
 
+    @DefaultStringValue("Label")
+    String networkLabelNetworksTab();
+
     @Override
     @DefaultStringValue("Comment")
     String commentLabel();

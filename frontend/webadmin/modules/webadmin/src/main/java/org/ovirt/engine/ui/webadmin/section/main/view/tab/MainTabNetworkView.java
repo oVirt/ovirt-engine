@@ -142,6 +142,14 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         };
         getTable().addColumn(vlanColumn, constants.vlanNetwork(), "200px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<NetworkView> labelColumn = new TextColumnWithTooltip<NetworkView>() {
+            @Override
+            public String getValue(NetworkView object) {
+                return object.getLabel() == null ? "-" : object.getLabel(); //$NON-NLS-1$
+            }
+        };
+        getTable().addColumn(labelColumn, constants.networkLabelNetworksTab(), "200px"); //$NON-NLS-1$
+
         providerColumn = new LinkColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
