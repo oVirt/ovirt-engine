@@ -19,26 +19,12 @@ package org.ovirt.engine.api.resource;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.ovirt.engine.api.model.Cluster;
-import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
-import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
-
+import org.ovirt.engine.api.model.AffinityGroup;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface ClusterResource extends UpdatableResource<Cluster> {
+public interface AffinityGroupResource extends UpdatableResource<AffinityGroup> {
 
-    @Path("networks")
-    public AssignedNetworksResource getAssignedNetworksSubResource();
+    @Path("vms")
+    public AffinityGroupVmsResource getAffinityGroupVmsSubResource();
 
-    @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
-
-    @Path("glustervolumes")
-    public GlusterVolumesResource getGlusterVolumesResource();
-
-    @Path("glusterhooks")
-    public GlusterHooksResource getGlusterHooksResource();
-
-    @Path("affinitygroups")
-    public AffinityGroupsResource getAffinityGroupsResource();
 }

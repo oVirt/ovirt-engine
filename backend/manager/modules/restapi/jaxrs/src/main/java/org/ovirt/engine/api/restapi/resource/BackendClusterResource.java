@@ -4,6 +4,7 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendClustersResource.SUB_COLLECTIONS;
 
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.ClusterResource;
@@ -76,6 +77,11 @@ public class BackendClusterResource extends AbstractBackendSubResource<Cluster, 
     @Override
     public GlusterHooksResource getGlusterHooksResource() {
         return inject(new BackendGlusterHooksResource(this));
+    }
+
+    @Override
+    public AffinityGroupsResource getAffinityGroupsResource() {
+        return inject(new BackendAffinityGroupsResource(id));
     }
 
 }

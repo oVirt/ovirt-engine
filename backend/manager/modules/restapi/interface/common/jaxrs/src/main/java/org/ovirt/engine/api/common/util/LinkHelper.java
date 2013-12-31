@@ -29,6 +29,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
+import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CdRom;
@@ -76,6 +77,8 @@ import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.resource.AffinityGroupResource;
+import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -371,6 +374,9 @@ public class LinkHelper {
         map.add(LabelResource.class, LabelsResource.class, Network.class);
         map.add(LabelResource.class, LabelsResource.class, HostNIC.class);
         TYPES.put(Label.class, map);
+
+        map = new ParentToCollectionMap(AffinityGroupResource.class, AffinityGroupsResource.class, Cluster.class);
+        TYPES.put(AffinityGroup.class, map);
     }
 
     /**

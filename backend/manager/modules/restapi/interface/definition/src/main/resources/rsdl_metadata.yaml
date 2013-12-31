@@ -4647,4 +4647,83 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /clusters/{cluster:id}/affinitygroups|rel=get
+  description: get the list of affinity groups in the cluster
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}|rel=get
+  description: get the details of the specified affinity group in the cluster
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}|rel=delete
+  description: delete the specified affinity groups in the cluster
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}|rel=update
+  description: update the specified affinity group in the cluster
+  request:
+    body:
+      parameterType: affinitygroup
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {affinitygroup.name: 'xs:string', affinitygroup.positive: 'xs:boolean', affinitygroup.enforcing: 'xs:boolean'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+- name: /clusters/{cluster:id}/affinitygroups|rel=add
+  description: add a new affinity group to the cluster
+  request:
+    body:
+      parameterType: affinitygroup
+      signatures:
+      - mandatoryArguments: {affinitygroup.name: 'xs:string', affinitygroup.positive: 'xs:boolean', affinitygroup.enforcing: 'xs:boolean'}
+        optionalArguments: {}
+        description: add a new affinity group to the cluster
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+- name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms|rel=get
+  description: get the list of vms per affinity group
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms/{vm:id}|rel=delete
+  description: remove the specified vm from the affinity groups
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /clusters/{cluster:id}/affinitygroups/{affinitygroup:id}/vms|rel=add
+  description: add a vm to the specified affinity group
+  request:
+    body:
+      parameterType: VM
+      signatures:
+      - mandatoryArguments: {vm.id|name: 'xs:string'}
+        optionalArguments: {}
+        description: add a vm to affinity group
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
 
