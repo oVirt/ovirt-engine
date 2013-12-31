@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
@@ -334,5 +335,12 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         for (VdsNetworkInterface nic : interfaces) {
             assertTrue(nic.getLabels().contains(LABEL));
         }
+    }
+
+    @Test
+    public void testGetAllNetworkLabelsForDataCenter() {
+        Set<String> result = dao.getAllNetworkLabelsForDataCenter(FixturesTool.DATA_CENTER);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
     }
 }

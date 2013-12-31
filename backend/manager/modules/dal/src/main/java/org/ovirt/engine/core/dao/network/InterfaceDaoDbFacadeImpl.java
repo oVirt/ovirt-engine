@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
@@ -198,6 +199,25 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
         }
 
         return labelledNics;
+    }
+
+    private List<VdsNetworkInterface> getAllInterfacesByDataCenterId(Guid dataCenterId) {
+        return getCallsHandler().executeReadList("GetInterfacesByDataCenterId",
+                vdsNetworkInterfaceRowMapper,
+                getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
+    }
+
+    @Override
+    public Set<String> getAllNetworkLabelsForDataCenter(Guid dataCenterId) {
+        Set<String> labels = new HashSet<>();
+        for (VdsNetworkInterface nic : getAllInterfacesByDataCenterId(dataCenterId)) {
+            if (nic.getLabels() != null) {
+                labels.addAll(nic.getLabels());
+            }
+        }
+
+        return labels;
+
     }
 
     private static final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =

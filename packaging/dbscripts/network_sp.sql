@@ -452,6 +452,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetInterfacesByDataCenterId(v_data_center_id UUID)
+RETURNS SETOF vds_interface_view STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vds_interface_view.*
+   FROM vds_interface_view
+   INNER JOIN vds_static
+   ON vds_interface_view.vds_id = vds_static.vds_id
+   INNER JOIN vds_groups
+   ON vds_static.vds_group_id = vds_groups.vds_group_id
+   WHERE vds_groups.storage_pool_id = v_data_center_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 ----------------------------------------------------------------
 -- [vm_interface] Table
 ----------------------------------------------------------------

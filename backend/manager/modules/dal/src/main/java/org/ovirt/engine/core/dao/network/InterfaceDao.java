@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.network;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
@@ -156,4 +157,13 @@ public interface InterfaceDao extends DAO {
      * @return
      */
     List<VdsNetworkInterface> getAllInterfacesByLabelForCluster(Guid clusterId, String label);
+
+    /**
+     * Retrieves all network labels defined on networks in a specific data-center
+     *
+     * @param id
+     *            the data-center id
+     * @return all labels defined for the data-center's networks
+     */
+    Set<String> getAllNetworkLabelsForDataCenter(Guid id);
 }
