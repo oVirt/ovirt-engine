@@ -827,6 +827,10 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.LABEL_NETWORK_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.UNLABEL_NETWORK, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.UNLABEL_NETWORK_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.LABEL_NIC, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.LABEL_NIC_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.UNLABEL_NIC, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.UNLABEL_NIC_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initExtrnalEvents() {

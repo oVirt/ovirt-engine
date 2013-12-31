@@ -429,6 +429,7 @@ public enum VdcBllErrors {
 
     // Network Labels
     LABELED_NETWORK_INTERFACE_NOT_FOUND(5200),
+    NETWORK_LABEL_CONFLICT(5201),
 
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),

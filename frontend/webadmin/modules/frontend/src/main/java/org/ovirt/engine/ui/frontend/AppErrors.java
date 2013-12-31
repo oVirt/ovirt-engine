@@ -638,6 +638,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Network")
     String VAR__TYPE__NETWORK();
 
+    @DefaultStringValue("$type Label")
+    String VAR__TYPE__LABEL();
+
     @DefaultStringValue("$type VM network interface profile")
     String VAR__TYPE__VNIC_PROFILE();
 
@@ -1895,6 +1898,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("An improper network interface is labeled. Please verify labels are provided only to interfaces or to bonds (not to slaves nor vlans).")
     String IMPROPER_INTERFACE_IS_LABELED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The network interface is already labeled with the specified label.")
+    String INTERFACE_ALREADY_LABELED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The network interface is not labeled with the specified label.")
+    String INTERFACE_NOT_LABELED();
+
     @DefaultStringValue("User/group ID cannot be empty.")
     String MISSING_DIRECTORY_ELEMENT_ID();
 
@@ -2685,6 +2694,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface does not exist.")
     String VM_INTERFACE_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The host network interface does not exist.")
+    String HOST_NETWORK_INTERFACE_NOT_EXIST();
+
     @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface is plugged to a running VM.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE();
 
@@ -2903,4 +2915,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("A labeled network interface could not be found.")
     String LABELED_NETWORK_INTERFACE_NOT_FOUND();
+
+    @DefaultStringValue("The networks represented by label cannot be configured on the same network interface.")
+    String NETWORK_LABEL_CONFLICT();
 }
