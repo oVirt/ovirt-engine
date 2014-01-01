@@ -266,7 +266,8 @@ BEGIN
     RETURN QUERY
     SELECT DISTINCT label
     FROM network
-    WHERE network.storage_pool_id = v_id;
+    WHERE network.storage_pool_id = v_id
+    AND label IS NOT NULL;
 END; $procedure$
 LANGUAGE plpgsql;
 
