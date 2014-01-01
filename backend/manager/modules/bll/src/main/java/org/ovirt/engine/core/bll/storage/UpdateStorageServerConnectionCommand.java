@@ -67,6 +67,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
 
+        if (newConnectionDetails.getstorage_type() == StorageType.ISCSI
+                && StringUtils.isEmpty(newConnectionDetails.getiqn())) {
+            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
+        }
+
         if (checkIsConnectionFieldEmpty(newConnectionDetails)) {
             return false;
         }

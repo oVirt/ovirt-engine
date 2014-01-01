@@ -204,7 +204,7 @@ public class UpdateStorageServerConnectionCommandTest {
     @Test
     public void updateChangeConnectionType() {
         StorageServerConnections iscsiConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getid())).thenReturn(oldNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
@@ -248,6 +248,16 @@ public class UpdateStorageServerConnectionCommandTest {
         parameters.setStorageServerConnection(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
+    }
+
+    @Test
+    public void updateISCSIConnectionEmptyIqn() {
+        StorageServerConnections newISCSIConnection =
+                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        parameters.setStorageServerConnection(newISCSIConnection);
+        parameters.setVdsId(Guid.Empty);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
     }
 
     @Test
@@ -328,7 +338,7 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void updateConnectionOfDomainsAndLunDisks() {
-        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
         List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
@@ -393,7 +403,7 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void updateConnectionOfLunDisks() {
-        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
         List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
@@ -437,7 +447,7 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void updateConnectionOfDomains() {
-        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
         List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
@@ -469,7 +479,7 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void updateConnectionOfUnattachedBlockDomain() {
-        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "user1", "mypassword123");
         List<LUNs> luns = new ArrayList<>();
         LUNs lun1 = new LUNs();
         lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
