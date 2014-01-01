@@ -40,7 +40,7 @@ public class BackendHostNicsResource
     extends AbstractBackendCollectionResource<HostNIC, VdsNetworkInterface>
         implements HostNicsResource {
 
-    static final String SUB_COLLECTIONS = "statistics";
+    static final String[] SUB_COLLECTIONS = { "statistics", "labels" };
 
     private String hostId;
 

@@ -2003,6 +2003,7 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="host_nic" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

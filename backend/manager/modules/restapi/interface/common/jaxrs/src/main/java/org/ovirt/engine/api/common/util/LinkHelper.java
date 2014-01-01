@@ -369,6 +369,7 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(LabelResource.class, LabelsResource.class);
         map.add(LabelResource.class, LabelsResource.class, Network.class);
+        map.add(LabelResource.class, LabelsResource.class, HostNIC.class);
         TYPES.put(Label.class, map);
     }
 

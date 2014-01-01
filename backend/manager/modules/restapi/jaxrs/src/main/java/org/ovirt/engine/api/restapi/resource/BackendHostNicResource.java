@@ -14,6 +14,7 @@ import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.HostNicResource;
+import org.ovirt.engine.api.resource.LabelsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
@@ -196,5 +197,10 @@ public class BackendHostNicResource
 
     private org.ovirt.engine.core.common.businessentities.network.Network map(Network network, org.ovirt.engine.core.common.businessentities.network.Network template) {
         return getMapper(Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class).map(network, template);
+    }
+
+    @Override
+    public LabelsResource getLabelsResource() {
+        return inject(new BackendHostNicLabelsResource(asGuid(id), parent.getHostId()));
     }
 }
