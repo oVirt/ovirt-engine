@@ -228,7 +228,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     @EditableOnVmStatusField
     @EditableOnTemplate
-    protected DisplayType defaultDisplayType;
+    private DisplayType defaultDisplayType;
 
     @EditableOnVmStatusField
     @EditableOnTemplate
@@ -245,7 +245,53 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     private Guid createdByUserId;
 
-    public VmBase(Guid id,
+    public VmBase(VmBase vmBase) {
+        this(vmBase.getName(),
+                vmBase.getId(),
+                vmBase.getVdsGroupId(),
+                vmBase.getOsId(),
+                vmBase.getCreationDate(),
+                vmBase.getDescription(),
+                vmBase.getComment(),
+                vmBase.getMemSizeMb(),
+                vmBase.getNumOfSockets(),
+                vmBase.getCpuPerSocket(),
+                vmBase.getNumOfMonitors(),
+                vmBase.getSingleQxlPci(),
+                vmBase.getDomain(),
+                vmBase.getTimeZone(),
+                vmBase.getVmType(),
+                vmBase.getUsbPolicy(),
+                vmBase.isFailBack(),
+                vmBase.getDefaultBootSequence(),
+                vmBase.getNiceLevel(),
+                vmBase.getCpuShares(),
+                vmBase.getPriority(),
+                vmBase.isAutoStartup(),
+                vmBase.isStateless(),
+                vmBase.getIsoPath(),
+                vmBase.getOrigin(),
+                vmBase.getKernelUrl(),
+                vmBase.getKernelParams(),
+                vmBase.getInitrdUrl(),
+                vmBase.getQuotaId(),
+                vmBase.isSmartcardEnabled(),
+                vmBase.isDeleteProtected(),
+                vmBase.getSsoMethod(),
+                vmBase.getTunnelMigration(),
+                vmBase.getVncKeyboardLayout(),
+                vmBase.getMinAllocatedMem(),
+                vmBase.isRunAndPause(),
+                vmBase.getCreatedByUserId(),
+                vmBase.getMigrationSupport(),
+                vmBase.isAllowConsoleReconnect(),
+                vmBase.getDedicatedVmForVds(),
+                vmBase.getDefaultDisplayType());
+    }
+
+    public VmBase(
+            String name,
+            Guid id,
             Guid vdsGroupId,
             int osId,
             Date creationDate,
@@ -280,8 +326,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             String vncKeyboardLayout,
             int minAllocatedMem,
             boolean runAndPause,
-            Guid createdByUserId) {
+            Guid createdByUserId,
+            MigrationSupport migrationSupport,
+            boolean allowConsoleReconnect,
+            Guid dedicatedVmForVds,
+            DisplayType defaultDisplayType) {
         this();
+        this.name = name;
         this.id = id;
         this.vdsGroupId = vdsGroupId;
         this.osId = osId;
@@ -317,8 +368,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.minAllocatedMem = minAllocatedMem;
         this.runAndPause = runAndPause;
         this.createdByUserId = createdByUserId;
-        defaultDisplayType = DisplayType.qxl;
+        this.defaultDisplayType = defaultDisplayType;
         setQuotaId(quotaId);
+        this.migrationSupport = migrationSupport;
+        this.allowConsoleReconnect = allowConsoleReconnect;
+        this.dedicatedVmForVds = dedicatedVmForVds;
     }
 
     public long getDbGeneration() {
@@ -661,6 +715,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((tunnelMigration == null) ? 0 : tunnelMigration.hashCode());
         result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
         result = prime * result + ((createdByUserId == null) ? 0 : createdByUserId.hashCode());
+        result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
         return result;
     }
 

@@ -61,8 +61,11 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             int numOfMonitors, boolean singleQxlPci, int status, int usbPolicy, String timeZone, int niceLevel,
             int cpuShares, boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, SsoMethod ssoMethod, Boolean tunnelMigration, String vncKeyboardLayout,
-            int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId, VmEntityType templateType) {
-        super(
+            int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId, VmEntityType templateType,
+            boolean autoStartup, int priority, DisplayType defaultDisplayType, String initrdUrl, String kernelUrl,
+            String kernelParams, Guid quotaId, Guid dedicatedVmForVds, MigrationSupport migrationSupport,
+            boolean allowConsoleReconnect, String isoPath) {
+        super(name,
                 vmtGuid,
                 vdsGroupId,
                 osId,
@@ -82,15 +85,15 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 defaultBootSequence,
                 niceLevel,
                 cpuShares,
-                0,
-                false,
+                priority,
+                autoStartup,
                 stateless,
-                null,
+                isoPath,
                 OriginType.valueOf(Config.<String> getValue(ConfigValues.OriginType)),
-                null,
-                null,
-                null,
-                null,
+                kernelUrl,
+                kernelParams,
+                initrdUrl,
+                quotaId,
                 smartcardEnabled,
                 deleteProtected,
                 ssoMethod,
@@ -98,14 +101,16 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 vncKeyboardLayout,
                 minAllocatedMem,
                 runAndPause,
-                createdByUserId);
+                createdByUserId,
+                migrationSupport,
+                allowConsoleReconnect,
+                dedicatedVmForVds,
+                defaultDisplayType);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();
 
         this.childCount = childCount;
-        setName(name);
-        this.setNumOfMonitors(numOfMonitors);
         this.setStatus(VmTemplateStatus.forValue(status));
         setTemplateType(templateType);
     }

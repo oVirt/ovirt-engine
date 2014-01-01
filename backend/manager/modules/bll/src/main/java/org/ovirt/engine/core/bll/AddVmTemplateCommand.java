@@ -424,7 +424,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         0,
                         new Date(),
                         getParameters().getDescription(),
-                        getParameters().getMasterVm().getMemSizeMb(), getVmTemplateName(),
+                        getParameters().getMasterVm().getMemSizeMb(),
+                        getVmTemplateName(),
                         getParameters().getMasterVm().getNumOfSockets(),
                         getParameters().getMasterVm().getCpuPerSocket(),
                         getParameters().getMasterVm().getOsId(),
@@ -450,18 +451,18 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().isStateless(),
                         getParameters().getMasterVm().isRunAndPause(),
                         getUserId(),
-                        getParameters().getTemplateType()));
-        getVmTemplate().setAutoStartup(getParameters().getMasterVm().isAutoStartup());
-        getVmTemplate().setPriority(getParameters().getMasterVm().getPriority());
-        getVmTemplate().setDefaultDisplayType(getParameters().getMasterVm().getDefaultDisplayType());
-        getVmTemplate().setInitrdUrl(getParameters().getMasterVm().getInitrdUrl());
-        getVmTemplate().setKernelUrl(getParameters().getMasterVm().getKernelUrl());
-        getVmTemplate().setKernelParams(getParameters().getMasterVm().getKernelParams());
-        getVmTemplate().setQuotaId(getParameters().getMasterVm().getQuotaId());
-        getVmTemplate().setDedicatedVmForVds(getParameters().getMasterVm().getDedicatedVmForVds());
-        getVmTemplate().setMigrationSupport(getParameters().getMasterVm().getMigrationSupport());
-        getVmTemplate().setAllowConsoleReconnect(getParameters().getMasterVm().isAllowConsoleReconnect());
-        getVmTemplate().setIsoPath(getParameters().getMasterVm().getIsoPath());
+                        getParameters().getTemplateType(),
+                        getParameters().getMasterVm().isAutoStartup(),
+                        getParameters().getMasterVm().getPriority(),
+                        getParameters().getMasterVm().getDefaultDisplayType(),
+                        getParameters().getMasterVm().getInitrdUrl(),
+                        getParameters().getMasterVm().getKernelUrl(),
+                        getParameters().getMasterVm().getKernelParams(),
+                        getParameters().getMasterVm().getQuotaId(),
+                        getParameters().getMasterVm().getDedicatedVmForVds(),
+                        getParameters().getMasterVm().getMigrationSupport(),
+                        getParameters().getMasterVm().isAllowConsoleReconnect(),
+                        getParameters().getMasterVm().getIsoPath()));
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());

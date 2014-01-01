@@ -57,57 +57,20 @@ public class VmStatic extends VmBase {
         setNiceLevel(0);
         setCpuShares(0);
         setDefaultBootSequence(BootSequence.C);
-        defaultDisplayType = DisplayType.qxl;
+        setDefaultDisplayType(DisplayType.qxl);
         setVmType(VmType.Desktop);
         vmtGuid = Guid.Empty;
     }
 
     public VmStatic(VmStatic vmStatic) {
-        super(vmStatic.getId(),
-                vmStatic.getVdsGroupId(),
-                vmStatic.getOsId(),
-                vmStatic.getCreationDate(),
-                vmStatic.getDescription(),
-                vmStatic.getComment(),
-                vmStatic.getMemSizeMb(),
-                vmStatic.getNumOfSockets(),
-                vmStatic.getCpuPerSocket(),
-                vmStatic.getNumOfMonitors(),
-                vmStatic.getSingleQxlPci(),
-                vmStatic.getDomain(),
-                vmStatic.getTimeZone(),
-                vmStatic.getVmType(),
-                vmStatic.getUsbPolicy(),
-                vmStatic.isFailBack(),
-                vmStatic.getDefaultBootSequence(),
-                vmStatic.getNiceLevel(),
-                vmStatic.getCpuShares(),
-                vmStatic.getPriority(),
-                vmStatic.isAutoStartup(),
-                vmStatic.isStateless(),
-                vmStatic.getIsoPath(),
-                vmStatic.getOrigin(),
-                vmStatic.getKernelUrl(),
-                vmStatic.getKernelParams(),
-                vmStatic.getInitrdUrl(),
-                vmStatic.getQuotaId(),
-                vmStatic.isSmartcardEnabled(),
-                vmStatic.isDeleteProtected(),
-                vmStatic.getSsoMethod(),
-                vmStatic.getTunnelMigration(),
-                vmStatic.getVncKeyboardLayout(),
-                vmStatic.getMinAllocatedMem(),
-                vmStatic.isRunAndPause(),
-                vmStatic.getCreatedByUserId());
-        setName(vmStatic.getName());
+        this((VmBase)vmStatic);
         vmtGuid = vmStatic.getVmtGuid();
         setCustomProperties(vmStatic.getCustomProperties());
-        setNumOfMonitors(vmStatic.getNumOfMonitors());
         setInitialized(vmStatic.isInitialized());
-        setDefaultDisplayType(vmStatic.getDefaultDisplayType());
-        setDedicatedVmForVds(vmStatic.getDedicatedVmForVds());
-        setMigrationSupport(vmStatic.getMigrationSupport());
-        setAllowConsoleReconnect(vmStatic.isAllowConsoleReconnect());
+    }
+
+    public VmStatic(VmBase vmBase) {
+        super(vmBase);
     }
 
     public String getCustomProperties() {
@@ -187,7 +150,6 @@ public class VmStatic extends VmBase {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
         result = prime * result + (initialized ? 1231 : 1237);
         result = prime * result + diskSize;
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
@@ -214,8 +176,7 @@ public class VmStatic extends VmBase {
             return false;
         }
         VmStatic other = (VmStatic) obj;
-        return (defaultDisplayType == other.defaultDisplayType
-                && initialized == other.initialized
+        return (initialized == other.initialized
                 && diskSize == other.diskSize
                 && ObjectUtils.objectsEqual(getName(), other.getName())
                 && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
