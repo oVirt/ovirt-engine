@@ -553,6 +553,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             AuditLogableBase auditLogable = new AuditLogableBase();
             auditLogable.addCustomValue("Host", vdsName);
             auditLogable.addCustomValue("Status", actionName);
+            auditLogable.setVdsId(getVds().getId());
             AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED);
             log.errorFormat("Failed to verify host {0} {1} status. Have retried {2} times with delay of {3} seconds between each retry.",
                     vdsName,
