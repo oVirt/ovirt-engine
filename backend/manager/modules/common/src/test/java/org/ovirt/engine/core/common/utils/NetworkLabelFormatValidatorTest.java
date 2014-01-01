@@ -30,9 +30,9 @@ public class NetworkLabelFormatValidatorTest {
 
     @Test
     public void checkNetworkLabelFormat() {
-        Set<ConstraintViolation<NetworkLabelContainer>> validate =
-                validator.validate(new NetworkLabelContainer(labels));
-        assertEquals(expectedResult, validate.isEmpty());
+        NetworkLabelContainer labelContainer = new NetworkLabelContainer(labels);
+        Set<ConstraintViolation<NetworkLabelContainer>> validate = validator.validate(labelContainer);
+        assertEquals("Failed to validate " + labelContainer.getLabels(), expectedResult, validate.isEmpty());
     }
 
     @Parameterized.Parameters
@@ -50,12 +50,16 @@ public class NetworkLabelFormatValidatorTest {
         });
     }
 
-    private class NetworkLabelContainer {
+    private static class NetworkLabelContainer {
         @ValidNetworkLabelFormat
         private Set<String> labels;
 
         public NetworkLabelContainer(Set<String> labels) {
             this.labels = labels;
+        }
+
+        public Set<String> getLabels() {
+            return labels;
         }
     }
 }
