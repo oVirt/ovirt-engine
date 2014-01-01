@@ -22,34 +22,14 @@
 from otopi import util
 
 
+from . import java
 from . import jboss
-from . import database
-from . import protocols
-from . import appmode
-from . import domain_type
-from . import firewall
-from . import ca
-from . import options
-from . import tools
-from . import iso_domain
-from . import macrange
-from . import productkey_upgrade
 
 
 @util.export
 def createPlugins(context):
+    java.Plugin(context=context)
     jboss.Plugin(context=context)
-    database.Plugin(context=context)
-    protocols.Plugin(context=context)
-    appmode.Plugin(context=context)
-    domain_type.Plugin(context=context)
-    firewall.Plugin(context=context)
-    ca.Plugin(context=context)
-    options.Plugin(context=context)
-    tools.Plugin(context=context)
-    iso_domain.Plugin(context=context)
-    macrange.Plugin(context=context)
-    productkey_upgrade.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

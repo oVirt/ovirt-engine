@@ -19,13 +19,12 @@
 """Jboss plugin."""
 
 
+import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
-from otopi import constants as otopicons
 from otopi import util
-from otopi import filetransaction
 from otopi import plugin
 
 
@@ -40,36 +39,27 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
+        stage=plugin.Stages.STAGE_INIT,
     )
-    def _misc(self):
-        for f in (
-            (
-                osetupcons.FileLocations.
-                OVIRT_ENGINE_SERVICE_CONFIG_JBOSS
-            ),
-            (
-                osetupcons.FileLocations.
-                OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG_JBOSS
-            ),
+    def _init(self):
+        self.environment.setdefault(
+            osetupcons.ConfigEnv.JBOSS_HOME,
+            osetupcons.FileLocations.JBOSS_HOME
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+    )
+    def _validation(self):
+        if not os.path.exists(
+            self.environment[
+                osetupcons.ConfigEnv.JBOSS_HOME
+            ]
         ):
-            content = [
-                'JBOSS_HOME="{jbossHome}"'.format(
+            raise RuntimeError(
+                _('Cannot find Jboss at {jbossHome}').format(
                     jbossHome=self.environment[
                         osetupcons.ConfigEnv.JBOSS_HOME
-                    ],
-                ),
-            ]
-            if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
-                content.append(
-                    'ENGINE_LOG_TO_CONSOLE=true'
-                )
-            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                filetransaction.FileTransaction(
-                    name=f,
-                    content=content,
-                    modifiedList=self.environment[
-                        otopicons.CoreEnv.MODIFIED_FILES
                     ],
                 )
             )
