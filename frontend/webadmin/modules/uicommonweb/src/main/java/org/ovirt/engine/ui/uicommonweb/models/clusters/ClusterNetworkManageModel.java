@@ -18,6 +18,8 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
     private final SearchableListModel<?> sourceListModel;
     private final UICommand okCommand;
     private final UICommand cancelCommand;
+    private boolean needsAttach;
+    private boolean needsDetach;
 
     public ClusterNetworkManageModel(SearchableListModel<?> sourceListModel) {
         this.sourceListModel = sourceListModel;
@@ -110,41 +112,44 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
             }
         }
 
-        final IFrontendMultipleActionAsyncCallback callback = new IFrontendMultipleActionAsyncCallback() {
-            Boolean needsAttach = !toAttach.isEmpty();
-            Boolean needsDetach = !toDetach.isEmpty();
+        startProgress(null);
+        needsAttach = !toAttach.isEmpty();
+        needsDetach = !toDetach.isEmpty();
+        if (needsAttach) {
+            Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup,
+                    toAttach,
+                    new IFrontendMultipleActionAsyncCallback() {
 
-            @Override
-            public void executed(FrontendMultipleActionAsyncResult result) {
-                if (result.getActionType() == VdcActionType.DetachNetworkToVdsGroup) {
-                    needsDetach = false;
-                }
-                if (result.getActionType() == VdcActionType.AttachNetworkToVdsGroup) {
+                @Override
+                public void executed(FrontendMultipleActionAsyncResult result) {
                     needsAttach = false;
-                }
-
-                if (needsAttach) {
-                    Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup, toAttach, this, null);
-                }
-
-                if (needsDetach) {
-                    Frontend.getInstance().runMultipleAction(VdcActionType.DetachNetworkToVdsGroup, toDetach, this, null);
-                }
-
-                if (!needsAttach && !needsDetach) {
                     doFinish();
                 }
-            }
+            });
+        }
+        if (needsDetach) {
+            Frontend.getInstance().runMultipleAction(VdcActionType.DetachNetworkToVdsGroup,
+                    toDetach,
+                    new IFrontendMultipleActionAsyncCallback() {
 
-            private void doFinish() {
-                stopProgress();
-                cancel();
-                sourceListModel.forceRefresh();
-            }
-        };
+                @Override
+                public void executed(FrontendMultipleActionAsyncResult result) {
+                    needsDetach = false;
+                    doFinish();
+                }
+            });
+        }
+        doFinish();
+    }
 
-        callback.executed(new FrontendMultipleActionAsyncResult(null, null, null));
-        startProgress(null);
+    private void doFinish() {
+        if (needsAttach || needsDetach) {
+            return;
+        }
+
+        stopProgress();
+        cancel();
+        sourceListModel.forceRefresh();
     }
 
     private void cancel() {
