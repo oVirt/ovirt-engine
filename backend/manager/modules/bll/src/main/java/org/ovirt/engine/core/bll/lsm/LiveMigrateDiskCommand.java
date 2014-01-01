@@ -32,6 +32,12 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     public LiveMigrateDiskCommand(T parameters) {
         super(parameters);
 
+        if (isLastTaskHandler()) {
+            // No need to initialize values if all tasks have been completed
+            // (prevent fetching un-needed/stale data after last task completion)
+            return;
+        }
+
         setStoragePoolId(getVm().getStoragePoolId());
         getParameters().setStoragePoolId(getStoragePoolId());
 
