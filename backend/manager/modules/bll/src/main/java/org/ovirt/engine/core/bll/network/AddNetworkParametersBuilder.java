@@ -10,9 +10,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -37,7 +35,7 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
             VdsNetworkInterface nicToConfigure = getNicToConfigure(setupNetworkParams.getInterfaces(), nic.getId());
 
             if (vlanNetwork) {
-                VdsNetworkInterface vlan = createVlanDevice(nic, nicToConfigure.getVdsId(), network);
+                VdsNetworkInterface vlan = createVlanDevice(nic, network);
                 setupNetworkParams.getInterfaces().add(vlan);
             } else if (nicToConfigure.getNetworkName() == null) {
                 nicToConfigure.setNetworkName(network.getName());
@@ -70,25 +68,6 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
         logable.addCustomValue("HostNames", StringUtils.join(hostNames, ", "));
         logable.addCustomValue("Label", network.getLabel());
         AuditLogDirector.log(logable, AuditLogType.ADD_NETWORK_BY_LABEL_FAILED);
-    }
-
-    private VdsNetworkInterface createVlanDevice(VdsNetworkInterface nic, Guid hostId, Network network) {
-        VdsNetworkInterface vlan = new Vlan();
-        vlan.setNetworkName(network.getName());
-        vlan.setVdsId(hostId);
-        vlan.setName(NetworkUtils.getVlanDeviceName(nic, network));
-        vlan.setBootProtocol(NetworkBootProtocol.NONE);
-        return vlan;
-    }
-
-    private VdsNetworkInterface getNicToConfigure(List<VdsNetworkInterface> nics, Guid id) {
-        for (VdsNetworkInterface nic : nics) {
-            if (nic.getId().equals(id)) {
-                return nic;
-            }
-        }
-
-        return null;
     }
 
     private DbFacade getDbFacade() {

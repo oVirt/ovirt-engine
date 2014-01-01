@@ -94,16 +94,6 @@ public class RemoveNetworkParametersBuilder extends NetworkParametersBuilder {
         AuditLogDirector.log(logable, AuditLogType.REMOVE_NETWORK_BY_LABEL_FAILED);
     }
 
-    private VdsNetworkInterface getNicToConfigure(List<VdsNetworkInterface> nics, Guid id) {
-        for (VdsNetworkInterface nic : nics) {
-            if (nic.getId().equals(id)) {
-                return nic;
-            }
-        }
-
-        return null;
-    }
-
     private DbFacade getDbFacade() {
         return DbFacade.getInstance();
     }
