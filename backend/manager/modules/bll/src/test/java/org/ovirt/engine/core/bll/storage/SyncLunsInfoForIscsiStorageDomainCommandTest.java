@@ -70,4 +70,25 @@ public class SyncLunsInfoForIscsiStorageDomainCommandTest {
         boolean isMismatch = command.isLunsInfoMismatch(lunsFromVgInfo, lunsFromDb);
         assertFalse(isMismatch);
     }
+
+    @Test
+    public void lunsMismatchDeviceSize() {
+        Guid pvID = Guid.newGuid();
+        Guid lunID = Guid.newGuid();
+
+        LUNs lunFromVG = new LUNs();
+        lunFromVG.setLUN_id(lunID.toString());
+        lunFromVG.setphysical_volume_id(pvID.toString());
+        lunFromVG.setDeviceSize(20);
+
+        LUNs lunFromDB = new LUNs();
+        lunFromDB.setLUN_id(lunID.toString());
+        lunFromDB.setphysical_volume_id(pvID.toString());
+        lunFromDB.setDeviceSize(10);
+
+        List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVG);
+        List<LUNs> lunsFromDb = Collections.singletonList(lunFromDB);
+
+        assertTrue(command.isLunsInfoMismatch(lunsFromVgInfo, lunsFromDb));
+    }
 }

@@ -85,6 +85,17 @@ public class LunDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that LUN's device size is updated correctly
+     */
+    @Test
+    public void testUpdateLUNsDeviceSize() {
+        int testDeviceSize = 20;
+        dao.updateLUNsDeviceSize(existingLUN.getLUN_id(), testDeviceSize);
+        LUNs dbLun = dao.get(existingLUN.getLUN_id());
+        assertEquals("LUN device size wasn't updated", testDeviceSize, dbLun.getDeviceSize());
+    }
+
+    /**
      * Ensures that an empty collection is returned.
      */
     @Test

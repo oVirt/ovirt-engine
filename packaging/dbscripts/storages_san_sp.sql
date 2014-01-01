@@ -36,6 +36,18 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION UpdateLUNsDeviceSize(v_LUN_id VARCHAR(50),
+    v_device_size INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+UPDATE LUNs set device_size = v_device_size where LUN_id = v_LUN_ID;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 
 Create or replace FUNCTION DeleteLUN(v_LUN_id VARCHAR(50))
 RETURNS VOID

@@ -49,9 +49,15 @@ public class SyncLunsInfoForIscsiStorageDomainCommand<T extends StorageDomainPar
     protected void refreshLunsInfo(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
         for (LUNs lunFromVgInfo : lunsFromVgInfo) {
             // Update LUN
-            if (getLunDao().get(lunFromVgInfo.getLUN_id()) == null) {
+            LUNs lunFromDB = getLunDao().get(lunFromVgInfo.getLUN_id());
+            if (lunFromDB == null) {
                 getLunDao().save(lunFromVgInfo);
                 log.infoFormat("New LUN discovered, ID: {0}", lunFromVgInfo.getLUN_id());
+            }
+            else if (lunFromDB.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
+                getLunDao().updateLUNsDeviceSize(lunFromVgInfo.getLUN_id(), lunFromVgInfo.getDeviceSize());
+                log.infoFormat("Updated LUN device size - ID: {0}, previous size: {1}, new size: {2}.",
+                        lunFromVgInfo.getLUN_id(), lunFromDB.getDeviceSize(), lunFromVgInfo.getDeviceSize());
             }
 
             // Update lun connections map
@@ -93,6 +99,10 @@ public class SyncLunsInfoForIscsiStorageDomainCommand<T extends StorageDomainPar
                 }
 
                 if (!lunFromDb.getLUN_id().equals(lunFromVgInfo.getLUN_id())) {
+                    return true;
+                }
+                else if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
+                    // Size mismatch detected - refresh info is needed
                     return true;
                 }
             }

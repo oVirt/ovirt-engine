@@ -80,6 +80,14 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
     }
 
     @Override
+    public void updateLUNsDeviceSize(String id, int deviceSize) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("LUN_id", id)
+                .addValue("device_size", deviceSize);
+
+        getCallsHandler().executeModification("updateLUNsDeviceSize", parameterSource);
+    }
+
+    @Override
     public void save(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("LUN_id", lun.getLUN_id())

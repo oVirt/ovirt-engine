@@ -50,6 +50,11 @@ public interface LunDAO extends DAO {
     void updateLUNsVolumeGroupId(String id, String volumeGroupId);
 
     /**
+     * Updates the lun device size
+     */
+    void updateLUNsDeviceSize(String id, int deviceSize);
+
+    /**
      * Saves the supplied LUN instance.
      *
      * @param lun
