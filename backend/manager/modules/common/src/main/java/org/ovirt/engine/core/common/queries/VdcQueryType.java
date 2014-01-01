@@ -78,6 +78,7 @@ public enum VdcQueryType implements Serializable {
     // Network labels
     GetNetworkLabelsByNetworkId,
     GetNetworkLabelsByDataCenterId,
+    GetNetworkLabelsByHostNicId,
 
     // VdsGroups
     GetVdsCertificateSubjectByVdsId(VdcQueryAuthType.User),
