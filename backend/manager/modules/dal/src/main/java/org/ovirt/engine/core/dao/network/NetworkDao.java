@@ -125,4 +125,15 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return the network
      */
     Network get(Guid networkId, Guid userID, boolean isFiltered);
+
+    /**
+     * Retrieves the networks with the specified label which are attached to a specific Cluster.
+     *
+     * @param label
+     *            the network label
+     * @param clusterId
+     *            the cluster the networks are attached to
+     * @return the networks
+     */
+    List<Network> getAllByLabelForCluster(String label, Guid clusterId);
 }

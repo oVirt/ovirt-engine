@@ -2,10 +2,12 @@ package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -113,6 +115,19 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         return new HashSet<>(getCallsHandler().executeReadList("GetAllNetworkLabelsByDataCenterId",
                 new SingleColumnRowMapper<String>(),
                 createIdParameterMapper(id)));
+    }
+
+    @Override
+    public List<Network> getAllByLabelForCluster(String label, Guid clusterId) {
+        List<Network> networksInCluster = getAllForCluster(clusterId);
+        List<Network> labeledNetworks = new ArrayList<>();
+        for (Network network : networksInCluster) {
+            if (StringUtils.equals(network.getLabel(), label)) {
+                labeledNetworks.add(network);
+            }
+        }
+
+        return labeledNetworks;
     }
 
     @Override

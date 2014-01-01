@@ -25,6 +25,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     private static final String EXISTING_NETWORK_NAME1 = "engine";
     private static final String EXISTING_NETWORK_NAME2 = "engine3";
     private static final int NUM_OF_NETWORKS = 6;
+    private static final String NETWORK_LABEL = "lbl1";
 
     @Override
     public void setUp() throws Exception {
@@ -286,6 +287,19 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         Set<String> result = dao.getAllNetworkLabelsForDataCenter(datacenter);
         assertNotNull(result);
         assertFalse(result.isEmpty());
+    }
+
+    /**
+     * Ensures a list of networks is returned for a given cluster by a specific label
+     */
+    public void getAllByLabelForCluster() {
+        List<Network> result = dao.getAllByLabelForCluster(NETWORK_LABEL, cluster);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+
+        for (Network network : result) {
+            assertEquals(NETWORK_LABEL, network.getLabel());
+        }
     }
 
     /**
