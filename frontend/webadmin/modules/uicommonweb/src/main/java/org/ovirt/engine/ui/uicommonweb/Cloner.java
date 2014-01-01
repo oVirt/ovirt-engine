@@ -330,6 +330,7 @@ public final class Cloner
     {
         NetworkCluster obj = new NetworkCluster();
 
+        obj.setId(instance.getId());
         obj.setStatus(instance.getStatus());
         obj.setDisplay(instance.isDisplay());
         obj.setRequired(instance.isRequired());

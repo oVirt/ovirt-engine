@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -126,6 +127,9 @@ public class ClusterNetworkListModel extends SearchableListModel
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<Network> newItems = (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(newItems, new Linq.NetworkComparator());
+                for (Network network : newItems) {
+                    network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
+                }
                 searchableListModel.setItems(newItems);
             }
         };

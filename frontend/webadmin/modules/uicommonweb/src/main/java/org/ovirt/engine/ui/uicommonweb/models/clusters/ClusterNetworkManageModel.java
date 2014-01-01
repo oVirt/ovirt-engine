@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -20,6 +21,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
     private final UICommand cancelCommand;
     private boolean needsAttach;
     private boolean needsDetach;
+    private boolean needsUpdate;
 
     public ClusterNetworkManageModel(SearchableListModel<?> sourceListModel) {
         this.sourceListModel = sourceListModel;
@@ -85,6 +87,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         Iterable<ClusterNetworkModel> manageList = getItems();
         final ArrayList<VdcActionParametersBase> toAttach = new ArrayList<VdcActionParametersBase>();
         final ArrayList<VdcActionParametersBase> toDetach = new ArrayList<VdcActionParametersBase>();
+        final ArrayList<VdcActionParametersBase> toUpdate = new ArrayList<VdcActionParametersBase>();
 
         for (ClusterNetworkModel manageModel : manageList) {
             NetworkCluster networkCluster = manageModel.getOriginalNetworkCluster();
@@ -100,21 +103,29 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                         || (manageModel.isDisplayNetwork() != networkCluster.isDisplay())
                         || (manageModel.isMigrationNetwork() != networkCluster.isMigration())) {
                     needsUpdate = true;
+                    networkCluster.setRequired(manageModel.isRequired());
+                    networkCluster.setDisplay(manageModel.isDisplayNetwork());
+                    networkCluster.setMigration(manageModel.isMigrationNetwork());
                 }
             }
 
-            if (needsAttach || needsUpdate) {
+            if (needsAttach) {
                 toAttach.add(new AttachNetworkToVdsGroupParameter(manageModel.getCluster(), manageModel.getEntity()));
             }
 
             if (needsDetach) {
                 toDetach.add(new AttachNetworkToVdsGroupParameter(manageModel.getCluster(), manageModel.getEntity()));
             }
+
+            if (needsUpdate) {
+                toUpdate.add(new NetworkClusterParameters(networkCluster));
+            }
         }
 
         startProgress(null);
         needsAttach = !toAttach.isEmpty();
         needsDetach = !toDetach.isEmpty();
+        needsUpdate = !toUpdate.isEmpty();
         if (needsAttach) {
             Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup,
                     toAttach,
@@ -139,11 +150,23 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                 }
             });
         }
+        if (needsUpdate) {
+            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateNetworkOnCluster,
+                    toUpdate,
+                    new IFrontendMultipleActionAsyncCallback() {
+
+                @Override
+                public void executed(FrontendMultipleActionAsyncResult result) {
+                    needsUpdate = false;
+                    doFinish();
+                }
+            });
+        }
         doFinish();
     }
 
     private void doFinish() {
-        if (needsAttach || needsDetach) {
+        if (needsAttach || needsDetach || needsUpdate) {
             return;
         }
 
