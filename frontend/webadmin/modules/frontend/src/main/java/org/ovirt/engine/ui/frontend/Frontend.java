@@ -495,6 +495,17 @@ public class Frontend implements HasHandlers {
     }
 
     /**
+     * RunMultipleActions without passing state.
+     * @param actionType The type of action to perform.
+     * @param parameters The parameters of the action.
+     */
+    public void runMultipleAction(final VdcActionType actionType,
+            final ArrayList<VdcActionParametersBase> parameters,
+            final IFrontendMultipleActionAsyncCallback callback) {
+        runMultipleAction(actionType, parameters, callback, null);
+    }
+
+    /**
      * RunMultipleActions without passing in a callback or state.
      * @param actionType The type of action to perform.
      * @param parameters The parameters of the action.
