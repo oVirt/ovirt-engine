@@ -10,59 +10,13 @@
        <Bug code="NP"/>
      </Match>
 
-    <Match>
-       <Class name="org.ovirt.engine.ui.uicommonweb.models.EntityModel" />
+     <!--
+      Ignore all the unconfirmed casts in this module.
+      Unfortunately, these warnings are currently inherit to the design,
+      and handling them on an individual basis just adds noise to the
+      process.
+      -->
+     <Match>
        <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.ListModel" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel$2" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel$2" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.vms.EditVmInterfaceModel" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.CommonModel" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.hosts.AsyncIterator$1" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModelErrorEventListener" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-      <Class name="org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel" />
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
+     </Match>
 </FindBugsFilter>
