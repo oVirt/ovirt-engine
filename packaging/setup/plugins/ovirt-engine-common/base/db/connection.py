@@ -105,6 +105,7 @@ class Plugin(plugin.PluginBase):
     )
     def _setup(self):
         config = configfile.ConfigFile([
+            osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
             osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
         ])
         if config.get('ENGINE_DB_PASSWORD') is not None:
