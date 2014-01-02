@@ -151,7 +151,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("ForceLabel".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                if ("ForceLabel".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
                     ConfirmationModel entity = (ConfirmationModel) sender;
                     force.setLabel(entity.getForceLabel());
                 }
