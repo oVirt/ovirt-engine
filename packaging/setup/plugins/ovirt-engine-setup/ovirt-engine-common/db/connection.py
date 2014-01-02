@@ -92,9 +92,9 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_INIT,
+        stage=plugin.Stages.STAGE_SETUP,
     )
-    def _init(self):
+    def _setup(self):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             self.DBTransaction(self)
         )
