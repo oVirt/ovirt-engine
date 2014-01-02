@@ -61,7 +61,7 @@ get_distro_packages() {
 
 	case "${distro}" in
 		redhat|centos|fedora|SuSE)
-			rpm -qa --last
+			LC_ALL=C rpm -qa --last
 			;;
 		debian|ubuntu)
 			dpkg -l | awk '/^ii/ {print $2, $3}'
