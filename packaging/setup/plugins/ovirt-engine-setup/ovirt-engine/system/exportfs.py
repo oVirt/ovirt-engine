@@ -148,11 +148,13 @@ class Plugin(plugin.PluginBase):
         )
         if self._conf == osetupcons.FileLocations.OVIRT_NFS_EXPORT_FILE:
             if exports_index is not None:
-                # This probably means that in a previous setup we added the path
-                # to /etc/exports instead of creating our own file in
-                # /etc/exports.d as we do now. Delete the line from /etc/exports.
-                # The transaction below does not pass modifiedList nor do we call
-                # addChanges - we do not revert this fix on cleanup.
+                # This probably means that in a previous setup we added
+                # the path to /etc/exports instead of creating our
+                # own file in /etc/exports.d as we do now. Delete the
+                # line from /etc/exports.
+                # The transaction below does not pass modifiedList
+                # nor do we call addChanges - we do not revert this
+                # fix on cleanup.
                 del exports_content[exports_index]
                 self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                     filetransaction.FileTransaction(
@@ -166,7 +168,7 @@ class Plugin(plugin.PluginBase):
                 new_line,
             ]
         else:
-            changes = { 'added': new_line }
+            changes = {'added': new_line}
             if exports_index is not None:
                 old_line = exports_content.pop(exports_index)
                 changes['removed'] = old_line
