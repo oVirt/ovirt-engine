@@ -39,4 +39,32 @@ public class RemoveNetworkParameters extends VdcActionParametersBase {
     public void setRemoveFromNetworkProvider(boolean removeFromNetworkProvider) {
         this.removeFromNetworkProvider = removeFromNetworkProvider;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + (isRemoveFromNetworkProvider() ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RemoveNetworkParameters other = (RemoveNetworkParameters) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        if (isRemoveFromNetworkProvider() != other.isRemoveFromNetworkProvider())
+            return false;
+        return true;
+    }
 }
