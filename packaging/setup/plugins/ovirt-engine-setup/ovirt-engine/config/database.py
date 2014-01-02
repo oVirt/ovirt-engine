@@ -45,9 +45,6 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        after=(
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
-        ),
     )
     def _misc(self):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
