@@ -199,6 +199,7 @@ Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 Requires:	postgresql-jdbc
 Requires:	quartz
+Requires:	snmp4j
 Requires:	spring-ldap
 Requires:	springframework-aop
 Requires:	springframework-beans
@@ -648,6 +649,7 @@ org/apache/xmlrpc/main/xmlrpc-client.jar
 org/apache/xmlrpc/main/xmlrpc-common.jar
 org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 org/quartz/main/quartz.jar
+org/snmp4j/main/snmp4j.jar
 org/springframework/main/spring-aop.jar springframework/spring-aop.jar
 org/springframework/main/spring-asm.jar objectweb-asm/asm.jar
 org/springframework/main/spring-beans.jar springframework/spring-beans.jar

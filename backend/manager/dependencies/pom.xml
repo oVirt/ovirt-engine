@@ -225,6 +225,12 @@
       <version>${aopalliance.version}</version>
     </dependency>
 
+    <dependency>
+        <groupId>org.snmp4j</groupId>
+        <artifactId>snmp4j</artifactId>
+        <version>${snmp4j.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -439,6 +445,12 @@
                 <groupId>aopalliance</groupId>
                 <artifactId>aopalliance</artifactId>
                 <moduleName>org.aopalliance</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.snmp4j</groupId>
+                <artifactId>snmp4j</artifactId>
+                <moduleName>org.snmp4j</moduleName>
               </module>
 
             </modules>
