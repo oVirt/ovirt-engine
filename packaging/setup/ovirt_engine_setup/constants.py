@@ -530,7 +530,6 @@ class Stages(object):
     DB_CONNECTION_AVAILABLE = 'osetup.db.connection.available'
     DB_SCHEMA = 'osetup.db.schema'
     NET_FIREWALL_MANAGER_AVAILABLE = 'osetup.net.firewallmanager.available'
-    CONFIG_DB_CREDENTIALS = 'osetup.config.database.credentials'
     CONFIG_PROTOCOLS_CUSTOMIZATION = 'osetup.config.protocols.customization'
     CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION = \
         'setup.config.websocket-proxy.customization'

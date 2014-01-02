@@ -206,9 +206,6 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.DB_SCHEMA,
-        after=(
-            osetupcons.Stages.CONFIG_DB_CREDENTIALS,
-        ),
         condition=lambda self: self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ],
