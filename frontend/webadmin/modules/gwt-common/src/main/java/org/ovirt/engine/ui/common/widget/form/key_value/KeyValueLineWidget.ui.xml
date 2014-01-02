@@ -13,7 +13,7 @@
 	 	}
 	</ui:style>
 
-	<g:HorizontalPanel height="30px" width="400px">
+	<g:HorizontalPanel ui:field="panel" height="30px" width="400px">
 		<e:ListModelListBoxEditor ui:field="keyField" addStyleNames="{style.fieldWidth}"/>
 		<ge:StringEntityModelTextBoxEditor ui:field="valueField" addStyleNames="{style.fieldWidth}"/>
 		<e:ListModelListBoxEditor ui:field="valuesField" addStyleNames="{style.fieldWidth}"/>

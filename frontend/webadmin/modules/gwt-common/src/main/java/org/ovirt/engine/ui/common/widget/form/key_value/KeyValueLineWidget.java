@@ -19,6 +19,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class KeyValueLineWidget extends Composite implements HasValueChangeHandlers<KeyValueLineModel>, HasEditorDriver<KeyValueLineModel>, HasEnabled {
@@ -36,6 +37,10 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     WidgetStyle style;
 
     @UiField
+    @Ignore
+    HorizontalPanel panel;
+
+    @UiField
     @Path(value = "keys.selectedItem")
     ListModelListBoxEditor<String> keyField;
 
@@ -49,7 +54,10 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
 
     private final Driver driver = GWT.create(Driver.class);
 
-    KeyValueLineWidget() {
+    private String rowWidth;
+
+    KeyValueLineWidget(String rowWidth) {
+        this.rowWidth = rowWidth;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
         addStyles();
@@ -59,6 +67,9 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
         keyField.addContentWidgetStyleName(style.fieldWidth());
         valueField.addContentWidgetStyleName(style.fieldWidth());
         valuesField.addContentWidgetStyleName(style.fieldWidth());
+        if (rowWidth != null) {
+            panel.setWidth(rowWidth);
+        }
         hideLabels();
     }
 

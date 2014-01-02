@@ -3,29 +3,35 @@ package org.ovirt.engine.ui.common.widget.form.key_value;
 import java.util.LinkedList;
 
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.BaseKeyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class KeyValueWidget extends AddRemoveRowWidget<KeyValueModel, KeyValueLineModel, KeyValueLineWidget> {
+public class KeyValueWidget<T extends BaseKeyModel> extends AddRemoveRowWidget<T, KeyValueLineModel, KeyValueLineWidget> {
 
     interface WidgetUiBinder extends UiBinder<Widget, KeyValueWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private KeyValueModel model;
+    private T model;
     private final LinkedList<KeyValueLineWidget> widgets = new LinkedList<KeyValueLineWidget>();
     private boolean enabled = true;
+    String rowWidth = null;
 
     KeyValueWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
+    public KeyValueWidget(String rowWidth) {
+        this();
+        this.rowWidth = rowWidth;
+    }
+
     @Override
-    protected void init(KeyValueModel model) {
+    protected void init(T model) {
         this.model = model;
         widgets.clear();
         super.init(model);
@@ -35,7 +41,7 @@ public class KeyValueWidget extends AddRemoveRowWidget<KeyValueModel, KeyValueLi
     }
 
     @Override
-    public KeyValueModel flush() {
+    public T flush() {
         super.flush();
         for (KeyValueLineWidget lineWidget : widgets) {
             lineWidget.flush();
@@ -52,7 +58,7 @@ public class KeyValueWidget extends AddRemoveRowWidget<KeyValueModel, KeyValueLi
 
     @Override
     protected KeyValueLineWidget createWidget(KeyValueLineModel value) {
-        KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget();
+        KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget(rowWidth);
         keyValueLineWidget.edit(value);
         widgets.add(keyValueLineWidget);
         return keyValueLineWidget;

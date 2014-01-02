@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -67,7 +68,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
 
     @UiField
     @Ignore
-    protected KeyValueWidget customPropertiesSheetEditor;
+    protected KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
     @UiField(provided = true)
     PolicyUnitListPanel usedFilterPanel;

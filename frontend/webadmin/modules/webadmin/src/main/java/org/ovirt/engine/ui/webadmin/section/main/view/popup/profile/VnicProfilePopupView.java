@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -75,7 +76,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
 
     @UiField
     @Ignore
-    public KeyValueWidget customPropertiesSheetEditor;
+    public KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
     @UiField(provided = true)
     @Path(value = "publicUse.entity")
