@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -34,6 +36,7 @@ public class SetupNetworksHelper {
     private List<String> removedNetworks = new ArrayList<String>();
     private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
     private Set<String> removedBonds = new HashSet<String>();
+    private List<VdsNetworkInterface> modifiedLabeledInterfaces = new ArrayList<>();
 
     /** All interface`s names that were processed by the helper. */
     private Set<String> ifaceNames = new HashSet<String>();
@@ -87,10 +90,26 @@ public class SetupNetworksHelper {
         validateBondSlavesCount();
         extractRemovedNetworks();
         extractRemovedBonds();
+        extractModifiedLabeledInterfaces();
         detectSlaveChanges();
         validateMTU();
 
         return translateViolations();
+    }
+
+    private void extractModifiedLabeledInterfaces() {
+        for (VdsNetworkInterface nic : params.getInterfaces()) {
+            VdsNetworkInterface existingNic = getExistingIfaces().get(nic.getName());
+            if (existingNic != null) {
+                Set<String> newLabels = nic.getLabels() == null ? Collections.<String> emptySet() : nic.getLabels();
+                Set<String> existingLabels =
+                        existingNic.getLabels() == null ? Collections.<String> emptySet() : existingNic.getLabels();
+                if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)) {
+                    existingNic.setLabels(newLabels);
+                    modifiedLabeledInterfaces.add(existingNic);
+                }
+            }
+        }
     }
 
     /**
@@ -584,6 +603,10 @@ public class SetupNetworksHelper {
 
     public Set<String> getRemovedBonds() {
         return removedBonds;
+    }
+
+    public List<VdsNetworkInterface> getModifiedLabeledInterfaces() {
+        return modifiedLabeledInterfaces;
     }
 
     public VmInterfaceManager getVmInterfaceManager() {

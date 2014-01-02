@@ -83,6 +83,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     @Override
     protected void executeCommand() {
         if (noChangesDetected()) {
+            if (!getModifiedLabeledInterfaces().isEmpty()) {
+                updateModifiedLabeledInterfaces();
+            }
+
             setSucceeded(true);
             return;
         }
@@ -123,6 +127,17 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         }
     }
 
+    private void updateModifiedLabeledInterfaces() {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<T>() {
+
+            @Override
+            public T runInTransaction() {
+                getDbFacade().getInterfaceDao().massUpdateInterfacesForVds(getModifiedLabeledInterfaces());
+                return null;
+            }
+        });
+    }
+
     private boolean noChangesDetected() {
         return getNetworks().isEmpty() && getRemovedNetworks().isEmpty()
                 && getBonds().isEmpty() && getRemovedBonds().isEmpty();
@@ -146,6 +161,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
     private List<Network> getNetworks() {
         return helper.getNetworks();
+    }
+
+    private List<VdsNetworkInterface> getModifiedLabeledInterfaces() {
+        return helper.getModifiedLabeledInterfaces();
     }
 
     /**
