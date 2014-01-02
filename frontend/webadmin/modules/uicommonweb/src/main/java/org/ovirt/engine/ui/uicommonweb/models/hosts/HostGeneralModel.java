@@ -874,6 +874,7 @@ public class HostGeneralModel extends EntityModel
         }
 
         InstallModel model = new InstallModel();
+        model.setVds(getEntity());
         setWindow(model);
         model.setTitle(constants.installHostTitle());
         model.setHashName("install_host"); //$NON-NLS-1$

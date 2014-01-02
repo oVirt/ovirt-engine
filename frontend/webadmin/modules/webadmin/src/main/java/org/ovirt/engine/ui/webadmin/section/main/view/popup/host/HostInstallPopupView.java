@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -155,15 +156,17 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     public void edit(final InstallModel model) {
         driver.edit(model);
 
-        rbPublicKey.setValue(true);
-        model.setAuthenticationMethod(AuthenticationMethod.PublicKey);
-        displayPassPkWindow(false);
+        boolean installedFailed = model.getVds().getStatus() == VDSStatus.InstallFailed;
+        model.setAuthenticationMethod(installedFailed ? AuthenticationMethod.Password: AuthenticationMethod.PublicKey);
+        displayPasswordField(installedFailed);
+        rbPassword.setValue(installedFailed);
+        rbPublicKey.setValue(!installedFailed);
 
         rbPassword.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 model.setAuthenticationMethod(AuthenticationMethod.Password);
-                displayPassPkWindow(true);
+                displayPasswordField(true);
             }
         });
 
@@ -171,7 +174,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 model.setAuthenticationMethod(AuthenticationMethod.PublicKey);
-                displayPassPkWindow(false);
+                displayPasswordField(false);
             }
         });
         // TODO: remove setIsChangable when configured ssh username is enabled
@@ -180,7 +183,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         networkProviderWidget.edit(model.getNetworkProviderModel());
     }
 
-    private void displayPassPkWindow(boolean isPasswordVisible) {
+    private void displayPasswordField(boolean isPasswordVisible) {
         if (isPasswordVisible) {
             passwordEditor.getElement().getStyle().setVisibility(Visibility.VISIBLE);
             publicKeyEditor.getElement().getStyle().setVisibility(Visibility.HIDDEN);

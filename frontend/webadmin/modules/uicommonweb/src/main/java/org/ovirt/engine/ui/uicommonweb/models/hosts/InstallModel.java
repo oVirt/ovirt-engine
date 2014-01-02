@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -18,6 +19,7 @@ public class InstallModel extends Model {
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private EntityModel privateUserPassword;
+    private VDS vds;
 
     public EntityModel getUserPassword() {
         return privateUserPassword;
@@ -108,6 +110,15 @@ public class InstallModel extends Model {
     public EntityModel getInterfaceMappings() {
         return getNetworkProviderModel().getInterfaceMappings();
     }
+
+    public void setVds(VDS value) {
+        vds = value;
+    }
+
+    public VDS getVds() {
+        return vds;
+    }
+
 
     public InstallModel() {
         setUserPassword(new EntityModel());
