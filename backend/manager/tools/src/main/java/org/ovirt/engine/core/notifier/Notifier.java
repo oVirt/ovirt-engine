@@ -10,6 +10,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.notifier.transport.smtp.Smtp;
+import org.ovirt.engine.core.notifier.transport.snmp.Snmp;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**
@@ -57,6 +58,7 @@ public class Notifier {
             notificationService = new NotificationService(prop);
             engineMonitorService = new EngineMonitorService(prop);
             notificationService.registerTransport(new Smtp(prop));
+            notificationService.registerTransport(new Snmp(prop));
             if (!notificationService.hasTransports()) {
                 throw new RuntimeException("No transport is enabled, nothing to do");
             }
