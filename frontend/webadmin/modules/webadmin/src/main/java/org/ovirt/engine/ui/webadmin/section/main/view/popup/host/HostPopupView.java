@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.List;
 
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -634,17 +636,17 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         fetchSshFingerprint.hideLabel();
         object.setAuthenticationMethod(AuthenticationMethod.Password);
 
-        rbPassword.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+        rbPassword.addFocusHandler(new FocusHandler() {
             @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
+            public void onFocus(FocusEvent event) {
                 object.setAuthenticationMethod(AuthenticationMethod.Password);
                 displayPassPkWindow(true);
             }
         });
 
-        rbPublicKey.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+        rbPublicKey.addFocusHandler(new FocusHandler() {
             @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
+            public void onFocus(FocusEvent event) {
                 object.setAuthenticationMethod(AuthenticationMethod.PublicKey);
                 displayPassPkWindow(false);
             }
