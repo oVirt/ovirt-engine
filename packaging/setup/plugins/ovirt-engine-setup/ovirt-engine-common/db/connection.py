@@ -68,7 +68,10 @@ class Plugin(plugin.PluginBase):
 
     def _checkDbEncoding(self, environment):
 
-        statement = database.Statement(environment=environment)
+        statement = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            environment=environment,
+        )
         encoding = statement.execute(
             statement="""
                 show server_encoding
@@ -110,7 +113,10 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _customization(self):
-        dbovirtutils = database.OvirtUtils(plugin=self)
+        dbovirtutils = database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+        )
 
         interactive = None in (
             self.environment[osetupcons.DBEnv.HOST],
@@ -296,6 +302,7 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.DBEnv.STATEMENT
         ] = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
 

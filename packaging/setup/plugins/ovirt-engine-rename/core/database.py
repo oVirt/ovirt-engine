@@ -92,6 +92,7 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.DBEnv.STATEMENT
         ] = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
 
@@ -99,9 +100,15 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_VALIDATION,
     )
     def _validation(self):
-        dbovirtutils = database.OvirtUtils(plugin=self)
+        dbovirtutils = database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+        )
         dbovirtutils.tryDatabaseConnect()
-        dbstatement = database.Statement(environment=self.environment)
+        dbstatement = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
         my_domains = []
         rows = dbstatement.execute(
             statement="""

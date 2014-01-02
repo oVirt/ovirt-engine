@@ -54,7 +54,10 @@ class Plugin(plugin.PluginBase):
         def abort(self):
             self._parent.logger.info(_('Rolling back database schema'))
             try:
-                dbovirtutils = database.OvirtUtils(plugin=self._parent)
+                dbovirtutils = database.OvirtUtils(
+                    plugin=self._parent,
+                    dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+                )
                 self._parent.logger.info(
                     _('Clearing Engine database {database}').format(
                         database=self._parent.environment[
@@ -62,7 +65,7 @@ class Plugin(plugin.PluginBase):
                         ],
                     )
                 )
-                dbovirtutils.clearOvirtEngineDatabase()
+                dbovirtutils.clearDatabase()
                 if self._backup is not None and os.path.exists(self._backup):
                     self._parent.logger.info(
                         _('Restoring Engine database {database}').format(
@@ -90,7 +93,10 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     def _checkDatabaseOwnership(self):
-        statement = database.Statement(environment=self.environment)
+        statement = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
         result = statement.execute(
             statement="""
                 select
@@ -154,7 +160,10 @@ class Plugin(plugin.PluginBase):
 
     def _checkSupportedVersionsPresent(self):
         # TODO: figure out a better way to do this for the future
-        statement = database.Statement(environment=self.environment)
+        statement = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
         dcVersions = statement.execute(
             statement="""
                 SELECT compatibility_version FROM storage_pool;
@@ -272,7 +281,10 @@ class Plugin(plugin.PluginBase):
     )
     def _miscUpgrade(self):
         self._checkSupportedVersionsPresent()
-        dbovirtutils = database.OvirtUtils(plugin=self)
+        dbovirtutils = database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+        )
         backupFile = dbovirtutils.backup(
             dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
             prefix=osetupcons.Const.ENGINE_DB_BACKUP_PREFIX,

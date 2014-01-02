@@ -239,7 +239,10 @@ class Plugin(plugin.PluginBase):
             )
 
     def _checkRunningTasks(self):
-        dbstatement = database.Statement(self.environment)
+        dbstatement = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
         return (
             self._getRunningTasks(dbstatement),
             self._getCompensations(dbstatement),
@@ -350,7 +353,10 @@ class Plugin(plugin.PluginBase):
         runningTasks, compensations = self._checkRunningTasks()
         if runningTasks or compensations:
             self._askUserToStopTasks(runningTasks, compensations)
-            dbstatement = database.Statement(self.environment)
+            dbstatement = database.Statement(
+                dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+                environment=self.environment,
+            )
             try:
                 self._waitForTasksToClear(dbstatement)
             except KeyboardInterrupt:

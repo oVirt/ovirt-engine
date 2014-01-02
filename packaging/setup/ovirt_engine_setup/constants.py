@@ -613,6 +613,20 @@ class Const(object):
     ISO_DOMAIN_NFS_DEFAULT_ACL = '0.0.0.0/0.0.0.0(rw)'
     ENGINE_DB_BACKUP_PREFIX = 'engine'
 
+    @classproperty
+    def ENGINE_DB_ENV_KEYS(self):
+        return {
+            'host': DBEnv.HOST,
+            'port': DBEnv.PORT,
+            'secured': DBEnv.SECURED,
+            'hostValidation': DBEnv.SECURED_HOST_VALIDATION,
+            'user': DBEnv.USER,
+            'password': DBEnv.PASSWORD,
+            'database': DBEnv.DATABASE,
+            'connection': DBEnv.CONNECTION,
+            'pgpassfile': DBEnv.PGPASS_FILE,
+        }
+
 
 @util.export
 @util.codegen

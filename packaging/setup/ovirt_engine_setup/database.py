@@ -16,6 +16,7 @@
 #
 
 
+import atexit
 import os
 import base64
 import tempfile
@@ -35,6 +36,9 @@ from otopi import base
 from otopi import util
 
 
+from ovirt_engine import util as outil
+
+
 from ovirt_engine_setup import constants as osetupcons
 
 
@@ -45,9 +49,14 @@ class Statement(base.Base):
     def environment(self):
         return self._environment
 
-    def __init__(self, environment):
+    def __init__(
+        self,
+        dbenvkeys,
+        environment,
+    ):
         super(Statement, self).__init__()
         self._environment = environment
+        self._dbenvkeys = dbenvkeys
 
     def execute(
         self,
@@ -89,21 +98,21 @@ class Statement(base.Base):
 
         ret = []
         if host is None:
-            host = self.environment[osetupcons.DBEnv.HOST]
+            host = self.environment[self._dbenvkeys['host']]
         if port is None:
-            port = self.environment[osetupcons.DBEnv.PORT]
+            port = self.environment[self._dbenvkeys['port']]
         if secured is None:
-            secured = self.environment[osetupcons.DBEnv.SECURED]
+            secured = self.environment[self._dbenvkeys['secured']]
         if securedHostValidation is None:
             securedHostValidation = self.environment[
-                osetupcons.DBEnv.SECURED_HOST_VALIDATION
+                self._dbenvkeys['hostValidation']
             ]
         if user is None:
-            user = self.environment[osetupcons.DBEnv.USER]
+            user = self.environment[self._dbenvkeys['user']]
         if password is None:
-            password = self.environment[osetupcons.DBEnv.PASSWORD]
+            password = self.environment[self._dbenvkeys['password']]
         if database is None:
-            database = self.environment[osetupcons.DBEnv.DATABASE]
+            database = self.environment[self._dbenvkeys['database']]
 
         sslmode = 'allow'
         if secured:
@@ -123,7 +132,7 @@ class Statement(base.Base):
                 args,
             )
             if not ownConnection:
-                connection = self.environment[osetupcons.DBEnv.CONNECTION]
+                connection = self.environment[self._dbenvkeys['connection']]
             else:
                 self.logger.debug('Creating own connection')
 
@@ -266,7 +275,12 @@ class OvirtUtils(base.Base):
     def command(self):
         return self._plugin.command
 
-    def __init__(self, plugin, environment=None):
+    def __init__(
+        self,
+        plugin,
+        dbenvkeys,
+        environment=None,
+    ):
         super(OvirtUtils, self).__init__()
         self._plugin = plugin
         self._environment = (
@@ -274,10 +288,32 @@ class OvirtUtils(base.Base):
             if environment is None
             else environment
         )
+        self._dbenvkeys = dbenvkeys
 
     def detectCommands(self):
         self.command.detect('pg_dump')
         self.command.detect('psql')
+
+    def createPgPass(self):
+        fd, pgpass = tempfile.mkstemp()
+        atexit.register(os.unlink, pgpass)
+        with os.fdopen(fd, 'w') as f:
+            f.write(
+                (
+                    '# DB USER credentials.\n'
+                    '{host}:{port}:{database}:{user}:{password}\n'
+                ).format(
+                    host=self.environment[self._dbenvkeys['host']],
+                    port=self.environment[self._dbenvkeys['port']],
+                    database=self.environment[self._dbenvkeys['database']],
+                    user=self.environment[self._dbenvkeys['user']],
+                    password=outil.escape(
+                        self.environment[self._dbenvkeys['password']],
+                        ':\\',
+                    ),
+                ),
+            )
+        self.environment[self._dbenvkeys['pgpassfile']] = pgpass
 
     def tryDatabaseConnect(self, environment=None):
 
@@ -285,7 +321,10 @@ class OvirtUtils(base.Base):
             environment = self.environment
 
         try:
-            statement = Statement(environment=environment)
+            statement = Statement(
+                environment=environment,
+                dbenvkeys=self._dbenvkeys,
+            )
             statement.execute(
                 statement="""
                     select 1
@@ -313,6 +352,7 @@ class OvirtUtils(base.Base):
     ):
         statement = Statement(
             environment=self.environment,
+            dbenvkeys=self._dbenvkeys,
         )
         ret = statement.execute(
             statement="""
@@ -334,9 +374,10 @@ class OvirtUtils(base.Base):
         )
         return ret[0]['count'] == 0
 
-    def clearOvirtEngineDatabase(self):
+    def clearDatabase(self):
         statement = Statement(
             environment=self.environment,
+            dbenvkeys=self._dbenvkeys,
         )
 
         statement.execute(
@@ -497,17 +538,15 @@ class OvirtUtils(base.Base):
                 '--disable-dollar-quoting',
                 '--disable-triggers',
                 '--format=p',
-                '-U', self.environment[osetupcons.DBEnv.USER],
-                '-h', self.environment[osetupcons.DBEnv.HOST],
-                '-p', str(self.environment[osetupcons.DBEnv.PORT]),
+                '-U', self.environment[self._dbenvkeys['user']],
+                '-h', self.environment[self._dbenvkeys['host']],
+                '-p', str(self.environment[self._dbenvkeys['port']]),
                 '-f', backupFile,
-                self.environment[osetupcons.DBEnv.DATABASE],
+                self.environment[self._dbenvkeys['database']],
             ),
             envAppend={
                 'PGPASSWORD': '',
-                'PGPASSFILE': self.environment[
-                    osetupcons.DBEnv.PGPASS_FILE
-                ]
+                'PGPASSFILE': self.environment[self._dbenvkeys['pgpassfile']],
             },
         )
 
@@ -521,18 +560,17 @@ class OvirtUtils(base.Base):
             (
                 self.command.get('psql'),
                 '-w',
-                '-h', self.environment[osetupcons.DBEnv.HOST],
-                '-p', str(self.environment[osetupcons.DBEnv.PORT]),
-                '-U', self.environment[osetupcons.DBEnv.USER],
-                '-d', self.environment[osetupcons.DBEnv.DATABASE],
+                '-h', self.environment[self._dbenvkeys['host']],
+                '-p', str(self.environment[self._dbenvkeys['port']]),
+                '-U', self.environment[self._dbenvkeys['user']],
+                '-d', self.environment[self._dbenvkeys['database']],
                 '-f', backupFile,
             ),
             envAppend={
                 'PGPASSWORD': '',
-                'PGPASSFILE': self.environment[
-                    osetupcons.DBEnv.PGPASS_FILE
-                ]
+                'PGPASSFILE': self.environment[self._dbenvkeys['pgpassfile']],
             },
         )
+
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -211,7 +211,10 @@ class Plugin(plugin.PluginBase):
         ].append(filename)
 
     def _waitDatabase(self, environment=None):
-        dbovirtutils = database.OvirtUtils(plugin=self)
+        dbovirtutils = database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+        )
         for i in range(60):
             try:
                 self.logger.debug('Attempting to connect database')
@@ -232,6 +235,7 @@ class Plugin(plugin.PluginBase):
 
     def _setDatabaseResources(self, environment):
         dbstatement = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
             environment=environment,
         )
         hasDatabase = dbstatement.execute(
@@ -269,6 +273,7 @@ class Plugin(plugin.PluginBase):
         if hasDatabase and hasUser:
             dbovirtutils = database.OvirtUtils(
                 plugin=self,
+                dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
                 environment=environment,
             )
             if dbovirtutils.isNewDatabase(
@@ -333,6 +338,7 @@ class Plugin(plugin.PluginBase):
         ]
 
         dbstatement = database.Statement(
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
             environment=environment,
         )
         for statement in statements:

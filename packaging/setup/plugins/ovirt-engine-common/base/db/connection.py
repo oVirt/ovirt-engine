@@ -93,7 +93,10 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _commands(self):
-        dbovirtutils = database.OvirtUtils(plugin=self)
+        dbovirtutils = database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+        )
         dbovirtutils.detectCommands()
 
     @plugin.event(
@@ -132,7 +135,10 @@ class Plugin(plugin.PluginBase):
                     dbenv[osetupcons.DBEnv.PASSWORD]
                 )
 
-                dbovirtutils = database.OvirtUtils(plugin=self)
+                dbovirtutils = database.OvirtUtils(
+                    plugin=self,
+                    dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+                )
                 dbovirtutils.tryDatabaseConnect(dbenv)
                 self.environment.update(dbenv)
                 self.environment[

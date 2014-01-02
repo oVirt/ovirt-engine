@@ -19,8 +19,6 @@
 """DB pgpass plugin."""
 
 
-import os
-import tempfile
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -29,10 +27,8 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_engine import util as outil
-
-
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import database
 
 
 @util.export
@@ -40,47 +36,6 @@ class Plugin(plugin.PluginBase):
     """DB pgpass plugin."""
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-
-    def _createTempPgPass(self):
-        pgpass = None
-        if self.environment[
-            osetupcons.DBEnv.PGPASS_FILE
-        ] is not None:
-            pgpass = self.environment[
-                osetupcons.DBEnv.PGPASS_FILE
-            ]
-        else:
-            fd, pgpass = tempfile.mkstemp(
-                prefix='pgpass',
-                suffix='.tmp',
-            )
-            os.close(fd)
-            os.chmod(pgpass, 0o600)
-        self.logger.debug(
-            'Password==None %s',
-            self.environment[osetupcons.DBEnv.PASSWORD] is None,
-        )
-        if self.environment[osetupcons.DBEnv.PASSWORD] is not None:
-            with open(pgpass, 'w') as f:
-                f.write(
-                    (
-                        '# DB USER credentials.\n'
-                        '{host}:{port}:{database}:{user}:{password}\n'
-                    ).format(
-                        host=self.environment[osetupcons.DBEnv.HOST],
-                        port=self.environment[osetupcons.DBEnv.PORT],
-                        database=self.environment[osetupcons.DBEnv.DATABASE],
-                        user=self.environment[osetupcons.DBEnv.USER],
-                        password=outil.escape(
-                            self.environment[osetupcons.DBEnv.PASSWORD],
-                            ':\\',
-                        ),
-                    ),
-                )
-
-        self.environment[
-            osetupcons.DBEnv.PGPASS_FILE
-        ] = pgpass
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -91,27 +46,29 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
+        condition=lambda self: self.environment[
+            osetupcons.DBEnv.PASSWORD
+        ] is not None
     )
     def _validation(self):
-        self._createTempPgPass()
+        # this required for dbvalidations
+        database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+        ).createPgPass()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
-    )
-    def _misc(self):
-        self._createTempPgPass()
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CLEANUP,
         condition=lambda self: self.environment[
             osetupcons.DBEnv.PGPASS_FILE
-        ] is not None,
+        ] is None
     )
-    def _cleanup(self):
-        f = self.environment[osetupcons.DBEnv.PGPASS_FILE]
-        if os.path.exists(f):
-            os.unlink(f)
+    def _misc(self):
+        database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+        ).createPgPass()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

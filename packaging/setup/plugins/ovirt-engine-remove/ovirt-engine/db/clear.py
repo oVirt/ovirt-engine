@@ -94,7 +94,10 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
 
         try:
-            dbovirtutils = database.OvirtUtils(plugin=self)
+            dbovirtutils = database.OvirtUtils(
+                plugin=self,
+                dbenvkeys=osetupcons.Const.ENGINE_DB_ENV_KEYS,
+            )
             dbovirtutils.tryDatabaseConnect()
             self._bkpfile = dbovirtutils.backup(
                 dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
@@ -105,7 +108,7 @@ class Plugin(plugin.PluginBase):
                     database=self.environment[osetupcons.DBEnv.DATABASE],
                 )
             )
-            dbovirtutils.clearOvirtEngineDatabase()
+            dbovirtutils.clearDatabase()
 
         except RuntimeError as e:
             self.logger.debug('exception', exc_info=True)
