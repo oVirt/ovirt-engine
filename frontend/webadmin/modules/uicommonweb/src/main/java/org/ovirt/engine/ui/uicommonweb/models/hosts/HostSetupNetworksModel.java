@@ -436,7 +436,6 @@ public class HostSetupNetworksModel extends EntityModel {
 
     protected void onNicsChanged() {
         operationFactory = new NetworkOperationFactory(getNetworks(), getNics());
-        queryFreeBonds();
         validate();
         getNetworksChangedEvent().raise(this, EventArgs.EMPTY);
     }
@@ -575,17 +574,17 @@ public class HostSetupNetworksModel extends EntityModel {
                     netToBeforeSyncParams.put(networkName, new NetworkParameters(nic));
                 }
             }
+        }
 
-            // calculate the next available bond name
-            List<String> bondNames = new ArrayList<String>(bondToNic.keySet());
-            Collections.sort(bondNames, new LexoNumericComparator());
-            nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + 0;
-            for (int i=0; i<bondNames.size(); ++i) {
-                if (nextBondName.equals(bondNames.get(i))) {
-                    nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + (i + 1);
-                } else {
-                    break;
-                }
+        // calculate the next available bond name
+        List<String> bondNames = new ArrayList<String>(bondToNic.keySet());
+        Collections.sort(bondNames, new LexoNumericComparator());
+        nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + 0;
+        for (int i=0; i<bondNames.size(); ++i) {
+            if (nextBondName.equals(bondNames.get(i))) {
+                nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + (i + 1);
+            } else {
+                break;
             }
         }
 
@@ -626,7 +625,7 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     private void queryFreeBonds() {
-        // query for all bonds on the host
+        // query for all unused, existing bonds on the host
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -636,6 +635,9 @@ public class HostSetupNetworksModel extends EntityModel {
                 List<VdsNetworkInterface> bonds =
                         (List<VdsNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 allBonds = bonds;
+
+                initNicModels();
+                stopProgress();
             }
         };
 
@@ -655,8 +657,9 @@ public class HostSetupNetworksModel extends EntityModel {
                 Object returnValue2 = returnValue.getReturnValue();
                 List<VdsNetworkInterface> allNics = (List<VdsNetworkInterface>) returnValue2;
                 HostSetupNetworksModel.this.allNics = allNics;
-                initNicModels();
-                stopProgress();
+
+                // chain the free bonds query
+                queryFreeBonds();
             }
         };
 
