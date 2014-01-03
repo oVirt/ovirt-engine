@@ -1640,6 +1640,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         if (model.getUserPassword().getEntity() != null) {
             addVdsParams.setPassword((String) model.getUserPassword().getEntity());
         }
+        addVdsParams.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
         addVdsParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
         model.startProgress(null);
 
