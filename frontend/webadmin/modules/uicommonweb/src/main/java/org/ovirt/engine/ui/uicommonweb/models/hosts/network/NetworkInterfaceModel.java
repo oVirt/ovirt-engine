@@ -15,20 +15,26 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
 
     private boolean bonded = false;
     private BondNetworkInterfaceModel bond;
+    private List<NetworkLabelModel> labels;
 
     public NetworkInterfaceModel(HostSetupNetworksModel setupModel) {
         super(setupModel);
         List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>();
         setItems(networks);
+        labels = new ArrayList<NetworkLabelModel>();
     }
 
     public NetworkInterfaceModel(VdsNetworkInterface nic,
             Collection<LogicalNetworkModel> nicNetworks,
+            Collection<NetworkLabelModel> nicLabels,
             HostSetupNetworksModel setupModel) {
         this(nic, setupModel);
         // attach all networks
         for (LogicalNetworkModel network : nicNetworks) {
             network.attach(this, false);
+        }
+        if (nicLabels != null) {
+            labels.addAll(nicLabels);
         }
     }
 
@@ -49,6 +55,14 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     @Override
     public List<LogicalNetworkModel> getItems() {
         return (List<LogicalNetworkModel>) super.getItems();
+    }
+
+    public List<NetworkLabelModel> getLabels() {
+        return labels;
+    }
+
+    public int getTotalItemSize() {
+        return getItems().size() + labels.size();
     }
 
     @Override

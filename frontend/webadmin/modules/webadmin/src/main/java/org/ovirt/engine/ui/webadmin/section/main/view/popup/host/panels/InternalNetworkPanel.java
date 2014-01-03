@@ -7,7 +7,11 @@ import com.google.gwt.resources.client.ImageResource;
 public class InternalNetworkPanel extends NetworkPanel {
 
     public InternalNetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style) {
-        super(item, style, true);
+        this(item, style, true);
+    }
+
+    public InternalNetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style, boolean draggable) {
+        super(item, style, draggable);
         getElement().addClassName(style.networkPanel());
     }
 

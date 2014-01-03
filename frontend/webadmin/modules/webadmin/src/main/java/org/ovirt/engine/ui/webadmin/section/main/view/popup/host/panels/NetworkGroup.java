@@ -1,12 +1,16 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
@@ -43,8 +47,12 @@ public class NetworkGroup extends FocusPanel {
         this.nicModel = nicModel;
         this.table = new FlexTable();
 
-        List<LogicalNetworkModel> networks = nicModel.getItems();
-        int networkSize = networks.size();
+        List<NetworkLabelModel> labels = nicModel.getLabels();
+        SortedSet<LogicalNetworkModel> networks = new TreeSet<LogicalNetworkModel>(nicModel.getItems());
+        for (NetworkLabelModel label : labels) {
+            networks.removeAll(label.getNetworks());
+        }
+        int networkSize = nicModel.getTotalItemSize();
 
         // style
         table.setCellSpacing(5);
@@ -71,15 +79,11 @@ public class NetworkGroup extends FocusPanel {
         ConnectorPanel connector = new ConnectorPanel(nicModel, style);
         table.setWidget(0, 1, connector);
 
-        // network
-        Collections.sort(networks);
+        // labels and networks
+        Collections.sort(labels);
         if (networkSize > 0) {
             flexCellFormatter.setRowSpan(0, 0, networkSize);
-            FlexTable networkTable = new FlexTable();
-            for (int i = 0; i < networkSize; i++) {
-                networkTable.setWidget(i, 0, new InternalNetworkPanel(networks.get(i), style));
-            }
-            networkTable.setWidth("100%"); //$NON-NLS-1$
+            FlexTable networkTable = createNetworkTable(labels, networks);
             table.setWidget(0, 2, networkTable);
         } else {
             SimplePanel emptyPanel = new SimplePanel();
@@ -127,6 +131,24 @@ public class NetworkGroup extends FocusPanel {
             }
         }, DropEvent.getType());
         setWidget(table);
+    }
+
+    private FlexTable createNetworkTable(Iterable<NetworkLabelModel> labels, Iterable<LogicalNetworkModel> networks) {
+        FlexTable networkTable = new FlexTable();
+
+        int i = 0;
+        Iterator<NetworkLabelModel> labelIterator = labels.iterator();
+        Iterator<LogicalNetworkModel> networkIterator = networks.iterator();
+        while (labelIterator.hasNext()) {
+            networkTable.setWidget(i++, 0, new NetworkLabelPanel(labelIterator.next(), style));
+        }
+        while (networkIterator.hasNext()) {
+            networkTable.setWidget(i++, 0, new InternalNetworkPanel(networkIterator.next(), style));
+        }
+
+        networkTable.setWidth("100%"); //$NON-NLS-1$
+
+        return networkTable;
     }
 
     private void doDrag(DragDropEventBase<?> event, boolean isDrop) {

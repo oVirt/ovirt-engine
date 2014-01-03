@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -36,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
@@ -117,6 +120,8 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private Map<String, LogicalNetworkModel> networkMap;
 
+    private Map<String, NetworkLabelModel> labelMap;
+
     private final List<String> networksToSync = new ArrayList<String>();
 
     // The purpose of this map is to keep the network parameters while moving the network from one nic to another
@@ -136,6 +141,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private final UICommand okCommand;
     public static final String NIC = "nic"; //$NON-NLS-1$
     public static final String NETWORK = "network"; //$NON-NLS-1$
+    public static final String LABEL = "label"; //$NON-NLS-1$
 
     public HostSetupNetworksModel(SearchableListModel listModel) {
         this.sourceListModel = listModel;
@@ -482,8 +488,17 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private void initNetworkModels() {
         Map<String, LogicalNetworkModel> networkModels = new HashMap<String, LogicalNetworkModel>();
+        labelMap = new HashMap<String, NetworkLabelModel>();
         for (Network network : allNetworks) {
-            networkModels.put(network.getName(), new LogicalNetworkModel(network, this));
+            LogicalNetworkModel networkModel = new LogicalNetworkModel(network, this);
+            networkModels.put(network.getName(), networkModel);
+
+            NetworkLabelModel labelModel = labelMap.get(network.getLabel());
+            if (labelModel == null) {
+                labelModel = new NetworkLabelModel(network.getLabel(), this);
+                labelMap.put(network.getLabel(), labelModel);
+            }
+            labelModel.getNetworks().add(networkModel);
         }
         setNetworks(networkModels);
     }
@@ -493,7 +508,8 @@ public class HostSetupNetworksModel extends EntityModel {
         Map<String, VdsNetworkInterface> nicMap = new HashMap<String, VdsNetworkInterface>();
         List<VdsNetworkInterface> physicalNics = new ArrayList<VdsNetworkInterface>();
         Map<String, List<VdsNetworkInterface>> bondToNic = new HashMap<String, List<VdsNetworkInterface>>();
-        Map<String, List<LogicalNetworkModel>> nicToNetwork = new HashMap<String, List<LogicalNetworkModel>>();
+        Map<String, Set<LogicalNetworkModel>> nicToNetwork = new HashMap<String, Set<LogicalNetworkModel>>();
+        Map<String, List<NetworkLabelModel>> nicToLabels = new HashMap<String, List<NetworkLabelModel>>();
 
         // map all nics
         for (VdsNetworkInterface nic : allNics) {
@@ -535,7 +551,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
             // initialize this nic's network list if it hadn't been initialized
             if (!nicToNetwork.containsKey(ifName)) {
-                nicToNetwork.put(ifName, new ArrayList<LogicalNetworkModel>());
+                nicToNetwork.put(ifName, new HashSet<LogicalNetworkModel>());
             }
 
             // does this nic have a network?
@@ -563,12 +579,35 @@ public class HostSetupNetworksModel extends EntityModel {
                 // set iface bridge to network
                 NetworkInterfaceModel existingEridge = networkModel.getVlanNic();
                 assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
-                networkModel.setBridge(new NetworkInterfaceModel(nic, nicNetworks, this));
+                networkModel.setBridge(new NetworkInterfaceModel(nic, nicNetworks, null, this));
 
                 nicToNetwork.get(ifName).add(networkModel);
 
                 if (!networkModel.isInSync() && networkModel.isManaged()) {
                     netToBeforeSyncParams.put(networkName, new NetworkParameters(nic));
+                }
+            }
+
+            // does this nic have any labels?
+            Set<String> labels = nic.getLabels();
+            if (labels != null) {
+                for (String label : labels) {
+                    NetworkLabelModel labelModel = labelMap.get(label);
+                    if (labelModel != null) {
+                        // attach label networks to nic
+                        for (LogicalNetworkModel networkModel : labelModel.getNetworks()) {
+                            nicToNetwork.get(ifName).add(networkModel);
+                            networkModel.attachViaLabel();
+                        }
+
+                        // attach label itself to nic
+                        List<NetworkLabelModel> nicLabels = nicToLabels.get(ifName);
+                        if (nicLabels == null) {
+                            nicLabels = new ArrayList<NetworkLabelModel>();
+                            nicToLabels.put(ifName, nicLabels);
+                        }
+                        nicLabels.add(labelModel);
+                    }
                 }
             }
         }
@@ -592,7 +631,8 @@ public class HostSetupNetworksModel extends EntityModel {
             if (nic.getBondName() != null) {
                 continue;
             }
-            List<LogicalNetworkModel> nicNetworks = nicToNetwork.get(nicName);
+            Collection<LogicalNetworkModel> nicNetworks = nicToNetwork.get(nicName);
+            List<NetworkLabelModel> nicLabels = nicToLabels.get(nicName);
             List<VdsNetworkInterface> bondedNics = bondToNic.get(nicName);
             NetworkInterfaceModel nicModel;
             if (bondedNics != null) {
@@ -602,9 +642,9 @@ public class HostSetupNetworksModel extends EntityModel {
                     bondedModel.setBonded(true);
                     bondedModels.add(bondedModel);
                 }
-                nicModel = new BondNetworkInterfaceModel(nic, nicNetworks, bondedModels, this);
+                nicModel = new BondNetworkInterfaceModel(nic, nicNetworks, nicLabels, bondedModels, this);
             } else {
-                nicModel = new NetworkInterfaceModel(nic, nicNetworks, this);
+                nicModel = new NetworkInterfaceModel(nic, nicNetworks, nicLabels, this);
             }
 
             nicModels.put(nicName, nicModel);

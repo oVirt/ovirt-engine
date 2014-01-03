@@ -133,7 +133,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
     protected void onMouseOver() {
         super.onMouseOver();
         LogicalNetworkModel network = (LogicalNetworkModel) item;
-        if (network != null && network.getAttachedToNic() != null) {
+        if (network != null && network.getAttachedToNic() != null && !network.isAttachedViaLabel()) {
             actionButton.setVisible(true);
         }
     }

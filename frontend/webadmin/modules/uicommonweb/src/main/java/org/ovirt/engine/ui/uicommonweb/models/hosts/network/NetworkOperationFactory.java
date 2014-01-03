@@ -41,12 +41,17 @@ public class NetworkOperationFactory {
      * @return
      */
     public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2, boolean isDrag) {
-        // first of all, if the network is external then there's no valid operation for it
+        // no valid operation for external networks or networks attached via label
         if (op1 instanceof LogicalNetworkModel) {
             LogicalNetworkModel network = (LogicalNetworkModel) op1;
-            if (network.getEntity().isExternal()) {
+            if (network.getEntity().isExternal() || network.isAttachedViaLabel()) {
                 return NetworkOperation.NULL_OPERATION;
             }
+        }
+
+        // no valid operation for network labels
+        if (op1 instanceof NetworkLabelModel) {
+            return NetworkOperation.NULL_OPERATION;
         }
 
         // unary operation dragging op1 to nowhere

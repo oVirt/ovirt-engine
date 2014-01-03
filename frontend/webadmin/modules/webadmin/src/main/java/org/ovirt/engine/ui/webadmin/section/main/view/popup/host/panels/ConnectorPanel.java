@@ -14,7 +14,7 @@ public class ConnectorPanel extends FlexTable {
     private final ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
     public ConnectorPanel(NetworkInterfaceModel nicModel, NetworkPanelsStyle style) {
         super();
-        int networkSize = nicModel.getItems().size();
+        int networkSize = nicModel.getTotalItemSize();
         if (networkSize == 0) {
             return;
         }

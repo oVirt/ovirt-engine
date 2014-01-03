@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -13,9 +14,10 @@ public class BondNetworkInterfaceModel extends NetworkInterfaceModel {
     private final List<NetworkInterfaceModel> bonded;
 
     public BondNetworkInterfaceModel(VdsNetworkInterface bondNic,
-            List<LogicalNetworkModel> nicNetworks,
+            Collection<LogicalNetworkModel> nicNetworks,
+            Collection<NetworkLabelModel> nicLabels,
             List<NetworkInterfaceModel> bonded, HostSetupNetworksModel setupModel) {
-        super(bondNic, nicNetworks, setupModel);
+        super(bondNic, nicNetworks, nicLabels, setupModel);
         this.bonded = bonded;
         for (NetworkInterfaceModel bondedNic : bonded) {
             bondedNic.setBond(this);

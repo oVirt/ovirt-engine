@@ -19,6 +19,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     private boolean selected;
     private boolean management;
+    private boolean attachedViaLabel;
     private NetworkInterfaceModel attachedToNic;
     private NetworkInterfaceModel vlanNic;
 
@@ -202,6 +203,14 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     public boolean isAttached() {
         return attachedToNic != null;
+    }
+
+    public boolean isAttachedViaLabel() {
+        return attachedViaLabel;
+    }
+
+    public void attachViaLabel() {
+        attachedViaLabel = true;
     }
 
     public boolean isManagement() {
