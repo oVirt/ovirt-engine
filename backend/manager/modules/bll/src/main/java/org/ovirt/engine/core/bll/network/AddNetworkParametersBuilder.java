@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -33,6 +35,9 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
         for (VdsNetworkInterface nic : nics) {
             SetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(nic.getVdsId());
             VdsNetworkInterface nicToConfigure = getNicToConfigure(setupNetworkParams.getInterfaces(), nic.getId());
+            if (nicToConfigure == null) {
+                throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
+            }
 
             if (vlanNetwork) {
                 VdsNetworkInterface vlan = createVlanDevice(nic, network);

@@ -426,6 +426,10 @@ public enum VdcBllErrors {
     PROVIDER_FAILURE(5050),
     PROVIDER_IMPORT_CERTIFICATE_CHAIN_ERROR(5051),
     PROVIDER_SSL_FAILURE(5052),
+
+    // Network Labels
+    LABELED_NETWORK_INTERFACE_NOT_FOUND(5200),
+
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session

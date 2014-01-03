@@ -2900,4 +2900,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot perform ${action}. Another power management action is already in progress.")
     String POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS();
+
+    @DefaultStringValue("A labeled network interface could not be found.")
+    String LABELED_NETWORK_INTERFACE_NOT_FOUND();
 }
