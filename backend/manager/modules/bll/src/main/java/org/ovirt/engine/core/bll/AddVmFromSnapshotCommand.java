@@ -271,6 +271,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 getParameters().isSoundDeviceEnabled(),
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
+                isBalloonEnabled(),
                 false);
     }
 

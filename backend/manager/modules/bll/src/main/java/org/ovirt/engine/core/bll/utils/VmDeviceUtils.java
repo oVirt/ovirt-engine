@@ -269,6 +269,7 @@ public class VmDeviceUtils {
                                      boolean soundDeviceEnabled,
                                      boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
+                                     boolean isBalloonEnabled,
                                      boolean copySnapshotDevices) {
         Guid id;
         String isoPath=vmBase.getIsoPath();
@@ -297,7 +298,7 @@ public class VmDeviceUtils {
                 // updating USB slots
                 updateUSBSlots(null, vmBase);
                 // add mem balloon if defined
-                updateMemoryBalloon(null, vmBase, vm.isBalloonEnabled());
+                updateMemoryBalloon(null, vmBase, isBalloonEnabled);
             }
 
             switch(device.getType()) {
@@ -439,6 +440,7 @@ public class VmDeviceUtils {
                                      boolean soundDeviceEnabled,
                                      boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
+                                     boolean isBalloonEnabled,
                                      boolean copySnapshotDevices) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
@@ -450,7 +452,7 @@ public class VmDeviceUtils {
 
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, srcDeviceIdToTargetDeviceIdMapping,
-                soundDeviceEnabled, isConsoleEnabled, isVirtioScsiEnabled, copySnapshotDevices);
+                soundDeviceEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, copySnapshotDevices);
     }
 
     private static void addVideoDevice(VmBase vm) {

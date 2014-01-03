@@ -302,7 +302,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                                 getVmDisks(),
                                 isVirtioScsiEnabled(),
                                 hasWatchdog(),
-                                getParameters().isBalloonEnabled(),
+                                isBalloonEnabled(),
                                 getParameters().isSoundDeviceEnabled(),
                                 getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
@@ -706,7 +706,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 getParameters().isSoundDeviceEnabled(),
                 getParameters().isConsoleEnabled(),
-                isVirtioScsiEnabled(), false);
+                isVirtioScsiEnabled(),
+                isBalloonEnabled(),
+                false);
     }
 
     protected static boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
@@ -1083,6 +1085,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
         return virtioScsiEnabled != null ? virtioScsiEnabled :
                 FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version());
+    }
+
+    protected boolean isBalloonEnabled() {
+        return getParameters().isBalloonEnabled();
     }
 
     protected boolean hasWatchdog() {
