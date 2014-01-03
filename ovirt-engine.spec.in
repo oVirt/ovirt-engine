@@ -887,7 +887,6 @@ fi
 
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
 %{_bindir}/engine-upgrade-check
-%{engine_data}/conf/nfs.sysconfig.in
 %{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/firewalld/ovirt-engine/
