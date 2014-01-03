@@ -27,6 +27,11 @@ public class Notifier {
     private static ScheduledExecutorService monitorScheduler = Executors.newSingleThreadScheduledExecutor();
 
     /**
+     * Command line argument, that tells Notifier to validate properties only (it exits after validation)
+     */
+    private static final String ARG_VALIDATE = "validate";
+
+    /**
      * Initializes logging configuration
      */
     private static void initLogging() {
@@ -44,10 +49,27 @@ public class Notifier {
 
     /**
      * @param args
-     *            [0] configuration file absolute path
+     *            command line arguments, if {@code args[0]} contains {@code validate}, then only validation is
+     *            executed and after that process ends. Otherwise process will continue to execute in standard way
      */
     public static void main(String[] args) {
+        NotificationProperties prop = null;
         initLogging();
+
+        try {
+            prop = NotificationProperties.getInstance();
+            prop.validate();
+        } catch (Exception ex) {
+            log.error("Failed to parse configuration.", ex);
+            // print error also to stderr to be seen in console during service startup
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+
+        if (args != null && args.length > 0 && ARG_VALIDATE.equals(args[0])) {
+            // command line argument to validate only entered
+            System.exit(0);
+        }
 
         NotifierSignalHandler handler = new NotifierSignalHandler();
         handler.addScheduledExecutorService(notifyScheduler);
@@ -55,9 +77,6 @@ public class Notifier {
         Runtime.getRuntime().addShutdownHook(handler);
 
         try {
-            NotificationProperties prop = NotificationProperties.getInstance();
-            prop.validate();
-
             NotificationService notificationService = new NotificationService(prop);
             EngineMonitorService engineMonitorService = new EngineMonitorService(prop);
 
