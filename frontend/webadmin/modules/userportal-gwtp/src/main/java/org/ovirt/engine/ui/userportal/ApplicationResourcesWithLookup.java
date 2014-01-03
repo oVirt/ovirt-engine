@@ -98,6 +98,12 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/sles_11.png")
     ImageResource sles_11_ppc64LargeImage();
 
+    @Source("images/os/large/freebsd.png")
+    ImageResource freebsdLargeImage();
+
+    @Source("images/os/large/freebsdx64.png")
+    ImageResource freebsdx64LargeImage();
+
     // OS type small images
 
     // TODO remove the same resources from ApplicationResources and rename this
@@ -192,6 +198,12 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/sles_11.png")
     ImageResource sles_11_ppc64SmallImage();
+
+    @Source("images/os/freebsd.png")
+    ImageResource freebsdSmallImage();
+
+    @Source("images/os/freebsdx64.png")
+    ImageResource freebsdx64SmallImage();
 
     @Source("images/vmtypes/desktop_vm_icon.png")
     ImageResource desktopVmIcon();
