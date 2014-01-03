@@ -491,9 +491,9 @@ public class HostSetupNetworksModel extends EntityModel {
     private void initNicModels() {
         Map<String, NetworkInterfaceModel> nicModels = new HashMap<String, NetworkInterfaceModel>();
         Map<String, VdsNetworkInterface> nicMap = new HashMap<String, VdsNetworkInterface>();
-        Map<String, VdsNetworkInterface> physicalNics = new HashMap<String, VdsNetworkInterface>();
-        Map<String, List<String>> bondToNic = new HashMap<String, List<String>>();
-        Map<String, List<String>> nicToNetwork = new HashMap<String, List<String>>();
+        List<VdsNetworkInterface> physicalNics = new ArrayList<VdsNetworkInterface>();
+        Map<String, List<VdsNetworkInterface>> bondToNic = new HashMap<String, List<VdsNetworkInterface>>();
+        Map<String, List<LogicalNetworkModel>> nicToNetwork = new HashMap<String, List<LogicalNetworkModel>>();
 
         // map all nics
         for (VdsNetworkInterface nic : allNics) {
@@ -503,29 +503,39 @@ public class HostSetupNetworksModel extends EntityModel {
         // pass over all nics
         for (VdsNetworkInterface nic : allNics) {
             // is this a management nic? (comes from backend)
-            boolean isNicManagement = nic.getIsManagement();
+            final boolean isNicManagement = nic.getIsManagement();
             final String nicName = nic.getName();
             final String networkName = nic.getNetworkName();
             final String bondName = nic.getBondName();
             final Integer vlanId = nic.getVlanId();
             final int dotpos = nicName.indexOf('.');
 
-            // is this a physical nic?
-            boolean isPhysicalInterface = vlanId == null;
-
-            if (isPhysicalInterface) {
-                physicalNics.put(nicName, nic);
+            if (vlanId == null) { // physical interface (rather than virtual VLAN interface)
+                physicalNics.add(nic);
             }
 
             // is the nic bonded?
             if (bondName != null) {
                 if (bondToNic.containsKey(bondName)) {
-                    bondToNic.get(bondName).add(nicName);
+                    bondToNic.get(bondName).add(nicMap.get(nicName));
                 } else {
-                    List<String> bondedNics = new ArrayList<String>();
-                    bondedNics.add(nicName);
+                    List<VdsNetworkInterface> bondedNics = new ArrayList<VdsNetworkInterface>();
+                    bondedNics.add(nicMap.get(nicName));
                     bondToNic.put(bondName, bondedNics);
                 }
+            }
+
+            // bridge name is either <nic>, <nic.vlanid> or <bond.vlanid>
+            String ifName;
+            if (dotpos > 0) {
+                ifName = nicName.substring(0, dotpos);
+            } else {
+                ifName = nicName;
+            }
+
+            // initialize this nic's network list if it hadn't been initialized
+            if (!nicToNetwork.containsKey(ifName)) {
+                nicToNetwork.put(ifName, new ArrayList<LogicalNetworkModel>());
             }
 
             // does this nic have a network?
@@ -548,13 +558,6 @@ public class HostSetupNetworksModel extends EntityModel {
                     networkModel.setManagement(true);
                 }
 
-                // bridge name is either <nic>, <nic.vlanid> or <bond.vlanid>
-                String ifName;
-                if (dotpos > 0) {
-                    ifName = nicName.substring(0, dotpos);
-                } else {
-                    ifName = nicName;
-                }
                 Collection<LogicalNetworkModel> nicNetworks = new ArrayList<LogicalNetworkModel>();
                 nicNetworks.add(networkModel);
                 // set iface bridge to network
@@ -562,13 +565,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
                 networkModel.setBridge(new NetworkInterfaceModel(nic, nicNetworks, this));
 
-                if (nicToNetwork.containsKey(ifName)) {
-                    nicToNetwork.get(ifName).add(networkName);
-                } else {
-                    List<String> bridgedNetworks = new ArrayList<String>();
-                    bridgedNetworks.add(networkName);
-                    nicToNetwork.put(ifName, bridgedNetworks);
-                }
+                nicToNetwork.get(ifName).add(networkModel);
 
                 if (!networkModel.isInSync() && networkModel.isManaged()) {
                     netToBeforeSyncParams.put(networkName, new NetworkParameters(nic));
@@ -589,32 +586,23 @@ public class HostSetupNetworksModel extends EntityModel {
         }
 
         // build models
-        for (VdsNetworkInterface nic : physicalNics.values()) {
+        for (VdsNetworkInterface nic : physicalNics) {
             String nicName = nic.getName();
             // dont show bonded nics
             if (nic.getBondName() != null) {
                 continue;
             }
-            List<LogicalNetworkModel> nicNetworks = new ArrayList<LogicalNetworkModel>();
-            List<String> networkNames = nicToNetwork.get(nicName);
-            if (networkNames != null) {
-                for (String networkName : networkNames) {
-                    LogicalNetworkModel networkModel;
-                    networkModel = networkMap.get(networkName);
-                    nicNetworks.add(networkModel);
-                }
-            }
-            List<String> bondedNicNames = bondToNic.get(nicName);
+            List<LogicalNetworkModel> nicNetworks = nicToNetwork.get(nicName);
+            List<VdsNetworkInterface> bondedNics = bondToNic.get(nicName);
             NetworkInterfaceModel nicModel;
-            if (bondedNicNames != null) {
-                List<NetworkInterfaceModel> bondedNics = new ArrayList<NetworkInterfaceModel>();
-                for (String bondedNicName : bondedNicNames) {
-                    VdsNetworkInterface bonded = nicMap.get(bondedNicName);
+            if (bondedNics != null) {
+                List<NetworkInterfaceModel> bondedModels = new ArrayList<NetworkInterfaceModel>();
+                for (VdsNetworkInterface bonded : bondedNics) {
                     NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded, this);
                     bondedModel.setBonded(true);
-                    bondedNics.add(bondedModel);
+                    bondedModels.add(bondedModel);
                 }
-                nicModel = new BondNetworkInterfaceModel(nic, nicNetworks, bondedNics, this);
+                nicModel = new BondNetworkInterfaceModel(nic, nicNetworks, bondedModels, this);
             } else {
                 nicModel = new NetworkInterfaceModel(nic, nicNetworks, this);
             }
