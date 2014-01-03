@@ -61,7 +61,7 @@ public class Entities {
         }
     }
 
-    public static <E extends VdsNetworkInterface> Map<String, E> hostInterfacesByNetworkName(List<E> entityList) {
+    public static <E extends VdsNetworkInterface> Map<String, E> hostInterfacesByNetworkName(Collection<E> entityList) {
         if (entityList != null) {
             Map<String, E> map = new HashMap<String, E>();
             for (E e : entityList) {
