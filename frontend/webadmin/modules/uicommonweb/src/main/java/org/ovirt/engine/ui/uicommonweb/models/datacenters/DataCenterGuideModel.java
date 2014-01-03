@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -1638,6 +1639,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         if (model.getUserPassword().getEntity() != null) {
             addVdsParams.setPassword((String) model.getUserPassword().getEntity());
         }
+        addVdsParams.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
         addVdsParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
         model.startProgress(null);
 
