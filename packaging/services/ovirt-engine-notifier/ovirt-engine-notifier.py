@@ -16,6 +16,7 @@
 
 
 import os
+import subprocess
 import sys
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
@@ -163,6 +164,8 @@ class Daemon(service.Daemon):
             'ENGINE_NOTIFIER_VARS': config.ENGINE_NOTIFIER_VARS,
         })
 
+        self._validateConfig()
+
     def daemonStdHandles(self):
         consoleLog = open(
             os.path.join(
@@ -187,6 +190,47 @@ class Daemon(service.Daemon):
             ),
         )
 
+    def _validateConfig(self):
+        args = self._engineArgs + ['validate']
+        self.logger.debug('Executing: %s', args)
+        proc = subprocess.Popen(
+            args=args,
+            executable=self._executable,
+            env=self._engineEnv,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            close_fds=True,
+        )
+
+        stdout, stderr = proc.communicate()
+
+        def printToBoth(msg):
+            self.logger.debug('%s', msg)
+            sys.stderr.write(msg + '\n')
+
+        def printstd(std, prefix):
+            if std:
+                for l in std.decode('utf-8', 'replace').splitlines():
+                    printToBoth(
+                        '%s: %s' % (
+                            prefix,
+                            l,
+                        )
+                    )
+
+        if stdout or stderr:
+            sys.stderr.write('\n')
+            printToBoth(_('Validation result:'))
+            printstd(stdout, 'stdout')
+            printstd(stderr, 'stderr')
+
+        if proc.returncode != 0:
+            printToBoth(
+                _('Validation failed returncode is {rc}:').format(
+                    rc=proc.returncode,
+                )
+            )
+            raise RuntimeError(_('Configuration is invalid'))
 
 if __name__ == '__main__':
     service.setupLogger()
