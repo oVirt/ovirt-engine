@@ -13,7 +13,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
@@ -1241,6 +1243,50 @@ public class SetupNetworksHelperTest {
         validateAndExpectNoViolations(helper);
     }
 
+    @Test
+    public void unlabeledNetworkRemovedFromLabeledNic() {
+        String networkName = "net";
+        VdsNetworkInterface nic = createLabeledNic("nic0", networkName, "lbl1");
+        mockExistingIfaces(nic);
+        nic.setNetworkName(null);
+        mockExistingNetworks(createNetwork(networkName));
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndExpectNoViolations(helper);
+        assertNoNetworksModified(helper);
+        assertNetworkRemoved(helper, networkName);
+    }
+
+    @Test
+    public void labeledNetworkRemovedFromUnlabeledNic() {
+        String networkName = "net";
+        VdsNetworkInterface nic = createNic("nic0", networkName);
+        mockExistingIfaces(nic);
+        nic.setNetworkName(null);
+        mockExistingNetworks(createLabeledNetwork(networkName, "lbl1"));
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndExpectNoViolations(helper);
+        assertNoNetworksModified(helper);
+        assertNetworkRemoved(helper, networkName);
+    }
+
+    @Test
+    public void labeledNetworkRemovedFromNic() {
+        String networkName = "net";
+        String label = "lbl1";
+        VdsNetworkInterface nic = createLabeledNic("nic0", networkName, label);
+        mockExistingIfaces(nic);
+        nic.setNetworkName(null);
+        mockExistingNetworks(createLabeledNetwork(networkName, label));
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
+                networkName);
+    }
+
     /* --- Helper methods for tests --- */
 
     private void validateAndExpectNoViolations(SetupNetworksHelper helper) {
@@ -1350,6 +1396,19 @@ public class SetupNetworksHelperTest {
     }
 
     /**
+     * @param networkName
+     *            The network's name.
+     * @param label
+     *            The label to be set on the network
+     * @return A network with some defaults, the given name and the given label
+     */
+    private Network createLabeledNetwork(String networkName, String label) {
+        Network network = createNetwork(networkName);
+        network.setLabel(label);
+        return network;
+    }
+
+    /**
      * Base method to create any sort of network interface with the given parameters.
      *
      * @param id
@@ -1369,7 +1428,8 @@ public class SetupNetworksHelperTest {
             Integer vlanId,
             String networkName,
             boolean bridged,
-            String address) {
+            String address,
+            Set<String> labels) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setId(id);
         iface.setName(name);
@@ -1379,6 +1439,7 @@ public class SetupNetworksHelperTest {
         iface.setNetworkName(networkName);
         iface.setBridged(bridged);
         iface.setAddress(address);
+        iface.setLabels(labels);
         return iface;
     }
 
@@ -1390,7 +1451,22 @@ public class SetupNetworksHelperTest {
      * @return {@link VdsNetworkInterface} representing a regular NIC with the given parameters.
      */
     private VdsNetworkInterface createNic(String nicName, String networkName) {
-        return createVdsInterface(Guid.newGuid(), nicName, false, null, null, networkName, true, null);
+        return createVdsInterface(Guid.newGuid(), nicName, false, null, null, networkName, true, null, null);
+    }
+
+    /**
+     * @param nicName
+     *            The name of the NIC.
+     * @param networkName
+     *            The network that is on the NIC. Can be <code>null</code>.
+     * @param labels
+     *            The labels to be set for the nic
+     * @return {@link VdsNetworkInterface} representing a regular labeled NIC with the given parameters.
+     */
+    private VdsNetworkInterface createLabeledNic(String string, String networkName, String... labels) {
+        VdsNetworkInterface nic = createNic("nic0", networkName);
+        nic.setLabels(new HashSet<>(Arrays.asList(labels)));
+        return nic;
     }
 
     /**
@@ -1408,7 +1484,8 @@ public class SetupNetworksHelperTest {
                 network.getVlanId(),
                 network.getName(),
                 network.isVmNetwork(),
-                network.getAddr());
+                network.getAddr(),
+                null);
         return nic;
     }
 
@@ -1434,7 +1511,7 @@ public class SetupNetworksHelperTest {
      * @return Bond with the given parameters.
      */
     private VdsNetworkInterface createBond(String name, String networkName) {
-        return createVdsInterface(Guid.newGuid(), name, true, null, null, networkName, true, null);
+        return createVdsInterface(Guid.newGuid(), name, true, null, null, networkName, true, null, null);
     }
 
     /**
@@ -1454,6 +1531,7 @@ public class SetupNetworksHelperTest {
                 vlanId,
                 networkName,
                 true,
+                null,
                 null);
     }
 
@@ -1467,7 +1545,7 @@ public class SetupNetworksHelperTest {
      * @return NIC from given NIC which is either enslaved or freed.
      */
     private VdsNetworkInterface enslaveOrReleaseNIC(VdsNetworkInterface iface, String bondName) {
-        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null, true, null);
+        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null, true, null, null);
     }
 
     /**
@@ -1584,7 +1662,8 @@ public class SetupNetworksHelperTest {
                     nics[i].getVlanId(),
                     nics[i].getNetworkName(),
                     nics[i].isBridged(),
-                    nics[i].getAddress()));
+                    nics[i].getAddress(),
+                    nics[i].getLabels()));
         }
         when(interfaceDAO.getAllInterfacesForVds(any(Guid.class))).thenReturn(existingIfaces);
     }

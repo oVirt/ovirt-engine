@@ -93,8 +93,30 @@ public class SetupNetworksHelper {
         extractModifiedLabeledInterfaces();
         detectSlaveChanges();
         validateMTU();
+        validateNotRemovingLabeledNetworks();
 
         return translateViolations();
+    }
+
+    private void validateNotRemovingLabeledNetworks() {
+        Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(params.getInterfaces());
+        Map<String, VdsNetworkInterface> hostInterfacesByNetworkName =
+                Entities.hostInterfacesByNetworkName(getExistingIfaces().values());
+
+        for (String network : removedNetworks) {
+            VdsNetworkInterface nic = hostInterfacesByNetworkName.get(network);
+            if (nic != null) {
+                if (NetworkUtils.isVlan(nic)) {
+                    nic = nicsByName.get(NetworkUtils.stripVlan(nic.getName()));
+                }
+
+                Network removedNetwork = getExistingClusterNetworks().get(network);
+                if (nic.getLabels() != null && removedNetwork != null
+                        && nic.getLabels().contains(removedNetwork.getLabel())) {
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC, network);
+                }
+            }
+        }
     }
 
     private void extractModifiedLabeledInterfaces() {
