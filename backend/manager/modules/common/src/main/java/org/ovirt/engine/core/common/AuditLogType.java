@@ -92,7 +92,7 @@ public enum AuditLogType {
     IRS_DISK_SPACE_LOW_ERROR(201, AuditLogTimeInterval.MINUTE.getValue() * 15),
     IRS_HOSTED_ON_VDS(204),
     // -- USER Log types --
-    USER_VDC_LOGIN(30), // user logged in to VDC
+    USER_VDC_LOGIN(30, AuditLogTimeInterval.SECOND.getValue() * 5), // user logged in to VDC
     USER_VDC_LOGIN_FAILED(114), // user logged in to VDC
     USER_VDC_LOGOUT(31), // User logged out from VDC
     USER_VDC_LOGOUT_FAILED(815), // User logged out failed
