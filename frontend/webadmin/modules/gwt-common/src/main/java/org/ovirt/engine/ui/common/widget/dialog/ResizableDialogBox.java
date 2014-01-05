@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.dialog;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -17,6 +19,7 @@ public class ResizableDialogBox extends DialogBox {
     private static int EDGE_SIZE = 3;
     private static int EDGE_THRESHOLD = 10;
 
+    private Style parentElementStyle;
     private static String STYLE_RESIZE_POSTFIX = "resize"; //$NON-NLS-1$
 
     public ResizableDialogBox() {
@@ -146,6 +149,9 @@ public class ResizableDialogBox extends DialogBox {
         String cursor = bottomEdge && rightEdge ? "se-resize" : //$NON-NLS-1$
                 rightEdge ? "e-resize" : bottomEdge ? "n-resize" : "default"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
+        if (parentElementStyle == null) {
+            parentElementStyle = getElement().getParentElement().getStyle();
+        }
         getElement().getParentElement().getStyle().setProperty("cursor", cursor); //$NON-NLS-1$
 
         return rightEdge || bottomEdge;
@@ -162,5 +168,16 @@ public class ResizableDialogBox extends DialogBox {
         }
 
         return null;
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        // reset mouse cursor to default, when the dialog closes
+        if (resizeSupportEnabled
+                && parentElementStyle != null
+                && !Cursor.DEFAULT.getCssName().equals(parentElementStyle.getCursor())) {
+            parentElementStyle.setCursor(Cursor.DEFAULT);
+        }
     }
 }
