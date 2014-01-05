@@ -74,28 +74,6 @@ public class LunDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that LUNs are returned for the connection.
-     */
-    @Test
-    public void testUpdateLUNsVolumeGroupId() {
-        String testGroupId = "testvolgroupId";
-        dao.updateLUNsVolumeGroupId(existingLUN.getLUN_id(), testGroupId);
-        LUNs dbLun = dao.get(existingLUN.getLUN_id());
-        assertEquals("LUNs volume group id wasn't updated", testGroupId, dbLun.getvolume_group_id());
-    }
-
-    /**
-     * Ensures that LUN's device size is updated correctly
-     */
-    @Test
-    public void testUpdateLUNsDeviceSize() {
-        int testDeviceSize = 20;
-        dao.updateLUNsDeviceSize(existingLUN.getLUN_id(), testDeviceSize);
-        LUNs dbLun = dao.get(existingLUN.getLUN_id());
-        assertEquals("LUN device size wasn't updated", testDeviceSize, dbLun.getDeviceSize());
-    }
-
-    /**
      * Ensures that an empty collection is returned.
      */
     @Test
@@ -144,4 +122,18 @@ public class LunDAOTest extends BaseDAOTestCase {
 
         assertNull(result);
     }
+
+    /**
+     * Ensures updating a LUN works as expected.
+     */
+    @Test
+    public void testUpdateLUNs() {
+        dao.update(existingLUN);
+
+        LUNs result = dao.get(existingLUN.getLUN_id());
+
+        assertNotNull(result);
+        assertEquals(existingLUN, result);
+    }
+
 }

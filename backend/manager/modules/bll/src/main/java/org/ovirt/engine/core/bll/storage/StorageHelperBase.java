@@ -120,7 +120,8 @@ public abstract class StorageHelperBase implements IStorageHelper {
                 getLunDao().remove(lun.getLUN_id());
                 numOfRemovedLuns++;
             } else {
-                getLunDao().updateLUNsVolumeGroupId(lun.getLUN_id(), "");
+                lun.setvolume_group_id("");
+                getLunDao().update(lun);
             }
         }
         return numOfRemovedLuns;

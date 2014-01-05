@@ -269,11 +269,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType, String volumeGroupId) {
+        lun.setvolume_group_id(volumeGroupId);
         if (DbFacade.getInstance().getLunDao().get(lun.getLUN_id()) == null) {
-            lun.setvolume_group_id(volumeGroupId);
             DbFacade.getInstance().getLunDao().save(lun);
-        } else if (!volumeGroupId.isEmpty()){
-            DbFacade.getInstance().getLunDao().updateLUNsVolumeGroupId(lun.getLUN_id(), volumeGroupId);
+        } else if (!volumeGroupId.isEmpty()) {
+            DbFacade.getInstance().getLunDao().update(lun);
         }
 
         for (StorageServerConnections connection : lun.getLunConnections()) {

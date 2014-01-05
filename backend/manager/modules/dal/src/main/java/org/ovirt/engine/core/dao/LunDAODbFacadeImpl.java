@@ -72,22 +72,6 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
     }
 
     @Override
-    public void updateLUNsVolumeGroupId(String id, String volumeGroupId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("LUN_id", id)
-                .addValue("volume_group_id", volumeGroupId);
-
-        getCallsHandler().executeModification("UpdateLUNsVolumeGroupId", parameterSource);
-    }
-
-    @Override
-    public void updateLUNsDeviceSize(String id, int deviceSize) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("LUN_id", id)
-                .addValue("device_size", deviceSize);
-
-        getCallsHandler().executeModification("updateLUNsDeviceSize", parameterSource);
-    }
-
-    @Override
     public void save(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("LUN_id", lun.getLUN_id())
@@ -100,6 +84,21 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
                 .addValue("device_size", lun.getDeviceSize());
 
         getCallsHandler().executeModification("InsertLUNs", parameterSource);
+    }
+
+    @Override
+    public void update(LUNs lun) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("LUN_id", lun.getLUN_id())
+                .addValue("physical_volume_id", lun.getphysical_volume_id())
+                .addValue("volume_group_id", lun.getvolume_group_id())
+                .addValue("serial", lun.getSerial())
+                .addValue("lun_mapping", lun.getLunMapping())
+                .addValue("vendor_id", lun.getVendorId())
+                .addValue("product_id", lun.getProductId())
+                .addValue("device_size", lun.getDeviceSize());
+
+        getCallsHandler().executeModification("UpdateLUNs", parameterSource);
     }
 
     @Override

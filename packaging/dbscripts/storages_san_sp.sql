@@ -23,25 +23,22 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION UpdateLUNsVolumeGroupId(v_LUN_id VARCHAR(50),
-v_volume_group_id VARCHAR(50))
-RETURNS VOID
-   AS $procedure$
-BEGIN
-UPDATE LUNs set volume_group_id = v_volume_group_id where LUN_id = v_LUN_ID;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
-Create or replace FUNCTION UpdateLUNsDeviceSize(v_LUN_id VARCHAR(50),
+Create or replace FUNCTION UpdateLUNs(v_LUN_id VARCHAR(50),
+    v_physical_volume_id VARCHAR(50) ,
+    v_volume_group_id VARCHAR(50) ,
+    v_serial VARCHAR(4000) ,
+    v_lun_mapping INTEGER ,
+    v_vendor_id VARCHAR(50) ,
+    v_product_id VARCHAR(50) ,
     v_device_size INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-UPDATE LUNs set device_size = v_device_size where LUN_id = v_LUN_ID;
+      UPDATE LUNs
+      SET LUN_id = v_LUN_id, physical_volume_id = v_physical_volume_id, volume_group_id = v_volume_group_id,
+          serial = v_serial, lun_mapping = v_lun_mapping, vendor_id = v_vendor_id,
+          product_id = v_product_id, device_size = v_device_size
+      WHERE LUN_id = v_LUN_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
