@@ -57,8 +57,7 @@ public class PostableFrame extends Frame {
     public void setParameter(String name, String value) {
         // get from hiddens map
         if (hiddens.containsKey(name)) {
-            for (Hidden hidden : hiddens.get(name))
-            {
+            for (Hidden hidden : hiddens.get(name)) {
                 form.getElement().removeChild(hidden.getElement());
                 hiddens.remove(name);
             }
@@ -81,8 +80,7 @@ public class PostableFrame extends Frame {
 
         List<Hidden> oldHiddenList = hiddens.get(name);
 
-        if (oldHiddenList == null)
-        {
+        if (oldHiddenList == null) {
             hiddens.put(name, new LinkedList<Hidden>(Collections.singletonList(hidden)));
         } else {
             oldHiddenList.add(hidden);

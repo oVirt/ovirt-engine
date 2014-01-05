@@ -11,8 +11,7 @@ import org.ovirt.engine.api.model.BaseResource;
     "domain"
 })
 public class Directory
-    extends BaseResource
-{
+    extends BaseResource {
 
     @XmlElement(required = true)
     protected String domain;

@@ -20,20 +20,16 @@ public class VolumeTransportTypeRenderer extends AbstractRenderer<Set<TransportT
         Translator transportTypeTranslator = EnumTranslator.create(TransportType.class);
         StringBuilder transportTypesBuilder = new StringBuilder();
         Iterator<TransportType> iterator = transportTypes.iterator();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             TransportType transportType = iterator.next();
-            if (transportTypeTranslator.containsKey(transportType))
-            {
+            if (transportTypeTranslator.containsKey(transportType)) {
                 transportTypesBuilder.append(transportTypeTranslator.get(transportType));
             }
-            else
-            {
+            else {
                 transportTypesBuilder.append(transportType.toString());
             }
 
-            if (iterator.hasNext())
-            {
+            if (iterator.hasNext()) {
                 transportTypesBuilder.append(", "); //$NON-NLS-1$
             }
         }

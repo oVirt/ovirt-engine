@@ -31,8 +31,7 @@ public class VdsHandler extends BaseHandler {
      *
      * @see Backend#InitHandlers
      */
-    public static void init()
-    {
+    public static void init() {
         Class<?>[] inspectedClasses = new Class<?>[] { VDS.class, VdsStatic.class, VdsDynamic.class };
         mUpdateVdsStatic =
                 new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses));

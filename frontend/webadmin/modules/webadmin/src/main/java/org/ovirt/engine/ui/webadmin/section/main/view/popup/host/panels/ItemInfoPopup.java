@@ -83,8 +83,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
                 addRow(SafeHtmlUtils.fromString(entity.getDescription()));
             }
             // Not in sync
-            if (!networkModel.isInSync())
-            {
+            if (!networkModel.isInSync()) {
                 addRow(templates.imageTextSetupNetwork(notInSyncImage, constants.networkNotInSync()));
             }
         }

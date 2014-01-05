@@ -282,8 +282,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     protected R linkSubCollections(R model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {
         if (subCollections != null) {
             for (String relation : subCollections) {
-                if(!shouldExclude(relation, subCollectionMembersToExclude))
-                {
+                if(!shouldExclude(relation, subCollectionMembersToExclude)) {
                     addOrUpdateLink(model, relation, LinkHelper.getUriBuilder(getUriInfo(), model, suggestedParent).path(relation).build().toString());
                 }
                 else{

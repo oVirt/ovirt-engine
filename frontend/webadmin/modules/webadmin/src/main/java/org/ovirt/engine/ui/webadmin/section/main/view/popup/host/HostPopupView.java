@@ -572,8 +572,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     }
 
     private void applyModeCustomizations() {
-        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
-        {
+        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly) {
             spmTab.setVisible(false);
             powerManagementTab.setVisible(false);
             consoleTab.setVisible(false);

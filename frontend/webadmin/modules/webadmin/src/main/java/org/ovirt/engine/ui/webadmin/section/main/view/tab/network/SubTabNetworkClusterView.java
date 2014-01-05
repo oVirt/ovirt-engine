@@ -95,8 +95,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                 new CheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>>(true) {
             @Override
             public Boolean getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
-                if (object.getSecond() != null)
-                {
+                if (object.getSecond() != null) {
                     return object.getSecond().isRequired();
                 }
                 return false;

@@ -306,12 +306,11 @@ public class TagsDirector {
             // since we have here both String and RegExp , each backslash char is represented by four backslash chars , so for marching 2 we will need 8
             tagNameRegExp=tagNameRegExp.replaceAll("\\\\\\\\", "");
             for (Tags child : tag.getChildren()) {
-                if (Regex.IsMatch(child.gettag_name(), tagNameRegExp))
+                if (Regex.IsMatch(child.gettag_name(), tagNameRegExp)) {
                 // the tag matches the regular expression -> add it and all its
                 // children
                 // (we prevent searching a regular expression match on them -
                 // unnecessary).
-                {
                     if (sb.length() == 0) {
                         if (indicator == TagReturnValueIndicator.ID)
                             sb.append(child.getTagIdAndChildrenIds());

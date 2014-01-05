@@ -272,8 +272,7 @@ public class EngineMonitorService implements Runnable {
         statusChanged = lastServerStatus ^ isResponsive;
 
         // reports for any server status change or in case of configure for repeatable notification
-        if (statusChanged || repeatNonResponsiveNotification)
-        {
+        if (statusChanged || repeatNonResponsiveNotification) {
             if (isResponsive) {
                 // if server is up, report only if its status was changed from non responsive.
                 if (statusChanged) {

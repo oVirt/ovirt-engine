@@ -11,8 +11,7 @@ import org.codehaus.jackson.map.ser.CustomSerializerFactory;
  * xjc generated classes contain isSetFoo() methods which get interpreted
  * by Jackson as "setFoo" properties which we don't want serialized.
  */
-public class CustomBeanFactory extends CustomSerializerFactory
-{
+public class CustomBeanFactory extends CustomSerializerFactory {
     @Override
     protected void processViews(SerializationConfig config, BeanSerializerBuilder builder) {
         super.processViews(config, builder);

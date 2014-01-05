@@ -4,9 +4,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetRoleByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
-    public GetRoleByIdQuery(P parameters)
-
-    {
+    public GetRoleByIdQuery(P parameters) {
         super(parameters);
     }
 

@@ -225,8 +225,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                 //update bricks associated with task id
                 String[] bricks = task.getTaskParameters().getBricks();
 
-                if (bricks != null)
-                {
+                if (bricks != null) {
                     List<GlusterBrickEntity> brickEntities = new ArrayList<>();
                     for (String brick: bricks) {
                         String[] brickParts = brick.split(":", -1);

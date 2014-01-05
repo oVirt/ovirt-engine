@@ -99,8 +99,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
     private void translateVolumeType(GlusterVolumeEntity volumeEntity) {
         Translator translator = EnumTranslator.create(GlusterVolumeType.class);
-        if (translator.containsKey(volumeEntity.getVolumeType()))
-        {
+        if (translator.containsKey(volumeEntity.getVolumeType())) {
             getDetailModel().setVolumeTypeSilently(translator.get(volumeEntity.getVolumeType()));
         }
     }

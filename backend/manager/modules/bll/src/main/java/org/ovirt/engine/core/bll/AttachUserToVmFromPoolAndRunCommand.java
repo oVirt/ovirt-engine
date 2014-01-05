@@ -255,12 +255,11 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                     getReturnValue().setEndActionTryAgain(false);
                 }
             }
-            else
+            else {
                 // Pool-snapshot is gone (probably due to processVmPoolOnStopVm
                 // treatment) ->
                 // no point in running the VM or trying to run again the endAction
                 // method:
-            {
                 log.warn("EndSuccessfully: No images were created for Vm, detaching user from Vm");
                 detachUserFromVmFromPool(); // just in case.
                 getReturnValue().setEndActionTryAgain(false);

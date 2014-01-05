@@ -56,8 +56,7 @@ public class GlusterHookSyncJob extends GlusterJob {
      * @param throwError - set to true if this method should throw exception.
      */
     public void refreshHooksInCluster(VDSGroup cluster, boolean throwError) {
-        if (!supportsGlusterHookFeature(cluster))
-        {
+        if (!supportsGlusterHookFeature(cluster)) {
             return;
         }
 
@@ -148,14 +147,12 @@ public class GlusterHookSyncJob extends GlusterJob {
                         if (conflictStatus==0) {
                             //there is no conflict in server hook and engine's copy of hook
                             //so remove from server hooks table if exists
-                            if (serverHook != null)
-                            {
+                            if (serverHook != null) {
                                 deletedServerHooks.add(serverHook);
                             }
                         } else {
                             //there is a conflict. we need to either add or update entry in server hook
-                            if (serverHook == null)
-                            {
+                            if (serverHook == null) {
                                 newServerHooks.add(buildServerHook(server.getId(), existingHook.getId(), fetchedHook));
                             } else {
                                 if (!(serverHook.getChecksum().equals(fetchedHook.getChecksum()) && serverHook.getContentType().equals(fetchedHook.getContentType())

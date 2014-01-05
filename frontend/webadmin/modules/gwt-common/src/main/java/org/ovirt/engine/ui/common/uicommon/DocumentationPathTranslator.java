@@ -6,8 +6,7 @@ import java.util.Map;
 public class DocumentationPathTranslator {
     private static Map<String, String> documentationPathMap;
 
-    public static String getPath(String hashName)
-    {
+    public static String getPath(String hashName) {
         String path = null;
 
         if (hashName != null && documentationPathMap != null) {
@@ -17,8 +16,7 @@ public class DocumentationPathTranslator {
         return path;
     }
 
-    public static void init(String fileContent)
-    {
+    public static void init(String fileContent) {
         documentationPathMap = new HashMap<String, String>();
 
         String[] lines = fileContent.split("\n"); //$NON-NLS-1$

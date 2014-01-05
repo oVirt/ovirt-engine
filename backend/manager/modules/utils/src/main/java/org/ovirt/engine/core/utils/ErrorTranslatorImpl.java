@@ -139,9 +139,8 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
             if (!(errorMsg == null || errorMsg.isEmpty())) {
                 if ((IsDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
                     ret = errorMsg;
-                } else
+                } else {
                 // just a message that doesn't have a value in the resource:
-                {
                     String[] splitted = errorMsg.toLowerCase().split("[_]", -1);
                     ret = StringUtils.join(splitted, " ");
                 }

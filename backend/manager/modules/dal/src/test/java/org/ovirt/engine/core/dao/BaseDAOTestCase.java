@@ -123,8 +123,7 @@ public abstract class BaseDAOTestCase {
 
             loadDataFactory(properties.getProperty("database.testing.datafactory"));
 
-            if (initSql != null && !initSql.isEmpty())
-            {
+            if (initSql != null && !initSql.isEmpty()) {
                 needInitializationSql = true;
             }
         } catch (Exception error) {

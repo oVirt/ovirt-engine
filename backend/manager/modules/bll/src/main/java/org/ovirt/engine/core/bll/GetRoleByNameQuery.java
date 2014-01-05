@@ -4,9 +4,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetRoleByNameQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
-    public GetRoleByNameQuery(P parameters)
-
-    {
+    public GetRoleByNameQuery(P parameters) {
         super(parameters);
     }
 

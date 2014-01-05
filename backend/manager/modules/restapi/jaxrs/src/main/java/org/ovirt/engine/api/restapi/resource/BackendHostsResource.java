@@ -44,36 +44,30 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     @Override
     public Hosts list() {
         ApplicationMode appMode = getCurrent().get(ApplicationMode.class);
-        if (appMode == ApplicationMode.GlusterOnly)
-        {
+        if (appMode == ApplicationMode.GlusterOnly) {
             return listGlusterOnly();
         }
-        else
-        {
+        else {
             return listAll();
         }
     }
 
     private Hosts listGlusterOnly() {
-        if (isFiltered())
-        {
+        if (isFiltered()) {
             return mapGlusterOnlyCollection(getBackendCollection(VdcQueryType.GetAllHosts,
                     new VdcQueryParametersBase()));
         }
-        else
-        {
+        else {
             return mapGlusterOnlyCollection(getBackendCollection(SearchType.VDS));
         }
     }
 
     private Hosts listAll() {
-        if (isFiltered())
-        {
+        if (isFiltered()) {
             return mapCollection(getBackendCollection(VdcQueryType.GetAllHosts,
                     new VdcQueryParametersBase()));
         }
-        else
-        {
+        else {
             return mapCollection(getBackendCollection(SearchType.VDS));
         }
     }

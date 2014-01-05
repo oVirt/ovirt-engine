@@ -378,9 +378,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public VmTemplate getVmTemplate() {
-        if (mVmTemplate == null && (mVmTemplateId != null || getVm() != null))
-
-        {
+        if (mVmTemplate == null && (mVmTemplateId != null || getVm() != null)) {
 
             mVmTemplate = getVmTemplateDAO()
                     .get(mVmTemplateId != null ? getVmTemplateId() : getVm()

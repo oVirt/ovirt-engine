@@ -202,8 +202,7 @@ public class BackendApiResource
 
     public List<String> getRels() {
         appMode = getCurrent().get(ApplicationMode.class);
-        if (appMode == ApplicationMode.GlusterOnly)
-        {
+        if (appMode == ApplicationMode.GlusterOnly) {
             return getGlusterRels();
         }
         return getAllRels();
@@ -300,12 +299,10 @@ public class BackendApiResource
     public Response head() {
         appMode = getCurrent().get(ApplicationMode.class);
         API api = null;
-        if(appMode == ApplicationMode.GlusterOnly)
-        {
+        if(appMode == ApplicationMode.GlusterOnly) {
             api = getGlusterApi();
         }
-        else
-        {
+        else {
             api = getApi();
         }
         return getResponseBuilder(api).build();

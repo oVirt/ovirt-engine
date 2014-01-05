@@ -120,12 +120,10 @@ public class VmStatusCell extends AbstractCell<VM> {
 
     SafeHtml getResourceImage(VM vm) {
 
-        if (vm.getVmPauseStatus() != VmPauseStatus.NONE || vm.getVmPauseStatus() != VmPauseStatus.NOERR)
-        {
+        if (vm.getVmPauseStatus() != VmPauseStatus.NONE || vm.getVmPauseStatus() != VmPauseStatus.NOERR) {
             return null;
         }
-        else
-        {
+        else {
             // Create Image from the alert resource
             ImageResource alertImageResource = resources.alertImage();
 

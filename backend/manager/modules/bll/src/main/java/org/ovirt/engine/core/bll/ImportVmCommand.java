@@ -510,8 +510,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId());
         for (VDSGroup group : groups) {
             if (group.getId().equals(getParameters().getVdsGroupId())) {
-                if (group.getArchitecture() != getVm().getClusterArch())
-                {
+                if (group.getArchitecture() != getVm().getClusterArch()) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VM_ARCHITECTURE_NOT_SUPPORTED_BY_CLUSTER);
                 }
                 return true;

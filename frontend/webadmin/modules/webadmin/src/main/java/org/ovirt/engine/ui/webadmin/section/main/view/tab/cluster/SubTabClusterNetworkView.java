@@ -88,8 +88,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
 
                         List<SafeHtml> images = new LinkedList<SafeHtml>();
 
-                        if (network.getCluster() != null)
-                        {
+                        if (network.getCluster() != null) {
                             if (network.getCluster().isDisplay()) {
 
                                 images.add(displayImage);
@@ -110,8 +109,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                     @Override
                     public SafeHtml getTooltip(Network network) {
                         Map<SafeHtml, String> imagesToText = new LinkedHashMap<SafeHtml, String>();
-                        if (network.getCluster() != null)
-                        {
+                        if (network.getCluster() != null) {
                             if (network.getCluster().isDisplay()) {
                                 imagesToText.put(displayImage, constants.displayItemInfo());
                             }

@@ -215,9 +215,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                         return syntaxContainer;
                     }
                 } else {
-                    if (searchCharArr.length >= idx + 2) // Check that this
+                    if (searchCharArr.length >= idx + 2) { // Check that this
                                                          // maybe a plural
-                    {
                         // Validate that the next character is an 's'
                         if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
@@ -301,9 +300,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                     curStartPos = idx + 1;
 
                 } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
-                    if (searchCharArr.length >= idx + 2) // Check that this
+                    if (searchCharArr.length >= idx + 2) { // Check that this
                                                          // maybe a plural
-                    {
                         // Validate that the next character is an 's'
                         if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
@@ -354,9 +352,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                     curStartPos = idx + 1;
                 } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
-                    if (searchCharArr.length >= idx + 2) // Check that this
+                    if (searchCharArr.length >= idx + 2) { // Check that this
                                                          // maybe a plural
-                    {
                         // Validate that the next character is an 's'
                         if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
@@ -408,10 +405,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
                     } else if (mSearchObjectAC.isCrossReference(nextObject, syntaxContainer.getFirst().getBody())) {
-                        if (searchCharArr.length >= idx + 2) // Check that this
+                        if (searchCharArr.length >= idx + 2) { // Check that this
                                                              // maybe a
                                                              // plural
-                        {
                             // Validate that the next character is an 's'
                             if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                                 // Then just move things along.
@@ -641,8 +637,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                         relObj = retval.getPreviousSyntaxObject(2, SyntaxObjectType.CROSS_REF_OBJ);
                         String fldName = retval.getPreviousSyntaxObject(0, SyntaxObjectType.CONDITION_FIELD);
                         conditionRelationAC = mSearchObjectAC.getFieldRelationshipAutoCompleter(relObj, fldName);
-                    } else // curState == SyntaxObjectType.CROSS_REF_OBJ
-                    {
+                    } else { // curState == SyntaxObjectType.CROSS_REF_OBJ
                         relObj = retval.getPreviousSyntaxObject(0, SyntaxObjectType.CROSS_REF_OBJ);
                         conditionRelationAC = mSearchObjectAC.getObjectRelationshipAutoCompleter();
 
@@ -1018,8 +1013,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 objName = prev.getBody();
                 conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(objName);
                 conditionType = ConditionType.FreeTextSpecificObj;
-            } else // if (prev.getType() == SyntaxObjectType.CONDITION_FIELD)
-            {
+            } else { // if (prev.getType() == SyntaxObjectType.CONDITION_FIELD)
                 fieldName = prev.getBody();
                 prev = objIter.previous();
                 if (prev.getType() != SyntaxObjectType.DOT) {

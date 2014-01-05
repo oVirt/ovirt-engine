@@ -121,12 +121,10 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         VdcQueryReturnValue result = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode, ConfigCommon.defaultConfigurationVersion));
         ApplicationMode appMode = null;
-        if (result.getSucceeded())
-        {
+        if (result.getSucceeded()) {
             appMode = ApplicationMode.from((Integer) result.getReturnValue());
         }
-        else
-        {
+        else {
             appMode = ApplicationMode.AllModes;
         }
         return appMode;

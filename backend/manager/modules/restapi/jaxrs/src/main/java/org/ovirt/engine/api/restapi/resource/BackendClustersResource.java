@@ -35,36 +35,30 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     public Clusters list() {
         ApplicationMode appMode = getCurrent().get(ApplicationMode.class);
 
-        if (appMode == ApplicationMode.VirtOnly)
-        {
+        if (appMode == ApplicationMode.VirtOnly) {
             return listVirtOnly();
         }
-        else
-        {
+        else {
             return listAll();
         }
     }
 
     private Clusters listVirtOnly() {
-        if (isFiltered())
-        {
+        if (isFiltered()) {
             return mapVirtOnlyCollection(getBackendCollection(VdcQueryType.GetAllVdsGroups,
                     new VdcQueryParametersBase()));
         }
-        else
-        {
+        else {
             return mapVirtOnlyCollection(getBackendCollection(SearchType.Cluster));
         }
     }
 
     private Clusters listAll() {
-        if (isFiltered())
-        {
+        if (isFiltered()) {
             return mapCollection(getBackendCollection(VdcQueryType.GetAllVdsGroups,
                     new VdcQueryParametersBase()));
         }
-        else
-        {
+        else {
             return mapCollection(getBackendCollection(SearchType.Cluster));
         }
     }

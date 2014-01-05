@@ -66,8 +66,7 @@ public abstract class AbstractUiCommandButton extends Composite
                 sb.append(reason).append(",");  //$NON-NLS-1$
             }
             title = sb.toString();
-            if (title.length() != 0)
-            {
+            if (title.length() != 0) {
                 title = title.substring(0, title.length() -1);
             }
         } else {

@@ -158,8 +158,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     }
 
-    protected void addStyles()
-    {
+    protected void addStyles() {
         volumeTypeEditor.addContentWidgetStyleName(style.editorContentWidget());
         replicaCountEditor.addContentWidgetStyleName(style.editorContentWidget());
         stripeCountEditor.addContentWidgetStyleName(style.editorContentWidget());
@@ -183,8 +182,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         }, constants.brickDirectoryBricks());
     }
 
-    private void initButtons()
-    {
+    private void initButtons() {
         addBrickButton.addClickHandler(new ClickHandler() {
 
             @Override
@@ -235,10 +233,8 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         });
     }
 
-    private void clearSelections()
-    {
-        if (bricksTable.getSelectionModel() instanceof MultiSelectionModel)
-        {
+    private void clearSelections() {
+        if (bricksTable.getSelectionModel() instanceof MultiSelectionModel) {
             ((MultiSelectionModel) bricksTable.getSelectionModel()).clear();
         }
     }

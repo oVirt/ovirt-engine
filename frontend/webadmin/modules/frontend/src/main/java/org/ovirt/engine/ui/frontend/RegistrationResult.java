@@ -6,21 +6,18 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
-public final class RegistrationResult
-{
+public final class RegistrationResult {
     /**
      Raised once when a first result retrievement occurs.
 
     */
     private Event privateRetrievedEvent;
 
-    public Event getRetrievedEvent()
-    {
+    public Event getRetrievedEvent() {
         return privateRetrievedEvent;
     }
 
-    private void setRetrievedEvent(Event value)
-    {
+    private void setRetrievedEvent(Event value) {
         privateRetrievedEvent = value;
     }
 
@@ -28,42 +25,35 @@ public final class RegistrationResult
 
     private Guid privateId = Guid.Empty;
 
-    public Guid getId()
-    {
+    public Guid getId() {
         return privateId;
     }
 
-    private void setId(Guid value)
-    {
+    private void setId(Guid value) {
         privateId = value;
     }
 
     private ObservableCollection<IVdcQueryable> privateData;
 
-    public ObservableCollection<IVdcQueryable> getData()
-    {
+    public ObservableCollection<IVdcQueryable> getData() {
         return privateData;
     }
 
-    private void setData(ObservableCollection<IVdcQueryable> value)
-    {
+    private void setData(ObservableCollection<IVdcQueryable> value) {
         privateData = value;
     }
 
     private int privateRetrievementCount;
 
-    public int getRetrievementCount()
-    {
+    public int getRetrievementCount() {
         return privateRetrievementCount;
     }
 
-    public void setRetrievementCount(int value)
-    {
+    public void setRetrievementCount(int value) {
         privateRetrievementCount = value;
     }
 
-    static
-    {
+    static {
         RetrievedEventDefinition = new EventDefinition("RetrievedEvent", RegistrationResult.class); //$NON-NLS-1$
     }
 

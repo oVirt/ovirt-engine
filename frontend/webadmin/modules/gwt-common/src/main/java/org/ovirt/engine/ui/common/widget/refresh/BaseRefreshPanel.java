@@ -251,8 +251,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         // Hide popup on window resize
         Window.addResizeHandler(new ResizeHandler() {
             @Override
-            public void onResize(ResizeEvent event)
-            {
+            public void onResize(ResizeEvent event) {
                 menuPopup.hide();
             }
         });

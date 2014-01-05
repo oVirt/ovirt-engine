@@ -29,8 +29,7 @@ import org.jboss.resteasy.plugins.providers.jackson.ResteasyJacksonProvider;
 @Provider
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class JsonProvider extends ResteasyJacksonProvider
-{
+public class JsonProvider extends ResteasyJacksonProvider {
     public JsonProvider() {
         super();
         setMapper(CustomObjectMapper.get());

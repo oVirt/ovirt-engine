@@ -46,8 +46,7 @@ public class TicketUtils {
     throws
         NoSuchAlgorithmException,
         SignatureException,
-        InvalidKeyException
-    {
+        InvalidKeyException {
         Base64 base64 = new Base64(0);
         Map<String, String> map = new HashMap<String, String>();
 

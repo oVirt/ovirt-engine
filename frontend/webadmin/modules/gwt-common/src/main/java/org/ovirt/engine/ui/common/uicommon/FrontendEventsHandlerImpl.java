@@ -56,8 +56,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
         int actionNum = 0;
         for (VdcReturnValueBase v : returnValues) {
             ++actionNum;
-            if (isRaiseErrorModalPanel(action, v.getFault()))
-            {
+            if (isRaiseErrorModalPanel(action, v.getFault())) {
                 for (String canDo : v.getCanDoActionMessages()) {
                     String description =
                             (v.getDescription() != null && !"".equals(v.getDescription().trim())) || returnValues.size() == 1 ? v.getDescription() : ConstantsManager.getInstance().getConstants().action() + " " + actionNum; //$NON-NLS-1$ //$NON-NLS-2$

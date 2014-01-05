@@ -456,8 +456,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     }
 
-    private void initCheckBoxEditors()
-    {
+    private void initCheckBoxEditors() {
         importGlusterConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -489,8 +488,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     }
 
     private void applyModeCustomizations() {
-        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
-        {
+        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly) {
             optimizationTab.setVisible(false);
             resiliencePolicyTab.setVisible(false);
             clusterPolicyTab.setVisible(false);

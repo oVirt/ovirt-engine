@@ -17,8 +17,7 @@ import com.google.inject.Inject;
 
 public class SubTabExtendedVmSessionsView
     extends AbstractSubTabFormView<UserPortalItemModel, UserPortalListModel, VmSessionsModel>
-    implements SubTabExtendedVmSessionsPresenter.ViewDef
-  {
+    implements SubTabExtendedVmSessionsPresenter.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabExtendedVmSessionsView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);

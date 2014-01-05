@@ -54,8 +54,7 @@ public class HealthStatus extends HttpServlet {
             }
         } catch (Throwable t) {
             String msg = "Unable to contact Database!";
-            if (backend == null)
-            {
+            if (backend == null) {
                 msg = "Unable to contact Backend!";
             }
             out.print(msg);

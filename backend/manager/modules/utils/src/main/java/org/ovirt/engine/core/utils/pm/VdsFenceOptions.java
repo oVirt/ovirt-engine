@@ -499,8 +499,7 @@ public class VdsFenceOptions implements Serializable {
                             result = Double.parseDouble(fencingAgentInstanceOptions.get(key));
                         } catch (NumberFormatException e) {
                         }
-                    } else // return as string
-                    {
+                    } else { // return as string
                         result = fencingAgentInstanceOptions.get(key);
                     }
                 } else {

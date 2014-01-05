@@ -12,9 +12,8 @@ public class AddTagCommand<T extends TagsOperationParameters> extends TagsComman
     }
 
     @Override
-    protected void executeCommand()
+    protected void executeCommand() {
 
-    {
         DbFacade.getInstance().getTagDao().save(getTag());
         TagsDirector.getInstance().AddTag(getTag());
 

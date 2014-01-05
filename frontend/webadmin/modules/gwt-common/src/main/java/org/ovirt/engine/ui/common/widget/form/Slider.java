@@ -130,8 +130,7 @@ public class Slider extends Composite {
                 setSliderWidth();
             }
 
-            public void setSliderWidth()
-            {
+            public void setSliderWidth() {
                 double d = ((DockLayoutPanel.LayoutData) westPanel.getLayoutData()).size;
 
                 setPivot((int) d + getMin());

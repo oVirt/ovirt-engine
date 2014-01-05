@@ -148,8 +148,7 @@ public class EngineConfigLogic {
 
     public static String getPassFromFile(String passFile) throws IOException {
         File f = new File(passFile);
-        if (!f.exists())
-        {
+        if (!f.exists()) {
             return StringUtils.EMPTY;
         }
         FileReader input = new FileReader(passFile);

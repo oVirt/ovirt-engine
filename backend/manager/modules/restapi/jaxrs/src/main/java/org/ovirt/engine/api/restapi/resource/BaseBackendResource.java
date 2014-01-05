@@ -333,8 +333,7 @@ public class BaseBackendResource {
     public <E extends Enum<E>> List<E> validateEnumValues(Class<E> clz, List<String> names) {
         ArrayList<E> enumList = new ArrayList<E>();
 
-        for (String name : names)
-        {
+        for (String name : names) {
             enumList.add(validateEnum(clz, name));
         }
         return enumList;

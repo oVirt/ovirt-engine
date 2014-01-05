@@ -103,8 +103,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
         selectAllHeader.setUpdater(new ValueUpdater<Boolean>() {
             @Override
-            public void update(Boolean value)
-            {
+            public void update(Boolean value) {
                 model.setIsAllLunsSelected(value);
             }
         });

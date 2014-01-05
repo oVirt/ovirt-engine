@@ -23,8 +23,7 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.ser.CustomSerializerFactory;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
-public class CustomObjectMapper extends ObjectMapper
-{
+public class CustomObjectMapper extends ObjectMapper {
     public static CustomObjectMapper get() {
         CustomObjectMapper mapper = new CustomObjectMapper();
         mapper.setSerializer(new CustomBeanFactory())

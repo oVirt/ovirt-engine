@@ -377,8 +377,7 @@ public class IsoDomainListSyncronizer {
      */
     public void refresheIsoDomainWhenActivateDomain(final Guid isoStorageDomainId,
             final Guid storagePoolId) {
-        if (storagePoolId != null && (isoStorageDomainId != null))
-        {
+        if (storagePoolId != null && (isoStorageDomainId != null)) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -534,8 +533,7 @@ public class IsoDomainListSyncronizer {
      * If refresh from VDSM has encounter problems, we update the problematic domain list.
      * @param repoImage
      */
-    private void updateCachedIsoFileListFromVdsm(RepoImage repoImage)
-    {
+    private void updateCachedIsoFileListFromVdsm(RepoImage repoImage) {
         boolean isRefreshed = false;
         try {
             List<RepoImage> problematicRepoFileList = new ArrayList<RepoImage>();

@@ -144,8 +144,7 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
         final FlowPanel alertPanel = new FlowPanel();
         int start = 0;
 
-        for (final UICommand command : commands)
-        {
+        for (final UICommand command : commands) {
             // Find the open and close positions of the link within the message:
             final int openIndex = text.indexOf("<a>", start); //$NON-NLS-1$
             final int closeIndex = text.indexOf("</a>", start); //$NON-NLS-1$
@@ -179,8 +178,7 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
                     });
         }
 
-        if (start < text.length())
-        {
+        if (start < text.length()) {
             final String afterText = text.substring(start);
             // Create the label for the text after the tag:
             final Label afterLabel = new Label(afterText);
@@ -188,8 +186,7 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
             alertPanel.add(afterLabel);
         }
 
-        if (start > 0)
-        {
+        if (start > 0) {
             // Add the alert to the view:
             view.addAlert(alertPanel);
         }

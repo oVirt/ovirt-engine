@@ -657,8 +657,7 @@ public class RsdlBuilder {
                 &&
                 (Boolean.FALSE.equals(link2.getRequest().getBody().isRequired()))
                 )
-           )
-        {
+           ) {
             if (link1ParamType!=null && link2ParamType==null) {
                 return link2;
             }

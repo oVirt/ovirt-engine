@@ -120,8 +120,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     }
 
     private void applyModeCustomizations() {
-        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
-        {
+        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly) {
             networkProviderTab.setVisible(false);
         }
     }

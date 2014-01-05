@@ -257,8 +257,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     private final CommonApplicationConstants constants;
 
     @UiFactory
-    protected DisclosurePanel createPanel(String label)
-    {
+    protected DisclosurePanel createPanel(String label) {
         return new DisclosurePanel(resources.decreaseIcon(), resources.increaseIcon(), label);
     }
 

@@ -239,20 +239,17 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         public boolean isValid(String field, String value) {
             boolean retval = true;
             IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
-            if (vlaueAc != null) // check if this enum first
-            {
+            if (vlaueAc != null) { // check if this enum first
                 retval = vlaueAc.validate(value);
             }
-            if (!retval) // check for week before
-            {
+            if (!retval) { // check for week before
                 for (DayOfWeek day : DayOfWeek.values()) {
                     if (day.toString().equalsIgnoreCase(value)) {
                         return true;
                     }
                 }
             }
-            if (!retval) // check for free date
-            {
+            if (!retval) { // check for free date
                 retval = DateUtils.parse(StringHelper.trim(value, '\'')) != null;
             }
 

@@ -33,8 +33,7 @@ public class ConnectAutomaticallyManager {
 
     @Inject
     public ConnectAutomaticallyManager(ConnectAutomaticallyProvider connectAutomatically,
-                                       ErrorPopupManager errorPopupManager)
-    {
+                                       ErrorPopupManager errorPopupManager) {
         this.connectAutomatically = connectAutomatically;
         this.errorPopupManager = errorPopupManager;
     }

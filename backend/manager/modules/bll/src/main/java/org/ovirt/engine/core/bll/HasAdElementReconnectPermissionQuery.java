@@ -6,8 +6,7 @@ import org.ovirt.engine.core.common.queries.HasAdElementReconnectPermissionParam
 import org.ovirt.engine.core.compat.Guid;
 
 public class HasAdElementReconnectPermissionQuery<P extends HasAdElementReconnectPermissionParameters>
-    extends QueriesCommandBase<P>
-{
+    extends QueriesCommandBase<P> {
 
     public HasAdElementReconnectPermissionQuery(P parameters) {
         super(parameters);

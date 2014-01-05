@@ -275,8 +275,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
 
-        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly)
-        {
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.pmHost(),
                     pmSubActions,
                     CommandLocation.OnlyFromToolBar));

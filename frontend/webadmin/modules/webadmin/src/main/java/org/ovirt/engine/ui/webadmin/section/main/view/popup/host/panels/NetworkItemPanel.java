@@ -248,8 +248,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
     public static String getDragDropEventData(DragDropEventBase<?> event, boolean isDrop) {
         if (isDrop) {
             return event.getData("Text"); //$NON-NLS-1$
-        } else
-        {
+        } else {
             // On most of the browsers drag, dragenter, dragleave, dragover and dragend don't have access to event's
             // data
             return lastDragData;

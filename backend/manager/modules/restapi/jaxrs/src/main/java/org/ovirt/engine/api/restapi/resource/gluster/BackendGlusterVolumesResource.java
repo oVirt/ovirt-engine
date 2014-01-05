@@ -101,17 +101,14 @@ public class BackendGlusterVolumesResource
     private void validateEnumParameters(GlusterVolume volume) {
         validateEnum(GlusterVolumeType.class, volume.getVolumeType().toUpperCase());
 
-        if (volume.isSetTransportTypes())
-        {
+        if (volume.isSetTransportTypes()) {
             validateEnumValues(TransportType.class, convertToUppercase(volume.getTransportTypes().getTransportTypes()));
         }
     }
 
-    public static List<String> convertToUppercase(List<String> list)
-    {
+    public static List<String> convertToUppercase(List<String> list) {
         ArrayList<String> result = new ArrayList<String>();
-        for (String string : list)
-        {
+        for (String string : list) {
             result.add(string.toUpperCase());
         }
         return result;

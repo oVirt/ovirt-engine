@@ -34,8 +34,7 @@ public class RpmVersionUtils {
                 && comps1[counter].toString().equals(comps2[counter].toString())) {
             counter++;
         }
-        if (comps1[counter] == null && comps2[counter] == null)
-        {
+        if (comps1[counter] == null && comps2[counter] == null) {
             // This means that the number of segments is equal, and that all segments in relative places are equal
             return 0;
         }

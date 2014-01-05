@@ -106,11 +106,9 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
     }
 
     private void onSelect() {
-        Scheduler.get().scheduleDeferred(new ScheduledCommand()
-        {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
             @Override
-            public void execute()
-            {
+            public void execute() {
                 int selectedItemIndex = suggestionsTable.getSelectedItemIndex();
                 SearchSuggestion selectedSuggetion = suggestionDataProvider.getList().get(selectedItemIndex);
                 if (selectedSuggetion != null) {
@@ -129,11 +127,9 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
             suggestionsTable.focusItemByIndex(suggestionsTable.getSelectedItemIndex());
 
             if (suggestionsTable.getSelectedItemIndex() == 0) {
-                Scheduler.get().scheduleDeferred(new ScheduledCommand()
-                {
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                     @Override
-                    public void execute()
-                    {
+                    public void execute() {
                         suggestionsTable.getElement().getParentElement().setScrollTop(0);
                     }
                 });

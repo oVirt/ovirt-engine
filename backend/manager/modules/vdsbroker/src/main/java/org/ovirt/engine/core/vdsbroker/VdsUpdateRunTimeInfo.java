@@ -1447,8 +1447,7 @@ public class VdsUpdateRunTimeInfo {
                 }
             }
             // if failed in destination right after migration
-            else // => cacheVm == null
-            {
+            else { // => cacheVm == null
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
                 addVmDynamicToList(vmDynamic);
             }
@@ -1717,8 +1716,7 @@ public class VdsUpdateRunTimeInfo {
     private void removeVmsFromCache(List<VM> running) {
         Guid vmGuid;
         for (VM vmToRemove : _vmDict.values()) {
-            if (running.contains(vmToRemove))
-            {
+            if (running.contains(vmToRemove)) {
                 continue;
             }
             proceedVmBeforeDeletion(vmToRemove, null);

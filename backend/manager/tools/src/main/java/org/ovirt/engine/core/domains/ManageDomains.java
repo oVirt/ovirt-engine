@@ -248,8 +248,7 @@ public class ManageDomains {
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPProviderTypes);
             String ldapPort =
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPServerPort);
-            if (ldapPort == null)
-            {
+            if (ldapPort == null) {
                 ldapPort = DEFAULT_LDAP_SERVER_PORT;
             }
 
@@ -273,8 +272,7 @@ public class ManageDomains {
         KDCLocator locator = new KDCLocator();
         DnsSRVResult result = null;
         boolean foundServers = true;
-        try
-        {
+        try {
             result = locator.getKdc(DnsSRVLocator.TCP, domainName);
             if (!foundSrvRecords(result)) {
                 result = locator.getKdc(DnsSRVLocator.UDP, domainName);
@@ -882,8 +880,7 @@ public class ManageDomains {
             if (gssapiDomains.contains(currLdapServerEntry.getKey())) {
                 ldapServersPerGSSAPIDomains.put(currLdapServerEntry.getKey(),
                         new ArrayList<String>(Arrays.asList(currLdapServerEntry.getValue().split(";"))));
-            } else
-            {
+            } else {
                 ldapServersPerSimpleDomains.put(currLdapServerEntry.getKey(),
                         new ArrayList<String>(Arrays.asList(currLdapServerEntry.getValue().split(";"))));
 

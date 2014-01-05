@@ -636,9 +636,8 @@ public final class AsyncTaskManager {
                     // task is still running or is still in the cache:
                     _tasks.get(vdsmTaskId).setLastStatusAccessTime();
                     returnValue.add(_tasks.get(vdsmTaskId).getLastTaskStatus());
-                } else // task doesn't exist in the manager (shouldn't happen) ->
+                } else { // task doesn't exist in the manager (shouldn't happen) ->
                 // assume it has been ended successfully.
-                {
                     log.warnFormat(
                             "Polling tasks. Task ID '{0}' doesn't exist in the manager -> assuming 'finished'.",
                             vdsmTaskId);

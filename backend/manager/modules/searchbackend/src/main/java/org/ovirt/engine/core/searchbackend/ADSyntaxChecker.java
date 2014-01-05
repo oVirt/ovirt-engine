@@ -70,9 +70,8 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                         return retval;
                     }
                 } else {
-                    if (searchCharArr.length >= idx + 2) // Check that this
+                    if (searchCharArr.length >= idx + 2) { // Check that this
                                                          // maybe a plural
-                    {
                         // Validate that the next character is an 's'
                         if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
