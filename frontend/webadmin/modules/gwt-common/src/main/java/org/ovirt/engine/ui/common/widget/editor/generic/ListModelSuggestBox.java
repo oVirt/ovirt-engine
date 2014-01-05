@@ -1,7 +1,12 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import java.util.Collection;
 import org.ovirt.engine.ui.common.widget.editor.BaseListModelSuggestBox;
@@ -20,6 +25,19 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
             @Override
             public void onFocus(FocusEvent event) {
                 asSuggestBox().showSuggestionList();
+            }
+        });
+        addKeyPressHandler(new KeyPressHandler() {
+
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                    @Override
+                    public void execute() {
+                        ValueChangeEvent.fire(asSuggestBox(), asSuggestBox().getText());
+                    }
+                });
             }
         });
     }
