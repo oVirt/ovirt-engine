@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -68,8 +68,8 @@ class PermissionWithUniqueKeyEquals extends Permissions {
             return false;
         }
         Permissions other = (Permissions) obj;
-        return (ObjectUtils.objectsEqual(getad_element_id(), other.getad_element_id())
-                && ObjectUtils.objectsEqual(getrole_id(), other.getrole_id())
-                && ObjectUtils.objectsEqual(getObjectId(), other.getObjectId()));
+        return Objects.equals(getad_element_id(), other.getad_element_id())
+                && Objects.equals(getrole_id(), other.getrole_id())
+                && Objects.equals(getObjectId(), other.getObjectId());
     }
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -31,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.ListUtils;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -569,7 +569,7 @@ public class GlusterSyncJob extends GlusterJob {
                 }
             } else {
                 // brick found. update it if required. Only property that could be different is the brick order
-                if (!ObjectUtils.objectsEqual(existingBrick.getBrickOrder(), fetchedBrick.getBrickOrder())) {
+                if (!Objects.equals(existingBrick.getBrickOrder(), fetchedBrick.getBrickOrder())) {
                     log.infoFormat("Brick order for brick {0} changed from {1} to {2} because of direct CLI operations. Updating engine DB accordingly.",
                             existingBrick.getQualifiedName(),
                             existingBrick.getBrickOrder(),
@@ -725,13 +725,13 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         if (existingVolume.getVolumeType().isReplicatedType() &&
-                !ObjectUtils.objectsEqual(existingVolume.getReplicaCount(), fetchedVolume.getReplicaCount())) {
+                !Objects.equals(existingVolume.getReplicaCount(), fetchedVolume.getReplicaCount())) {
                 existingVolume.setReplicaCount(fetchedVolume.getReplicaCount());
                 changed = true;
         }
 
         if (existingVolume.getVolumeType().isStripedType() &&
-                !ObjectUtils.objectsEqual(existingVolume.getStripeCount(), fetchedVolume.getStripeCount())) {
+                !Objects.equals(existingVolume.getStripeCount(), fetchedVolume.getStripeCount())) {
             existingVolume.setStripeCount(fetchedVolume.getStripeCount());
             changed = true;
         }

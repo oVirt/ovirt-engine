@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -28,7 +29,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.ListUtils;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -58,7 +58,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();
-        if (!ObjectUtils.objectsEqual(oldGroup.getcompatibility_version(), getParameters().getVdsGroup().getcompatibility_version())) {
+        if (!Objects.equals(oldGroup.getcompatibility_version(), getParameters().getVdsGroup().getcompatibility_version())) {
             String emulatedMachine = null;
             // pick an UP host randomly - all should have latest compat version already if we passed the canDo.
             for (VDS vds : allForVdsGroup) {

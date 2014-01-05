@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -40,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -354,7 +354,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected void updateQuota(DiskImage diskImage) {
         if (isQuotaValidationNeeded()) {
             DiskImage oldDisk = (DiskImage) getOldDisk();
-            if (!ObjectUtils.objectsEqual(oldDisk.getQuotaId(), diskImage.getQuotaId())) {
+            if (!Objects.equals(oldDisk.getQuotaId(), diskImage.getQuotaId())) {
                 getImageStorageDomainMapDao().updateQuotaForImageAndSnapshots(diskImage.getId(),
                         diskImage.getStorageIds().get(0),
                         diskImage.getQuotaId());
@@ -537,7 +537,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
         Guid oldQuotaId = ((DiskImage) getOldDisk()).getQuotaId();
-        return !ObjectUtils.objectsEqual(oldQuotaId, getQuotaId());
+        return !Objects.equals(oldQuotaId, getQuotaId());
     }
 
     protected boolean shouldUpdateReadOnly() {

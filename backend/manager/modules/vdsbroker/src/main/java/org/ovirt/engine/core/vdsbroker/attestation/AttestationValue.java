@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.attestation;
 
+import java.util.Objects;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class AttestationValue {
 
@@ -51,8 +51,8 @@ public class AttestationValue {
         if (obj == null || (obj.getClass() != this.getClass()))
             return false;
         AttestationValue other = (AttestationValue) obj;
-        return (ObjectUtils.objectsEqual(hostName, other.hostName)
-                && ObjectUtils.objectsEqual(trustLevel, other.trustLevel));
+        return Objects.equals(hostName, other.hostName)
+                && Objects.equals(trustLevel, other.trustLevel);
     }
 
 }
