@@ -32,6 +32,13 @@ ENGINE_USR="@ENGINE_USR@"
 ENGINE_JAVA_MODULEPATH="${ENGINE_USR}/modules"
 
 #
+# Use this if you want to enable remote debugging of the notifier java virtual
+# machine (useful mainly for developers):
+#
+#   NOTIFIER_DEBUG_ADDRESS=localhost:8686
+NOTIFIER_DEBUG_ADDRESS=
+
+#
 # Service timeouts
 #
 NOTIFIER_STOP_TIME=30

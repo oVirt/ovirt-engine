@@ -137,6 +137,20 @@ class Daemon(service.Daemon):
                 self._config.get('ENGINE_ETC'),
             ),
             '-Djboss.modules.write-indexes=false',
+        ]
+
+        debugAddress = self._config.get('NOTIFIER_DEBUG_ADDRESS')
+        if debugAddress:
+            self._engineArgs.append(
+                (
+                    '-agentlib:jdwp=transport=dt_socket,address=%s,'
+                    'server=y,suspend=n'
+                ) % (
+                    debugAddress
+                )
+            )
+
+        self._engineArgs += [
             '-jar', jbossModulesJar,
             '-dependencies', 'org.ovirt.engine.core.tools',
             '-class', 'org.ovirt.engine.core.notifier.Notifier',
