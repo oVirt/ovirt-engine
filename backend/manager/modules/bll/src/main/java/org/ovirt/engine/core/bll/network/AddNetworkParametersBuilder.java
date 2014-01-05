@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -14,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -53,29 +50,14 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
             parameters.add(setupNetworkParams);
         }
 
-        reportNonUpdateableHosts(nonUpdateableHosts);
+        reportNonUpdateableHosts(AuditLogType.ADD_NETWORK_BY_LABEL_FAILED, nonUpdateableHosts);
         return parameters;
     }
 
-    private void reportNonUpdateableHosts(Set<Guid> nonUpdateableHosts) {
-        if (nonUpdateableHosts.isEmpty()) {
-            return;
-        }
-
-        List<String> hostNames = new ArrayList<>(nonUpdateableHosts.size());
-        for (Guid hostId : nonUpdateableHosts) {
-            hostNames.add(getDbFacade().getVdsStaticDao().get(hostId).getName());
-        }
-
-        AuditLogableBase logable = new AuditLogableBase();
+    @Override
+    protected void addValuesToLog(AuditLogableBase logable) {
         logable.setStoragePoolId(network.getDataCenterId());
         logable.addCustomValue("Network", network.getName());
-        logable.addCustomValue("HostNames", StringUtils.join(hostNames, ", "));
         logable.addCustomValue("Label", network.getLabel());
-        AuditLogDirector.log(logable, AuditLogType.ADD_NETWORK_BY_LABEL_FAILED);
-    }
-
-    private DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 }

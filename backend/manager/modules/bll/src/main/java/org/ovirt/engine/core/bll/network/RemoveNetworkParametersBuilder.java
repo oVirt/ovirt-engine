@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -58,8 +56,14 @@ public class RemoveNetworkParametersBuilder extends NetworkParametersBuilder {
             parameters.add(setupNetworkParams);
         }
 
-        reportNonUpdateableHosts(nonUpdateableHosts);
+        reportNonUpdateableHosts(AuditLogType.REMOVE_NETWORK_BY_LABEL_FAILED, nonUpdateableHosts);
         return parameters;
+    }
+
+    @Override
+    protected void addValuesToLog(AuditLogableBase logable) {
+        logable.setStoragePoolId(network.getDataCenterId());
+        logable.addCustomValue("Network", network.getName());
     }
 
     /**
@@ -80,26 +84,5 @@ public class RemoveNetworkParametersBuilder extends NetworkParametersBuilder {
         }
 
         return null;
-    }
-
-    private void reportNonUpdateableHosts(Set<Guid> nonUpdateableHosts) {
-        if (nonUpdateableHosts.isEmpty()) {
-            return;
-        }
-
-        List<String> hostNames = new ArrayList<>(nonUpdateableHosts.size());
-        for (Guid hostId : nonUpdateableHosts) {
-            hostNames.add(getDbFacade().getVdsStaticDao().get(hostId).getName());
-        }
-
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.setStoragePoolId(network.getDataCenterId());
-        logable.addCustomValue("Network", network.getName());
-        logable.addCustomValue("HostNames", StringUtils.join(hostNames, ", "));
-        AuditLogDirector.log(logable, AuditLogType.REMOVE_NETWORK_BY_LABEL_FAILED);
-    }
-
-    private DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 }
