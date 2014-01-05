@@ -34,8 +34,9 @@ public class ValidNameValidatorTest {
 
     @Test
     public void checkName() {
-        Set<ConstraintViolation<ValidNameContainer>> result = validator.validate(new ValidNameContainer(name));
-        assertEquals(expectedResult, result.isEmpty());
+        ValidNameContainer container = new ValidNameContainer(name);
+        Set<ConstraintViolation<ValidNameContainer>> result = validator.validate(container);
+        assertEquals("Failed to validate name: " + container.getName(), expectedResult, result.isEmpty());
     }
 
     @Parameterized.Parameters
@@ -55,13 +56,17 @@ public class ValidNameValidatorTest {
         });
     }
 
-    private class ValidNameContainer {
+    private static class ValidNameContainer {
 
         @ValidName
         private String name;
 
         public ValidNameContainer(String name) {
             this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }
