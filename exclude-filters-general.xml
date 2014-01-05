@@ -36,15 +36,6 @@
     </Match>
 
     <!--
-    TBD:
-    findbugs reason:
-    Eq: Class doesnt override equals in superclass (EQ_DOESNT_OVERRIDE_EQUALS)
-    -->
-    <Match>
-        <Bug code="Eq" />
-    </Match>
-
-    <!--
     Currently Ignoring.
     findbugs reason:
     REC: Exception is caught when Exception is not thrown (REC_CATCH_EXCEPTION)
