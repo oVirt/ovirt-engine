@@ -176,6 +176,7 @@ public final class VdsProperties {
     public static final String disk_true_size = "truesize";
     public static final String image_group_id = "imageID";
     public static final String size = "size";
+    public static final String lun_guid = "lunGUID";
 
     // Iso/Floppy related properties
     public static final String iso_list = "isolist";

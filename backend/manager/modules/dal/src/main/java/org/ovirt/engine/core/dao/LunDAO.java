@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
  *
  *
  */
-public interface LunDAO extends DAO {
+public interface LunDAO extends GenericDao<LUNs, String>, MassOperationsDao<LUNs, String> {
     /**
      * Gets the LUN with the specified id.
      *
@@ -43,28 +43,4 @@ public interface LunDAO extends DAO {
      * @return the list of LUNs
      */
     List<LUNs> getAll();
-
-    /**
-     * Saves the supplied LUN instance.
-     *
-     * @param lun
-     *            the LUN
-     */
-    void save(LUNs lun);
-
-    /**
-     * Updates the specified LUN.
-     *
-     * @param lun
-     *            the LUN
-     */
-    void update(LUNs lun);
-
-    /**
-     * Removes the specified LUN.
-     *
-     * @param id
-     *            the LUN id
-     */
-    void remove(String id);
 }

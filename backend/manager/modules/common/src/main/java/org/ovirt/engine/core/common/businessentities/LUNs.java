@@ -1,13 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class LUNs implements Serializable {
+public class LUNs implements BusinessEntity<String> {
     private static final long serialVersionUID = 3026455643639610091L;
 
     public LUNs() {
@@ -281,5 +279,15 @@ public class LUNs implements Serializable {
      */
     @Deprecated
     public void setAccessible(boolean accessible) {
+    }
+
+    @Override
+    public String getId() {
+        return getLUN_id();
+    }
+
+    @Override
+    public void setId(String id) {
+        setLUN_id(id);
     }
 }

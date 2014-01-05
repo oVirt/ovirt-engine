@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker.entities;
 
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -16,12 +18,17 @@ public class VmInternalData {
     private VmStatistics vmStatistics;
     private List<VmGuestAgentInterface> vmGuestAgentInterfaces;
 
+    // A map represents VM's LUN disks (LUN ID -> LUNs object)
+    private Map<String, LUNs> lunsMap;
+
     public VmInternalData(VmDynamic vmDynamic,
             VmStatistics vmStatistics,
-            List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
+            List<VmGuestAgentInterface> vmGuestAgentInterfaces,
+            Map<String, LUNs> lunsMap) {
         this.vmDynamic = vmDynamic;
         this.vmStatistics = vmStatistics;
         this.vmGuestAgentInterfaces = vmGuestAgentInterfaces;
+        this.lunsMap = lunsMap;
     }
 
     public VmDynamic getVmDynamic() {
@@ -48,6 +55,14 @@ public class VmInternalData {
         this.vmGuestAgentInterfaces = vmGuestAgentInterfaces;
     }
 
+    public Map<String, LUNs> getLunsMap() {
+        return lunsMap;
+    }
+
+    public void setLunsMap(Map<String, LUNs> lunsMap) {
+        this.lunsMap = lunsMap;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -55,6 +70,7 @@ public class VmInternalData {
         result = prime * result + ((vmDynamic == null) ? 0 : vmDynamic.hashCode());
         result = prime * result + ((vmGuestAgentInterfaces == null) ? 0 : vmGuestAgentInterfaces.hashCode());
         result = prime * result + ((vmStatistics == null) ? 0 : vmStatistics.hashCode());
+        result = prime * result + ((lunsMap == null) ? 0 : lunsMap.hashCode());
         return result;
     }
 
@@ -89,6 +105,13 @@ public class VmInternalData {
                 return false;
             }
         } else if (!vmStatistics.equals(other.vmStatistics)) {
+            return false;
+        }
+        if (lunsMap == null) {
+            if (other.lunsMap != null) {
+                return false;
+            }
+        } else if (!lunsMap.equals(other.lunsMap)) {
             return false;
         }
         return true;
