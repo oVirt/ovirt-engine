@@ -219,10 +219,7 @@ class Plugin(plugin.PluginBase):
 
         self.logger.info(_('Creating database schema'))
         args = [
-            os.path.join(
-                osetupcons.FileLocations.OVIRT_ENGINE_DB_DIR,
-                'create_schema.sh',
-            ),
+            osetupcons.FileLocations.OVIRT_ENGINE_DB_CREATE,
             '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
             '-s', self.environment[osetupcons.DBEnv.HOST],
             '-p', str(self.environment[osetupcons.DBEnv.PORT]),
