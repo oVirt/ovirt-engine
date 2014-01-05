@@ -20,6 +20,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -30,11 +33,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VdsUpdateRunTimeInfoTest {
@@ -44,6 +49,8 @@ public class VdsUpdateRunTimeInfoTest {
 
     private VDS vds;
     HashMap[] vmInfo;
+    List<VmDynamic> poweringUpVms;
+    Map<Guid, VmInternalData> runningVms;
 
     VdsUpdateRunTimeInfo updater;
 
@@ -52,6 +59,9 @@ public class VdsUpdateRunTimeInfoTest {
 
     @Mock
     VmDAO vmDAO;
+
+    @Mock
+    DiskDao diskDAO;
 
     @Mock
     DbFacade dbFacade;
@@ -85,6 +95,16 @@ public class VdsUpdateRunTimeInfoTest {
             @Override
             protected Map[] getVmInfo(List<String> vmsToUpdate) {
                 return vmInfo;
+            }
+
+            @Override
+            protected List<VmDynamic> getPoweringUpVms() {
+                return poweringUpVms;
+            }
+
+            @Override
+            protected Map<Guid, VmInternalData> getRunningVms() {
+                return runningVms;
             }
 
         };
@@ -122,11 +142,60 @@ public class VdsUpdateRunTimeInfoTest {
         assertEquals("wrong number of removed devices", 0, updater.getRemovedVmDevices().size());
     }
 
+    @Test
+    public void updateLunDisksNoMismatch() {
+        LUNs lun = new LUNs();
+        lun.setLUN_id(Guid.newGuid().toString());
+        lun.setDeviceSize(10);
+
+        LunDisk lunDisk = new LunDisk();
+        lunDisk.setLun(lun);
+
+        updateLunDisksTest(Collections.singletonMap(lun.getLUN_id(), lun), Collections.singletonList((Disk) lunDisk));
+
+        assertEquals("wrong number of LUNs to update", 0, updater.getVmLunDisksToSave().size());
+    }
+
+    @Test
+    public void updateLunDisksMismatch() {
+        String lunGuid = Guid.newGuid().toString();
+
+        LUNs lun1 = new LUNs();
+        lun1.setLUN_id(lunGuid);
+        lun1.setDeviceSize(10);
+
+        LUNs lun2 = new LUNs();
+        lun2.setLUN_id(lunGuid);
+        lun2.setDeviceSize(20);
+
+        LunDisk lunDisk = new LunDisk();
+        lunDisk.setLun(lun2);
+
+        updateLunDisksTest(Collections.singletonMap(lun1.getLUN_id(), lun1), Collections.singletonList((Disk) lunDisk));
+
+        assertEquals("wrong number of LUNs to update", 1, updater.getVmLunDisksToSave().size());
+    }
+
+    private void updateLunDisksTest(Map<String, LUNs> lunsMapFromVmStats, List<Disk> vmLunDisksFromDb) {
+        Guid vmId = Guid.newGuid();
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setId(vmId);
+        VmInternalData vmInternalData = new VmInternalData(vmDynamic, null, null, lunsMapFromVmStats);
+
+        when(diskDAO.getAllForVm(any(Guid.class), any(Boolean.class))).thenReturn(vmLunDisksFromDb);
+
+        poweringUpVms = Collections.singletonList(vmDynamic);
+        runningVms = Collections.singletonMap(vmId, vmInternalData);
+
+        updater.updateLunDisks();
+    }
+
     private void initConditions() {
         when(dbFacade.getVdsGroupDao()).thenReturn(groupDAO);
         when(dbFacade.getVmDao()).thenReturn(vmDAO);
         when(dbFacade.getAuditLogDao()).thenReturn(mockAuditLogDao);
         when(dbFacade.getVmDeviceDao()).thenReturn(vmDeviceDAO);
+        when(dbFacade.getDiskDao()).thenReturn(diskDAO);
         when(groupDAO.get((Guid) any())).thenReturn(cluster);
         Map<Guid, VM> emptyMap = Collections.emptyMap();
         when(vmDAO.getAllRunningByVds(vds.getId())).thenReturn(emptyMap);

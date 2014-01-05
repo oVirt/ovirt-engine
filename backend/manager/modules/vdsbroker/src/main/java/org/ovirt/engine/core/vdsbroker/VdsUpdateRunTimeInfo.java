@@ -24,6 +24,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -93,6 +95,7 @@ public class VdsUpdateRunTimeInfo {
     private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<>();
     private final Map<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave = new HashMap<>();
     private final Map<Guid, DiskImageDynamic> _vmDiskImageDynamicToSave = new HashMap<>();
+    private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
     private final Map<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<>();
@@ -167,6 +170,7 @@ public class VdsUpdateRunTimeInfo {
         getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(allVmInterfaceStatistics);
 
         getDbFacade().getDiskImageDynamicDao().updateAllInBatch(_vmDiskImageDynamicToSave.values());
+        getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
         getVdsEventListener().addExternallyManagedVms(_externalVmsToAdd);
@@ -941,6 +945,8 @@ public class VdsUpdateRunTimeInfo {
 
             prepareGuestAgentNetworkDevicesForUpdate();
 
+            updateLunDisks();
+
         } else if (command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSErrorException) {
                 log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
@@ -983,6 +989,42 @@ public class VdsUpdateRunTimeInfo {
                             updateGuestAgentInterfacesChanges(vmDynamic, vmGuestAgentInterfaces, guestAgentNicHash);
                             addVmDynamicToList(vmDynamic);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    protected void updateLunDisks() {
+        // Looping only over powering up VMs as LUN device size
+        // is updated by VDSM only once when running a VM.
+        for (VmDynamic vmDynamic : getPoweringUpVms()) {
+            VmInternalData vmInternalData = getRunningVms().get(vmDynamic.getId());
+            if (vmInternalData != null) {
+                Map<String, LUNs> lunsMap = vmInternalData.getLunsMap();
+                if (lunsMap.isEmpty()) {
+                    // LUNs list from getVmStats hasn't been updated yet or VDSM doesn't support LUNs list retrieval.
+                    continue;
+                }
+
+                List<Disk> vmDisks = getDbFacade().getDiskDao().getAllForVm(vmDynamic.getId(), true);
+                for (Disk disk : vmDisks) {
+                    if (disk.getDiskStorageType() != DiskStorageType.LUN) {
+                        continue;
+                    }
+
+                    LUNs lunFromDB = ((LunDisk) disk).getLun();
+                    LUNs lunFromMap = lunsMap.get(lunFromDB.getId());
+
+                    // LUN's device size might be returned as zero in case of an error in VDSM;
+                    // Hence, verify before updating.
+                    if (lunFromMap.getDeviceSize() != 0 && lunFromMap.getDeviceSize() != lunFromDB.getDeviceSize()) {
+                        // Found a mismatch - set LUN for update
+                        log.infoFormat("Updated LUN device size - ID: {0}, previous size: {1}, new size: {2}.",
+                                lunFromDB.getLUN_id(), lunFromDB.getDeviceSize(), lunFromMap.getDeviceSize());
+
+                        lunFromDB.setDeviceSize(lunFromMap.getDeviceSize());
+                        vmLunDisksToSave.add(lunFromDB);
                     }
                 }
             }
@@ -2079,6 +2121,23 @@ public class VdsUpdateRunTimeInfo {
      */
     protected List<VmDeviceId> getRemovedVmDevices() {
         return Collections.unmodifiableList(removedDeviceIds);
+    }
+
+    /**
+     * An access method for test usages
+     *
+     * @return The LUNs to update in DB
+     */
+    protected List<LUNs> getVmLunDisksToSave() {
+        return Collections.unmodifiableList(vmLunDisksToSave);
+    }
+
+    protected List<VmDynamic> getPoweringUpVms() {
+        return _poweringUpVms;
+    }
+
+    protected Map<Guid, VmInternalData> getRunningVms() {
+        return _runningVms;
     }
 
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {

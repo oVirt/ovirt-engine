@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -12,7 +13,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>LunDAODbFacadeImpl</code> provides a concrete implementation of {@link LunDAO}. The original code was
  * refactored from the {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
  */
-public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
+public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, String> implements LunDAO {
+
+    public LunDAODbFacadeImpl() {
+        super("luns");
+        setProcedureNameForGet("GetLUNByLUNId");
+        setProcedureNameForGetAll("GetAllFromLUNs");
+    }
 
     protected static final RowMapper<LUNs> MAPPER = new RowMapper<LUNs>() {
         @Override
@@ -72,6 +79,16 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
     }
 
     @Override
+    protected MapSqlParameterSource createIdParameterMapper(String id) {
+        return getCustomMapSqlParameterSource().addValue("LUN_id", id);
+    }
+
+    @Override
+    protected RowMapper<LUNs> createEntityRowMapper() {
+        return MAPPER;
+    }
+
+    @Override
     public void save(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("LUN_id", lun.getLUN_id())
@@ -107,5 +124,38 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
                 .addValue("LUN_id", id);
 
         getCallsHandler().executeModification("DeleteLUN", parameterSource);
+    }
+
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(LUNs lun) {
+        return createIdParameterMapper(lun.getId())
+                .addValue("physical_volume_id", lun.getphysical_volume_id())
+                .addValue("volume_group_id", lun.getvolume_group_id())
+                .addValue("serial", lun.getSerial())
+                .addValue("lun_mapping", lun.getLunMapping())
+                .addValue("vendor_id", lun.getVendorId())
+                .addValue("product_id", lun.getProductId())
+                .addValue("device_size", lun.getDeviceSize());
+    }
+
+    @Override
+    public MapSqlParameterMapper<LUNs> getBatchMapper() {
+        return new MapSqlParameterMapper<LUNs>() {
+
+            @Override
+            public MapSqlParameterSource map(LUNs lun) {
+                MapSqlParameterSource paramValue = new MapSqlParameterSource()
+                        .addValue("lun_id", lun.getLUN_id())
+                        .addValue("physical_volume_id", lun.getphysical_volume_id())
+                        .addValue("volume_group_id", lun.getvolume_group_id())
+                        .addValue("serial", lun.getSerial())
+                        .addValue("lun_mapping", lun.getLunMapping())
+                        .addValue("vendor_id", lun.getVendorId())
+                        .addValue("product_id", lun.getProductId())
+                        .addValue("device_size", lun.getDeviceSize());
+
+                return paramValue;
+            }
+        };
     }
 }

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -44,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -97,6 +99,34 @@ public class VdsBrokerObjectsBuilder {
         VmStatistics vmStatistics = new VmStatistics();
         updateVMStatisticsData(vmStatistics, xmlRpcStruct);
         return vmStatistics;
+    }
+
+    public static Map<String, LUNs> buildVmLunDisksData(Map<String, Object> xmlRpcStruct) {
+        Map<String, Object> disks = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.vm_disks);
+        Map<String, LUNs> lunsMap = new HashMap<>();
+
+        if (disks != null) {
+            for (Object diskAsObj : disks.values()) {
+                Map<String, Object> disk = (Map<String, Object>) diskAsObj;
+
+                String lunGuidString = AssignStringValue(disk, VdsProperties.lun_guid);
+                if (!StringUtils.isEmpty(lunGuidString)) {
+                    LUNs lun = new LUNs();
+                    lun.setLUN_id(lunGuidString);
+
+                    if (disk.containsKey(VdsProperties.disk_true_size)) {
+                        long sizeInBytes = AssignLongValue(disk, VdsProperties.disk_true_size);
+                        int sizeInGB = SizeConverter.convert(
+                                sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GB).intValue();
+                        lun.setDeviceSize(sizeInGB);
+                    }
+
+                    lunsMap.put(lunGuidString, lun);
+                }
+            }
+        }
+
+        return lunsMap;
     }
 
     public static void updateVMDynamicData(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
