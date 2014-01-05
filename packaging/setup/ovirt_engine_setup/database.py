@@ -472,7 +472,8 @@ class OvirtUtils(base.Base):
 
     def backup(
         self,
-        prefix='engine',
+        dir,
+        prefix,
     ):
         fd, backupFile = tempfile.mkstemp(
             prefix='%s-%s.' % (
@@ -480,7 +481,7 @@ class OvirtUtils(base.Base):
                 datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             ),
             suffix='.sql',
-            dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+            dir=dir,
         )
         os.close(fd)
 

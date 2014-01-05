@@ -646,6 +646,7 @@ class Const(object):
     FIREWALL_MANAGER_IPTABLES = 'iptables'
     FIREWALL_MANAGER_FIREWALLD = 'firewalld'
     ISO_DOMAIN_NFS_DEFAULT_ACL = '0.0.0.0/0.0.0.0(rw)'
+    ENGINE_DB_BACKUP_PREFIX = 'engine'
 
 
 @util.export

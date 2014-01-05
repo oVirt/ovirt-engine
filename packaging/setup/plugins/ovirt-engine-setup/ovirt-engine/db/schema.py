@@ -273,7 +273,10 @@ class Plugin(plugin.PluginBase):
     def _miscUpgrade(self):
         self._checkSupportedVersionsPresent()
         dbovirtutils = database.OvirtUtils(plugin=self)
-        backupFile = dbovirtutils.backup()
+        backupFile = dbovirtutils.backup(
+            dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+            prefix=osetupcons.Const.ENGINE_DB_BACKUP_PREFIX,
+        )
 
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             self.SchemaTransaction(

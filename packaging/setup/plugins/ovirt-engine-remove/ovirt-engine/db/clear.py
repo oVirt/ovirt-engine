@@ -96,7 +96,10 @@ class Plugin(plugin.PluginBase):
         try:
             dbovirtutils = database.OvirtUtils(plugin=self)
             dbovirtutils.tryDatabaseConnect()
-            self._bkpfile = dbovirtutils.backup()
+            self._bkpfile = dbovirtutils.backup(
+                dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+                prefix=osetupcons.Const.ENGINE_DB_BACKUP_PREFIX,
+            )
             self.logger.info(
                 _('Clearing Engine database {database}').format(
                     database=self.environment[osetupcons.DBEnv.DATABASE],
