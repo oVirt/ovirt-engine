@@ -55,7 +55,15 @@ class Plugin(plugin.PluginBase):
         self.dialog.note(
             text=_('\n--== CONFIGURATION PREVIEW ==--\n\n'),
         )
-        for c in osetupcons.__dict__['__osetup_attrs__']:
+        for c in sum(
+            [
+                constobj.__dict__['__osetup_attrs__']
+                for constobj in self.environment[
+                    osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+                ]
+            ],
+            [],
+        ):
             for k in c.__dict__.values():
                 if hasattr(k, '__osetup_attrs__'):
                     attrs = k.__osetup_attrs__
