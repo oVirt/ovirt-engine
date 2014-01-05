@@ -55,7 +55,7 @@ public class SyncLunsInfoForIscsiStorageDomainCommand<T extends StorageDomainPar
                 log.infoFormat("New LUN discovered, ID: {0}", lunFromVgInfo.getLUN_id());
             }
             else if (lunFromDB.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
-                getLunDao().updateLUNsDeviceSize(lunFromVgInfo.getLUN_id(), lunFromVgInfo.getDeviceSize());
+                getLunDao().update(lunFromVgInfo);
                 log.infoFormat("Updated LUN device size - ID: {0}, previous size: {1}, new size: {2}.",
                         lunFromVgInfo.getLUN_id(), lunFromDB.getDeviceSize(), lunFromVgInfo.getDeviceSize());
             }
