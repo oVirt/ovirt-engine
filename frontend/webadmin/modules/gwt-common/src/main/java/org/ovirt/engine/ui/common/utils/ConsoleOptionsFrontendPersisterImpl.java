@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.common.utils;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.PoolConsolesImpl;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsolesImpl;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
@@ -51,33 +54,51 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         this.consoleUtils = consoleUtils;
     }
 
-    @Override
-    public void storeToLocalStorage(VmConsoles vmConsoles) {
-        ConsoleProtocol selectedProtocol = vmConsoles.getSelectedProcotol();
-        ConsoleContext context = vmConsoles.getConsoleContext();
+    public void storeToLocalStorage(VmConsoles consoles) {
+        storeConsolesInternal(consoles, consoles instanceof PoolConsolesImpl);
+    }
 
-        String id = vmConsoles.getVm().getId().toString();
-        KeyMaker keyMaker = new KeyMaker(id, context);
+    private void storeConsolesInternal(VmConsoles consoles, boolean isPool) {
+        ConsoleProtocol selectedProtocol = consoles.getSelectedProcotol();
+        ConsoleContext context = consoles.getConsoleContext();
+        String id = consoles.getEntityId().toString();
+
+        KeyMaker keyMaker = new KeyMaker(id, isPool, context);
 
         clientStorage.setLocalItem(keyMaker.make(SELECTED_PROTOCOL), selectedProtocol.toString());
 
         if (selectedProtocol == ConsoleProtocol.SPICE) {
-            storeSpiceData(vmConsoles, keyMaker);
+            storeSpiceData(consoles, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.VNC) {
-            storeVncData(vmConsoles, keyMaker);
+            storeVncData(consoles, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.RDP) {
-            storeRdpData(vmConsoles, keyMaker);
+            storeRdpData(consoles, keyMaker);
         }
     }
 
     @Override
-    public void loadFromLocalStorage(VmConsoles vmConsoles) {
+    public void loadFromLocalStorage(VmConsoles consoles) {
+        String vmId = guidToStringNullSafe(consoles.getVm().getId());
+        String poolId = guidToStringNullSafe(consoles.getVm().getVmPoolId());
+        ConsoleContext context = consoles.getConsoleContext();
 
-        String vmId = vmConsoles.getVm().getId().toString();
-        ConsoleContext context = vmConsoles.getConsoleContext();
+        if (poolId != null) {
+            KeyMaker poolKeyMaker = new KeyMaker(poolId, true, context);
+            loadConsolesWithKeymaker(consoles, poolKeyMaker); // load pool defaults
+        }
+        if (consoles instanceof VmConsolesImpl) {
+            KeyMaker vmKeyMaker = new KeyMaker(vmId, false, context);
+            loadConsolesWithKeymaker(consoles, vmKeyMaker); // load vm
+        }
+    }
 
-        KeyMaker keyMaker = new KeyMaker(vmId, context);
+    private String guidToStringNullSafe(Guid id) {
+        return (id == null)
+                ? null
+                : id.toString();
+    }
 
+    private void loadConsolesWithKeymaker(VmConsoles consoles, KeyMaker keyMaker) {
         String selectedProtocolString = clientStorage.getLocalItem(keyMaker.make(SELECTED_PROTOCOL));
         if (selectedProtocolString == null || "".equals(selectedProtocolString)) {
             // if the protocol is not set, nothing is set - ignore
@@ -86,16 +107,16 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
         ConsoleProtocol selectedProtocol = ConsoleProtocol.valueOf(selectedProtocolString);
 
-        if (!vmConsoles.canSelectProtocol(selectedProtocol)) {
+        if (!consoles.canSelectProtocol(selectedProtocol)) {
             return;
         }
 
         if (selectedProtocol == ConsoleProtocol.SPICE) {
-            loadSpiceData(vmConsoles, keyMaker);
+            loadSpiceData(consoles, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.VNC) {
-            loadVncData(vmConsoles, keyMaker);
+            loadVncData(consoles, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.RDP) {
-            loadRdpData(vmConsoles, keyMaker);
+            loadRdpData(consoles, keyMaker);
         }
     }
 
@@ -202,18 +223,20 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     }
 
     class KeyMaker {
+        private final String id;
 
-        private final String vmId;
+        private final boolean isPool;
 
         private final ConsoleContext context;
 
-        public KeyMaker(String vmId, ConsoleContext context) {
-            this.vmId = vmId;
+        public KeyMaker(String id, boolean isPool, ConsoleContext context) {
+            this.id = id;
+            this.isPool = isPool;
             this.context = context;
         }
 
         public String make(String key) {
-            return vmId + context + key;
+            return id + isPool + context + key;
         }
     }
 }

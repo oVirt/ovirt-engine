@@ -55,7 +55,6 @@ public class ConnectAutomaticallyManager {
     }
 
     public void registerModel(final AbstractUserPortalListModel model) {
-
         if (alreadyOpened || !connectAutomatically.readConnectAutomatically()) {
             return;
         }
@@ -86,7 +85,6 @@ public class ConnectAutomaticallyManager {
 
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            //todo revisit this, connectAutomatically flag may not be needed
             if (connectAutomatically.readConnectAutomatically() && model.getCanConnectAutomatically() && !alreadyOpened) {
                 try {
                     model.getAutoConnectableConsoles().get(0).connect();

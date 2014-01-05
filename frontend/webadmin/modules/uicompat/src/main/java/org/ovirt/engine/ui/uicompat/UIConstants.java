@@ -2111,5 +2111,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Not available when Templates are not configured.")
     String notAvailableWithNoTemplates();
+
+    @DefaultStringValue("Connecting to pool not supported.")
+    String connectToPoolNotSupported();
 }
 

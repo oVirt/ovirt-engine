@@ -126,9 +126,6 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Role: {0} on User {1}")
     SafeHtml roleOnUser(String roleName, String userName);
 
-    @DefaultMessage("Connecting to VM pool is not supported")
-    String connectingToPoolIsNotSupported();
-
     @DefaultMessage("Map control-alt-del shortcut to {0}")
     String remapCtrlAltDelete(String hotkey);
 

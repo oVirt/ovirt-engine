@@ -10,6 +10,6 @@ public class ConsoleEditButtonCell extends AbstractConsoleButtonCell {
 
     @Override
     protected boolean shouldRenderCell(UserPortalItemModel model) {
-        return model.getVM() != null && model.getVM().isRunningOrPaused();
+        return model.isPool() || (model.getVM() != null) && model.getVM().isRunningOrPaused();
     }
 }

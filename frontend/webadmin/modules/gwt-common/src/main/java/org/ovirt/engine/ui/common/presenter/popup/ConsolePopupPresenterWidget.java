@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
+import org.ovirt.engine.ui.uicommonweb.models.VmConsolesImpl;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
@@ -130,16 +131,15 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     @Override
     public void init(final ConsolePopupModel model) {
-        if (model.getVmConsoles().getVm() == null) {
-            throw new IllegalArgumentException("The console popup can not be used with pool, only with VM"); //$NON-NLS-1$
-        }
-
         this.model = model;
         initModel(model);
         initView(model);
         initListeners(model);
 
-        String vmName = model.getVmConsoles().getVm().getName();
+        String vmName = (model.getVmConsoles() instanceof VmConsolesImpl)
+                ? model.getVmConsoles().getVm().getName()
+                : model.getVmConsoles().getVm().getVmPoolName(); // for pool dialogs display pool name
+
         getView().setVmName(vmName);
         getView().setCtrlAltDeleteRemapHotkey(consoleUtils.getRemapCtrlAltDelHotkey());
 

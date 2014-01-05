@@ -30,4 +30,8 @@ public enum ConsoleProtocol {
 
         return null;
     }
+
+    public Class getBackingClass() {
+        return model;
+    }
 }

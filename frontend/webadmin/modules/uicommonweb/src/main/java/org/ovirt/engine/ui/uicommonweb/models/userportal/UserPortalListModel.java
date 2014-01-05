@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -75,7 +77,9 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -1354,11 +1358,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
             // Remove pools that has provided VMs.
             ArrayList<VmPool> filteredPools = new ArrayList<VmPool>();
-            poolMap = new HashMap<Guid, VmPool>();
-
             for (VmPool pool : getpools()) {
                 // Add pool to map.
-                poolMap.put(pool.getVmPoolId(), pool);
 
                 int attachedVmsCount = 0;
                 for (VM vm : getvms()) {
@@ -1373,30 +1374,48 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             }
 
             // Merge VMs and Pools, and create item models.
-            List all = Linq.concat(getvms(), filteredPools);
-            Collections.sort(all, new NameableComparator());
-            consoleModelsCache.updateCache(filterVms(all));
+            final List all = Linq.concat(getvms(), filteredPools);
 
-            ArrayList<Model> items = new ArrayList<Model>();
-            for (Object item : all)
-            {
-                VmConsoles consoles = null;
-                if (item instanceof VM) {
-                    consoles = consoleModelsCache.getVmConsolesForVm((VM) item);
-                }
-                UserPortalItemModel model = new UserPortalItemModel(item, consoles);
-                model.setEntity(item);
-                items.add(model);
+            List<VdcQueryType> poolQueryList = new ArrayList<VdcQueryType>();
+            List<VdcQueryParametersBase> poolParamList = new ArrayList<VdcQueryParametersBase>();
+
+            for (VmPool p : filteredPools) {
+                poolQueryList.add(VdcQueryType.GetVmDataByPoolId);
+                poolParamList.add(new IdQueryParameters(p.getVmPoolId()));
             }
 
-            setItems(items);
+            Frontend.getInstance().runMultipleQueries(
+                    poolQueryList, poolParamList,
+                    new IFrontendMultipleQueryAsyncCallback() {
+                        @Override
+                        public void executed(FrontendMultipleQueryAsyncResult result) {
+                            List<VM> vmsOfPools = new LinkedList<VM>();
 
-            setCanConnectAutomatically(getAutoConnectableConsoles().size() == 1);
+                            List<VdcQueryReturnValue> poolRepresentants = result.getReturnValues();
+                            for (VdcQueryReturnValue poolRepresentant : poolRepresentants) {
+                                vmsOfPools.add((VM) poolRepresentant.getReturnValue());
+                            }
 
-            setvms(null);
-            setpools(null);
+                            consoleModelsCache.updateVmCache(getvms());
+                            consoleModelsCache.updatePoolCache(vmsOfPools);
 
-            getSearchCompletedEvent().raise(this, EventArgs.EMPTY);
+                            Collections.sort(all, new NameableComparator());
+
+                            ArrayList<Model> items = new ArrayList<Model>();
+                            for (Object item : all) {
+                                VmConsoles consoles = consoleModelsCache.getVmConsolesForEntity(item);
+                                UserPortalItemModel model = new UserPortalItemModel(item, consoles);
+                                model.setEntity(item);
+                                items.add(model);
+                            }
+
+                            setItems(items);
+
+                            setvms(null);
+                            setpools(null);
+
+                            getSearchCompletedEvent().raise(this, EventArgs.EMPTY);
+                        }});
         }
     }
 

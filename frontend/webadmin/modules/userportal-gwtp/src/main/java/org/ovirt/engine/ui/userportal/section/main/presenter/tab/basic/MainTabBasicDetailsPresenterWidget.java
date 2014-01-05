@@ -171,10 +171,6 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
     private void setupConsole(final UserPortalBasicListProvider modelProvider) {
         UserPortalItemModel item = modelProvider.getModel().getSelectedItem();
-        if (item.isPool()) {
-            getView().setConsoleWarningMessage(messages.connectingToPoolIsNotSupported());
-            return;
-        }
 
         getView().setEditConsoleEnabled(isEditConsoleEnabled(item));
 
@@ -197,7 +193,12 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
-        return item != null && item.getVM() != null && item.getVM().isRunningOrPaused();
+        if (item == null) {
+            return false;
+        }
+
+        return item.isPool() ||
+                (item.getVM() != null && item.getVM().isRunningOrPaused());
     }
 
 }

@@ -1,11 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
@@ -16,11 +13,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
-    private boolean canConnectAutomatically;
-
     private UICommand editConsoleCommand;
 
     protected ConsoleModelsCache consoleModelsCache;
@@ -53,18 +47,8 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
         return autoConnectableConsoles;
     }
 
-    public boolean getCanConnectAutomatically()
-    {
-        return canConnectAutomatically;
-    }
-
-    public void setCanConnectAutomatically(boolean value)
-    {
-        if (canConnectAutomatically != value)
-        {
-            canConnectAutomatically = value;
-            onPropertyChanged(new PropertyChangedEventArgs("CanConnectAutomatically")); //$NON-NLS-1$
-        }
+    public boolean getCanConnectAutomatically() {
+        return getAutoConnectableConsoles().size() == 1;
     }
 
     public UICommand getEditConsoleCommand() {
@@ -76,13 +60,6 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
     }
 
     public abstract void onVmAndPoolLoad();
-
-    protected HashMap<Guid, VmPool> poolMap;
-
-    public VmPool resolveVmPoolById(Guid id)
-    {
-        return poolMap.get(id);
-    }
 
     @Override
     public void executeCommand(UICommand command) {

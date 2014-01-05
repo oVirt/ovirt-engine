@@ -634,7 +634,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     @Override
     public void setItems(Iterable value) {
-        consoleModelsCache.updateCache(value);
+        consoleModelsCache.updateVmCache(value);
 
         super.setItems(value);
     }
@@ -676,7 +676,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        final VmConsoles activeVmConsoles = consoleModelsCache.getVmConsolesForVm(((VM) getSelectedItem()));
+        final VmConsoles activeVmConsoles = consoleModelsCache.getVmConsolesForEntity(getSelectedItem());
 
         final ConsolePopupModel model = new ConsolePopupModel();
         model.setVmConsoles(activeVmConsoles);
@@ -2283,7 +2283,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         // return true, if at least one console is available
         for (VM vm : list) {
-            if (consoleModelsCache.getVmConsolesForVm(vm).canConnectToConsole()) {
+            if (consoleModelsCache.getVmConsolesForEntity(vm).canConnectToConsole()) {
                 return true;
             }
         }
@@ -2465,7 +2465,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         for (VM vm : list) {
             try {
-                consoleModelsCache.getVmConsolesForVm(vm).connect();
+                consoleModelsCache.getVmConsolesForEntity(vm).connect();
             } catch (VmConsoles.ConsoleConnectException e) {
                 final String errorMessage = e.getLocalizedErrorMessage();
                 if (errorMessage != null) {

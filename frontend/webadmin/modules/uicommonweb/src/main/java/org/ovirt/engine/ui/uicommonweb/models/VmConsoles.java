@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 
 
@@ -58,6 +59,19 @@ public interface VmConsoles {
      * @param vm - new VM
      */
     void setVm(VM vm);
+
+
+    /**
+     * Get id of underlying entity (various implementation may want to return various names).
+     * @return id of underlying entity
+     */
+    Guid getEntityId();
+
+    /**
+     * Get name of underlying entity (various implementation may want to return various names).
+     * @return name of underlying entity
+     */
+    String getEntityName();
 
     /**
      * Returns the message explaining why it's console cannot be connected to.
