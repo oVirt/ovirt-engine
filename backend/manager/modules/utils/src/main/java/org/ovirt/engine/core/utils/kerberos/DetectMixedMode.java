@@ -34,20 +34,4 @@ public class DetectMixedMode {
         }
         return false;
     }
-
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            System.out.println("Error: Missing krb5.conf file argument");
-            System.out.println("Usage: " + DetectMixedMode.class.getName() + " krb5.conf");
-            System.exit(1);
-        }
-        DetectMixedMode d = new DetectMixedMode();
-        String krbConfPath = args[0];
-        try {
-            System.out.print(d.detect(krbConfPath) ? "yes" : "no");
-        } catch (FileNotFoundException e) {
-            System.out.println("Error: file " + krbConfPath + " not found");
-            System.exit(1);
-        }
-    }
 }
