@@ -46,7 +46,7 @@ class Plugin(plugin.PluginBase):
             self._backup = backup
 
         def __str__(self):
-            return _("Schema Transaction")
+            return _("Engine schema Transaction")
 
         def prepare(self):
             pass
@@ -56,7 +56,7 @@ class Plugin(plugin.PluginBase):
             try:
                 dbovirtutils = database.OvirtUtils(plugin=self._parent)
                 self._parent.logger.info(
-                    _('Clearing database {database}').format(
+                    _('Clearing Engine database {database}').format(
                         database=self._parent.environment[
                             osetupcons.DBEnv.DATABASE
                         ],
@@ -65,7 +65,7 @@ class Plugin(plugin.PluginBase):
                 dbovirtutils.clearOvirtEngineDatabase()
                 if self._backup is not None and os.path.exists(self._backup):
                     self._parent.logger.info(
-                        _('Restoring database {database}').format(
+                        _('Restoring Engine database {database}').format(
                             database=self._parent.environment[
                                 osetupcons.DBEnv.DATABASE
                             ],
@@ -74,11 +74,11 @@ class Plugin(plugin.PluginBase):
                     dbovirtutils.restore(backupFile=self._backup)
             except Exception as e:
                 self._parent.logger.debug(
-                    'Exception during database restore',
+                    'Error during Engine database restore',
                     exc_info=True,
                 )
                 self._parent.logger.error(
-                    _('Database rollback failed: {error}').format(
+                    _('Engine database rollback failed: {error}').format(
                         error=e,
                     )
                 )
@@ -127,7 +127,7 @@ class Plugin(plugin.PluginBase):
         if len(result) > 0:
             raise RuntimeError(
                 _(
-                    'Cannot upgrade the database schema due to wrong '
+                    'Cannot upgrade the Engine database schema due to wrong '
                     'ownership of some database entities.\n'
                     'Please execute: {command}\n'
                     'Using the password of the "postgres" user.'
@@ -217,7 +217,7 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-        self.logger.info(_('Creating database schema'))
+        self.logger.info(_('Creating Engine database schema'))
         args = [
             osetupcons.FileLocations.OVIRT_ENGINE_DB_CREATE,
             '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
@@ -289,7 +289,7 @@ class Plugin(plugin.PluginBase):
         # consider doing that via python
         #
 
-        self.logger.info(_('Updating database schema'))
+        self.logger.info(_('Updating Engine database schema'))
         args = [
             osetupcons.FileLocations.OVIRT_ENGINE_DB_UPGRADE,
             '-s', self.environment[osetupcons.DBEnv.HOST],

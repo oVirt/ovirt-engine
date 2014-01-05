@@ -144,7 +144,7 @@ class Plugin(plugin.PluginBase):
                     exc_info=True,
                 )
                 msg = _(
-                    'Cannot connect to database using existing '
+                    'Cannot connect to Engine database using existing '
                     'credentials: {user}@{host}:{port}'
                 ).format(
                     host=dbenv[osetupcons.DBEnv.HOST],

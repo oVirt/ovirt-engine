@@ -78,7 +78,7 @@ class Plugin(plugin.PluginBase):
         if rc != 0:
             raise RuntimeError(
                 _(
-                    'Failed checking DB:\n'
+                    'Failed checking Engine database:\n'
                     '{output}\n'.format(
                         output=stdout,
                     )
@@ -127,7 +127,7 @@ class Plugin(plugin.PluginBase):
     )
     def _validation(self):
         self.logger.info(
-            _('Checking the DB consistency')
+            _('Checking the Engine database consistency')
         )
         violations, issues_found = self._checkDb()
         if issues_found:
@@ -137,7 +137,7 @@ class Plugin(plugin.PluginBase):
                 self.logger.warn(
                     _(
                         'The following inconsistencies were found '
-                        'in the DB: {violations}. '
+                        'in Engine database: {violations}. '
                     ).format(
                         violations=violations,
                     ),
@@ -160,7 +160,6 @@ class Plugin(plugin.PluginBase):
             ]:
                 raise RuntimeError(
                     _(
-                        'User decided to skip db fix.\n'
                         'Upgrade aborted, database integrity '
                         'cannot be established.'
                     )
@@ -172,7 +171,7 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         self.logger.info(
-            _('Fixing DB inconsistencies')
+            _('Fixing Engine database inconsistencies')
         )
         self._dbUtil(fix=True)
 

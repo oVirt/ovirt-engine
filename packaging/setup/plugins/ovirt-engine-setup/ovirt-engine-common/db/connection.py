@@ -79,7 +79,7 @@ class Plugin(plugin.PluginBase):
         if encoding.lower() != 'utf8':
             raise RuntimeError(
                 _(
-                    'Encoding of the engine database is {encoding}. '
+                    'Encoding of the Engine database is {encoding}. '
                     'Engine installation is only supported on servers '
                     'with default encoding set to UTF8. Please fix the '
                     'default DB encoding before you continue'
@@ -155,8 +155,8 @@ class Plugin(plugin.PluginBase):
             if host is None:
                 while True:
                     host = self.dialog.queryString(
-                        name='OVESETUP_DB_HOST',
-                        note=_('Database host [@DEFAULT@]: '),
+                        name='OVESETUP_ENGINE_DB_HOST',
+                        note=_('Engine database host [@DEFAULT@]: '),
                         prompt=True,
                         default=osetupcons.Defaults.DEFAULT_DB_HOST,
                     )
@@ -175,8 +175,8 @@ class Plugin(plugin.PluginBase):
                     try:
                         port = osetuputil.parsePort(
                             self.dialog.queryString(
-                                name='OVESETUP_DB_PORT',
-                                note=_('Database port [@DEFAULT@]: '),
+                                name='OVESETUP_ENGINE_DB_PORT',
+                                note=_('Engine database port [@DEFAULT@]: '),
                                 prompt=True,
                                 default=osetupcons.Defaults.DEFAULT_DB_PORT,
                             )
@@ -188,9 +188,9 @@ class Plugin(plugin.PluginBase):
             if secured is None:
                 secured = dialog.queryBoolean(
                     dialog=self.dialog,
-                    name='OVESETUP_DB_SECURED',
+                    name='OVESETUP_ENGINE_DB_SECURED',
                     note=_(
-                        'Database secured connection (@VALUES@) '
+                        'Engine database secured connection (@VALUES@) '
                         '[@DEFAULT@]: '
                     ),
                     prompt=True,
@@ -203,10 +203,10 @@ class Plugin(plugin.PluginBase):
             if securedHostValidation is None:
                 securedHostValidation = dialog.queryBoolean(
                     dialog=self.dialog,
-                    name='OVESETUP_DB_SECURED_HOST_VALIDATION',
+                    name='OVESETUP_ENGINE_DB_SECURED_HOST_VALIDATION',
                     note=_(
-                        'Validate host name in secured connection (@VALUES@) '
-                        '[@DEFAULT@]: '
+                        'Engine database host name validation in secured '
+                        'connection (@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,
                     default=True,
@@ -214,24 +214,24 @@ class Plugin(plugin.PluginBase):
 
             if db is None:
                 db = self.dialog.queryString(
-                    name='OVESETUP_DB_DATABASE',
-                    note=_('Database name [@DEFAULT@]: '),
+                    name='OVESETUP_ENGINE_DB_DATABASE',
+                    note=_('Engine database name [@DEFAULT@]: '),
                     prompt=True,
                     default=osetupcons.Defaults.DEFAULT_DB_DATABASE,
                 )
 
             if user is None:
                 user = self.dialog.queryString(
-                    name='OVESETUP_DB_USER',
-                    note=_('Database user [@DEFAULT@]: '),
+                    name='OVESETUP_ENGINE_DB_USER',
+                    note=_('Engine database user [@DEFAULT@]: '),
                     prompt=True,
                     default=osetupcons.Defaults.DEFAULT_DB_USER,
                 )
 
             if password is None:
                 password = self.dialog.queryString(
-                    name='OVESETUP_DB_PASSWORD',
-                    note=_('Database password: '),
+                    name='OVESETUP_ENGINE_DB_PASSWORD',
+                    note=_('Engine database password: '),
                     prompt=True,
                     hidden=True,
                 )
@@ -258,7 +258,7 @@ class Plugin(plugin.PluginBase):
                     connectionValid = True
                 except RuntimeError as e:
                     self.logger.error(
-                        _('Cannot connect to database: {error}').format(
+                        _('Cannot connect to Engine database: {error}').format(
                             error=e,
                         )
                     )

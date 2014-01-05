@@ -70,10 +70,10 @@ class Plugin(plugin.PluginBase):
                 osetupcons.RemoveEnv.REMOVE_DATABASE
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
-                name='OVESETUP_REMOVE_DATABASE',
+                name='OVESETUP_ENGINE_DB_REMOVE',
                 note=_(
-                    'Do you want to remove Engine DB content? All data will '
-                    'be lost (@VALUES@) [@DEFAULT@]: '
+                    'Do you want to remove Engine database content? '
+                    'All data will be lost (@VALUES@) [@DEFAULT@]: '
                 ),
                 prompt=True,
                 true=_('Yes'),
@@ -98,7 +98,7 @@ class Plugin(plugin.PluginBase):
             dbovirtutils.tryDatabaseConnect()
             self._bkpfile = dbovirtutils.backup()
             self.logger.info(
-                _('Clearing database {database}').format(
+                _('Clearing Engine database {database}').format(
                     database=self.environment[osetupcons.DBEnv.DATABASE],
                 )
             )
@@ -108,7 +108,7 @@ class Plugin(plugin.PluginBase):
             self.logger.debug('exception', exc_info=True)
             self.logger.warning(
                 _(
-                    'Cannot clear database: {error}'
+                    'Cannot clear Engine database: {error}'
                 ).format(
                     error=e,
                 )
@@ -127,10 +127,11 @@ class Plugin(plugin.PluginBase):
     def _closeup(self):
         self.dialog.note(
             text=_(
-                'A backup of the database is available at {path}'
+                'A backup of the Engine database is available at {path}'
             ).format(
                 path=self._bkpfile
             ),
         )
+
 
 # vim: expandtab tabstop=4 shiftwidth=4

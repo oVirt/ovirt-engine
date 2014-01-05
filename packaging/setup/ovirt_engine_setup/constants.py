@@ -715,7 +715,7 @@ class DBEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Database host'),
+        description=_('Engine database host'),
     )
     def HOST(self):
         return 'OVESETUP_DB/host'
@@ -723,7 +723,7 @@ class DBEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Datbase port'),
+        description=_('Engine database port'),
     )
     def PORT(self):
         return 'OVESETUP_DB/port'
@@ -731,7 +731,7 @@ class DBEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Database secured connection'),
+        description=_('Engine database secured connection'),
     )
     def SECURED(self):
         return 'OVESETUP_DB/secured'
@@ -739,7 +739,7 @@ class DBEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Database host name validation'),
+        description=_('Engine database host name validation'),
     )
     def SECURED_HOST_VALIDATION(self):
         return 'OVESETUP_DB/securedHostValidation'
@@ -747,7 +747,7 @@ class DBEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Database name'),
+        description=_('Engine database name'),
     )
     def DATABASE(self):
         return 'OVESETUP_DB/database'
@@ -755,7 +755,7 @@ class DBEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Database user name'),
+        description=_('Engine database user name'),
     )
     def USER(self):
         return 'OVESETUP_DB/user'
