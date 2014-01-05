@@ -2,8 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
 
-import java.util.Collections;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -12,7 +10,6 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
-import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -76,8 +73,8 @@ public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk
                 getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,
                 MoveDisksParameters.class,
-                new String[] {"ParametersList"},
-                new Object[] {Collections.singletonList(new MoveDiskParameters(GUIDS[1], Guid.Empty, GUIDS[3]))},
+                new String[] {},
+                new Object[] {},
                 true, true, null, null, true));
         verifyActionResponse(resource.move(setUpParams(false)), "disks/" + DISK_ID, false);
     }

@@ -23,7 +23,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
-import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -317,8 +316,8 @@ public class BackendVmDiskResourceTest
                 getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,
                 MoveDisksParameters.class,
-                new String[] { "ParametersList" },
-                new Object[] { Collections.singletonList(new MoveDiskParameters(GUIDS[1], Guid.Empty, GUIDS[3])) }));
+                new String[] {},
+                new Object[] {}));
 
         verifyActionResponse(((VmDiskResource) resource).move(setUpMoveParams(false)));
     }
@@ -357,8 +356,8 @@ public class BackendVmDiskResourceTest
                 getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,
                 MoveDisksParameters.class,
-                new String[] { "ParametersList" },
-                new Object[] { Collections.singletonList(new MoveDiskParameters(GUIDS[1], Guid.Empty, GUIDS[3])) }));
+                new String[] {},
+                new Object[] {}));
 
         verifyActionResponse(((VmDiskResource) resource).move(setUpMoveParams(true)));
     }
