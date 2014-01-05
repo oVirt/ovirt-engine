@@ -174,7 +174,8 @@ SELECT
 	cast((c.swap_total - c.swap_free) as int) as swap_used_mb,
 	cast(b.vm_active as smallint) as vm_active,
 	cast(b.vm_count as smallint) as total_vms,
-	b.vms_cores_count as total_vms_vcpus
+	b.vms_cores_count as total_vms_vcpus,
+	cast(c.mem_shared as smallint) as ksm_shared_memory_percent
 FROM vds_dynamic b, vds_statistics c
 where	b.vds_id  = c.vds_id;
 
