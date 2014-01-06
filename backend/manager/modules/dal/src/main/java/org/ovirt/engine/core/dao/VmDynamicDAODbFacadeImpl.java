@@ -89,6 +89,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("vm_ip", vm.getVmIp())
                 .addValue("vm_fqdn", vm.getVmFQDN())
                 .addValue("last_start_time", vm.getLastStartTime())
+                .addValue("last_stop_time", vm.getLastStopTime())
                 .addValue("vm_pid", vm.getVmPid())
                 .addValue("display", vm.getDisplay())
                 .addValue("acpi_enable", vm.getAcpiEnable())
@@ -143,6 +144,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setVmFQDN(rs.getString("vm_fqdn"));
                 entity.setLastStartTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("last_start_time")));
+                entity.setLastStopTime(DbFacadeUtils.fromDate(rs
+                        .getTimestamp("last_stop_time")));
                 entity.setVmPid((Integer) rs.getObject("vm_pid"));
                 entity.setDisplay((Integer) rs.getObject("display"));
                 entity.setAcpiEnable((Boolean) rs.getObject("acpi_enable"));
@@ -199,6 +202,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .addValue("vm_host", entity.getVmHost())
                         .addValue("vm_ip", entity.getVmIp())
                         .addValue("last_start_time", entity.getLastStartTime())
+                        .addValue("last_stop_time", entity.getLastStopTime())
                         .addValue("vm_pid", entity.getVmPid())
                         .addValue("vm_fqdn", entity.getVmFQDN())
                         .addValue("app_list", entity.getAppList())

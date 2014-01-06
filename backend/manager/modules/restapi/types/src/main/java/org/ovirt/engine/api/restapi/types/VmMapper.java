@@ -422,6 +422,9 @@ public class VmMapper {
                 model.getDisplay().setType(map(entity.getDefaultDisplayType(), null));
             }
         }
+        if (entity.getLastStopTime() != null) {
+            model.setStopTime(DateMapper.map(entity.getLastStopTime(), null));
+        }
         if (model.getDisplay() != null) {
             model.getDisplay().setMonitors(entity.getNumOfMonitors());
             model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());

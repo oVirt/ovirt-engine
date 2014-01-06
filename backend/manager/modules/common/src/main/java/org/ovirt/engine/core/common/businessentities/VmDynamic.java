@@ -17,6 +17,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String vmHost;
     private Integer vmPid;
     private Date lastStartTime;
+    private Date lastStopTime;
     private String guestCurUserName;
     private String consoleCurUserName;
     private Guid consoleUserId;
@@ -88,6 +89,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + ((vmIp == null) ? 0 : vmIp.hashCode());
         result = prime * result + ((vmFQDN == null) ? 0 : vmFQDN.hashCode());
         result = prime * result + ((lastStartTime == null) ? 0 : lastStartTime.hashCode());
+        result = prime * result + ((lastStopTime == null) ? 0 : lastStopTime.hashCode());
         result = prime * result + ((vmPid == null) ? 0 : vmPid.hashCode());
         result = prime * result + (lastWatchdogEvent == null ? 0 : lastWatchdogEvent.hashCode());
         result = prime * result + (lastWatchdogAction == null ? 0 : lastWatchdogAction.hashCode());
@@ -141,6 +143,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(vmIp, other.vmIp)
                 && ObjectUtils.objectsEqual(vmFQDN, other.vmFQDN)
                 && ObjectUtils.objectsEqual(lastStartTime, other.lastStartTime)
+                && ObjectUtils.objectsEqual(lastStopTime, other.lastStopTime)
                 && ObjectUtils.objectsEqual(vmPid, other.vmPid)
                 && ObjectUtils.objectsEqual(lastWatchdogEvent, other.lastWatchdogEvent)
                 && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction)
@@ -331,6 +334,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setLastStartTime(Date value) {
         this.lastStartTime = value;
+    }
+
+    public Date getLastStopTime() {
+        return this.lastStopTime;
+    }
+
+    public void setLastStopTime(Date value) {
+        this.lastStopTime = value;
     }
 
     public Integer getVmPid() {

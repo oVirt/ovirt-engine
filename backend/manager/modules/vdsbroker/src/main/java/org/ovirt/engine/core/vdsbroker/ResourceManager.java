@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -289,6 +290,7 @@ public class ResourceManager {
             if (isVmNotRunning) {
                 vm.setRunOnVds(null);
                 vm.setVmPauseStatus(VmPauseStatus.NONE);
+                vm.setLastStopTime(new Date());
             }
         }
     }

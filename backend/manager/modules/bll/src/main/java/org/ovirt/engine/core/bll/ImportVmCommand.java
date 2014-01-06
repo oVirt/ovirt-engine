@@ -1097,6 +1097,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         tempVar.setVmHost("");
         tempVar.setVmIp("");
         tempVar.setVmFQDN("");
+        tempVar.setLastStopTime(new Date());
         tempVar.setAppList(getParameters().getVm().getDynamicData().getAppList());
         getVmDynamicDAO().save(tempVar);
         getCompensationContext().snapshotNewEntity(tempVar);

@@ -491,6 +491,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmDynamic.setLastStartTime(value);
     }
 
+    public Date getLastStopTime() {
+        return this.vmDynamic.getLastStopTime();
+    }
+
+    public void setLastStopTime(Date value) {
+        this.vmDynamic.setLastStopTime(value);
+    }
+
     public String getConsoleCurentUserName() {
         return this.vmDynamic.getConsoleCurrentUserName();
     }
