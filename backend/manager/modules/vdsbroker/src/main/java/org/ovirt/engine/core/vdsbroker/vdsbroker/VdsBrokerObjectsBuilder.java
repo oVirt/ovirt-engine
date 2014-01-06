@@ -1255,9 +1255,11 @@ public class VdsBrokerObjectsBuilder {
                 addBootProtocol(networkConfig, host, iface);
             }
 
-            NetworkQosMapper qosMapper =
-                    new NetworkQosMapper(network, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
-            iface.setQos(qosMapper.deserialize());
+            if (FeatureSupported.hostNetworkQos(host.getVdsGroupCompatibilityVersion())) {
+                NetworkQosMapper qosMapper =
+                        new NetworkQosMapper(network, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
+                iface.setQos(qosMapper.deserialize());
+            }
         }
     }
 
