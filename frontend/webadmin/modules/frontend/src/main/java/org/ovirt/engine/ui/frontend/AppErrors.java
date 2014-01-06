@@ -856,6 +856,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action hot unplug")
     String VAR__ACTION__HOT_UNPLUG();
 
+    @DefaultStringValue("$action hot set cpus")
+    String VAR__ACTION__HOT_SET_CPUS();
+
     @DefaultStringValue("$action log on")
     String VAR__ACTION__LOGON();
 

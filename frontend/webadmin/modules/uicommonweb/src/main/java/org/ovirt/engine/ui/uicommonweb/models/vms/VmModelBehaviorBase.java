@@ -894,8 +894,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (numOfSockets == 0 || coresPerSocket == 0) {
             initListToOne(getModel().getCoresPerSocket());
             initListToOne(getModel().getNumOfSockets());
-            coresPerSocket = 1;
-            numOfSockets = 1;
         }
 
         List<Integer> coresPerSocets = findIndependentPossibleValues(maxCpusPerSocket);
@@ -930,7 +928,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * The hard way of finding, what the correct combination of the sockets and cores/socket should be (e.g. checking
      * all possible combinations)
      */
-    private void composeCoresAndSocketsWhenDontFitInto(int totalCpuCores) {
+    protected void composeCoresAndSocketsWhenDontFitInto(int totalCpuCores) {
         List<Integer> possibleSockets = findIndependentPossibleValues(maxNumOfSockets);
         List<Integer> possibleCoresPerSocket = findIndependentPossibleValues(maxCpusPerSocket);
 
@@ -957,7 +955,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    private int extractIntFromListModel(ListModel model) {
+    protected int extractIntFromListModel(ListModel model) {
         return model.getSelectedItem() != null ? Integer.parseInt(model
                 .getSelectedItem()
                 .toString())
@@ -988,7 +986,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) array[0];
                         behavior.maxNumOfSockets = ((Integer) returnValue);
                         behavior.updataMaxVmsInPool();
-
                     }
                 }, getModel().getHash()), version);
     }
@@ -996,7 +993,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     /**
      * Returns a list of integers which can divide the param
      */
-    private List<Integer> findIndependentPossibleValues(int max) {
+    protected List<Integer> findIndependentPossibleValues(int max) {
         List<Integer> res = new ArrayList<Integer>();
         int totalCPUCores = getTotalCpuCores();
 
@@ -1012,7 +1009,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     /**
      * Filters out the values, which can not be used in conjuction with the others to reach the total CPUs
      */
-    private List<Integer> filterPossibleValues(List<Integer> candidates, List<Integer> others) {
+    protected List<Integer> filterPossibleValues(List<Integer> candidates, List<Integer> others) {
         List<Integer> res = new ArrayList<Integer>();
         int currentCpusCores = getTotalCpuCores();
 

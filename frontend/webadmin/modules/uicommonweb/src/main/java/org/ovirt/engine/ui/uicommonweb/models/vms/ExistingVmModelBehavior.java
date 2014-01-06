@@ -4,18 +4,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -32,6 +37,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     protected VM vm;
 
     private List<VmNetworkInterface> networkInerfaces;
+    private int hostCpu;
+    private VDS runningOnHost;
 
     public ExistingVmModelBehavior(VM vm)
     {
@@ -179,7 +186,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().selectSsoMethod(vm.getSsoMethod());
 
         getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
-        getModel().getNumOfSockets().setIsChangable(!vm.isRunning());
+        getModel().getNumOfSockets().setIsChangable(isHotSetCpuSupported() || !vm.isRunning());
 
         getModel().getCoresPerSocket().setIsChangable(!vm.isRunning());
 
@@ -264,6 +271,27 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         initPriority(vm.getPriority());
 
         getModel().setSelectedMigrationDowntime(vm.getMigrationDowntime());
+
+        if (isHotSetCpuSupported()) {
+            // cancel related events while fetching data
+            getModel().getTotalCPUCores().getEntityChangedEvent().removeListener(getModel());
+            getModel().getCoresPerSocket().getSelectedItemChangedEvent().removeListener(getModel());
+            getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
+
+            AsyncDataProvider.getHostById(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    ExistingVmModelBehavior existingVmModelBehavior = (ExistingVmModelBehavior) model;
+                    runningOnHost = (VDS) returnValue;
+                    hostCpu = calculateHostCpus();
+                    existingVmModelBehavior.updateNumOfSockets();
+                }
+            }), vm.getRunOnVds());
+        }
+    }
+
+    private int calculateHostCpus() {
+        return  getModel().getSelectedCluster().getCountThreadsAsCores() ? runningOnHost.getCpuThreads() : runningOnHost.getCpuCores();
     }
 
     @Override
@@ -340,5 +368,69 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getCdAttached().setEntity(hasCd);
 
         updateCdImage();
+    }
+
+    @Override
+    public void numOfSocketChanged() {
+        if (isHotSetCpuSupported()) {
+            int numOfSockets = extractIntFromListModel(getModel().getNumOfSockets());
+            int coresPerSocket = vm.getCpuPerSocket();
+            getModel().getTotalCPUCores().setEntity(Integer.toString(numOfSockets * coresPerSocket));
+        } else {
+            super.numOfSocketChanged();
+        }
+    }
+
+    @Override
+    public void totalCpuCoresChanged() {
+        if (isHotSetCpuSupported()) {
+            if (runningOnHost == null) {
+                return; //async call didn't return with the host yet
+            }
+            // must not change the num of cpu per socket so the list has only 1 item
+            List<Integer> coresPerSockets = Arrays.asList(new Integer[]{vm.getCpuPerSocket()});
+
+            getModel().getCoresPerSocket().setItems(coresPerSockets);
+            getModel().getNumOfSockets().setItems(createSocketsRange());
+
+            getModel().getCoresPerSocket().setSelectedItem(vm.getCpuPerSocket());
+            getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
+
+            getModel().getNumOfSockets().getSelectedItemChangedEvent().addListener(getModel());
+            numOfSocketChanged();
+        } else {
+            super.totalCpuCoresChanged();
+        }
+    }
+
+    /**
+     *  span a list of all possible sockets values
+     */
+    private List<Integer> createSocketsRange() {
+        List<Integer> res = new ArrayList<Integer>();
+        int maxHostCpu = getHostCpu();
+        int cpusPerSockets = vm.getCpuPerSocket();
+
+        for (int i = 1; i <= maxHostCpu; i++) {
+            // sockets stepping must not exceed the host maximum
+            if (i * cpusPerSockets <= maxHostCpu) {
+                res.add(i);
+            }
+        }
+        return res;
+    }
+
+    public boolean isHotSetCpuSupported() {
+        VDSGroup selectedCluster = getModel().getSelectedCluster();
+        Version clusterVersion = selectedCluster.getcompatibility_version();
+        Boolean hotplugEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled, clusterVersion.getValue());
+        boolean hotplugCpuSupported = Boolean.parseBoolean(((Map<String, String>) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HotPlugCpuSupported,
+                clusterVersion.getValue())).get(selectedCluster.getArchitecture().name()));
+
+        return getVm().getStatus() == VMStatus.Up && hotplugEnabled && hotplugCpuSupported;
+    }
+
+    public int getHostCpu() {
+        return hostCpu;
     }
 }
