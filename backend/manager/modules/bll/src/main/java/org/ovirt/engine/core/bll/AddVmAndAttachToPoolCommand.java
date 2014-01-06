@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -57,7 +58,11 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
 
     private VdcReturnValueBase addVm(VmStatic vmStatic) {
         VmManagementParametersBase parameters = new VmManagementParametersBase(vmStatic);
-        parameters.setSessionId(getParameters().getSessionId());
+        if (StringUtils.isEmpty(getParameters().getSessionId())) {
+            parameters.setParametersCurrentUser(getCurrentUser());
+        } else {
+            parameters.setSessionId(getParameters().getSessionId());
+        }
         parameters.setDontAttachToDefaultTag(true);
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());

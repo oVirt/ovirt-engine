@@ -85,4 +85,11 @@ public interface VmStaticDAO extends GenericDao<VmStatic, Guid> {
     public void incrementDbGeneration(Guid id);
 
     List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids);
+
+    /**
+     * remove with optionally remove/keep vm permissions
+     * @param id vm to remove
+     * @param removePermissions flag to indicate if to remove the permissions or keep them
+     */
+    public void remove(Guid id, boolean removePermissions);
 }

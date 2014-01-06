@@ -154,7 +154,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // for base templates, make sure it has no versions that need to be removed first
-        if (vmTemplateId.equals(template.getBaseTemplateId())) {
+        if (getParameters().isRemoveTemplateFromDb() && vmTemplateId.equals(template.getBaseTemplateId())) {
             List<VmTemplate> templateVersions = getVmTemplateDAO().getTemplateVersionsForBaseTemplate(vmTemplateId);
             if (!templateVersions.isEmpty()) {
                 List<String> templateVersionsNames = new ArrayList<>();

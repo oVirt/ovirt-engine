@@ -445,6 +445,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cannot use 'Latest Version' when using clone from Template.")
     String ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Vm is set to use a specific version, and not automatically update to the latest version.")
+    String ACTION_TYPE_FAILED_VM_NOT_SET_FOR_LATEST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Vm is already at the latest version.")
+    String ACTION_TYPE_FAILED_VM_ALREADY_IN_LATEST_VERSION();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM is non migratable.")
     String ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE();
 
@@ -909,6 +915,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$action disable")
     String VAR__ACTION__DISABLE();
+
+    @DefaultStringValue("$action update version for")
+    String VAR__ACTION__UPDATE_VM_VERSION();
 
     @DefaultStringValue("$hostStatus Up")
     String VAR__HOST_STATUS__UP();

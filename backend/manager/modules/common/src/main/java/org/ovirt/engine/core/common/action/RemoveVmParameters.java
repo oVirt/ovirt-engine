@@ -7,6 +7,7 @@ public class RemoveVmParameters extends VmOperationParameterBase implements java
     private static final long serialVersionUID = 4931085923357689965L;
     private boolean force;
     private boolean removeDisks;
+    private boolean removePermissions;
 
     public boolean getForce() {
         return force;
@@ -24,10 +25,19 @@ public class RemoveVmParameters extends VmOperationParameterBase implements java
         this.removeDisks = removeDisks;
     }
 
+    public boolean isRemovePermissions() {
+        return removePermissions;
+    }
+
+    public void setRemovePermissions(boolean removePermissions) {
+        this.removePermissions = removePermissions;
+    }
+
     public RemoveVmParameters(Guid vmId, boolean force) {
         super(vmId);
         setForce(force);
         removeDisks = true;
+        removePermissions = true;
     }
 
     public RemoveVmParameters(Guid vmId, boolean force, boolean removeDisks) {
@@ -37,5 +47,6 @@ public class RemoveVmParameters extends VmOperationParameterBase implements java
 
     public RemoveVmParameters() {
         removeDisks = true;
+        removePermissions = true;
     }
 }
