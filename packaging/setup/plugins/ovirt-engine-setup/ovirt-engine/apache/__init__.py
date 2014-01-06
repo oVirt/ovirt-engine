@@ -25,14 +25,14 @@ from otopi import util
 from . import root
 from . import ssl
 from . import selinux
-from . import ovirt_engine
+from . import engine
 
 
 @util.export
 def createPlugins(context):
     root.Plugin(context=context)
     ssl.Plugin(context=context)
-    ovirt_engine.Plugin(context=context)
+    engine.Plugin(context=context)
     selinux.Plugin(context=context)
 
 
