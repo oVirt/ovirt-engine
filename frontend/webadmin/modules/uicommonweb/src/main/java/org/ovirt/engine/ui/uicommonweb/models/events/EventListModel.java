@@ -236,13 +236,13 @@ public class EventListModel extends ListWithDetailsModel
             return;
         }
 
-        if (!source.isEmpty()) {
-            //We received some new events, tell the active models to update.
-            RefreshActiveModelEvent.fire(this, false);
-        }
         List<AuditLog> list = (List<AuditLog>) getItems();
 
         Collections.sort(source, new Linq.AuditLogComparer());
+        if (!source.isEmpty() && !list.contains(source.get(source.size() - 1))) {
+            //We received some new events, tell the active models to update.
+            RefreshActiveModelEvent.fire(this, false);
+        }
 
         for (AuditLog item : source)
         {

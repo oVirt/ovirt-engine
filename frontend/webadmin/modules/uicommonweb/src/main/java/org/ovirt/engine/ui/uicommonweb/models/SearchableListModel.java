@@ -889,7 +889,7 @@ public abstract class SearchableListModel<T> extends ListModel<T> implements Gri
             @Override
             public void onRefreshActiveModel(RefreshActiveModelEvent event) {
                 if (getTimer().isActive()) { //Only if we are active should we refresh.
-                    getForceRefreshCommand().execute();
+                    syncSearch();
                     if (event.isDoFastForward()) {
                         //Start the fast refresh.
                         getTimer().fastForward();
