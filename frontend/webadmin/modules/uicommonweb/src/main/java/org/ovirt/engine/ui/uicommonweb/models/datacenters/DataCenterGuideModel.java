@@ -420,7 +420,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
         boolean attachIsoAllowed =
-                (attachedDataStorages.size() > 0 && Linq.isAnyStorageDomainIsMatserAndActive(attachedDataStorages)
+                (attachedDataStorages.size() > 0 && Linq.isAnyStorageDomainIsMasterAndActive(attachedDataStorages)
                         && isoStorageDomains.size() > 0 && attachedIsoStorages.isEmpty() && upHosts.size() > 0);
 
         // The action is available if there are no storages attached to the

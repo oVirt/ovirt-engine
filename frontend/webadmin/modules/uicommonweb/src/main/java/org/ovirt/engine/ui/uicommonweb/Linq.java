@@ -265,12 +265,12 @@ public final class Linq
     }
 
     /**
-     * Checks if Any StorageDomain Is Matser And Active
+     * Checks if Any StorageDomain Is Master And Active
      *
      * @param sdl
      * @return
      */
-    public static boolean isAnyStorageDomainIsMatserAndActive(List<StorageDomain> sdl)
+    public static boolean isAnyStorageDomainIsMasterAndActive(List<StorageDomain> sdl)
     {
         for (StorageDomain a : sdl)
         {
