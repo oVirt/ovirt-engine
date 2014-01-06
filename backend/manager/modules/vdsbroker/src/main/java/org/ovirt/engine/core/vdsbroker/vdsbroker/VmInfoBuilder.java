@@ -85,7 +85,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         VmDeviceType vmDeviceType = getOsRepository().getDisplayDevice(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), displayType);
         // create a monitor as an unmanaged device
         struct.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
-        struct.put(VdsProperties.Device, vmDeviceType);
+        struct.put(VdsProperties.Device, vmDeviceType.getName());
         struct.put(VdsProperties.SpecParams, getNewMonitorSpecParams(displayType, numOfMonitors, singleQxlPci));
         struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
         devices.add(struct);
