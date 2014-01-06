@@ -109,6 +109,9 @@ public class SetupNetworksHelper {
             if (nic != null) {
                 if (NetworkUtils.isVlan(nic)) {
                     nic = nicsByName.get(NetworkUtils.stripVlan(nic.getName()));
+                    if (nic == null) {
+                        continue;
+                    }
                 }
 
                 Network removedNetwork = getExistingClusterNetworks().get(network);
