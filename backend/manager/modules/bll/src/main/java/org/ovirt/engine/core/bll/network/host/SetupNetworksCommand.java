@@ -209,8 +209,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 // save the new network topology to DB
                 Backend.getInstance().getResourceManager()
                         .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                                new CollectHostNetworkDataVdsCommandParameters(getVds(),
-                                        getParameters().getInterfaces()));
+                                new CollectHostNetworkDataVdsCommandParameters(getVds(), getInterfaces()));
 
                 // Update cluster networks (i.e. check if need to activate each new network)
                 for (Network net : getNetworks()) {
