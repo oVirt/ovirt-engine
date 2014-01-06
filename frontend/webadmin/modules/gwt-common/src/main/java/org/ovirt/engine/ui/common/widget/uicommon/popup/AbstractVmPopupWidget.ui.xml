@@ -337,6 +337,10 @@
             padding-left: 5px;
         }
 
+        .totalvcpusTextBox {
+            float: right;
+        }
+
         .cpuSahresValueTextBox {
             padding-left: 5px;
         }
@@ -440,8 +444,12 @@
 			<t:DialogTab ui:field="systemTab">
 				<t:content>
 					<g:FlowPanel>
-                            <ge:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
-                            <ge:EntityModelTextBoxEditor ui:field="totalvCPUsEditor" />
+                        <ge:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
+                         <g:FlowPanel addStyleNames="{style.labelToCouple}">
+                             <g:Label text="{constants.numOfVCPUs}" addStyleNames="{style.labelToCoupleLabel}"/>
+                             <d:InfoIcon ui:field="totalVCpuInfoIcon"/>
+                             <ge:StringEntityModelTextBoxOnlyEditor ui:field="totalvCPUsEditor" addStyleNames="{style.totalvcpusTextBox}"/>
+                         </g:FlowPanel>
 							<g:FlowPanel addStyleNames="{style.sectionPanel}">
 								<d:AdvancedParametersExpander ui:field="vcpusAdvancedParameterExpander"/>
 								<g:FlowPanel ui:field="vcpusAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">

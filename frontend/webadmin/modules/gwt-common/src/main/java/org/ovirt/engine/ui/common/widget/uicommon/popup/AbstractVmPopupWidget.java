@@ -220,7 +220,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
     @WithElementId("totalCPUCores")
-    public EntityModelTextBoxEditor<String> totalvCPUsEditor;
+    public StringEntityModelTextBoxOnlyEditor totalvCPUsEditor;
+
+    @UiField(provided = true)
+    InfoIcon totalVCpuInfoIcon;
 
     @UiField
     @Ignore
@@ -766,7 +769,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private void initTextBoxEditors() {
         descriptionEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         commentEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        totalvCPUsEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         numOfVmsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         cpuPinning = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         cpuSharesAmountEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
@@ -810,6 +813,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
 
         });
+
+        totalVCpuInfoIcon = new InfoIcon(applicationTemplates.italicText(messages.hotPlugUnplugCpuWarning()), resources);
     }
 
     /**
@@ -1122,7 +1127,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // System tab
         memSizeEditor.setLabel(constants.memSizeVmPopup());
-        totalvCPUsEditor.setLabel(constants.numOfVCPUs());
         corePerSocketEditor.setLabel(constants.coresPerSocket());
         numOfSocketsEditor.setLabel(constants.numOfSockets());
     }
