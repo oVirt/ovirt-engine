@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -91,6 +93,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             return;
         }
 
+        if (!getRemovedBonds().isEmpty()) {
+            unlabelRemovedBonds();
+        }
+
         T bckndCmdParams = getParameters();
         final SetupNetworksVdsCommandParameters vdsCmdParams = new SetupNetworksVdsCommandParameters(
                 getVdsId(),
@@ -124,6 +130,15 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             }
         } catch (TimeoutException e) {
             log.debugFormat("Setup networks command timed out for {0} seconds", timeout);
+        }
+    }
+
+    private void unlabelRemovedBonds() {
+        Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(getInterfaces());
+        for (String bond : getRemovedBonds()) {
+            if (nicsByName.containsKey(bond)) {
+                nicsByName.get(bond).setLabels(null);
+            }
         }
     }
 
