@@ -527,7 +527,9 @@ class OvirtUtils(base.Base):
         os.close(fd)
 
         self.logger.info(
-            _("Backing up database to '{file}'.").format(
+            _("Backing up database {host}:{database} to '{file}'.").format(
+                host=self.environment[self._dbenvkeys['host']],
+                database=self.environment[self._dbenvkeys['database']],
                 file=backupFile,
             )
         )
