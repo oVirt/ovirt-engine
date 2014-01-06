@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
@@ -188,10 +189,20 @@ public class GlusterSyncJobTest {
 
     private GlusterVolumeEntity createDistVol(String volName, Guid volId) {
         GlusterVolumeEntity vol = createVolume(volName, volId);
+        vol.getAdvancedDetails().setCapacityInfo(getCapacityInfo(volId));
         vol.addBrick(createBrick(volId, existingServer1, DIST_BRICK_D1));
         vol.addBrick(createBrick(volId, existingServer1, DIST_BRICK_D2));
         existingVolumes.add(vol);
         return vol;
+    }
+
+    private GlusterVolumeSizeInfo getCapacityInfo(Guid volId) {
+        GlusterVolumeSizeInfo capacityInfo = new GlusterVolumeSizeInfo();
+        capacityInfo.setVolumeId(volId);
+        capacityInfo.setTotalSize(90000L);
+        capacityInfo.setUsedSize(90000L);
+        capacityInfo.setFreeSize(10000L);
+        return capacityInfo;
     }
 
     private GlusterVolumeEntity createReplVol() {
@@ -489,6 +500,12 @@ public class GlusterSyncJobTest {
 
     private GlusterVolumeAdvancedDetails getVolumeAdvancedDetails(GlusterVolumeEntity volume) {
         GlusterVolumeAdvancedDetails volDetails = new GlusterVolumeAdvancedDetails();
+        GlusterVolumeSizeInfo capacityInfo = new GlusterVolumeSizeInfo();
+        capacityInfo.setVolumeId(volume.getId());
+        capacityInfo.setTotalSize(600000L);
+        capacityInfo.setFreeSize(200000L);
+        capacityInfo.setUsedSize(400000L);
+        volDetails.setCapacityInfo(capacityInfo);
 
         List<BrickDetails> brickDetailsList = new ArrayList<BrickDetails>();
         for (GlusterBrickEntity brick : volume.getBricks()) {
@@ -628,6 +645,9 @@ public class GlusterSyncJobTest {
                 CLUSTER_ID,
                 existingDistVol.getName());
 
+        // Update capacity info
+        inOrder.verify(volumeDao, mode)
+                .updateVolumeCapacityInfo(getVolumeAdvancedDetails(existingDistVol).getCapacityInfo());
         // release lock on the cluster
         inOrder.verify(glusterManager, mode).releaseLock(CLUSTER_ID);
 
@@ -638,6 +658,13 @@ public class GlusterSyncJobTest {
         inOrder.verify(glusterManager, mode).getVolumeAdvancedDetails(existingServer1,
                 CLUSTER_ID,
                 existingReplVol.getName());
+
+        // Add Capacity Info
+        inOrder.verify(volumeDao, mode)
+                .addVolumeCapacityInfo(getVolumeAdvancedDetails(existingReplVol).getCapacityInfo());
+
+        // Add Capacity Info
+        inOrder.verify(brickDao, mode).addBrickProperties(any(List.class));
 
         // update brick status
         inOrder.verify(brickDao, mode).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));

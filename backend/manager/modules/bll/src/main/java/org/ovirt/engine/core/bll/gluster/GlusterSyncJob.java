@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
+import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
@@ -789,7 +790,7 @@ public class GlusterSyncJob extends GlusterJob {
             if (volume.isOnline()) {
                 acquireLock(cluster.getId());
                 try {
-                    refreshBrickStatuses(upServer, volume);
+                    refreshVolumeDetails(upServer, volume);
                 } catch (Exception e) {
                     log.errorFormat("Error while refreshing brick statuses for volume {0} of cluster {1}",
                             volume.getName(),
@@ -802,19 +803,50 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private void refreshBrickStatuses(VDS upServer, GlusterVolumeEntity volume) {
+    public void refreshVolumeDetails(VDS upServer, GlusterVolumeEntity volume) {
         List<GlusterBrickEntity> bricksToUpdate = new ArrayList<GlusterBrickEntity>();
-        Map<Guid, GlusterStatus> brickStatusMap =
-                getBrickStatusMap(getVolumeAdvancedDetails(upServer, volume.getClusterId(), volume.getName()));
-        for (GlusterBrickEntity brick : volume.getBricks()) {
-            GlusterStatus fetchedStatus = brickStatusMap.get(brick.getId());
-            // if fetchedStatus is null, it means this is a new brick added from gluster cli and doesn't exist in engine
-            // DB yet. Don't do anything, wait for it to be added by the 'lightweight' refresh job
-            if (fetchedStatus != null && fetchedStatus != brick.getStatus()) {
-                logBrickStatusChange(volume, brick, fetchedStatus);
-                brick.setStatus(fetchedStatus);
-                bricksToUpdate.add(brick);
+        List<GlusterBrickEntity> brickPropertiesToUpdate = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> brickPropertiesToAdd = new ArrayList<GlusterBrickEntity>();
+
+        GlusterVolumeAdvancedDetails volumeAdvancedDetails = getVolumeAdvancedDetails(upServer, volume.getClusterId(), volume.getName());
+
+        if (volumeAdvancedDetails.getCapacityInfo() != null) {
+            if (volume.getAdvancedDetails().getCapacityInfo() == null) {
+                getVolumeDao().addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
+            } else {
+                getVolumeDao().updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
             }
+        }
+
+        Map<Guid, BrickProperties> brickPropertiesMap =
+                getBrickPropertiesMap(volumeAdvancedDetails);
+        for (GlusterBrickEntity brick : volume.getBricks()) {
+            BrickProperties brickProperties = brickPropertiesMap.get(brick.getId());
+            if (brickProperties != null) {
+                if (brickProperties.getStatus() != brick.getStatus()) {
+                    logBrickStatusChange(volume, brick, brickProperties.getStatus());
+                    brick.setStatus(brickProperties.getStatus());
+                    bricksToUpdate.add(brick);
+                }
+                if (brick.getBrickProperties() == null) {
+                    BrickDetails brickDetails = new BrickDetails();
+                    brickDetails.setBrickProperties(brickProperties);
+                    brick.setBrickDetails(brickDetails);
+                    brickPropertiesToAdd.add(brick);
+                } else if (brickProperties.getTotalSize() != brick.getBrickProperties().getTotalSize()
+                        || brickProperties.getFreeSize() != brick.getBrickProperties().getFreeSize()) {
+                    brick.getBrickDetails().setBrickProperties(brickProperties);
+                    brickPropertiesToUpdate.add(brick);
+                }
+            }
+        }
+
+        if (!brickPropertiesToAdd.isEmpty()) {
+            getBrickDao().addBrickProperties(brickPropertiesToAdd);
+        }
+
+        if (!brickPropertiesToUpdate.isEmpty()) {
+            getBrickDao().updateBrickProperties(brickPropertiesToUpdate);
         }
 
         if (!bricksToUpdate.isEmpty()) {
@@ -836,11 +868,12 @@ public class GlusterSyncJob extends GlusterJob {
                 });
     }
 
-    private Map<Guid, GlusterStatus> getBrickStatusMap(GlusterVolumeAdvancedDetails volumeDetails) {
-        Map<Guid, GlusterStatus> brickStatusMap = new HashMap<Guid, GlusterStatus>();
+    private Map<Guid, BrickProperties> getBrickPropertiesMap(GlusterVolumeAdvancedDetails volumeDetails) {
+        Map<Guid, BrickProperties> brickStatusMap = new HashMap<Guid, BrickProperties>();
         for (BrickDetails brickDetails : volumeDetails.getBrickDetails()) {
-            brickStatusMap.put(brickDetails.getBrickProperties().getBrickId(), brickDetails.getBrickProperties()
-                    .getStatus());
+            if (brickDetails.getBrickProperties().getBrickId() != null) {
+                brickStatusMap.put(brickDetails.getBrickProperties().getBrickId(), brickDetails.getBrickProperties());
+            }
         }
         return brickStatusMap;
     }
@@ -851,7 +884,7 @@ public class GlusterSyncJob extends GlusterJob {
                         clusterId,
                         volumeName,
                         null,
-                        false));
+                        false, true));
 
         return result.getSucceeded() ? (GlusterVolumeAdvancedDetails) result.getReturnValue() : null;
     }
