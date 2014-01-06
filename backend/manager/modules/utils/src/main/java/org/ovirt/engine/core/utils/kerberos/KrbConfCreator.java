@@ -219,20 +219,6 @@ public class KrbConfCreator {
         return (realm != null) ? " Problematic domain is: " + realm.toLowerCase() : "";
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        try {
-            KrbConfCreator kerbParser = new KrbConfCreator(args);
-            StringBuffer buffer = kerbParser.parse();
-            kerbParser.toFile(buffer);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            if (e instanceof AuthenticationException) {
-                System.exit(((AuthenticationException) e).getAuthResult().getExitCode());
-            }
-            System.exit(1);
-        }
-    }
-
     private enum Arguments {
         domains,
         krb5_conf_path,

@@ -33,18 +33,4 @@ public class CLIParser {
         return argsMap.keySet();
     }
 
-    public static void main(String[] args) {
-        CLIParser parser = new CLIParser(args);
-        if (args.length == 0) {
-            System.out.println("Usage:\n\t-d or -flag an existance flag that can be checked with hasArg(String) method"
-                    + "\n\t-key=value value can be extracted with getArg(String) method");
-            System.exit(1);
-        }
-
-        System.out.println("arguments sent:\n");
-        for (String key : parser.getArgs()) {
-            String value = parser.getArg(key);
-            System.out.println(" " + key + ": " + value);
-        }
-    }
 }

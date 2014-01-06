@@ -9,4 +9,8 @@
     <suppress checks="checks.NoArgConstructorCheck" files="EventResult.java"/>
     <suppress checks="checks.NoArgConstructorCheck" files="LocationInfo.java"/>
     <suppress checks="checks.NoArgConstructorCheck" files="HttpLocationInfo.java"/>
+    <suppress checks="UncommentedMain" files="ManageDomains.java"/>
+    <suppress checks="UncommentedMain" files="Notifier.java"/>
+    <suppress checks="UncommentedMain" files="Tar.java"/>
+    <suppress checks="UncommentedMain" files="TestCommon.java"/>
 </suppressions>

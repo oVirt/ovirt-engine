@@ -20,6 +20,7 @@
     <module name="AvoidStarImport"/>
     <module name="UpperEll"/>
     <module name="EqualsHashCode"/>
+    <module name="UncommentedMain"/>
     <module name="checks.NlsCheck">
       <property name="run" value="${runNlsCheck}" default="false"/>
     </module>
