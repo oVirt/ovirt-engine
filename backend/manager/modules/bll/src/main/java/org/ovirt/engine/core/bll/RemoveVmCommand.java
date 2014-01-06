@@ -261,9 +261,16 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     private RemoveAllVmImagesParameters buildRemoveAllVmImagesParameters(List<DiskImage> images) {
         RemoveAllVmImagesParameters params = new RemoveAllVmImagesParameters(getVmId(), images);
-        params.setParentCommand(getActionType());
-        params.setEntityInfo(getParameters().getEntityInfo());
-        params.setParentParameters(getParameters());
+        if (getParameters().getParentCommand() == VdcActionType.Unknown) {
+            params.setParentCommand(getActionType());
+            params.setEntityInfo(getParameters().getEntityInfo());
+            params.setParentParameters(getParameters());
+        } else {
+            params.setParentCommand(getParameters().getParentCommand());
+            params.setEntityInfo(getParameters().getParentParameters().getEntityInfo());
+            params.setParentParameters(getParameters().getParentParameters());
+        }
+
         return params;
     }
 
@@ -283,7 +290,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         removeVmUsers();
         removeVmNetwork();
         memoryStates = removeVmSnapshots();
-        removeVmStatic();
+        removeVmStatic(getParameters().isRemovePermissions());
     }
 
     /**

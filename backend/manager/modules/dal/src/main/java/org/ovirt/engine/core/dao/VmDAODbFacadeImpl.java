@@ -277,6 +277,13 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                         .addValue("cluster_id", clusterId));
     }
 
+    @Override
+    public List<Guid> getVmIdsForVersionUpdate(Guid baseTemplateId) {
+        return getCallsHandler().executeReadList("getVmIdsForVersionUpdate",
+                createGuidMapper(), getCustomMapSqlParameterSource()
+                    .addValue("base_template_id", baseTemplateId));
+    }
+
     static final class VMRowMapper implements RowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 

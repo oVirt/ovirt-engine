@@ -618,7 +618,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION DeleteVmStatic(v_vm_guid UUID)
+Create or replace FUNCTION DeleteVmStatic(v_vm_guid UUID, v_remove_permissions boolean)
 RETURNS VOID
    AS $procedure$
    DECLARE
@@ -632,7 +632,9 @@ BEGIN
       AND   entity_type = 'VM';
 
 			-- delete VM permissions --
-      DELETE FROM permissions where object_id = v_vm_guid;
+      if v_remove_permissions then
+        DELETE FROM permissions where object_id = v_vm_guid;
+      end if;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -1227,3 +1229,22 @@ INSERT INTO vm_init(vm_id, host_name, domain, authorized_keys, regenerate_keys, 
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetVmIdsForVersionUpdate(v_base_template_id UUID) RETURNS SETOF UUID STABLE
+AS $procedure$
+BEGIN
+RETURN QUERY select vs.vm_guid
+             from vm_static vs
+               natural join vm_dynamic
+             where (vmt_guid = v_base_template_id or vmt_guid in
+                          (select vm_guid from vm_static where vmt_guid = v_base_template_id))
+               and template_version_number is null and entity_type='VM' and status=0
+                   and (is_stateless = TRUE or
+                        (exists (select * from vm_pool_map where vm_guid = vs.vm_guid)
+                         and not exists
+                        (SELECT *
+                         FROM   snapshots
+                         WHERE  vm_id = vs.vm_guid
+                                AND    snapshot_type = 'STATELESS')));
+END; $procedure$
+LANGUAGE plpgsql;

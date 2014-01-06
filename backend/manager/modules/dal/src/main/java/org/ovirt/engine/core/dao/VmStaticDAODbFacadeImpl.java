@@ -103,7 +103,13 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
 
     @Override
     public void remove(Guid id) {
-        getCallsHandler().executeModification("DeleteVmStatic", getIdParamterSource(id));
+        remove(id, true);
+    }
+
+    public void remove(Guid id, boolean removePermissions) {
+        getCallsHandler().executeModification("DeleteVmStatic",
+                getIdParamterSource(id)
+                        .addValue("remove_permissions", removePermissions));
     }
 
     private MapSqlParameterSource getIdParamterSource(Guid id) {
@@ -178,7 +184,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
     public Long getDbGeneration(Guid id) {
         return getCallsHandler().executeRead("GetDbGeneration", getLongMapper()
                 , getCustomMapSqlParameterSource()
-                        .addValue("vm_guid", id));
+                .addValue("vm_guid", id));
     }
 
     public List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids) {

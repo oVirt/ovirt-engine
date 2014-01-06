@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -28,6 +30,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
+import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -56,11 +59,14 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -77,6 +83,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private boolean isVmInDb;
 
     private static final String BASE_TEMPLATE_VERSION_NAME = "base version";
+    private static Map<Guid, String> updateVmsJobIdMap = new ConcurrentHashMap<Guid, String>();
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -203,6 +210,16 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             getParameters().setBaseTemplateId(getVmTemplateId());
             if (StringUtils.isEmpty(getParameters().getTemplateVersionName())) {
                 getParameters().setTemplateVersionName(BASE_TEMPLATE_VERSION_NAME);
+            }
+        } else {
+            String jobId = updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
+            if (jobId != null) {
+                log.infoFormat("Cancelling current running update for vms for base template id {0}", getParameters().getBaseTemplateId());
+                try {
+                    SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+                } catch (Exception e) {
+                    log.warnFormat("Failed deleting job {0} at cancelRecoveryJob", jobId);
+                }
             }
         }
 
@@ -572,6 +589,29 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private void endDefaultOperations() {
         endUnlockOps();
+
+        // in case of new version of a template, update vms marked to use latest
+        if (getParameters().getBaseTemplateId() != null) {
+            String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
+                    new Object[0], 0, TimeUnit.SECONDS);
+            updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), jobId);
+        }
+    }
+
+    @OnTimerMethodAnnotation("onTimerHandleVdsRecovering")
+    public void onTimerHandleVdsRecovering() {
+        for (Guid vmId : getVmDAO().getVmIdsForVersionUpdate(getParameters().getBaseTemplateId())) {
+            // if the job was removed, stop executing, we probably have new version creation going on
+            if (!updateVmsJobIdMap.containsKey(getParameters().getBaseTemplateId())) {
+                break;
+            }
+            UpdateVmVersionParameters params = new UpdateVmVersionParameters(vmId);
+            params.setSessionId(getParameters().getSessionId());
+            // execute in new transaction, as failure here should not fail template creation
+            params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+            getBackend().runInternalAction(VdcActionType.UpdateVmVersion, params);
+        }
+        updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
     }
 
     private void endUnlockOps() {

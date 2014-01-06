@@ -210,7 +210,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmStatic() {
-        getVmStaticDAO().remove(getVmId());
+        removeVmStatic(true);
+    }
+
+    protected void removeVmStatic(boolean removePermissions) {
+        getVmStaticDAO().remove(getVmId(), removePermissions);
     }
 
     protected List<VmNic> getInterfaces() {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
+import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -30,27 +31,44 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
 
     @Override
     protected void executeCommand() {
-        boolean returnVal = true;
-        Guid snapshotId = DbFacade.getInstance().getSnapshotDao().getId(getVmId(), SnapshotType.STATELESS);
-        List<DiskImage> imagesList = null;
+        VdcReturnValueBase result =
+                getBackend().runInternalAction(VdcActionType.UpdateVmVersion,
+                        new UpdateVmVersionParameters(getVmId()),
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
 
-        if (snapshotId != null) {
-            imagesList = DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
-        }
+        // if it fail because of canDoAction, its safe to restore the snapshot
+        // and the vm will still be usable with previous version
+        if (!result.getSucceeded() && !result.getCanDoAction()) {
+            log.warnFormat("Couldn't update VM {0} ({1}) version from it's template, continue with restoring stateless snapshot.",
+                    getVm().getName(),
+                    getVmId());
 
-        if (imagesList != null && imagesList.size() > 0) {
-            /**
-             * restore all snapshots
-             */
-            RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(getVm().getId(), snapshotId);
-            tempVar.setShouldBeLogged(false);
-            tempVar.setImages(imagesList);
-            VdcReturnValueBase vdcReturn =
-                    Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
-                            tempVar,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
-            returnVal = vdcReturn.getSucceeded();
+            boolean returnVal = true;
+            Guid snapshotId = DbFacade.getInstance().getSnapshotDao().getId(getVmId(), SnapshotType.STATELESS);
+            List<DiskImage> imagesList = null;
+
+            if (snapshotId != null) {
+                imagesList = DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+            }
+
+            if (imagesList != null && imagesList.size() > 0) {
+                /**
+                 * restore all snapshots
+                 */
+                RestoreAllSnapshotsParameters tempVar = new RestoreAllSnapshotsParameters(getVm().getId(), snapshotId);
+                tempVar.setShouldBeLogged(false);
+                tempVar.setImages(imagesList);
+                VdcReturnValueBase vdcReturn =
+                        Backend.getInstance().runInternalAction(VdcActionType.RestoreAllSnapshots,
+                                tempVar,
+                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+                returnVal = vdcReturn.getSucceeded();
+            }
+            setSucceeded(returnVal);
         }
-        setSucceeded(returnVal);
+    }
+
+    private void overrideVmComfig() {
+
     }
 }

@@ -27,6 +27,7 @@ public class VmDAOTest extends BaseDAOTestCase {
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
+    private static final Guid VM_TO_UPDATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5002");
 
     private static final int VM_COUNT = 7;
     private VmDAO dao;
@@ -499,5 +500,12 @@ public class VmDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void testGetVmIdsForVersionUpdate() {
+        List<Guid> vmIdsToUpdate = dao.getVmIdsForVersionUpdate(FixturesTool.VM_TEMPLATE_RHEL5);
+
+        assertTrue(vmIdsToUpdate.contains(VM_TO_UPDATE_ID));
     }
 }

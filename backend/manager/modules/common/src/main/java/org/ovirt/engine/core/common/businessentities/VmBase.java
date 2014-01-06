@@ -49,6 +49,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private Guid vdsGroupId;
 
+    @CopyOnNewVersion
     @EditableField
     private int osId;
 
@@ -63,55 +64,69 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private String comment;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     private int memSizeMb;
 
     @EditableOnVmStatusField(statuses = {VMStatus.Down, VMStatus.Up} )
+    @CopyOnNewVersion
     @EditableOnTemplate
     private int numOfSockets;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     private int cpuPerSocket;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors,
             message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
     private int numOfMonitors;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     private boolean singleQxlPci;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     @Size(max = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
     private String timeZone;
 
+    @CopyOnNewVersion
     @EditableField
     private VmType vmType;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     private UsbPolicy usbPolicy;
 
+    @CopyOnNewVersion
     private boolean failBack;
 
+    @CopyOnNewVersion
     @EditableField
     private BootSequence defaultBootSequence;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     private int niceLevel;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     private int cpuShares;
 
+    @CopyOnNewVersion
     @EditableField
     private int priority;
 
+    @CopyOnNewVersion
     @EditableField
     private boolean autoStartup;
 
@@ -119,9 +134,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private boolean stateless;
 
+    @CopyOnNewVersion
     @EditableField
     private boolean deleteProtected;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     private SsoMethod ssoMethod;
@@ -129,15 +146,18 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private long dbGeneration;
 
+    @CopyOnNewVersion
     @EditableField
     private boolean smartcardEnabled;
 
+    @CopyOnNewVersion
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath;
 
     private OriginType origin;
 
+    @CopyOnNewVersion
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
@@ -145,6 +165,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                     UpdateEntity.class })
     private String kernelUrl;
 
+    @CopyOnNewVersion
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
@@ -152,6 +173,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                     UpdateEntity.class })
     private String kernelParams;
 
+    @CopyOnNewVersion
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
@@ -159,12 +181,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                     UpdateEntity.class })
     private String initrdUrl;
 
+    @CopyOnNewVersion
     @EditableField
     private boolean allowConsoleReconnect;
 
     /**
      * if this field is null then value should be taken from cluster
      */
+    @CopyOnNewVersion
     @EditableField
     private Boolean tunnelMigration;
 
@@ -225,11 +249,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     private MigrationSupport migrationSupport;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     private Guid dedicatedVmForVds;
@@ -238,6 +264,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private DisplayType defaultDisplayType;
 
+    @CopyOnNewVersion
     @EditableOnVmStatusField
     @EditableOnTemplate
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
@@ -245,9 +272,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
     private String vncKeyboardLayout;
 
+    @CopyOnNewVersion
     @EditableField
     private int minAllocatedMem;
 
+    @CopyOnNewVersion
     @EditableField
     private boolean runAndPause;
 

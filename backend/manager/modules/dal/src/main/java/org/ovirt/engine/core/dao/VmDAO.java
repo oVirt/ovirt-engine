@@ -290,4 +290,15 @@ public interface VmDAO extends DAO {
      * @return
      */
     List<VM> getAllRunningByCluster(Guid clusterId);
+
+    /**
+     * Retrieves all ids of vms that are candidate for version update for this base template:
+     * template_version_number is set to null
+     * status is down
+     * vm is stateless or belong to vm pool
+     * (for vm in pool, check there is no stateless snapshot for it [manual pool])
+     *
+     * @return the list of ids of these vms
+     */
+    List<Guid> getVmIdsForVersionUpdate(Guid baseTemplateId);
 }
