@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -27,9 +28,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -83,7 +86,9 @@ public class HotPlugDiskToVmCommandTest {
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     @Mock
-    OsRepository osRepository;
+    private DiskValidator diskValidator;
+    @Mock
+    protected OsRepository osRepository;
 
     /**
      * The command under test.
@@ -143,6 +148,7 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionFailedVirtIODisk() throws Exception {
         mockVmStatusUp();
+        mockInterfaceList();
         when(osRepository.getOsName(0)).thenReturn("RHEL6");
         createNotVirtIODisk();
         assertFalse(command.canDoAction());
@@ -154,6 +160,7 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionChecksIfHotPlugDiskSnapshotIsSupported() throws Exception {
         mockVmStatusUp();
+        mockInterfaceList();
         cretaeVirtIODisk();
         initStorageDomain();
         command.getParameters().setSnapshotId(Guid.newGuid());
@@ -164,6 +171,7 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionFailedWrongPlugStatus() throws Exception {
         mockVmStatusUp();
+        mockInterfaceList();
         cretaeDiskWrongPlug(true);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -173,6 +181,7 @@ public class HotPlugDiskToVmCommandTest {
 
     @Test
     public void canDoActionFailedGuestOsIsNotSupported() {
+        mockInterfaceList();
         VM vm = mockVmStatusUp();
         vm.setVmOs(15); // rhel3x64
         cretaeVirtIODisk();
@@ -188,10 +197,24 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionSuccess() {
         mockVmStatusUp();
+        mockInterfaceList();
         cretaeVirtIODisk();
         initStorageDomain();
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
+    }
+
+    @Test
+    public void canDoActionSuccessFailedDiskInterfaceUnsupported() {
+        mockVmStatusUp();
+        cretaeVirtIODisk();
+        initStorageDomain();
+        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
     }
 
     @Before
@@ -270,6 +293,17 @@ public class HotPlugDiskToVmCommandTest {
         vds.setVdsGroupCompatibilityVersion(new Version("3.1"));
         doReturn(vdsDao).when(command).getVdsDAO();
         when(vdsDao.get(Mockito.any(Guid.class))).thenReturn(vds);
+    }
+
+    protected void mockInterfaceList() {
+        ArrayList<String> diskInterfaces = new ArrayList<String>(
+                Arrays.asList(new String[] {
+                        "IDE",
+                        "VirtIO",
+                        "VirtIO_SCSI"
+                }));
+
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(diskInterfaces);
     }
 
     /**

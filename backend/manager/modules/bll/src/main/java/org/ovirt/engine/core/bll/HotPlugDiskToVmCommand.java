@@ -48,6 +48,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
                 isVmInUpPausedDownStatus() &&
                 canRunActionOnNonManagedVm() &&
                 isDiskExist(getDisk()) &&
+                interfaceDiskValidation() &&
                 checkCanPerformPlugUnPlugDisk() &&
                 isVmNotInPreviewSnapshot() &&
                 imageStorageValidation() &&
@@ -57,6 +58,11 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     private boolean virtIoScsiDiskValidation() {
         DiskValidator diskValidator = getDiskValidator(disk);
         return validate(diskValidator.isVirtIoScsiValid(getVm()));
+    }
+
+    private boolean interfaceDiskValidation() {
+        DiskValidator diskValidator = getDiskValidator(disk);
+        return validate(diskValidator.isDiskInterfaceSupported(getVm()));
     }
 
     private boolean imageStorageValidation() {

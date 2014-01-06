@@ -36,15 +36,17 @@ public class VmValidationUtils {
     }
 
     /**
-     * Check if the OS type support VirtIO-SCSI.
+     * Check if the OS type support the disk interface
      *
      * @param osId The OS identifier.
+     * @param clusterVersion The cluster version.
+     * @param diskInterface The disk interface.
      *
-     * @return If the OS type is supported.
+     * @return If the disk interface is supported by the OS type.
      */
-    public static boolean isOsSupportedForVirtIoScsi(int osId, Version clusterVersion) {
+    public static boolean isDiskInterfaceSupportedByOs(int osId, Version clusterVersion, DiskInterface diskInterface) {
         List<String> diskInterfaces = getOsRepository().getDiskInterfaces(osId, clusterVersion);
-        return diskInterfaces.contains(DiskInterface.VirtIO_SCSI.toString());
+        return diskInterfaces.contains(diskInterface.name());
     }
 
     /**

@@ -157,7 +157,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
         DiskValidator diskValidator = getDiskValidator(getNewDisk());
         return validateCanUpdateShareable() && validateCanUpdateReadOnly() &&
-                validate(diskValidator.isVirtIoScsiValid(getVm()));
+                validate(diskValidator.isVirtIoScsiValid(getVm())) &&
+                (getOldDisk().getDiskInterface() == getNewDisk().getDiskInterface()
+                || validate(diskValidator.isDiskInterfaceSupported(getVm())));
     }
 
     @Override
@@ -166,7 +168,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
 
-    private boolean validatePciAndIdeLimit(List<VM> vmsDiskPluggedTo) {
+    protected boolean validatePciAndIdeLimit(List<VM> vmsDiskPluggedTo) {
         for (VM vm : vmsDiskPluggedTo) {
             List<VmNic> allVmInterfaces = getVmNicDao().getAllForVm(vm.getId());
             List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks(vm.getId()));

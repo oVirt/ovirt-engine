@@ -234,6 +234,8 @@ public class DiskMapper {
             return org.ovirt.engine.core.common.businessentities.DiskInterface.VirtIO;
         case VIRTIO_SCSI:
             return org.ovirt.engine.core.common.businessentities.DiskInterface.VirtIO_SCSI;
+        case SPAPR_VSCSI:
+            return org.ovirt.engine.core.common.businessentities.DiskInterface.SPAPR_VSCSI;
         default:
             return null;
         }
@@ -248,6 +250,8 @@ public class DiskMapper {
             return DiskInterface.VIRTIO.value();
         case VirtIO_SCSI:
             return DiskInterface.VIRTIO_SCSI.value();
+        case SPAPR_VSCSI:
+            return DiskInterface.SPAPR_VSCSI.value();
         default:
             return null;
         }

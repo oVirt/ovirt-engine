@@ -22,6 +22,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionFailedWrongPlugStatus() throws Exception {
         mockVmStatusUp();
+        mockInterfaceList();
         cretaeDiskWrongPlug(false);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()

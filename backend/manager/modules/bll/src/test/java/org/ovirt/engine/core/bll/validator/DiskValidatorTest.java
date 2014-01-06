@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,18 +18,23 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DiskValidatorTest {
 
+    @Mock
+    private OsRepository osRepository;
     @Mock
     private VmDAO vmDAO;
     private DiskValidator validator;
@@ -44,13 +50,25 @@ public class DiskValidatorTest {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         vm.setId(Guid.newGuid());
+        vm.setVmOs(1);
         return vm;
+    }
+
+    private void initializeOsRepository (int osId, DiskInterface diskInterface) {
+        ArrayList<String> supportedDiskInterfaces = new ArrayList<>();
+        supportedDiskInterfaces.add(diskInterface.name());
+        when(osRepository.getDiskInterfaces(1, null)).thenReturn(supportedDiskInterfaces);
+        when(osRepository.getDiskInterfaces(2, null)).thenReturn(new ArrayList<String>());
+        // init the injector with the osRepository instance
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     @Before
     public void setUp() {
+        initializeOsRepository(1, DiskInterface.VirtIO);
         disk = createDisk();
         disk.setDiskAlias("disk1");
+        disk.setDiskInterface(DiskInterface.VirtIO);
         validator = spy(new DiskValidator(disk));
         doReturn(vmDAO).when(validator).getVmDAO();
     }
@@ -105,5 +123,20 @@ public class DiskValidatorTest {
         vmsInfo.get(1).getSecond().setSnapshotId(Guid.newGuid());
         assertThat(validator.isDiskPluggedToVmsThatAreNotDown(true, vmsInfo),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
+    }
+
+    @Test
+    public void diskInterfaceSupportedByOs() {
+        VM vm = createVM();
+        initializeOsRepository(vm.getOs(), DiskInterface.VirtIO);
+        assertThat(validator.isDiskInterfaceSupported(vm), isValid());
+    }
+
+    @Test
+    public void diskInterfaceNotSupportedByOs() {
+        VM vm = createVM();
+        vm.setVmOs(2);
+        initializeOsRepository(vm.getOs(), DiskInterface.VirtIO);
+        assertThat(validator.isDiskInterfaceSupported(vm), failsWith(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
     }
 }

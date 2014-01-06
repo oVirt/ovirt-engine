@@ -144,6 +144,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
+        if (!validate(diskValidator.isDiskInterfaceSupported(getVm()))) {
+            return false;
+        }
+
         return true;
     }
 
@@ -160,7 +164,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 validate(storageDomainValidator.isDomainWithinThresholds()) &&
                 checkExceedingMaxBlockDiskSize() &&
                 canAddShareableDisk() &&
-                validate(diskValidator.isVirtIoScsiValid(vm));
+                validate(diskValidator.isVirtIoScsiValid(vm)) &&
+                validate(diskValidator.isDiskInterfaceSupported(getVm()));
 
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.

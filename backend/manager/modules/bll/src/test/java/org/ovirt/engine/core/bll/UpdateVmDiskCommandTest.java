@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeast;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -32,6 +33,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -50,6 +52,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -99,6 +103,11 @@ public class UpdateVmDiskCommandTest {
     private StorageDomainStaticDAO storageDomainStaticDao;
     @Mock
     private DbFacade dbFacade;
+    @Mock
+    private DiskValidator diskValidator;
+
+    @Mock
+    OsRepository osRepository;
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -201,6 +210,8 @@ public class UpdateVmDiskCommandTest {
 
         initializeCommand(parameters);
 
+        mockInterfaceList();
+
         assertTrue(command.canDoAction());
         command.executeVmCommand();
         assertTrue(oldDisk.getVmSnapshotId() == null);
@@ -231,6 +242,8 @@ public class UpdateVmDiskCommandTest {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
         initializeCommand(parameters);
+
+        mockInterfaceList();
 
         // The command should only succeed if there is no other bootable disk
         assertEquals(!boot, command.canDoAction());
@@ -263,7 +276,10 @@ public class UpdateVmDiskCommandTest {
             when(diskDao.getVmBootActiveDisk(otherVmId)).thenReturn(otherDisk);
         }
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+
         initializeCommand(parameters, Arrays.asList(createVmStatusDown(), otherVm));
+
+        mockInterfaceList();
 
         // The command should only succeed if there is no other bootable disk
         assertEquals(!boot, command.canDoAction());
@@ -315,6 +331,37 @@ public class UpdateVmDiskCommandTest {
 
         device.setIsReadOnly(true);
         verify(vmDeviceDAO, times(1)).update(device);
+    }
+
+    @Test
+    public void testUpdateDiskInterfaceUnsupported() {
+        final UpdateVmDiskParameters parameters = createParameters();
+        parameters.getDiskInfo().setDiskInterface(DiskInterface.IDE);
+        when(diskDao.get(diskImageGuid)).thenAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+            final DiskImage oldDisk = createDiskImage();
+            oldDisk.setDiskInterface(DiskInterface.VirtIO);
+            assert(oldDisk.getDiskInterface() != parameters.getDiskInfo().getDiskInterface());
+            return oldDisk;
+            }
+        });
+
+        initializeCommand(parameters);
+        doReturn(true).when(command).validatePciAndIdeLimit(any(List.class));
+
+        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
+
+        VmDevice device = createVmDevice(diskImageGuid, vmId);
+        doReturn(device).when(vmDeviceDAO).get(device.getId());
+
+        command.executeVmCommand();
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
     }
 
     @Test
@@ -383,6 +430,8 @@ public class UpdateVmDiskCommandTest {
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
 
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+
         mockVds();
         mockVmsStoragePoolInfo(vms);
         mockToUpdateDiskVm(vms);
@@ -403,11 +452,23 @@ public class UpdateVmDiskCommandTest {
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
     }
 
+    protected void mockInterfaceList() {
+        ArrayList<String> diskInterfaces = new ArrayList<String>(
+                Arrays.asList(new String[] {
+                        "IDE",
+                        "VirtIO",
+                        "VirtIO_SCSI"
+                }));
+
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(diskInterfaces);
+    }
+
     protected VM createVmStatusDown(VM... otherPluggedVMs) {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         vm.setGuestOs("rhel6");
         vm.setId(vmId);
+        vm.setVdsGroupCompatibilityVersion(Version.v3_1);
         return vm;
     }
 
@@ -497,6 +558,7 @@ public class UpdateVmDiskCommandTest {
         DiskImage disk = new DiskImage();
         disk.setId(diskImageGuid);
         disk.setSize(100000L);
+        disk.setDiskInterface(DiskInterface.VirtIO);
         return disk;
     }
 
@@ -507,6 +569,7 @@ public class UpdateVmDiskCommandTest {
         DiskImage disk = createDiskImage();
         disk.setvolumeFormat(volumeFormat);
         disk.setShareable(true);
+        disk.setDiskInterface(DiskInterface.VirtIO);
         return disk;
     }
 

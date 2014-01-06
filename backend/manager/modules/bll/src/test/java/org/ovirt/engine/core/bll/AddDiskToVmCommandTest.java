@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -93,6 +94,9 @@ public class AddDiskToVmCommandTest {
     @Mock
     private OsRepository osRepository;
 
+    @Mock
+    private DiskValidator diskValidator;
+
     /**
      * The command under test.
      */
@@ -106,8 +110,27 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
+        mockInterfaceList();
 
         runAndAssertCanDoActionSuccess();
+    }
+
+    @Test
+    public void canDoActionFailWithUnsupportedDiskInterface() throws Exception {
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId);
+
+        mockVm();
+        mockStorageDomain(storageId);
+        mockStoragePoolIsoMap();
+        when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
     }
 
     @Test
@@ -118,6 +141,7 @@ public class AddDiskToVmCommandTest {
         mockVmWithDisk(storageId);
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
+        mockInterfaceList();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -130,6 +154,7 @@ public class AddDiskToVmCommandTest {
         mockVmWithDisk(storageId);
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
+        mockInterfaceList();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -142,6 +167,7 @@ public class AddDiskToVmCommandTest {
         mockVmWithDisk(Guid.newGuid());
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
+        mockInterfaceList();
 
         assertTrue(command.canDoAction());
     }
@@ -166,6 +192,7 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
+        mockInterfaceList();
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
         assertTrue(command.canDoAction());
@@ -201,6 +228,7 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
+        mockInterfaceList();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -241,6 +269,7 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId, Version.v3_1);
         mockStoragePoolIsoMap();
+        mockInterfaceList();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -347,6 +376,19 @@ public class AddDiskToVmCommandTest {
     private void mockStoragePoolIsoMap() {
         StoragePoolIsoMap spim = new StoragePoolIsoMap();
         when(storagePoolIsoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(spim);
+    }
+
+    protected void mockInterfaceList() {
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+
+        ArrayList<String> diskInterfaces = new ArrayList<String>(
+                Arrays.asList(new String[] {
+                        "IDE",
+                        "VirtIO",
+                        "VirtIO_SCSI"
+                }));
+
+        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(diskInterfaces);
     }
 
     /**
@@ -488,12 +530,14 @@ public class AddDiskToVmCommandTest {
     private static DiskImage createDiskImage(long sizeInGigabytes) {
         DiskImage image = new DiskImage();
         image.setSizeInGigabytes(sizeInGigabytes);
+        image.setDiskInterface(DiskInterface.IDE);
         return image;
     }
 
     private static DiskImage createShareableDiskImage() {
         DiskImage image = new DiskImage();
         image.setShareable(true);
+        image.setDiskInterface(DiskInterface.IDE);
         return image;
     }
 
@@ -593,6 +637,7 @@ public class AddDiskToVmCommandTest {
 
     @Test
     public void testAddingIDELunExceedsSlotLimit() {
+        mockInterfaceList();
         LunDisk disk = createISCSILunDisk();
         disk.setDiskInterface(DiskInterface.IDE);
         AddDiskParameters parameters = createParameters();
@@ -612,6 +657,7 @@ public class AddDiskToVmCommandTest {
 
     @Test
     public void testAddingPCILunExceedsSlotLimit() {
+        mockInterfaceList();
         LunDisk disk = createISCSILunDisk();
         disk.setDiskInterface(DiskInterface.VirtIO);
         AddDiskParameters parameters = createParameters();
@@ -715,6 +761,8 @@ public class AddDiskToVmCommandTest {
 
         DiskValidator diskValidator = spyDiskValidator(disk);
         doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
+
+        mockInterfaceList();
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }

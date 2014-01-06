@@ -126,6 +126,10 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return false;
         }
 
+        if (!validate(diskValidator.isDiskInterfaceSupported(getVm()))) {
+            return false;
+        }
+
         if (!isVmNotInPreviewSnapshot()) {
             return false;
         }
