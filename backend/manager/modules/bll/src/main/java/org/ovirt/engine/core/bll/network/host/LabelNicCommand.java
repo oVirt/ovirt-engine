@@ -30,6 +30,8 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T> {
 
     private VdsNetworkInterface nic;
+    private List<Network> labeledNetworks;
+    private List<VdsNetworkInterface> hostNics;
 
     public LabelNicCommand(T parameters) {
         super(parameters);
@@ -40,7 +42,9 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
     protected void executeCommand() {
         VdcReturnValueBase result =
                 getBackend().runInternalAction(VdcActionType.PersistentSetupNetworks,
-                        new AddNetworksByLabelParametersBuilder().buildParameters(getNic(), getLabel()));
+                        new AddNetworksByLabelParametersBuilder().buildParameters(getNic(),
+                                getLabel(),
+                                getClusterNetworksByLabel()));
         if (result.getSucceeded()) {
             getReturnValue().setActionReturnValue(getLabel());
         } else {
@@ -70,7 +74,51 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
             return failCanDoAction(VdcBllMessages.IMPROPER_INTERFACE_IS_LABELED);
         }
 
+        for (VdsNetworkInterface nic : getHostInterfaces()) {
+            if (!StringUtils.equals(nic.getName(), getNicName()) && nic.getLabels() != null
+                    && nic.getLabels().contains(getLabel())) {
+                return failCanDoAction(VdcBllMessages.OTHER_INTERFACE_ALREADY_LABELED, "$LabeledNic " + nic.getName());
+            }
+        }
+
+        List<String> assignedNetworks = validateNetworksNotAssignedToIncorrectNics();
+        if (!assignedNetworks.isEmpty()) {
+            return failCanDoAction(VdcBllMessages.LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE, "$AssignedNetworks "
+                    + StringUtils.join(assignedNetworks, ", "));
+        }
+
         return true;
+    }
+
+    private List<VdsNetworkInterface> getHostInterfaces() {
+        if (hostNics == null) {
+            hostNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVdsId());
+        }
+
+        return hostNics;
+    }
+
+    public List<String> validateNetworksNotAssignedToIncorrectNics() {
+        Map<String, VdsNetworkInterface> nicsByNetworkName = Entities.hostInterfacesByNetworkName(getHostInterfaces());
+        List<String> badlyAssignedNetworks = new ArrayList<>();
+        for (Network network : getClusterNetworksByLabel()) {
+            if (nicsByNetworkName.containsKey(network.getName())) {
+                VdsNetworkInterface assignedNic = nicsByNetworkName.get(network.getName());
+                if (!StringUtils.equals(getNicName(), NetworkUtils.stripVlan(assignedNic.getName()))) {
+                    badlyAssignedNetworks.add(network.getName());
+                }
+            }
+        }
+
+        return badlyAssignedNetworks;
+    }
+
+    private List<Network> getClusterNetworksByLabel() {
+        if (labeledNetworks == null) {
+            labeledNetworks = getNetworkDAO().getAllByLabelForCluster(getLabel(), getVds().getVdsGroupId());
+        }
+
+        return labeledNetworks;
     }
 
     @Override
@@ -104,9 +152,10 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     private class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilder {
 
-        public SetupNetworksParameters buildParameters(VdsNetworkInterface nic, String label) {
+        public SetupNetworksParameters buildParameters(VdsNetworkInterface nic,
+                String label,
+                List<Network> labeledNetworks) {
             SetupNetworksParameters parameters = createSetupNetworksParameters(nic.getVdsId());
-            List<Network> labeledNetworks = getNetworkDAO().getAllByLabelForCluster(label, getVds().getVdsGroupId());
             Set<Network> networkToAdd = getNetworksToConfigure(parameters.getInterfaces(), labeledNetworks);
             VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), nic.getId());
             if (nicToConfigure == null) {

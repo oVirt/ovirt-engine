@@ -1319,6 +1319,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST}. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following networks are already attached to a different interface: ${AssignedNetworks}. Please remove the networks in order to label the interface.")
+    String LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The label is already defined on other interface ${LabeledNic} on the host.")
+    String OTHER_INTERFACE_ALREADY_LABELED();
+
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();
 

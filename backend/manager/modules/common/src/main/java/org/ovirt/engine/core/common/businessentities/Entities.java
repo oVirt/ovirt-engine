@@ -65,7 +65,9 @@ public class Entities {
         if (entityList != null) {
             Map<String, E> map = new HashMap<String, E>();
             for (E e : entityList) {
-                map.put(e.getNetworkName(), e);
+                if (e.getNetworkName() != null) {
+                    map.put(e.getNetworkName(), e);
+                }
             }
             return map;
         } else {
