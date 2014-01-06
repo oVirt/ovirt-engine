@@ -85,7 +85,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
         });
 
-        if (!getNetwork().isExternal() && getNetwork().getLabel() != null
+        if (!getPersistedNetwork().isExternal() && getPersistedNetwork().getLabel() != null
                 && NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
             addNetworkToHosts();
         }
@@ -97,8 +97,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     private void addNetworkToHosts() {
         List<VdsNetworkInterface> nics =
                 getDbFacade().getInterfaceDao().getAllInterfacesByLabelForCluster(getParameters().getVdsGroupId(),
-                        getNetwork().getLabel());
-        AddNetworkParametersBuilder builder = new AddNetworkParametersBuilder(getNetwork());
+                        getPersistedNetwork().getLabel());
+        AddNetworkParametersBuilder builder = new AddNetworkParametersBuilder(getPersistedNetwork());
         ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
 
         if (!parameters.isEmpty()) {

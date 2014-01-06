@@ -27,6 +27,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends VdsGroupCommandBase<T> {
+
+    private Network persistedNetwork;
+
     public DetachNetworkToVdsGroupCommand(T parameters) {
         super(parameters);
     }
@@ -37,12 +40,12 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
             @Override
             public Void runInTransaction() {
-                getNetworkClusterDAO().remove(getParameters().getVdsGroupId(), getNetwork().getId());
+                getNetworkClusterDAO().remove(getParameters().getVdsGroupId(), getParameters().getNetworkCluster().getNetworkId());
                 return null;
             }
         });
 
-        if (!getNetwork().isExternal() && getNetwork().getLabel() != null
+        if (!getPersistedNetwork().isExternal() && getPersistedNetwork().getLabel() != null
                 && NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
             removeNetworkFromHosts();
         }
@@ -87,11 +90,19 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return getParameters().getNetwork();
     }
 
+    private Network getPersistedNetwork() {
+        if (persistedNetwork == null) {
+            persistedNetwork = getNetworkDAO().get(getNetwork().getId());
+        }
+
+        return persistedNetwork;
+    }
+
     private void removeNetworkFromHosts() {
         List<VdsNetworkInterface> nics =
                 getDbFacade().getInterfaceDao().getAllInterfacesByLabelForCluster(getParameters().getVdsGroupId(),
-                        getNetwork().getLabel());
-        RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getNetwork());
+                        getPersistedNetwork().getLabel());
+        RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getPersistedNetwork());
         ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
 
         if (!parameters.isEmpty()) {
