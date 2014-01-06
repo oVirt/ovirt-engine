@@ -251,7 +251,7 @@ public class Frontend implements HasHandlers {
         initQueryParamsFilter(parameters);
 
         final VdcOperation<VdcQueryType, VdcQueryParametersBase> operation =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(queryType, parameters, isPublic,
+                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(queryType, parameters, isPublic, false,
                 new VdcOperationCallback<VdcOperation<VdcQueryType, VdcQueryParametersBase>, VdcQueryReturnValue>() {
             @Override
             public void onSuccess(final VdcOperation<VdcQueryType, VdcQueryParametersBase> operation,
@@ -384,7 +384,7 @@ public class Frontend implements HasHandlers {
             parameters.setRefresh(false); // Why do we do this?
             initQueryParamsFilter(parameters);
             operationList.add(new VdcOperation<VdcQueryType, VdcQueryParametersBase>(queryTypeList.get(i),
-                    parameters, multiCallback));
+                    parameters, true, multiCallback));
         }
 
         raiseQueryStartedEvent(queryTypeList, context);
@@ -575,7 +575,7 @@ public class Frontend implements HasHandlers {
         List<VdcOperation<?, ?>> operationList = new ArrayList<VdcOperation<?, ?>>();
         for (VdcActionParametersBase parameter: parameters) {
             VdcOperation<VdcActionType, VdcActionParametersBase> operation = new VdcOperation<VdcActionType,
-                    VdcActionParametersBase>(actionType, parameter, multiCallback);
+                    VdcActionParametersBase>(actionType, parameter, true, multiCallback);
             operationList.add(operation);
         }
         if (operationList.isEmpty()) {

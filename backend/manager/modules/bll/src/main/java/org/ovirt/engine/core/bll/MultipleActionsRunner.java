@@ -20,9 +20,10 @@ public class MultipleActionsRunner {
     private final static int CONCURRENT_ACTIONS = 10;
 
     private VdcActionType actionType = VdcActionType.Unknown;
-    private List<VdcActionParametersBase> parameters;
+    private final List<VdcActionParametersBase> parameters;
     private final ArrayList<CommandBase<?>> commands = new ArrayList<CommandBase<?>>();
     protected boolean isInternal;
+    private boolean isWaitForResult = false;
 
     /**
      * Execute the actions only if CanDo of all the requests returns true
@@ -88,7 +89,11 @@ public class MultipleActionsRunner {
             }
 
             if (canRunActions) {
-                invokeCommands();
+                if (isWaitForResult) {
+                    invokeSyncCommands();
+                } else {
+                    invokeCommands();
+                }
             }
         } catch (RuntimeException e) {
             log.error("Failed to execute multiple actions of type: " + actionType, e);
@@ -162,12 +167,17 @@ public class MultipleActionsRunner {
         });
     }
 
+    protected void invokeSyncCommands() {
+        runCommands();
+    }
+
     /**
      * Executes commands which passed validation and creates monitoring objects.
      *
      * @param command
      *            The command to execute
      */
+
     protected void executeValidatedCommand(CommandBase<?> command) {
         if (executionContext == null || executionContext.isMonitored()) {
             ExecutionHandler.prepareCommandForMonitoring(command,
@@ -185,5 +195,9 @@ public class MultipleActionsRunner {
 
     public void setIsRunOnlyIfAllCanDoPass(boolean isRunOnlyIfAllCanDoPass) {
         this.isRunOnlyIfAllCanDoPass = isRunOnlyIfAllCanDoPass;
+    }
+
+    public void setIsWaitForResult(boolean waitForResult) {
+        this.isWaitForResult = waitForResult;
     }
 }

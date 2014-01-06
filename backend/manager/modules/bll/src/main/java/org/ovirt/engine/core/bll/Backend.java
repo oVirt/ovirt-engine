@@ -20,6 +20,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
 import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
@@ -74,7 +75,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 
 // Here we use a Singleton Bean
 // The @Startup annotation is to make sure the bean is initialized on startup.
@@ -504,13 +504,19 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass) {
+        return runMultipleActions(actionType, parameters, isRunOnlyIfAllCanDoPass, false);
+    }
+
+    @Override
+    public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass, boolean waitForResult) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
             ArrayList<VdcReturnValueBase> list = new ArrayList<VdcReturnValueBase>();
             list.add(returnValue);
             return list;
         } else {
-            return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllCanDoPass);
+            return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllCanDoPass, waitForResult);
         }
     }
 
@@ -518,13 +524,14 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @ExcludeClassInterceptors
     public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters) {
-        return runMultipleActionsImpl(actionType, parameters, true, false);
+        return runMultipleActionsImpl(actionType, parameters, true, false, false);
     }
 
     public ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             boolean isInternal,
             boolean isRunOnlyIfAllCanDoPass,
+            boolean isWaitForResult,
             ExecutionContext executionContext) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
         if (!StringUtils.isEmpty(sessionId)) {
@@ -538,6 +545,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 parameters, isInternal);
         runner.setExecutionContext(executionContext);
         runner.setIsRunOnlyIfAllCanDoPass(isRunOnlyIfAllCanDoPass);
+        runner.setIsWaitForResult(isWaitForResult);
         return runner.execute();
     }
 
@@ -546,14 +554,16 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             ExecutionContext executionContext) {
-        return runMultipleActionsImpl(actionType, parameters, true, false, executionContext);
+        return runMultipleActionsImpl(actionType, parameters, true, false, false, executionContext);
     }
 
     private ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             boolean isInternal,
-            boolean isRunOnlyIfAllCanDoPass) {
-        return runMultipleActionsImpl(actionType, parameters, isInternal, isRunOnlyIfAllCanDoPass, null);
+            boolean isRunOnlyIfAllCanDoPass,
+            boolean isWaitForResult) {
+        return runMultipleActionsImpl(actionType, parameters, isInternal, isRunOnlyIfAllCanDoPass, isWaitForResult,
+                null);
     }
 
     @Override
