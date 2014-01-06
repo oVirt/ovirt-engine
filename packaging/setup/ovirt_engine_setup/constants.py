@@ -523,6 +523,8 @@ class Stages(object):
     DIALOG_TITLES_S_FIREWALL = 'osetup.dialog.titles.firewall.start'
     DIALOG_TITLES_S_PACKAGES = 'osetup.dialog.titles.packaging.start'
     DIALOG_TITLES_S_PKI = 'osetup.dialog.titles.pki.start'
+    DIALOG_TITLES_S_PRODUCT_OPTIONS = \
+        'osetup.dialog.titles.productoptions.start'
     DIALOG_TITLES_S_SYSTEM = 'osetup.dialog.titles.system.start'
     DIALOG_TITLES_E_ALLINONE = 'osetup.dialog.titles.allinone.end'
     DIALOG_TITLES_E_APACHE = 'osetup.dialog.titles.apache.end'
@@ -532,6 +534,7 @@ class Stages(object):
     DIALOG_TITLES_E_FIREWALL = 'osetup.dialog.titles.firewall.end'
     DIALOG_TITLES_E_PACKAGES = 'osetup.dialog.titles.packages.end'
     DIALOG_TITLES_E_PKI = 'osetup.dialog.titles.pki.end'
+    DIALOG_TITLES_E_PRODUCT_OPTIONS = 'osetup.dialog.titles.productoptions.end'
     DIALOG_TITLES_E_SYSTEM = 'osetup.dialog.titles.system.end'
 
     DIALOG_TITLES_S_SUMMARY = 'osetup.dialog.titles.summary.start'

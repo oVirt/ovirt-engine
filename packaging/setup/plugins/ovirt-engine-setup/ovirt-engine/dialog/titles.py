@@ -48,7 +48,29 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
+    )
+    def _title_s_product_options(self):
+        self._title(
+            text=_('PRODUCT OPTIONS'),
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
+        ),
+    )
+    def _title_e_product_options(self):
+        pass
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_PACKAGES,
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
+        ),
         condition=lambda self: self._distribution in (
             'redhat', 'fedora', 'centos',
         ),
