@@ -132,7 +132,9 @@ class Daemon(service.Daemon):
         )
 
         self._engineArgs = [
+            # The name of the process, as displayed by ps:
             'ovirt-engine-notifier',
+
             '-Dlog4j.configuration=file://%s/notifier/log4j.xml' % (
                 self._config.get('ENGINE_ETC'),
             ),
