@@ -128,7 +128,7 @@ public class FrontendActionTest {
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 null);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
-                callbackMultipleActions.capture());
+                eq(false), callbackMultipleActions.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackMultipleActions.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
@@ -152,7 +152,7 @@ public class FrontendActionTest {
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
-                callbackMultipleActions.capture());
+                eq(false), callbackMultipleActions.capture());
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
                 "404 status code"); //$NON-NLS-1$
         callbackMultipleActions.getValue().onFailure(exception);
@@ -186,7 +186,7 @@ public class FrontendActionTest {
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
-                callbackMultipleActions.capture());
+                eq(false), callbackMultipleActions.capture());
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
         returnValues.add(new VdcReturnValueBase());
         returnValues.add(new VdcReturnValueBase());
@@ -223,7 +223,7 @@ public class FrontendActionTest {
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
-                callbackMultipleActions.capture());
+                eq(false), callbackMultipleActions.capture());
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
         returnValues.add(new VdcReturnValueBase());
         returnValues.add(new VdcReturnValueBase());
@@ -270,7 +270,7 @@ public class FrontendActionTest {
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
-                callbackMultipleActions.capture());
+                eq(false), callbackMultipleActions.capture());
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
         returnValues.add(new VdcReturnValueBase());
         returnValues.add(new VdcReturnValueBase());

@@ -103,6 +103,12 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     @Override
     public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllCanDoPass) {
+        return RunMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass, false);
+    }
+
+    @Override
+    public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllCanDoPass, boolean isWaitForResult) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         for (VdcActionParametersBase params : multipleParams) {
@@ -110,7 +116,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         }
 
         ArrayList<VdcReturnValueBase> returnValues =
-                getBackend().runMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass);
+                getBackend().runMultipleActions(actionType, multipleParams, isRunOnlyIfAllCanDoPass, isWaitForResult);
 
         return returnValues;
     }

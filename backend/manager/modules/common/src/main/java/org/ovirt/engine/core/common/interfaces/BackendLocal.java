@@ -24,6 +24,10 @@ public interface BackendLocal {
 
     java.util.ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             java.util.ArrayList<VdcActionParametersBase> parameters,
+            boolean isRunOnlyIfAllCanDoPass, boolean waitForResult);
+
+    java.util.ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+            java.util.ArrayList<VdcActionParametersBase> parameters,
             boolean isRunOnlyIfAllCanDoPass);
 
     void initialize();

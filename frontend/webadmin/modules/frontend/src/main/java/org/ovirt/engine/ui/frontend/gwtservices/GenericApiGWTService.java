@@ -34,6 +34,11 @@ public interface GenericApiGWTService extends RpcService {
             ArrayList<VdcActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllCanDoPass);
 
+    public ArrayList<VdcReturnValueBase> RunMultipleActions(
+            VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> multipleParams,
+            boolean isRunOnlyIfAllCanDoPass, boolean isWaitForResult);
+
     public DbUser getLoggedInUser();
 
     public VdcReturnValueBase logOff(DbUser userToLogoff);

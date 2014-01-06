@@ -228,47 +228,71 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
             if (parameters.size() > 1 || (allActionOperations.size() == 1
                     && allActionOperations.get(0).getCallback() instanceof VdcOperationCallbackList)) {
-                getService().RunMultipleActions(actionEntry.getKey(), (ArrayList<VdcActionParametersBase>) parameters, false,
-                        new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
-
-                    @Override
-                    public void onFailure(final Throwable exception) {
-                        Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
-                                getCallbackMap(actionEntry.getValue());
-                        for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
-                            if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
-                                ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
-                            } else {
-                                ((VdcOperationCallback) callbackEntry.getKey()).onFailure(callbackEntry.getValue().get(0),
-                                        exception);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onSuccess(final ArrayList<VdcReturnValueBase> result) {
-                        Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
-                                getCallbackMap(actionEntry.getValue());
-                        for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
-                            List<VdcReturnValueBase> actionResult = (List<VdcReturnValueBase>)
-                                    getOperationResult(callbackEntry.getValue(), allActionOperations, result);
-                            if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
-                                ((VdcOperationCallbackList) callbackEntry.getKey()).onSuccess(callbackEntry.getValue(),
-                                        actionResult);
-                            } else {
-                                ((VdcOperationCallback) callbackEntry.getKey()).onSuccess(callbackEntry.getValue().get(0),
-                                        actionResult.get(0));
-                            }
-                        }
-                    }
-
-                });
+                List<VdcOperation<?, ?>> waitForResultList = getWaitForResultList(actionEntry.getValue());
+                if (!waitForResultList.isEmpty()) {
+                    runMultipleActions(actionEntry.getKey(), waitForResultList, parameters, allActionOperations,
+                            true);
+                }
+                if (waitForResultList.size() != actionEntry.getValue().size()) {
+                    List<VdcOperation<?, ?>> immediateReturnList = actionEntry.getValue();
+                    immediateReturnList.removeAll(waitForResultList); //Don't care if it succeeds or not.
+                    runMultipleActions(actionEntry.getKey(), immediateReturnList, parameters, allActionOperations,
+                            false);
+                }
             } else if (actionEntry.getValue().size() == 1) {
                 transmitOperation(actionEntry.getValue().get(0));
             }
         }
     }
 
+    private List<VdcOperation<?, ?>> getWaitForResultList(List<VdcOperation<?, ?>> originalList) {
+        List<VdcOperation<?, ?>> result = new ArrayList<VdcOperation<?, ?>>();
+        for (VdcOperation<?, ?> operation: originalList) {
+            if (!operation.isFromList()) {
+                result.add(operation);
+            }
+        }
+        return result;
+    }
+
+    private void runMultipleActions(final VdcActionType actionType, final List<VdcOperation<?, ?>> operations,
+            List<VdcActionParametersBase> parameters, final List<VdcOperation<?, ?>> allActionOperations,
+            final boolean waitForResults) {
+        getService().RunMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters,
+                false, waitForResults, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
+
+            @Override
+            public void onFailure(final Throwable exception) {
+                Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
+                        getCallbackMap(operations);
+                for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
+                    if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                        ((VdcOperationCallbackList) callbackEntry.getKey()).onFailure(callbackEntry.getValue(), exception);
+                    } else {
+                        ((VdcOperationCallback) callbackEntry.getKey()).onFailure(callbackEntry.getValue().get(0),
+                                exception);
+                    }
+                }
+            }
+
+            @Override
+            public void onSuccess(final ArrayList<VdcReturnValueBase> result) {
+                Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
+                        getCallbackMap(operations);
+                for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
+                    List<VdcReturnValueBase> actionResult = (List<VdcReturnValueBase>)
+                            getOperationResult(callbackEntry.getValue(), allActionOperations, result);
+                    if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
+                        ((VdcOperationCallbackList) callbackEntry.getKey()).onSuccess(callbackEntry.getValue(),
+                                actionResult);
+                    } else {
+                        ((VdcOperationCallback) callbackEntry.getKey()).onSuccess(callbackEntry.getValue().get(0),
+                                actionResult.get(0));
+                    }
+                }
+            }
+        });
+    }
     /**
      * Map operations by callback, so we can properly call a single callback for all related operations.
      * @param operationList The list of operations to determine the map for.
