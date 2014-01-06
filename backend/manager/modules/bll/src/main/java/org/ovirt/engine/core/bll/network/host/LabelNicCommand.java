@@ -62,7 +62,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
             return failCanDoAction(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST);
         }
 
-        if (getNic().getLabels() != null && getNic().getLabels().contains(getParameters().getLabel())) {
+        if (getNic().getLabels() != null && getNic().getLabels().contains(getLabel())) {
             return failCanDoAction(VdcBllMessages.INTERFACE_ALREADY_LABELED);
         }
 
