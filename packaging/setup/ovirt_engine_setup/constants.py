@@ -496,7 +496,6 @@ class Stages(object):
     DB_CONNECTION_SETUP = 'osetup.db.connection.setup'
     DB_CONNECTION_CUSTOMIZATION = 'osetup.db.connection.customization'
     DB_CONNECTION_STATUS = 'osetup.db.connection.status'
-    DB_HOST_LOCATION_CUSTOMIZATION = 'osetup.db.hostlocation.customization'
     DB_CREDENTIALS_AVAILABLE_EARLY = 'osetup.db.connection.credentials.early'
     DB_CREDENTIALS_AVAILABLE_LATE = 'osetup.db.connection.credentials.late'
     DB_CONNECTION_AVAILABLE = 'osetup.db.connection.available'
