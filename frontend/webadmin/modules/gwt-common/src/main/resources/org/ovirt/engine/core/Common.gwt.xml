@@ -114,7 +114,7 @@
 		<include name="common/businessentities/TagsVmMap.java" />
 		<include name="common/businessentities/Tags.java" />
 		<include name="common/businessentities/TagsType.java" />
-		<include name="common/EventNotificationMethods.java" />
+		<include name="common/EventNotificationMethod.java" />
 		<include name="common/businessentities/UsbPolicy.java" />
         <include name="common/businessentities/SsoMethod.java" />
 		<include name="common/businessentities/VDS.java" />

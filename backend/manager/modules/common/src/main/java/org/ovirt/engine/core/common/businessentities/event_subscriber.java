@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import org.hibernate.validator.constraints.Email;
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -48,7 +48,7 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
                 && ObjectUtils.objectsEqual(id.tagName, other.id.tagName));
     }
 
-    public event_subscriber(String event_up_name, EventNotificationMethods eventNotificationMethod,
+    public event_subscriber(String event_up_name, EventNotificationMethod eventNotificationMethod,
                             Guid subscriber_id, String tagName) {
         this();
         this.id.eventUpName = event_up_name;
@@ -58,7 +58,7 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
         this.id.tagName = tagName;
     }
 
-    public event_subscriber(String event_up_name, EventNotificationMethods eventNotificationMethod, String method_address, Guid subscriber_id,
+    public event_subscriber(String event_up_name, EventNotificationMethod eventNotificationMethod, String method_address, Guid subscriber_id,
             String tagName) {
         this (event_up_name, eventNotificationMethod, subscriber_id, tagName);
         this.methodAddress = method_address;
@@ -72,11 +72,11 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
         this.id.eventUpName = value;
     }
 
-    public EventNotificationMethods getevent_notification_method() {
+    public EventNotificationMethod getevent_notification_method() {
         return this.id.eventNotificationMethod;
     }
 
-    public void setevent_notification_method(EventNotificationMethods eventNotificationMethod) {
+    public void setevent_notification_method(EventNotificationMethod eventNotificationMethod) {
         this.id.eventNotificationMethod = eventNotificationMethod;
     }
 

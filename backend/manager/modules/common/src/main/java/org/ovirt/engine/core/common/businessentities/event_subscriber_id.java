@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -11,7 +11,7 @@ public class event_subscriber_id implements Serializable {
 
     Guid subscriberId;
     String eventUpName;
-    EventNotificationMethods eventNotificationMethod;
+    EventNotificationMethod eventNotificationMethod;
     String tagName;
 
     @Override

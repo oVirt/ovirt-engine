@@ -1,5 +1,5 @@
 package org.ovirt.engine.core.common;
 
-public enum EventNotificationMethods {
+public enum EventNotificationMethod {
     EMAIL
 }

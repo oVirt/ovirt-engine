@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.AuditLogSeverity;
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
@@ -79,7 +79,7 @@ public class NotificationService implements Runnable {
             failedQueriesNotificationThreshold = 1;
         }
         notificationMethodsMapper = new NotificationMethodsMapper(prop);
-        failedQueriesEventSender = notificationMethodsMapper.getEventSender(EventNotificationMethods.EMAIL);
+        failedQueriesEventSender = notificationMethodsMapper.getEventSender(EventNotificationMethod.EMAIL);
     }
 
     private int getNonNegativeIntegerProperty(final String name) throws NotificationServiceException {
@@ -351,7 +351,7 @@ public class NotificationService implements Runnable {
         eals.setevent_type(rs.getInt("event_type"));
         eals.setsubscriber_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("subscriber_id")));
         eals.setevent_up_name(rs.getString("event_up_name"));
-        eals.setEventNotificationMethod(EventNotificationMethods.valueOf(rs.getString("notification_method")));
+        eals.setEventNotificationMethod(EventNotificationMethod.valueOf(rs.getString("notification_method")));
         eals.setmethod_address(rs.getString("method_address"));
         eals.settag_name(rs.getString("tag_name"));
         eals.setaudit_log_id(rs.getLong("audit_log_id"));
@@ -383,7 +383,7 @@ public class NotificationService implements Runnable {
             EventAuditLogSubscriber eals = new EventAuditLogSubscriber();
             eals.setevent_type(MessageHelper.MessageType.alertMessage.getEventType());
             eals.setevent_up_name("DATABASE_UNREACHABLE");
-            eals.setEventNotificationMethod(EventNotificationMethods.EMAIL);
+            eals.setEventNotificationMethod(EventNotificationMethod.EMAIL);
             eals.setmethod_address(StringUtils.strip(email));
             eals.setmessage("Failed to query for notifications. Database Connection refused.");
             eals.setseverity(AuditLogSeverity.ERROR.getValue());

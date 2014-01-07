@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
@@ -32,7 +32,7 @@ public class EventDAOTest extends BaseDAOTestCase {
         newSubscriber = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
         newSubscription = new event_subscriber();
         newSubscription.setsubscriber_id(newSubscriber);
-        newSubscription.setevent_notification_method(EventNotificationMethods.EMAIL);
+        newSubscription.setevent_notification_method(EventNotificationMethod.EMAIL);
         newSubscription.setevent_up_name("TestRun");
         newSubscription.settag_name("farkle");
 

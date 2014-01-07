@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.compat.Guid;
 
 public class EventAuditLogSubscriber implements Serializable {
@@ -46,13 +46,13 @@ public class EventAuditLogSubscriber implements Serializable {
         this.event_up_nameField = value;
     }
 
-    private EventNotificationMethods eventNotificationMethod;
+    private EventNotificationMethod eventNotificationMethod;
 
-    public EventNotificationMethods getEventNotificationMethod() {
+    public EventNotificationMethod getEventNotificationMethod() {
         return this.eventNotificationMethod;
     }
 
-    public void setEventNotificationMethod(EventNotificationMethods eventNotificationMethod) {
+    public void setEventNotificationMethod(EventNotificationMethod eventNotificationMethod) {
         this.eventNotificationMethod = eventNotificationMethod;
     }
 

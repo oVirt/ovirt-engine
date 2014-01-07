@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,7 +25,7 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
                 throws SQLException {
             event_subscriber entity = new event_subscriber();
             entity.setevent_up_name(rs.getString("event_up_name"));
-            entity.setevent_notification_method(EventNotificationMethods.valueOf(rs.getString("notification_method")));
+            entity.setevent_notification_method(EventNotificationMethod.valueOf(rs.getString("notification_method")));
             entity.setmethod_address(rs.getString("method_address"));
             entity.setsubscriber_id(getGuidDefaultEmpty(rs, "subscriber_id"));
             entity.settag_name(rs.getString("tag_name"));
