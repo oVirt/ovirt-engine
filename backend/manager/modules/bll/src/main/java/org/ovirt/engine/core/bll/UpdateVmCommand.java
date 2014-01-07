@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
@@ -375,8 +376,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        if (getParameters().isVirtioScsiEnabled() != null && !getVm().isDown()
-                && vmDeviceChanged(VmDeviceGeneralType.CONTROLLER, getParameters().isVirtioScsiEnabled())) {
+        if (getParameters().isVirtioScsiEnabled() != null
+                && !getVm().isDown()
+                && vmDeviceChanged(VmDeviceGeneralType.CONTROLLER,
+                        VmDeviceType.VIRTIOSCSI.getName(),
+                        getParameters().isVirtioScsiEnabled())) {
             addCanDoActionMessage("$device VirtIO-SCSI");
             return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
         }
@@ -387,6 +391,20 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private boolean vmDeviceChanged(VmDeviceGeneralType deviceType, boolean deviceEnabled) {
         List<VmDevice> vmDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getVmId(),
                 deviceType);
+
+        return deviceEnabled == vmDevices.isEmpty();
+    }
+
+    /**
+     * Determines whether a VM device change has been request by the user.
+     * @param deviceType VmDeviceGeneralType.
+     * @param device VmDeviceType name.
+     * @param deviceEnabled indicates whether the user asked to enable the device.
+     * @return true if a change has been requested; otherwise, false
+     */
+    private boolean vmDeviceChanged(VmDeviceGeneralType deviceType, String device, boolean deviceEnabled) {
+        List<VmDevice> vmDevices = getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
+                deviceType, device);
 
         return deviceEnabled == vmDevices.isEmpty();
     }
