@@ -24,7 +24,7 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     private static final Guid NO_VDSM_TASKS_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5333");
     private static final String EXISTING_CORRELATION_ID = "54947df8-job1";
     private static final int NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID = 1;
-    private static final int TOTAL_JOBS = 5;
+    private static final int TOTAL_JOBS = 6;
 
     @Override
     @Before
@@ -133,6 +133,8 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
         Date dateToDelete = df.parse("2013-02-9 10:11:00");
         dao.deleteCompletedJobs(dateToDelete, dateToDelete);
         int sizeAfterDelete = dao.getAll().size();
+        assertTrue("Check job with step and no async task deleted",
+                dao.get(new Guid("54947df8-0e9e-4471-a2f9-9af509fb0002")) == null);
         assertTrue("Check an entry was deleted", sizeBeforeDelete > sizeAfterDelete);
     }
 
