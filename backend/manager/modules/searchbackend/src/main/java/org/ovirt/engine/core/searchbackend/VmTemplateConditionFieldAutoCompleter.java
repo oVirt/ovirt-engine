@@ -53,6 +53,8 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         columnNameDict.put("QUOTA", "quota_name");
         columnNameDict.put("_VMT_ID", "vmt_guid");
         // Building the validation dict
+
+        notFreeTextSearchableFieldsList.add("OS");
         buildBasicValidationTable();
     }
 
