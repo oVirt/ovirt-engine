@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.notifier.utils;
 
 import java.net.InetAddress;
-
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +10,41 @@ import org.ovirt.engine.core.utils.LocalConfig;
  * Defines properties uses by the event notification service
  */
 public class NotificationProperties extends LocalConfig {
+
+    /**
+     * Service parameters
+     */
+    public static final String DAYS_TO_KEEP_HISTORY = "DAYS_TO_KEEP_HISTORY";
+    public static final String INTERVAL_IN_SECONDS = "INTERVAL_IN_SECONDS";
+    public static final String ENGINE_INTERVAL_IN_SECONDS = "ENGINE_INTERVAL_IN_SECONDS";
+    public static final String ENGINE_TIMEOUT_IN_SECONDS = "ENGINE_TIMEOUT_IN_SECONDS";
+    public static final String IS_HTTPS_PROTOCOL = "IS_HTTPS_PROTOCOL";
+    public static final String SSL_PROTOCOL = "SSL_PROTOCOL";
+    public static final String REPEAT_NON_RESPONSIVE_NOTIFICATION = "REPEAT_NON_RESPONSIVE_NOTIFICATION";
+    public static final String ENGINE_MONITOR_RETRIES = "ENGINE_MONITOR_RETRIES";
+    public static final String SSL_IGNORE_CERTIFICATE_ERRORS = "SSL_IGNORE_CERTIFICATE_ERRORS";
+    public static final String SSL_IGNORE_HOST_VERIFICATION = "SSL_IGNORE_HOST_VERIFICATION";
+
+    /**
+     * Comma separated list of recipients to be informed in case
+     * the notification service cannot connect to the DB. can be empty.
+     */
+    public static final String FAILED_QUERIES_NOTIFICATION_RECIPIENTS = "FAILED_QUERIES_NOTIFICATION_RECIPIENTS";
+
+    /**
+     * Send a notification email after first failure to fetch notifications,
+     * and then once every failedQueriesNotificationThreshold times.
+     */
+    public static final String FAILED_QUERIES_NOTIFICATION_THRESHOLD = "FAILED_QUERIES_NOTIFICATION_THRESHOLD";
+
+    /**
+     * This parameter specifies how many days of old events are processed and
+     * sent when the notifier starts. If set to 2, for example, the notifier
+     * will process and send the events of the last two days, older events will
+     * just be marked as processed and won't be sent.
+     */
+    public static final String DAYS_TO_SEND_ON_STARTUP = "DAYS_TO_SEND_ON_STARTUP";
+
     /**
      * Email parameters
      */
@@ -37,41 +71,6 @@ public class NotificationProperties extends LocalConfig {
      * SMTP transport encryption using TLS (SMTP with STARTTLS)
      */
     public static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
-
-    /**
-     * Service parameters
-     */
-    public static final String DAYS_TO_KEEP_HISTORY = "DAYS_TO_KEEP_HISTORY";
-    public static final String INTERVAL_IN_SECONDS = "INTERVAL_IN_SECONDS";
-    public static final String ENGINE_INTERVAL_IN_SECONDS = "ENGINE_INTERVAL_IN_SECONDS";
-    public static final String ENGINE_TIMEOUT_IN_SECONDS = "ENGINE_TIMEOUT_IN_SECONDS";
-    public static final String IS_HTTPS_PROTOCOL = "IS_HTTPS_PROTOCOL";
-    public static final String SSL_PROTOCOL = "SSL_PROTOCOL";
-    public static final String REPEAT_NON_RESPONSIVE_NOTIFICATION = "REPEAT_NON_RESPONSIVE_NOTIFICATION";
-    public static final String ENGINE_MONITOR_RETRIES = "ENGINE_MONITOR_RETRIES";
-    public static final String SSL_IGNORE_CERTIFICATE_ERRORS = "SSL_IGNORE_CERTIFICATE_ERRORS";
-    public static final String SSL_IGNORE_HOST_VERIFICATION = "SSL_IGNORE_HOST_VERIFICATION";
-    public static final String ENGINE_PID = "ENGINE_PID";
-
-    /**
-     * This parameter specifies how many days of old events are processed and
-     * sent when the notifier starts. If set to 2, for example, the notifier
-     * will process and send the events of the last two days, older events will
-     * just be marked as processed and won't be sent.
-     */
-    public static final String DAYS_TO_SEND_ON_STARTUP = "DAYS_TO_SEND_ON_STARTUP";
-
-    /**
-     * Comma separated list of recipients to be informed in case
-     * the notification service cannot connect to the DB. can be empty.
-     */
-    public static final String FAILED_QUERIES_NOTIFICATION_RECIPIENTS = "FAILED_QUERIES_NOTIFICATION_RECIPIENTS";
-
-    /**
-     * Send a notification email after first failure to fetch notifications,
-     * and then once every failedQueriesNotificationThreshold times.
-     */
-    public static final String FAILED_QUERIES_NOTIFICATION_THRESHOLD = "FAILED_QUERIES_NOTIFICATION_THRESHOLD";
 
     // Default files for defaults and overridden values:
     private static String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/notifier.conf.defaults";
@@ -118,9 +117,11 @@ public class NotificationProperties extends LocalConfig {
      * @throws IllegalArgumentException if some properties has invalid values
      */
     public void validate() {
-        // validate mandatory properties
-        for (String property : new String[] {
+        // validate mandatory and non empty properties
+        for (String property : new String[]{
                 NotificationProperties.DAYS_TO_KEEP_HISTORY,
+                NotificationProperties.DAYS_TO_SEND_ON_STARTUP,
+                NotificationProperties.FAILED_QUERIES_NOTIFICATION_THRESHOLD,
                 NotificationProperties.ENGINE_INTERVAL_IN_SECONDS,
                 NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS,
                 NotificationProperties.INTERVAL_IN_SECONDS,
@@ -132,6 +133,25 @@ public class NotificationProperties extends LocalConfig {
                 throw new IllegalArgumentException(
                         String.format(
                                 "Check configuration file, '%s' is missing",
+                                property));
+            }
+        }
+
+        // validate non negative args
+        for (String property : new String[]{
+                NotificationProperties.DAYS_TO_KEEP_HISTORY,
+                NotificationProperties.DAYS_TO_SEND_ON_STARTUP,
+                NotificationProperties.FAILED_QUERIES_NOTIFICATION_THRESHOLD}) {
+            final String stringVal = getProperty(property);
+            try {
+                int value = Integer.parseInt(stringVal);
+                if (value < 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (NumberFormatException exception) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "'%s' must be a non negative integer.",
                                 property));
             }
         }
@@ -182,7 +202,7 @@ public class NotificationProperties extends LocalConfig {
             if (!StringUtils.isEmpty(candidate)) {
                 try {
                     new InternetAddress(candidate);
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     throw new IllegalArgumentException(
                             String.format(
                                     "Check configuration file, invalid format in '%s'",
