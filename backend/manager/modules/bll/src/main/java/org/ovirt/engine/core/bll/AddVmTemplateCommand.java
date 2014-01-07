@@ -216,6 +216,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
+                            VmDeviceUtils.isBalloonEnabled(getVmId()),
                             false);
                 } else {
                     // sending true for isVm in order to create basic devices needed
@@ -229,6 +230,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
+                            getVm().isBalloonEnabled(),
                             false);
                 }
 
