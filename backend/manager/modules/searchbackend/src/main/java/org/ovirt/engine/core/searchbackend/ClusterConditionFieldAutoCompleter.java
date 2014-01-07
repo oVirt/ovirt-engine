@@ -8,7 +8,6 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add("NAME");
         mVerbs.add("DESCRIPTION");
         mVerbs.add("COMMENT");
-        mVerbs.add("INITIALIZED");
         mVerbs.add("ARCHITECTURE");
 
         // Building the autoCompletion Dict
@@ -17,7 +16,6 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("NAME", String.class);
         getTypeDictionary().put("DESCRIPTION", String.class);
         getTypeDictionary().put("COMMENT", String.class);
-        getTypeDictionary().put("INITIALIZED", Boolean.class);
         getTypeDictionary().put("ARCHITECTURE", ArchitectureType.class);
 
         // building the ColumnName Dict
@@ -25,7 +23,6 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         columnNameDict.put("DESCRIPTION", "description");
         columnNameDict.put("COMMENT", "free_text_comment");
         columnNameDict.put("ARCHITECTURE", "architecture");
-        // mColumnNameDict.put("INITIALIZED", "is_initialized");
 
         // Building the validation dict
         buildBasicValidationTable();
@@ -39,9 +36,7 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        if ("INITIALIZED".equals(fieldName)) {
-            retval = new BitValueAutoCompleter();
-        } else if ("ARCHITECTURE".equals(fieldName)) {
+        if ("ARCHITECTURE".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ArchitectureType.class);
         }
         return retval;
