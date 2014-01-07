@@ -44,67 +44,17 @@ public class NotificationService implements Runnable {
     private DataSource ds;
     private NotificationProperties prop = null;
     private NotificationMethodsMapper notificationMethodsMapper;
-    private int daysToKeepHistory = 0;
-    private int daysToSendOnStartup = 0;
     private EventSender failedQueriesEventSender;
     private List<EventAuditLogSubscriber> failedQueriesEventSubscribers = Collections.emptyList();
-    private int failedQueriesNotificationThreshold;
     private int failedQueries = 0;
 
     public NotificationService(NotificationProperties prop) throws NotificationServiceException {
         this.prop = prop;
         initConnectivity();
-        initConfigurationProperties();
-        initEvents();
-        initFailedQueriesEventSubscribers();
-    }
-
-    /**
-     * Validates the correctness of properties set in the configuration file.<br>
-     * If any of the properties is invalid, an error will be sent and service initialization fails.<br>
-     * Validated properties are: <li>DAYS_TO_KEEP_HISTORY - property could be omitted, if specified should be a positive
-     * <li>INTERVAL_IN_SECONDS - property is mandatory, if specified should be a positive <li>DB Connectivity
-     * Credentials - if failed to obtain connection to database, fails
-     * <li>FAILED_QUERIES_NOTIFICATION_THRESHOLD - send db connectivity notification once every x query attempts.
-     *
-     * @throws NotificationServiceException
-     *             configuration setting error
-     */
-    private void initConfigurationProperties() throws NotificationServiceException {
-        daysToKeepHistory = getNonNegativeIntegerProperty(NotificationProperties.DAYS_TO_KEEP_HISTORY);
-        daysToSendOnStartup = getNonNegativeIntegerProperty(NotificationProperties.DAYS_TO_SEND_ON_STARTUP);
-        failedQueriesNotificationThreshold =
-                getNonNegativeIntegerProperty(NotificationProperties.FAILED_QUERIES_NOTIFICATION_THRESHOLD);
-        if (failedQueriesNotificationThreshold == 0) {
-            failedQueriesNotificationThreshold = 1;
-        }
         notificationMethodsMapper = new NotificationMethodsMapper(prop);
         failedQueriesEventSender = notificationMethodsMapper.getEventSender(EventNotificationMethod.EMAIL);
-    }
-
-    private int getNonNegativeIntegerProperty(final String name) throws NotificationServiceException {
-         // Get the text of the property:
-         final String text = prop.getProperty(name);
-
-         // Validate it:
-         if (StringUtils.isNotEmpty(text)) {
-             try {
-                 int value = Integer.parseInt(text);
-                 if (value < 0) {
-                     throw new NumberFormatException(name + " value should be a positive number");
-                 }
-                 return value;
-             }
-             catch (NumberFormatException exception) {
-                 String err =
-                         String.format("Invalid format of %s: %s", name, text);
-                 log.error(err, exception);
-                 throw new NotificationServiceException(err, exception);
-             }
-         }
-
-         // If the property can't be found then return 0 as the value:
-         return 0;
+        initEvents();
+        initFailedQueriesEventSubscribers();
     }
 
     /**
@@ -115,9 +65,7 @@ public class NotificationService implements Runnable {
         try {
             log.debug("Start event notification service iteration");
             processEvents();
-            if (daysToKeepHistory > 0) {
-                deleteObseleteHistoryData();
-            }
+            deleteObsoleteHistoryData();
             log.debug("Finish event notification service iteration");
         } catch (Throwable e) {
             if (!Thread.interrupted()) {
@@ -126,37 +74,38 @@ public class NotificationService implements Runnable {
         }
     }
 
-    // TODO: Consider adding deleteObseleteHistoryData() as a separate scheduled thread run on a daily basis
-    private void deleteObseleteHistoryData() throws SQLException {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -daysToKeepHistory);
-        Timestamp startDeleteFrom = new Timestamp(cal.getTimeInMillis());
-        Connection connection = null;
-        PreparedStatement deleteStmt = null;
-        int deletedRecords;
-        try {
-            connection = ds.getConnection();
-            deleteStmt = connection.prepareStatement("delete from event_notification_hist where sent_at < ?");
-            deleteStmt.setTimestamp(1, startDeleteFrom);
-            deletedRecords = deleteStmt.executeUpdate();
-        } finally {
-            if (deleteStmt != null) {
-                deleteStmt.close();
+    private void deleteObsoleteHistoryData() throws SQLException {
+        if (prop.getInteger(NotificationProperties.DAYS_TO_KEEP_HISTORY) > 0) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DATE, -prop.getInteger(NotificationProperties.DAYS_TO_KEEP_HISTORY));
+            Timestamp startDeleteFrom = new Timestamp(cal.getTimeInMillis());
+            Connection connection = null;
+            PreparedStatement deleteStmt = null;
+            int deletedRecords;
+            try {
+                connection = ds.getConnection();
+                deleteStmt = connection.prepareStatement("delete from event_notification_hist where sent_at < ?");
+                deleteStmt.setTimestamp(1, startDeleteFrom);
+                deletedRecords = deleteStmt.executeUpdate();
+            } finally {
+                if (deleteStmt != null) {
+                    deleteStmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
             }
-            if (connection != null) {
-                connection.close();
-            }
-        }
 
-        if (deletedRecords > 0) {
-            log.debug(deletedRecords + " records were deleted from \"event_notification_hist\" table.");
+            if (deletedRecords > 0) {
+                log.debug(deletedRecords + " records were deleted from \"event_notification_hist\" table.");
+            }
         }
     }
 
     private void markOldEventsAsProcessed() throws SQLException {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -daysToSendOnStartup);
+        calendar.add(Calendar.DATE, -prop.getInteger(NotificationProperties.DAYS_TO_SEND_ON_STARTUP));
         Timestamp ts = new Timestamp(calendar.getTimeInMillis());
         Connection connection = null;
         PreparedStatement statement = null;
@@ -266,6 +215,11 @@ public class NotificationService implements Runnable {
                 log.error("Failed to dispatch query failure email message", e);
                 // Don't rethrow. we don't want to mask the original query exception.
             }
+        }
+        int failedQueriesNotificationThreshold =
+                prop.getInteger(NotificationProperties.FAILED_QUERIES_NOTIFICATION_THRESHOLD);
+        if (failedQueriesNotificationThreshold == 0) {
+            failedQueriesNotificationThreshold = 1;
         }
         failedQueries = (failedQueries + 1) % failedQueriesNotificationThreshold;
     }
