@@ -33,16 +33,21 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
 
@@ -61,6 +66,8 @@ public class UpdateVmCommandTest {
     private VdsDAO vdsDAO;
     @Mock
     private DiskDao diskDAO;
+    @Mock
+    private VmDeviceDAO vmDeviceDAO;
 
     @Mock
     OsRepository osRepository;
@@ -251,6 +258,43 @@ public class UpdateVmCommandTest {
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
     }
+
+    @Test
+    public void testCannotDisableVirtioScsiForRunningVM() {
+        prepareVmToPassCanDoAction();
+        command.getParameters().setVirtioScsiEnabled(false);
+        vm.setStatus(VMStatus.Up);
+        mockDiskDaoGetAllForVm(Collections.<Disk> emptyList(), true);
+
+        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
+        doReturn(true).when(command).areUpdatedFieldsLegal();
+
+        doReturn(Collections.emptyList()).when(vmDeviceDAO).getVmDeviceByVmIdAndType(
+                any(Guid.class), any(VmDeviceGeneralType.class));
+        doReturn(Collections.singletonList(new VmDevice())).when(vmDeviceDAO).getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(), VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName());
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
+    }
+
+    @Test
+    public void testCanEditARunningVM() {
+        prepareVmToPassCanDoAction();
+        vm.setStatus(VMStatus.Up);
+        mockDiskDaoGetAllForVm(Collections.<Disk> emptyList(), true);
+
+        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
+        doReturn(true).when(command).areUpdatedFieldsLegal();
+
+        doReturn(Collections.emptyList()).when(vmDeviceDAO).getVmDeviceByVmIdAndType(
+                any(Guid.class), any(VmDeviceGeneralType.class));
+        doReturn(Collections.emptyList()).when(vmDeviceDAO).getVmDeviceByVmIdTypeAndDevice(
+                any(Guid.class), any(VmDeviceGeneralType.class), any(String.class));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
 
     private void prepareVmToPassCanDoAction() {
         vmStatic.setName("vm1");
