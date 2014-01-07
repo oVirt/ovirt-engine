@@ -47,15 +47,6 @@
     <!--
     Currently Ignoring.
     findbugs reason:
-    IS: Inconsistent synchronization (IS2_INCONSISTENT_SYNC)
-    -->
-    <Match>
-        <Bug code="IS" />
-    </Match>
-
-    <!--
-    Currently Ignoring.
-    findbugs reason:
     REC: Exception is caught when Exception is not thrown (REC_CATCH_EXCEPTION)
     -->
     <Match>
