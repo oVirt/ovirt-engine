@@ -28,6 +28,11 @@ public class RemoveNetworkParametersBuilder extends NetworkParametersBuilder {
     public ArrayList<VdcActionParametersBase> buildParameters(List<VdsNetworkInterface> nics) {
         Set<Guid> nonUpdateableHosts = new HashSet<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+
+        if (NetworkUtils.isManagementNetwork(network)) {
+            return parameters;
+        }
+
         boolean vlanNetwork = NetworkUtils.isVlan(network);
 
         for (VdsNetworkInterface nic : nics) {
