@@ -22,7 +22,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     private static final int TOTAL_STEPS_OF_MULTI_STEP_JOB = 8;
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5111");
     private static final Guid EXISTING_STEP_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509111111");
-    private static final int TOTAL_STEPS = 12;
+    private static final int TOTAL_STEPS = 13;
     private static final Guid EXISTING_STEP_WITH_SUB_STEPS = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5223");
     private static final int TOTAL_STEPS_OF_PARENT_STEP = 3;
     private static final Guid IN_PROGRESS_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5333");
