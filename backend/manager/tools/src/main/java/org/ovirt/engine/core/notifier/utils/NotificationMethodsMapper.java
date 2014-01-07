@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.notifier.utils;
 
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
 import org.ovirt.engine.core.notifier.utils.sender.mail.EventSenderMailImpl;
 
@@ -9,13 +9,13 @@ import java.util.Map;
 
 public class NotificationMethodsMapper {
 
-    private Map<EventNotificationMethods, EventSender> eventSenders = new HashMap<>();
+    private Map<EventNotificationMethod, EventSender> eventSenders = new HashMap<>();
 
     public NotificationMethodsMapper(NotificationProperties prop) {
-        eventSenders.put(EventNotificationMethods.EMAIL, new EventSenderMailImpl(prop));
+        eventSenders.put(EventNotificationMethod.EMAIL, new EventSenderMailImpl(prop));
     }
 
-    public EventSender getEventSender(EventNotificationMethods method) {
+    public EventSender getEventSender(EventNotificationMethod method) {
         return eventSenders.get(method);
     }
 

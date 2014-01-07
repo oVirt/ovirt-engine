@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventMap;
@@ -25,7 +25,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         // method and address
         Guid subscriberId = getParameters().getEventSubscriber().getsubscriber_id();
         String eventName = getParameters().getEventSubscriber().getevent_up_name();
-        EventNotificationMethods eventNotificationMethod =
+        EventNotificationMethod eventNotificationMethod =
                 getParameters().getEventSubscriber().getevent_notification_method();
         List<event_subscriber> subscriptions = DbFacade.getInstance()
                 .getEventDao().getAllForSubscriber(subscriberId);
@@ -70,7 +70,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
      * subscriptions]; otherwise, <c>false</c>.
      */
     private static boolean IsAlreadySubscribed(Iterable<event_subscriber> subscriptions, Guid subscriberId,
-            String eventName, EventNotificationMethods eventNotificationMethod) {
+            String eventName, EventNotificationMethod eventNotificationMethod) {
         boolean retval = false;
         for (event_subscriber eventSubscriber : subscriptions) {
             if (subscriberId.equals(eventSubscriber.getsubscriber_id())

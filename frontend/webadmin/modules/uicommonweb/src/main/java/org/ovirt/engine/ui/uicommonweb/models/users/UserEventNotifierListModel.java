@@ -7,7 +7,7 @@ import java.util.MissingResourceException;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
-import org.ovirt.engine.core.common.EventNotificationMethods;
+import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -257,14 +257,14 @@ public class UserEventNotifierListModel extends SearchableListModel
             for (event_subscriber a : existing)
             {
                 toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
-                        EventNotificationMethods.EMAIL,
+                        EventNotificationMethod.EMAIL,
                         a.getmethod_address(),
                         a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             for (SelectionTreeNodeModel a : selected)
             {
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
-                        EventNotificationMethods.EMAIL,
+                        EventNotificationMethod.EMAIL,
                         (String) model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
@@ -274,7 +274,7 @@ public class UserEventNotifierListModel extends SearchableListModel
             for (SelectionTreeNodeModel a : added)
             {
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
-                        EventNotificationMethods.EMAIL,
+                        EventNotificationMethod.EMAIL,
                         (String) model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
@@ -282,7 +282,7 @@ public class UserEventNotifierListModel extends SearchableListModel
             for (event_subscriber a : removed)
             {
                 toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
-                        EventNotificationMethods.EMAIL,
+                        EventNotificationMethod.EMAIL,
                         a.getmethod_address(),
                         a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
