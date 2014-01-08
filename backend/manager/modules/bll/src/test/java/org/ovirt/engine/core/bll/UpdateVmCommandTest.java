@@ -11,8 +11,10 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -84,13 +87,22 @@ public class UpdateVmCommandTest {
 
     @Before
     public void setUp() {
+        final int osId = 0;
+        final Version version = Version.v3_0;
+
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
-        when(osRepository.getMinimumRam(0, Version.v3_0)).thenReturn(0);
-        when(osRepository.getMinimumRam(0, null)).thenReturn(0);
-        when(osRepository.getMaximumRam(0, Version.v3_0)).thenReturn(256);
-        when(osRepository.getMaximumRam(0, null)).thenReturn(256);
-        when(osRepository.isWindows(0)).thenReturn(false);
-        when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
+
+        when(osRepository.getMinimumRam(osId, version)).thenReturn(0);
+        when(osRepository.getMinimumRam(osId, null)).thenReturn(0);
+        when(osRepository.getMaximumRam(osId, version)).thenReturn(256);
+        when(osRepository.getMaximumRam(osId, null)).thenReturn(256);
+        when(osRepository.isWindows(osId)).thenReturn(false);
+        when(osRepository.getArchitectureFromOS(osId)).thenReturn(ArchitectureType.x86_64);
+
+        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
+        displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
+        displayTypeMap.get(osId).put(version, Arrays.asList(DisplayType.qxl));
+        when(osRepository.getDisplayTypes()).thenReturn(displayTypeMap);
 
         VmHandler.init();
         vm = new VM();
@@ -98,7 +110,7 @@ public class UpdateVmCommandTest {
         group = new VDSGroup();
         group.setcpu_name("Intel Conroe Family");
         group.setId(Guid.newGuid());
-        group.setcompatibility_version(Version.v3_0);
+        group.setcompatibility_version(version);
         group.setArchitecture(ArchitectureType.x86_64);
 
         vm.setVdsGroupId(group.getId());

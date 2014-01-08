@@ -456,6 +456,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
+        // Check if the display type is supported
+        if (!VmHandler.isDisplayTypeSupported(getParameters().getVmStaticData().getOsId(),
+                vmFromParams.getDefaultDisplayType(),
+                getReturnValue().getCanDoActionMessages(),
+                getVdsGroup().getcompatibility_version())) {
+            return false;
+        }
+
         // check cpuPinning if the check haven't failed yet
         if (!isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData())) {
             return false;

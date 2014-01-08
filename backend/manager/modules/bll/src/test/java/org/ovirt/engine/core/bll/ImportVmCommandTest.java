@@ -10,6 +10,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -22,14 +23,19 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -41,6 +47,8 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -48,6 +56,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ImportVmCommandTest {
 
     @ClassRule
@@ -57,6 +66,22 @@ public class ImportVmCommandTest {
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+
+    @Mock
+    OsRepository osRepository;
+
+    @Before
+    public void setUp() {
+        // init the injector with the osRepository instance
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+
+        final int osId = 0;
+
+        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
+        displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
+        displayTypeMap.get(osId).put(null, Arrays.asList(DisplayType.qxl));
+        when(osRepository.getDisplayTypes()).thenReturn(displayTypeMap);
+    }
 
     @Test
     public void insufficientDiskSpace() {

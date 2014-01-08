@@ -291,6 +291,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        // Check if the display type is supported
+        if (!VmHandler.isDisplayTypeSupported(getParameters().getMasterVm().getOsId(),
+                getParameters().getMasterVm().getDefaultDisplayType(),
+                getReturnValue().getCanDoActionMessages(),
+                getVdsGroup().getcompatibility_version())) {
+            return false;
+        }
+
         if (getParameters().getVm().getSingleQxlPci() &&
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),

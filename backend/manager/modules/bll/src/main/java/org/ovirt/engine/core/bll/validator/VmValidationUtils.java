@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Version;
@@ -47,6 +48,15 @@ public class VmValidationUtils {
     public static boolean isDiskInterfaceSupportedByOs(int osId, Version clusterVersion, DiskInterface diskInterface) {
         List<String> diskInterfaces = getOsRepository().getDiskInterfaces(osId, clusterVersion);
         return diskInterfaces.contains(diskInterface.name());
+    }
+
+    /**
+     * Check if the display type of the OS is supported (as per the configuration).
+     *
+     * @return a boolean
+     */
+    public static boolean isDisplayTypeSupported(int osId, Version version, DisplayType defaultDisplayType) {
+        return getOsRepository().getDisplayTypes().get(osId).get(version).contains(defaultDisplayType);
     }
 
     /**

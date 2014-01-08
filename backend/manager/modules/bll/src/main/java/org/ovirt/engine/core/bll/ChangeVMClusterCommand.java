@@ -86,6 +86,14 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                     return false;
                 }
 
+                // Check if the display type is supported
+                if (!VmHandler.isDisplayTypeSupported(vm.getOs(),
+                        vm.getDefaultDisplayType(),
+                        getReturnValue().getCanDoActionMessages(),
+                        clusterCompatibilityVersion)) {
+                    return false;
+                }
+
                 if (VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId()) &&
                         !FeatureSupported.virtIoScsi(targetCluster.getcompatibility_version())) {
                     return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);

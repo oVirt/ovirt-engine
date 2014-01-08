@@ -339,7 +339,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     private boolean canDoActionAfterCloneVm(Map<Guid, StorageDomain> domainsMap) {
-        VM vm = getParameters().getVm();
+        VM vmFromParams = getParameters().getVm();
 
         // check that the imported vm guid is not in engine
         if (!validateNoDuplicateVm()) {
@@ -365,8 +365,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
 
-        if (getParameters().getCopyCollapse() && vm.getDiskMap() != null) {
-            for (Disk disk : vm.getDiskMap().values()) {
+        if (getParameters().getCopyCollapse() && vmFromParams.getDiskMap() != null) {
+            for (Disk disk : vmFromParams.getDiskMap().values()) {
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage key = (DiskImage) getVm().getDiskMap().get(disk.getId());
 
@@ -411,6 +411,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
 
         if (!validateUsbPolicy()) {
+            return false;
+        }
+
+        // Check if the display type is supported
+        if (!VmHandler.isDisplayTypeSupported(vmFromParams.getOs(),
+                vmFromParams.getDefaultDisplayType(),
+                getReturnValue().getCanDoActionMessages(),
+                getVdsGroup().getcompatibility_version())) {
             return false;
         }
 

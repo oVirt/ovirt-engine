@@ -336,6 +336,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        // Check if the display type is supported
+        if (!VmHandler.isDisplayTypeSupported(vmFromParams.getOs(),
+                vmFromParams.getDefaultDisplayType(),
+                getReturnValue().getCanDoActionMessages(),
+                getVdsGroup().getcompatibility_version())) {
+            return false;
+        }
+
         // check cpuPinning
         if (!isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData())) {
             return false;

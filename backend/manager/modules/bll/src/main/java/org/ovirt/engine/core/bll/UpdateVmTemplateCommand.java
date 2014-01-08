@@ -104,6 +104,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs());
         }
 
+        // Check if the display type is supported
+        if (returnValue) {
+            returnValue = VmHandler.isDisplayTypeSupported(getParameters().getVmTemplateData().getOsId(),
+                    getParameters().getVmTemplateData().getDefaultDisplayType(),
+                    getReturnValue().getCanDoActionMessages(),
+                    getVdsGroup().getcompatibility_version());
+        }
+
         if (returnValue) {
             returnValue = AddVmCommand.checkCpuSockets(getParameters().getVmTemplateData().getNumOfSockets(),
                     getParameters().getVmTemplateData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()

@@ -392,6 +392,30 @@ public class VmHandler {
     }
 
     /**
+     * Check if the display type is supported.
+     *
+     * @param osId
+     *            Type of the OS.
+     * @param defaultDisplayType
+     *            The VM default display type.
+     * @param reasons
+     *            The reasons.VdsGroups
+     * @param clusterVersion
+     *            The cluster version.
+     * @return
+     */
+    public static boolean isDisplayTypeSupported(int osId,
+                                            DisplayType defaultDisplayType,
+                                            List<String> reasons,
+                                            Version clusterVersion) {
+        boolean result = VmValidationUtils.isDisplayTypeSupported(osId, clusterVersion, defaultDisplayType);
+        if (!result) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
+        }
+        return result;
+    }
+
+    /**
      * Check if the interface name is not duplicate in the list of interfaces.
      *
      * @param interfaces
