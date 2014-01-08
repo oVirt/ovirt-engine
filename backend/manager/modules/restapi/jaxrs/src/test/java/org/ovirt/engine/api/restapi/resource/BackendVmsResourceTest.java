@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.ConfigurationType;
@@ -1311,7 +1313,9 @@ public class BackendVmsResourceTest
     }
 
     protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
-        return new VDSGroup();
+        VDSGroup cluster = new VDSGroup();
+        cluster.setArchitecture(ArchitectureType.x86_64);
+        return cluster;
     }
 
     private Disks createDisksCollection() {

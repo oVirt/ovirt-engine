@@ -817,7 +817,7 @@ public class BackendVmResourceTest
                                    notFound,
                 new org.ovirt.engine.core.common.businessentities.VM() {{
                     setId(GUIDS[0]);
-                    setVmOs(OsRepository.DEFAULT_OS);
+                    setVmOs(OsRepository.DEFAULT_X86_OS);
                 }});
     }
 

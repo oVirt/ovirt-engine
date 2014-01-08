@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -103,8 +104,18 @@ public class BackendVmsResource extends
                     staticVm.setVdsGroupId(getClusterId(vm));
                 }
 
+                VDSGroup cluster = lookupCluster(staticVm.getVdsGroupId());
+
+                if (Guid.Empty.equals(templateId) && !vm.isSetOs()) {
+                    staticVm.setOsId(OsRepository.AUTO_SELECT_OS);
+                }
+
+                if (Guid.Empty.equals(templateId) && !vm.isSetDisplay()) {
+                    staticVm.setDefaultDisplayType(null);
+                }
+
                 staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(),
-                        lookupCluster(staticVm.getVdsGroupId())));
+                        cluster));
 
                 if (!isFiltered()) {
                     // if the user set the host-name within placement-policy, rather than the host-id (legal) -

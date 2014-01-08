@@ -63,6 +63,8 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetVmWatchdogTypes:
                 setReturnValue(osRepository.getVmWatchdogTypes(getParameters().getOsId(), getParameters().getVersion()));
                 break;
+            case GetDefaultOSes:
+                setReturnValue(osRepository.getDefaultOSes());
         }
     }
 }

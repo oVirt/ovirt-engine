@@ -184,6 +184,8 @@ public final class AsyncDataProvider {
     private static List<Integer> windowsOsIds;
     // cached OS Architecture
     private static HashMap<Integer, ArchitectureType> osArchitectures;
+    // default OS per architecture
+    private static HashMap<ArchitectureType, Integer> defaultOSes;
 
 
     // cached os's support for display types (given compatibility version)
@@ -229,6 +231,20 @@ public final class AsyncDataProvider {
         initNicHotplugSupportMap();
         initDiskHotpluggableInterfacesMap();
         initOsArchitecture();
+        initDefaultOSes();
+    }
+
+    public static void initDefaultOSes() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                defaultOSes =(HashMap<ArchitectureType, Integer>) ((VdcQueryReturnValue) returnValue)
+                        .getReturnValue();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
+                OsRepositoryVerb.GetDefaultOSes), callback);
     }
 
     public static void initNicHotplugSupportMap() {
@@ -3568,5 +3584,9 @@ public final class AsyncDataProvider {
     public static int getSchedulerAllowOverbookingPendingRequestsThreshold() {
         return (Integer) getConfigValuePreConverted(ConfigurationValues.SchedulerOverBookingThreshold,
                 getDefaultConfigurationVersion());
+    }
+
+    public static Integer getDefaultOs (ArchitectureType architectureType) {
+        return defaultOSes.get(architectureType);
     }
 }

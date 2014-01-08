@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +45,12 @@ public enum OsRepositoryImpl implements OsRepository {
      */
     private Map<Integer, String> idToUnameLookup;
     private Map<String, Integer> backwardCompatibleNamesToIds;
+    private static HashMap<ArchitectureType, Integer> defaultOsMap = new HashMap<ArchitectureType, Integer>(2);
+
+    static {
+        defaultOsMap.put(ArchitectureType.x86_64, DEFAULT_X86_OS);
+        defaultOsMap.put(ArchitectureType.ppc64, DEFAULT_PPC_OS);
+    }
 
     public void init(MapBackedPreferences preferences) {
         INSTANCE.preferences = preferences;
@@ -302,12 +309,12 @@ public enum OsRepositoryImpl implements OsRepository {
         return displayTypeMap;
     }
 
-    private List<DisplayType> getDisplayTypes(int osId, Version version) {
+    public List<DisplayType> getDisplayTypes(int osId, Version version) {
         return new ArrayList<DisplayType>(parseDisplayProtocols(osId, version).keySet());
     }
 
     private Map<DisplayType, VmDeviceType> parseDisplayProtocols(int osId, Version version) {
-        Map<DisplayType, VmDeviceType> parseDisplayProtocols = new HashMap<DisplayType, VmDeviceType>();
+        Map<DisplayType, VmDeviceType> parseDisplayProtocols = new LinkedHashMap<DisplayType, VmDeviceType>();
 
         String displayProtocolValue = getValueByVersion(idToUnameLookup.get(osId), "devices.display.protocols", version);
         for (String displayProtocol : displayProtocolValue.split(",")) {
@@ -505,5 +512,10 @@ public enum OsRepositoryImpl implements OsRepository {
 
     public Map<String, Integer> getBackwardCompatibleNamesToIds() {
         return backwardCompatibleNamesToIds;
+    }
+
+    @Override
+    public Map<ArchitectureType, Integer> getDefaultOSes() {
+        return defaultOsMap;
     }
 }

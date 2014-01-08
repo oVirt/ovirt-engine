@@ -53,6 +53,7 @@ public class OsQueryParameters extends VdcQueryParametersBase {
         GetWindowsOss,
         GetUniqueOsNames,
         GetOsNames,
-        GetOsArchitectures
+        GetOsArchitectures,
+        GetDefaultOSes
     }
 }

@@ -307,7 +307,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
 
     private VmStatic getVmStatic() {
         VmStatic vmStatic = new VmStatic();
-        vmStatic.setOsId(OsRepository.DEFAULT_OS);
+        vmStatic.setOsId(OsRepository.DEFAULT_X86_OS);
         vmStatic.setMemSizeMb(300);
         vmStatic.setStateless(false);
         vmStatic.setVmtGuid(vmTemplateId);

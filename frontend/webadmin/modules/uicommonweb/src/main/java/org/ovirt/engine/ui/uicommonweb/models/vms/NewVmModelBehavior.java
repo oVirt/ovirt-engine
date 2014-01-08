@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -90,13 +89,12 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             // If this a blank template, use the proper value for the default OS
             if (template.getId().equals(Guid.Empty))
             {
-                List<Integer> osIds = (List<Integer>) getModel().getOSType().getItems();
-
-                if (!osIds.isEmpty()) {
-                    getModel().getOSType().setSelectedItem(Collections.min(osIds));
+                Integer osId = AsyncDataProvider.getDefaultOs(getModel().getSelectedCluster().getArchitecture());
+                if (osId != null) {
+                    setSelectedOSById(osId.intValue());
                 }
             } else {
-                getModel().getOSType().setSelectedItem(template.getOsId());
+                setSelectedOSById(template.getOsId());
             }
             getModel().getTotalCPUCores().setEntity(Integer.toString(template.getNumOfCpus()));
             getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
@@ -192,6 +190,15 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
 
             updateNetworkInterfacesByTemplate(template);
+        }
+    }
+
+    private void setSelectedOSById (int osId) {
+        for (Integer osIdList : getModel().getOSType().getItems()) {
+            if (osIdList.intValue() == osId) {
+                getModel().getOSType().setSelectedItem(osIdList);
+                break;
+            }
         }
     }
 

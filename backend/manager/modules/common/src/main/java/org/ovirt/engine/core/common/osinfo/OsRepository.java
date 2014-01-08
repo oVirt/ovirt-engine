@@ -19,9 +19,15 @@ import org.ovirt.engine.core.compat.Version;
  */
 public interface OsRepository {
 
-    public final static int DEFAULT_OS = 0;
+    public final static int DEFAULT_X86_OS = 0;
+    public final static int DEFAULT_PPC_OS = 1001;
     public final static int OLD_OTHER_ID = 6;
 
+    /*
+     * This value is used to enable the auto selection of an appropriate OS when
+     * the user does not set a OS in the REST API.
+     */
+    public final static int AUTO_SELECT_OS = -1;
 
     /**
      * @return all loaded os ids
@@ -84,6 +90,11 @@ public interface OsRepository {
      * @return maximum RAM in mb
      */
     public int getMaximumRam(int osId, Version version);
+
+    /**
+     * @return The supported display types for the given OS and cluster compatbility version
+     */
+    public List<DisplayType> getDisplayTypes(int osId, Version version);
 
      /**
       * @return map (osId -> compatibility version -> display types list) for all OSs and
@@ -210,6 +221,12 @@ public interface OsRepository {
      * @return the os id. 0 if non found for that name.
      */
     int getOsIdByUniqueName(String uniqueOsName);
+
+    /**
+     * Get the default OS for given architecture
+     * @return
+     */
+    Map<ArchitectureType, Integer> getDefaultOSes();
 
     /**
      * @param osId

@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -63,7 +64,9 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -1141,6 +1144,27 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             vmStatic.setKernelParams(imageType.getKernelParams());
             // set vm disks source to be the image type, vm disks are taken from it
             vmDisksSource = (VmTemplate)imageType;
+        }
+
+        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+
+        // Choose a proper default OS according to the cluster architecture
+        if (getParameters().getVmStaticData().getOsId() == OsRepository.AUTO_SELECT_OS) {
+            if (getVdsGroup().getArchitecture() != ArchitectureType.undefined) {
+                Integer defaultOs = osRepository.getDefaultOSes().get(getVdsGroup().getArchitecture());
+
+                getParameters().getVmStaticData().setOsId(defaultOs);
+            }
+        }
+
+        // Choose a proper default display type according to the cluster architecture
+        if (getParameters().getVmStaticData().getOsId() != OsRepository.AUTO_SELECT_OS &&
+                getParameters().getVmStaticData().getDefaultDisplayType() == null) {
+            DisplayType defaultDisplayType =
+                    osRepository.getDisplayTypes(getParameters().getVmStaticData().getOsId(),
+                            getVdsGroup().getcompatibility_version()).get(0);
+
+            getParameters().getVmStaticData().setDefaultDisplayType(defaultDisplayType);
         }
     }
 }
