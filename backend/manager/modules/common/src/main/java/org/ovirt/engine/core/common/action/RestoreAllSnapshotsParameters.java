@@ -8,18 +8,23 @@ import org.ovirt.engine.core.compat.Guid;
 public class RestoreAllSnapshotsParameters extends TryBackToAllSnapshotsOfVmParameters implements java.io.Serializable {
     private static final long serialVersionUID = -8756081739745132849L;
 
+    private List<DiskImage> images;
+
     public RestoreAllSnapshotsParameters(Guid vmId, Guid dstSnapshotId) {
         super(vmId, dstSnapshotId);
     }
 
-    private List<DiskImage> privateImagesList;
-
-    public List<DiskImage> getImagesList() {
-        return privateImagesList;
+    public RestoreAllSnapshotsParameters(Guid vmId, Guid dstSnapshotId, List<DiskImage> images) {
+        this(vmId, dstSnapshotId);
+        this.images = images;
     }
 
-    public void setImagesList(List<DiskImage> value) {
-        privateImagesList = value;
+    public List<DiskImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<DiskImage> images) {
+        this.images = images;
     }
 
     public RestoreAllSnapshotsParameters() {

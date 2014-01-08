@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
@@ -112,27 +114,34 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 getDstSnapshot(),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
+                getParameters().getDisks(),
                 getCompensationContext(), getVm().getVdsGroupCompatibilityVersion(), getCurrentUser());
     }
 
     @Override
     protected void executeVmCommand() {
+        final boolean restoreMemory = getParameters().isRestoreMemory() &&
+                FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion());
 
         final Guid newActiveSnapshotId = Guid.newGuid();
         final Snapshot snapshotToBePreviewed = getDstSnapshot();
-        final List<DiskImage> images = DbFacade
-                .getInstance()
-                .getDiskImageDao()
-                .getAllSnapshotsForVmSnapshot(snapshotToBePreviewed.getId());
-        final boolean restoreMemory = getParameters().isRestoreMemory() &&
-                FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion());
+
+        final Snapshot previousActiveSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+        final Guid previousActiveSnapshotId = previousActiveSnapshot.getId();
+
+        final List<DiskImage> images = getParameters().getDisks() != null ? getParameters().getDisks() :
+                DbFacade.getInstance()
+                        .getDiskImageDao()
+                        .getAllSnapshotsForVmSnapshot(snapshotToBePreviewed.getId());
+
+        // Images list without those that are excluded from preview
+        final List<DiskImage> filteredImages = (List<DiskImage>) CollectionUtils.subtract(
+                images, getImagesExcludedFromPreview(images, previousActiveSnapshotId, newActiveSnapshotId));
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                Snapshot previousActiveSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
                 getCompensationContext().snapshotEntity(previousActiveSnapshot);
-                Guid previousActiveSnapshotId = previousActiveSnapshot.getId();
                 getSnapshotDao().remove(previousActiveSnapshotId);
                 snapshotsManager.addSnapshot(previousActiveSnapshotId,
                         "Active VM before the preview",
@@ -143,10 +152,12 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 snapshotsManager.addActiveSnapshot(newActiveSnapshotId,
                         getVm(),
                         restoreMemory ? snapshotToBePreviewed.getMemoryVolume() : StringUtils.EMPTY,
+                        images,
                         getCompensationContext());
+
                 // if there are no images there's no reason to save the compensation data to DB as the update is
                 // being executed in the same transaction so we can restore the vm config and end the command.
-                if (!images.isEmpty()) {
+                if (!filteredImages.isEmpty()) {
                     getCompensationContext().stateChanged();
                 } else {
                     getVmStaticDAO().incrementDbGeneration(getVm().getId());
@@ -156,13 +167,13 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             }
         });
 
-        if (!images.isEmpty()) {
+        if (!filteredImages.isEmpty()) {
             VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
             freeLock();
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    for (DiskImage image : images) {
+                    for (DiskImage image : filteredImages) {
                         VdcReturnValueBase vdcReturnValue =
                                 Backend.getInstance().runInternalAction(VdcActionType.TryBackToSnapshot,
                                         buildTryBackToSnapshotParameters(newActiveSnapshotId, image),
@@ -195,6 +206,23 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             });
         }
         setSucceeded(true);
+    }
+
+    /**
+     * Returns the list of images that haven't been selected for preview (remain the images from current active VM).
+     */
+    private List<DiskImage> getImagesExcludedFromPreview(List<DiskImage> images, Guid previousActiveSnapshotId, Guid newActiveSnapshotId) {
+        List<DiskImage> excludedImages = new ArrayList<>();
+
+        for (DiskImage image : images) {
+            if (image.getVmSnapshotId().equals(previousActiveSnapshotId)) {
+                // Image is already active, hence only update snapshot ID.
+                getImageDao().updateImageVmSnapshotId(image.getImageId(), newActiveSnapshotId);
+                excludedImages.add(image);
+            }
+        }
+
+        return excludedImages;
     }
 
     @Override
@@ -259,7 +287,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 return disk.getVmSnapshotId();
             }
         });
-        if (snapshotIds.contains(getParameters().getDstSnapshotId())) {
+        // Allow active VM custom preview (i.e. block only when no images are specified).
+        if (snapshotIds.contains(getParameters().getDstSnapshotId()) && getParameters().getDisks() == null) {
             return failCanDoAction(VdcBllMessages.CANNOT_PREIEW_CURRENT_IMAGE);
         }
 

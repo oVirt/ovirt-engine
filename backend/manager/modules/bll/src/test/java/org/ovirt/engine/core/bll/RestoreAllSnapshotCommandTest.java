@@ -151,7 +151,7 @@ public class RestoreAllSnapshotCommandTest {
     private void initSpyCommand() {
         RestoreAllSnapshotsParameters parameters = new RestoreAllSnapshotsParameters(vmId, dstSnapshotId);
         List<DiskImage> diskImageList = createDiskImageList();
-        parameters.setImagesList(diskImageList);
+        parameters.setImages(diskImageList);
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageValidator).allDomainsWithinThresholds();
         spyCommand = spy(new RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters>(parameters));

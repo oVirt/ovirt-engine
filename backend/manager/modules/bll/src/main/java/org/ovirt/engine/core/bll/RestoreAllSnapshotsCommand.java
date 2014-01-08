@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -58,6 +59,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     private final Set<Guid> snapshotsToRemove = new HashSet<Guid>();
     private Snapshot targetSnapshot;
+    List<DiskImage> imagesToRestore = new ArrayList<>();
 
     /**
      * The snapshot id which will be removed (the stateless/preview/active image).
@@ -99,7 +101,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         restoreSnapshotAndRemoveObsoleteSnapshots(targetSnapshot);
 
         boolean succeeded = true;
-        for (DiskImage image : getImagesList()) {
+        for (DiskImage image : imagesToRestore) {
             if (image.getImageStatus() != ImageStatus.ILLEGAL) {
                 ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
                         getVmId(), targetSnapshot, removedSnapshotId);
@@ -225,12 +227,25 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * Additionally, remove all obsolete snapshots (The one after stateless, or the preview chain which was not chosen).
      */
     protected void restoreSnapshotAndRemoveObsoleteSnapshots(Snapshot targetSnapshot) {
+        Guid activeSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+        List<DiskImage> imagesFromActiveSnapshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(activeSnapshotId);
+
+        Guid previewSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.PREVIEW);
+        List<DiskImage> imagesFromPreviewSnapshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(previewSnapshotId);
+
+        List<DiskImage> intersection = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
 
         switch (targetSnapshot.getType()) {
         case PREVIEW:
             getSnapshotDao().updateStatus(
                     getSnapshotDao().getId(getVmId(), SnapshotType.REGULAR, SnapshotStatus.IN_PREVIEW),
                     SnapshotStatus.OK);
+
+            getParameters().setImages((List<DiskImage>) CollectionUtils.union(imagesFromPreviewSnapshot, intersection));
+            imagesToRestore = imagesFromPreviewSnapshot;
+            updateSnapshotIdForSkipRestoreImages(
+                    ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), targetSnapshot.getId());
+
         case STATELESS:
             restoreConfiguration(targetSnapshot);
             break;
@@ -241,13 +256,21 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 prepareToDeletePreviewBranch();
 
                 // Set the active snapshot's images as target images for restore, because they are what we keep.
-                getParameters().setImagesList(getDiskImageDao().getAllSnapshotsForVmSnapshot(
-                        getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE)));
+                getParameters().setImages(imagesFromActiveSnapshot);
+                imagesToRestore = ImagesHandler.imagesIntersection(imagesFromActiveSnapshot, imagesFromPreviewSnapshot);
+                updateSnapshotIdForSkipRestoreImages(
+                        ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), activeSnapshotId);
                 break;
             }
         default:
             throw new VdcBLLException(VdcBllErrors.ENGINE, "No support for restoring to snapshot type: "
                     + targetSnapshot.getType());
+        }
+    }
+
+    private void updateSnapshotIdForSkipRestoreImages(List<DiskImage> skipRestoreImages, Guid snapshotId) {
+        for (DiskImage image : skipRestoreImages) {
+            getImageDao().updateImageVmSnapshotId(image.getImageId(), snapshotId);
         }
     }
 
@@ -267,6 +290,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 targetSnapshot,
                 targetSnapshot.getId(),
+                getParameters().getDisks(),
                 getCompensationContext(), getVm().getVdsGroupCompatibilityVersion(), getCurrentUser());
         getSnapshotDao().remove(targetSnapshot.getId());
         // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
@@ -274,6 +298,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 getVm(),
                 SnapshotStatus.LOCKED,
                 targetSnapshot.getMemoryVolume(),
+                getParameters().getDisks(),
                 getCompensationContext());
     }
 
@@ -313,11 +338,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     private List<DiskImage> getImagesList() {
-        if (getParameters().getImagesList() == null && !getParameters().getDstSnapshotId().equals(Guid.Empty)) {
-            getParameters().setImagesList(
+        if (getParameters().getImages() == null && !getParameters().getDstSnapshotId().equals(Guid.Empty)) {
+            getParameters().setImages(
                     getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId()));
         }
-        return getParameters().getImagesList();
+        return getParameters().getImages();
     }
 
     @Override

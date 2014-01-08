@@ -2,7 +2,9 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -402,10 +404,15 @@ public class SnapshotsManager {
     public void attempToRestoreVmConfigurationFromSnapshot(VM vm,
             Snapshot snapshot,
             Guid activeSnapshotId,
+            List<DiskImage> images,
             CompensationContext compensationContext, Version version, DbUser user) {
         boolean vmUpdatedFromConfiguration = false;
         if (snapshot.getVmConfiguration() != null) {
             vmUpdatedFromConfiguration = updateVmFromConfiguration(vm, snapshot.getVmConfiguration());
+
+            if (images != null) {
+                vmUpdatedFromConfiguration &= updateImagesByConfiguration(vm, images);
+            }
         }
 
         if (!vmUpdatedFromConfiguration) {
@@ -428,6 +435,36 @@ public class SnapshotsManager {
 
             VmDeviceUtils.addImportedDevices(vm.getStaticData(), false);
         }
+    }
+
+    private boolean updateImagesByConfiguration(VM vm, List<DiskImage> images) {
+        Map<Guid, VM> snapshotVmConfigurations = new HashMap<>();
+        ArrayList<DiskImage> imagesFromVmConf = new ArrayList<>();
+
+        for (DiskImage image : images) {
+            Guid vmSnapshotId = image.getVmSnapshotId();
+            VM vmFromConf = snapshotVmConfigurations.get(vmSnapshotId);
+            if (vmFromConf == null) {
+                vmFromConf = new VM();
+                Snapshot snapshot = getSnapshotDao().get(image.getVmSnapshotId());
+                if (!updateVmFromConfiguration(vmFromConf, snapshot.getVmConfiguration())) {
+                    return false;
+                }
+                snapshotVmConfigurations.put(vmSnapshotId, vmFromConf);
+            }
+
+            for (DiskImage imageFromVmConf : vmFromConf.getImages()) {
+                if (imageFromVmConf.getId().equals(image.getId())) {
+                    imageFromVmConf.setStorageIds(image.getStorageIds());
+                    imagesFromVmConf.add(imageFromVmConf);
+                    break;
+                }
+            }
+        }
+
+        vm.setImages(imagesFromVmConf);
+
+        return true;
     }
 
     /**
