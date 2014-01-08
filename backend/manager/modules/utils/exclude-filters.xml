@@ -1,17 +1,6 @@
 <FindBugsFilter>
      <Match>
        <!--
-        findbugs complains that we are double checking for (vmPropertiesUtils == null).
-        We need to double check because we are using the singleton design pattern,
-        we first check for null and the second check is inside synchronized block.
-       -->
-       <Class name="org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils" />
-       <Method name="getInstance"/>
-       <Bug code="DC"/>
-     </Match>
-
-     <Match>
-       <!--
         findbugs complains that we are having empty block of catch exception:
         catch (Exception e) {}
         This is a test code that close ssh socket and have nothing to do if the
@@ -48,18 +37,5 @@
      <Match>
        <Class name="org.ovirt.engine.core.utils.log.Log" />
        <Bug code="Nm"/>
-     </Match>
-
-     <!--
-      findbugs complain that the code is using absolute path in File object,
-      the FileServletTest is using it to test input path
-
-      findbugs reason:
-      DMI: Code contains a hard coded reference to an absolute pathname (DMI_HARDCODED_ABSOLUTE_FILENAME)
-     -->
-     <Match>
-       <Class name="org.ovirt.engine.core.FileServletTest" />
-       <Method name="testInitServletConfig_BaseSet"/>
-       <Bug code="DMI"/>
      </Match>
 </FindBugsFilter>
