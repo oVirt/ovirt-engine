@@ -30,6 +30,9 @@ from otopi import util
 from otopi import plugin
 
 
+from ovirt_engine import configfile
+
+
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import database
 
@@ -55,39 +58,37 @@ class Plugin(plugin.PluginBase):
             osetupcons.FileLocations.LEGACY_PSQL_PASS_FILE
         ):
             self.logger.debug('Existing database pgpass found')
+            config = configfile.ConfigFile([
+                osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
+            ])
+            legacy_user = config.get('ENGINE_DB_USER')
+            self.logger.debug('legacy ENGINE_DB_USER: %s' % legacy_user)
             with open(
                 osetupcons.FileLocations.LEGACY_PSQL_PASS_FILE,
                 'r',
             ) as f:
                 for l in f:
                     l = l.rstrip('\n')
-                    if ':%s:' % 'postgres' not in l:
-                        d = l.split(':')
-                        if len(d) == 5:
-                            self._dbenv = {
-                                osetupcons.DBEnv.HOST: d[0],
-                                osetupcons.DBEnv.PORT: int(d[1]),
-                                osetupcons.DBEnv.SECURED: None,
-                                osetupcons.DBEnv.SECURED_HOST_VALIDATION: None,
-                                osetupcons.DBEnv.DATABASE: (
-                                    d[2] if d[2] != '*'
-                                    else
-                                    osetupcons.Defaults.DEFAULT_DB_DATABASE
-                                ),
-                                osetupcons.DBEnv.USER: d[3],
-                                osetupcons.DBEnv.PASSWORD: d[4],
-                                osetupcons.DBEnv.NEW_DATABASE: False,
-                            }
-                            self.environment[
-                                osetupcons.CoreEnv.LEGACY_PG_CREDS_FOUND
-                            ] = True
-
-                            # In legacy we always have engine user defined
-                            # before the rhevm user, as that's how we
-                            # upgraded from 3.0; in other installations
-                            # we will not have more than 1 user (engine)
-                            # As such, we should use the first user we find.
-                            break
+                    d = l.split(':')
+                    if len(d) == 5 and d[3] == legacy_user:
+                        self._dbenv = {
+                            osetupcons.DBEnv.HOST: d[0],
+                            osetupcons.DBEnv.PORT: int(d[1]),
+                            osetupcons.DBEnv.SECURED: None,
+                            osetupcons.DBEnv.SECURED_HOST_VALIDATION: None,
+                            osetupcons.DBEnv.DATABASE: (
+                                d[2] if d[2] != '*'
+                                else
+                                osetupcons.Defaults.DEFAULT_DB_DATABASE
+                            ),
+                            osetupcons.DBEnv.USER: d[3],
+                            osetupcons.DBEnv.PASSWORD: d[4],
+                            osetupcons.DBEnv.NEW_DATABASE: False,
+                        }
+                        self.environment[
+                            osetupcons.CoreEnv.LEGACY_PG_CREDS_FOUND
+                        ] = True
+                        break
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
