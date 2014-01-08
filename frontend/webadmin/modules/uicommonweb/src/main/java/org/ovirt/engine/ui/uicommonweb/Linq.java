@@ -1153,6 +1153,26 @@ public final class Linq
 
     }
 
+    public final static class StorageDomainComparator implements Comparator<StorageDomain>, Serializable {
+        private static final long serialVersionUID = 990203400356561587L;
+        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(StorageDomain domain1, StorageDomain domain2) {
+            return lexoNumeric.compare(domain1.getName(), domain2.getName());
+        }
+    }
+
+    public final static class VDSGroupComparator implements Comparator<VDSGroup>, Serializable {
+        private static final long serialVersionUID = 990203400356561587L;
+        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(VDSGroup cluster1, VDSGroup cluster2) {
+            return lexoNumeric.compare(cluster1.getName(), cluster2.getName());
+        }
+    }
+
     public final static class NetworkComparator implements Comparator<Network>, Serializable {
 
         private static final long serialVersionUID = 990203400356561587L;

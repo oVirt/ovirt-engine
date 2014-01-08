@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -448,6 +450,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
             if (storages != null && storages.size() > 0)
             {
+                // sort by name first
+                Collections.sort(storages, new Linq.StorageDomainComparator());
                 for (StorageDomain storage : storages)
                 {
                     SystemTreeItemModel storageItem = new SystemTreeItemModel();
@@ -469,6 +473,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             List<Network> dcNetworks = getNetworkMap().get(getDataCenters().get(count).getId());
             if (dcNetworks != null)
             {
+                // sort by name first
+                Collections.sort(dcNetworks, new Linq.NetworkComparator());
                 for (Network network : dcNetworks)
                 {
                     SystemTreeItemModel networkItem = new SystemTreeItemModel();
@@ -496,9 +502,10 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
             if (getClusterMap().containsKey(getDataCenters().get(count).getId()))
             {
-                for (VDSGroup cluster : getClusterMap().get(getDataCenters().get(count).getId()))
+                List<VDSGroup> clusters = getClusterMap().get(getDataCenters().get(count).getId());
+                Collections.sort(clusters, new Linq.VDSGroupComparator());
+                for (VDSGroup cluster : clusters)
                 {
-
                     SystemTreeItemModel clusterItem = new SystemTreeItemModel();
                     clusterItem.setType(cluster.supportsGlusterService() ? SystemTreeItemType.Cluster_Gluster
                             : SystemTreeItemType.Cluster);
