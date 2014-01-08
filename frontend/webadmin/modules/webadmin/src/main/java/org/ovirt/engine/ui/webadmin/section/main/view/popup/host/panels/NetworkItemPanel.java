@@ -106,6 +106,7 @@ public abstract class NetworkItemPanel extends FocusPanel {
         if (parentPanel != null) {
             parentPanel.onMouseOver();
         }
+        actionButton.setVisible(false);
     }
 
     protected void onMouseOver() {

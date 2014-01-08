@@ -45,6 +45,7 @@ public class NicPanel extends NetworkItemPanel {
         }
         rowPanel.setWidget(0, 2, nicImage);
         rowPanel.setWidget(0, 3, titleLabel);
+        rowPanel.setWidget(0, 4, actionButton);
         return rowPanel;
     }
 
@@ -63,6 +64,14 @@ public class NicPanel extends NetworkItemPanel {
 
     @Override
     protected void onAction() {
-       // Do nothing
+       item.edit();
+    }
+
+    @Override
+    protected void onMouseOver() {
+        super.onMouseOver();
+        if (parentPanel == null) {
+            actionButton.setVisible(true);
+        }
     }
 }

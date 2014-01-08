@@ -17,4 +17,9 @@ public class SetupNetworksBondModel extends HostBondInterfaceModel {
         setBond(new SortedListModel(new LexoNumericComparator()));
     }
 
+    @Override
+    public boolean validate() {
+        return getLabelsModel().validate();
+    }
+
 }

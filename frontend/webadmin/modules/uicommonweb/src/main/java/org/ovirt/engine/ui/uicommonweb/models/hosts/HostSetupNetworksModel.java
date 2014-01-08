@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -122,6 +125,8 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private Map<String, NetworkLabelModel> labelMap;
 
+    private Map<String, String> labelToIface;
+
     private final List<String> networksToSync = new ArrayList<String>();
 
     // The purpose of this map is to keep the network parameters while moving the network from one nic to another
@@ -133,6 +138,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private final Map<String, NetworkParameters> netToBeforeSyncParams;
     private final SearchableListModel sourceListModel;
     private List<VdsNetworkInterface> allBonds;
+    private SortedSet<String> dcLabels;
     private NetworkOperation currentCandidate;
     private NetworkItemModel<?> currentOp1;
     private NetworkItemModel<?> currentOp2;
@@ -197,6 +203,10 @@ public class HostSetupNetworksModel extends EntityModel {
         NetworkItemModel<?> op1 = nic1 == null ? network1 : nic1;
         NetworkItemModel<?> op2 = nic2 == null ? network2 : nic2;
 
+        return candidateOperation(op1, op2, drop);
+    }
+
+    private boolean candidateOperation(NetworkItemModel<?> op1, NetworkItemModel<?> op2, boolean drop) {
         if (op1 == null) {
             throw new IllegalArgumentException("null Operands"); //$NON-NLS-1$
         }
@@ -245,6 +255,58 @@ public class HostSetupNetworksModel extends EntityModel {
         return privateOperationCandidateEvent;
     }
 
+    private Set<LogicalNetworkModel> computeLabelChanges(NicLabelModel labelsModel,
+            Collection<LogicalNetworkModel> originalNetworks) {
+
+        Collection<String> removedLabels = labelsModel.getRemovedLabels();
+        Collection<String> addedLabels = labelsModel.getAddedLabels();
+        Set<LogicalNetworkModel> removedNetworks = new HashSet<LogicalNetworkModel>();
+        Set<LogicalNetworkModel> addedNetworks = new HashSet<LogicalNetworkModel>();
+        for (String label : removedLabels) {
+            Collection<LogicalNetworkModel> labelNetworks = labelMap.get(label).getNetworks();
+            if (labelNetworks != null) {
+                removedNetworks.addAll(labelNetworks);
+            }
+        }
+        for (String label : addedLabels) {
+            NetworkLabelModel labelModel = labelMap.get(label);
+            if (labelModel != null) {
+                addedNetworks.addAll(labelModel.getNetworks());
+            }
+        }
+
+        Set<LogicalNetworkModel> potentialNetworks = new HashSet<LogicalNetworkModel>(originalNetworks);
+        potentialNetworks.removeAll(removedNetworks);
+        potentialNetworks.addAll(addedNetworks);
+
+        return potentialNetworks;
+    }
+
+    // generate a mock "bonding" operation to check if the networks can be configured together
+    private boolean validateLabelChanges(Collection<LogicalNetworkModel> potentialNetworks) {
+        NetworkInterfaceModel mockSrc = new NetworkInterfaceModel(this);
+        NetworkInterfaceModel mockDst = new NetworkInterfaceModel(this);
+        mockSrc.setEntity(new VdsNetworkInterface());
+        mockDst.setEntity(new VdsNetworkInterface());
+        mockDst.setItems(new ArrayList<LogicalNetworkModel>(potentialNetworks));
+
+        boolean res = candidateOperation(mockSrc, mockDst, false);
+        if (!res) {
+            candidateOperation(mockSrc, mockDst, true); // trick to get a red-highlighted error status
+        }
+        return res;
+    }
+
+    private void commitLabelChanges(NicLabelModel labelModel,
+            VdsNetworkInterface iface,
+            Collection<LogicalNetworkModel> potentialNetworks) {
+
+        labelModel.commit(iface);
+        NetworkInterfaceModel ifaceModel = nicMap.get(iface.getName());
+        NetworkOperation.clearNetworks(ifaceModel, allNics);
+        NetworkOperation.attachNetworks(ifaceModel, new ArrayList<LogicalNetworkModel>(potentialNetworks), allNics);
+    }
+
     public void onEdit(NetworkItemModel<?> item) {
         Model editPopup = null;
         BaseCommandTarget okTarget = null;
@@ -253,15 +315,50 @@ public class HostSetupNetworksModel extends EntityModel {
              * Bond Dialog
              *****************/
             final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getEntity();
-            editPopup = new SetupNetworksEditBondModel(entity);
+            editPopup = new SetupNetworksEditBondModel(entity, getFreeLabels(), labelToIface);
             final SetupNetworksBondModel bondDialogModel = (SetupNetworksBondModel) editPopup;
 
             // OK Target
             okTarget = new BaseCommandTarget() {
                 @Override
                 public void executeCommand(UICommand command) {
-                    setBondOptions(entity, bondDialogModel);
+                    if (!bondDialogModel.validate()) {
+                        return;
+                    }
                     sourceListModel.setConfirmWindow(null);
+                    Collection<LogicalNetworkModel> potentialNetworks =
+                            computeLabelChanges(bondDialogModel.getLabelsModel(), nicMap.get(entity.getName())
+                                    .getItems());
+                    if (validateLabelChanges(potentialNetworks)) {
+                        setBondOptions(entity, bondDialogModel);
+                        commitLabelChanges(bondDialogModel.getLabelsModel(), entity, potentialNetworks);
+                        redraw();
+                    }
+                }
+            };
+        } else if (item instanceof NetworkInterfaceModel) {
+            /*******************
+             * Interface Dialog
+             *******************/
+            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getEntity();
+            final HostNicModel interfacePopupModel = new HostNicModel(entity, getFreeLabels(), labelToIface);
+            editPopup = interfacePopupModel;
+
+            // OK Target
+            okTarget = new BaseCommandTarget() {
+                @Override
+                public void executeCommand(UICommand uiCommand) {
+                    if (!interfacePopupModel.validate()) {
+                        return;
+                    }
+                    sourceListModel.setConfirmWindow(null);
+                    Collection<LogicalNetworkModel> potentialNetworks =
+                            computeLabelChanges(interfacePopupModel.getLabelsModel(), nicMap.get(entity.getName())
+                                    .getItems());
+                    if (validateLabelChanges(potentialNetworks)) {
+                        commitLabelChanges(interfacePopupModel.getLabelsModel(), entity, potentialNetworks);
+                        redraw();
+                    }
                 }
             };
         } else if (item instanceof LogicalNetworkModel) {
@@ -377,13 +474,22 @@ public class HostSetupNetworksModel extends EntityModel {
             return;
         } else if (operation == NetworkOperation.BOND_WITH || operation == NetworkOperation.JOIN_BONDS) {
             final SetupNetworksBondModel bondPopup;
+            VdsNetworkInterface iface1 = ((NetworkInterfaceModel) networkCommand.getOp1()).getEntity();
+            VdsNetworkInterface iface2 = ((NetworkInterfaceModel) networkCommand.getOp2()).getEntity();
             if (operation == NetworkOperation.BOND_WITH) {
-                bondPopup = new SetupNetworksAddBondModel(getFreeBonds(), nextBondName);
+                bondPopup =
+                        new SetupNetworksAddBondModel(getFreeBonds(),
+                                nextBondName,
+                                Arrays.asList(iface1, iface2),
+                                getFreeLabels(),
+                                labelToIface);
             } else {
                 bondPopup =
                         new SetupNetworksJoinBondsModel(getFreeBonds(),
                                 (BondNetworkInterfaceModel) networkCommand.getOp1(),
-                                (BondNetworkInterfaceModel) networkCommand.getOp2());
+                                (BondNetworkInterfaceModel) networkCommand.getOp2(),
+                                getFreeLabels(),
+                                labelToIface);
             }
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
@@ -393,25 +499,26 @@ public class HostSetupNetworksModel extends EntityModel {
                                 return;
                             }
                             sourceListModel.setConfirmWindow(null);
-                            VdsNetworkInterface bond = new Bond((String) bondPopup.getBond().getSelectedItem());
-                            setBondOptions(bond, bondPopup);
+
                             NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
                             NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
                             List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>();
                             networks.addAll(nic1.getItems());
                             networks.addAll(nic2.getItems());
+                            Collection<LogicalNetworkModel> potentialNetworks =
+                                    computeLabelChanges(bondPopup.getLabelsModel(), networks);
+                            if (!validateLabelChanges(potentialNetworks)) {
+                                return;
+                            }
+                            VdsNetworkInterface bond = new Bond((String) bondPopup.getBond().getSelectedItem());
+                            setBondOptions(bond, bondPopup);
+
                             networkCommand.execute(bond);
                             redraw();
 
                             // Attach the previous networks
-                            for (NetworkInterfaceModel nic : getNics()) {
-                                if (nic.getName().equals(bond.getName())) {
-                                    NetworkOperation.attachNetworks(nic, networks, allNics);
-                                    redraw();
-                                    return;
-                                }
-                            }
-
+                            commitLabelChanges(bondPopup.getLabelsModel(), bond, potentialNetworks);
+                            redraw();
                         }
                     }));
 
@@ -465,6 +572,12 @@ public class HostSetupNetworksModel extends EntityModel {
 
     }
 
+    private Collection<String> getFreeLabels() {
+        SortedSet<String> freeLabels = new TreeSet<String>(dcLabels);
+        freeLabels.removeAll(labelToIface.keySet());
+        return freeLabels;
+    }
+
     private List<String> getFreeBonds() {
         List<String> freeBonds = new ArrayList<String>();
         for (VdsNetworkInterface bond : allBonds) {
@@ -510,6 +623,7 @@ public class HostSetupNetworksModel extends EntityModel {
         Map<String, List<VdsNetworkInterface>> bondToNic = new HashMap<String, List<VdsNetworkInterface>>();
         Map<String, Set<LogicalNetworkModel>> nicToNetwork = new HashMap<String, Set<LogicalNetworkModel>>();
         Map<String, List<NetworkLabelModel>> nicToLabels = new HashMap<String, List<NetworkLabelModel>>();
+        labelToIface = new HashMap<String, String>();
 
         // map all nics
         for (VdsNetworkInterface nic : allNics) {
@@ -592,6 +706,7 @@ public class HostSetupNetworksModel extends EntityModel {
             Set<String> labels = nic.getLabels();
             if (labels != null) {
                 for (String label : labels) {
+                    labelToIface.put(label, ifName);
                     NetworkLabelModel labelModel = labelMap.get(label);
                     if (labelModel != null) {
                         // attach label networks to nic
@@ -652,6 +767,18 @@ public class HostSetupNetworksModel extends EntityModel {
         setNics(nicModels);
     }
 
+    private void queryLabels() {
+        AsyncDataProvider.getNetworkLabelsByDataCenterId(getEntity().getStoragePoolId(), new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                dcLabels = (SortedSet<String>) returnValue;
+
+                initNicModels();
+                stopProgress();
+            }
+        }));
+    }
+
     private void queryFreeBonds() {
         // query for all unused, existing bonds on the host
         AsyncQuery asyncQuery = new AsyncQuery();
@@ -664,8 +791,8 @@ public class HostSetupNetworksModel extends EntityModel {
                         (List<VdsNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 allBonds = bonds;
 
-                initNicModels();
-                stopProgress();
+                // chain the DC labels query
+                queryLabels();
             }
         };
 

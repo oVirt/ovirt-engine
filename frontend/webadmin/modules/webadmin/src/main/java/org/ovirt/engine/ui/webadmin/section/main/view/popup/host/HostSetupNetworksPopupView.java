@@ -141,7 +141,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 HostSetupNetworksModel model = (HostSetupNetworksModel) sender;
                 List<LogicalNetworkModel> networks = model.getNetworks();
                 List<NetworkInterfaceModel> nics = model.getNics();
-                status.setText(EMPTY_STATUS);
+                status.setFadeText(EMPTY_STATUS);
                 updateNetworks(networks);
                 updateNics(nics);
                 // mark as rendered

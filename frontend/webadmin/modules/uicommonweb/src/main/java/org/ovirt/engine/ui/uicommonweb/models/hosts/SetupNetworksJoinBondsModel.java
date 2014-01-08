@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +23,9 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
     @SuppressWarnings("unchecked")
     public SetupNetworksJoinBondsModel(List<String> freeBonds,
             BondNetworkInterfaceModel source,
-            BondNetworkInterfaceModel target) {
+            BondNetworkInterfaceModel target,
+            Collection<String> suggestedLabels,
+            Map<String, String> labelToIface) {
 
         setTitle(ConstantsManager.getInstance().getConstants().joinBondsTitle());
 
@@ -40,6 +44,8 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
         addBondOptionIfMissing(target.getBondOptions());
         getBondingOptions().setItems(bondOptions);
         getBondingOptions().setSelectedItem(pairForBondOption.get(target.getBondOptions()));
+
+        setLabelsModel(new NicLabelModel(Arrays.asList(source.getEntity(), target.getEntity()), suggestedLabels, labelToIface));
     }
 
     private void addBondOptionIfMissing(String candidateOption) {

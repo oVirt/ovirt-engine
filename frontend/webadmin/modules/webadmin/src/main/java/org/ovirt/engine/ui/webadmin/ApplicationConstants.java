@@ -2353,6 +2353,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Custom mode")
     String customModeHostPopup();
 
+    @DefaultStringValue("Labels")
+    String labelsHostPopup();
+
     @DefaultStringValue("Boot Protocol")
     String bootProtocolHostPopup();
 

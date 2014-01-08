@@ -124,12 +124,6 @@ public abstract class NetworkPanel extends NetworkItemPanel {
     }
 
     @Override
-    protected void onMouseOut() {
-        super.onMouseOut();
-        actionButton.setVisible(false);
-    }
-
-    @Override
     protected void onMouseOver() {
         super.onMouseOver();
         LogicalNetworkModel network = (LogicalNetworkModel) item;

@@ -53,6 +53,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstal
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostNicPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
@@ -268,6 +269,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopu
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostNicPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
@@ -1103,6 +1105,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(SetupNetworksBondPopupPresenterWidget.class,
                 SetupNetworksBondPopupPresenterWidget.ViewDef.class,
                 SetupNetworksBondPopupView.class);
+        bindPresenterWidget(HostNicPopupPresenterWidget.class,
+                HostNicPopupPresenterWidget.ViewDef.class,
+                HostNicPopupView.class);
         bindPresenterWidget(HostSetupNetworksPopupPresenterWidget.class,
                 HostSetupNetworksPopupPresenterWidget.ViewDef.class,
                 HostSetupNetworksPopupView.class);

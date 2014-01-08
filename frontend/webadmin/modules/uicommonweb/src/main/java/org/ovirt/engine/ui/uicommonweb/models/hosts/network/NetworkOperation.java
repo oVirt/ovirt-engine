@@ -492,7 +492,7 @@ public enum NetworkOperation {
 
     };
 
-    private static void clearNetworks(NetworkInterfaceModel nic, List<VdsNetworkInterface> allNics) {
+    public static void clearNetworks(NetworkInterfaceModel nic, List<VdsNetworkInterface> allNics) {
         List<LogicalNetworkModel> attachedNetworks = nic.getItems();
         if (attachedNetworks.size() > 0) {
             for (LogicalNetworkModel networkModel : new ArrayList<LogicalNetworkModel>(attachedNetworks)) {

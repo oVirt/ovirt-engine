@@ -201,6 +201,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("You could detach {0} first.")
     String suggestDetachNetwork(String networkName);
 
+    @DefaultMessage("Label {0} cannot be assigned to this interface, it is already assigned to interface {1}.")
+    String labelInUse(String label, String ifaceName);
+
     @DefaultMessage("Incorrect number of Total Virtual CPUs. It is not possible to compose this number from the available Virtual Sockets and Cores per Virtual Sockets")
     String incorrectVCPUNumber();
 
