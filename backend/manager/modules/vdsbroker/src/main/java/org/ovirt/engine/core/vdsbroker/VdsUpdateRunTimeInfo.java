@@ -892,9 +892,12 @@ public class VdsUpdateRunTimeInfo {
         } else if (isVdsUpOrGoingToMaintenance || _vds.getStatus() == VDSStatus.Error) {
             return;
         }
-        AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-        logable.addCustomValue("VdsStatus", _vds.getStatus().toString());
-        auditLog(logable, AuditLogType.VDS_DETECTED);
+        // show status UP in audit only when InitVdsOnUpCommand finished successfully
+        if (_vds.getStatus() != VDSStatus.Up) {
+            AuditLogableBase logable = new AuditLogableBase(_vds.getId());
+            logable.addCustomValue("HostStatus", _vds.getStatus().toString());
+            auditLog(logable, AuditLogType.VDS_DETECTED);
+        }
     }
 
     private void refreshVmStats() {

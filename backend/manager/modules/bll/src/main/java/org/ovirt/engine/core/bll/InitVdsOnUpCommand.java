@@ -133,6 +133,12 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         }
 
         setSucceeded(initSucceeded);
+
+        if (getSucceeded()) {
+            AuditLogableBase logable = new AuditLogableBase(getVds().getId());
+            logable.addCustomValue("HostStatus", getVds().getStatus().toString());
+            AuditLogDirector.log(logable, AuditLogType.VDS_DETECTED);
+        }
     }
 
     private boolean initVirtResources() {
