@@ -239,12 +239,15 @@ SELECT     	a.vm_guid AS vm_id,
 			a.time_zone,
 			c.vm_pool_id,
 			d.vm_pool_name,
+			a.created_by_user_id,
+            e.username as created_by_user_name,
 			a._create_date AS create_date,
             a._update_date AS update_date
 FROM        vm_static as a
 				INNER JOIN vm_static as b ON a.vmt_guid = b.vm_guid
 				LEFT OUTER JOIN vm_pool_map as c ON a.vm_guid = c. vm_guid
 					LEFT OUTER JOIN vm_pools as d ON c.vm_pool_id = d.vm_pool_id
+				LEFT OUTER JOIN users as e ON a.created_by_user_id = e.user_id
 WHERE     (a.entity_type = 'VM' AND b.entity_type = 'TEMPLATE') AND
           ((a._create_date >
                           (SELECT     var_datetime
