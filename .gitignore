@@ -25,6 +25,7 @@ maven-eclipse.xml
 *.ipr
 *.iml
 .idea
+.pydevproject
 
 # python files
 ###########################
