@@ -253,7 +253,7 @@ public enum OsRepositoryImpl implements OsRepository {
     @Override
     public ArrayList<String> getWatchDogModels(int osId, Version version) {
         String models = getValueByVersion(idToUnameLookup.get(osId),
-                "watchDogModels",
+                "devices.watchdog.models",
                 version);
         return trimElements(models.split(","));
     }
@@ -309,7 +309,7 @@ public enum OsRepositoryImpl implements OsRepository {
     private Map<DisplayType, VmDeviceType> parseDisplayProtocols(int osId, Version version) {
         Map<DisplayType, VmDeviceType> parseDisplayProtocols = new HashMap<DisplayType, VmDeviceType>();
 
-        String displayProtocolValue = getValueByVersion(idToUnameLookup.get(osId), "displayProtocols", version);
+        String displayProtocolValue = getValueByVersion(idToUnameLookup.get(osId), "devices.display.protocols", version);
         for (String displayProtocol : displayProtocolValue.split(",")) {
             Pair<String, String> pairs = parseDisplayProtocol(displayProtocol);
             if (pairs != null) {
