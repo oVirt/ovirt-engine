@@ -15,6 +15,18 @@ public class ClientAgentType {
         platform = getPlatform();
     }
 
+    /**
+     * This hotfix function determines whether client browser is exactly IE 11.
+     * It is used by the logic related to SPICE ActiveX plugin.
+     */
+    public native boolean isIE11() /*-{
+        var isWindows = this.@org.ovirt.engine.ui.common.uicommon.ClientAgentType::getOS()() == "Windows";
+        var containsTrident = navigator.userAgent != undefined && navigator.userAgent.indexOf("Trident") != -1;
+        var versionIs11 = this.@org.ovirt.engine.ui.common.uicommon.ClientAgentType::version == 11;
+
+        return isWindows && containsTrident && versionIs11;
+    }-*/;
+
     public boolean isIE() {
         return "explorer".equalsIgnoreCase(browser); //$NON-NLS-1$
     }

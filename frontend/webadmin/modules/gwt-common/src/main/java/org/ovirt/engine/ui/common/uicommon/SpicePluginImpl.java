@@ -6,12 +6,14 @@ import java.util.logging.Logger;
 
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 
 public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     private static Logger logger = Logger.getLogger(SpicePluginImpl.class.getName());
     private final Configurator configurator = (Configurator) TypeResolver.getInstance().resolve(Configurator.class);
+    private final ConsoleUtils cu = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
 
     @Override
     public void connect() {
@@ -19,7 +21,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
 
         if (configurator.isClientLinuxFirefox()) {
             connectNativelyViaXPI();
-        } else if (configurator.isClientWindowsExplorer()) {
+        } else if (configurator.isClientWindowsExplorer() || cu.isIE11()) {
             connectNativelyViaActiveX();
         }
     }
@@ -219,7 +221,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     public boolean detectBrowserPlugin() {
         if (configurator.isClientLinuxFirefox()) {
             return detectXpiPlugin();
-        } else if (configurator.isClientWindowsExplorer()) {
+        } else if (configurator.isClientWindowsExplorer() || cu.isIE11()) {
             return detectActiveXPlugin();
         }
 
@@ -264,6 +266,15 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     }-*/;
 
     public native void connectNativelyViaActiveX() /*-{
+                                                   // helper for attaching callbacks for ie 11
+                                                   function attachEventIe11Safe(object, eventName, callbackFn) {
+                                                       if($wnd.document.attachEvent) { // ie < 11
+                                                           object.attachEvent(eventName, callbackFn);
+                                                       } else {
+                                                           object.addEventListener(eventName, callbackFn, false);
+                                                       }
+                                                   }
+
                                                    var hostIp = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getHost()();
                                                    var port = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getPort()();
                                                    var fullScreen = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::isFullScreen()();
@@ -303,13 +314,10 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    //alert("Trust Store ["+trustStore+"]");
 
                                                    this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::loadActiveX(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(id,codebase,spiceCabOjectClassId);
-
                                                    var client = $wnd.document.getElementById(id);
-                                                   client.attachEvent('onreadystatechange', onReadyStateChange);
-                                                   client.attachEvent('onmenuitemselected', onMenuItemSelected);
-
+                                                   attachEventIe11Safe(client, 'onreadystatechange', onReadyStateChange);
+                                                   attachEventIe11Safe(client, 'onmenuitemselected', onMenuItemSelected);
                                                    tryToConnect();
-
                                                    function tryToConnect() {
                                                    if (client.readyState == 4) {
                                                    try {
@@ -356,7 +364,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                        client.Proxy = '';
                                                    }
 
-                                                   client.attachEvent('ondisconnected', onDisconnected);
+                                                   attachEventIe11Safe(client, 'ondisconnected', onDisconnected);
                                                    client.connect();
 
                                                    connectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, null);

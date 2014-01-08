@@ -10,6 +10,8 @@ public interface ConsoleUtils {
 
     public boolean isBrowserPluginSupported(ConsoleProtocol protocol);
 
+    public boolean isIE11();
+
     public boolean isSpiceProxyDefined(VM vm);
 
     public boolean isWebSocketProxyDefined();
