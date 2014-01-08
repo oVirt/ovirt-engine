@@ -11,6 +11,8 @@ public interface ConsoleUtils {
     public boolean canOpenVNCConsole(HasConsoleModel item);
     public boolean canOpenRDPConsole(HasConsoleModel item);
 
+    public boolean isIE11();
+
     public String determineProtocolMessage(HasConsoleModel item);
     public ConsoleProtocol determineConnectionProtocol(HasConsoleModel item);
 

@@ -222,9 +222,10 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     public boolean isBrowserPluginSupported(ConsoleProtocol protocol) {
         switch (protocol) {
         case SPICE:
-            if ((clientAgentType.os.equalsIgnoreCase("Windows")) //$NON-NLS-1$
+            if ((clientAgentType.os.equalsIgnoreCase("Windows") //$NON-NLS-1$
                     && (clientAgentType.browser.equalsIgnoreCase("Explorer")) //$NON-NLS-1$
-                    && (clientAgentType.version >= 7.0)) {
+                    && (clientAgentType.version >= 7.0))
+                    || clientAgentType.isIE11()) {
                 return true;
             } else if ((clientAgentType.os.equalsIgnoreCase("Linux")) //$NON-NLS-1$
                     && (clientAgentType.browser.equalsIgnoreCase("Firefox")) //$NON-NLS-1$
@@ -233,15 +234,20 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
             }
             return false;
         case RDP:
-            if ((clientAgentType.os.equalsIgnoreCase("Windows"))//$NON-NLS-1$
+            if ((clientAgentType.os.equalsIgnoreCase("Windows")//$NON-NLS-1$
                     && (clientAgentType.browser.equalsIgnoreCase("Explorer"))//$NON-NLS-1$
-                    && (clientAgentType.version >= 7.0)) {
+                    && (clientAgentType.version >= 7.0))
+                    || clientAgentType.isIE11()) {
                 return true;
             }
             return false;
         default:
             return false;
         }
+    }
+
+    public boolean isIE11() {
+        return clientAgentType.isIE11();
     }
 
     private native String getUserAgentString() /*-{
