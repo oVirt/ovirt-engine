@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.businessentities.network.NetworkLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 public class GetNetworkLabelsByHostNicIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {

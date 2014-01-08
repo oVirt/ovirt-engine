@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.businessentities.network;
+package org.ovirt.engine.core.common.businessentities.network.pseudo;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
