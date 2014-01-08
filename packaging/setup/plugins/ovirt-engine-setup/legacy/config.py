@@ -20,6 +20,7 @@
 
 
 import os
+import stat
 import glob
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -43,6 +44,8 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self._backup = None
+        self._backup_stat = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -115,6 +118,27 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_EARLY_MISC,
+        condition=lambda self: self.environment[
+            osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
+        ],
+    )
+    def _early_misc(self):
+        if os.path.exists(
+            osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
+        ):
+            # keep a copy of sysconfig content before yum transaction,
+            # allowing rollback.
+            self._backup_stat = os.stat(
+                osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
+            )
+            with open(
+                osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG,
+                'r',
+            ) as f:
+                self._backup = f.read()
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self.environment[
             osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
@@ -148,6 +172,34 @@ class Plugin(plugin.PluginBase):
                             content=f.read().splitlines(),
                         )
                     )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLEANUP,
+        condition=lambda self: self.environment[
+            osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
+        ],
+    )
+    def _cleanup(self):
+        if (
+            self._backup is not None and
+            self.environment[otopicons.BaseEnv.ERROR]
+        ):
+            with open(
+                osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG,
+                'w',
+            ) as f:
+                f.write(
+                    self._backup,
+                )
+            os.chmod(
+                osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG,
+                stat.S_IMODE(self._backup_stat.st_mode)
+            )
+            os.chown(
+                osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG,
+                self._backup_stat.st_uid,
+                self._backup_stat.st_gid
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
