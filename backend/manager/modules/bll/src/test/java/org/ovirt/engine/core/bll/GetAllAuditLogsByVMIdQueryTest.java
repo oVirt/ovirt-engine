@@ -9,29 +9,26 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.AuditLogDAO;
-import org.ovirt.engine.core.utils.RandomUtils;
 
-/** A test case for the {@link GetAllAuditLogsByVMTemplateNameQuery} class. */
-public class GetAllAuditLogsByVMTemplateNameQueryTest
-        extends AbstractUserQueryTest<NameQueryParameters, GetAllAuditLogsByVMTemplateNameQuery<? extends NameQueryParameters>> {
+/** A test case for the {@link GetAllAuditLogsByVMIdQuery} class. */
+public class GetAllAuditLogsByVMIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetAllAuditLogsByVMIdQuery<? extends IdQueryParameters>> {
 
     @Test
     public void testExecuteQueryCommand() {
         // Mock the Query Parameters
-        String vmTemplateName = RandomUtils.instance().nextString(10, true);
-        when(getQueryParameters().getName()).thenReturn(vmTemplateName);
+        Guid vmId = Guid.newGuid();
+        when(getQueryParameters().getId()).thenReturn(vmId);
 
         // Set up the expected result
         AuditLog expectedResult = new AuditLog();
-        expectedResult.setvm_template_name(vmTemplateName);
+        expectedResult.setvm_id(vmId);
 
         // Mock the DAOs
         AuditLogDAO auditLogDAOMock = mock(AuditLogDAO.class);
-        when(auditLogDAOMock.getAllByVMTemplateName(vmTemplateName,
-                getUser().getId(),
-                getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(expectedResult));
+        when(auditLogDAOMock.getAllByVMId(vmId, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(expectedResult));
         when(getDbFacadeMockInstance().getAuditLogDao()).thenReturn(auditLogDAOMock);
 
         getQuery().executeQueryCommand();

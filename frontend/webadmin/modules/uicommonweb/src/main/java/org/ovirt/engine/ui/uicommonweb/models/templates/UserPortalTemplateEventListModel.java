@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 
@@ -17,8 +17,8 @@ public class UserPortalTemplateEventListModel extends TemplateEventListModel {
             return;
         }
 
-        super.syncSearch(VdcQueryType.GetAllAuditLogsByVMTemplateName,
-                new NameQueryParameters(getEntity().getName()));
+        super.syncSearch(VdcQueryType.GetAllAuditLogsByVMTemplateId,
+                new IdQueryParameters(getEntity().getId()));
 
     }
 

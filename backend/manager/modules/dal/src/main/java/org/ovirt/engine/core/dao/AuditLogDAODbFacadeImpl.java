@@ -65,33 +65,33 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
     }
 
     @Override
-    public List<AuditLog> getAllByVMName(String vmName) {
-        return getAllByVMName(vmName, null, false);
+    public List<AuditLog> getAllByVMId(Guid vmId) {
+        return getAllByVMId(vmId, null, false);
     }
 
     @Override
-    public List<AuditLog> getAllByVMName(String vmName, Guid userID, boolean isFiltered) {
+    public List<AuditLog> getAllByVMId(Guid vmId, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource()
-                        .addValue("vm_name", vmName)
+                        .addValue("vm_id", vmId)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetAuditLogByVMName", auditLogRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAuditLogByVMId", auditLogRowMapper, parameterSource);
     }
 
     @Override
-    public List<AuditLog> getAllByVMTemplateName(String vmName) {
-        return getAllByVMTemplateName(vmName, null, false);
+    public List<AuditLog> getAllByVMTemplateId(Guid vmId) {
+        return getAllByVMTemplateId(vmId, null, false);
     }
 
     @Override
-    public List<AuditLog> getAllByVMTemplateName(String vmName, Guid userID, boolean isFiltered) {
+    public List<AuditLog> getAllByVMTemplateId(Guid vmId, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource()
-                        .addValue("vm_template_name", vmName)
+                        .addValue("vm_template_id", vmId)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetAuditLogByVMTemplateName", auditLogRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAuditLogByVMTemplateId", auditLogRowMapper, parameterSource);
     }
 
     @Override

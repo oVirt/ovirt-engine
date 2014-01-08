@@ -35,25 +35,25 @@ public class AuditLogDaoMocker implements AuditLogDAO {
     }
 
     @Override
-    public List<AuditLog> getAllByVMName(String vmName) {
+    public List<AuditLog> getAllByVMId(Guid vmId) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<AuditLog> getAllByVMName(String vmName, Guid userID, boolean isFiltered) {
+    public List<AuditLog> getAllByVMId(Guid vmId, Guid userID, boolean isFiltered) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<AuditLog> getAllByVMTemplateName(String vmTemplateName) {
+    public List<AuditLog> getAllByVMTemplateId(Guid vmTemplateId) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<AuditLog> getAllByVMTemplateName(String vmTemplateName, Guid userID, boolean isFiltered) {
+    public List<AuditLog> getAllByVMTemplateId(Guid vmTemplateId, Guid userID, boolean isFiltered) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -159,12 +159,12 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAuditLogByVMName(v_vm_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log STABLE
+Create or replace FUNCTION GetAuditLogByVMId(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
       FROM   audit_log
-      WHERE  not deleted and vm_name = v_vm_name
+      WHERE  not deleted and vm_id = v_vm_id
       AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_vm_permissions_view
                                         WHERE  user_id = v_user_id AND entity_id = vm_id));
@@ -173,12 +173,12 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAuditLogByVMTemplateName(v_vm_template_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log STABLE
+Create or replace FUNCTION GetAuditLogByVMTemplateId(v_vm_template_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
       FROM   audit_log
-      WHERE  not deleted and vm_template_name = v_vm_template_name
+      WHERE  not deleted and vm_template_id = v_vm_template_id
       AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_vm_template_permissions_view
                                         WHERE  user_id = v_user_id AND entity_id = vm_template_id));

@@ -48,48 +48,48 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     List<AuditLog> getAll(Guid userID, boolean isFiltered);
 
     /**
-     * Retrieves all audit log entries for the given VM name.
+     * Retrieves all audit log entries for the given VM ID.
      *
-     * @param vmName
-     *          The name of the vm to retrieve audit logs for
      * @return the list of entries
      */
-    List<AuditLog> getAllByVMName(String vmName);
+    List<AuditLog> getAllByVMId(Guid vmId);
 
     /**
      * Retrieves all audit log entries for the given VM name with optional permission filtering.
      *
-     * @param vmName
-     *            The name of the vm to retrieve audit logs for
+     * @param vmId
+     *            The ID of the vm to retrieve audit logs for
      * @param userID
      *            The ID of the user requesting the information
      * @param isFiltered
      *            whether the results should be filtered according to the user's permissions
      * @return the list of entries
      */
-    List<AuditLog> getAllByVMName(String vmName, Guid userID, boolean isFiltered);
+    List<AuditLog> getAllByVMId(Guid vmId, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all audit log entries for the given VM Template name.
      *
-     * @param vmTemplateName
-     *          The name of the vm template to retrieve audit logs for
+     *
+     * @param vmTemplateId
+     *          The ID of the vm template to retrieve audit logs for
      * @return the list of entries
      */
-    List<AuditLog> getAllByVMTemplateName(String vmTemplateName);
+    List<AuditLog> getAllByVMTemplateId(Guid vmTemplateId);
 
     /**
      * Retrieves all audit log entries for the given VM Template name with optional permission filtering.
      *
-     * @param vmTemplateName
-     *            The name of the vm template to retrieve audit logs for
+     *
+     * @param vmTemplateId
+     *          The ID of the vm template to retrieve audit logs for
      * @param userID
      *            The ID of the user requesting the information
      * @param isFiltered
      *            whether the results should be filtered according to the user's permissions
      * @return the list of entries
      */
-    List<AuditLog> getAllByVMTemplateName(String vmTemplateName, Guid userID, boolean isFiltered);
+    List<AuditLog> getAllByVMTemplateId(Guid vmTemplateId, Guid userID, boolean isFiltered);
 
     /**
      * Saves the provided audit log
