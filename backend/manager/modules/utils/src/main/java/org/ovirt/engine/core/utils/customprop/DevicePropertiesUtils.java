@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.config.Config;
@@ -329,13 +330,13 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
 
         for (Map.Entry<String, String> e : properties.entrySet()) {
             String key = e.getKey();
-            String value = e.getValue();
             if (key == null || !deviceProperties.get(version).get(type).containsKey(key)) {
                 errorsSet.add(new ValidationError(ValidationFailureReason.KEY_DOES_NOT_EXIST, key));
                 continue;
             }
 
-            if (value == null || !deviceProperties.get(version).get(type).get(key).matcher(value).matches()) {
+            String value = StringUtils.defaultString(e.getValue());
+            if (!deviceProperties.get(version).get(type).get(key).matcher(value).matches()) {
                 errorsSet.add(new ValidationError(ValidationFailureReason.INCORRECT_VALUE, key));
                 continue;
             }

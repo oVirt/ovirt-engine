@@ -59,7 +59,7 @@ public class CustomPropertiesUtils {
      * Regex describing property definition - key=value
      */
     protected static final String KEY_VALUE_REGEX_STR = "((" + LEGITIMATE_CHARACTER_FOR_KEY + ")+)=(("
-            + LEGITIMATE_CHARACTER_FOR_VALUE + ")+)";
+            + LEGITIMATE_CHARACTER_FOR_VALUE + ")*)";
 
     /**
      * Regex describing properties definition. They can be in the from of "key=value" or "key1=value1;... key-n=value_n"
@@ -83,7 +83,7 @@ public class CustomPropertiesUtils {
     CustomPropertiesUtils() {
         semicolonPattern = Pattern.compile(PROPERTIES_DELIMETER);
         keyPattern = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
-        valuePattern = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")+");
+        valuePattern = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")*");
         validationPattern = Pattern.compile(VALIDATION_STR);
         invalidSyntaxValidationError = Arrays.asList(new ValidationError(ValidationFailureReason.SYNTAX_ERROR, ""));
     }
@@ -121,13 +121,13 @@ public class CustomPropertiesUtils {
         if (properties != null && !properties.isEmpty()) {
             for (Map.Entry<String, String> e : properties.entrySet()) {
                 String key = e.getKey();
-                String value = e.getValue();
                 if (key == null || !keyPattern.matcher(key).matches()) {
                     // syntax error in property name
                     error = true;
                     break;
                 }
-                if (value == null || !valuePattern.matcher(value).matches()) {
+
+                if (!valuePattern.matcher(StringUtils.defaultString(e.getValue())).matches()) {
                     // syntax error in property value
                     error = true;
                     break;
@@ -290,7 +290,7 @@ public class CustomPropertiesUtils {
             for (Map.Entry<String, String> e : properties.entrySet()) {
                 sb.append(e.getKey());
                 sb.append(KEY_VALUE_DELIMETER);
-                sb.append(e.getValue());
+                sb.append(StringUtils.defaultString(e.getValue()));
                 sb.append(PROPERTIES_DELIMETER);
             }
             // remove last PROPERTIES_DELIMETER

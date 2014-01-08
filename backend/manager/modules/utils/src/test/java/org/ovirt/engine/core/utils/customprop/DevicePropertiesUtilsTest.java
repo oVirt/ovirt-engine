@@ -54,7 +54,7 @@ public class DevicePropertiesUtilsTest {
      */
     private DevicePropertiesUtils mockDevicePropertiesUtils() {
         return mockDevicePropertiesUtils("{type=disk;prop={bootable=^(true|false)$}};"
-                + "{type=interface;prop={speed=^([0-9]{1,5})$;duplex=^(full|half)$}}");
+                + "{type=interface;prop={speed=^([0-9]{1,5})$;duplex=^(full|half)$;debug=([a-z0-9A-Z]*)$}}");
     }
 
     /**
@@ -110,24 +110,24 @@ public class DevicePropertiesUtilsTest {
     }
 
     /**
-     * Tries to set property with no value to a device with supported version
+     * Tries to set property with no value (value is invalid due provided REGEX) to a device with supported version
      */
     @Test
-    public void invalidPropertiesFormat() {
+    public void invalidPropertyValue1() {
         DevicePropertiesUtils utils = mockDevicePropertiesUtils();
         Map<String, String> map = new HashMap<String, String>();
         map.put("bootable", null);
 
         List<ValidationError> errors = utils.validateProperties(Version.v3_3, VmDeviceGeneralType.DISK, map);
 
-        validateFailure(errors, ValidationFailureReason.SYNTAX_ERROR);
+        validateFailure(errors, ValidationFailureReason.INCORRECT_VALUE);
     }
 
     /**
      * Tries to set invalid property value to a device with supported version
      */
     @Test
-    public void invalidPropertyValue() {
+    public void invalidPropertyValue2() {
         DevicePropertiesUtils utils = mockDevicePropertiesUtils();
         List<ValidationError> errors =
                 utils.validateProperties(Version.v3_3, VmDeviceGeneralType.DISK, utils.convertProperties("bootable=x"));
@@ -173,7 +173,7 @@ public class DevicePropertiesUtilsTest {
         List<ValidationError> errors =
                 utils.validateProperties(Version.v3_3,
                         VmDeviceGeneralType.INTERFACE,
-                        utils.convertProperties("speed=10;duplex=half"));
+                        utils.convertProperties("speed=10;duplex=half;debug="));
 
         assertTrue(errors.isEmpty());
     }
@@ -184,7 +184,7 @@ public class DevicePropertiesUtilsTest {
     @Test
     public void validCustomDevPropSpec() {
         String customDevPropSpec = "{type=disk;prop={bootable=^(true|false)$}};"
-                + "{type=interface;prop={speed=[0-9]{1,5};duplex=^(full|half)$}};"
+                + "{type=interface;prop={speed=[0-9]{1,5};duplex=^(full|half)$;debug=([a-z0-9A-Z]*)$}};"
                 + "{type=video;prop={turned_on=^(true|false)$}};"
                 + "{type=sound;prop={volume=[0-9]{1,2}}};"
                 + "{type=controller;prop={hotplug=^(true|false)$}};"

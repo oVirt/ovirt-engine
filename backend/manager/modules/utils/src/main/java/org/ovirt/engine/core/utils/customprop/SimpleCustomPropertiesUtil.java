@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 public class SimpleCustomPropertiesUtil extends CustomPropertiesUtils {
 
     private static final SimpleCustomPropertiesUtil instance = new SimpleCustomPropertiesUtil();
@@ -47,13 +49,12 @@ public class SimpleCustomPropertiesUtil extends CustomPropertiesUtils {
 
         for (Entry<String, String> e : properties.entrySet()) {
             String key = e.getKey();
-            String value = e.getValue();
             if (key == null || !regExMap.containsKey(key)) {
                 errorsSet.add(new ValidationError(ValidationFailureReason.KEY_DOES_NOT_EXIST, key));
                 continue;
             }
 
-            if (value == null || !keysToRegex.get(key).matcher(value).matches()) {
+            if (!keysToRegex.get(key).matcher(StringUtils.defaultString(e.getValue())).matches()) {
                 errorsSet.add(new ValidationError(ValidationFailureReason.INCORRECT_VALUE, key));
                 continue;
             }

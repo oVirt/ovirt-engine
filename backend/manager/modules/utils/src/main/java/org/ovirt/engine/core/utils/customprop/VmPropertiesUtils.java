@@ -247,7 +247,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
             for (String keyValuePairStr : keyValuePairs) {
                 String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
                 String key = pairParts[0];
-                String value = pairParts[1];
+                String value = StringUtils.defaultString(pairParts[1]);
                 if (propertiesMap.containsKey(key)) {
                     errorsSet.add(new ValidationError(ValidationFailureReason.DUPLICATE_KEY, key));
                     continue;
@@ -282,12 +282,16 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         Set<Entry<String, String>> entries = propertiesMap.entrySet();
         Iterator<Entry<String, String>> iterator = entries.iterator();
         Entry<String, String> entry = iterator.next();
-        result.append(entry.getKey()).append("=").append(entry.getValue());
+        result.append(entry.getKey())
+                .append("=")
+                .append(StringUtils.defaultString(entry.getValue()));
         while (iterator.hasNext()) {
             result.append(";");
             entry = iterator.next();
             if (entry != null) {
-                result.append(entry.getKey()).append("=").append(entry.getValue());
+                result.append(entry.getKey())
+                        .append("=")
+                        .append(StringUtils.defaultString(entry.getValue()));
             }
         }
         return result.toString();
@@ -308,7 +312,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         Set<String> userdefinedPropertiesKeys = userdefinedProperties.get(version).keySet();
         for (Entry<String, String> propertiesEntry : propertiesEntries) {
             String propertyKey = propertiesEntry.getKey();
-            String propertyValue = propertiesEntry.getValue();
+            String propertyValue = StringUtils.defaultString(propertiesEntry.getValue());
             if (predefinedPropertiesKeys.contains(propertyKey)) {
                 predefinedPropertiesMap.put(propertyKey, propertyValue);
             }

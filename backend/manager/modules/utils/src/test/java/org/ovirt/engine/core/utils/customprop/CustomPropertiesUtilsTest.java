@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.customprop;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyMap;
 import static org.ovirt.engine.core.utils.customprop.PropertiesUtilsTestHelper.validatePropertyValue;
@@ -22,9 +23,7 @@ public class CustomPropertiesUtilsTest {
         CustomPropertiesUtils utils = new CustomPropertiesUtils();
 
         assertTrue("Invalid key/value delimiter", utils.syntaxErrorInProperties("speed:1024;duplex=full"));
-        assertTrue("Key/value delimiter present, but value missing",
-                utils.syntaxErrorInProperties("speed=1024;duplex="));
-        assertTrue("Missing value", utils.syntaxErrorInProperties("speed=1024;duplex"));
+        assertTrue("Missing key/value delimiter", utils.syntaxErrorInProperties("speed=1024;duplex"));
         assertTrue("Invalid key character", utils.syntaxErrorInProperties("spe*ed=1024;duplex=full"));
         assertTrue("Invalid value character", utils.syntaxErrorInProperties("speed=1024;duplex=fu;ll"));
     }
@@ -38,8 +37,9 @@ public class CustomPropertiesUtilsTest {
         Map<String, String> propMap = new LinkedHashMap<>();
         propMap.put("speed", "1024");
         propMap.put("duplex", null);
+        propMap.put("debug", "");
 
-        assertTrue(utils.syntaxErrorInProperties(propMap));
+        assertFalse(utils.syntaxErrorInProperties(propMap));
     }
 
     /**
@@ -48,12 +48,13 @@ public class CustomPropertiesUtilsTest {
     @Test
     public void convertValidPropertiesToMap() {
         CustomPropertiesUtils utils = new CustomPropertiesUtils();
-        String propStr = "speed=1024;duplex=half";
+        String propStr = "speed=1024;duplex=half;debug=";
 
         Map<String, String> map = utils.convertProperties(propStr);
-        validatePropertyMap(map, 2);
+        validatePropertyMap(map, 3);
         validatePropertyValue(map, "speed", "1024");
         validatePropertyValue(map, "duplex", "half");
+        validatePropertyValue(map, "debug", "");
     }
 
     /**
@@ -65,9 +66,11 @@ public class CustomPropertiesUtilsTest {
         Map<String, String> propMap = new LinkedHashMap<>();
         propMap.put("speed", "1024");
         propMap.put("duplex", "half");
+        propMap.put("debug", null);
+        propMap.put("verbose", "");
 
         String propStr = utils.convertProperties(propMap);
         // order of properties in string is known if LinkedHashMap is used
-        assertEquals("speed=1024;duplex=half", propStr);
+        assertEquals("speed=1024;duplex=half;debug=;verbose=", propStr);
     }
 }
