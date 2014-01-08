@@ -53,6 +53,7 @@ case "$1" in
 				RETVAL=0
 			fi
 		fi
+		[ $RETVAL -ne 0 -a ! -s "${PIDFILE}" ] && rm -f "${PIDFILE}"
 		;;
 	stop)
 		echo -n $"Stopping $PROG: "
