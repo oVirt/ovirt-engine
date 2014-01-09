@@ -512,6 +512,7 @@ class Stages(object):
     SSH_KEY_AVAILABLE = 'osetup.pki.ssh.available'
     SYSTEM_NFS_CONFIG_AVAILABLE = 'osetup.system.nfs.available'
     SYSTEM_SYSCTL_CONFIG_AVAILABLE = 'osetup.system.sysctl.available'
+    SYSTEM_HOSTILE_SERVICES_DETECTION = 'osetup.system.hostile.detection'
     CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
     APACHE_RESTART = 'osetup.apache.core.restart'
 

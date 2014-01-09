@@ -63,6 +63,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,
+        name=osetupcons.Stages.SYSTEM_HOSTILE_SERVICES_DETECTION,
         condition=lambda self: self._enabled,
     )
     def _transaction_begin(self):
