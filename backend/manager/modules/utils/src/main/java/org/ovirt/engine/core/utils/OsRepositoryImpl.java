@@ -367,6 +367,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public int getMaxPciDevices(int osId, Version version) {
+        return getInt(getValueByVersion(idToUnameLookup.get(osId), "devices.maxPciDevices", version), -1);
+    }
+
+    @Override
     public String getCdInterface(int osId, Version version) {
         return getValueByVersion(idToUnameLookup.get(osId), "devices.cdInterface", version);
     }

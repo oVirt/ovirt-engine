@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParame
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -98,16 +99,24 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return getVmName();
     }
 
-    // 26 PCI slots: 31 total minus 5 saved for qemu (Host Bridge, ISA Bridge,
-    // IDE, Agent, ACPI)
-    public final static int MAX_PCI_SLOTS = 26;
     // 3 IDE slots: 4 total minus 1 for CD
     public final static int MAX_IDE_SLOTS = 3;
+
+    // The maximum number of VirtIO SCSI disks that libvirt
+    // allows without creating another controller
+    public final static int MAX_VIRTIO_SCSI_DISKS = 16383;
+
+    // The maximum number of sPAPR VSCSI disks that
+    // can be detected by the Linux kernel of PPC64 guests
+    public final static int MAX_SPAPR_SCSI_DISKS = 8;
+
     private List<VmNic> interfaces;
 
     /**
      * This method checks that with the given parameters, the max PCI and IDE limits defined are not passed.
      *
+     * @param osId
+     * @param clusterVersion
      * @param monitorsNumber
      * @param interfaces
      * @param disks
@@ -118,7 +127,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @param messages
      * @return a boolean
      */
-    public static <T extends Disk> boolean checkPciAndIdeLimit(int monitorsNumber,
+    public static <T extends Disk> boolean checkPciAndIdeLimit(
+            int osId,
+            Version clusterVersion,
+            int monitorsNumber,
             List<VmNic> interfaces,
             List<T> disks,
             boolean virtioScsiEnabled,
@@ -126,6 +138,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             boolean isBalloonEnabled,
             boolean isSoundDeviceEnabled,
             ArrayList<String> messages) {
+
         boolean result = true;
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
         // interfaces) + (all disks that are not IDE)
@@ -158,7 +171,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         // Sound device controller requires one PCI slot
         pciInUse += isSoundDeviceEnabled ? 1 : 0;
 
-        if (pciInUse > MAX_PCI_SLOTS) {
+        OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+
+        int maxPciSlots = osRepository.getMaxPciDevices(osId, clusterVersion);
+
+        if (pciInUse > maxPciSlots) {
             result = false;
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS.name());
         }
@@ -170,6 +187,24 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }).size()) {
             result = false;
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS.name());
+        }
+        else if (MAX_VIRTIO_SCSI_DISKS < LinqUtils.filter(disks, new Predicate<T>() {
+            @Override
+            public boolean eval(T a) {
+                return a.getDiskInterface() == DiskInterface.VirtIO_SCSI;
+            }
+        }).size()) {
+            result = false;
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS.name());
+        }
+        else if (MAX_SPAPR_SCSI_DISKS < LinqUtils.filter(disks, new Predicate<T>() {
+            @Override
+            public boolean eval(T a) {
+                return a.getDiskInterface() == DiskInterface.SPAPR_VSCSI;
+            }
+        }).size()) {
+            result = false;
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS.name());
         }
         return result;
     }

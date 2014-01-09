@@ -174,7 +174,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks(vm.getId()));
             allVmDisks.add(getNewDisk());
 
-            if (!checkPciAndIdeLimit(vm.getNumOfMonitors(), allVmInterfaces, allVmDisks,
+            if (!checkPciAndIdeLimit(vm.getOs(),
+                    vm.getVdsGroupCompatibilityVersion(),
+                    vm.getNumOfMonitors(),
+                    allVmInterfaces,
+                    allVmDisks,
                     VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId()),
                     VmDeviceUtils.hasWatchdog(vm.getId()),
                     VmDeviceUtils.isBalloonEnabled(vm.getId()),

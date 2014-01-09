@@ -125,7 +125,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         List<VmNic> allInterfaces = new ArrayList<>(interfaces);
         allInterfaces.add(getInterface());
 
-        if (!pciAndIdeWithinLimit(vm, allInterfaces)) {
+        if (!pciAndIdeWithinLimit(getVm(), allInterfaces)) {
             return false;
         }
 

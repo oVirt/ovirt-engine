@@ -105,7 +105,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         List<Disk> allVmDisks = new ArrayList<Disk>(getVm().getDiskMap().values());
         allVmDisks.add(diskInfo);
 
-        return checkPciAndIdeLimit(getVm().getNumOfMonitors(),
+        return checkPciAndIdeLimit(getVm().getOs(),
+                getVm().getVdsGroupCompatibilityVersion(),
+                getVm().getNumOfMonitors(),
                 vmInterfaces,
                 allVmDisks,
                 isVirtioScsiControllerAttached(getVmId()),

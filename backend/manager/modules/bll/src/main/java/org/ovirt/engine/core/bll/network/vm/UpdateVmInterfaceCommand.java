@@ -193,7 +193,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         allInterfaces.add(getInterface());
         VmStatic vm = getVmStaticDAO().get(getVmId());
 
-        if (!pciAndIdeWithinLimit(vm, allInterfaces)) {
+        if (!pciAndIdeWithinLimit(getVm(), allInterfaces)) {
             return false;
         }
 

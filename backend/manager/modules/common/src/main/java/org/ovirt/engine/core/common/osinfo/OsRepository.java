@@ -203,6 +203,13 @@ public interface OsRepository {
     /**
      * @param osId
      * @param version
+     * @return the maximum allowed number of PCI devices
+     */
+    public int getMaxPciDevices(int osId, Version Version);
+
+    /**
+     * @param osId
+     * @param version
      * @return a specific Cd Interface for the given os.
      */
     String getCdInterface(int osId, Version version);

@@ -402,7 +402,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<Disk> allDisks = getDbFacade().getDiskDao().getAllForVm(getVmId());
         List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
 
-        return checkPciAndIdeLimit(vmFromParams.getNumOfMonitors(),
+        return checkPciAndIdeLimit(
+                vmFromParams.getOs(),
+                getVdsGroup().getcompatibility_version(),
+                vmFromParams.getNumOfMonitors(),
                 interfaces,
                 allDisks,
                 isVirtioScsiEnabled(),

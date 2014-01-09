@@ -300,7 +300,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         returnValue =
                 returnValue
-                        && checkPciAndIdeLimit(getParameters().getVmStaticData().getNumOfMonitors(),
+                        && checkPciAndIdeLimit(getParameters().getVm().getOs(),
+                                getVdsGroup().getcompatibility_version(),
+                                getParameters().getVmStaticData().getNumOfMonitors(),
                                 getVmInterfaces(),
                                 getVmDisks(),
                                 isVirtioScsiEnabled(),

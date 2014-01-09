@@ -131,7 +131,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
             List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
 
-            if (!VmCommand.checkPciAndIdeLimit(getParameters().getVmTemplateData().getNumOfMonitors(),
+            if (!VmCommand.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),
+                            getVdsGroup().getcompatibility_version(),
+                            getParameters().getVmTemplateData().getNumOfMonitors(),
                             interfaces,
                             new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
                             VmDeviceUtils.isVirtioScsiControllerAttached(getParameters().getVmTemplateData().getId()),

@@ -1016,6 +1016,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Maximum IDE devices exceeded.")
     String ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Maximum VirtIO SCSI devices exceeded.")
+    String ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Maximum sPAPR VSCSI devices exceeded.")
+    String ACTION_TYPE_FAILED_EXCEEDED_MAX_SPAPR_VSCSI_DISKS();
+
     @DefaultStringValue("User is already attached to VM")
     String USER_CANNOT_ATTACH_TO_VM_ALREADY_ATTACHED();
 

@@ -60,7 +60,9 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
         List<VmNic> interfacesForCheckPciLimit = new ArrayList<VmNic>(interfaces);
         interfacesForCheckPciLimit.add(getParameters().getInterface());
-        if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getNumOfMonitors(),
+        if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getOsId(),
+                getVdsGroup().getcompatibility_version(),
+                getVmTemplate().getNumOfMonitors(),
                 interfacesForCheckPciLimit,
                 new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
                     VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),

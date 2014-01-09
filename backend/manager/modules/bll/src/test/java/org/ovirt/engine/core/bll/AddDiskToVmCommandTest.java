@@ -64,6 +64,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class AddDiskToVmCommandTest {
     private static int MAX_BLOCK_SIZE = 8192;
     private static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
+    private static int MAX_PCI_SLOTS = 26;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -111,6 +112,7 @@ public class AddDiskToVmCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockInterfaceList();
+        mockMaxPciSlots();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -123,6 +125,7 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
+        mockMaxPciSlots();
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
@@ -142,6 +145,7 @@ public class AddDiskToVmCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockInterfaceList();
+        mockMaxPciSlots();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -155,6 +159,7 @@ public class AddDiskToVmCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockInterfaceList();
+        mockMaxPciSlots();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -168,6 +173,7 @@ public class AddDiskToVmCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockInterfaceList();
+        mockMaxPciSlots();
 
         assertTrue(command.canDoAction());
     }
@@ -193,6 +199,7 @@ public class AddDiskToVmCommandTest {
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
         mockInterfaceList();
+        mockMaxPciSlots();
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
         assertTrue(command.canDoAction());
@@ -207,6 +214,7 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
+        mockMaxPciSlots();
         doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
 
         assertFalse(command.canDoAction());
@@ -229,6 +237,7 @@ public class AddDiskToVmCommandTest {
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
         mockInterfaceList();
+        mockMaxPciSlots();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -246,6 +255,7 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId, StorageType.ISCSI);
         mockStoragePoolIsoMap();
+        mockMaxPciSlots();
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -270,6 +280,7 @@ public class AddDiskToVmCommandTest {
         mockStorageDomain(storageId, Version.v3_1);
         mockStoragePoolIsoMap();
         mockInterfaceList();
+        mockMaxPciSlots();
 
         runAndAssertCanDoActionSuccess();
     }
@@ -290,6 +301,7 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId, Version.v3_1);
         mockStoragePoolIsoMap();
+        mockMaxPciSlots();
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -310,6 +322,7 @@ public class AddDiskToVmCommandTest {
         mockVm();
         mockStorageDomain(storageId, StorageType.GLUSTERFS, Version.v3_1);
         mockStoragePoolIsoMap();
+        mockMaxPciSlots();
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().
@@ -434,6 +447,11 @@ public class AddDiskToVmCommandTest {
         DiskValidator diskValidator = spy(new DiskValidator(disk));
         doReturn(diskValidator).when(command).getDiskValidator(disk);
         return diskValidator;
+    }
+
+    private void mockMaxPciSlots() {
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
     }
 
     /**
@@ -646,6 +664,8 @@ public class AddDiskToVmCommandTest {
         when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
         VM vm = mockVm();
 
+        mockMaxPciSlots();
+
         // use maximum slots for IDE - canDo expected to succeed.
         fillDiskMap(disk, vm, VmCommand.MAX_IDE_SLOTS - 1);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
@@ -665,9 +685,10 @@ public class AddDiskToVmCommandTest {
         initializeCommand(Guid.newGuid(), parameters);
         when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
         VM vm = mockVm();
+        mockMaxPciSlots();
 
         // use maximum slots for PCI. canDo expected to succeed.
-        fillDiskMap(disk, vm, VmCommand.MAX_PCI_SLOTS - 2);
+        fillDiskMap(disk, vm, MAX_PCI_SLOTS - 2);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
 
         vm.getDiskMap().put(Guid.newGuid(), disk);
@@ -688,6 +709,7 @@ public class AddDiskToVmCommandTest {
 
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+        mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
             new ArrayList<>(Arrays.asList("VirtIO")));
@@ -712,6 +734,7 @@ public class AddDiskToVmCommandTest {
 
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+        mockMaxPciSlots();
 
         DiskValidator diskValidator = spyDiskValidator(disk);
         doReturn(false).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
@@ -735,6 +758,7 @@ public class AddDiskToVmCommandTest {
 
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+        mockMaxPciSlots();
 
         DiskValidator diskValidator = spyDiskValidator(disk);
         doReturn(true).when(diskValidator).isVirtioScsiControllerAttached(any(Guid.class));
@@ -755,6 +779,7 @@ public class AddDiskToVmCommandTest {
 
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+        mockMaxPciSlots();
 
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 new ArrayList<>(Arrays.asList("VirtIO_SCSI")));

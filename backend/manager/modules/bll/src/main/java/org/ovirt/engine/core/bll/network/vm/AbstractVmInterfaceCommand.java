@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
@@ -73,10 +73,12 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 getReturnValue().getCanDoActionMessages());
     }
 
-    protected boolean pciAndIdeWithinLimit(VmStatic vm, List<VmNic> allInterfaces) {
+    protected boolean pciAndIdeWithinLimit(VM vm, List<VmNic> allInterfaces) {
         List<Disk> allDisks = getDiskDao().getAllForVm(getVmId());
 
-        return checkPciAndIdeLimit(vm.getNumOfMonitors(), allInterfaces, allDisks,
+        return checkPciAndIdeLimit(vm.getOs(),
+                vm.getVdsGroupCompatibilityVersion(),
+                vm.getNumOfMonitors(), allInterfaces, allDisks,
                 VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
                 VmDeviceUtils.hasWatchdog(getVmId()),
                 VmDeviceUtils.isBalloonEnabled(getVmId()),

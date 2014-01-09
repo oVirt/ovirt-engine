@@ -66,6 +66,7 @@ public class AddVmCommandTest {
     private static final int REQUIRED_DISK_SIZE_GB = 10;
     private static final int AVAILABLE_SPACE_GB = 11;
     private static final int USED_SPACE_GB = 4;
+    private static int MAX_PCI_SLOTS = 26;
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private VmTemplate vmTemplate = null;
@@ -114,6 +115,7 @@ public class AddVmCommandTest {
         mockVerifyAddVM(cmd);
         mockConfig();
         mockConfigSizeDefaults();
+        mockMaxPciSlots();
 
         mockStorageDomainDaoGetAllStoragesForPool(AVAILABLE_SPACE_GB);
         mockUninterestingMethods(cmd);
@@ -233,6 +235,11 @@ public class AddVmCommandTest {
         mockUninterestingMethods(cmd);
         doReturn(true).when(cmd).checkCpuSockets();
         doReturn(null).when(cmd).getVmFromConfiguration();
+    }
+
+    private void mockMaxPciSlots() {
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
     }
 
     private AddVmFromTemplateCommand<AddVmFromTemplateParameters> createVmFromTemplateCommand(VM vm) {

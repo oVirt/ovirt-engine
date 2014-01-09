@@ -23,6 +23,7 @@ public class OsRepositoryImplTest {
     public static final String NETWORK_DEVICES = "e100,pv";
     public static final String DISK_HOTPLUGGABLE_INTERFACES = "VirtIO_SCSI, VirtIO";
     public static final String WATCH_DOG_MODELS = "model1, model2";
+    public static final String MAX_PCI_DEVICES = "26";
     public static final String PATH_TO_SYSPREP = "/path/to/sysprep";
     public static final String SOME_PRODUCT_KEY = "some-product-key";
     public static final String SOUND_DEVICE = "ac97";
@@ -38,6 +39,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/devices/network").put("value", NETWORK_DEVICES);
         preferences.node("/os/rhel7/devices/disk/hotpluggableInterfaces").put("value", DISK_HOTPLUGGABLE_INTERFACES);
         preferences.node("/os/rhel7/devices/watchdog/models").put("value", WATCH_DOG_MODELS);
+        preferences.node("/os/rhel7/devices/maxPciDevices").put("value", MAX_PCI_DEVICES);
         preferences.node("/os/rhel7/resources/minimum/ram").put("value", "1024");
         preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.1", "512");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
@@ -152,6 +154,10 @@ public class OsRepositoryImplTest {
 
         assertTrue(isSizeCorrect);
         assertTrue(containsSameElements);
+    }
+
+    public void testGetMaxPciDevices() throws Exception {
+        assertTrue(OsRepositoryImpl.INSTANCE.getMaxPciDevices(777, null) == 26);
     }
 
     @Test
