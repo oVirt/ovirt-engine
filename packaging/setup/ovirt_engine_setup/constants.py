@@ -514,6 +514,7 @@ class Stages(object):
     SYSTEM_HOSTILE_SERVICES_DETECTION = 'osetup.system.hostile.detection'
     CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
     APACHE_RESTART = 'osetup.apache.core.restart'
+    DISTRO_RPM_PACKAGE_UPDATE_CHECK = 'osetup.distro-rpm.package.update.check'
 
     DIALOG_TITLES_S_ALLINONE = 'osetup.dialog.titles.allinone.start'
     DIALOG_TITLES_S_APACHE = 'osetup.dialog.titles.apache.start'
@@ -1030,6 +1031,9 @@ class RPMDistroEnv(object):
 
     VERSION_LOCK_FILTER = 'OSETUP_RPMDISTRO/versionLockFilter'
     VERSION_LOCK_APPLY = 'OSETUP_RPMDISTRO/versionLockApply'
+
+    PACKAGES_UPGRADE_LIST = 'OVESETUP_RPMDISTRO/packagesUpgradeList'
+    PACKAGES_SETUP = 'OVESETUP_RPMDISTRO/packagesSetup'
 
 
 @util.export
