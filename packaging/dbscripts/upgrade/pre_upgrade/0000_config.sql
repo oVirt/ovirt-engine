@@ -470,7 +470,6 @@ select fn_db_add_config_value('UserDefinedVMProperties','','3.3');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.4');
 select fn_db_add_config_value('UserRefreshRate','3600','general');
 select fn_db_add_config_value('UserSessionTimeOutInterval','30','general');
-select fn_db_add_config_value('UserSessionTimeOutInvalidationInterval','30','general');
 select fn_db_add_config_value('UtilizationThresholdInPercent','80','general');
 select fn_db_add_config_value('ValidNumOfMonitors','1,2,4','general');
 select fn_db_add_config_value('VcpuConsumptionPercentage','10','general');
