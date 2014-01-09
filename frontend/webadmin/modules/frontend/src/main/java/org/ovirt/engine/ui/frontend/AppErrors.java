@@ -2934,7 +2934,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The host ${hostName} did not satisfy ${filterType} filter ${filterName}.")
     String SCHEDULING_HOST_FILTERED_REASON();
 
-    @DefaultStringValue("Cannot ${action} ${type}. There is no host that satisfies current scheduling constraints. See bellow for details:")
+    @DefaultStringValue("Cannot ${action} ${type}. There is no host that satisfies current scheduling constraints. See below for details:")
     String SCHEDULING_ALL_HOSTS_FILTERED_OUT();
 
     @DefaultStringValue("Cannot perform ${action}. Another power management action is already in progress.")
