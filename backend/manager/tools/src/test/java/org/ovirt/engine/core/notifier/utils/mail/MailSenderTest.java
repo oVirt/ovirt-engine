@@ -53,7 +53,7 @@ public class MailSenderTest {
         eventData.setmessage("a test message to be sent via non-secured mode");
         EventSenderResult sentResult = null;
         try {
-            sentResult = mailSender.send(eventData, null);
+            sentResult = mailSender.send(eventData);
         } catch (Exception e) {
             sentResult = new EventSenderResult();
             sentResult.setSent(false);
@@ -88,11 +88,11 @@ public class MailSenderTest {
         );
         EventSenderMailImpl mailSender = new EventSenderMailImpl(NotificationProperties.getInstance());
         eventData.setmessage("a test message to be sent via secured mode");
-        mailSender.send(eventData, null);
+        mailSender.send(eventData);
 
         EventSenderResult sentResult = null;
         try {
-            sentResult = mailSender.send(eventData, null);
+            sentResult = mailSender.send(eventData);
         } catch (Exception e) {
             sentResult = new EventSenderResult();
             sentResult.setSent(false);

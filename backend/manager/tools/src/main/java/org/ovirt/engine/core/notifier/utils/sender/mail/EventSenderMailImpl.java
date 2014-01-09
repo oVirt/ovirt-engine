@@ -51,15 +51,12 @@ public class EventSenderMailImpl implements EventSender {
     /**
      * {@link #EventSender}
      */
-    public EventSenderResult send(EventAuditLogSubscriber eventData, String methodAddress) {
+    public EventSenderResult send(EventAuditLogSubscriber eventData) {
         EventSenderResult result = new EventSenderResult();
         EventMessageContent message = new EventMessageContent();
         message.prepareMessage(hostName, eventData, isBodyHtml);
 
         String recipient = eventData.getmethod_address();
-        if (StringUtils.isEmpty(recipient)) {
-            recipient = methodAddress;
-        }
 
         if ( StringUtils.isEmpty(recipient) ) {
             log.error("Email recipient is not known, please check user table ( email ) or event_subscriber ( method_address ), unable to send email for subscriber " + eventData.getsubscriber_id() + ", message was " + message.getMessageSubject() + ":" + message.getMessageBody());

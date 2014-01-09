@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,7 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.EventNotificationMethod;
-import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.compat.Guid;
@@ -121,8 +119,7 @@ public class NotificationService implements Runnable {
             );
             statement.setTimestamp(1, ts);
             updatedRecords = statement.executeUpdate();
-        }
-        finally {
+        } finally {
             DbUtils.closeQuietly(statement, connection);
         }
 
@@ -144,8 +141,7 @@ public class NotificationService implements Runnable {
         // all of them:
         try {
             markOldEventsAsProcessed();
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new NotificationServiceException("Failed mark old events as processed.", exception);
         }
     }
@@ -154,7 +150,7 @@ public class NotificationService implements Runnable {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<EventAuditLogSubscriber> eventSubscribers  = new ArrayList<>();
+        List<EventAuditLogSubscriber> eventSubscribers = new ArrayList<>();
         try {
             connection = ds.getConnection();
             ps =
@@ -169,33 +165,29 @@ public class NotificationService implements Runnable {
             }
 
         } catch (SQLException e) {
-            if (isConnectionException(e)){
+            if (isConnectionException(e)) {
                 handleQueryFailure();
             }
             throw e;
         } finally {
             DbUtils.closeQuietly(rs, ps, connection);
         }
-        DbUser dbUser = null;
-        for (EventAuditLogSubscriber eventSubscriber:eventSubscribers) {
-            dbUser = getUserByUserId(eventSubscriber.getsubscriber_id());
-            if (dbUser != null) {
-                EventSender method =
-                        notificationMethodsMapper.getEventSender(eventSubscriber.getEventNotificationMethod());
-                EventSenderResult sendResult = null;
-                try {
-                    sendResult = method.send(eventSubscriber, dbUser.getEmail());
-                } catch (Exception e) {
-                    log.error("Failed to dispatch message", e);
-                    sendResult = new EventSenderResult();
-                    sendResult.setSent(false);
-                    sendResult.setReason(e.getMessage());
-                }
-                addEventNotificationHistory(geteventNotificationHist(eventSubscriber,
-                        sendResult.isSent(),
-                        sendResult.getReason()));
-                updateAuditLogEventProcessed(eventSubscriber);
+        for (EventAuditLogSubscriber eventSubscriber : eventSubscribers) {
+            EventSender method =
+                    notificationMethodsMapper.getEventSender(eventSubscriber.getEventNotificationMethod());
+            EventSenderResult sendResult = null;
+            try {
+                sendResult = method.send(eventSubscriber);
+            } catch (Exception e) {
+                log.error("Failed to dispatch message", e);
+                sendResult = new EventSenderResult();
+                sendResult.setSent(false);
+                sendResult.setReason(e.getMessage());
             }
+            addEventNotificationHistory(geteventNotificationHist(eventSubscriber,
+                    sendResult.isSent(),
+                    sendResult.getReason()));
+            updateAuditLogEventProcessed(eventSubscriber);
         }
     }
 
@@ -206,10 +198,10 @@ public class NotificationService implements Runnable {
     private void handleQueryFailure() {
         if (failedQueries == 0) {
             try {
-                for( EventAuditLogSubscriber failedQueriesEventSubscriber:failedQueriesEventSubscribers){
+                for (EventAuditLogSubscriber failedQueriesEventSubscriber : failedQueriesEventSubscribers) {
                     failedQueriesEventSubscriber.setlog_time(new Date());
                     failedQueriesEventSender.
-                            send(failedQueriesEventSubscriber, failedQueriesEventSubscriber.getmethod_address());
+                            send(failedQueriesEventSubscriber);
                 }
             } catch (Exception e) {
                 log.error("Failed to dispatch query failure email message", e);
@@ -276,37 +268,17 @@ public class NotificationService implements Runnable {
         return eventHistory;
     }
 
-    private DbUser getUserByUserId(Guid userId) throws SQLException {
-        // Using preparedStatement instead of STP GetUserByUserId to skip handling supporting dialects
-        // for MSSQL and PG. PG doesn't support parameter name which matches a column name. This is supported
-        // by the backend, since using a plan JDBC, bypassing this issue by prepared statement.
-        // in additional, required only partial email field of the DbUser
-        Connection connection = null;
-        Statement ps = null;
-        ResultSet rs = null;
-        DbUser dbUser = null;
-        try {
-            connection = ds.getConnection();
-            ps = connection.createStatement();
-            rs = ps.executeQuery(String.format("SELECT email FROM users WHERE user_id = '%s'", userId.toString()));
-            if (rs.next()) {
-                dbUser = new DbUser();
-                dbUser.setId(userId);
-                dbUser.setEmail(rs.getString("email"));
-            }
-        } finally {
-            DbUtils.closeQuietly(rs, ps, connection);
-        }
-        return dbUser;
-    }
-
     private EventAuditLogSubscriber getEventAuditLogSubscriber(ResultSet rs) throws SQLException {
         EventAuditLogSubscriber eals = new EventAuditLogSubscriber();
         eals.setevent_type(rs.getInt("event_type"));
         eals.setsubscriber_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("subscriber_id")));
         eals.setevent_up_name(rs.getString("event_up_name"));
         eals.setEventNotificationMethod(EventNotificationMethod.valueOf(rs.getString("notification_method")));
-        eals.setmethod_address(rs.getString("method_address"));
+        String methodAddress = rs.getString("method_address");
+        if (methodAddress == null) {
+
+        }
+        eals.setmethod_address(methodAddress);
         eals.settag_name(rs.getString("tag_name"));
         eals.setaudit_log_id(rs.getLong("audit_log_id"));
         eals.setuser_id(Guid.createGuidFromString(rs.getString("user_id")));
@@ -333,7 +305,7 @@ public class NotificationService implements Runnable {
             return;
         }
         List<EventAuditLogSubscriber> failedQueriesEventSubscribers = new LinkedList<>();
-        for (String email:emailRecipients.split(",")){
+        for (String email : emailRecipients.split(",")) {
             EventAuditLogSubscriber eals = new EventAuditLogSubscriber();
             eals.setevent_type(MessageHelper.MessageType.alertMessage.getEventType());
             eals.setevent_up_name("DATABASE_UNREACHABLE");
