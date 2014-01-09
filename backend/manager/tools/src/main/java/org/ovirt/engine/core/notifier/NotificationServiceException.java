@@ -3,7 +3,7 @@ package org.ovirt.engine.core.notifier;
 /**
  * An exception of the notification service
  */
-public class NotificationServiceException extends Exception {
+public class NotificationServiceException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

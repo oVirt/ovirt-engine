@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.notifier.utils.sender;
+package org.ovirt.engine.core.notifier.transport;
 
 /**
  * Describes the result of send attempt.

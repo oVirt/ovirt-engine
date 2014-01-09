@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.notifier.utils.sender.mail;
+package org.ovirt.engine.core.notifier.transport.smtp;
 
 import java.util.Date;
 import java.util.Properties;
