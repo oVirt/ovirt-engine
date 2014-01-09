@@ -77,6 +77,8 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
 
     private GlusterAsyncTask asyncTask;
 
+    private GlusterVolumeAdvancedDetails advancedDetails;
+
     public GlusterVolumeEntity() {
         options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
         bricks = new ArrayList<GlusterBrickEntity>();
@@ -86,6 +88,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         transportTypes = new LinkedHashSet<TransportType>();
         volumeType = GlusterVolumeType.DISTRIBUTE;
         asyncTask = new GlusterAsyncTask();
+        advancedDetails = new GlusterVolumeAdvancedDetails();
     }
 
     @Override
@@ -374,6 +377,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         result = prime * result + ((accessProtocols == null) ? 0 : accessProtocols.hashCode());
         result = prime * result + ((bricks == null) ? 0 : bricks.hashCode());
         result = prime * result + ((asyncTask == null) ? 0 : asyncTask.hashCode());
+        result = prime * result + ((advancedDetails == null) ? 0 : advancedDetails.hashCode());
         return result;
     }
 
@@ -417,6 +421,10 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
             return false;
         }
 
+        if (!ObjectUtils.objectsEqual(getAdvancedDetails(), volume.getAdvancedDetails())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -452,5 +460,13 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     @Override
     public void setAsyncTask(GlusterAsyncTask asyncTask) {
         this.asyncTask = asyncTask;
+    }
+
+    public GlusterVolumeAdvancedDetails getAdvancedDetails() {
+        return advancedDetails;
+    }
+
+    public void setAdvancedDetails(GlusterVolumeAdvancedDetails advancedDetails) {
+        this.advancedDetails = advancedDetails;
     }
 }

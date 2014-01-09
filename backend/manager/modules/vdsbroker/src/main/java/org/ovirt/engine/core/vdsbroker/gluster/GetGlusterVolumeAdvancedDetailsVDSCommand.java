@@ -25,20 +25,23 @@ public class GetGlusterVolumeAdvancedDetailsVDSCommand<P extends GlusterVolumeAd
     protected void executeVdsBrokerCommand() {
         executeVolumeStatusInfo("");
         GlusterVolumeAdvancedDetails volumeAdvancedDetails = result.getVolumeAdvancedDetails();
-
-        if (getParameters().isDetailRequired()) {
+        if (getParameters().isCapacityInfoRequired() || getParameters().isDetailRequired()) {
             if (getSucceeded()) {
                 executeVolumeStatusInfo(GlusterVolumeStatusOption.DETAIL.name().toLowerCase());
                 if (getSucceeded()) {
                     volumeAdvancedDetails.copyDetailsFrom(result.getVolumeAdvancedDetails());
-                    executeVolumeStatusInfo(GlusterVolumeStatusOption.CLIENTS.name().toLowerCase());
-                    if (getSucceeded()) {
-                        volumeAdvancedDetails.copyClientsFrom(result.getVolumeAdvancedDetails());
-                        executeVolumeStatusInfo(GlusterVolumeStatusOption.MEM.name().toLowerCase());
+                }
+            }
+        }
+        if (getParameters().isDetailRequired()) {
+            if (getSucceeded()) {
+                executeVolumeStatusInfo(GlusterVolumeStatusOption.CLIENTS.name().toLowerCase());
+                if (getSucceeded()) {
+                    volumeAdvancedDetails.copyClientsFrom(result.getVolumeAdvancedDetails());
+                    executeVolumeStatusInfo(GlusterVolumeStatusOption.MEM.name().toLowerCase());
 
-                        if (getSucceeded()) {
-                            volumeAdvancedDetails.copyMemoryFrom(result.getVolumeAdvancedDetails());
-                        }
+                    if (getSucceeded()) {
+                        volumeAdvancedDetails.copyMemoryFrom(result.getVolumeAdvancedDetails());
                     }
                 }
             }

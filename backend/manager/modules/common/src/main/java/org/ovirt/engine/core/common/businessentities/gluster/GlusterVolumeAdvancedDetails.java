@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -21,11 +23,14 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
 
     private List<BrickDetails> brickDetails;
     private List<GlusterServerService> serviceInfo;
+    private GlusterVolumeSizeInfo capacityInfo;
+    private Date updatedAt;
 
     public GlusterVolumeAdvancedDetails() {
     }
 
     public void copyDetailsFrom(GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
+        setCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         for (BrickDetails newBrickDetails : volumeAdvancedDetails.getBrickDetails()) {
             Guid newBrickId = newBrickDetails.getBrickProperties().getBrickId();
             if (newBrickId != null) {
@@ -105,4 +110,66 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
     public void setServiceInfo(List<GlusterServerService> serviceInfo) {
         this.serviceInfo = serviceInfo;
     }
+
+    public GlusterVolumeSizeInfo getCapacityInfo() {
+        return capacityInfo;
+    }
+
+    public void setCapacityInfo(GlusterVolumeSizeInfo capacityInfo) {
+        this.capacityInfo = capacityInfo;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((capacityInfo == null) ? 0 : capacityInfo.hashCode());
+        result = prime * result + ((serviceInfo == null) ? 0 : serviceInfo.hashCode());
+        result = prime * result + ((brickDetails == null) ? 0 : brickDetails.hashCode());
+        result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
+        result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof GlusterVolumeAdvancedDetails)) {
+            return false;
+        }
+
+        if (this == obj)
+            return true;
+
+        GlusterVolumeAdvancedDetails otherVolumeAdvancedDetails = (GlusterVolumeAdvancedDetails) obj;
+
+        if (!ObjectUtils.objectsEqual(capacityInfo, otherVolumeAdvancedDetails.getCapacityInfo())) {
+            return false;
+        }
+
+        if (!ObjectUtils.objectsEqual(brickDetails, otherVolumeAdvancedDetails.getBrickDetails())) {
+            return false;
+        }
+
+        if (!ObjectUtils.objectsEqual(serviceInfo, otherVolumeAdvancedDetails.getServiceInfo())) {
+            return false;
+        }
+
+        if (!ObjectUtils.objectsEqual(updatedAt, otherVolumeAdvancedDetails.getUpdatedAt())) {
+            return false;
+        }
+
+        if (!ObjectUtils.objectsEqual(volumeId, otherVolumeAdvancedDetails.getVolumeId())) {
+            return false;
+        }
+        return true;
+    }
+
 }

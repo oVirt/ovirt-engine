@@ -10,6 +10,20 @@ public class GlusterVolumeAdvancedDetailsVDSParameters extends GlusterVolumeVDSP
     private Guid clusterId;
     private String brickName;
     private boolean detailRequired;
+    private boolean capacityInfoRequired;
+
+    public GlusterVolumeAdvancedDetailsVDSParameters(Guid upServerId,
+            Guid clusterId,
+            String volumeName,
+            String brickName,
+            boolean detailRequired,
+            boolean capacityInfoRequired) {
+        super(upServerId, volumeName);
+        this.clusterId = clusterId;
+        this.brickName = brickName;
+        this.detailRequired = detailRequired;
+        this.capacityInfoRequired = capacityInfoRequired;
+    }
 
     public GlusterVolumeAdvancedDetailsVDSParameters(Guid upServerId,
             Guid clusterId,
@@ -35,6 +49,14 @@ public class GlusterVolumeAdvancedDetailsVDSParameters extends GlusterVolumeVDSP
 
     public String getBrickName() {
         return brickName;
+    }
+
+    public boolean isCapacityInfoRequired() {
+        return capacityInfoRequired;
+    }
+
+    public void setCapacityInfoRequired(boolean capacityInfoRequired) {
+        this.capacityInfoRequired = capacityInfoRequired;
     }
 
 }

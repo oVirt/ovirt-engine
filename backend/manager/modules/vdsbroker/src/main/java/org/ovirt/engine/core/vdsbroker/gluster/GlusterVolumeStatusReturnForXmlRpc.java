@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatu
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.MallInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.MemoryStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String STATUS = "status";
     private static final String VOLUME_STATUS = "volumeStatus";
+    private static final String VOLUME_STATUS_INFO = "volumeStatsInfo";
     private static final String VOLUME_NAME = "name";
     private static final String PORT = "port";
     private static final String PID = "pid";
@@ -42,6 +44,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
 
     private static final String DETAIL_SIZE_TOTAL = "sizeTotal";
     private static final String DETAIL_SIZE_FREE = "sizeFree";
+    private static final String DETAIL_SIZE_USED = "sizeUsed";
     private static final String DETAIL_DEVICE = "device";
     private static final String DETAIL_BLOCK_SIZE = "blockSize";
     private static final String DETAIL_MNT_OPTIONS = "mntOptions";
@@ -90,6 +93,18 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             List<BrickDetails> brickDetails = prepareBrickDetails(volume, (Object[]) statusInfo.get(BRICKS));
             volumeAdvancedDetails.setBrickDetails(brickDetails);
             volumeAdvancedDetails.setServiceInfo(prepareServiceInfo(statusInfo));
+            GlusterVolumeSizeInfo capacityInfo = null;
+
+            // Fetch the volume capacity detail
+            if (statusInfo.containsKey(VOLUME_STATUS_INFO)) {
+                Map<String, Object> volumeStatusInfo = (Map<String, Object>) statusInfo.get("volumeStatsInfo");
+                capacityInfo = new GlusterVolumeSizeInfo();
+                capacityInfo.setVolumeId(volume.getId());
+                capacityInfo.setTotalSize(Long.valueOf((String) volumeStatusInfo.get(DETAIL_SIZE_TOTAL)));
+                capacityInfo.setUsedSize(Long.valueOf((String) volumeStatusInfo.get(DETAIL_SIZE_USED)));
+                capacityInfo.setFreeSize(Long.valueOf((String) volumeStatusInfo.get(DETAIL_SIZE_FREE)));
+                volumeAdvancedDetails.setCapacityInfo(capacityInfo);
+            }
         }
     }
 
