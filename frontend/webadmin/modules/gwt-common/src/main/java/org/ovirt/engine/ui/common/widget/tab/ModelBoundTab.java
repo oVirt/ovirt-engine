@@ -14,6 +14,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
 
 public class ModelBoundTab extends SimpleTab implements HasHandlers {
+
     private final EventBus eventBus;
 
     public ModelBoundTab(final ModelBoundTabData tabData, AbstractTabPanel tabPanel, EventBus eventBus) {
@@ -49,13 +50,23 @@ public class ModelBoundTab extends SimpleTab implements HasHandlers {
                     boolean isAvailable = modelProvider.getModel().getIsAvailable();
                     setAccessible(isAvailable);
                 }
-                TabAccessibleChangeEvent.fire(ModelBoundTab.this, ModelBoundTab.this);
             }
         });
+    }
+
+    @Override
+    public void setAccessible(boolean accessible) {
+        boolean wasAccessible = isAccessible();
+        super.setAccessible(accessible);
+
+        if (accessible != wasAccessible) {
+            TabAccessibleChangeEvent.fire(this, this);
+        }
     }
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
         eventBus.fireEvent(event);
     }
+
 }

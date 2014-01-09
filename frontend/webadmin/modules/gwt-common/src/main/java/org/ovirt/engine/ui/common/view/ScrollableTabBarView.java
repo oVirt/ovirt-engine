@@ -9,11 +9,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasLoadHandlers;
-import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,7 +22,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ScrollableTabBarView extends AbstractView implements ScrollableTabBarPresenterWidget.ViewDef, HasLoadHandlers {
+public class ScrollableTabBarView extends AbstractView implements ScrollableTabBarPresenterWidget.ViewDef {
 
     public interface ViewUiBinder extends UiBinder<Widget, ScrollableTabBarView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -216,7 +212,6 @@ public class ScrollableTabBarView extends AbstractView implements ScrollableTabB
      * right floating tabs.
      */
     private void recalculateWidgetBarMinWidth() {
-        // Add 1 for browsers that don't report width properly.
         widgetBar.getElement().getStyle().setProperty(MIN_WIDTH_STYLE, calculateWidgetMinWidthNeeded(), Unit.PX);
     }
 
@@ -245,9 +240,10 @@ public class ScrollableTabBarView extends AbstractView implements ScrollableTabB
                 }
             }
         }
+        // Add 1 for browsers that don't report width properly.
+        minWidth++;
         // Store this in a variable so we don't have to calculate it all the time.
         // This assumes that when resizes/etc happen this gets called to recalculate everything.
-        minWidth++;
         widgetMinWidth = minWidth;
         return minWidth;
     }
@@ -401,15 +397,4 @@ public class ScrollableTabBarView extends AbstractView implements ScrollableTabB
         showScrollButtons();
     }
 
-    @Override
-    public void fireEvent(GwtEvent<?> event) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public HandlerRegistration addLoadHandler(LoadHandler handler) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }
