@@ -958,7 +958,7 @@ class ProvisioningEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Configure local database'),
+        description=_('Configure local Engine database'),
     )
     def POSTGRES_PROVISIONING_ENABLED(self):
         return 'OVESETUP_PROVISIONING/postgresProvisioningEnabled'
