@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.notifier.utils.sender.mail;
+package org.ovirt.engine.core.notifier.transport.smtp;
 
 /**
  * Describes a message content

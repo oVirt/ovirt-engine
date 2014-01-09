@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.notifier.utils.sender.mail;
+package org.ovirt.engine.core.notifier.transport.smtp;
 
 
 import java.net.InetAddress;
@@ -8,13 +8,14 @@ import javax.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
+import org.ovirt.engine.core.common.businessentities.AuditLogEvent;
+import org.ovirt.engine.core.common.businessentities.AuditLogEventSubscriber;
+import org.ovirt.engine.core.notifier.transport.Transport;
+import org.ovirt.engine.core.notifier.transport.EventSenderResult;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
-import org.ovirt.engine.core.notifier.utils.sender.EventSender;
-import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
 
 /**
- * The class designed to send e-mails to subscriptions for events.<br>
+ * The class sends e-mails to event subscribers.
  * In order to define a proper mail client, the following properties should be provided:
  * <li><code>MAIL_SERVER</code> mail server name
  * <li><code>MAIL_PORT</code> mail server port</li><br>
@@ -26,16 +27,16 @@ import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
  * <ul><li>"from" address should include a domain, same as <code>MAIL_USER</code> property
  * <li><code>MAIL_REPLY_TO</code> specifies "replyTo" address in outgoing message
  */
-public class EventSenderMailImpl implements EventSender {
+public class Smtp implements Transport {
 
-    private static final Logger log = Logger.getLogger(EventSenderMailImpl.class);
+    private static final Logger log = Logger.getLogger(Smtp.class);
     private JavaMailSender mailSender;
     private String hostName;
     private boolean isBodyHtml = false;
 
-    public EventSenderMailImpl(NotificationProperties mailProp) {
-        mailSender = new JavaMailSender(mailProp);
-        String isBodyHtmlStr = mailProp.getProperty(NotificationProperties.HTML_MESSAGE_FORMAT);
+    public Smtp(NotificationProperties props) {
+        mailSender = new JavaMailSender(props);
+        String isBodyHtmlStr = props.getProperty(NotificationProperties.HTML_MESSAGE_FORMAT);
         if (StringUtils.isNotEmpty(isBodyHtmlStr)) {
             isBodyHtml = Boolean.valueOf(isBodyHtmlStr);
         }
@@ -43,23 +44,23 @@ public class EventSenderMailImpl implements EventSender {
         try {
             hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            EventSenderMailImpl.log.error("Failed to resolve machine name, using localhost instead.", e);
+            Smtp.log.error("Failed to resolve machine name, using localhost instead.", e);
             hostName = "localhost";
         }
     }
 
-    /**
-     * {@link #EventSender}
-     */
-    public EventSenderResult send(EventAuditLogSubscriber eventData) {
+    public EventSenderResult send(AuditLogEvent event, AuditLogEventSubscriber subscriber) {
         EventSenderResult result = new EventSenderResult();
         EventMessageContent message = new EventMessageContent();
-        message.prepareMessage(hostName, eventData, isBodyHtml);
+        message.prepareMessage(hostName, event, isBodyHtml);
 
-        String recipient = eventData.getmethod_address();
+        String recipient = subscriber.getMethodAddress();
 
-        if ( StringUtils.isEmpty(recipient) ) {
-            log.error("Email recipient is not known, please check user table ( email ) or event_subscriber ( method_address ), unable to send email for subscriber " + eventData.getsubscriber_id() + ", message was " + message.getMessageSubject() + ":" + message.getMessageBody());
+        if (StringUtils.isEmpty(recipient)) {
+            log.error("Email recipient is not known, please check user table ( email )" +
+                    " or event_subscriber ( method_address )," +
+                    " unable to send email for subscriber " + subscriber.getSubscriberId() + "," +
+                    " message was " + message.getMessageSubject() + ":" + message.getMessageBody());
             result.setSent(false);
             return result;
         }
@@ -80,7 +81,7 @@ public class EventSenderMailImpl implements EventSender {
         }
 
         // Attempt additional 3 retries in case of failure
-        for (int i=0; i < 3 && shouldRetry; ++i){
+        for (int i = 0; i < 3 && shouldRetry; ++i) {
             shouldRetry = false;
             try {
                 // hold the next send attempt for 30 seconds in case of a busy mail server

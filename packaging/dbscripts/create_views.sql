@@ -918,35 +918,6 @@ CREATE OR REPLACE VIEW vm_interface_view AS
   JOIN vm_static AS vm_templates ON vm_interface.vmt_guid = vm_templates.vm_guid
   JOIN vm_device ON vm_interface.vmt_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id
   LEFT JOIN (vnic_profiles JOIN network ON network.id = vnic_profiles.network_id) ON vnic_profiles.id = vm_interface.vnic_profile_id;
-----------------------------------------------
--- Event Notification Views
-----------------------------------------------
-
-
-
-CREATE OR REPLACE VIEW event_audit_log_subscriber_view
-
-AS
-SELECT     1 as event_type, event_subscriber_1.subscriber_id as subscriber_id, event_subscriber_1.event_up_name as event_up_name, event_subscriber_1.notification_method as notification_method,
-                      event_subscriber_1.method_address as method_address, event_subscriber_1.tag_name as tag_name, users.email as email, audit_log_1.audit_log_id as audit_log_id, audit_log_1.user_id as user_id, audit_log_1.user_name as user_name,
-                      audit_log_1.vm_id as vm_id, audit_log_1.vm_name as vm_name, audit_log_1.vm_template_id as vm_template_id, audit_log_1.vm_template_name as vm_template_name, audit_log_1.vds_id as vds_id, audit_log_1.vds_name as vds_name,
-                      audit_log_1.storage_pool_id as storage_pool_id, audit_log_1.storage_pool_name as storage_pool_name, audit_log_1.storage_domain_id as storage_domain_id, audit_log_1.storage_domain_name as storage_domain_name,
-                      audit_log_1.log_time as log_time, audit_log_1.severity as severity, audit_log_1.message as message
-FROM         audit_log AS audit_log_1 INNER JOIN
-event_subscriber AS event_subscriber_1 ON audit_log_1.log_type_name = event_subscriber_1.event_up_name
-INNER JOIN users ON event_subscriber_1.subscriber_id = users.user_id
-WHERE     (audit_log_1.processed = false)
-UNION
-SELECT     distinct 0 as event_type, event_subscriber.subscriber_id as subscriber_id, audit_log.log_type_name as event_up_name, event_subscriber.notification_method as notification_method, event_subscriber.method_address as method_address,
-                      event_subscriber.tag_name as tag_name, users_1.email as email, audit_log.audit_log_id as audit_log_id, audit_log.user_id as user_id, audit_log.user_name as user_name, audit_log.vm_id as vm_id, audit_log.vm_name as vm_name,
-                      audit_log.vm_template_id as vm_template_id, audit_log.vm_template_name as vm_template_name, audit_log.vds_id as vds_id, audit_log.vds_name as vds_name, audit_log.storage_pool_id as storage_pool_id,
-                      audit_log.storage_pool_name as storage_pool_name, audit_log.storage_domain_id as storage_domain_id, audit_log.storage_domain_name as storage_domain_name, audit_log.log_time as log_time, audit_log.severity as severity,
-                      audit_log.message as message
-FROM         audit_log AS audit_log INNER JOIN
-event_map ON audit_log.log_type_name = event_map.event_down_name INNER JOIN
-event_subscriber AS event_subscriber ON event_subscriber.event_up_name = event_map.event_up_name
-INNER JOIN users AS users_1 ON event_subscriber.subscriber_id = users_1.user_id
-WHERE     (audit_log.processed = false);
 
 
 
