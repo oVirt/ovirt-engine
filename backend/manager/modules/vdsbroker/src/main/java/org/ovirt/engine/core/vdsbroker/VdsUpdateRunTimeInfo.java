@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -22,8 +23,9 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -123,6 +125,19 @@ public class VdsUpdateRunTimeInfo {
     private static final int TO_MEGA_BYTES = 1024;
     private static final String HOSTED_ENGINE_VM_NAME = "HostedEngine";
     private static final String EXTERNAL_VM_NAME_FORMAT = "external-%1$s";
+
+    /** names of fields in {@link VmDynamic} that are not changed by VDSM */
+    private static final List<String> UNCHANGEABLE_FIELDS_BY_VDSM;
+
+    static {
+        List<String> tmpList = new ArrayList<String>();
+        for (Field field : VmDynamic.class.getDeclaredFields()) {
+            if (field.isAnnotationPresent(UnchangeableByVdsm.class)) {
+                tmpList.add(field.getName());
+            }
+        }
+        UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
+    }
 
     private void saveDataToDb() {
         if (_saveVdsDynamic) {
@@ -1646,23 +1661,10 @@ public class VdsUpdateRunTimeInfo {
                     else if (runningVm.getStatus() == VMStatus.Paused) {
                         _vmsToRemoveFromAsync.add(vmToUpdate.getId());
                         if (vmToUpdate.getStatus() != VMStatus.Paused) {
-                            // check exit message to determine wht the vm has
-                            // paused
-                            AuditLogType logType = AuditLogType.UNASSIGNED;
-                            AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmToUpdate.getId());
-                            VmPauseStatus pauseStatus = runningVm.getPauseStatus();
-                            if (pauseStatus.equals(VmPauseStatus.NOERR) || pauseStatus.equals(VmPauseStatus.NONE)) {
-                                // user requested pause, no log needed
-                            } else if (pauseStatus == VmPauseStatus.ENOSPC) {
-                                logType = AuditLogType.VM_PAUSED_ENOSPC;
-                            } else if (pauseStatus == VmPauseStatus.EIO) {
-                                logType = AuditLogType.VM_PAUSED_EIO;
-                            } else if (pauseStatus == VmPauseStatus.EPERM) {
-                                logType = AuditLogType.VM_PAUSED_EPERM;
-                            } else {
-                                logType = AuditLogType.VM_PAUSED_ERROR;
-                            }
+                            // check exit message to determine why the VM is paused
+                            AuditLogType logType = vmPauseStatusToAuditLogType(runningVm.getPauseStatus());
                             if (logType != AuditLogType.UNASSIGNED) {
+                                AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmToUpdate.getId());
                                 auditLog(logable, logType);
                             }
                         }
@@ -1699,6 +1701,23 @@ public class VdsUpdateRunTimeInfo {
         }
         // compare between vm in cache and vm from vdsm
         removeVmsFromCache(running);
+    }
+
+    private AuditLogType vmPauseStatusToAuditLogType(VmPauseStatus pauseStatus) {
+        switch (pauseStatus) {
+        case NOERR:
+        case NONE:
+            // user requested pause, no log needed
+            return AuditLogType.UNASSIGNED;
+        case ENOSPC:
+            return AuditLogType.VM_PAUSED_ENOSPC;
+        case EIO:
+            return AuditLogType.VM_PAUSED_EIO;
+        case EPERM:
+            return AuditLogType.VM_PAUSED_EPERM;
+        default:
+            return AuditLogType.VM_PAUSED_ERROR;
+        }
     }
 
     private static void logVmStatusTransition(VM vmToUpdate, VmDynamic runningVm) {
@@ -1885,19 +1904,9 @@ public class VdsUpdateRunTimeInfo {
             // check if dynamic data changed - update cache and DB
             List<String> props = ObjectIdentityChecker.GetChangedFields(
                     vmToUpdate.argvalue.getDynamicData(), vmNewDynamicData);
-            // dont check fields:
-            props.remove("vmHost");
-            props.remove("runOnVds");
-            props.remove("disks");
-            props.remove("bootSequence");
-            props.remove("lastVdsRunOn");
-            props.remove("hibernationVolHandle");
-            props.remove("exitMessage");
-            props.remove("lastStartTime");
-            props.remove("consoleUserId");
-            props.remove("consoleCurrentUserName");
-            props.remove("runOnce");
-            props.remove("cpuName");
+            // remove all fields that should not be checked:
+            props.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
+
             if (vmNewDynamicData.getStatus() != VMStatus.Up) {
                 props.remove("appList");
                 vmNewDynamicData.setAppList(vmToUpdate.argvalue.getAppList());

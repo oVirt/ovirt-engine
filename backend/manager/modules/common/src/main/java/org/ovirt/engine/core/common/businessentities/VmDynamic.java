@@ -14,17 +14,22 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private VMStatus status;
     private String vmIp;
     private String vmFQDN;
+    @UnchangeableByVdsm
     private String vmHost;
     private Integer vmPid;
+    @UnchangeableByVdsm
     private Date lastStartTime;
     private Date lastStopTime;
     private String guestCurUserName;
-    private String consoleCurUserName;
+    @UnchangeableByVdsm
+    private String consoleCurrentUserName;
+    @UnchangeableByVdsm
     private Guid consoleUserId;
     private Date guestLastLoginTime;
     private Date guestLastLogoutTime;
     private String guestOs;
     private Guid migratingToVds;
+    @UnchangeableByVdsm
     private Guid runOnVds;
     private String appList;
     private Integer display;
@@ -36,21 +41,28 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Boolean kvmEnable;
     private Integer displaySecurePort;
     private Integer utcDiff;
+    @UnchangeableByVdsm
     private Guid lastVdsRunOn;
     private String clientIp;
     private Integer guestRequestedMemory;
+    @UnchangeableByVdsm
     private String hibernationVolHandle;
+    @UnchangeableByVdsm
     private BootSequence bootSequence;
     private VmExitStatus exitStatus;
     private VmPauseStatus pauseStatus;
     private String hash;
     private int guestAgentNicsHash;
-    private String mExitMessage;
+    @UnchangeableByVdsm
+    private String exitMessage;
+    @UnchangeableByVdsm
     private ArrayList<DiskImageDynamic> disks;
     private boolean win2kHackEnabled;
     private Long lastWatchdogEvent;
     private String lastWatchdogAction;
+    @UnchangeableByVdsm
     private boolean runOnce;
+    @UnchangeableByVdsm
     private String cpuName;
 
     @Override
@@ -67,7 +79,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + ((displaySecurePort == null) ? 0 : displaySecurePort.hashCode());
         result = prime * result + displayType.hashCode();
         result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
-        result = prime * result + ((consoleCurUserName == null) ? 0 : consoleCurUserName.hashCode());
+        result = prime * result + ((consoleCurrentUserName == null) ? 0 : consoleCurrentUserName.hashCode());
         result = prime * result + ((guestCurUserName == null) ? 0 : guestCurUserName.hashCode());
         result = prime * result + ((consoleUserId == null) ? 0 : consoleUserId.hashCode());
         result = prime * result + ((guestLastLoginTime == null) ? 0 : guestLastLoginTime.hashCode());
@@ -78,7 +90,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + ((kvmEnable == null) ? 0 : kvmEnable.hashCode());
         result = prime * result + ((lastVdsRunOn == null) ? 0 : lastVdsRunOn.hashCode());
         result = prime * result + ((disks == null) ? 0 : disks.hashCode());
-        result = prime * result + ((mExitMessage == null) ? 0 : mExitMessage.hashCode());
+        result = prime * result + ((exitMessage == null) ? 0 : exitMessage.hashCode());
         result = prime * result + exitStatus.hashCode();
         result = prime * result + (win2kHackEnabled ? 1231 : 1237);
         result = prime * result + ((migratingToVds == null) ? 0 : migratingToVds.hashCode());
@@ -122,7 +134,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(displaySecurePort, other.displaySecurePort)
                 && displayType == other.displayType
                 && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
-                && ObjectUtils.objectsEqual(consoleCurUserName, other.consoleCurUserName)
+                && ObjectUtils.objectsEqual(consoleCurrentUserName, other.consoleCurrentUserName)
                 && ObjectUtils.objectsEqual(guestCurUserName, other.guestCurUserName)
                 && ObjectUtils.objectsEqual(consoleUserId, other.consoleUserId)
                 && ObjectUtils.objectsEqual(guestLastLoginTime, other.guestLastLoginTime)
@@ -133,7 +145,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(kvmEnable, other.kvmEnable)
                 && ObjectUtils.objectsEqual(lastVdsRunOn, other.lastVdsRunOn)
                 && ObjectUtils.objectsEqual(disks, other.disks)
-                && ObjectUtils.objectsEqual(mExitMessage, other.mExitMessage)
+                && ObjectUtils.objectsEqual(exitMessage, other.exitMessage)
                 && exitStatus == other.exitStatus
                 && win2kHackEnabled == other.win2kHackEnabled
                 && ObjectUtils.objectsEqual(migratingToVds, other.migratingToVds)
@@ -155,11 +167,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     }
 
     public String getExitMessage() {
-        return mExitMessage;
+        return exitMessage;
     }
 
     public void setExitMessage(String value) {
-        mExitMessage = value;
+        exitMessage = value;
     }
 
     public VmExitStatus getExitStatus() {
@@ -224,11 +236,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     }
 
     public String getConsoleCurrentUserName() {
-        return consoleCurUserName;
+        return consoleCurrentUserName;
     }
 
     public void setConsoleCurrentUserName(String consoleCurUserName) {
-        this.consoleCurUserName = consoleCurUserName;
+        this.consoleCurrentUserName = consoleCurUserName;
     }
 
     public String getGuestCurrentUserName() {
