@@ -1,14 +1,18 @@
 package org.ovirt.engine.core.bll.network.template;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -73,7 +77,30 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
+        if (!checkPciAndIdeLimit(oldIface, new ArrayList<VmNic>(interfaces), clusterCompatibilityVersion)) {
+            return false;
+        }
+
         return true;
+    }
+
+    private boolean checkPciAndIdeLimit(VmNic oldIface,
+            List<VmNic> interfaces,
+            Version clusterCompatibilityVersion) {
+
+        interfaces.remove(oldIface);
+        interfaces.add(getParameters().getInterface());
+
+        return VmCommand.checkPciAndIdeLimit(getVmTemplate().getOsId(),
+                clusterCompatibilityVersion,
+                getVmTemplate().getNumOfMonitors(),
+                interfaces,
+                new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
+                VmDeviceUtils.isVirtioScsiControllerAttached(getVmTemplate().getId()),
+                VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
+                VmDeviceUtils.isBalloonEnabled(getVmTemplate().getId()),
+                VmDeviceUtils.isSoundDeviceEnabled(getVmTemplate().getId()),
+                getReturnValue().getCanDoActionMessages());
     }
 
     @Override

@@ -65,10 +65,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 getVmTemplate().getNumOfMonitors(),
                 interfacesForCheckPciLimit,
                 new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
-                    VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
-                    VmDeviceUtils.hasWatchdog(getVmId()),
-                    VmDeviceUtils.isBalloonEnabled(getVmId()),
-                    VmDeviceUtils.isSoundDeviceEnabled(getVmId()),
+                    VmDeviceUtils.isVirtioScsiControllerAttached(getVmTemplate().getId()),
+                    VmDeviceUtils.hasWatchdog(getVmTemplate().getId()),
+                    VmDeviceUtils.isBalloonEnabled(getVmTemplate().getId()),
+                    VmDeviceUtils.isSoundDeviceEnabled(getVmTemplate().getId()),
                     getReturnValue().getCanDoActionMessages())) {
             return false;
         }
