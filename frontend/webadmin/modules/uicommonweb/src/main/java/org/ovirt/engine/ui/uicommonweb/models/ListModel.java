@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 public class ListModel<T> extends EntityModel<T>
 {
 
-    public static EventDefinition selectedItemChangedEventDefinition;
+    public static final EventDefinition selectedItemChangedEventDefinition;
     private Event privateSelectedItemChangedEvent;
 
     public Event getSelectedItemChangedEvent()
@@ -29,7 +29,7 @@ public class ListModel<T> extends EntityModel<T>
         privateSelectedItemChangedEvent = value;
     }
 
-    public static EventDefinition selectedItemsChangedEventDefinition;
+    public static final EventDefinition selectedItemsChangedEventDefinition;
     private Event privateSelectedItemsChangedEvent;
 
     public Event getSelectedItemsChangedEvent()
@@ -42,7 +42,7 @@ public class ListModel<T> extends EntityModel<T>
         privateSelectedItemsChangedEvent = value;
     }
 
-    public static EventDefinition itemsChangedEventDefinition;
+    public static final EventDefinition itemsChangedEventDefinition;
     private Event privateItemsChangedEvent;
 
     public Event getItemsChangedEvent()

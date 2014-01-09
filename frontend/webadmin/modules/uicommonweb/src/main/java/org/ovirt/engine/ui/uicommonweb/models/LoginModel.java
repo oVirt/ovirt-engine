@@ -25,7 +25,7 @@ public class LoginModel extends Model
     public static final String BeginLoginStage = "BeginTest"; //$NON-NLS-1$
     public static final String EndLoginStage = "EndTest"; //$NON-NLS-1$
 
-    public static EventDefinition loggedInEventDefinition;
+    public static final EventDefinition loggedInEventDefinition;
     private Event privateLoggedInEvent;
 
     public Event getLoggedInEvent()
@@ -38,7 +38,7 @@ public class LoginModel extends Model
         privateLoggedInEvent = value;
     }
 
-    public static EventDefinition loginFailedEventDefinition;
+    public static final EventDefinition loginFailedEventDefinition;
     private Event privateLoginFailedEvent;
 
     public Event getLoginFailedEvent()

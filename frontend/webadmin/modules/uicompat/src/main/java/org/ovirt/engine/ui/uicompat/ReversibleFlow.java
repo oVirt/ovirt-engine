@@ -12,7 +12,7 @@ public class ReversibleFlow {
     int rollbackIndex;
     Object context;
 
-    public static EventDefinition completeEventDefinition;
+    public static final EventDefinition completeEventDefinition;
     private Event completeEvent;
 
     public Event getCompleteEvent() {

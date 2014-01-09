@@ -24,12 +24,12 @@ public class EngineEncryptionUtils {
 
     private static final Log log = LogFactory.getLog(EngineEncryptionUtils.class);
 
-    protected static File keystoreFile;
-    protected static KeyStore.PasswordProtection keystorePassword;
-    protected static String keystoreAlias;
+    private static final File keystoreFile;
+    private static final KeyStore.PasswordProtection keystorePassword;
+    private static final String keystoreAlias;
 
-    protected static File truststoreFile;
-    protected static KeyStore.PasswordProtection truststorePassword;
+    private static final File truststoreFile;
+    private static final KeyStore.PasswordProtection truststorePassword;
 
     static {
         EngineLocalConfig config = EngineLocalConfig.getInstance();

@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class SanTargetModel extends EntityModel
 {
 
-    public static EventDefinition loggedInEventDefinition;
+    public static final EventDefinition loggedInEventDefinition;
     private Event privateLoggedInEvent;
 
     public Event getLoggedInEvent()

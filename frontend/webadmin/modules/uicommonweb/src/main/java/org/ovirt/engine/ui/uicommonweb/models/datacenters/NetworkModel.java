@@ -45,7 +45,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class NetworkModel extends Model
 {
-    protected static String ENGINE_NETWORK =
+    protected static final String ENGINE_NETWORK =
             (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private EntityModel privateName;

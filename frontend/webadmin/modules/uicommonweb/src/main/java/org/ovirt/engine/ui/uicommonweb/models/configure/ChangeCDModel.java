@@ -12,7 +12,7 @@ public class ChangeCDModel extends Model
 
     // public event EventHandler Executed = delegate { };
 
-    public static EventDefinition executedEventDefinition;
+    public static final EventDefinition executedEventDefinition;
     private Event privateExecutedEvent;
 
     public Event getExecutedEvent()

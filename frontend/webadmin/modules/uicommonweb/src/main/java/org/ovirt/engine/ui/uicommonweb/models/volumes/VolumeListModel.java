@@ -61,8 +61,8 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
 
-    public static Integer REPLICATE_COUNT_DEFAULT = 2;
-    public static Integer STRIPE_COUNT_DEFAULT = 4;
+    public static final Integer REPLICATE_COUNT_DEFAULT = 2;
+    public static final Integer STRIPE_COUNT_DEFAULT = 4;
 
     private UICommand newVolumeCommand;
 

@@ -53,7 +53,7 @@ public class QueryHelper {
      * REVISIT: can we safely just drop the return type specifier?
      * (doesn't seem to have any effect in the powershell case)
      */
-    public static Map<Class<?>, String> RETURN_TYPES;
+    private static final Map<Class<?>, String> RETURN_TYPES;
 
     static {
         RETURN_TYPES = new HashMap<Class<?>, String>();

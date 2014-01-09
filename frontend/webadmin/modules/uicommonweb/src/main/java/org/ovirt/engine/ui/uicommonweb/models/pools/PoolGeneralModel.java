@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicompat.Translator;
 public class PoolGeneralModel extends EntityModel
 {
 
-    public static EventDefinition updateCompleteEventDefinition;
+    public static final EventDefinition updateCompleteEventDefinition;
     private Event privateUpdateCompleteEvent;
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();

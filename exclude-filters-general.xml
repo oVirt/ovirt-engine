@@ -29,15 +29,6 @@
     <!--
     Currently Ignoring.
     findbugs reason:
-    MS: May expose internal static state by storing a mutable object into a static field (EI_EXPOSE_STATIC_REP2)
-    -->
-    <Match>
-        <Bug code="MS" />
-    </Match>
-
-    <!--
-    Currently Ignoring.
-    findbugs reason:
     REC: Exception is caught when Exception is not thrown (REC_CATCH_EXCEPTION)
     -->
     <Match>

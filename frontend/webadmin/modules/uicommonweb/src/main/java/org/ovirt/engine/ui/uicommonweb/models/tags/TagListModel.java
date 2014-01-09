@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class TagListModel extends SearchableListModel
 {
 
-    public static EventDefinition resetRequestedEventDefinition;
+    public static final EventDefinition resetRequestedEventDefinition;
     private Event privateResetRequestedEvent;
 
     public Event getResetRequestedEvent()

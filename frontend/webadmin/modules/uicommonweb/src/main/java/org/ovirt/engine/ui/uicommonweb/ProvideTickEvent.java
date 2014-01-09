@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 @SuppressWarnings("unused")
 public final class ProvideTickEvent
 {
-    public static EventDefinition definition;
+    public static final EventDefinition definition;
 
     static
     {

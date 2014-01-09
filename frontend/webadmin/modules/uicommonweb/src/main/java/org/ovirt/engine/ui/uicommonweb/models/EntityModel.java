@@ -28,7 +28,7 @@ public class EntityModel<T> extends Model implements HasHandlers
 
     private final List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
-    public static EventDefinition entityChangedEventDefinition;
+    public static final EventDefinition entityChangedEventDefinition;
     private Event privateEntityChangedEvent;
 
     public Event getEntityChangedEvent()

@@ -33,7 +33,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
     //timeo nfs option max value
     private final static short TIMEOUT_MAX = 6000;
 
-    public static EventDefinition pathChangedEventDefinition;
+    public static final EventDefinition pathChangedEventDefinition;
     private Event pathChangedEvent;
 
     public Event getPathChangedEvent() {

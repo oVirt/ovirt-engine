@@ -48,9 +48,9 @@ public class BookmarkListModel extends SearchableListModel
 
     private static final BookmarksComparator COMPARATOR = new BookmarksComparator();
 
-    public static EventDefinition navigatedEventDefinition;
+    public static final EventDefinition navigatedEventDefinition;
 
-    public static EventDefinition savedEventDefinition;
+    public static final EventDefinition savedEventDefinition;
 
     private Event privateNavigatedEvent;
 

@@ -30,13 +30,13 @@ import java.util.List;
 
 public abstract class ImportExportRepoImageBaseModel extends EntityModel implements ICommandTarget {
 
-    protected static EventDefinition selectedItemChangedEventDefinition;
+    protected static final EventDefinition selectedItemChangedEventDefinition;
 
     static {
         selectedItemChangedEventDefinition = new EventDefinition("SelectedItemChanged", ListModel.class); //$NON-NLS-1$
     }
 
-    protected static UIConstants constants = ConstantsManager.getInstance().getConstants();
+    protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     protected List<EntityModel> entities;
 

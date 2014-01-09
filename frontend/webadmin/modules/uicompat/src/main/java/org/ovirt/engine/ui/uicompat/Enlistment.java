@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicompat;
 
 public class Enlistment {
 
-    public static EventDefinition doneEventDefinition;
+    public static final EventDefinition doneEventDefinition;
     private Event doneEvent;
 
     protected Event getDoneEvent() {

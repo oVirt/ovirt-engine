@@ -33,7 +33,7 @@ public class VmGeneralModel extends EntityModel
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
-    public static EventDefinition updateCompleteEventDefinition;
+    public static final EventDefinition updateCompleteEventDefinition;
     private Event privateUpdateCompleteEvent;
 
     public Event getUpdateCompleteEvent()

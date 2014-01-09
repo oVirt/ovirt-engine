@@ -1,2 +1,11 @@
 <FindBugsFilter>
+    <!--
+    Currently Ignoring.
+    findbugs reason:
+    MS: May expose internal static state by storing a mutable object into a static field
+    -->
+    <Match>
+        <Class name="org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter" />
+        <Bug pattern="MS_SHOULD_BE_FINAL" />
+    </Match>
 </FindBugsFilter>

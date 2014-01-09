@@ -16,7 +16,7 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* extends IVdcQueryable */> extends
         AbstractBackendResource<R, Q> {
 
-    protected static final String[] STRICTLY_IMMUTABLE = { "id" };
+    private static final String[] STRICTLY_IMMUTABLE = { "id" };
 
     protected String id;
     protected Guid guid;

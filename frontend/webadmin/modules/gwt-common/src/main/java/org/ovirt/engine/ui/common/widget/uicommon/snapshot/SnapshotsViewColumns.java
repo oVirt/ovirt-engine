@@ -19,7 +19,7 @@ public class SnapshotsViewColumns {
     private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
 
-    public static TextColumnWithTooltip<Snapshot> dateColumn = new TextColumnWithTooltip<Snapshot>() {
+    public static final TextColumnWithTooltip<Snapshot> dateColumn = new TextColumnWithTooltip<Snapshot>() {
         @Override
         public String getValue(Snapshot snapshot) {
             if (snapshot.getType() == SnapshotType.ACTIVE) {
@@ -29,14 +29,14 @@ public class SnapshotsViewColumns {
         }
     };
 
-    public static TextColumnWithTooltip<Snapshot> statusColumn = new EnumColumn<Snapshot, SnapshotStatus>() {
+    public static final TextColumnWithTooltip<Snapshot> statusColumn = new EnumColumn<Snapshot, SnapshotStatus>() {
         @Override
         protected SnapshotStatus getRawValue(Snapshot snapshot) {
             return snapshot.getStatus();
         }
     };
 
-    public static CheckboxColumn<Snapshot> memoryColumn = new CheckboxColumn<Snapshot>() {
+    public static final CheckboxColumn<Snapshot> memoryColumn = new CheckboxColumn<Snapshot>() {
         @Override
         public Boolean getValue(Snapshot object) {
             return !object.getMemoryVolume().isEmpty();
@@ -48,7 +48,7 @@ public class SnapshotsViewColumns {
         }
     };
 
-    public static SafeHtmlColumn<Snapshot> descriptionColumn = new SafeHtmlColumn<Snapshot>() {
+    public static final SafeHtmlColumn<Snapshot> descriptionColumn = new SafeHtmlColumn<Snapshot>() {
         @Override
         public final SafeHtml getValue(Snapshot snapshot) {
             // Get raw description string (ignore < and > characters).

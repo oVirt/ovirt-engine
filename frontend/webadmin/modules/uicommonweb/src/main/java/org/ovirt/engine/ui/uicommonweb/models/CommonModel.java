@@ -56,7 +56,7 @@ public class CommonModel extends ListModel
 {
 
     // TODO: "SingedOut" is misspelled.
-    public static EventDefinition signedOutEventDefinition = new EventDefinition("SingedOut", CommonModel.class); //$NON-NLS-1$
+    public static final EventDefinition signedOutEventDefinition = new EventDefinition("SingedOut", CommonModel.class); //$NON-NLS-1$
     private Event privateSignedOutEvent;
     private UICommand privateSearchCommand;
     private UICommand privateConfigureCommand;

@@ -26,7 +26,7 @@ import org.ovirt.engine.api.common.util.ReflectionHelper;
 
 public abstract class AbstractUpdatableResource<R extends BaseResource> {
 
-    protected static final String[] STRICTLY_IMMUTABLE = {"id"};
+    private static final String[] STRICTLY_IMMUTABLE = {"id"};
 
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
 

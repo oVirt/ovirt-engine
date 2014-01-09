@@ -3,14 +3,14 @@ package org.ovirt.engine.ui.uicompat;
 
 public class PreparingEnlistment extends Enlistment {
 
-    public static EventDefinition preparedEventDefinition;
+    public static final EventDefinition preparedEventDefinition;
     private Event preparedEvent;
 
     protected Event getPreparedEvent() {
         return preparedEvent;
     }
 
-    public static EventDefinition rollbackEventDefinition;
+    public static final EventDefinition rollbackEventDefinition;
     private Event rollbackEvent;
 
     protected Event getRollbackEvent() {

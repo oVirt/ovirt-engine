@@ -34,7 +34,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
-    public static EventDefinition searchCompletedEventDefinition;
+    public static final EventDefinition searchCompletedEventDefinition;
     private Event privateSearchCompletedEvent;
 
     public Event getSearchCompletedEvent()

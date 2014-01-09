@@ -85,7 +85,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class UserPortalListModel extends AbstractUserPortalListModel {
 
-    public static EventDefinition searchCompletedEventDefinition;
+    public static final EventDefinition searchCompletedEventDefinition;
     private Event privateSearchCompletedEvent;
 
     public Event getSearchCompletedEvent()

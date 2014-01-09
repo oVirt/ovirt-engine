@@ -34,7 +34,7 @@ public class PolicyUnitPanel extends FocusPanel {
     protected int position;
     WidgetStyle style;
 
-    protected static String lastDragData = ""; //$NON-NLS-1$
+    private static String lastDragData = ""; //$NON-NLS-1$
 
     public PolicyUnitPanel(PolicyUnit policyUnit,
             NewClusterPolicyModel model,

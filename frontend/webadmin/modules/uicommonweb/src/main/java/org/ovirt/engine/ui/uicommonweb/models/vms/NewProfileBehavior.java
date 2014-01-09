@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 public class NewProfileBehavior extends ProfileBehavior {
 
-    public static String ENGINE_NETWORK_NAME =
+    public static final String ENGINE_NETWORK_NAME =
             (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     @Override

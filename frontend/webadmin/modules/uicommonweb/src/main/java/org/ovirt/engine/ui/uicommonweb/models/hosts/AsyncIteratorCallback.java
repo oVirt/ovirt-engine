@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 
 public class AsyncIteratorCallback {
 
-    public static EventDefinition notifyEventDefinition;
+    public static final EventDefinition notifyEventDefinition;
 
     private Event notifyEvent;
 

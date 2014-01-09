@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class NetworkQoSModel extends BaseNetworkQosModel {
 
-    public static NetworkQoS EMPTY_QOS;
+    public static final NetworkQoS EMPTY_QOS;
 
     static {
         EMPTY_QOS = new NetworkQoS();

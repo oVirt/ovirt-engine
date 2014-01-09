@@ -39,7 +39,7 @@ public abstract class ConsoleModel extends EntityModel {
         return EJECT_LABEL;
     }
 
-    public static EventDefinition errorEventDefinition;
+    public static final EventDefinition errorEventDefinition;
     private Event privateErrorEvent;
 
     public Event getErrorEvent()

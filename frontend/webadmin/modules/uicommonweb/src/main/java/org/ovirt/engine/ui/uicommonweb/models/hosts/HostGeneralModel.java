@@ -47,7 +47,7 @@ public class HostGeneralModel extends EntityModel
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
-    public static EventDefinition requestEditEventDefinition;
+    public static final EventDefinition requestEditEventDefinition;
     private Event privateRequestEditEvent;
 
     public Event getRequestEditEvent()
@@ -60,7 +60,7 @@ public class HostGeneralModel extends EntityModel
         privateRequestEditEvent = value;
     }
 
-    public static EventDefinition requestGOToEventsTabEventDefinition;
+    public static final EventDefinition requestGOToEventsTabEventDefinition;
     private Event privateRequestGOToEventsTabEvent;
 
     public Event getRequestGOToEventsTabEvent()

@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class TagModel extends Model implements TreeNodeInfo {
 
-    public static EventDefinition selectionChangedEventDefinition;
+    public static final EventDefinition selectionChangedEventDefinition;
     private Event privateSelectionChangedEvent;
 
     public Event getSelectionChangedEvent()
