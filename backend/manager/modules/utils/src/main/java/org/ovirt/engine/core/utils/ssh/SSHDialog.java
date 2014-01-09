@@ -320,6 +320,12 @@ public class SSHDialog implements Closeable {
                     poutStdout,
                     stderr
                 );
+
+                // the apache-sshd does not
+                // flush streams nor close them
+                // this leads other side of pipe
+                // to miss last bytes
+                poutStdout.flush();
             }
             catch (Exception e) {
                 if (stderr.size() == 0) {

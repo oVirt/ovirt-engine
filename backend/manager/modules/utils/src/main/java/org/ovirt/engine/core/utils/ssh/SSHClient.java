@@ -710,6 +710,12 @@ public class SSHClient implements Closeable {
                 remoteDigest
             );
 
+            // the apache-sshd does not
+            // flush streams nor close them
+            // this leads other side of pipe
+            // to miss last bytes
+            pout.flush();
+
             t.join(THREAD_JOIN_WAIT_TIME);
             if (t.getState() != Thread.State.TERMINATED) {
                 throw new IllegalStateException("Cannot stop SSH stream thread");
