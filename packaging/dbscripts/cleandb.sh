@@ -33,7 +33,7 @@ DEBUG () {
     fi
 }
 
-while getopts hs:d:u:p:lv option; do
+while getopts hs:d:u:p:l:v option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;
