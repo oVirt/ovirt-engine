@@ -7,7 +7,7 @@ public class RHDSSimpleLdapQueryExecutionFormatter extends SimpleLdapQueryExecut
     protected String getDisplayFilter(LdapQueryMetadata queryMetadata) {
         return String.format(queryMetadata.getFilter(),
                 getEncodedParameters(queryMetadata.getQueryData().getFilterParameters(),
-                        queryMetadata.getLdapGuidEncoder()));
+                        queryMetadata.getLdapIdEncoder()));
     }
 
 }

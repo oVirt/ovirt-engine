@@ -17,6 +17,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
@@ -54,7 +55,7 @@ public class ADUserContextMapper implements ContextMapper {
             Object adObjectGuid = attributes.get(objectguid.name()).get(0);
             byte[] guidBytes = (byte[]) adObjectGuid;
             Guid guid = new Guid(guidBytes, false);
-            user.setUserId(guid);
+            user.setUserId(new ExternalId(guid.toByteArray()));
 
             // Getting other string properties
             Attribute att = attributes.get(userprincipalname.name());

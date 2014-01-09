@@ -24,9 +24,9 @@ public interface LdapQueryMetadata {
 
     public void setReturningAttributes(String[] returningAttributes);
 
-    public LdapGuidEncoder getLdapGuidEncoder();
+    public LdapIdEncoder getLdapIdEncoder();
 
-    public void setLdapGuidEncoder(LdapGuidEncoder ldapGuidEncoder);
+    public void setLdapIdEncoder(LdapIdEncoder ldapIdEncoder);
 
     public LdapQueryFormatter<LdapQueryExecution> getFormatter();
 

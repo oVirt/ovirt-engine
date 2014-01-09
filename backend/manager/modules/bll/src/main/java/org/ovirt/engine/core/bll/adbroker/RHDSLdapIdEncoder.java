@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.bll.adbroker;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RHDSLdapGuidEncoder implements LdapGuidEncoder {
-    private static final RHDSLdapGuidEncoder instance = new RHDSLdapGuidEncoder();
+public class RHDSLdapIdEncoder implements LdapIdEncoder {
+    private static final RHDSLdapIdEncoder instance = new RHDSLdapIdEncoder();
 
-    public static RHDSLdapGuidEncoder getInstance() {
+    public static RHDSLdapIdEncoder getInstance() {
         return instance;
     }
 
-    private RHDSLdapGuidEncoder() {
+    private RHDSLdapIdEncoder() {
         // Empty on purpose.
     }
 
@@ -26,7 +27,8 @@ public class RHDSLdapGuidEncoder implements LdapGuidEncoder {
     }
 
     @Override
-    public String encodeGuid(Guid guid) {
+    public String encodedId(ExternalId id) {
+        Guid guid = new Guid(id.getBytes(), true);
         return getNsUniqueIdFromGuidString(guid.toString());
     }
 

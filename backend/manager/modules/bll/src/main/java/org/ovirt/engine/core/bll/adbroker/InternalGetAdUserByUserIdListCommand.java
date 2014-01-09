@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.compat.Guid;
-
-
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class InternalGetAdUserByUserIdListCommand extends InternalBrokerCommandBase {
-    private java.util.ArrayList<Guid> getUserIds() {
-        return ((LdapSearchByIdListParameters) getParameters()).getUserIds();
+    private List<ExternalId> getUserIds() {
+        return ((LdapSearchByIdListParameters) getParameters()).getIds();
     }
 
     public InternalGetAdUserByUserIdListCommand(LdapSearchByIdListParameters parameters) {
@@ -20,8 +18,8 @@ public class InternalGetAdUserByUserIdListCommand extends InternalBrokerCommandB
     @Override
     protected void executeQuery() {
         List<LdapUser> results = new ArrayList<LdapUser>();
-        for (Guid guid : getUserIds()) {
-            LdapUser user = InternalBrokerUtils.getUserByUserGuid(guid);
+        for (ExternalId id : getUserIds()) {
+            LdapUser user = InternalBrokerUtils.getUserById(id);
             if (user != null) {
                 results.add(user);
             }

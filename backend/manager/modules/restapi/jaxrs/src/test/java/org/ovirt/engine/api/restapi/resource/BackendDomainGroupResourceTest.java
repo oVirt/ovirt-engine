@@ -17,7 +17,7 @@ public class BackendDomainGroupResourceTest
     extends AbstractBackendSubResourceTest<Group, LdapGroup, BackendDomainGroupResource> {
 
     public BackendDomainGroupResourceTest() {
-        super(new BackendDomainGroupResource(GUIDS[1].toString(), null));
+        super(new BackendDomainGroupResource(EXTERNAL_IDS[1], null));
     }
 
     @Override
@@ -27,30 +27,17 @@ public class BackendDomainGroupResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
-        control.replay();
-        try {
-            new BackendDomainGroupResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
-    }
-
-    @Test
     public void testGet() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(1, false);
-
         control.replay();
-
         verifyModel(resource.get(), 1);
     }
 
     @Override
     protected void verifyModel(Group model, int index) {
-        assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(NAMES[index], model.getName());
     }
 
@@ -59,12 +46,12 @@ public class BackendDomainGroupResourceTest
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(1, true);
-
         control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -82,7 +69,7 @@ public class BackendDomainGroupResourceTest
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-            new Object[] { DOMAIN, GUIDS[index] },
+            new Object[] { DOMAIN, EXTERNAL_IDS[index] },
             notFound? null: getEntity(index)
         );
     }
@@ -90,7 +77,7 @@ public class BackendDomainGroupResourceTest
     @Override
     protected LdapGroup getEntity(int index) {
         LdapGroup entity = new LdapGroup();
-        entity.setid(GUIDS[index]);
+        entity.setid(EXTERNAL_IDS[index]);
         entity.setname(NAMES[index]);
         return entity;
     }

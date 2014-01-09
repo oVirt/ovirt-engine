@@ -13,12 +13,12 @@ public class SimpleLdapQueryExecutionFormatter extends LdapQueryExecutionFormatt
         String filter =
                 String.format(queryMetadata.getFilter(),
                         getEncodedParameters(queryMetadata.getQueryData().getFilterParameters(),
-                                queryMetadata.getLdapGuidEncoder()));
+                                queryMetadata.getLdapIdEncoder()));
 
         String baseDN =
                 String.format(queryMetadata.getBaseDN(),
                         getEncodedParameters(queryMetadata.getQueryData().getBaseDNParameters(),
-                                queryMetadata.getLdapGuidEncoder()));
+                                queryMetadata.getLdapIdEncoder()));
 
         return new LdapQueryExecution(filter,
                 getDisplayFilter(queryMetadata),

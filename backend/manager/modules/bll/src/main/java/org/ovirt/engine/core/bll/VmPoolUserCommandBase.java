@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> extends VmPoolSimpleUserCommandBase<T> {
@@ -13,12 +14,10 @@ public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> exte
     }
 
     protected void initUser() {
-        if (getDbUser() == null) {
-            setDbUser(UserCommandBase.initUser(
-                getParameters().getSessionId(),
-                getParameters().getUser().getDomain(),
-                getParameters().getUser().getId()
-            ));
+        DbUser user = getDbUser();
+        if (user != null && user.getId() == null) {
+            user.setId(Guid.newGuid());
+            getDbUserDAO().save(user);
         }
     }
 }

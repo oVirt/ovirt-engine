@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.AdUsersSearchParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 @RunWith(Parameterized.class)
 public class LdapUserSearchQueryTest extends LdapSearchQueryTestBase {
@@ -33,7 +33,7 @@ public class LdapUserSearchQueryTest extends LdapSearchQueryTestBase {
     protected LdapUser getExpectedResult() {
         LdapUser user = new LdapUser();
         user.setUserName(NAME_TO_SEARCH);
-        user.setUserId(Guid.newGuid());
+        user.setUserId(new ExternalId(0));
         user.setDomainControler(DOMAIN);
         return user;
     }

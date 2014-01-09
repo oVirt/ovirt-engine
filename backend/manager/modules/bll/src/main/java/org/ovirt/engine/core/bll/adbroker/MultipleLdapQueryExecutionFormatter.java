@@ -23,14 +23,14 @@ public class MultipleLdapQueryExecutionFormatter extends LdapQueryExecutionForma
 
         Object[] encodedFilterParameters =
                 getEncodedParameters(queryMetadata.getQueryData().getFilterParameters(),
-                        queryMetadata.getLdapGuidEncoder());
+                        queryMetadata.getLdapIdEncoder());
 
         String filter = getFilter(queryMetadata, encodedFilterParameters);
 
         String baseDN =
                 String.format(queryMetadata.getBaseDN(),
                         getEncodedParameters(queryMetadata.getQueryData().getBaseDNParameters(),
-                                queryMetadata.getLdapGuidEncoder()));
+                                queryMetadata.getLdapIdEncoder()));
 
         return new LdapQueryExecution(filter,
                 displayFilter,

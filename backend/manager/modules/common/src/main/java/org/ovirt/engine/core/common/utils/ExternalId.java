@@ -9,26 +9,83 @@ import java.util.Arrays;
  * bytes.
  */
 public class ExternalId implements Serializable {
-    // Serialization identifier:
     private static final long serialVersionUID = 7859034308053227906L;
 
-    // The plain bytes of the identifier:
+    /**
+     * Creates an identifier from an array of bytes.
+     */
+    public static ExternalId fromBytes(byte[] bytes) {
+        return new ExternalId(bytes);
+    }
+
+    /**
+     * Convers an hexadecimal representation of an array of bytes into an external identifier ignoring any separators
+     * or spaces that may be present. Anything that isn't an hexadecimal character is considered a separator and thus
+     * ignored.
+     *
+     * @param text the hexadecimal representation of the identifier, containing hexadedimal digits in lower or upper
+     *     case and optional separators
+     */
+    public static ExternalId fromHex(String text) {
+        byte[] buffer = new byte[text.length() / 2];
+        int j = 0;
+        int k = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char digit = text.charAt(i);
+            int value;
+            if (digit >= '0' && digit <= '9') {
+                value = digit - '0';
+            }
+            else if (digit >= 'a' && digit <= 'f') {
+                value = 10 + (digit - 'a');
+            }
+            else if (digit >= 'A' && digit <= 'F') {
+                value = 10 + (digit - 'A');
+            }
+            else {
+                continue;
+            }
+            if ((j & 1) == 0) {
+                buffer[k] = (byte) (value << 4);
+            }
+            else {
+                buffer[k] |= value;
+                k++;
+            }
+            j++;
+        }
+        if (buffer.length > k) {
+            byte[] tmp = new byte[k];
+            System.arraycopy(buffer, 0, tmp, 0, k);
+            buffer = tmp;
+        }
+        return new ExternalId(buffer);
+    }
+
+    /**
+     * The plain bytes of the identifier.
+     */
     private byte[] bytes;
 
-    // The hash code is computed when the identifier is created in order to
-    // avoid having to compute it repeatedly when the identifier is used as
-    // a key in a hash map:
+    /**
+     * The hash code is computed when the identifier is created in order to avoid having to compute it repeatedly when
+     * the identifier is used as a key in a hash map.
+     */
     private int hash;
 
     /**
-     * This constructor is intended only for serialization support, please
-     * don't use it directly.
+     * This constructor is intended only for serialization support, please don't use it directly.
      */
     public ExternalId() {
         bytes = new byte[0];
         hash = Arrays.hashCode(bytes);
     }
 
+    /**
+     * Creates a new identifier from the given bytes.
+     *
+     * @param values the bytes
+     */
     public ExternalId(byte[] values) {
         bytes = values;
         hash = Arrays.hashCode(bytes);
@@ -72,7 +129,13 @@ public class ExternalId implements Serializable {
         return bytes;
     }
 
-    public String toString() {
+    /**
+     * Generates the hexadecimal representation of the identifier. Each byte is represented by two lowercase hexadecimal
+     * characters, without any separator.
+     *
+     * @return a string containing the hexadecimal representation of the identifier
+     */
+    public String toHex() {
         StringBuilder buffer = new StringBuilder(2 * bytes.length);
         for (int i = 0; i < bytes.length; i++) {
             String text = Integer.toHexString(bytes[i] & 0xff);
@@ -82,6 +145,17 @@ public class ExternalId implements Serializable {
             buffer.append(text);
         }
         return buffer.toString();
+    }
+
+    /**
+     * Creates a string representation of the identifier. The actual representation may vary from version to version, so
+     * avoid relying on it. If you need to rely on the representation use other methods, like {@link #toHex()}.
+     *
+     * @return a string containing a representation of the identifier
+     */
+    @Override
+    public String toString() {
+        return toHex();
     }
 
     @Override

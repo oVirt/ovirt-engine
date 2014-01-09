@@ -1,11 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import org.apache.commons.codec.binary.Hex;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.DomainGroupResource;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This resource corresponds to a group that exists in some directory accessible by the engine, and that may or may not
@@ -17,10 +20,12 @@ public class BackendDomainGroupResource
         implements DomainGroupResource {
 
     private BackendDomainGroupsResource parent;
+    private ExternalId id;
 
-    public BackendDomainGroupResource(String id, BackendDomainGroupsResource parent) {
-        super(id, Group.class, LdapGroup.class);
+    public BackendDomainGroupResource(ExternalId id, BackendDomainGroupsResource parent) {
+        super(Hex.encodeHexString(id.getBytes()), Group.class, LdapGroup.class);
         this.parent = parent;
+        this.id = id;
     }
 
     public BackendDomainGroupsResource getParent() {
@@ -33,16 +38,21 @@ public class BackendDomainGroupResource
 
     @Override
     public Group get() {
-        DirectoryIdQueryParameters queryParameters = new DirectoryIdQueryParameters(
-            parent.getDirectory().getName(),
-            guid
-        );
-        return performGet(VdcQueryType.GetDirectoryGroupById, queryParameters, BaseResource.class);
+        String directory = parent.getDirectory().getName();
+        DirectoryIdQueryParameters parameters = new DirectoryIdQueryParameters(directory, id);
+        return performGet(VdcQueryType.GetDirectoryGroupById, parameters, BaseResource.class);
     }
 
     @Override
     protected Group doPopulate(Group model, LdapGroup entity) {
         return model;
+    }
+
+    // We need to override this method because the native identifier of this
+    // resource isn't an UUID.
+    @Override
+    protected Guid asGuidOr404(String id) {
+        return null;
     }
 
 }

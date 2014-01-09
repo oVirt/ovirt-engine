@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendBaseTest extends Assert {
@@ -59,6 +60,22 @@ public abstract class AbstractBackendBaseTest extends Assert {
             new Guid("11111111-1111-1111-1111-111111111111"),
             new Guid("22222222-2222-2222-2222-222222222222"),
             new Guid("33333333-3333-3333-3333-333333333333") };
+
+    /**
+     * External identifiers used by directory users and groups.
+     */
+    protected static final ExternalId[] EXTERNAL_IDS = {
+        new ExternalId(0),
+        new ExternalId(1),
+        new ExternalId(2),
+        new ExternalId(3),
+    };
+
+    /**
+     * External identifier of a non existing user or group.
+     */
+    protected static final ExternalId NON_EXISTANT_EXTERNAL_ID = new ExternalId(9);
+
     protected static final Guid NON_EXISTANT_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     protected static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
     protected static final String[] NAMES = { "sedna", "eris", "orcus" };

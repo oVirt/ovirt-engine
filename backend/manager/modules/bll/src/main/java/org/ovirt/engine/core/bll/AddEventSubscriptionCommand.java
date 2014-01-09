@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -40,24 +39,11 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                 // validate event
                 List<EventMap> eventMap = DbFacade.getInstance().getEventDao().getEventMapByName(eventName);
                 if (eventMap.size() > 0) {
-                    String domain = getParameters().getDomain();
                     // Validate user
                     DbUser user = DbFacade.getInstance().getDbUserDao().get(subscriberId);
                     if (user == null) {
-                        // If user exists in AD and does not exist in DB - try to add it to DB
-                        // If an exception is thrown while trying, handle it and and fail with the relevant message
-                        try {
-                            user = UserCommandBase.initUser(
-                                getParameters().getSessionId(),
-                                domain,
-                                subscriberId
-                            );
-                            retValue = ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(),
-                                                user);
-                        } catch (VdcBLLException vdcBllException) {
-                            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-                            retValue = false;
-                        }
+                        addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
+                        retValue = false;
                     } else {
                         retValue = ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(), user);
                     }

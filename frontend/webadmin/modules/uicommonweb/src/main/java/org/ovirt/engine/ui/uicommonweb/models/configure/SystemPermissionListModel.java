@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -171,6 +171,7 @@ public class SystemPermissionListModel extends SearchableListModel
                 group.setId(user.getId());
                 group.setName(user.getFirstName());
                 group.setDomain(user.getDomain());
+                group.setExternalId(user.getExternalId());
                 PermissionsOperationsParameters tempVar2 = new PermissionsOperationsParameters();
                 tempVar2.setPermission(perm);
                 tempVar2.setGroup(group);

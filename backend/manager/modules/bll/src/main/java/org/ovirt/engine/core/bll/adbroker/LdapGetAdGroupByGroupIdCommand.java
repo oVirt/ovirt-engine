@@ -2,15 +2,16 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 //
 // JTODO - this needs testing -- Livnat
 //
 
 public class LdapGetAdGroupByGroupIdCommand extends LdapWithConfiguredCredentialsCommandBase {
-    private Guid getGroupId() {
+    private ExternalId getGroupId() {
         return ((LdapSearchByIdParameters) getParameters()).getId();
     }
 
@@ -31,8 +32,9 @@ public class LdapGetAdGroupByGroupIdCommand extends LdapWithConfiguredCredential
 
         if (searchResult != null) {
             GroupSearchResult result = (GroupSearchResult) searchResult;
-            Guid groupId = result.getGuid();
-            if (!getGroupId().equals(groupId)) {
+            ExternalId groupId = result.getId();
+
+            if (ObjectUtils.notEqual(getGroupId(), groupId)) {
                 /**
                  * Cannot find group - group is Inactive
                  */

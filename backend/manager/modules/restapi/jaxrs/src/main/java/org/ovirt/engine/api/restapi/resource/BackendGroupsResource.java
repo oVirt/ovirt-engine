@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -130,28 +131,6 @@ public class BackendGroupsResource
         return collection;
     }
 
-    public DbGroup lookupGroupById(Guid id) {
-        return getEntity(
-            DbGroup.class,
-            VdcQueryType.GetDbGroupById,
-            new IdQueryParameters(id),
-            id.toString()
-        );
-    }
-
-    private class GroupIdResolver extends EntityIdResolver<Guid> {
-        private Guid id;
-
-        public GroupIdResolver(Guid id) {
-            this.id = id;
-        }
-
-        @Override
-        public DbGroup lookupEntity(Guid id) throws BackendFailureException {
-            return lookupGroupById(this.id);
-        }
-    }
-
     @Override
     protected Group doPopulate(Group model, DbGroup entity) {
         return model;
@@ -186,43 +165,39 @@ public class BackendGroupsResource
                 .entity("No such group: " + group.getName() + " in directory " + directoryName)
                 .build();
         }
-        DirectoryIdParameters addGroup = new DirectoryIdParameters();
-        addGroup.setDirectory(directoryName);
-        addGroup.setId(directoryGroup.getid());
-        return performCreate(
-            VdcActionType.AddGroup,
-            addGroup,
-            new GroupIdResolver(directoryGroup.getid()),
-            BaseResource.class
-        );
+        DirectoryIdParameters parameters = new DirectoryIdParameters();
+        parameters.setDirectory(directoryName);
+        parameters.setId(directoryGroup.getid());
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbGroupById, IdQueryParameters.class);
+        return performCreate(VdcActionType.AddGroup, parameters, resolver, BaseResource.class);
     }
 
     /**
      * Find the directory user that corresponds to the given model.
      *
      * @param directoryName the name of the directory where to perform the search
-     * @param model the group model
+     * @param groupModel the group model
      * @return the requested directory group or {@code null} if no such group exists
      */
-    private LdapGroup findDirectoryGroup(String directoryName, Group model) {
+    private LdapGroup findDirectoryGroup(String directoryName, Group groupModel) {
         // Try to find a group that matches the identifier contained in the model:
-        if (model.isSetId()) {
-            String modelId = model.getId();
+        if (groupModel.isSetId()) {
+            String groupId = groupModel.getId();
             return getEntity(
                 LdapGroup.class,
                 VdcQueryType.GetDirectoryGroupById,
-                new DirectoryIdQueryParameters(directoryName, Guid.createGuidFromString(modelId)),
-                modelId,
+                new DirectoryIdQueryParameters(directoryName, ExternalId.fromHex(groupId)),
+                groupId,
                 true
             );
         }
 
         // Try to find a group that matches the name contained in the model:
-        if (model.isSetName()) {
+        if (groupModel.isSetName()) {
             return getEntity(
                 LdapGroup.class,
                 SearchType.AdGroup,
-                getDirectoryGroupSearchPattern(model.getName(), directoryName)
+                getDirectoryGroupSearchPattern(groupModel.getName(), directoryName)
             );
         }
 

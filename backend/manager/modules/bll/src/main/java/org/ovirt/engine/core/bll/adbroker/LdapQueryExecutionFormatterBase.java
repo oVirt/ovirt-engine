@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 public abstract class LdapQueryExecutionFormatterBase implements LdapQueryFormatter<LdapQueryExecution> {
 
@@ -9,7 +9,7 @@ public abstract class LdapQueryExecutionFormatterBase implements LdapQueryFormat
 
     protected abstract String getDisplayFilter(LdapQueryMetadata queryMetadata);
 
-    protected Object[] getEncodedParameters(Object[] parameters, LdapGuidEncoder LdapGuidEncoder) {
+    protected Object[] getEncodedParameters(Object[] parameters, LdapIdEncoder idEncoder) {
         if (parameters == null) {
             return null;
         }
@@ -19,8 +19,8 @@ public abstract class LdapQueryExecutionFormatterBase implements LdapQueryFormat
         int index = 0;
 
         for (Object parameter : parameters) {
-            if (parameter instanceof Guid) {
-                retVal[index] = LdapGuidEncoder.encodeGuid((Guid) parameter);
+            if (parameter instanceof ExternalId) {
+                retVal[index] = idEncoder.encodedId((ExternalId) parameter);
             }
             index++;
         }

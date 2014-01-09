@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -274,14 +274,14 @@ public class AdElementListModel extends SearchableListModel
                     return;
                 }
 
-                HashSet<Guid> excludeUsers = new HashSet<Guid>();
+                HashSet<ExternalId> excludeUsers = new HashSet<ExternalId>();
                 if (adElementListModel.getExcludeItems() != null)
                 {
                     for (Object item : adElementListModel.getExcludeItems())
                     {
                         DbUser a = (DbUser) item;
 
-                        excludeUsers.add(a.getId());
+                        excludeUsers.add(a.getExternalId());
                     }
                 }
                 adElementListModel.setgroups(new ArrayList<EntityModel>());
@@ -291,7 +291,7 @@ public class AdElementListModel extends SearchableListModel
                     if (!excludeUsers.contains(a.getid()))
                     {
                         DbUser tempVar3 = new DbUser();
-                        tempVar3.setId(a.getid());
+                        tempVar3.setExternalId(a.getid());
                         tempVar3.setFirstName(a.getname());
                         tempVar3.setLastName(""); //$NON-NLS-1$
                         tempVar3.setLoginName(""); //$NON-NLS-1$
@@ -312,7 +312,7 @@ public class AdElementListModel extends SearchableListModel
                 _asyncQuery);
     }
 
-    protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<Guid> excludeUsers) {
+    protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<ExternalId> excludeUsers) {
         for (IVdcQueryable item : (ArrayList<IVdcQueryable>) returnValue.getReturnValue()) {
             LdapUser a = (LdapUser) item;
             if (!excludeUsers.contains(a.getUserId())) {
@@ -323,12 +323,12 @@ public class AdElementListModel extends SearchableListModel
         }
     }
 
-    protected Set<Guid> getExcludeUsers() {
-        Set<Guid> excludeUsers = new HashSet<Guid>();
+    protected Set<ExternalId> getExcludeUsers() {
+        Set<ExternalId> excludeUsers = new HashSet<ExternalId>();
         if (getExcludeItems() != null) {
             for (Object item : getExcludeItems()) {
                 DbUser a = (DbUser) item;
-                excludeUsers.add(a.getId());
+                excludeUsers.add(a.getExternalId());
             }
         }
         return excludeUsers;

@@ -9,7 +9,7 @@ public class LdapQueryMetadataImpl implements LdapQueryMetadata {
     private ContextMapper contextMapper;
     private int searchScope;
     private String[] returningAttributes;
-    private LdapGuidEncoder ldapGuidEncoder;
+    private LdapIdEncoder idEncoder;
     private LdapQueryFormatter<LdapQueryExecution> formatter;
     private LdapQueryData queryData;
 
@@ -19,7 +19,7 @@ public class LdapQueryMetadataImpl implements LdapQueryMetadata {
             int searchScope,
             String[] returningAttributes,
             LdapQueryFormatter<LdapQueryExecution> formatter,
-            LdapGuidEncoder ldapGuidEncoder ) {
+            LdapIdEncoder idEncoder ) {
 
         this.filter = filter;
         this.baseDN = baseDN;
@@ -27,7 +27,7 @@ public class LdapQueryMetadataImpl implements LdapQueryMetadata {
         this.searchScope = searchScope;
         this.returningAttributes = returningAttributes;
         this.formatter = formatter;
-        this.ldapGuidEncoder = ldapGuidEncoder;
+        this.idEncoder = idEncoder;
     }
 
     @Override
@@ -81,13 +81,13 @@ public class LdapQueryMetadataImpl implements LdapQueryMetadata {
     }
 
     @Override
-    public LdapGuidEncoder getLdapGuidEncoder() {
-        return ldapGuidEncoder;
+    public LdapIdEncoder getLdapIdEncoder() {
+        return idEncoder;
     }
 
     @Override
-    public void setLdapGuidEncoder(LdapGuidEncoder ldapGuidEncoder) {
-        this.ldapGuidEncoder = ldapGuidEncoder;
+    public void setLdapIdEncoder(LdapIdEncoder ldapIdEncoder) {
+        this.idEncoder = ldapIdEncoder;
     }
 
     @Override

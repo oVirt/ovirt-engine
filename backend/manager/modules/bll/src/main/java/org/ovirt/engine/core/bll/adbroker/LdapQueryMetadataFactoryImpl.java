@@ -64,7 +64,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
     // 3. The context mapper
     // 4. The list of attributes we want the query to return from the ldap provider
     // 5. The formatter - it formats the query (we currently have simple one, multiple (for queries like (|(...)(...))) and one for SearchBackend purposes
-    // 6. The GUID encoder - sometimes we need to convert the binary data to string (in AD for example), or just toString (in IPA)
+    // 6. The id encoder - sometimes we need to convert the binary data to string (in AD for example), or just toString (in IPA)
 
     private static Map<LdapQueryType, LdapQueryMetadata> setGeneralProviderMap() {
         Map<LdapQueryType, LdapQueryMetadata> generalHashMap = new HashMap<LdapQueryType, LdapQueryMetadata>();
@@ -89,7 +89,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         ADGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
         adHashMap.put(LdapQueryType.getUserByGuid, new LdapQueryMetadataImpl(
                         "(objectGUID=%1$s)",
                         "",
@@ -97,7 +97,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
         adHashMap.put(LdapQueryType.getGroupByGuid, new LdapQueryMetadataImpl(
                         "(objectGUID=%1$s)",
                         "",
@@ -105,7 +105,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
         adHashMap.put(LdapQueryType.getGroupByName, new LdapQueryMetadataImpl(
                         "(&(ObjectCategory=Group)(name=%1$s))",
                         "",
@@ -113,7 +113,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
         adHashMap.put(LdapQueryType.getUserByPrincipalName, new LdapQueryMetadataImpl(
                         "(&(sAMAccountType=805306368)(userPrincipalName=%1$s))",
                         "",
@@ -121,7 +121,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
         adHashMap.put(LdapQueryType.getUserByName, new LdapQueryMetadataImpl(
                         "(&(sAMAccountType=805306368)(sAMAccountName=%1$s))",
                         "",
@@ -129,7 +129,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
         adHashMap.put(LdapQueryType.rootDSE, new LdapQueryMetadataImpl(
                         "(objectClass=*)",
                         "",
@@ -137,7 +137,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         ADRootDSEContextMapper.ROOTDSE_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
         adHashMap.put(LdapQueryType.getGroupsByGroupNames, new LdapQueryMetadataImpl(
                         "(&(ObjectCategory=Group)(name=%1$s))",
                         "",
@@ -145,7 +145,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
         adHashMap.put(LdapQueryType.getUsersByUserGuids, new LdapQueryMetadataImpl(
                         "(objectGUID=%1$s)",
                         "",
@@ -153,7 +153,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
-                        ADLdapGuidEncoder.getInstance()));
+                        ADLdapIdEncoder.getInstance()));
 
         LdapQueryMetadataImpl searchUsersMetadata =
                 new LdapQueryMetadataImpl("this string is overrided by user input meta-query",
@@ -162,7 +162,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SearchQueryFotmatter(activeDirectorySearchSyntaxMap, noOpFilterSearchEnginePreProcessor),
-                        ADLdapGuidEncoder.getInstance());
+                        ADLdapIdEncoder.getInstance());
         adHashMap.put(LdapQueryType.searchUsers, searchUsersMetadata);
 
         LdapQueryMetadataImpl searchGroupsMetadata =
@@ -172,7 +172,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ADGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SearchQueryFotmatter(activeDirectorySearchSyntaxMap, noOpFilterSearchEnginePreProcessor),
-                        ADLdapGuidEncoder.getInstance());
+                        ADLdapIdEncoder.getInstance());
         adHashMap.put(LdapQueryType.searchGroups, searchGroupsMetadata);
         return adHashMap;
     }
@@ -186,7 +186,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         IPAGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         ipaHashMap.put(LdapQueryType.getGroupByGuid, new LdapQueryMetadataImpl(
                         "(ipaUniqueID=%1$s)",
                         "",
@@ -194,7 +194,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         ipaHashMap.put(LdapQueryType.getUserByGuid, new LdapQueryMetadataImpl(
                         "(ipaUniqueID=%1$s)",
                         "",
@@ -202,7 +202,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         ipaHashMap.put(LdapQueryType.getGroupByName, new LdapQueryMetadataImpl(
                         "(&(objectClass=ipaUserGroup)(cn=%1$s))",
                         "",
@@ -210,7 +210,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         ipaHashMap.put(LdapQueryType.getUserByPrincipalName, new LdapQueryMetadataImpl(
                         "(&(objectClass=krbPrincipalAux)(krbPrincipalName=%1$s))",
                         "",
@@ -218,7 +218,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         ipaHashMap.put(LdapQueryType.getUserByName, new LdapQueryMetadataImpl(
                         "(&(objectClass=posixAccount)(objectClass=krbPrincipalAux)(uid=%1$s))",
                         "",
@@ -226,7 +226,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         ipaHashMap.put(LdapQueryType.rootDSE, new LdapQueryMetadataImpl(
                         "(objectClass=*)",
                         "",
@@ -234,7 +234,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         IPARootDSEContextMapper.ROOTDSE_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         ipaHashMap.put(LdapQueryType.getGroupsByGroupNames, new LdapQueryMetadataImpl(
                         "(&(objectClass=ipaUserGroup)(cn=%1$s))",
                         "",
@@ -242,7 +242,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         ipaHashMap.put(LdapQueryType.getUsersByUserGuids, new LdapQueryMetadataImpl(
                         "(ipaUniqueID=%1$s)",
                         "",
@@ -250,7 +250,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         LdapQueryMetadataImpl ipaSearchUsersMetadata = new LdapQueryMetadataImpl(
                         "this string is replaced by user input meta-query",
                         "",
@@ -258,7 +258,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAUserContextMapper.USERS_ATTRIBUTE_FILTER,
                 new SearchQueryFotmatter(ipaSearchSyntaxMap, noOpFilterSearchEnginePreProcessor),
-                        DefaultLdapGuidEncoder.getInstance());
+                        DefaultLdapIdEncoder.getInstance());
         ipaHashMap.put(LdapQueryType.searchUsers, ipaSearchUsersMetadata);
 
         LdapQueryMetadataImpl ipaSearchGroupsMetadata = new LdapQueryMetadataImpl(
@@ -268,7 +268,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         IPAGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                 new SearchQueryFotmatter(ipaSearchSyntaxMap, noOpFilterSearchEnginePreProcessor),
-                        DefaultLdapGuidEncoder.getInstance());
+                        DefaultLdapIdEncoder.getInstance());
         ipaHashMap.put(LdapQueryType.searchGroups, ipaSearchGroupsMetadata);
 
         return ipaHashMap;
@@ -284,7 +284,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         RHDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new RHDSSimpleLdapQueryExecutionFormatter(),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         dsHashMap.put(LdapQueryType.getGroupByGuid, new LdapQueryMetadataImpl(
                         "(nsuniqueid=%1$s)",
                         "",
@@ -292,7 +292,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new RHDSSimpleLdapQueryExecutionFormatter(),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         dsHashMap.put(LdapQueryType.getUserByGuid, new LdapQueryMetadataImpl(
                         "(nsuniqueid=%1$s)",
                         "",
@@ -300,7 +300,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new RHDSSimpleLdapQueryExecutionFormatter(),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         dsHashMap.put(LdapQueryType.getGroupByName, new LdapQueryMetadataImpl(
                         "(&(objectClass=groupofuniquenames)(cn=%1$s))",
                         "",
@@ -308,7 +308,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new RHDSSimpleLdapQueryExecutionFormatter(),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         dsHashMap.put(LdapQueryType.getUserByName, new LdapQueryMetadataImpl(
                         "(&(objectClass=person)(uid=%1$s))",
                         "",
@@ -316,7 +316,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new RHDSSimpleLdapQueryExecutionFormatter(),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         // In RHDS there is no UPN, so we do the same query as getUserByName, using a formatter that will adjust the filter
         // to contain the user name instead of the UPN
         dsHashMap.put(LdapQueryType.getUserByPrincipalName, new LdapQueryMetadataImpl(
@@ -326,7 +326,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new RHDSUPNLdapQueryExecutionFormatter(),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         dsHashMap.put(LdapQueryType.rootDSE, new LdapQueryMetadataImpl(
                         "(objectClass=*)",
                         "",
@@ -334,7 +334,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         RHDSRootDSEContextMapper.ROOTDSE_ATTRIBUTE_FILTER,
                         new RHDSSimpleLdapQueryExecutionFormatter(),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         dsHashMap.put(LdapQueryType.getGroupsByGroupNames, new LdapQueryMetadataImpl(
                         "(&(objectClass=groupofuniquenames)(cn=%1$s))",
                         "",
@@ -342,7 +342,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new RHDSMultipleLdapQueryExecutionFormatter("(|", ")"),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         dsHashMap.put(LdapQueryType.getUsersByUserGuids, new LdapQueryMetadataImpl(
                         "(nsuniqueid=%1$s)",
                         "",
@@ -350,7 +350,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new RHDSMultipleLdapQueryExecutionFormatter("(|", ")"),
-                        RHDSLdapGuidEncoder.getInstance()));
+                        RHDSLdapIdEncoder.getInstance()));
         LdapQueryMetadataImpl rhdsSearchUsersMetadata = new LdapQueryMetadataImpl(
                         "this string is replaced by user input meta-query",
                         "",
@@ -358,7 +358,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                 new SearchQueryFotmatter(dsSearchSyntaxMap, upnSplitterLdapFilterSearchEnginePreProcessor),
-                        RHDSLdapGuidEncoder.getInstance());
+                        RHDSLdapIdEncoder.getInstance());
         dsHashMap.put(LdapQueryType.searchUsers, rhdsSearchUsersMetadata);
 
         LdapQueryMetadataImpl rhdsSearchGroupsMetadata = new LdapQueryMetadataImpl(
@@ -368,7 +368,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         RHDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                 new SearchQueryFotmatter(dsSearchSyntaxMap, noOpFilterSearchEnginePreProcessor),
-                        RHDSLdapGuidEncoder.getInstance());
+                        RHDSLdapIdEncoder.getInstance());
         dsHashMap.put(LdapQueryType.searchGroups, rhdsSearchGroupsMetadata);
 
         return dsHashMap;
@@ -384,7 +384,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         ITDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         itdsHashMap.put(LdapQueryType.getGroupByGuid, new LdapQueryMetadataImpl(
                         "(uniqueIdentifier=%1$s)",
                         "",
@@ -392,7 +392,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         itdsHashMap.put(LdapQueryType.getUserByGuid, new LdapQueryMetadataImpl(
                         "(uniqueIdentifier=%1$s)",
                         "",
@@ -400,7 +400,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         itdsHashMap.put(LdapQueryType.getGroupByName, new LdapQueryMetadataImpl(
                         "(&(objectClass=groupofuniquenames)(cn=%1$s))",
                         "",
@@ -408,7 +408,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         itdsHashMap.put(LdapQueryType.getUserByPrincipalName, new LdapQueryMetadataImpl(
                         "(principalName=%1$s))",
                         "",
@@ -416,7 +416,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         itdsHashMap.put(LdapQueryType.getUserByName, new LdapQueryMetadataImpl(
                         "(uid=%1$s))",
                         "",
@@ -424,7 +424,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         itdsHashMap.put(LdapQueryType.rootDSE, new LdapQueryMetadataImpl(
                         "(objectClass=*)",
                         "",
@@ -432,7 +432,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         ITDSRootDSEContextMapper.ROOTDSE_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         itdsHashMap.put(LdapQueryType.getGroupsByGroupNames, new LdapQueryMetadataImpl(
                         "(&(objectClass=groupofuniquenames)(cn=%1$s))",
                         "",
@@ -440,7 +440,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         itdsHashMap.put(LdapQueryType.getUsersByUserGuids, new LdapQueryMetadataImpl(
                         "(uid=%1$s)",
                         "",
@@ -448,7 +448,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
-                        DefaultLdapGuidEncoder.getInstance()));
+                        DefaultLdapIdEncoder.getInstance()));
         LdapQueryMetadataImpl itdsSearchUsersMetadata = new LdapQueryMetadataImpl(
                         "this string is replaced by user input meta-query",
                         "",
@@ -456,7 +456,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSUserContextMapper.USERS_ATTRIBUTE_FILTER,
                 new SearchQueryFotmatter(itdsSearchSyntaxMap, noOpFilterSearchEnginePreProcessor),
-                        DefaultLdapGuidEncoder.getInstance());
+                        DefaultLdapIdEncoder.getInstance());
         itdsHashMap.put(LdapQueryType.searchUsers, itdsSearchUsersMetadata);
 
         LdapQueryMetadataImpl itdsSearchGroupsMetadata = new LdapQueryMetadataImpl(
@@ -466,7 +466,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         ITDSGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                 new SearchQueryFotmatter(itdsSearchSyntaxMap, noOpFilterSearchEnginePreProcessor),
-                        DefaultLdapGuidEncoder.getInstance());
+                        DefaultLdapIdEncoder.getInstance());
         itdsHashMap.put(LdapQueryType.searchGroups, itdsSearchGroupsMetadata);
 
         return itdsHashMap;
@@ -482,7 +482,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         openLdapHashMap.put(LdapQueryType.getGroupByGuid, new LdapQueryMetadataImpl(
                         "(entryUUID=%1$s)",
                         "",
@@ -490,7 +490,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         openLdapHashMap.put(LdapQueryType.getUserByGuid, new LdapQueryMetadataImpl(
                         "(entryUUID=%1$s)",
                         "",
@@ -498,7 +498,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         openLdapHashMap.put(LdapQueryType.getGroupByName, new LdapQueryMetadataImpl(
                         "(&(objectClass=groupOfNames)(cn=%1$s))",
                         "",
@@ -506,7 +506,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         openLdapHashMap.put(LdapQueryType.getUserByPrincipalName, new LdapQueryMetadataImpl(
                         "(uid=%1$s)",
                         "",
@@ -514,7 +514,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         openLdapHashMap.put(LdapQueryType.getUserByName, new LdapQueryMetadataImpl(
                         "(uid=%1$s)",
                         "",
@@ -522,7 +522,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         openLdapHashMap.put(LdapQueryType.rootDSE, new LdapQueryMetadataImpl(
                         "(objectClass=*)",
                         "",
@@ -530,7 +530,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.OBJECT_SCOPE,
                         DefaultRootDSEContextMapper.ROOTDSE_ATTRIBUTE_FILTER,
                         new SimpleLdapQueryExecutionFormatter(),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         openLdapHashMap.put(LdapQueryType.getGroupsByGroupNames, new LdapQueryMetadataImpl(
                         "(&(objectClass=groupOfNames)(cn=%1$s))",
                         "",
@@ -538,7 +538,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         openLdapHashMap.put(LdapQueryType.getUsersByUserGuids, new LdapQueryMetadataImpl(
                         "(entryUUID=%1$s)",
                         "",
@@ -546,7 +546,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
-                        new DefaultGuidEncoder()));
+                        new DefaultIdEncoder()));
         LdapQueryMetadataImpl OpenLdapSearchUsersMetadata = new LdapQueryMetadataImpl(
                         "this string is replaced by user input meta-query",
                         "",
@@ -554,7 +554,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
                 new SearchQueryFotmatter(openLdapSearchSyntaxMap, upnSplitterLdapFilterSearchEnginePreProcessor),
-                        new DefaultGuidEncoder());
+                        new DefaultIdEncoder());
         openLdapHashMap.put(LdapQueryType.searchUsers, OpenLdapSearchUsersMetadata);
 
         LdapQueryMetadataImpl OpenLdapSearchGroupsMetadata = new LdapQueryMetadataImpl(
@@ -564,7 +564,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         SearchControls.SUBTREE_SCOPE,
                         OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
                 new SearchQueryFotmatter(openLdapSearchSyntaxMap, noOpFilterSearchEnginePreProcessor),
-                        new DefaultGuidEncoder());
+                        new DefaultIdEncoder());
         openLdapHashMap.put(LdapQueryType.searchGroups, OpenLdapSearchGroupsMetadata);
 
         return openLdapHashMap;

@@ -10,6 +10,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -53,7 +54,7 @@ public class RHDSGroupContextMapper implements ContextMapper {
             String distinguishedName = searchResult.getNameInNamespace();
             distinguishedName = LdapBrokerUtils.hadleNameEscaping(distinguishedName);
             GroupSearchResult groupSearchResult =
-                    new GroupSearchResult(Guid.createGuidFromStringDefaultEmpty(LdapBrokerUtils.getGuidFromNsUniqueId(objectGuid)),
+                    new GroupSearchResult(new ExternalId(Guid.createGuidFromStringDefaultEmpty(LdapBrokerUtils.getGuidFromNsUniqueId(objectGuid)).toByteArray()),
                             memberOf,
                             distinguishedName);
             return groupSearchResult;

@@ -448,7 +448,6 @@ public class UserListModel extends ListWithDetailsModel
 
         ArrayList<VdcActionType> actionsList = new ArrayList<VdcActionType>(items.size());
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>(items.size());
-        ArrayList<IFrontendActionAsyncCallback> callbacksList = new ArrayList<IFrontendActionAsyncCallback>(items.size());
         for (DbUser item : items)
         {
             if (item.isGroup())
@@ -462,12 +461,18 @@ public class UserListModel extends ListWithDetailsModel
             }
             DirectoryIdParameters parameters = new DirectoryIdParameters();
             parameters.setDirectory(item.getDomain());
-            parameters.setId(item.getId());
+            parameters.setId(item.getExternalId());
             parametersList.add(parameters);
-            callbacksList.add(null);
         }
 
         model.startProgress(null);
+
+        IFrontendActionAsyncCallback nopCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                // Nothing.
+            }
+        };
 
         IFrontendActionAsyncCallback lastCallback = new IFrontendActionAsyncCallback() {
             @Override
@@ -478,9 +483,11 @@ public class UserListModel extends ListWithDetailsModel
             }
         };
 
-        if (callbacksList.size() > 0) {
-            callbacksList.set(callbacksList.size() - 1, lastCallback);
+        ArrayList<IFrontendActionAsyncCallback> callbacksList = new ArrayList<IFrontendActionAsyncCallback>(items.size());
+        for (int i = 1; i < items.size(); i++) {
+            callbacksList.add(nopCallback);
         }
+        callbacksList.add(lastCallback);
 
         Frontend.getInstance().runMultipleActions(actionsList, parametersList, callbacksList, lastCallback, model);
     }

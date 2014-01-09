@@ -50,16 +50,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_INVALID_OBJECT_ID);
             return false;
         }
-        // check if no ad_element_id in permission or id doesn't equal to sent
-        // user or group
-        if ((adElementId == null)
-                || (getParameters().getUser() != null && !getParameters().getUser()
-                        .getId()
-                        .equals(adElementId))
-                || (getParameters().getGroup() != null && !getParameters().getGroup().getId().equals(adElementId))) {
-            addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_USER_ID_MISMATCH);
-            return false;
-        }
+
         // if user and group not sent check user/group is in the db in order to
         // give permission
         if (getParameters().getUser() == null
@@ -108,15 +99,29 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             getAdGroupDAO().save(group);
         }
 
+        // The identifier of the owner of the permission can come from the parameters directly or from the user/group
+        // objects:
+        Guid ownerId = parameters.getPermission().getad_element_id();
+        if (ownerId == null) {
+            if (user != null) {
+                ownerId = user.getId();
+            }
+            if (ownerId == null) {
+                if (group != null) {
+                    ownerId = group.getId();
+                }
+            }
+        }
+
         final Permissions paramPermission = parameters.getPermission();
 
         Permissions permission =
-                getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getrole_id(),
-                        paramPermission.getad_element_id(),
+                getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getrole_id(), ownerId,
                         paramPermission.getObjectId());
 
         if (permission == null) {
             paramPermission.setId(Guid.newGuid());
+            paramPermission.setad_element_id(ownerId);
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override

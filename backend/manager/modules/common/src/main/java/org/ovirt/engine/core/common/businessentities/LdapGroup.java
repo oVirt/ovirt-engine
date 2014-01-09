@@ -3,13 +3,13 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.Guid;
 
 public class LdapGroup extends IVdcQueryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
-    private Guid id;
+    private ExternalId id;
 
     private String name;
 
@@ -23,13 +23,12 @@ public class LdapGroup extends IVdcQueryable {
 
     public LdapGroup() {
         active = true;
-        id = Guid.Empty;
         name = "";
         distinguishedName = "";
     }
 
     public LdapGroup(DbGroup dbGroup) {
-        id = dbGroup.getId();
+        id = dbGroup.getExternalId();
         name = dbGroup.getName();
         domain = dbGroup.getDomain();
         active = dbGroup.isActive();
@@ -37,11 +36,11 @@ public class LdapGroup extends IVdcQueryable {
         memberOf = dbGroup.getMemberOf() != null ? new ArrayList<String>(dbGroup.getMemberOf()) : null;
     }
 
-    public Guid getid() {
+    public ExternalId getid() {
         return this.id;
     }
 
-    public void setid(Guid value) {
+    public void setid(ExternalId value) {
         this.id = value;
     }
 
@@ -61,13 +60,13 @@ public class LdapGroup extends IVdcQueryable {
         active = value;
     }
 
-    public LdapGroup(Guid id, String name, String domain) {
+    public LdapGroup(ExternalId id, String name, String domain) {
         this (id);
         this.name = name;
         this.domain = domain;
     }
 
-    public LdapGroup(Guid id, String name, String domain, String distinguishedName, List<String> memberOf) {
+    public LdapGroup(ExternalId id, String name, String domain, String distinguishedName, List<String> memberOf) {
         this(id, name, domain);
         this.distinguishedName = distinguishedName;
         this.setMemberOf(memberOf);
@@ -78,7 +77,7 @@ public class LdapGroup extends IVdcQueryable {
      *
      * @param id
      */
-    public LdapGroup(Guid id) {
+    public LdapGroup(ExternalId id) {
         this.id = id;
         active = false;
     }

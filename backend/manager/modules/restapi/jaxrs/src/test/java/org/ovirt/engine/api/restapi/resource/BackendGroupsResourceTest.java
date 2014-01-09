@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGroupsResourceTest
@@ -209,10 +208,10 @@ public class BackendGroupsResourceTest
             VdcActionType.AddGroup,
             DirectoryIdParameters.class,
             new String[] { "Directory", "Id" },
-            new Object[] { DOMAIN, GUIDS[0] },
+            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
             true,
             true,
-            null,
+            GUIDS[0],
             VdcQueryType.GetDbGroupById,
             IdQueryParameters.class,
             new String[] { "Id" },
@@ -248,10 +247,10 @@ public class BackendGroupsResourceTest
             VdcActionType.AddGroup,
             DirectoryIdParameters.class,
             new String[] { "Directory", "Id" },
-            new Object[] { DOMAIN, GUIDS[0] },
+            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
             true,
             true,
-            null,
+            GUIDS[0],
             VdcQueryType.GetDbGroupById,
             IdQueryParameters.class,
             new String[] { "Id" },
@@ -299,17 +298,17 @@ public class BackendGroupsResourceTest
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-            new Object[] { DOMAIN, GUIDS[0] },
+            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
             getDirectoryGroup(0)
         );
         setUpCreationExpectations(
             VdcActionType.AddGroup,
             DirectoryIdParameters.class,
             new String[] { "Directory", "Id" },
-            new Object[] { DOMAIN, GUIDS[0] },
+            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
             true,
             true,
-            null,
+            GUIDS[0],
             VdcQueryType.GetDbGroupById,
             IdQueryParameters.class,
             new String[] { "Id" },
@@ -319,7 +318,7 @@ public class BackendGroupsResourceTest
 
         Group model = new Group();
         model.setName(GROUP_NAMES[0]);
-        model.setId(GUIDS[0].toString());
+        model.setId(EXTERNAL_IDS[0].toHex());
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -338,13 +337,13 @@ public class BackendGroupsResourceTest
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-            new Object[] { DOMAIN, NON_EXISTANT_GUID },
+            new Object[] { DOMAIN, NON_EXISTANT_EXTERNAL_ID },
             null
         );
         control.replay();
         Group model = new Group();
         model.setName(GROUP_NAMES[0]);
-        model.setId(NON_EXISTANT_GUID.toString());
+        model.setId(NON_EXISTANT_EXTERNAL_ID.toHex());
 
         try {
             collection.add(model);
@@ -365,7 +364,7 @@ public class BackendGroupsResourceTest
     protected DbGroup getEntity(int index) {
         DbGroup entity = new DbGroup();
         entity.setId(GUIDS[index]);
-        entity.setExternalId(new ExternalId(GUIDS[index].toByteArray()));
+        entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setName(GROUP_NAMES[index]);
         entity.setDomain(DOMAIN);
         return entity;
@@ -373,7 +372,7 @@ public class BackendGroupsResourceTest
 
     private LdapGroup getDirectoryGroup(int index) {
         LdapGroup directoryGroup = new LdapGroup();
-        directoryGroup.setid(GUIDS[index]);
+        directoryGroup.setid(EXTERNAL_IDS[index]);
         directoryGroup.setname(GROUP_NAMES[index]);
         directoryGroup.setdomain(DOMAIN);
         return directoryGroup;
@@ -382,6 +381,7 @@ public class BackendGroupsResourceTest
     @Override
     protected void verifyModel(Group model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(GROUP_NAMES[index], model.getName());
         assertNotNull(model.getDomain());
         assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());

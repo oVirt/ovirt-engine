@@ -7,7 +7,6 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class BackendGroupResourceTest
     extends AbstractBackendSubResourceTest<Group, DbGroup, BackendGroupResource> {
@@ -71,14 +70,15 @@ public class BackendGroupResourceTest
     protected DbGroup getEntity(int index) {
         DbGroup entity = new DbGroup();
         entity.setId(GUIDS[index]);
+        entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setName(NAMES[index]);
         entity.setDomain(DOMAIN);
-        entity.setExternalId(new ExternalId(GUIDS[index].toByteArray()));
         return entity;
     }
 
     protected void verifyModel(Group model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(NAMES[index], model.getName());
         assertNotNull(model.getDomain());
         verifyLinks(model);

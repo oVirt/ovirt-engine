@@ -1,11 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import org.apache.commons.codec.binary.Hex;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.DomainUserResource;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This resource corresponds to an user that exists in some directory
@@ -19,10 +22,12 @@ public class BackendDomainUserResource
         implements DomainUserResource {
 
     private BackendDomainUsersResource parent;
+    private ExternalId id;
 
-    public BackendDomainUserResource(String id, BackendDomainUsersResource parent) {
-        super(id, User.class, LdapUser.class);
+    public BackendDomainUserResource(ExternalId id, BackendDomainUsersResource parent) {
+        super(Hex.encodeHexString(id.getBytes()), User.class, LdapUser.class);
         this.parent = parent;
+        this.id = id;
     }
 
     public BackendDomainUsersResource getParent() {
@@ -35,11 +40,9 @@ public class BackendDomainUserResource
 
     @Override
     public User get() {
-        DirectoryIdQueryParameters queryParameters = new DirectoryIdQueryParameters(
-            parent.getDirectory().getName(),
-            guid
-        );
-        return performGet(VdcQueryType.GetDirectoryUserById, queryParameters, BaseResource.class);
+        String directory = parent.getDirectory().getName();
+        DirectoryIdQueryParameters parameters = new DirectoryIdQueryParameters(directory, id);
+        return performGet(VdcQueryType.GetDirectoryUserById, parameters, BaseResource.class);
     }
 
     @Override
@@ -47,4 +50,10 @@ public class BackendDomainUserResource
         return model;
     }
 
+    // We need to override this method because the native identifier of this
+    // resource isn't an UUID.
+    @Override
+    protected Guid asGuidOr404(String id) {
+        return null;
+    }
 }

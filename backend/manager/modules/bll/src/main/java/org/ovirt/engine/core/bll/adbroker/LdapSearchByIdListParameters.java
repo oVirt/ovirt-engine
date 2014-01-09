@@ -1,20 +1,22 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import org.ovirt.engine.core.compat.Guid;
+import java.util.List;
+
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class LdapSearchByIdListParameters extends LdapBrokerBaseParameters {
-    private java.util.ArrayList<Guid> privateUserIds;
+    private List<ExternalId> ids;
 
-    public java.util.ArrayList<Guid> getUserIds() {
-        return privateUserIds;
-    }
-
-    private void setUserIds(java.util.ArrayList<Guid> value) {
-        privateUserIds = value;
-    }
-
-    public LdapSearchByIdListParameters(String domain, java.util.ArrayList<Guid> userIds) {
+    public LdapSearchByIdListParameters(String domain, List<ExternalId> ids) {
         super(domain);
-        setUserIds(userIds);
+        this.ids = ids;
+    }
+
+    public List<ExternalId> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<ExternalId> ids) {
+        this.ids = ids;
     }
 }

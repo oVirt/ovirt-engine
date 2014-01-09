@@ -4,6 +4,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Domain;
@@ -13,6 +17,7 @@ import org.ovirt.engine.api.resource.DomainUserResource;
 import org.ovirt.engine.api.resource.DomainUsersResource;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 /**
  * This resource corresponds to the users that exist in a directory accessible
@@ -48,7 +53,19 @@ public class BackendDomainUsersResource
     @Override
     @SingleEntityResource
     public DomainUserResource getDomainUserSubResource(String id) {
-        return inject(new BackendDomainUserResource(id, this));
+        try {
+            byte[] bytes = Hex.decodeHex(id.toCharArray());
+            ExternalId externalId = new ExternalId(bytes);
+            return inject(new BackendDomainUserResource(externalId, this));
+        }
+        catch (DecoderException exception) {
+            throw new WebFaultException(
+                exception,
+                "Can't decode domain user identifier '" + id + "'.",
+                Response.Status.INTERNAL_SERVER_ERROR
+            );
+        }
+
     }
 
     private String getSearchPattern() {

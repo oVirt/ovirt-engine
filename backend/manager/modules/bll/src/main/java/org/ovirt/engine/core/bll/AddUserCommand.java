@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDAO;
 
@@ -34,7 +35,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
     protected boolean canDoAction() {
         // Get the name of the directory and the identifier of the user from the parameters:
         String directory = getParameters().getDirectory();
-        Guid id = getParameters().getId();
+        ExternalId id = getParameters().getId();
 
         // Check that the user is available in the directory (and save the reference to avoid looking it up later when
         // actually adding the user to the database):
@@ -58,7 +59,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         DbUserDAO dao = getDbUserDAO();
 
         // First check if the user is already in the database, if it is we need to update, if not we need to insert:
-        DbUser dbUser = dao.get(directoryUser.getUserId());
+        DbUser dbUser = dao.getByExternalId(directoryUser.getDomainControler(), directoryUser.getUserId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
             dbUser.setId(Guid.newGuid());
@@ -71,6 +72,8 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
             dao.update(dbUser);
         }
 
+        // Return the identifier of the created user:
+        setActionReturnValue(dbUser.getId());
         setSucceeded(true);
     }
 

@@ -3,14 +3,14 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 //
 // JTODO - this needs testing -- Livnat
 //
 
 public class LdapGetAdUserByUserIdCommand extends LdapWithConfiguredCredentialsCommandBase {
-    private Guid getUserId() {
+    private ExternalId getUserId() {
         return ((LdapSearchByIdParameters) getParameters()).getId();
     }
 

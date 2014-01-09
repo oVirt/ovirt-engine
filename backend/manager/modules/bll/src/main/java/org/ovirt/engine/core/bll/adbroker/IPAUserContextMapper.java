@@ -17,6 +17,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
@@ -51,10 +52,10 @@ public class IPAUserContextMapper implements ContextMapper {
         user = new LdapUser();
 
         // user's Guid
-        String objectGuid;
         try {
-            objectGuid = (String)attributes.get(ipaUniqueId.name()).get(0);
-            user.setUserId(Guid.createGuidFromStringDefaultEmpty(objectGuid));
+            String idText = (String) attributes.get(ipaUniqueId.name()).get(0);
+            Guid idObject = Guid.createGuidFromStringDefaultEmpty(idText);
+            user.setUserId(new ExternalId(idObject.toByteArray()));
 
             // Getting other string properties
             Attribute att = attributes.get(krbPrincipalname.name());

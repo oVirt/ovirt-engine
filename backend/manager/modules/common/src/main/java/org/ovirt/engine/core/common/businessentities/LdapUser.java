@@ -2,11 +2,10 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class LdapUser extends IVdcQueryable implements Serializable {
@@ -16,7 +15,7 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     // TODO - DesktopDevice ?? (Miki)
 
     private static final long serialVersionUID = 6800096193162766377L;
-    private Guid mUserId;
+    private ExternalId mUserId;
     private String mUserName;
     private String mDomainControler;
     private String mName;
@@ -30,12 +29,11 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     private Map<String, LdapGroup> mGroups;
 
     public LdapUser() {
-        mUserId = Guid.Empty;
         mGroups = new HashMap<String, LdapGroup>();
     }
 
     public LdapUser(DbUser dbUser) {
-        setUserId(dbUser.getId());
+        setUserId(dbUser.getExternalId());
         setUserName(dbUser.getLoginName());
         setName(dbUser.getFirstName());
         setSurName(dbUser.getLastName());
@@ -53,11 +51,11 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         mUserName = value;
     }
 
-    public Guid getUserId() {
+    public ExternalId getUserId() {
         return mUserId;
     }
 
-    public void setUserId(Guid value) {
+    public void setUserId(ExternalId value) {
         mUserId = value;
     }
 
@@ -138,24 +136,23 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         this.memberof = memberof;
     }
 
+    public String getGroupIds() {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (LdapGroup group : mGroups.values()) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(",");
+            }
+            sb.append(group.getid());
+        }
+        return sb.toString();
+    }
+
     @Override
     public Object getQueryableId() {
         return getUserId();
-    }
-
-    public String getGroupIds() {
-        String groupIds = "";
-        if (!mGroups.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (Iterator<LdapGroup> iterator = mGroups.values().iterator(); iterator.hasNext();) {
-                sb.append(iterator.next().getid().toString());
-                if (iterator.hasNext()) {
-                    sb.append(",");
-                }
-            }
-            groupIds = sb.toString();
-        }
-        return groupIds;
     }
 
 }

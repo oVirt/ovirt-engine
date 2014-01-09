@@ -10,6 +10,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
@@ -52,10 +53,11 @@ public class ADGroupContextMapper implements ContextMapper {
             Object adObjectGuid = attributes.get(objectGuid.name()).get(0);
             byte[] guidBytes = (byte[]) adObjectGuid;
             Guid guid = new Guid(guidBytes, false);
+            ExternalId id = new ExternalId(guid.toByteArray());
 
             String distinguishedName = searchResult.getNameInNamespace();
             distinguishedName = LdapBrokerUtils.hadleNameEscaping(distinguishedName);
-            GroupSearchResult groupSearchResult = new GroupSearchResult(guid, memberOf, distinguishedName);
+            GroupSearchResult groupSearchResult = new GroupSearchResult(id, memberOf, distinguishedName);
             return groupSearchResult;
         } catch (Exception ex) {
             log.error("Failed populating group", ex);

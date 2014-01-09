@@ -12,7 +12,7 @@ public class RHDSMultipleLdapQueryExecutionFormatter extends MultipleLdapQueryEx
     protected String getDisplayFilter(LdapQueryMetadata queryMetadata) {
         Object[] encodedFilterParameters =
                 getEncodedParameters(queryMetadata.getQueryData().getFilterParameters(),
-                        queryMetadata.getLdapGuidEncoder());
+                        queryMetadata.getLdapIdEncoder());
 
         return getFilter(queryMetadata, encodedFilterParameters);
     }

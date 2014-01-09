@@ -16,7 +16,7 @@ public class BackendDomainUserResourceTest
     extends AbstractBackendSubResourceTest<User, LdapUser, BackendDomainUserResource> {
 
     public BackendDomainUserResourceTest() {
-        super(new BackendDomainUserResource(GUIDS[1].toString(), null));
+        super(new BackendDomainUserResource(EXTERNAL_IDS[1], null));
     }
 
     @Override
@@ -26,30 +26,17 @@ public class BackendDomainUserResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
-        control.replay();
-        try {
-            new BackendDomainUserResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
-    }
-
-     @Test
     public void testGet() throws Exception {
       UriInfo uriInfo = setUpBasicUriExpectations();
       setUriInfo(uriInfo);
       setUpEntityQueryExpectations(1, false);
-
       control.replay();
-
       verifyModel(resource.get(), 1);
     }
 
     @Override
     protected void verifyModel(User model, int index) {
-        assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(NAMES[index], model.getName());
     }
 
@@ -58,12 +45,12 @@ public class BackendDomainUserResourceTest
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(1, true);
-
         control.replay();
         try {
             resource.get();
             fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
+        }
+        catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -81,7 +68,7 @@ public class BackendDomainUserResourceTest
             VdcQueryType.GetDirectoryUserById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-            new Object[] { DOMAIN, GUIDS[index] },
+            new Object[] { DOMAIN, EXTERNAL_IDS[index] },
             notFound? null: getEntity(index)
         );
     }
@@ -89,7 +76,7 @@ public class BackendDomainUserResourceTest
     @Override
     protected LdapUser getEntity(int index) {
         LdapUser entity = new LdapUser();
-        entity.setUserId(GUIDS[index]);
+        entity.setUserId(EXTERNAL_IDS[index]);
         entity.setName(NAMES[index]);
         entity.setDepartment(DOMAIN);
         return entity;

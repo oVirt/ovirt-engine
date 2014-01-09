@@ -27,7 +27,7 @@ public class RHDSUPNLdapQueryExecutionFormatter extends SimpleLdapQueryExecution
         String baseDN =
                 String.format(queryMetadata.getBaseDN(),
                         getEncodedParameters(queryMetadata.getQueryData().getBaseDNParameters(),
-                                queryMetadata.getLdapGuidEncoder()));
+                                queryMetadata.getLdapIdEncoder()));
 
         return new LdapQueryExecution(filter,
                 getDisplayFilter(queryMetadata),

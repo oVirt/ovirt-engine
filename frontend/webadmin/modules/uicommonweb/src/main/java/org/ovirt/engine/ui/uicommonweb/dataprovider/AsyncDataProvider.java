@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -3220,6 +3221,10 @@ public final class AsyncDataProvider {
         else if (entity instanceof DbUser)
         {
             return ((DbUser) entity).getId();
+        }
+        else if (entity instanceof DbGroup)
+        {
+            return ((DbGroup) entity).getId();
         }
         else if (entity instanceof Quota)
         {

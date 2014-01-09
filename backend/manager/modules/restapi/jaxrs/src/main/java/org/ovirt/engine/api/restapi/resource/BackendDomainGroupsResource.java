@@ -4,6 +4,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Domain;
@@ -13,6 +17,7 @@ import org.ovirt.engine.api.resource.DomainGroupResource;
 import org.ovirt.engine.api.resource.DomainGroupsResource;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 /**
  * This resource corresponds to the groups that exist in a directory accessible to the engine. Those groups may or may
@@ -46,7 +51,18 @@ public class BackendDomainGroupsResource
     @Override
     @SingleEntityResource
     public DomainGroupResource getDomainGroupSubResource(String id) {
-        return inject(new BackendDomainGroupResource(id, this));
+        try {
+            byte[] bytes = Hex.decodeHex(id.toCharArray());
+            ExternalId externalId = new ExternalId(bytes);
+            return inject(new BackendDomainGroupResource(externalId, this));
+        }
+        catch (DecoderException exception) {
+            throw new WebFaultException(
+                exception,
+                "Can't decode domain group identifier '" + id + "'.",
+                Response.Status.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     private String getSearchPattern() {

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -93,8 +94,7 @@ public class DbUserCacheManager {
     private static void updateDBUserFromADUser(DbUser dbUser, LdapUser ldapUser, HashSet<Guid> updatedUsers) {
         boolean succeeded = false;
 
-        if ((ldapUser == null) || (ldapUser.getUserId().equals(Guid.Empty))
-                || (!ldapUser.getUserId().equals(dbUser.getId()))) {
+        if (ldapUser == null || !ldapUser.getUserId().equals(dbUser.getExternalId())) {
             if (dbUser.isActive()) {
                 log.warnFormat("User {0} not found in directory server, its status switched to InActive",
                         dbUser.getFirstName());
@@ -158,31 +158,34 @@ public class DbUserCacheManager {
 
             List<String> domainsList = LdapBrokerUtils.getDomainsList(true);
             List<DbUser> filteredUsers = LinqUtils.filter(allUsers, new UsersPerDomainPredicate(domainsList));
-            Map<String, Map<Guid, DbUser>> userByDomains = new HashMap<String, Map<Guid, DbUser>>();
+            Map<String, Map<ExternalId, DbUser>> userByDomains = new HashMap<>();
 
             // Map all users by domains
             for (DbUser user : filteredUsers) {
-                Map<Guid, DbUser> domainUser;
+                Map<ExternalId, DbUser> domainUser;
                 if (!userByDomains.containsKey(user.getDomain())) {
-                    domainUser = new HashMap<Guid, DbUser>();
+                    domainUser = new HashMap<>();
                     userByDomains.put(user.getDomain(), domainUser);
                 } else {
                     domainUser = userByDomains.get(user.getDomain());
                 }
-                domainUser.put(user.getId(), user);
+                domainUser.put(user.getExternalId(), user);
             }
 
             if (userByDomains.size() != 0) {
                 // Refresh users in each domain separately
-                for (Map.Entry<String, Map<Guid, DbUser>> entry : userByDomains.entrySet()) {
+                for (Map.Entry<String, Map<ExternalId, DbUser>> entry : userByDomains.entrySet()) {
                     String domain = entry.getKey();
+                    Collection<DbUser> users = entry.getValue().values();
+                    List<ExternalId> ids = new ArrayList<>(users.size());
+                    for (DbUser user : users) {
+                        ids.add(user.getExternalId());
+                    }
                     List<LdapUser> adUsers =
                             (List<LdapUser>) LdapFactory.getInstance(domain)
                             .runAdAction(
                                     AdActionType.GetAdUserByUserIdList,
-                                    new LdapSearchByUserIdListParameters(domain,
-                                            new ArrayList<Guid>(entry.getValue().keySet()),
-                                            false))
+                                    new LdapSearchByUserIdListParameters(domain, ids, false))
                                     .getReturnValue();
                     HashSet<Guid> updatedUsers = new HashSet<Guid>();
                     if (adUsers == null) {
@@ -253,7 +256,6 @@ public class DbUserCacheManager {
                 if (partAfterAtSign.contains("/")) {
                     String partPreviousToSlashSign = partAfterAtSign.split("[/]", -1)[0];
                     newDomainName = partPreviousToSlashSign;
-
                 }
 
                 group.setDomain(newDomainName);
@@ -273,7 +275,7 @@ public class DbUserCacheManager {
                             (LdapGroup) LdapFactory
                                     .getInstance(group.getDomain())
                                     .runAdAction(AdActionType.GetAdGroupByGroupId,
-                                            new LdapSearchByIdParameters(group.getDomain(), group.getId()))
+                                            new LdapSearchByIdParameters(group.getDomain(), group.getExternalId()))
                                     .getReturnValue();
 
                     if (group.isActive() && (groupFromAD == null || !groupFromAD.isActive())) {
@@ -303,5 +305,4 @@ public class DbUserCacheManager {
             SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
         }
     }
-
 }

@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +21,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendUsersResourceTest
@@ -181,16 +178,16 @@ public class BackendUsersResourceTest
         setUpGetEntityExpectations(
             query,
             SearchType.AdUser,
-            getAdUser(0)
+            getDirectoryUser(0)
         );
         setUpCreationExpectations(
             VdcActionType.AddUser,
             DirectoryIdParameters.class,
             new String[] { "Directory", "Id" },
-            new Object[] { DOMAIN, GUIDS[0] },
+            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
             true,
             true,
-            null,
+            GUIDS[0],
             VdcQueryType.GetDbUserByUserId,
             IdQueryParameters.class,
             new String[] { "Id" },
@@ -208,24 +205,25 @@ public class BackendUsersResourceTest
     protected DbUser getEntity(int index) {
         DbUser entity = new DbUser();
         entity.setId(GUIDS[index]);
-        entity.setExternalId(new ExternalId(GUIDS[index].toByteArray()));
+        entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setLoginName(NAMES[index]);
         entity.setGroupNames(GROUPS);
         entity.setDomain(DOMAIN);
         return entity;
     }
 
-    protected LdapUser getAdUser(int index) {
-        LdapUser adUser = new LdapUser();
-        adUser.setUserId(GUIDS[index]);
-        adUser.setUserName(NAMES[index]);
-        adUser.setDomainControler(DOMAIN);
-        return adUser;
+    private LdapUser getDirectoryUser(int index) {
+        LdapUser directoryUser = new LdapUser();
+        directoryUser.setUserId(EXTERNAL_IDS[index]);
+        directoryUser.setUserName(NAMES[index]);
+        directoryUser.setDomainControler(DOMAIN);
+        return directoryUser;
     }
 
     @Override
     protected void verifyModel(User model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(NAMES[index], model.getUserName());
         assertNotNull(model.getDomain());
         assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());
@@ -236,13 +234,6 @@ public class BackendUsersResourceTest
             assertEquals(PARSED_GROUPS[i], group.getName());
         }
         verifyLinks(model);
-    }
-
-    public static LdapUser setUpEntityExpectations(LdapUser entity, int index) {
-        expect(entity.getUserId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getDomainControler()).andReturn(DOMAIN).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        return entity;
     }
 
     @Override

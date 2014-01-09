@@ -4,53 +4,51 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 /**
- * Contains Search result information for ADGroups
- *
- *
+ * Contains search result information for directory groups.
  */
 public class GroupSearchResult {
-    private List<String> _memberOf = (List<String>) Collections.EMPTY_LIST;
-    private String _distinguishedName;
-    private Guid guid;
+    private List<String> memberOf = (List<String>) Collections.EMPTY_LIST;
+    private String distinguishedName;
+    private ExternalId id;
 
-    public GroupSearchResult(LdapGroup groups) {
-        guid = groups.getid();
-        _distinguishedName = groups.getDistinguishedName();
-        _memberOf = groups.getMemberOf();
+    public GroupSearchResult(LdapGroup group) {
+        id = group.getid();
+        distinguishedName = group.getDistinguishedName();
+        memberOf = group.getMemberOf();
     }
 
     public List<String> getMemberOf() {
-        return _memberOf;
+        return memberOf;
     }
 
     public void setMemberOf(List<String> memberOf) {
-        _memberOf = memberOf;
+        this.memberOf = memberOf;
     }
 
     public String getDistinguishedName() {
-        return _distinguishedName;
+        return distinguishedName;
     }
 
     public void setDistinguishedName(String distinguishedName) {
-        _distinguishedName = distinguishedName;
+        this.distinguishedName = distinguishedName;
     }
 
-    public GroupSearchResult(Guid guid, List<String> memberOf,
+    public GroupSearchResult(ExternalId id, List<String> memberOf,
             String distinguishedName) {
-        _memberOf = memberOf;
-        _distinguishedName = distinguishedName;
-        this.setGuid(guid);
+        this.id = id;
+        this.memberOf = memberOf;
+        this.distinguishedName = distinguishedName;
     }
 
-    public void setGuid(Guid guid) {
-        this.guid = guid;
+    public void setId(ExternalId id) {
+        this.id = id;
     }
 
-    public Guid getGuid() {
-        return guid;
+    public ExternalId getId() {
+        return id;
     }
 
 }

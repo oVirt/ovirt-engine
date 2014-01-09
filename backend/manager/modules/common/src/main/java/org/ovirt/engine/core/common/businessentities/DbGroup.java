@@ -36,8 +36,7 @@ public class DbGroup extends IVdcQueryable {
     }
 
     public DbGroup(LdapGroup ldapGroup) {
-        id = ldapGroup.getid();
-        externalId = new ExternalId(ldapGroup.getid().toByteArray());
+        externalId = ldapGroup.getid();
         domain = ldapGroup.getdomain();
         name = ldapGroup.getname();
         distinguishedName = ldapGroup.getDistinguishedName();

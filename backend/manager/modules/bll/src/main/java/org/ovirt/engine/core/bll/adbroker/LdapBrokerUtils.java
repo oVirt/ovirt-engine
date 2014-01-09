@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -125,15 +125,15 @@ public class LdapBrokerUtils {
         // that are now in updatedGroups list
         List<GroupSearchResult> results = new ArrayList<GroupSearchResult>();
 
-        HashMap<String, java.util.HashMap<Guid, LdapUser>> groupsAdUsersMap =
-                new java.util.HashMap<String, java.util.HashMap<Guid, LdapUser>>();
+        Map<String, Map<ExternalId, LdapUser>> groupsAdUsersMap = new HashMap<>();
         Set<String> currentGroupsForSearch = new HashSet<String>();
+
         // Constructs a map that holds the groups that were already previously queried (for example, by
         // DbUserCacheManager.updateDbGroups
-        Map<Guid, LdapGroup> alreadyQueriedGroups = new HashMap<Guid, LdapGroup>();
+        Map<String, LdapGroup> alreadyQueriedGroups = new HashMap<>();
         if (updatedGroups != null) {
             for (LdapGroup adGroup : updatedGroups) {
-                alreadyQueriedGroups.put(adGroup.getid(), adGroup);
+                alreadyQueriedGroups.put(adGroup.getname(), adGroup);
             }
         }
         // Passes on all the users
@@ -141,10 +141,9 @@ public class LdapBrokerUtils {
             // Passes on all known groups of a given user.
             for (Map.Entry<String, LdapGroup> groupEntry : user.getGroups().entrySet()) {
 
-                java.util.HashMap<Guid, LdapUser> map;
+                Map<ExternalId, LdapUser> map;
 
                 String groupName = groupEntry.getKey();
-                Guid groupId = groupEntry.getValue().getid();
                 String groupDN = groupEntry.getValue().getDistinguishedName();
 
                 // Checks the following for all groups of user
@@ -153,9 +152,9 @@ public class LdapBrokerUtils {
                 // 2. For a group that is marked as candidate for population - check if it was already populated
                 // if so - add it to the search results list, and not to the groups to be queried
                 if (!groupsAdUsersMap.containsKey(groupName)) {
-                    map = new java.util.HashMap<Guid, LdapUser>();
+                    map = new HashMap<>();
                     groupsAdUsersMap.put(groupName, map);
-                    LdapGroup alreadyUpdatedGroup = alreadyQueriedGroups.get(groupId);
+                    LdapGroup alreadyUpdatedGroup = alreadyQueriedGroups.get(groupName);
                     // If the group was already populated, transform it to LDAP query result object and add it to result
                     // list
                     if (alreadyUpdatedGroup != null) {
@@ -202,9 +201,7 @@ public class LdapBrokerUtils {
      *            password of AD user to perform the query with
      * @param domainName
      *            domain of LDAP server to perform the query against
-     * @param ldapSecurityAuth
-     *            security authentication type (either SIMPLE or GSSAPI - in case of SIMPLE no optimization occurs)
-     * @param queryInfo
+     * @param queryData
      *            object that contain query information (query filter + base DN)
      * @return list of results
      */
@@ -256,12 +253,12 @@ public class LdapBrokerUtils {
      * @param searchResult
      */
     private static void ProceedGroupsSearchResult(GroupSearchResult searchResult,
-            Map<String, java.util.HashMap<Guid, LdapUser>> _groupsAdUsersMap,
+            Map<String, Map<ExternalId, LdapUser>> _groupsAdUsersMap,
             Set<String> currentGroupsForSearch) {
         List<String> memberOf = searchResult.getMemberOf();
         String groupName = searchResult.getDistinguishedName();
         groupName = generateGroupDisplayValue(groupName);
-        java.util.HashMap<Guid, LdapUser> groupUsers = _groupsAdUsersMap.get(groupName);
+        Map<ExternalId, LdapUser> groupUsers = _groupsAdUsersMap.get(groupName);
         if (memberOf == null) {
             return;
         }
@@ -272,7 +269,7 @@ public class LdapBrokerUtils {
             if (!_groupsAdUsersMap.containsKey(parentGroupName)) {
 
                 currentGroupsForSearch.add(parentGroupName);
-                java.util.HashMap<Guid, LdapUser> map = new java.util.HashMap<Guid, LdapUser>();
+                Map<ExternalId, LdapUser> map = new HashMap<>();
                 if (groupUsers != null) {
                     for (LdapUser user : groupUsers.values()) {
                         map.put(user.getUserId(), user);
@@ -281,9 +278,9 @@ public class LdapBrokerUtils {
                 }
                 _groupsAdUsersMap.put(parentGroupName, map);
             } else {
-                java.util.HashMap<Guid, LdapUser> parentGroupUser = _groupsAdUsersMap.get(parentGroupName);
+                Map<ExternalId, LdapUser> parentGroupUser = _groupsAdUsersMap.get(parentGroupName);
                 if (parentGroupUser != null && groupUsers != null) {
-                    for (Map.Entry<Guid, LdapUser> entry : groupUsers.entrySet()) {
+                    for (Map.Entry<ExternalId, LdapUser> entry : groupUsers.entrySet()) {
                         if (!parentGroupUser.containsKey(entry.getKey())) {
                             parentGroupUser.put(entry.getKey(), entry.getValue());
                             AddGroupToUser(entry.getValue(), parentGroupName);

@@ -8,12 +8,14 @@ import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DbUserDAO;
 
 public abstract class UserCommandBase<T extends IdParameters> extends CommandBase<T> {
     public UserCommandBase() {
@@ -55,8 +57,8 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
     }
 
     @SuppressWarnings("deprecation")
-    public static DbUser initUser(String sessionId, String domain, Guid id) {
-        DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(id);
+    public static DbUser initUser(String sessionId, String domain, ExternalId id) {
+        DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(domain, id);
         if (dbUser == null) {
             LdapUser adUser = (LdapUser) LdapFactory
                     .getInstance(domain)
@@ -74,18 +76,17 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
 
     /**
      * Check if the authenticated user exist in the DB. Add it if its missing.
-     *
-     * @param ldapUser
-     * @return newly create
      */
-    public static DbUser persistAuthenticatedUser(LdapUser ldapUser) {
-        DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(ldapUser.getUserId());
-        boolean newUser = dbUser == null;
-        dbUser = new DbUser(ldapUser);
-        if (newUser) {
-            DbFacade.getInstance().getDbUserDao().save(dbUser);
-        } else {
-            DbFacade.getInstance().getDbUserDao().update(dbUser);
+    public static DbUser persistAuthenticatedUser(LdapUser directoryUser) {
+        DbUserDAO dao = DbFacade.getInstance().getDbUserDao();
+        DbUser dbUser = dao.getByExternalId(directoryUser.getDomainControler(), directoryUser.getUserId());
+        if (dbUser != null) {
+            dao.update(dbUser);
+        }
+        else {
+            dbUser = new DbUser(directoryUser);
+            dbUser.setId(Guid.newGuid());
+            dao.save(dbUser);
         }
         return dbUser;
     }

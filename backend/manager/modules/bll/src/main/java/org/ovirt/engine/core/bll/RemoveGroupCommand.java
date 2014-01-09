@@ -40,7 +40,7 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
         }
 
         // Remove the group itself:
-        getAdGroupDAO().remove(getAdGroup().getid());
+        getAdGroupDAO().remove(id);
 
         setSucceeded(true);
     }

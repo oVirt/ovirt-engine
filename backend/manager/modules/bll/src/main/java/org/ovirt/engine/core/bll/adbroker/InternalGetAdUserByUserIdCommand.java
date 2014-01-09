@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class InternalGetAdUserByUserIdCommand extends InternalBrokerCommandBase {
-    private Guid getUserId() {
+    private ExternalId getUserId() {
         return ((LdapSearchByIdParameters) getParameters()).getId();
     }
 
@@ -14,8 +14,7 @@ public class InternalGetAdUserByUserIdCommand extends InternalBrokerCommandBase 
 
     @Override
     protected void executeQuery() {
-        LdapUser user = InternalBrokerUtils.getUserByUserGuid(getUserId());
-
+        LdapUser user = InternalBrokerUtils.getUserById(getUserId());
         if (user != null) {
             setSucceeded(true);
             setReturnValue(user);

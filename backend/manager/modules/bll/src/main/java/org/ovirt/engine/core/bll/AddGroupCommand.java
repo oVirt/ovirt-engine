@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbGroupDAO;
 
@@ -35,7 +36,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
     @Override
     protected boolean canDoAction() {
         String directory = getParameters().getDirectory();
-        Guid id = getParameters().getId();
+        ExternalId id = getParameters().getId();
         directoryGroup = (LdapGroup) LdapFactory.getInstance(directory).runAdAction(
             AdActionType.GetAdGroupByGroupId,
             new LdapSearchByIdParameters(directory, id)
@@ -52,8 +53,10 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
 
     @Override
     protected void executeCommand() {
+        // First check if the group is already in the database, if it is we
+        // need to update, if not we need to insert:
         DbGroupDAO dao = getAdGroupDAO();
-        DbGroup dbGroup = dao.get(directoryGroup.getid());
+        DbGroup dbGroup = dao.getByExternalId(directoryGroup.getdomain(), directoryGroup.getid());
         if (dbGroup == null) {
             dbGroup = new DbGroup(directoryGroup);
             dbGroup.setId(Guid.newGuid());
@@ -65,6 +68,9 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
             dbGroup.setId(id);
             dao.update(dbGroup);
         }
+
+        // Return the identifier of the created group:
+        setActionReturnValue(dbGroup.getId());
         setSucceeded(true);
     }
 

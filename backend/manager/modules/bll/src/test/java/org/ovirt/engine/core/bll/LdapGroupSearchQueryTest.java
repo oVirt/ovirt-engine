@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.AdGroupsSearchParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 @RunWith(Parameterized.class)
 public class LdapGroupSearchQueryTest extends LdapSearchQueryTestBase {
@@ -31,7 +31,7 @@ public class LdapGroupSearchQueryTest extends LdapSearchQueryTestBase {
 
     @Override
     protected LdapGroup getExpectedResult() {
-        return new LdapGroup(Guid.newGuid(), NAME_TO_SEARCH, DOMAIN);
+        return new LdapGroup(new ExternalId(0), NAME_TO_SEARCH, DOMAIN);
     }
 
     @Override

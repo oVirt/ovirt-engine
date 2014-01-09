@@ -27,7 +27,7 @@ public class OpenLdapUPNLdapQueryExecutionFormatter extends SimpleLdapQueryExecu
         String baseDN =
                 String.format(queryMetadata.getBaseDN(),
                         getEncodedParameters(queryMetadata.getQueryData().getBaseDNParameters(),
-                                queryMetadata.getLdapGuidEncoder()));
+                                queryMetadata.getLdapIdEncoder()));
 
         return new LdapQueryExecution(filter,
                 getDisplayFilter(queryMetadata),

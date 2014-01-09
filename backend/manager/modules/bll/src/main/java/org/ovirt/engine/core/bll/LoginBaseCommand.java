@@ -4,13 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.adbroker.AdActionType;
-import org.ovirt.engine.core.bll.adbroker.BrokerUtils;
-import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
-import org.ovirt.engine.core.bll.adbroker.LdapFactory;
-import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
-import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserNameParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -21,13 +15,14 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class LoginBaseCommand<T extends LoginUserParameters> extends CommandBase<T> {
+    private LdapUser directoryUser;
+    private DbUser dbUser;
+
     public LoginBaseCommand(T parameters) {
         super(parameters);
     }
@@ -40,56 +35,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     @Override
     public VdcLoginReturnValueBase getReturnValue() {
         return (VdcLoginReturnValueBase) super.getReturnValue();
-    }
-
-    private void HandleAuthenticationError(List<VdcBllMessages> errorMessages) {
-        // check if authentication failed due to password expiration
-        LdapBroker adFactory =
-                LdapFactory.getInstance(BrokerUtils.getLoginDomain(getParameters().getUserName(), getDomain()));
-
-        if (adFactory == null) {
-            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATION_WRONG_AUTHENTICATION_METHOD);
-            getReturnValue().setLoginResult(LoginResult.CantAuthenticate);
-            log.errorFormat(getReturnValue().getCanDoActionMessages().get(0) + " : {0}", getParameters().getUserName());
-            return;
-        }
-
-        LoginResult result = LoginResult.CantAuthenticate;
-        if (!Config.<String> getValue(ConfigValues.AuthenticationMethod).toUpperCase().equals("LDAP")) {
-            // In case we're using LDAP+GSSAPI/Kerberos - and there was an
-            // authentication error -
-            // we cannot query information about the user - we can do it only in
-            // local user
-            Object tempVar = null;
-            Object execResult =
-                    adFactory.runAdAction(
-                            AdActionType.GetAdUserByUserName,
-                            new LdapSearchByUserNameParameters(getParameters().getSessionId(),
-                                    getDomain(),
-                                    getParameters()
-                                            .getUserName()));
-            if (execResult != null) {
-                LdapReturnValueBase adExecResult = (LdapReturnValueBase) execResult;
-                tempVar = adExecResult.getReturnValue();
-            }
-            LdapUser user = (LdapUser) ((tempVar instanceof LdapUser) ? tempVar : null);
-            if (user != null && user.getPasswordExpired()) {
-                // If the password is expired - report just the error to the user
-                errorMessages.clear();
-                errorMessages.add(VdcBllMessages.USER_PASSWORD_EXPIRED);
-                result = LoginResult.PasswordExpired;
-            }
-        }
-        // If for some reason the error messages list is still empty - add the general "user can't authenticate" message
-        if (errorMessages.size() == 0) {
-            errorMessages.add(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
-        }
-
-        for (VdcBllMessages msg : errorMessages) {
-            getReturnValue().getCanDoActionMessages().add(msg.name());
-        }
-        getReturnValue().setLoginResult(result);
-        log.errorFormat(getReturnValue().getCanDoActionMessages().get(0) + " : {0}", getParameters().getUserName());
     }
 
     public String getUserPassword() {
@@ -107,18 +52,16 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected abstract UserAuthenticationResult authenticateUser();
 
-    protected LdapUser ldapUser;
-
     @Override
     protected void executeCommand() {
         // add user session
         setActionReturnValue(getCurrentUser());
-        // Persist the most updated version of the user
-        UserCommandBase.persistAuthenticatedUser(ldapUser);
+
         getReturnValue().setLoginResult(LoginResult.Autheticated);
         // Permissions for this user might been changed since last login so
         // update his isAdmin flag accordingly
         updateUserData();
+
         setSucceeded(true);
     }
 
@@ -137,64 +80,68 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     protected boolean isUserCanBeAuthenticated() {
-        boolean authenticated = false;
-        DbUser dbUser = SessionDataContainer.getInstance().getUser(false);
-        if (dbUser == null) {
-            boolean domainFound = false;
-            List<String> vdcDomains = LdapBrokerUtils.getDomainsList();
-            for (String domain : vdcDomains) {
-                if (StringUtils.equals(domain.toLowerCase(), getDomain().toLowerCase())) {
-                    domainFound = true;
-                    break;
-                }
-            }
-            if (!domainFound) {
-                addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_DOMAIN_NOT_SUPPORTED);
-                return false;
-            }
-
-            UserAuthenticationResult result = authenticateUser();
-            // If no result object is returned from authentication - create a result object with general authentication
-            // error
-            if (result == null) {
-                result = new UserAuthenticationResult(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
-            }
-            ldapUser = result.getUser();
-            authenticated = result.isSuccessful();
-
-            if ((!authenticated || ldapUser == null)) {
-                HandleAuthenticationError(result.getErrorMessages());
-                authenticated = false;
-            }
-        } else {
+        // Check if the user is already logged in:
+        dbUser = SessionDataContainer.getInstance().getUser(false);
+        if (dbUser != null) {
             addCanDoActionMessage(VdcBllMessages.USER_IS_ALREADY_LOGGED_IN);
+            return false;
         }
-        if (authenticated) {
-            /*
-             * Check login permissions
-             * We do it here and not via the getPermissionCheckSubjects mechanism, because we need the user to be logged in to
-             * the system in order to perform this check. The user is indeed logged in when running every command
-             * except the login command
-             */
-            if (!checkUserAndGroupsAuthorization(ldapUser.getUserId(), ldapUser.getGroupIds(), getActionType().getActionGroup(), MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID, VdcObjectType.Bottom, true)) {
-                addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
-                return false;
+
+        // Find the name of the directory where the user should be
+        // authenticated:
+        List<String> directories = LdapBrokerUtils.getDomainsList();
+        boolean found = false;
+        for (String directory : directories) {
+            if (StringUtils.equalsIgnoreCase(directory, getDomain())) {
+                found = true;
+                break;
             }
-
-            // Retrieve the MLA admin status of the user.
-            // This may be redundant in some use-cases, but looking forward to Single Sign On,
-            // we will want this info
-            dbUser = new DbUser(ldapUser);
-            boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(dbUser);
-            log.debugFormat("Checking if user {0} is an admin, result {1}", dbUser.getLoginName(), isAdmin);
-            dbUser.setAdmin(isAdmin);
-            setCurrentUser(dbUser);
-
-            // Add the user password to the session, as it will be needed later
-            // when trying to log on to virtual machines:
-            SessionDataContainer.getInstance().setPassword(getUserPassword());
         }
-        return authenticated;
+        if (!found) {
+            addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_DOMAIN_NOT_SUPPORTED);
+            return false;
+        }
+
+        // Perform the actual authentication:
+        UserAuthenticationResult result = authenticateUser();
+        if (result == null) {
+            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+            return false;
+        }
+        if (!result.isSuccessful()) {
+            for (VdcBllMessages message : result.getErrorMessages()) {
+                addCanDoActionMessage(message);
+            }
+            return false;
+        }
+
+        // Check that the user exists in the database, if it doesn't exist then
+        // we need to add it now:
+        directoryUser = result.getUser();
+        dbUser = UserCommandBase.persistAuthenticatedUser(directoryUser);
+
+        // Check login permissions. We do it here and not via the
+        // getPermissionCheckSubjects mechanism, because we need the user to be logged in to
+        // the system in order to perform this check. The user is indeed logged in when running every command
+        // except the login command
+        if (!checkUserAndGroupsAuthorization(dbUser.getId(), dbUser.getGroupIds(), getActionType().getActionGroup(), MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID, VdcObjectType.Bottom, true)) {
+            addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
+        }
+
+        // Retrieve the MLA admin status of the user.
+        // This may be redundant in some use-cases, but looking forward to Single Sign On,
+        // we will want this info
+        boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(dbUser);
+        log.debugFormat("Checking if user {0} is an admin, result {1}", dbUser.getLoginName(), isAdmin);
+        dbUser.setAdmin(isAdmin);
+        setCurrentUser(dbUser);
+
+        // Add the user password to the session, as it will be needed later
+        // when trying to log on to virtual machines:
+        SessionDataContainer.getInstance().setPassword(getUserPassword());
+
+        return true;
     }
 
     @Override
@@ -215,7 +162,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                DbFacade.getInstance().updateLastAdminCheckStatus(ldapUser.getUserId());
+                DbFacade.getInstance().updateLastAdminCheckStatus(dbUser.getId());
             }
         });
     }

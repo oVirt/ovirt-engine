@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -17,7 +17,7 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
     @Override
     protected void executeQueryCommand() {
         final String domain = getParameters().getDomain();
-        final Guid id = getParameters().getId();
+        final ExternalId id = getParameters().getId();
         final LdapBroker broker = LdapFactory.getInstance(domain);
         final LdapGroup group = (LdapGroup) broker.runAdAction(
             AdActionType.GetAdGroupByGroupId,

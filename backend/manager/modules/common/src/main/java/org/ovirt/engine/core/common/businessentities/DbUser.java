@@ -80,8 +80,7 @@ public class DbUser extends IVdcQueryable {
     }
 
     public DbUser(LdapUser ldapUser) {
-        id = ldapUser.getUserId();
-        externalId = new ExternalId(ldapUser.getUserId().toByteArray());
+        externalId = ldapUser.getUserId();
         domain = ldapUser.getDomainControler();
         loginName = ldapUser.getUserName();
         firstName = ldapUser.getName();

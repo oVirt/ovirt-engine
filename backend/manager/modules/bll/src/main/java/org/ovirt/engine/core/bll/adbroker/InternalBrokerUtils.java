@@ -9,25 +9,28 @@ import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
 
 public class InternalBrokerUtils {
 
-    private static final Guid ADMIN_GUID = new Guid("fdfc627c-d875-11e0-90f0-83df133b58cc");
+    private static final ExternalId ADMIN_ID = new ExternalId(
+        0xfd, 0xfc, 0x62, 0x7c, 0xd8, 0x75, 0x11, 0xe0,
+        0x90, 0xf0, 0x83, 0xdf, 0x13, 0x3b, 0x58, 0xcc
+    );
 
     private static DbUserDAO getDbUserDAO() {
         return DbFacade.getInstance().getDbUserDao();
     }
 
-    public static LdapGroup getGroupByGroupGuid(Guid groupGuid) {
+    public static LdapGroup getGroupById(ExternalId id) {
         return null;
     }
 
-    public static LdapUser getUserByUserGuid(Guid userGuid) {
+    public static LdapUser getUserById(ExternalId id) {
         LdapUser retVal = null;
-        DbUser dbUser = getDbUserDAO().get(userGuid);
+        DbUser dbUser = getDbUserDAO().getByExternalId(Config.<String>getValue(ConfigValues.AdminDomain), id);
         if (dbUser != null) {
             retVal = new LdapUser(dbUser);
         }
@@ -51,7 +54,7 @@ public class InternalBrokerUtils {
 
     public static List<LdapUser> getAllUsers() {
         List<LdapUser> users = new ArrayList<LdapUser>();
-        LdapUser user = getUserByUserGuid(ADMIN_GUID);
+        LdapUser user = getUserById(ADMIN_ID);
         if (user != null) {
             users.add(user);
         }

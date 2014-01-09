@@ -3,14 +3,12 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.common.util.ReflectionHelper.assignChildModel;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
@@ -102,10 +100,6 @@ public class BackendUsersResource
         return null;
     }
 
-    protected String getCurrentDomain() {
-        return getCurrent().get(Principal.class).getDomain();
-    }
-
     /**
      * This method calculates the search pattern used to search for the
      * directory user that will be added to the database when performing the
@@ -134,13 +128,6 @@ public class BackendUsersResource
         return sb.toString();
     }
 
-    protected List<DbUser> getDbUsersForDomain() {
-        return asCollection(DbUser.class,
-                getEntity(ArrayList.class,
-                        SearchType.DBUser,
-                        getDirectoryUserSearchPattern("*", getCurrentDomain())));
-    }
-
     @Override
     public Response performRemove(String id) {
         return performAction(VdcActionType.RemoveUser, new IdParameters(asGuid(id)));
@@ -165,31 +152,6 @@ public class BackendUsersResource
         return user;
     }
 
-    protected User mapUser(DbUser dbUser) {
-        return getMapper(DbUser.class, User.class).map(dbUser, null);
-    }
-
-    public DbUser lookupUserById(Guid id) {
-        return getEntity(DbUser.class,
-                         VdcQueryType.GetDbUserByUserId,
-                         new IdQueryParameters(id),
-                         id.toString());
-    }
-
-    protected class UserIdResolver extends EntityIdResolver<Guid> {
-
-        private Guid id;
-
-        UserIdResolver(Guid id) {
-            this.id = id;
-        }
-
-        @Override
-        public DbUser lookupEntity(Guid id) throws BackendFailureException {
-            return lookupUserById(this.id);
-        }
-    }
-
     @Override
     protected User doPopulate(User model, DbUser entity) {
         return model;
@@ -203,7 +165,8 @@ public class BackendUsersResource
     public Users list() {
         if (isFiltered()) {
             return mapDbUserCollection(getBackendCollection(VdcQueryType.GetAllDbUsers, new VdcQueryParametersBase()));
-        } else {
+        }
+        else {
           return mapDbUserCollection(getBackendCollection(SearchType.DBUser, getSearchPattern()));
         }
     }
@@ -225,10 +188,11 @@ public class BackendUsersResource
                     .entity("No such user: " + user.getUserName() + " in domain " + domain)
                     .build();
         }
-        DirectoryIdParameters addUser = new DirectoryIdParameters();
-        addUser.setDirectory(directoryUser.getDomainControler());
-        addUser.setId(directoryUser.getUserId());
-        return performCreate(VdcActionType.AddUser, addUser, new UserIdResolver(directoryUser.getUserId()), BaseResource.class);
+        DirectoryIdParameters parameters = new DirectoryIdParameters();
+        parameters.setDirectory(directoryUser.getDomainControler());
+        parameters.setId(directoryUser.getUserId());
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbUserByUserId, IdQueryParameters.class);
+        return performCreate(VdcActionType.AddUser, parameters, resolver, BaseResource.class);
     }
 
     private boolean isNameContainsDomain(User user) {

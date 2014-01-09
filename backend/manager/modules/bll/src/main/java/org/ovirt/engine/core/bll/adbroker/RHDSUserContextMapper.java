@@ -18,6 +18,7 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -50,10 +51,10 @@ public class RHDSUserContextMapper implements ContextMapper {
         user = new LdapUser();
 
         // user's Guid
-        String objectGuid;
         try {
-            objectGuid = (String) attributes.get(nsUniqueId.name()).get(0);
-            user.setUserId(Guid.createGuidFromStringDefaultEmpty(LdapBrokerUtils.getGuidFromNsUniqueId(objectGuid)));
+            String idText = (String) attributes.get(nsUniqueId.name()).get(0);
+            Guid idObject = Guid.createGuidFromStringDefaultEmpty(LdapBrokerUtils.getGuidFromNsUniqueId(idText));
+            user.setUserId(new ExternalId(idObject.toByteArray()));
 
             // Getting other string properties
             Attribute att = attributes.get(uid.name());
