@@ -32,7 +32,8 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean', action.vm.disks.detach_only: 'xs:boolean'}
+        optionalArguments: {action.force: 'xs:boolean', action.vm.disks.detach_only: 'xs:boolean',
+          action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: deletes the virtual machine in the system for the given virtual machine id with optional arguments where the vm can be forced to be removed and option to just detach the disks associated with the vm.
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -258,7 +259,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: shutdown a virtual machine in the system identified by the given id
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -268,7 +272,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: stop a virtual machine in the system identified by the given id
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -313,7 +320,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: suspend a virtual machine in the system identified by the given id
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -338,7 +348,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: detach a virtual machine in the system identified by the given id from the storage domain
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -377,7 +390,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.ticket.value: 'xs:string'}
+        optionalArguments: {action.ticket.value: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: Create a ticket for connecting to the VM using the display protocol.
     urlparams: {}
     headers:
@@ -515,7 +528,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.detach: 'xs:boolean'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: delete or detach a disk for a given virtual machine based on detach flag provided
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -594,7 +607,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: activate a disk attached to a virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -604,7 +620,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: deactivate a disk attached to a virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -629,7 +648,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -829,7 +848,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.restore_memory: 'xs:boolean'}
+        optionalArguments: {action.restore_memory: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: restore the virtual machine from a given snapshot
     urlparams: {}
     headers:
@@ -958,7 +977,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1262,7 +1281,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1345,7 +1364,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
+        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}, action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: import the template from the export or data domain into the specified cluster
     urlparams: {}
     headers:
@@ -1401,7 +1420,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean',action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
+        optionalArguments: {action.async: 'xs:boolean',action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}, action.grace_period.expiry: 'xs:long'}
         description: import the specified virtual machine in the storage domain into the specified cluster
     urlparams: {}
     headers:
@@ -1673,7 +1692,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean'}
+        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: delete the specified data center in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -1786,7 +1805,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: activate the specified storage domain in the data center
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1796,7 +1818,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: deactivate the specified storage domain in the data center
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2288,7 +2313,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean'}
+        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: delete the specified host in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -2358,7 +2383,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: activate the specified host in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2368,7 +2396,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: force the specified to be selected as storage pool manager
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2392,7 +2423,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: commit the changes made to network configuration of the host
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2402,7 +2436,10 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: deactivate the specified host
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2414,7 +2451,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.fence_type: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: initiate the fence operation on the host which has become non-responsive after multiple retries to connect to it
     urlparams: {}
     headers:
@@ -2432,7 +2469,7 @@ actions:
         description: install vdsm and other packages required to get the host ready to be used in the engine providing the root password. This has been deprecated
       - mandatoryArguments: {}
         optionalArguments: {action.ssh.port: 'xs:int', action.ssh.fingerprint: 'xs:string', action.ssh.authentication_method: 'xs:string',
-          action.ssh.user.user_name: 'xs:string', action.ssh.user.password: 'xs:string', action.image: 'xs:string'}
+          action.ssh.user.user_name: 'xs:string', action.ssh.user.password: 'xs:string', action.image: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: install vdsm and other packages required to get the host ready to be used in the engine providing thre ssh password
     urlparams: {}
     headers:
@@ -2445,6 +2482,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.iscsi.address: 'xs:string'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
     urlparams: {}
     headers:
@@ -2457,6 +2495,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.iscsi.address: 'xs:string', action.iscsi.target: 'xs:string'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: login to the specified iscsi target at the specified address
     urlparams: {}
     headers:
@@ -2542,7 +2581,7 @@ actions:
             host_nic.boot_protocol: 'xs:string', host_nic.mac: 'xs:string', host_nic.ip.address: 'xs:string', host_nic.ip.netmask: 'xs:string',
             host_nic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string', option.type: 'xs:string'},
             bonding.slaves.host_nic--COLLECTION: {host_nic.name|id: 'xs:string'},
-            host_nic.override_configuration: 'xs:boolean'}
+            host_nic.override_configuration: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
           action.checkConnectivity: xs:boolean
           action.connectivityTimeout: xs:int
           action.force: xs:boolean
@@ -2571,7 +2610,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: detach the network interface card from the specified host
     urlparams: {}
     headers:
@@ -3287,7 +3326,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.storage_domain.id: 'xs:string', action.force: 'xs:boolean'}
+        optionalArguments: {action.storage_domain.id: 'xs:string', action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
@@ -3313,7 +3352,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -3676,7 +3715,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -3779,7 +3818,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean'}
+        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: start the gluster volume attached to the cluster with an optional argument to force the operation
     urlparams: {}
     headers:
@@ -3792,7 +3831,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean'}
+        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stop the gluster volume attached to the cluster with an optional argument to force the operation
     urlparams: {}
     headers:
@@ -3805,7 +3844,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.fix_layout: 'xs:boolean', action.force: 'xs:boolean'}
+        optionalArguments: {action.fix_layout: 'xs:boolean', action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the rebalance command on the gluster volume attached to the cluster with optional arguments to fix the lay and force the operation
     urlparams: {}
     headers:
@@ -3818,7 +3857,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the stop rebalance command on the gluster volume attached to the cluster
     urlparams: {}
     headers:
@@ -3830,7 +3869,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.option.name: 'xs:string', action.option.value: 'xs:string'}
+      - mandatoryArguments: {action.option.name: 'xs:string', action.option.value: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         optionalArguments: {}
     urlparams: {}
     headers:
@@ -3843,7 +3882,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.option.name: 'xs:string', action.force: 'xs:boolean'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: reset an option for the gluster volume attached to the cluster with mandatory option to force the operation
     urlparams: {}
     headers:
@@ -3856,7 +3895,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: resets all options for the gluster volume attached to the cluster
     urlparams: {}
     headers:
@@ -3918,7 +3957,7 @@ actions:
       signatures:
       - mandatoryArguments:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: migrate the data from the brick to others and mark for deletion
     urlparams: {}
     headers:
@@ -3932,7 +3971,7 @@ actions:
       signatures:
       - mandatoryArguments:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: stops the bricks migration task started on on volume
     urlparams: {}
     headers:
@@ -3946,7 +3985,7 @@ actions:
       signatures:
       - mandatoryArguments:
           action.bricks--COLLECTION: {brick.name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: activates the bricks post migration of data for reuse
     urlparams: {}
     headers:
@@ -3959,7 +3998,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.brick.server_id: 'xs:string', action.brick.brick_dir: 'xs:string'}
-        optionalArguments: {action.force: 'xs:boolean'}
+        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
         deprecated: true
     urlparams: {}
@@ -4067,7 +4106,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -4088,7 +4127,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -4181,7 +4220,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.status.state: 'xs:string'}
-        optionalArguments: {action.force: 'xs:boolean'}
+        optionalArguments: {action.force: 'xs:boolean', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: end the specified external job in the system with an optional argument to force the operation
     urlparams: {}
     headers:
@@ -4195,7 +4234,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: clear the specified external job in the system
     urlparams: {}
     headers:
@@ -4243,7 +4282,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean', action.status.state: 'xs:string'}
+        optionalArguments: {action.force: 'xs:boolean', action.status.state: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
         description: invoke the command to end the specified step of an external job with an optional agrument to force the operation
     urlparams: {}
     headers:
@@ -4380,7 +4419,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -4391,7 +4430,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -4402,7 +4441,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.resolution_type: 'xs:string'}
-        optionalArguments: {action.host.id|name: 'xs:string'}
+        optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
