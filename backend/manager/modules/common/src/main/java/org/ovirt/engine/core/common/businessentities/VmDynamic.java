@@ -65,6 +65,9 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private String cpuName;
 
+    public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
+    public static final String STATUS_FIELD_NAME = "status";
+
     @Override
     public int hashCode() {
         final int prime = 31;

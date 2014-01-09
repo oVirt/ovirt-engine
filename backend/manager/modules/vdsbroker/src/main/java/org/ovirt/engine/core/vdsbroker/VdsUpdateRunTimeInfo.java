@@ -1055,7 +1055,7 @@ public class VdsUpdateRunTimeInfo {
             }
         }
 
-        if (vmsToUpdateFromVds.size() > 0) {
+        if (!vmsToUpdateFromVds.isEmpty()) {
             // If there are vms that require updating,
             // get the new info from VDSM in one call, and then update them all
             updateVmDevices(vmsToUpdateFromVds);
@@ -1908,15 +1908,15 @@ public class VdsUpdateRunTimeInfo {
             props.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
 
             if (vmNewDynamicData.getStatus() != VMStatus.Up) {
-                props.remove("appList");
+                props.remove(VmDynamic.APPLICATIONS_LIST_FIELD_NAME);
                 vmNewDynamicData.setAppList(vmToUpdate.argvalue.getAppList());
-            } else if (props.contains("status")
+            } else if (props.contains(VmDynamic.STATUS_FIELD_NAME)
                     && vmToUpdate.argvalue.getDynamicData().getStatus() == VMStatus.PreparingForHibernate) {
                 vmNewDynamicData.setStatus(VMStatus.PreparingForHibernate);
-                props.remove("status");
+                props.remove(VmDynamic.STATUS_FIELD_NAME);
             }
             // if anything else changed
-            if (props.size() > 0) {
+            if (!props.isEmpty()) {
                 vmToUpdate.argvalue.updateRunTimeDynamicData(vmNewDynamicData, _vds.getId(), _vds.getName());
                 returnValue = true;
             }
@@ -2042,7 +2042,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void addVmInterfaceStatisticsToList(List<VmNetworkInterface> list) {
-        if (list.size() <= 0) {
+        if (list.isEmpty()) {
             return;
         }
         _vmInterfaceStatisticsToSave.put(list.get(0).getVmId(), list);
