@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeC
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivitySeperatorCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeBrickStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeCapacityCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeTaskWaitingCell;
 
@@ -121,6 +122,13 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             }
         });
 
+        getTable().addColumn(new Column<GlusterVolumeEntity, GlusterVolumeEntity>(new VolumeCapacityCell()) {
+            @Override
+            public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
+                return object;
+            }
+        }, constants.volumeCapacity(), "60px");//$NON-NLS-1$
+
         getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList) {
                 @Override
                 protected boolean isVisible(GlusterTaskSupport value) {
@@ -129,7 +137,6 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 }),
                 constants.activitiesOnVolume(),
                 "100px"); //$NON-NLS-1$
-
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override

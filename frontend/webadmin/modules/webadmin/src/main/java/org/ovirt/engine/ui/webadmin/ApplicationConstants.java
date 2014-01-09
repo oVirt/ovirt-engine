@@ -2631,6 +2631,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remove")
     String removeVolume();
 
+    @DefaultStringValue("Space Used")
+    String volumeCapacity();
+
     @DefaultStringValue("Start")
     String startVolume();
 
