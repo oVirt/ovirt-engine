@@ -32,9 +32,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     private Guid existingImageId = Guid.newGuid();
     private Guid existingImageGroupId = Guid.newGuid();
     private Snapshot existingSnapshot;
-    private VM existingVm = null;
     private SnapshotsManager snapshotsManager;
-    private DiskImage existingDiskImage;
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
     private static final String EXISTING_VM_NAME = "Dummy configuration";
@@ -44,9 +42,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     public void setUp() throws Exception {
         super.setUp();
         existingSnapshot = createSnapshot(existingSnapshotId);
-        existingVm = createVm(existingVmId);
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration
-        existingDiskImage = createDiskImage(existingImageId, existingImageGroupId);
         snapshotVmConfigurationHelper = spy(new SnapshotVmConfigurationHelper());
         when(getQuery().getSnapshotVmConfigurationHelper()).thenReturn(snapshotVmConfigurationHelper);
         snapshotsManager = mock(SnapshotsManager.class);
