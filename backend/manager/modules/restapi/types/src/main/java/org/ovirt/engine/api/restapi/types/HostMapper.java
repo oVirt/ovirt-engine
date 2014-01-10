@@ -122,6 +122,9 @@ public class HostMapper {
         if (model.isSetEnabled()) {
             entity.setPmEnabled(model.isEnabled());
         }
+        if (model.isSetAutomaticPmEnabled()) {
+            entity.setDisablePowerManagementPolicy(!model.isAutomaticPmEnabled());
+        }
         if (model.isSetPmProxies()) {
             String delim = "";
             StringBuilder builder = new StringBuilder();
@@ -456,6 +459,7 @@ public class HostMapper {
         model.setEnabled(entity.getpm_enabled());
         model.setAddress(entity.getManagementIp());
         model.setUsername(entity.getPmUser());
+        model.setAutomaticPmEnabled(!entity.isDisablePowerManagementPolicy());
         if (entity.getPmOptionsMap() != null) {
             model.setOptions(map(entity.getPmOptionsMap(), null));
         }
