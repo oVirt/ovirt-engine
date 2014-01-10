@@ -12,7 +12,7 @@ public enum SsoMethod {
 
     public static SsoMethod fromString(String val) {
         for (SsoMethod ssoMethod : SsoMethod.values()) {
-            if (ssoMethod.value.equals(val)) {
+            if (ssoMethod.value.equalsIgnoreCase(val)) {
                 return ssoMethod;
             }
         }

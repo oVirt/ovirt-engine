@@ -636,6 +636,7 @@
           <xs:element ref="content_types" minOccurs="0" />
           <xs:element ref="hook_states" minOccurs="0" />
           <xs:element ref="stages" minOccurs="0" />
+          <xs:element ref="sso_methods" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1029,6 +1030,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="SnapshotStatuses"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="sso_methods" type="SsoMethods"/>
+
+  <xs:complexType name="SsoMethods">
+    <xs:sequence>
+      <xs:element name="sso_method" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="SsoMethods"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -2286,6 +2301,7 @@
           <xs:element name="display" type="Display" minOccurs="0" maxOccurs="1"/>
           <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
           <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
+          <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
@@ -2343,6 +2359,34 @@
       <xs:element name="version" type="Version" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="type" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Single Sign-On Section -->
+  <xs:element name="sso" type="Sso"/>
+
+  <xs:complexType name="Sso">
+    <xs:sequence>
+      <xs:element ref="methods" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="methods" type="Methods"/>
+
+  <xs:complexType name="Methods">
+    <xs:sequence>
+      <xs:annotation>
+        <xs:appinfo>
+          <jaxb:property name="methods"/>
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:element ref="method" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="method" type="Method" />
+
+  <xs:complexType name="Method">
+    <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="HighAvailability">
@@ -2556,6 +2600,7 @@
           <xs:element name="origin" type="xs:string" minOccurs="0"/>
           <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
           <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
+          <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
