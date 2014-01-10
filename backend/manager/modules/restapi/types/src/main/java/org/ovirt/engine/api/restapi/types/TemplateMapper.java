@@ -62,6 +62,9 @@ public class TemplateMapper {
         if (model.isSetDeleteProtected()) {
             entity.setDeleteProtected(model.isDeleteProtected());
         }
+        if (model.isSetSso() && model.getSso().isSetMethods()) {
+            entity.setSsoMethod(SsoMapper.map(model.getSso(), null));
+        }
         if (model.isSetType()) {
             VmType vmType = VmType.fromValue(model.getType());
             if (vmType != null) {
@@ -184,6 +187,9 @@ public class TemplateMapper {
         if (model.isSetDeleteProtected()) {
             staticVm.setDeleteProtected(model.isDeleteProtected());
         }
+        if (model.isSetSso() && model.getSso().isSetMethods()) {
+            staticVm.setSsoMethod(SsoMapper.map(model.getSso(), null));
+        }
         if (model.isSetType()) {
             VmType vmType = VmType.fromValue(model.getType());
             if (vmType != null) {
@@ -270,12 +276,13 @@ public class TemplateMapper {
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
         model.setComment(entity.getComment());
-        model.setMemory((long)entity.getMemSizeMb() * BYTES_PER_MB);
+        model.setMemory((long) entity.getMemSizeMb() * BYTES_PER_MB);
         model.setHighAvailability(new HighAvailability());
         model.getHighAvailability().setEnabled(entity.isAutoStartup());
         model.getHighAvailability().setPriority(entity.getPriority());
         model.setStateless(entity.isStateless());
         model.setDeleteProtected(entity.isDeleteProtected());
+        model.setSso(SsoMapper.map(entity.getSsoMethod(), null));
         if (entity.getVmType() != null) {
             model.setType(VmMapper.map(entity.getVmType(), null));
         }

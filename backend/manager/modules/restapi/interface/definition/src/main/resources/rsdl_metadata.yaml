@@ -77,6 +77,7 @@ actions:
           vm.comment: xs:string
           vm.stateless: xs:boolean
           vm.delete_protected: xs:boolean
+          vm.sso.methods.method--COLLECTION: {method.id: 'xs:string'}
           vm.console.enabled: xs:boolean
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
@@ -146,6 +147,7 @@ actions:
           vm.stateless: xs:boolean
           vm.permissions.clone: xs:boolean
           vm.delete_protected: xs:boolean
+          vm.sso.methods.method--COLLECTION: {method.id: 'xs:string'}
           vm.console.enabled: xs:boolean
           vm.cpu.mode: xs:string
           vm.cpu.topology.sockets: xs:int
@@ -194,6 +196,7 @@ actions:
           vm.comment: xs:string
           vm.stateless: xs:boolean
           vm.delete_protected: xs:boolean
+          vm.sso.methods.method--COLLECTION: {method.id: 'xs:string'}
           vm.console.enabled: xs:boolean
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
@@ -235,6 +238,7 @@ actions:
                 vm.stateless: xs:boolean
                 vm.permissions.clone: xs:boolean
                 vm.delete_protected: xs:boolean
+                vm.sso.methods.method--COLLECTION: {method.id: 'xs:string'}
                 vm.cpu.mode: xs:string
                 vm.cpu.topology.sockets: xs:int
                 vm.placement_policy.affinity: xs:string
@@ -3322,6 +3326,7 @@ actions:
           template.type: xs:string
           template.stateless: 'xs:boolean'
           template.delete_protected: xs:boolean
+          template.sso.methods.method--COLLECTION: {method.id: 'xs:string'}
           template.console.enabled: xs:boolean
           template.placement_policy.affinity: xs:string
           template.description: xs:string
@@ -3368,6 +3373,7 @@ actions:
           template.type: xs:string
           template.stateless: 'xs:boolean'
           template.delete_protected: xs:boolean
+          template.sso.methods.method--COLLECTION: {method.id: 'xs:string'}
           template.console.enabled: xs:boolean
           template.placement_policy.affinity: xs:string
           template.description: xs:string
