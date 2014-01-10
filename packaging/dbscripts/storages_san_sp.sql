@@ -464,7 +464,7 @@ Create or replace FUNCTION Getstorage_server_connectionsByKey(v_iqn VARCHAR(128)
 	v_port VARCHAR(50) ,
 	v_portal VARCHAR(50) ,
 	v_username VARCHAR(50) ,
-	v_password VARCHAR(50)) RETURNS SETOF storage_server_connections STABLE
+	v_password text) RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
