@@ -1614,4 +1614,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Double-click to select an entire row")
     String customPreviewSnapshotTableTitle();
+
+    @DefaultStringValue("Saving memory may cause data loss when excluding disks!")
+    String snapshotCreationWithMemoryAndPartialDisksWarning();
+
+    @DefaultStringValue("Previewing memory may cause data loss when excluding disks!")
+    String snapshotPreviewWithMemoryAndPartialDisksWarning();
 }

@@ -37,13 +37,21 @@
             font-size: 13px;
             padding-bottom: 2px;
         }
+
+        .warningPanel {
+            color: red;
+            text-align: right;
+        }
     </ui:style>
 
     <g:SplitLayoutPanel ui:field="splitLayoutPanel" width="100%">
         <g:center>
             <g:SimplePanel addStyleNames="{style.containerPanel}">
                 <g:FlowPanel addStyleNames="{style.containerPanelInner}">
-                    <g:Label ui:field="previewTableLabel" addStyleNames="{style.previewTableLabel}"/>
+                    <g:HorizontalPanel width="100%">
+                        <g:Label ui:field="previewTableLabel" addStyleNames="{style.previewTableLabel}"/>
+                        <g:SimplePanel ui:field="warningPanel" addStyleNames="{style.warningPanel}"/>
+                    </g:HorizontalPanel>
                     <e:EntityModelCellTable ui:field="previewTable"/>
                 </g:FlowPanel>
             </g:SimplePanel>

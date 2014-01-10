@@ -14,6 +14,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -74,6 +75,9 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
     @UiField
     SimplePanel snapshotInfoContainer;
+
+    @UiField
+    SimplePanel warningPanel;
 
     private PreviewSnapshotModel previewSnapshotModel;
     private VmSnapshotInfoPanel vmSnapshotInfoPanel;
@@ -148,6 +152,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             public void update(int index, SnapshotModel snapshotModel, Boolean value) {
                 previewSnapshotModel.setSnapshotModel(snapshotModel);
                 previewSnapshotModel.clearMemorySelection();
+                updateMemoryWarning();
                 refreshTable(previewTable);
 
                 if (snapshotModel.getVm() == null) {
@@ -171,6 +176,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             public void update(int index, SnapshotModel snapshotModel, Boolean value) {
                 previewSnapshotModel.getSnapshotModel().getMemory().setEntity(value);
                 refreshTable(previewTable);
+                updateMemoryWarning();
             }
         }) {
             @Override
@@ -209,6 +215,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
                     diskListModel.setSelectedItem(Boolean.TRUE.equals(value) ? image : null);
                     refreshTable(previewTable);
+                    updateMemoryWarning();
                     updateInfoPanel();
                 }
             }) {
@@ -255,6 +262,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                         SnapshotModel selectedSnapshotModel = (SnapshotModel) event.getValue();
                         previewSnapshotModel.clearSelection();
                         previewSnapshotModel.selectSnapshot(selectedSnapshotModel.getEntity().getId());
+                        updateMemoryWarning();
                         refreshTable(previewTable);
                     }
                     lastClick = System.currentTimeMillis();
@@ -266,6 +274,22 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
     private void refreshTable(EntityModelCellTable table) {
         table.asEditor().edit(table.asEditor().flush());
         table.redraw();
+    }
+
+    private void updateMemoryWarning() {
+        List<DiskImage> allSnapshotsDisks = previewSnapshotModel.getSnapshotModel().getEntity().getDiskImages();
+        List<DiskImage> selectedDisks = previewSnapshotModel.getSelectedDisks();
+
+        boolean partialDisksSelection = !selectedDisks.containsAll(allSnapshotsDisks);
+        boolean isIncludeMemory = (Boolean) previewSnapshotModel.getSnapshotModel().getMemory().getEntity();
+
+        SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
+                resources.logWarningImage()).getHTML());
+        HTML warningWidget = new HTML(templates.iconWithText(
+                warningImage, constants.snapshotPreviewWithMemoryAndPartialDisksWarning()));
+
+        // Show warning in case of previewing a memory snapshot and excluding some disks.
+        warningPanel.setWidget(isIncludeMemory && partialDisksSelection ? warningWidget : null);
     }
 
     private void updateInfoPanel() {

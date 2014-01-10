@@ -2,15 +2,22 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -26,6 +33,8 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+import java.util.ArrayList;
 
 public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<SnapshotModel> {
 
@@ -66,11 +75,22 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     @Ignore
     FlowPanel messagePanel;
 
-    private final Driver driver = GWT.create(Driver.class);
+    @UiField
+    SimplePanel warningPanel;
 
-    public VmSnapshotCreatePopupWidget(CommonApplicationConstants constants) {
+    private final Driver driver = GWT.create(Driver.class);
+    private CommonApplicationTemplates templates;
+    private CommonApplicationResources resources;
+    private CommonApplicationConstants constants;
+
+    public VmSnapshotCreatePopupWidget(CommonApplicationConstants constants, CommonApplicationTemplates templates,
+                                       CommonApplicationResources resources) {
+        this.constants = constants;
+        this.templates = templates;
+        this.resources = resources;
+
         initEditors();
-        initTables(constants);
+        initTables();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -81,7 +101,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
         memoryEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
-    private void initTables(CommonApplicationConstants constants) {
+    private void initTables() {
         disksTable = new ListModelObjectCellTable<DiskImage, ListModel>(true, true);
         disksTable.enableColumnResizing();
 
@@ -141,9 +161,16 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
                 }
             }
         });
+
+        model.getMemory().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateMemoryWarning(model);
+            }
+        });
     }
 
-    private void editDisksTable(SnapshotModel model) {
+    private void editDisksTable(final SnapshotModel model) {
         disksTable.asEditor().edit(model.getSnapshotDisks());
         model.getSnapshotDisks().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
@@ -151,6 +178,29 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
                 disksTable.selectAll();
             }
         });
+
+        model.getSnapshotDisks().getSelectedItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateMemoryWarning(model);
+            }
+        });
+    }
+
+    private void updateMemoryWarning(SnapshotModel model) {
+        ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) model.getSnapshotDisks().getItems();
+        ArrayList<DiskImage> selectedDiskImages = (ArrayList<DiskImage>) model.getSnapshotDisks().getSelectedItems();
+
+        boolean partialDisksSelection = selectedDiskImages != null && diskImages.size() != selectedDiskImages.size();
+        boolean isIncludeMemory = (Boolean) model.getMemory().getEntity();
+
+        SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
+                resources.logWarningImage()).getHTML());
+        HTML warningWidget = new HTML(templates.iconWithText(
+                warningImage, constants.snapshotCreationWithMemoryAndPartialDisksWarning()));
+
+        // Show warning in case of saving memory to snapshot and excluding some disks.
+        warningPanel.setWidget(isIncludeMemory && partialDisksSelection ? warningWidget : null);
     }
 
     @Override

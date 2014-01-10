@@ -21,8 +21,13 @@
             max-height: 40px;
 		}
 
+        .warningPanel {
+            color: red;
+            padding-top: 5px;
+        }
+
         .disksPanel {
-            height: 200px;
+            height: 180px;
             margin: 5px;
         }
 
@@ -40,6 +45,7 @@
             <e:ListModelObjectCellTable ui:field="disksTable"/>
         </g:ScrollPanel>
         <e:EntityModelCheckBoxEditor ui:field="memoryEditor" addStyleNames="{style.memoryEditor}" />
+        <g:SimplePanel ui:field="warningPanel" addStyleNames="{style.warningPanel}"/>
         <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}"/>
 	</g:FlowPanel>
 

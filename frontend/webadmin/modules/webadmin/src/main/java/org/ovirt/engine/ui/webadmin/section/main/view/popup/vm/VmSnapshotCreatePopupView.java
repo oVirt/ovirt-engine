@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmSnapshotCreatePopup
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -19,8 +20,9 @@ public class VmSnapshotCreatePopupView extends AbstractModelBoundWidgetPopupView
     }
 
     @Inject
-    public VmSnapshotCreatePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, new VmSnapshotCreatePopupWidget(constants), "410px", "400px"); //$NON-NLS-1$ //$NON-NLS-2$
+    public VmSnapshotCreatePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
+                                     ApplicationTemplates templates) {
+        super(eventBus, resources, new VmSnapshotCreatePopupWidget(constants, templates, resources), "410px", "400px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
