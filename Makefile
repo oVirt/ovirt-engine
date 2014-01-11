@@ -401,11 +401,6 @@ install-layout: \
 	ln -s "$(DATA_DIR)/branding/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 
-	# legacy-begin
-	ln -sf "$(DATA_DIR)/bin/engine-upgrade.sh" "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
-	ln -sf "$(DATA_DIR)/bin/engine-check-update.sh" "$(DESTDIR)$(BIN_DIR)/engine-check-update"
-	# legacy-end
-
 gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
 	cd "frontend/webadmin/modules/$(DEBUG_MODULE)" && \

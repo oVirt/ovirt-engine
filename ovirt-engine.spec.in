@@ -876,13 +876,6 @@ fi
 %{engine_state}/backups/
 %{engine_state}/setup/
 
-# Legacy
-# TODO: remove in 3.4
-%{_bindir}/engine-check-update
-%{_bindir}/engine-upgrade
-%{engine_data}/bin/engine-check-update.sh
-%{engine_data}/bin/engine-upgrade.sh
-
 %files setup-plugin-ovirt-engine
 
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
