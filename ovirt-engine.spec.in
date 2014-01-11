@@ -342,7 +342,6 @@ Requires:	otopi >= 1.2.0
 Setup and upgrade scripts for %{ovirt_product_name_short}
 
 %pre setup
-%ovirt_create_user_vdsm
 %ovirt_create_user_engine
 
 %package setup-plugin-ovirt-engine
@@ -353,6 +352,9 @@ Requires:	%{name}
 
 %description setup-plugin-ovirt-engine
 Setup and upgrade specific plugins for %{ovirt_product_name_short}
+
+%pre setup-plugin-ovirt-engine
+%ovirt_create_user_vdsm
 
 %package setup-plugin-ovirt-engine-common
 Summary:	Setup and upgrade common plugins for %{ovirt_product_name_short}
