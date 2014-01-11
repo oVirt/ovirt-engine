@@ -609,7 +609,6 @@ class Const(object):
 
     ACTION_SETUP = 'setup'
     ACTION_REMOVE = 'cleanup'
-    ACTION_UPGRADE = 'upgrade'
     ACTION_RENAME = 'rename'
     FIREWALL_MANAGER_HUMAN = 'skip'
     FIREWALL_MANAGER_IPTABLES = 'iptables'

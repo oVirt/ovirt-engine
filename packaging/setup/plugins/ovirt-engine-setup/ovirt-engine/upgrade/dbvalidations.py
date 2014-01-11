@@ -89,7 +89,6 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._enabled = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -101,29 +100,15 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
-        after=(
-            osetupcons.Stages.DB_CONNECTION_SETUP,
-        ),
-    )
-    def _setup(self):
-        self._enabled = (
-            self.environment[
-                osetupcons.CoreEnv.ACTION
-            ] == osetupcons.Const.ACTION_UPGRADE and
-            not self.environment[
-                osetupcons.DBEnv.NEW_DATABASE
-            ]
-        )
-
-    @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         priority=plugin.Stages.PRIORITY_LOW,
         after=(
             osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
             osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ),
-        condition=lambda self: self._enabled,
+        condition=lambda self: not self.environment[
+            osetupcons.DBEnv.NEW_DATABASE
+        ],
     )
     def _validation(self):
         self.logger.info(
@@ -167,7 +152,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_EARLY_MISC,
-        condition=lambda self: self._enabled,
+        condition=lambda self: self.environment[
+            osetupcons.DBEnv.FIX_DB_VIOLATIONS
+        ],
     )
     def _misc(self):
         self.logger.info(

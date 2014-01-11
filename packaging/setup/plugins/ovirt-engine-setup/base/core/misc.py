@@ -19,7 +19,6 @@
 """Misc plugin."""
 
 
-import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -57,19 +56,11 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
-        priority=plugin.Stages.PRIORITY_LOW
     )
     def _init(self):
-        if os.path.exists(
-            osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
-        ):
-            self.environment[
-                osetupcons.CoreEnv.ACTION
-            ] = osetupcons.Const.ACTION_UPGRADE
-        else:
-            self.environment[
-                osetupcons.CoreEnv.ACTION
-            ] = osetupcons.Const.ACTION_SETUP
+        self.environment[
+            osetupcons.CoreEnv.ACTION
+        ] = osetupcons.Const.ACTION_SETUP
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

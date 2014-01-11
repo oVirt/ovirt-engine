@@ -102,16 +102,13 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         name=osetupcons.Stages.DB_CONNECTION_SETUP,
-        condition=lambda self: self.environment[
-            osetupcons.CoreEnv.ACTION
-        ] != osetupcons.Const.ACTION_SETUP,
     )
     def _setup(self):
         config = configfile.ConfigFile([
             osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
             osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
         ])
-        if config.get('ENGINE_DB_PASSWORD') is not None:
+        if config.get('ENGINE_DB_PASSWORD'):
             try:
                 dbenv = {}
                 for e, k in (
