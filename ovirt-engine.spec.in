@@ -860,6 +860,7 @@ fi
 %files setup
 
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
+%dir %{engine_data}/setup/bin/
 %dir %{engine_log}/setup
 %{_bindir}/engine-cleanup
 %{_bindir}/engine-setup
