@@ -870,9 +870,7 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-setup
 %{engine_data}/setup/bin/ovirt-engine-setup.env
 %{engine_data}/setup/ovirt_engine_setup/
-%{engine_data}/setup/plugins/ovirt-engine-common/base/
-%{engine_data}/setup/plugins/ovirt-engine-remove/base/
-%{engine_data}/setup/plugins/ovirt-engine-setup/base/
+%{engine_data}/setup/plugins/*/base/
 %{engine_state}/backups/
 %{engine_state}/setup/
 
@@ -886,23 +884,20 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-rename
 %{engine_data}/setup/bin/ovirt-engine-upgrade-check
 %{engine_data}/setup/dbutils/
-%{engine_data}/setup/plugins/ovirt-engine-remove/ovirt-engine/
+%{engine_data}/setup/plugins/*/ovirt-engine/
 %{engine_data}/setup/plugins/ovirt-engine-rename/
-%{engine_data}/setup/plugins/ovirt-engine-setup/ovirt-engine/
 
 # backward compatibility
 %ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
 
 %files setup-plugin-ovirt-engine-common
 
-%{engine_data}/setup/plugins/ovirt-engine-setup/ovirt-engine-common/
+%{engine_data}/setup/plugins/*/ovirt-engine-common/
 
 %files setup-plugin-websocket-proxy
 
 %{engine_data}/firewalld/websocket-proxy/
-%{engine_data}/setup/plugins/ovirt-engine-common/websocket_proxy/
-%{engine_data}/setup/plugins/ovirt-engine-remove/websocket_proxy/
-%{engine_data}/setup/plugins/ovirt-engine-setup/websocket_proxy/
+%{engine_data}/setup/plugins/*/websocket_proxy/
 
 %files setup-plugin-allinone
 
