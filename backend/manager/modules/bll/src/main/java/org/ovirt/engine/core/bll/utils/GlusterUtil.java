@@ -2,8 +2,12 @@ package org.ovirt.engine.core.bll.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,15 +17,21 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -210,5 +220,43 @@ public class GlusterUtil {
         EngineLock lock = new EngineLock(exclusiveLocks, null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
+    }
+
+    public boolean isHostExists(List<GlusterServerInfo> glusterServers, VDS server) {
+        if (GlusterFeatureSupported.glusterHostUuidSupported(server.getVdsGroupCompatibilityVersion())) {
+            GlusterServer glusterServer = DbFacade.getInstance().getGlusterServerDao().getByServerId(server.getId());
+            if (glusterServer != null) {
+                for (GlusterServerInfo glusterServerInfo : glusterServers) {
+                    if (glusterServerInfo.getUuid().equals(glusterServer.getGlusterServerUuid())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        else {
+            for (GlusterServerInfo glusterServer : glusterServers) {
+                if (glusterServer.getHostnameOrIp().equals(server.getHostName())) {
+                    return true;
+                }
+                try {
+                    String glusterHostAddr = InetAddress.getByName(glusterServer.getHostnameOrIp()).getHostAddress();
+                    for (VdsNetworkInterface vdsNwInterface : getVdsInterfaces(server.getId())) {
+                        if (glusterHostAddr.equals(vdsNwInterface.getAddress())) {
+                            return true;
+                        }
+                    }
+                } catch (UnknownHostException e) {
+                    log.errorFormat("Could not resolve IP address of the host {0}. Error: {1}",
+                            glusterServer.getHostnameOrIp(),
+                            e.getMessage());
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<VdsNetworkInterface> getVdsInterfaces(Guid vdsId) {
+        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vdsId);
+        return (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
     }
 }

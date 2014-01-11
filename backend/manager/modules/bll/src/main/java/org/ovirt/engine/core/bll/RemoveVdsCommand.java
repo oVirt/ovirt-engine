@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
@@ -227,12 +229,37 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                 setSucceeded(returnValue.getSucceeded()
                         || VdcBllErrors.GlusterHostIsNotPartOfCluster == returnValue.getVdsError().getCode());
                 if (!getSucceeded()) {
+                    // VDSM in 3.3 (or less) cluster will return GlusterHostRemoveFailedException
+                    // if the host is not part of the cluster
+                    // So if peer detach is failed, check the peer list to decide that the host is not part of the
+                    // cluster
+
+                    if (returnValue.getVdsError().getCode() == VdcBllErrors.GlusterHostRemoveFailedException) {
+                        List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer);
+                        if (glusterServers != null) {
+                            if (!GlusterUtil.getInstance().isHostExists(glusterServers, getVds())) {
+                                setSucceeded(true);
+                                return;
+                            }
+                        }
+                    }
                     getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
                     getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
                     errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
                     return;
                 }
             }
+        }
+    }
+
+    private List<GlusterServerInfo> getGlusterPeers(VDS upServer) {
+        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServersList,
+                new VdsIdVDSCommandParametersBase(upServer.getId()));
+        if (returnValue.getSucceeded()) {
+            return (List<GlusterServerInfo>) returnValue.getReturnValue();
+        }
+        else {
+            return null;
         }
     }
 

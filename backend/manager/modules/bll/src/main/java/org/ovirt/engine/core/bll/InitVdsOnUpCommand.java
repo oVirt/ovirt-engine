@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -59,7 +56,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -403,7 +399,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                         customLogValues.put("Command", "gluster peer status");
                         setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                         return false;
-                    } else if (!hostExists(glusterServers, getVds())) {
+                    }
+                    else if (!getGlusterUtil().isHostExists(glusterServers, getVds())) {
                         if (!glusterPeerProbe(upServer.getId(), getVds().getHostName())) {
                             customLogValues.put("Command", "gluster peer probe " + getVds().getHostName());
                             setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
@@ -421,7 +418,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                                 return true;
                             }
                             List<GlusterServerInfo> newGlusterServers = getGlusterPeers(newUpServer.getId());
-                            if (!hostExists(newGlusterServers, getVds())) {
+                            if (!getGlusterUtil().isHostExists(newGlusterServers, getVds())) {
                                 log.infoFormat("Failed to find host {0} in gluster peer list from {1} on attempt {2}" , getVds(), newUpServer, ++retries);
                                 // if num of attempts done
                                 if (retries == MAX_RETRIES_GLUSTER_PROBE_STATUS) {
@@ -446,6 +443,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         }
     }
 
+    private GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
+    }
+
     private VDS getNewUpServer(VDS upServer) {
         List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
         VDS newUpServer = null;
@@ -456,39 +457,6 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             }
         }
         return newUpServer;
-    }
-
-    private boolean hostExists(List<GlusterServerInfo> glusterServers, VDS server) {
-        if (GlusterFeatureSupported.glusterHostUuidSupported(getVdsGroup().getcompatibility_version())) {
-            GlusterServer glusterServer = DbFacade.getInstance().getGlusterServerDao().getByServerId(server.getId());
-            if (glusterServer != null) {
-                for (GlusterServerInfo glusterServerInfo : glusterServers) {
-                    if (glusterServerInfo.getUuid().equals(glusterServer.getGlusterServerUuid())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        else {
-            for (GlusterServerInfo glusterServer : glusterServers) {
-                if (glusterServer.getHostnameOrIp().equals(server.getHostName())) {
-                    return true;
-                }
-                try {
-                    String glusterHostAddr = InetAddress.getByName(glusterServer.getHostnameOrIp()).getHostAddress();
-                    for (VdsNetworkInterface vdsNwInterface : getVdsInterfaces(server.getId())) {
-                        if (glusterHostAddr.equals(vdsNwInterface.getAddress())) {
-                            return true;
-                        }
-                    }
-                } catch (UnknownHostException e) {
-                    log.errorFormat("Could not resole IP address of the host {0}. Error: {1}",
-                            glusterServer.getHostnameOrIp(),
-                            e.getMessage());
-                }
-            }
-        }
-        return false;
     }
 
     private boolean hostUuidExists(Guid addedServerUuid) {
@@ -509,15 +477,6 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             glusterServer.setGlusterServerUuid(addedServerUuid);
             glusterServerDao.save(glusterServer);
         }
-    }
-
-    public InterfaceDao getInterfaceDAO() {
-        return getDbFacade().getInterfaceDao();
-    }
-
-    private List<VdsNetworkInterface> getVdsInterfaces(Guid vdsId) {
-        List<VdsNetworkInterface> interfaces = getInterfaceDAO().getAllInterfacesForVds(vdsId);
-        return (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
     }
 
     @SuppressWarnings("unchecked")
