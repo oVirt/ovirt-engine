@@ -204,13 +204,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
         public List<VdsNetworkInterface> configureNetworks(VdsNetworkInterface nic, Set<Network> networks) {
             List<VdsNetworkInterface> vlans = new ArrayList<>();
             for (Network network : networks) {
-                if (NetworkUtils.isVlan(network)) {
-                    vlans.add(createVlanDevice(nic, network));
-                } else if (StringUtils.isEmpty(nic.getNetworkName())) {
-                    nic.setNetworkName(network.getName());
-                } else {
-                    throw new VdcBLLException(VdcBllErrors.NETWORK_LABEL_CONFLICT);
-                }
+                configureNetwork(nic, vlans, network);
             }
 
             return vlans;

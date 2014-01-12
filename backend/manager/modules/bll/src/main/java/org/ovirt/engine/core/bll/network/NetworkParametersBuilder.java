@@ -12,6 +12,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -71,6 +73,27 @@ public abstract class NetworkParametersBuilder {
     }
 
     protected void addValuesToLog(AuditLogableBase logable) {
+    }
+
+    /**
+     * Configure a network on a given network interface if the network is not a vlan or add a newly created vlan device
+     * based on the given nic to the host interface
+     *
+     * @param nic
+     *            the underlying nic (interface or bond)
+     * @param nics
+     *            the host nics to which a vlan should be added
+     * @param network
+     *            the network to attach
+     */
+    protected void configureNetwork(VdsNetworkInterface nic, List<VdsNetworkInterface> nics, Network network) {
+        if (NetworkUtils.isVlan(network)) {
+            nics.add(createVlanDevice(nic, network));
+        } else if (StringUtils.isEmpty(nic.getNetworkName())) {
+            nic.setNetworkName(network.getName());
+        } else {
+            throw new VdcBLLException(VdcBllErrors.NETWORK_LABEL_CONFLICT);
+        }
     }
 
     private DbFacade getDbFacade() {
