@@ -2,24 +2,35 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -27,9 +38,13 @@ import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParam
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -193,7 +208,33 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             getVdsSpmIdMapDAO().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId());
         }
 
+        if (NetworkHelper.setupNetworkSupported(getTargetCluster().getcompatibility_version())) {
+            configureNetworks();
+        }
+
         setSucceeded(true);
+    }
+
+    private void configureNetworks() {
+        ChangeClusterParametersBuilder builder = new ChangeClusterParametersBuilder();
+        final SetupNetworksParameters params;
+
+        try {
+            params = builder.buildParameters(getVdsId(), getSourceCluster().getId(), getTargetCluster().getId());
+        } catch (VdcBLLException e) {
+            AuditLogDirector.log(new AuditLogableBase(getVdsId()),
+                    AuditLogType.CONFIGURE_NETWORK_BY_LABELS_WHEN_CHANGING_CLUSTER_FAILED);
+            return;
+        }
+
+        ThreadPoolUtil.execute(new Runnable() {
+
+            @Override
+            public void run() {
+                getBackend().runInternalAction(VdcActionType.PersistentSetupNetworks, params);
+
+            }
+        });
     }
 
     @Override
@@ -298,5 +339,126 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             targetCluster = DbFacade.getInstance().getVdsGroupDao().get(getParameters().getClusterId());
         }
         return targetCluster;
+    }
+
+    private class ChangeClusterParametersBuilder extends NetworkParametersBuilder {
+
+        public SetupNetworksParameters buildParameters(Guid hostId, Guid sourceClusterId, Guid targetClusterId) {
+            List<Network> targetClusterNetworks = getNetworkDAO().getAllForCluster(targetClusterId);
+            Map<String, Network> targetClusterNetworksByName = Entities.entitiesByName(targetClusterNetworks);
+
+            SetupNetworksParameters params = createSetupNetworksParameters(hostId);
+            Map<String, VdsNetworkInterface> nicsByNetwork =
+                    Entities.hostInterfacesByNetworkName(params.getInterfaces());
+            Map<String, List<Network>> targetNetworksByLabel = getClusterNetworksByLabel(targetClusterNetworks);
+            Map<String, List<Network>> sourceNetworksByLabel =
+                    getClusterNetworksByLabel(getNetworkDAO().getAllForCluster(sourceClusterId));
+            List<VdsNetworkInterface> hostNics = new ArrayList<>(params.getInterfaces());
+
+            // Detect which networks should be added and which should be removed
+            for (VdsNetworkInterface nic : hostNics) {
+                adjustNetworksByLabel(sourceNetworksByLabel,
+                        targetClusterNetworksByName,
+                        targetNetworksByLabel,
+                        params,
+                        nicsByNetwork,
+                        nic);
+            }
+
+            return params;
+        }
+
+        /**
+         * Add or remove labeled networks from a nic by the assignment of networks to the target cluster:
+         * <ul>
+         * <li>Assigned labeled network will be defined on the nic if isn't already</li>
+         * <li>Unassigned labeled network will be removed from a nic if isn't already</li>
+         * </ul>
+         *
+         * @param sourceNetworksByLabel
+         *            a map of the labeled source cluster networks by their label
+         * @param targetNetworksByName
+         *            a map of the destination cluster networks by their name
+         * @param targetNetworksByLabel
+         *            a map of the labeled target cluster networks by their label
+         * @param params
+         *            the setup networks parameters to be adjusted according to the findings
+         * @param nicsByNetwork
+         *            a map of nics by the network attached to them
+         * @param nic
+         *            the current examined network interface
+         */
+        public void adjustNetworksByLabel(Map<String, List<Network>> sourceNetworksByLabel,
+                Map<String, Network> targetNetworksByName,
+                Map<String, List<Network>> targetNetworksByLabel,
+                SetupNetworksParameters params,
+                Map<String, VdsNetworkInterface> nicsByNetwork,
+                VdsNetworkInterface nic) {
+            if (nic.getLabels() == null) {
+                return;
+            }
+
+            for (String label : nic.getLabels()) {
+                // configure networks by target cluster assignment
+                List<Network> targetLabeledNetworks = targetNetworksByLabel.get(label);
+                if (targetLabeledNetworks != null) {
+                    for (Network net : targetLabeledNetworks) {
+                        if (targetNetworksByName.containsKey(net.getName())
+                                && !nicsByNetwork.containsKey(net.getName())) {
+                            configureNetwork(nic, params.getInterfaces(), net);
+                        } else if (configuredNetworkNotAssignedToCluster(targetNetworksByName, nicsByNetwork, net)) {
+                            removeNetworkFromParameters(params, nic, net);
+                        }
+                    }
+                }
+
+                // remove labeled networks originated in source cluster but not assigned to target cluster
+                List<Network> sourceLabeledNetworks = sourceNetworksByLabel.get(label);
+                if (sourceLabeledNetworks != null) {
+                    for (Network net : sourceLabeledNetworks) {
+                        if (configuredNetworkNotAssignedToCluster(targetNetworksByName, nicsByNetwork, net)) {
+                            removeNetworkFromParameters(params, nic, net);
+                        }
+                    }
+                }
+            }
+        }
+
+        private boolean configuredNetworkNotAssignedToCluster(Map<String, Network> targetNetworksByName,
+                Map<String, VdsNetworkInterface> nicsByNetwork,
+                Network net) {
+            return nicsByNetwork.containsKey(net.getName()) && !targetNetworksByName.containsKey(net.getName());
+        }
+
+        public void removeNetworkFromParameters(SetupNetworksParameters params, VdsNetworkInterface nic, Network net) {
+            if (NetworkUtils.isVlan(net)) {
+                VdsNetworkInterface vlan = getVlanDevice(params.getInterfaces(), nic, net);
+                if (vlan == null) {
+                    throw new VdcBLLException(VdcBllErrors.NETWORK_LABEL_CONFLICT);
+                } else {
+                    params.getInterfaces().remove(vlan);
+                }
+            } else if (StringUtils.equals(net.getName(), nic.getNetworkName())) {
+                nic.setNetworkName(null);
+            }
+        }
+
+        /**
+         * Returns a map of labels to the cluster networks represented by that label.
+         */
+        private Map<String, List<Network>> getClusterNetworksByLabel(List<Network> clusterNetworks) {
+            Map<String, List<Network>> networksByLabel = new HashMap<>();
+            for (Network network : clusterNetworks) {
+                if (network.getLabel() != null) {
+                    if (!networksByLabel.containsKey(network.getLabel())) {
+                        networksByLabel.put(network.getLabel(), new ArrayList<Network>());
+                    }
+
+                    networksByLabel.get(network.getLabel()).add(network);
+                }
+            }
+
+            return networksByLabel;
+        }
     }
 }

@@ -838,6 +838,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.SUBNET_REMOVAL_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.SUBNET_ADDED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.SUBNET_ADDITION_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.CONFIGURE_NETWORK_BY_LABELS_WHEN_CHANGING_CLUSTER_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initExtrnalEvents() {
