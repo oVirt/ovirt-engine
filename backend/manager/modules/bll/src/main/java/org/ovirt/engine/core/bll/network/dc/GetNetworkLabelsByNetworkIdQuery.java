@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class GetNetworkLabelsByNetworkIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetNetworkLabelsByNetworkIdQuery(P parameters) {
@@ -18,7 +19,7 @@ public class GetNetworkLabelsByNetworkIdQuery<P extends IdQueryParameters> exten
     protected void executeQueryCommand() {
         Network network =
                 getDbFacade().getNetworkDao().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
-        getQueryReturnValue().setReturnValue(network == null || network.getLabel() == null
+        getQueryReturnValue().setReturnValue(network == null || !NetworkUtils.isLabeled(network)
                 ? Collections.<NetworkLabel> emptyList()
                 : new ArrayList<NetworkLabel>(Arrays.asList((new NetworkLabel(network.getLabel())))));
     }

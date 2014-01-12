@@ -241,6 +241,17 @@ public final class NetworkUtils {
     }
 
     /**
+     * Determine if a given network is labeled
+     *
+     * @param network
+     *            the network to check.
+     * @return <code>true</code> iff the network is labeled.
+     */
+    public static boolean isLabeled(Network network) {
+        return network.getLabel() != null;
+    }
+
+    /**
      * Constructs the vlan device name in the format of "{nic name}.{vlan-id}"
      *
      * @param underlyingNic

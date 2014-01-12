@@ -85,7 +85,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
         });
 
-        if (!getPersistedNetwork().isExternal() && getPersistedNetwork().getLabel() != null
+        if (!getPersistedNetwork().isExternal() && NetworkUtils.isLabeled(getPersistedNetwork())
                 && NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
             addNetworkToHosts();
         }

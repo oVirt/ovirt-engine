@@ -84,7 +84,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         NetworkForCreate networkForCreate = new NetworkForCreate();
         networkForCreate.setAdminStateUp(true);
         networkForCreate.setName(network.getName());
-        if (network.getLabel() != null) {
+        if (NetworkUtils.isLabeled(network)) {
             networkForCreate.setProviderPhysicalNetwork(network.getLabel());
             if (NetworkUtils.isVlan(network)) {
                 networkForCreate.setProviderNetworkType(VLAN_NETWORK);

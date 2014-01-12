@@ -449,7 +449,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         private Map<String, List<Network>> getClusterNetworksByLabel(List<Network> clusterNetworks) {
             Map<String, List<Network>> networksByLabel = new HashMap<>();
             for (Network network : clusterNetworks) {
-                if (network.getLabel() != null) {
+                if (NetworkUtils.isLabeled(network)) {
                     if (!networksByLabel.containsKey(network.getLabel())) {
                         networksByLabel.put(network.getLabel(), new ArrayList<Network>());
                     }

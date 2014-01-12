@@ -294,11 +294,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private boolean labelAdded() {
-        return getOldNetwork().getLabel() == null && getNetwork().getLabel() != null;
+        return !NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork());
     }
 
     private boolean labelRemoved() {
-        return getOldNetwork().getLabel() != null && getNetwork().getLabel() == null;
+        return NetworkUtils.isLabeled(getOldNetwork()) && !NetworkUtils.isLabeled(getNetwork());
     }
 
     private class SyncNetworkParametersBuilder extends NetworkParametersBuilder{

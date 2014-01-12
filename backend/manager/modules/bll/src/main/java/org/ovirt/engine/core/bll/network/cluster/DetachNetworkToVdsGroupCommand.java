@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -45,7 +46,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
         });
 
-        if (!getPersistedNetwork().isExternal() && getPersistedNetwork().getLabel() != null
+        if (!getPersistedNetwork().isExternal() && NetworkUtils.isLabeled(getPersistedNetwork())
                 && NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
             removeNetworkFromHosts();
         }

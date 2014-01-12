@@ -190,7 +190,7 @@ public class NetworkValidator {
     }
 
     public ValidationResult notLabeled() {
-        return network.getLabel() == null ? ValidationResult.VALID
+        return !NetworkUtils.isLabeled(network) ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED);
     }
 
