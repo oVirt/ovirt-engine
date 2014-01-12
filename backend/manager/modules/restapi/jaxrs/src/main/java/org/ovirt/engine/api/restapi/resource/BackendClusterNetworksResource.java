@@ -67,7 +67,7 @@ public class BackendClusterNetworksResource
 
         org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
         return performCreate(addAction,
-                               getActionParameters(network, entity),
+                               getAddParameters(network, entity),
                                new NetworkIdResolver(StringUtils.defaultIfEmpty(network.getName(), networkName)));
     }
 
@@ -97,7 +97,13 @@ public class BackendClusterNetworksResource
     }
 
     @Override
-    protected VdcActionParametersBase getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity) {
+    protected VdcActionParametersBase getAddParameters(Network network,
+            org.ovirt.engine.core.common.businessentities.network.Network entity) {
+        return new AttachNetworkToVdsGroupParameter(getVDSGroup(), entity);
+    }
+
+    @Override
+    protected VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity) {
         return new AttachNetworkToVdsGroupParameter(getVDSGroup(), entity);
     }
 

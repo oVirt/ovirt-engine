@@ -8,6 +8,8 @@ import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -33,7 +35,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
         validateParameters(network, getRequiredAddFields());
         validateEnums(Network.class, network);
         org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
-        AddNetworkStoragePoolParameters params = getActionParameters(network, entity);
+        AddNetworkStoragePoolParameters params = getAddParameters(network, entity);
         return performCreate(addAction,
                                params,
                                new DataCenterNetworkIdResolver(network.getName(), params.getStoragePoolId().toString()));
@@ -61,7 +63,8 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     }
 
     @Override
-    protected AddNetworkStoragePoolParameters getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity) {
+    protected AddNetworkStoragePoolParameters getAddParameters(Network network,
+            org.ovirt.engine.core.common.businessentities.network.Network entity) {
         if (namedDataCenter(network)) {
             entity.setDataCenterId(getDataCenterId(network));
         }
@@ -73,6 +76,11 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
         }
 
         return parameters;
+    }
+
+    @Override
+    protected VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity) {
+        return new RemoveNetworkParameters(entity.getId());
     }
 
     protected String[] getRequiredAddFields() {

@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -47,9 +48,9 @@ public class BackendDataCenterNetworksResourceTest
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(2);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveNetwork,
-                                           AddNetworkStoragePoolParameters.class,
-                                           new String[] { "StoragePoolId" },
-                                           new Object[] { DATA_CENTER_ID },
+                                           RemoveNetworkParameters.class,
+                                           new String[] { "Id" },
+                                           new Object[] { GUIDS[0] },
                                            true,
                                            true));
         verifyRemove(collection.remove(GUIDS[0].toString()));
@@ -87,9 +88,9 @@ public class BackendDataCenterNetworksResourceTest
         setUpEntityQueryExpectations(2);
 
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveNetwork,
-                                           AddNetworkStoragePoolParameters.class,
-                                           new String[] { "StoragePoolId" },
-                                           new Object[] { DATA_CENTER_ID },
+                                           RemoveNetworkParameters.class,
+                                           new String[] { "Id" },
+                                           new Object[] { GUIDS[0] },
                                            canDo,
                                            success));
         try {

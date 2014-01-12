@@ -31,7 +31,9 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
 
     protected abstract VdcQueryParametersBase getQueryParameters();
 
-    protected abstract VdcActionParametersBase getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity);
+    protected abstract VdcActionParametersBase getAddParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity);
+
+    protected abstract VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity);
 
     public Networks list() {
         return mapCollection(getBackendCollection(queryType, getQueryParameters()));
@@ -44,7 +46,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
             notFound();
             return null;
         }
-        return performAction(removeAction, getActionParameters(null, entity));
+        return performAction(removeAction, getRemoveParameters(entity));
     }
 
     protected Networks mapCollection(List<org.ovirt.engine.core.common.businessentities.network.Network> entities) {
