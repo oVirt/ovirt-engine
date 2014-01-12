@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.network.AddNetworksByLabelParametersBuilder;
+import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.ClusterNetworksParameters;
@@ -91,6 +92,7 @@ public class AttachNetworksToClusterCommand<T extends ClusterNetworksParameters>
                     labelsToNicsByHost.get(entry.getKey())));
         }
 
+        NetworkParametersBuilder.updateParametersSequencing(parameters);
         getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
     }
 

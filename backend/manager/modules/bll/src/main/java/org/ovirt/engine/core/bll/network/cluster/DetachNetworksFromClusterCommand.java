@@ -12,6 +12,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
+import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworksByLabelParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
@@ -90,6 +91,7 @@ public class DetachNetworksFromClusterCommand<T extends ClusterNetworksParameter
                     nicsByHost.get(entry.getKey())));
         }
 
+        NetworkParametersBuilder.updateParametersSequencing(parameters);
         getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
     }
 

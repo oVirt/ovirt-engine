@@ -60,6 +60,8 @@ public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBui
             parameters.getInterfaces().removeAll(nicsToRemove);
         }
 
+        parameters.setNetworkNames(StringUtils.join(Entities.objectNames(networksToRemove), ", "));
+
         return parameters;
     }
 

@@ -31,6 +31,7 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
 
         for (VdsNetworkInterface nic : nics) {
             PersistentSetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(nic.getVdsId());
+            setupNetworkParams.setNetworkNames(network.getName());
             VdsNetworkInterface nicToConfigure = getNicToConfigure(setupNetworkParams.getInterfaces(), nic.getId());
             if (nicToConfigure == null) {
                 throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
