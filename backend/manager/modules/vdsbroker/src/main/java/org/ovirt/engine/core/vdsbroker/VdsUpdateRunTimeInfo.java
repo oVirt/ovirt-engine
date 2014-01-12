@@ -1895,6 +1895,7 @@ public class VdsUpdateRunTimeInfo {
             props.remove("consoleCurrentUserName");
             props.remove("runOnce");
             props.remove("cpuName");
+            props.remove("lastStopTime");
             if (vmNewDynamicData.getStatus() != VMStatus.Up) {
                 props.remove("appList");
                 vmNewDynamicData.setAppList(vmToUpdate.argvalue.getAppList());
