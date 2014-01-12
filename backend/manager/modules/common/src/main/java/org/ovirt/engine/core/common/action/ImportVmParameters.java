@@ -11,49 +11,49 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
     private static final long serialVersionUID = -6514416097090370831L;
 
     @Valid
-    private VM _vm;
-    private Guid _sourceDomainId;
-    private Guid _destDomainId;
-    private Guid _vdsGroupId;
+    private VM vm;
+    private Guid sourceDomainId;
+    private Guid destDomainId;
+    private Guid vdsGroupId;
 
     public ImportVmParameters() {
-        _sourceDomainId = Guid.Empty;
-        _destDomainId = Guid.Empty;
+        sourceDomainId = Guid.Empty;
+        destDomainId = Guid.Empty;
     }
 
     public ImportVmParameters(VM vm, Guid sourceStorageDomainId, Guid destStorageDomainId, Guid storagePoolId,
             Guid vdsGroupId) {
         super(vm.getId(), destStorageDomainId);
-        _vm = vm;
-        _sourceDomainId = sourceStorageDomainId;
-        _destDomainId = destStorageDomainId;
+        this.sourceDomainId = sourceStorageDomainId;
+        this.destDomainId = destStorageDomainId;
+        setVm(vm);
         setStorageDomainId(destStorageDomainId);
         setStoragePoolId(storagePoolId);
-        _vdsGroupId = vdsGroupId;
+        setVdsGroupId(vdsGroupId);
     }
 
     public VM getVm() {
-        return _vm;
+        return vm;
     }
 
     public void setVm(VM vm) {
-        _vm = vm;
+        this.vm = vm;
     }
 
     public Guid getSourceDomainId() {
-        return _sourceDomainId;
+        return sourceDomainId;
     }
 
     public Guid getDestDomainId() {
-        return _destDomainId;
+        return destDomainId;
     }
 
     public Guid getVdsGroupId() {
-        return _vdsGroupId;
+        return vdsGroupId;
     }
 
-    public void setVdsGroupId(Guid value) {
-        _vdsGroupId = value;
+    public void setVdsGroupId(Guid vdsGroupId) {
+        this.vdsGroupId = vdsGroupId;
     }
 
 }
