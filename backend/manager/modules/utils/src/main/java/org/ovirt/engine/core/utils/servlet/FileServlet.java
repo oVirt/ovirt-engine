@@ -57,6 +57,7 @@ public class FileServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(FileServlet.class);
 
     // The names of the parameters:
+    private static final String CACHE = "cache";
     private static final String TYPE = "type";
     private static final String FILE = "file";
 
@@ -64,6 +65,7 @@ public class FileServlet extends HttpServlet {
     private static final String INDEX = "index.html";
 
     // The values of the parameters:
+    protected boolean cache;
     protected String type;
     protected File base;
 
@@ -71,6 +73,14 @@ public class FileServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         // Let the parent do its work:
         super.init(config);
+
+        final String cacheString = config.getInitParameter(CACHE);
+        if (cacheString == null) {
+            cache = true;
+        }
+        else {
+            cache = Boolean.parseBoolean(cacheString);
+        }
 
         // Get the content type of the file (it can be null, in which case the
         // global system MIME types map will be used to figure it out):
@@ -103,7 +113,7 @@ public class FileServlet extends HttpServlet {
         file = checkForIndex(request, response, file, request.getPathInfo());
         // Send the content of the file:
         // type is the default MIME type of the Servlet.
-        ServletUtils.sendFile(request, response, file, type);
+        ServletUtils.sendFile(request, response, file, type, cache);
     }
 
     protected File checkForIndex(HttpServletRequest request, HttpServletResponse response, File file, String path) throws IOException {

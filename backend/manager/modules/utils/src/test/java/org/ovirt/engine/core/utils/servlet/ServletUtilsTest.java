@@ -7,8 +7,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -200,6 +202,50 @@ public class ServletUtilsTest {
        when(mockResponse.getOutputStream()).thenReturn(responseOut);
        File file = createTempPng();
        ServletUtils.sendFile(mockRequest, mockResponse, file, null);
+       //Check that the mime type was set to the one passed in, instead of the one associated with the file
+       verify(mockResponse).setContentType("image/png");
+       //Check the file length is set right.
+       verify(mockResponse).setContentLength((int) file.length());
+       //Make sure the stream is written to.
+       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String, boolean)}.
+     * @throws IOException
+     */
+    @Test
+    public void testSendFile_PNGNoMime_Cache() throws IOException {
+       HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+       HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+       ServletOutputStream responseOut = mock(ServletOutputStream.class);
+       when(mockResponse.getOutputStream()).thenReturn(responseOut);
+       File file = createTempPng();
+       ServletUtils.sendFile(mockRequest, mockResponse, file, null, true);
+       //Check that we have eTag
+       verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));
+       //Check that the mime type was set to the one passed in, instead of the one associated with the file
+       verify(mockResponse).setContentType("image/png");
+       //Check the file length is set right.
+       verify(mockResponse).setContentLength((int) file.length());
+       //Make sure the stream is written to.
+       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String, boolean)}.
+     * @throws IOException
+     */
+    @Test
+    public void testSendFile_PNGNoMime_NoCache() throws IOException {
+       HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+       HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+       ServletOutputStream responseOut = mock(ServletOutputStream.class);
+       when(mockResponse.getOutputStream()).thenReturn(responseOut);
+       File file = createTempPng();
+       ServletUtils.sendFile(mockRequest, mockResponse, file, null, false);
+       //Check that we have eTag
+       verify(mockResponse, never()).setHeader(eq("ETag"), anyString());
        //Check that the mime type was set to the one passed in, instead of the one associated with the file
        verify(mockResponse).setContentType("image/png");
        //Check the file length is set right.

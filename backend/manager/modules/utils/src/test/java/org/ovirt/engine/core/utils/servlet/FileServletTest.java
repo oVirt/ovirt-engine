@@ -7,8 +7,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -96,6 +98,48 @@ public class FileServletTest {
         ServletOutputStream responseOut = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(responseOut);
         testServlet.doGet(mockRequest, mockResponse);
+        //Make sure cache is enabled
+        verify(mockResponse).setHeader(eq("ETag"), anyString());
+        //Make sure something is written to the output stream (assuming it is the file).
+        verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.FileServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Test
+    public void testDoGet2() throws ServletException, IOException {
+        when(mockConfig.getInitParameter("cache")).thenReturn("true");
+        when(mockConfig.getInitParameter("file")).thenReturn(file.getParent());
+        testServlet.init(mockConfig);
+        when(mockRequest.getPathInfo()).thenReturn(file.getName());
+        ServletOutputStream responseOut = mock(ServletOutputStream.class);
+        when(mockResponse.getOutputStream()).thenReturn(responseOut);
+        testServlet.doGet(mockRequest, mockResponse);
+        //Make sure cache is enabled
+        verify(mockResponse).setHeader(eq("ETag"), anyString());
+        //Make sure something is written to the output stream (assuming it is the file).
+        verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.FileServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Test
+    public void testDoGet3() throws ServletException, IOException {
+        when(mockConfig.getInitParameter("cache")).thenReturn("false");
+        when(mockConfig.getInitParameter("file")).thenReturn(file.getParent());
+        testServlet.init(mockConfig);
+        when(mockRequest.getPathInfo()).thenReturn(file.getName());
+        ServletOutputStream responseOut = mock(ServletOutputStream.class);
+        when(mockResponse.getOutputStream()).thenReturn(responseOut);
+        testServlet.doGet(mockRequest, mockResponse);
+        //Make sure cache is disabled
+        verify(mockResponse, never()).setHeader(eq("ETag"), anyString());
         //Make sure something is written to the output stream (assuming it is the file).
         verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
     }

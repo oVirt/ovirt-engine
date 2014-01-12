@@ -72,6 +72,10 @@ public class ServletUtils {
      * @throws IOException
      */
     public static void sendFile(final HttpServletRequest request, final HttpServletResponse response, final File file, final String defaultType) throws IOException {
+        sendFile(request, response, file, defaultType, true);
+    }
+
+    public static void sendFile(final HttpServletRequest request, final HttpServletResponse response, final File file, final String defaultType, boolean cache) throws IOException {
         // Make sure the file exits and is readable and send a 404 error
         // response if it doesn't:
         if (!canReadFile(file)) {
@@ -79,19 +83,26 @@ public class ServletUtils {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
         else {
-            String eTag = getETag(file);
+            boolean send = true;
 
-            // Always include ETag on response
-            response.setHeader("ETag", eTag);
+            if (cache) {
+                String eTag = getETag(file);
 
-            String IfNoneMatch = request.getHeader("If-None-Match");
-            if ("*".equals(IfNoneMatch)) {
-                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                // Always include ETag on response
+                response.setHeader("ETag", eTag);
+
+                String IfNoneMatch = request.getHeader("If-None-Match");
+                if ("*".equals(IfNoneMatch)) {
+                    response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                    send = false;
+                }
+                else if (eTag.equals(IfNoneMatch)) {
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                    send = false;
+                }
             }
-            else if (eTag.equals(IfNoneMatch)) {
-                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            }
-            else {
+
+            if (send) {
                 // Send metadata
                 String mime = defaultType;
                 if (mime == null) {
