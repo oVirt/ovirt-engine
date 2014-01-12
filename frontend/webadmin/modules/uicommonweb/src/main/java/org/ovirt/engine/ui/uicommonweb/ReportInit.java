@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.ReportParser;
@@ -84,7 +85,10 @@ public class ReportInit {
     private void parseReportsXML() {
 
         RequestBuilder requestBuilder =
-                new RequestBuilder(RequestBuilder.GET, "Reports.xml"); //$NON-NLS-1$
+                new RequestBuilder(RequestBuilder.GET,
+                    "/" //$NON-NLS-1$
+                    + BaseContextPathData.getInstance().getRelativePath()
+                    + "services/reports-ui"); //$NON-NLS-1$
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override

@@ -65,6 +65,23 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>reports-ui</servlet-name>
+    <servlet-class>org.ovirt.engine.core.utils.servlet.FileServlet</servlet-class>
+    <init-param>
+      <param-name>file</param-name>
+      <param-value>%{ENGINE_REPORTS_UI}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cache</param-name>
+      <param-value>false</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>reports-ui</servlet-name>
+    <url-pattern>/reports-ui</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>health</servlet-name>
     <servlet-class>org.ovirt.engine.core.services.HealthStatus</servlet-class>
   </servlet>
