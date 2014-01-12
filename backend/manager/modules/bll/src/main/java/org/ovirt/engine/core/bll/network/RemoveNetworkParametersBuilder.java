@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -45,7 +44,7 @@ public class RemoveNetworkParametersBuilder extends NetworkParametersBuilder {
             if (network.getName().equals(nicToConfigure.getNetworkName())) {
                 nicToConfigure.setNetworkName(null);
             } else if (vlanNetwork) {
-                VdsNetworkInterface vlan = getVlanDevice(setupNetworkParams.getInterfaces(), nicToConfigure);
+                VdsNetworkInterface vlan = getVlanDevice(setupNetworkParams.getInterfaces(), nicToConfigure, network);
 
                 if (vlan == null) {
                     nonUpdateableHosts.add(nic.getVdsId());
@@ -69,25 +68,5 @@ public class RemoveNetworkParametersBuilder extends NetworkParametersBuilder {
     protected void addValuesToLog(AuditLogableBase logable) {
         logable.setStoragePoolId(network.getDataCenterId());
         logable.addCustomValue("Network", network.getName());
-    }
-
-    /**
-     * Finds the vlan device among all interfaces, either by the network name or by vlan-id
-     *
-     * @param nics
-     *            the host interfaces
-     * @param baseNic
-     *            the underlying interface of the vlan device
-     * @return the vlan device if exists, else <code>null</code>
-     */
-    private VdsNetworkInterface getVlanDevice(List<VdsNetworkInterface> nics, VdsNetworkInterface baseNic) {
-        for (VdsNetworkInterface n : nics) {
-            if (StringUtils.equals(n.getName(), NetworkUtils.getVlanDeviceName(baseNic, network))
-                    || StringUtils.equals(n.getNetworkName(), network.getName())) {
-                return n;
-            }
-        }
-
-        return null;
     }
 }

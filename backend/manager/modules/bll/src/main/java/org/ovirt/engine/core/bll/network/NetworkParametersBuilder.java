@@ -96,6 +96,28 @@ public abstract class NetworkParametersBuilder {
         }
     }
 
+    /**
+     * Finds the vlan device among all interfaces, either by the network name or by vlan-id
+     *
+     * @param nics
+     *            the host interfaces
+     * @param baseNic
+     *            the underlying interface of the vlan device
+     * @return the vlan device if exists, else <code>null</code>
+     */
+    protected VdsNetworkInterface getVlanDevice(List<VdsNetworkInterface> nics,
+            VdsNetworkInterface baseNic,
+            Network network) {
+        for (VdsNetworkInterface n : nics) {
+            if (StringUtils.equals(n.getName(), NetworkUtils.getVlanDeviceName(baseNic, network))
+                    || StringUtils.equals(n.getNetworkName(), network.getName())) {
+                return n;
+            }
+        }
+
+        return null;
+    }
+
     private DbFacade getDbFacade() {
         return DbFacade.getInstance();
     }
