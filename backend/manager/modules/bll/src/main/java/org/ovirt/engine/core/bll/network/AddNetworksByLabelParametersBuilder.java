@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -57,6 +58,8 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
             // configure the network on the nic
             parameters.getInterfaces().addAll(configureNetworks(nicToConfigure, Collections.singleton(network)));
         }
+
+        parameters.setNetworkNames(StringUtils.join(Entities.objectNames(networkToAdd), ", "));
 
         return parameters;
     }

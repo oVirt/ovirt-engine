@@ -84,6 +84,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(getNetwork(), getOldNetwork());
 
         if (!parameters.isEmpty()) {
+            NetworkParametersBuilder.updateParametersSequencing(parameters);
             getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
         }
     }
@@ -420,6 +421,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
             for (Guid hostId : hostIdsToSync) {
                 PersistentSetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(hostId);
+                setupNetworkParams.setNetworkNames(getNetworkName());
                 setupNetworkParams.setNetworksToSync(Collections.singletonList(getNetworkName()));
                 parameters.add(setupNetworkParams);
             }

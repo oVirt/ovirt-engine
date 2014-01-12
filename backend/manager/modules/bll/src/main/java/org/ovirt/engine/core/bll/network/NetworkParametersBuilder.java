@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -35,6 +36,7 @@ public abstract class NetworkParametersBuilder {
         parameters.setVdsId(host.getId());
         parameters.setInterfaces(nics);
         parameters.setCheckConnectivity(true);
+        parameters.setShouldBeLogged(false);
         return parameters;
     }
 
@@ -125,5 +127,22 @@ public abstract class NetworkParametersBuilder {
 
     private DbFacade getDbFacade() {
         return DbFacade.getInstance();
+    }
+
+    /**
+     * Update the given list of parameters to have sequencing according to their order, and have the total count. The
+     * updated parameters also will be set to log the command.
+     *
+     * @param parameters
+     *            A list of parameters to update.
+     */
+    public static void updateParametersSequencing(List<VdcActionParametersBase> parameters) {
+        for (int i = 0; i < parameters.size(); i++) {
+            PersistentSetupNetworksParameters setupNetworkParameters =
+                    (PersistentSetupNetworksParameters) parameters.get(i);
+            setupNetworkParameters.setSequence(i + 1);
+            setupNetworkParameters.setTotal(parameters.size());
+            setupNetworkParameters.setShouldBeLogged(true);
+        }
     }
 }
