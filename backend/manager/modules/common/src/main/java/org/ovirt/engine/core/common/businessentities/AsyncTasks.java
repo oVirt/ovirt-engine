@@ -184,7 +184,6 @@ public class AsyncTasks implements Serializable {
         results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
         results = prime * results + ((commandId == null) ? 0 : commandId.hashCode());
         results = prime * results + ((rootCommandId == null) ? 0 : rootCommandId.hashCode());
-        results = prime * results + ((actionParameters == null) ? 0 : actionParameters.hashCode());
         results = prime * results + ((actionType == null) ? 0 : actionType.hashCode());
         results = prime * results + ((result == null) ? 0 : result.hashCode());
         results = prime * results + ((status == null) ? 0 : status.hashCode());
@@ -211,7 +210,6 @@ public class AsyncTasks implements Serializable {
                 && ObjectUtils.objectsEqual(stepId, other.stepId)
                 && ObjectUtils.objectsEqual(commandId, other.commandId)
                 && ObjectUtils.objectsEqual(rootCommandId, other.rootCommandId)
-                && ObjectUtils.objectsEqual(actionParameters, other.actionParameters)
                 && actionType == other.actionType
                 && result == other.result
                 && status == other.status
