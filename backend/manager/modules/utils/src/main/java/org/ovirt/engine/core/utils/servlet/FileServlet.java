@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
@@ -85,7 +86,14 @@ public class FileServlet extends HttpServlet {
 
         // Create the base file object:
         // we use %{x} convention to avoid conflict with jboss properties
-        base = new File(EngineLocalConfig.getInstance().expandString(name.replaceAll("%\\{", "\\${")));
+        final String expanded = EngineLocalConfig.getInstance().expandString(name.replaceAll("%\\{", "\\${"));
+        if (StringUtils.isEmpty(expanded)) {
+            final String message = "Refusing to serve empty location";
+            log.debug(message);
+            throw new ServletException(message);
+        }
+
+        base = new File(expanded);
     }
 
     @Override
