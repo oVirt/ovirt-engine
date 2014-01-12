@@ -19,6 +19,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Integer vmPid;
     @UnchangeableByVdsm
     private Date lastStartTime;
+    @UnchangeableByVdsm
     private Date lastStopTime;
     private String guestCurUserName;
     @UnchangeableByVdsm
@@ -28,6 +29,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Date guestLastLoginTime;
     private Date guestLastLogoutTime;
     private String guestOs;
+    @UnchangeableByVdsm
     private Guid migratingToVds;
     @UnchangeableByVdsm
     private Guid runOnVds;
