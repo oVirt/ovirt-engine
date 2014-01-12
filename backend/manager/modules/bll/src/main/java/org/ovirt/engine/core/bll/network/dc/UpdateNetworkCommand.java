@@ -183,7 +183,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             List<VdsNetworkInterface> nics =
                     getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(network.getId());
             for (VdsNetworkInterface nic : nics) {
-                if (nic.getLabels() != null && nic.getLabels().contains(oldLabel)) {
+                if (NetworkUtils.isLabeled(nic) && nic.getLabels().contains(oldLabel)) {
                     new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_LABEL_RENAMING_NOT_SUPPORTED);
                 }
             }

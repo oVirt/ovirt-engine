@@ -66,7 +66,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
             return failCanDoAction(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST);
         }
 
-        if (getNic().getLabels() != null && getNic().getLabels().contains(getLabel())) {
+        if (NetworkUtils.isLabeled(getNic()) && getNic().getLabels().contains(getLabel())) {
             return failCanDoAction(VdcBllMessages.INTERFACE_ALREADY_LABELED);
         }
 
@@ -75,7 +75,7 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
         }
 
         for (VdsNetworkInterface nic : getHostInterfaces()) {
-            if (!StringUtils.equals(nic.getName(), getNicName()) && nic.getLabels() != null
+            if (!StringUtils.equals(nic.getName(), getNicName()) && NetworkUtils.isLabeled(nic)
                     && nic.getLabels().contains(getLabel())) {
                 return failCanDoAction(VdcBllMessages.OTHER_INTERFACE_ALREADY_LABELED, "$LabeledNic " + nic.getName());
             }

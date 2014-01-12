@@ -394,7 +394,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                 SetupNetworksParameters params,
                 Map<String, VdsNetworkInterface> nicsByNetwork,
                 VdsNetworkInterface nic) {
-            if (nic.getLabels() == null) {
+            if (!NetworkUtils.isLabeled(nic)) {
                 return;
             }
 

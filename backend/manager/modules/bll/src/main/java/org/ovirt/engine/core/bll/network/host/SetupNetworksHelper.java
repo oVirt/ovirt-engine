@@ -118,7 +118,7 @@ public class SetupNetworksHelper {
                 }
 
                 Network removedNetwork = getExistingClusterNetworks().get(network);
-                if (nic.getLabels() != null && removedNetwork != null
+                if (NetworkUtils.isLabeled(nic) && removedNetwork != null
                         && nic.getLabels().contains(removedNetwork.getLabel())) {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC, network);
                 }
@@ -130,9 +130,9 @@ public class SetupNetworksHelper {
         for (VdsNetworkInterface nic : params.getInterfaces()) {
             VdsNetworkInterface existingNic = getExistingIfaces().get(nic.getName());
             if (existingNic != null) {
-                Set<String> newLabels = nic.getLabels() == null ? Collections.<String> emptySet() : nic.getLabels();
+                Set<String> newLabels = NetworkUtils.isLabeled(nic) ? nic.getLabels() : Collections.<String> emptySet();
                 Set<String> existingLabels =
-                        existingNic.getLabels() == null ? Collections.<String> emptySet() : existingNic.getLabels();
+                        NetworkUtils.isLabeled(existingNic) ? existingNic.getLabels() : Collections.<String> emptySet();
                 if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)
                         || nic.isQosOverridden() != existingNic.isQosOverridden()) {
                     existingNic.setLabels(newLabels);

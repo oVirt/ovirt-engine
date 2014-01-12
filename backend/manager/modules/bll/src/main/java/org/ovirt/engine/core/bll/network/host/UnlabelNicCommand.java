@@ -59,7 +59,7 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
             return failCanDoAction(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST);
         }
 
-        if (getNic().getLabels() == null || !getNic().getLabels().contains(getLabel())) {
+        if (!NetworkUtils.isLabeled(getNic()) || !getNic().getLabels().contains(getLabel())) {
             return failCanDoAction(VdcBllMessages.INTERFACE_NOT_LABELED);
         }
 
@@ -137,7 +137,7 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
         }
 
         private void unlabelConfiguredNic(String label, VdsNetworkInterface nicToConfigure) {
-            if (nicToConfigure.getLabels() != null) {
+            if (NetworkUtils.isLabeled(nicToConfigure)) {
                 nicToConfigure.getLabels().remove(getLabel());
             }
         }

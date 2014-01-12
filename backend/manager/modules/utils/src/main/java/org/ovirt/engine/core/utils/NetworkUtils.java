@@ -252,6 +252,17 @@ public final class NetworkUtils {
     }
 
     /**
+     * Determine if a given network interface is labeled
+     *
+     * @param nic
+     *            the nic to check.
+     * @return <code>true</code> iff the nic is labeled.
+     */
+    public static boolean isLabeled(VdsNetworkInterface nic) {
+        return nic.getLabels() != null && !nic.getLabels().isEmpty();
+    }
+
+    /**
      * Constructs the vlan device name in the format of "{nic name}.{vlan-id}"
      *
      * @param underlyingNic

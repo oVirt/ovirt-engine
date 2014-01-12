@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class GetNetworkLabelsByHostNicIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetNetworkLabelsByHostNicIdQuery(P parameters) {
@@ -18,7 +19,7 @@ public class GetNetworkLabelsByHostNicIdQuery<P extends IdQueryParameters> exten
     @Override
     protected void executeQueryCommand() {
         VdsNetworkInterface nic = getDbFacade().getInterfaceDao().get(getParameters().getId());
-        getQueryReturnValue().setReturnValue(nic == null || nic.getLabels() == null ? Collections.<NetworkLabel> emptyList()
+        getQueryReturnValue().setReturnValue(nic == null || !NetworkUtils.isLabeled(nic) ? Collections.<NetworkLabel> emptyList()
                 : convertToNetworkLabels(nic.getLabels()));
     }
 
