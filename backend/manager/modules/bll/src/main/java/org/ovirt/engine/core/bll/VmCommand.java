@@ -237,15 +237,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return new SnapshotsManager().removeSnapshots(getVmId());
     }
 
-    /**
-     * There is a one to many relation between memory volumes and snapshots, so memory
-     * volumes should be removed only if the only snapshot that points to them is removed
-     */
-    protected boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume) {
-        return !memoryVolume.isEmpty() &&
-                getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
-    }
-
     protected void removeVmUsers() {
         List<TagsVmMap> all = getTagDao().getTagVmMapByVmIdAndDefaultTag(getVmId());
         for (TagsVmMap tagVm : all) {
