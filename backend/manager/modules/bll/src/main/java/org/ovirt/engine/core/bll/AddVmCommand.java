@@ -219,7 +219,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected Map<Guid, VmDevice> getVmInterfaceDevices() {
         List<VmDevice> vmInterfaceDevicesList = getVmDeviceDao().getVmDeviceByVmIdAndType(vmInterfacesSourceId, VmDeviceGeneralType.INTERFACE);
-        Map<Guid, VmDevice> vmInterfaceDevices = new HashMap();
+        Map<Guid, VmDevice> vmInterfaceDevices = new HashMap<>();
         for (VmDevice device : vmInterfaceDevicesList) {
             vmInterfaceDevices.put(device.getDeviceId(), device);
         }
