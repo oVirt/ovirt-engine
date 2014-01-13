@@ -60,13 +60,23 @@ public abstract class MemoryImageRemover {
         if (isMemoryStateRemovable(memoryVolumes)) {
             return removeMemoryVolumes(memoryVolumes);
         }
+
         return true;
     }
 
-    protected void removeMemoryVolumes(Set<String> memoryVolumes) {
+    /**
+     * Try to remove all the given memory volumes
+     *
+     * @param memoryVolumes - memory volumes to remove
+     * @return true if all the memory volumes were removed successfully, false otherwise
+     */
+    protected boolean removeMemoryVolumes(Set<String> memoryVolumes) {
+        boolean allVolumesRemovedSucessfully = true;
         for (String memoryVols : memoryVolumes) {
-            removeMemoryVolume(memoryVols);
+            allVolumesRemovedSucessfully &= removeMemoryVolume(memoryVols);
         }
+
+        return allVolumesRemovedSucessfully;
     }
 
     private boolean removeMemoryVolumes(String memVols) {

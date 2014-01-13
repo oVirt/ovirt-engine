@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -13,15 +13,18 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
 
     protected Boolean cachedPostZero;
-    private VM vm;
+    private Guid vmId;
+    private boolean removeOnlyIfNotUsedAtAll;
 
-    public MemoryImageRemoverOnDataDomain(VM vm, TaskHandlerCommand<?> enclosingCommand) {
-        super(enclosingCommand);
-        this.vm = vm;
+    public MemoryImageRemoverOnDataDomain(Guid vmId,
+            TaskHandlerCommand<? extends RemoveMemoryVolumesParameters> enclosingCommand) {
+        super(enclosingCommand, false);
+        this.vmId = vmId;
+        removeOnlyIfNotUsedAtAll = enclosingCommand.getParameters().isRemoveOnlyIfNotUsedAtAll();
     }
 
-    public void remove(Set<String> memoryStates) {
-        removeMemoryVolumes(memoryStates);
+    public boolean remove(Set<String> memoryStates) {
+        return removeMemoryVolumes(memoryStates);
     }
 
     @Override
@@ -38,15 +41,20 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
 
     protected boolean isPostZero() {
         if (cachedPostZero == null) {
-            cachedPostZero = isDiskWithWipeAfterDeleteExist(getDiskDao().getAllForVm(vm.getId()));
+            cachedPostZero = isDiskWithWipeAfterDeleteExist(getDiskDao().getAllForVm(vmId));
         }
+
         return cachedPostZero;
     }
 
     @Override
     protected boolean isMemoryStateRemovable(String memoryVolume) {
-        return !memoryVolume.isEmpty() &&
-                getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 0;
+        if (memoryVolume.isEmpty()) {
+            return false;
+        }
+
+        int numOfSnapshotsUsingThisMemory = getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume);
+        return numOfSnapshotsUsingThisMemory == (removeOnlyIfNotUsedAtAll ? 0 : 1);
     }
 
     protected SnapshotDao getSnapshotDao() {
