@@ -44,13 +44,24 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
             return null;
         }
         // get vds that over committed for the time defined
+        /* returns list of Hosts with
+         *    cpuUtilization >= highUtilization
+         *    && cpuOverCommitMinutes >= CpuOverCommitDurationMinutes
+         */
         List<VDS> overUtilizedHosts = getOverUtilizedHosts(hosts, parameters);
 
+        // if there aren't any overutilized hosts, then there is nothing to balance...
         if (overUtilizedHosts == null || overUtilizedHosts.size() == 0) {
+            log.infoFormat("There is no over-utilized host in cluster '{0}'", cluster.getName());
             return null;
         }
+
+        // returns hosts with utilization lower than the specified threshold
         List<VDS> underUtilizedHosts = getUnderUtilizedHosts(cluster, hosts, parameters);
+
+        //if no host has a spare power, then there is nothing we can do to balance it..
         if (underUtilizedHosts == null || underUtilizedHosts.size() == 0) {
+            log.warnFormat("All hosts are over-utilized, can't balance the cluster '{0}'", cluster.getName());
             return null;
         }
         VDS randomHost = overUtilizedHosts.get(new Random().nextInt(overUtilizedHosts.size()));
@@ -200,4 +211,5 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
         }
         return defaultValue;
     }
+
 }

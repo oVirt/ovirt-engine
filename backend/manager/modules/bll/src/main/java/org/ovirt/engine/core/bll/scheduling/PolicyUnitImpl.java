@@ -11,6 +11,8 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalanceP
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
@@ -85,6 +87,14 @@ public class PolicyUnitImpl extends PolicyUnit {
                 return new EvenDistributionBalancePolicyUnit(policyUnit);
             }
             break;
+        case "OptimalForEvenGuestDistribution":
+                if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+                    return new EvenGuestDistributionWeightPolicyUnit(policyUnit);
+                }
+                else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+                    return new EvenGuestDistributionBalancePolicyUnit(policyUnit);
+                }
+                break;
         default:
             break;
         }

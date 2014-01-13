@@ -16,8 +16,26 @@
 
 package org.ovirt.engine.api.model;
 
+/**
+ * This enum holds the types of all internal scheduling policies
+ */
 public enum SchedulingPolicyType {
-    EVENLY_DISTRIBUTED, POWER_SAVING, NONE;
+    /**
+     * Distributes the guest in a way that the CPU usage is approximately the same
+     * on all hosts in the cluster
+     */
+    EVENLY_DISTRIBUTED,
+    /**
+     * Distributes the guests in a way that is the best for saving power
+     */
+    POWER_SAVING,
+    NONE,
+    /**
+     * Distributes the guests in a way that every host host has approximately the same
+     * number of running guests
+     */
+    VM_EVENLY_DISTRIBUTED;
+
 
     public String value() {
         return name().toLowerCase();

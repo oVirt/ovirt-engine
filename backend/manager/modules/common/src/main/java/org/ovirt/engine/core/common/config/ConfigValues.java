@@ -440,6 +440,18 @@ public enum ConfigValues {
     @DefaultValueAttribute("120")
     MaxVdsMemOverCommitForServers,
     @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    HighVmCountForEvenGuestDistribute,
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    SpmVmGraceForEvenGuestDistribute,
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("5")
+    MigrationThresholdForEvenGuestDistribute,
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     AutoInstallCertificateOnApprove,

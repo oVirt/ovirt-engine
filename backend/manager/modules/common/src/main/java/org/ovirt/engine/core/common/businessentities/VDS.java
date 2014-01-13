@@ -1185,6 +1185,10 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         _spm_status = value;
     }
 
+    public boolean isSpm() {
+        return _spm_status == VdsSpmStatus.SPM;
+    }
+
     public NonOperationalReason getNonOperationalReason() {
         return this.mVdsDynamic.getNonOperationalReason();
     }
