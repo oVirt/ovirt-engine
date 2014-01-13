@@ -1,0 +1,23 @@
+package org.ovirt.engine.core.bll;
+
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+
+public class GetHostArchitectureQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    public GetHostArchitectureQuery(P parameters) {
+        super(parameters);
+    }
+
+    @Override
+    protected void executeQueryCommand() {
+        VDS host = getDbFacade().getVdsDao().get(getParameters().getId());
+
+        ServerCpu sc =
+                CpuFlagsManagerHandler.FindMaxServerCpuByFlags(host.getCpuFlags(),
+                        host.getVdsGroupCompatibilityVersion());
+
+        getQueryReturnValue().setReturnValue(sc.getArchitecture());
+    }
+}

@@ -201,6 +201,14 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+--This SP returns if the VDS group does not have any hosts or VMs
+Create or replace FUNCTION GetIsVdsGroupEmpty(v_vds_group_id UUID) RETURNS BOOLEAN
+   AS $procedure$
+BEGIN
+      RETURN NOT EXISTS(SELECT 1 FROM vm_static WHERE vds_group_id = v_vds_group_id AND vm_guid != '00000000-0000-0000-0000-000000000000') AND NOT EXISTS(SELECT 1 FROM vds_static WHERE vds_group_id = v_vds_group_id);
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 --This SP returns all clusters with permissions to run the given action by user
 Create or replace FUNCTION fn_perms_get_vds_groups_with_permitted_action(v_user_id UUID, v_action_group_id integer) RETURNS SETOF vds_groups_view STABLE

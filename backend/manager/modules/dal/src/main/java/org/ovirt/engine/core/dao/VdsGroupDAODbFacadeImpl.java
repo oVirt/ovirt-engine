@@ -44,6 +44,13 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
     }
 
     @Override
+    public Boolean getIsEmpty(Guid id) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_group_id", id);
+        return getCallsHandler().executeRead("GetIsVdsGroupEmpty", BooleanRowMapper.instance, parameterSource);
+    }
+
+    @Override
     public VDSGroup getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_group_name", name)
@@ -233,6 +240,15 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setOptimizationType(OptimizationType.from(rs.getInt("optimization_type")));
             entity.setSpiceProxy(rs.getString("spice_proxy"));
             return entity;
+        }
+    }
+
+    private final static class BooleanRowMapper implements RowMapper<Boolean> {
+        public static final RowMapper<Boolean> instance = new BooleanRowMapper();
+
+        @Override
+        public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return Boolean.valueOf(rs.getBoolean(1));
         }
     }
 

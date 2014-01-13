@@ -43,6 +43,15 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     VDSGroup getWithRunningVms(Guid id);
 
     /**
+     * Returns the specified VDS group if it does not have any VMs or clusters.
+     *
+     * @param id
+     *            the group id
+     * @return the VDS group
+     */
+    Boolean getIsEmpty(Guid id);
+
+    /**
      * Retrieves the group with the specified name.
      *
      * @param name

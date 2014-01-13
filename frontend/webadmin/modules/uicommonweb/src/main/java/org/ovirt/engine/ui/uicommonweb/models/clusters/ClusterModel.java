@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -1017,8 +1018,6 @@ public class ClusterModel extends EntityModel
 
         setArchitecture(new ListModel<ArchitectureType>());
 
-        getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(ArchitectureType.values())));
-
         setIsGeneralTabValid(true);
         setIsResiliencePolicyTabAvailable(true);
 
@@ -1285,6 +1284,7 @@ public class ClusterModel extends EntityModel
         {
             version = getDataCenter().getSelectedItem().getcompatibility_version();
         }
+
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -1294,15 +1294,40 @@ public class ClusterModel extends EntityModel
                 ClusterModel clusterModel = (ClusterModel) model;
                 ArrayList<ServerCpu> cpus = (ArrayList<ServerCpu>) result;
 
-                ServerCpu oldSelectedCpu = clusterModel.getCPU().getSelectedItem();
-                clusterModel.getCPU().setItems(cpus);
+                if (clusterModel.getIsEdit()) {
+                    AsyncQuery emptyQuery = new AsyncQuery();
 
-                clusterModel.getCPU().setSelectedItem(oldSelectedCpu != null ?
-                        Linq.firstOrDefault(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
+                    emptyQuery.setModel(new Object[] { clusterModel, cpus });
+                    emptyQuery.asyncCallback = new INewAsyncCallback() {
 
-                if (clusterModel.getCPU().getSelectedItem() == null || !isCPUinitialized)
-                {
-                    initCPU();
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            Boolean isEmpty = (Boolean) returnValue;
+
+                            Object[] objArray = (Object[]) model;
+
+                            ClusterModel clusterModel = (ClusterModel) objArray[0];
+                            ArrayList<ServerCpu> cpus = (ArrayList<ServerCpu>) objArray[1];
+
+                            if (isEmpty) {
+                                populateCPUList(clusterModel, cpus, true);
+                            } else {
+                                ArrayList<ServerCpu> filteredCpus = new ArrayList<ServerCpu>();
+
+                                for (ServerCpu cpu : cpus) {
+                                    if (cpu.getArchitecture() == clusterModel.getEntity().getArchitecture()) {
+                                        filteredCpus.add(cpu);
+                                    }
+                                }
+
+                                populateCPUList(clusterModel, filteredCpus, false);
+                            }
+                        }
+                    };
+
+                    AsyncDataProvider.isClusterEmpty(emptyQuery, clusterModel.getEntity().getId());
+                } else {
+                    populateCPUList(clusterModel, cpus, true);
                 }
             }
         };
@@ -1312,6 +1337,43 @@ public class ClusterModel extends EntityModel
         getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
         getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
         getEnableBallooning().setIsChangable(version.compareTo(Version.v3_3) >= 0);
+    }
+
+    private void populateCPUList(ClusterModel clusterModel, List<ServerCpu> cpus, boolean canChangeArchitecture)
+    {
+        ServerCpu oldSelectedCpu = clusterModel.getCPU().getSelectedItem();
+
+        clusterModel.getCPU().setItems(cpus);
+
+        clusterModel.getCPU().setSelectedItem(oldSelectedCpu != null ?
+                Linq.firstOrDefault(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
+
+        if (clusterModel.getCPU().getSelectedItem() == null || !isCPUinitialized)
+        {
+            initCPU();
+        }
+
+        if (clusterModel.getIsEdit()) {
+            if (canChangeArchitecture) {
+                getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(ArchitectureType.values())));
+            } else {
+                getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(clusterModel.getEntity()
+                        .getArchitecture())));
+            }
+
+            ArchitectureType oldSelectedArch =
+                    (ArchitectureType) clusterModel.getArchitecture().getSelectedItem();
+
+            if (oldSelectedArch != null) {
+                getArchitecture().setSelectedItem(oldSelectedArch);
+            } else {
+                getArchitecture().setSelectedItem(getEntity().getArchitecture());
+            }
+        } else {
+            getArchitecture().setItems(new ArrayList<ArchitectureType>(Arrays.asList(ArchitectureType.values())));
+            getArchitecture().setSelectedItem(ArchitectureType.undefined);
+        }
+
     }
 
     private void initCPU()

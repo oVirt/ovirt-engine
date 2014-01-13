@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -1180,7 +1181,6 @@ public abstract class HostModel extends Model
                 {
                     HostModel hostModel = (HostModel) model;
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
-                    VDSGroup oldCluster = (VDSGroup) hostModel.getCluster().getSelectedItem();
                     StoragePool selectedDataCenter = (StoragePool) getDataCenter().getSelectedItem();
 
                     // Update selected cluster only if the returned cluster list is indeed the selected datacenter's
@@ -1191,21 +1191,38 @@ public abstract class HostModel extends Model
                                     .getStoragePoolId()
                                     .equals(selectedDataCenter.getId()))
                     {
-                        hostModel.getCluster().setItems(clusters);
 
-                        if (oldCluster != null)
-                        {
-                            VDSGroup newSelectedItem =
-                                    Linq.firstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
-                            if (newSelectedItem != null)
-                            {
-                                hostModel.getCluster().setSelectedItem(newSelectedItem);
-                            }
-                        }
 
-                        if (hostModel.getCluster().getSelectedItem() == null)
-                        {
-                            hostModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+                        if (hostModel.getIsNew()) {
+                            updateClusterList(hostModel, clusters);
+                        } else {
+                            AsyncQuery architectureQuery = new AsyncQuery();
+
+                            architectureQuery.setModel(new Object[] { hostModel, clusters });
+                            architectureQuery.asyncCallback = new INewAsyncCallback() {
+                                @Override
+                                public void onSuccess(Object model, Object returnValue) {
+                                    Object[] objArray = (Object[]) model;
+                                    HostModel hostModel = (HostModel) objArray[0];
+                                    ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) objArray[1];
+
+                                    ArchitectureType architecture = (ArchitectureType) returnValue;
+
+                                    ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
+
+                                    for (VDSGroup cluster : clusters) {
+                                        if (cluster.getArchitecture() == ArchitectureType.undefined
+                                                || cluster.getArchitecture() == architecture) {
+                                            filteredClusters.add(cluster);
+                                        }
+                                    }
+
+                                    updateClusterList(hostModel, filteredClusters);
+                                }
+                            };
+
+                            AsyncDataProvider.getHostArchitecture(architectureQuery, hostModel.getHostId());
+
                         }
                     }
                 }
@@ -1213,6 +1230,28 @@ public abstract class HostModel extends Model
 
             AsyncDataProvider.getClusterList(_asyncQuery, dataCenter.getId());
         }
+    }
+
+    private void updateClusterList(HostModel hostModel, List<VDSGroup> clusters) {
+        VDSGroup oldCluster = (VDSGroup) hostModel.getCluster().getSelectedItem();
+
+        hostModel.getCluster().setItems(clusters);
+
+        if (oldCluster != null)
+        {
+            VDSGroup newSelectedItem =
+                    Linq.firstOrDefault(clusters, new Linq.ClusterPredicate(oldCluster.getId()));
+            if (newSelectedItem != null)
+            {
+                hostModel.getCluster().setSelectedItem(newSelectedItem);
+            }
+        }
+
+        if (hostModel.getCluster().getSelectedItem() == null)
+        {
+            hostModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+        }
+
     }
 
     private void cluster_SelectedItemChanged()

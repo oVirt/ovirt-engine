@@ -425,6 +425,28 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void isClusterEmpty(AsyncQuery aQuery, Guid id) {
+        aQuery.converterCallback = new IAsyncConverter<Boolean>() {
+            @Override
+            public Boolean Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return (Boolean) source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.IsClusterEmpty, new IdQueryParameters(id), aQuery);
+    }
+
+    public static void getHostArchitecture(AsyncQuery aQuery, Guid id) {
+        aQuery.converterCallback = new IAsyncConverter<ArchitectureType>() {
+            @Override
+            public ArchitectureType Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return (ArchitectureType) source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetHostArchitecture, new IdQueryParameters(id), aQuery);
+    }
+
     public static void getClusterById(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
