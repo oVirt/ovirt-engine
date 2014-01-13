@@ -1543,6 +1543,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    DefaultRouteSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     CloudInitSupported,
 
     @TypeConverterAttribute(Boolean.class)

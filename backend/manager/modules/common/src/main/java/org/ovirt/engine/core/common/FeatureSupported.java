@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
-
-import java.util.Map;
 
 /**
  * Convenience class to check if a feature is supported or not in any given version.<br>
@@ -219,5 +219,14 @@ public class FeatureSupported {
      */
     public static boolean getFileStats(Version version) {
         return supportedInConfig(ConfigValues.GetFileStats, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if default route is supported for the given version.
+     */
+    public static boolean defaultRoute(Version version) {
+        return supportedInConfig(ConfigValues.DefaultRouteSupported, version);
     }
 }

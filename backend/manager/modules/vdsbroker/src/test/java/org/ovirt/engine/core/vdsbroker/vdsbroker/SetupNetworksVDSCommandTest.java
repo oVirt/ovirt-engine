@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +52,9 @@ public class SetupNetworksVDSCommandTest {
     @Mock
     private VDS host;
 
+    @Mock
+    private Version version;
+
     @Rule
     public MockConfigRule configRule = new MockConfigRule();
 
@@ -59,6 +63,12 @@ public class SetupNetworksVDSCommandTest {
 
     @Captor
     private ArgumentCaptor<Map> networksCaptor;
+
+    @Before
+    public void mockConfig() {
+        when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
+        configRule.mockConfigValue(ConfigValues.DefaultRouteSupported, version, Boolean.FALSE);
+    }
 
     @Test
     public void vlanOverNic() {
@@ -156,9 +166,6 @@ public class SetupNetworksVDSCommandTest {
             VdsNetworkInterface iface,
             NetworkQoS expectedQos,
             boolean hostNetworkQosSupported) {
-
-        Version version = mock(Version.class);
-        when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
         configRule.mockConfigValue(ConfigValues.HostNetworkQosSupported, version, hostNetworkQosSupported);
 
         SetupNetworksVdsCommandParameters parameters =
