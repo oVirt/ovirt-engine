@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.memory.HibernationVolumesRemover;
+import org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 
@@ -22,8 +23,6 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters> extends CommandBase<T> implements TaskHandlerCommand<T> {
-    /** fictive list of task IDs, used when we don't want to add tasks */
-    private static final ArrayList<Guid> dummyTaskIdList = new ArrayList<>();
 
     public RemoveMemoryVolumesCommand(T parameters) {
         super(parameters);
@@ -35,13 +34,18 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
 
     @Override
     protected void executeCommand() {
-        HibernationVolumesRemover hibernationVolumesRemover =
-                new HibernationVolumesRemover(
-                        getParameters().getMemoryVolumes(),
+        MemoryImageRemoverOnDataDomain memoryImageRemover =
+                new MemoryImageRemoverOnDataDomain(
                         getParameters().getVmId(),
                         this);
 
-        setSucceeded(hibernationVolumesRemover.remove());
+        setSucceeded(memoryImageRemover.remove(
+                Collections.singleton(getParameters().getMemoryVolumes())));
+    }
+
+    @Override
+    protected AsyncTaskType getTaskType() {
+        return AsyncTaskType.deleteImage;
     }
 
     //////////////////////////////////
@@ -50,35 +54,27 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
 
     @Override
     public VdcActionType getActionType() {
-        return super.getActionType();
+        return getParameters().getParentCommand() == VdcActionType.Unknown ?
+                super.getActionType() : getParameters().getParentCommand();
     }
 
-    /**
-     * Not adding tasks
-     */
     @Override
     public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        return Guid.Empty;
+        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
     }
 
-    /**
-     * Not adding tasks
-     */
     @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType vdcObjectType,
             Guid... entityIds) {
-        return Guid.Empty;
+        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand, vdcObjectType, entityIds);
     }
 
-    /**
-     * Not adding task IDs
-     */
     @Override
     public ArrayList<Guid> getTaskIdList() {
-        return dummyTaskIdList;
+        return super.getTaskIdList();
     }
 
     @Override
@@ -86,20 +82,14 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
         throw new NotImplementedException();
     }
 
-    /**
-     * Not adding place holders
-     */
     @Override
     public Guid persistAsyncTaskPlaceHolder() {
-        return Guid.Empty;
+        return super.persistAsyncTaskPlaceHolder(getActionType());
     }
 
-    /**
-     * Not adding place holders
-     */
     @Override
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
-        return Guid.Empty;
+        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
 
     @Override

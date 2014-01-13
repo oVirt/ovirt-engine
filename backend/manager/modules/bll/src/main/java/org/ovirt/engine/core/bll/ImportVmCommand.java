@@ -13,7 +13,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -32,6 +31,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -1120,7 +1120,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         setVm(null);
 
         if (getVm() != null) {
-            removeVmSnapshots(getVm());
+            removeVmSnapshots();
             endActionOnAllImageGroups();
             removeVmNetworkInterfaces();
             getVmDynamicDAO().remove(getVmId());
@@ -1134,10 +1134,21 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
     }
 
-    private void removeVmSnapshots(VM vm) {
-        Set<String> memoryStates = snapshotsManager.removeSnapshots(vm.getId());
-        if (!memoryStates.isEmpty()) {
-            new MemoryImageRemoverOnDataDomain(vm, this).remove(memoryStates);
+    private void removeVmSnapshots() {
+        Guid vmId = getVmId();
+        Set<String> memoryStates = snapshotsManager.removeSnapshots(vmId);
+        for (String memoryState : memoryStates) {
+            removeMemoryVolumes(memoryState, vmId);
+        }
+    }
+
+    private void removeMemoryVolumes(String memoryVolume, Guid vmId) {
+        VdcReturnValueBase retVal = getBackend().runInternalAction(
+                VdcActionType.RemoveMemoryVolumes,
+                new RemoveMemoryVolumesParameters(memoryVolume, vmId));
+
+        if (!retVal.getSucceeded()) {
+            log.errorFormat("Failed to remove memory volumes: {0}", memoryVolume);
         }
     }
 

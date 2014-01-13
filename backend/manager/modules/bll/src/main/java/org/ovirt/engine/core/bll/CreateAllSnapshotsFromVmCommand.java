@@ -324,19 +324,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             getSnapshotDao().removeMemoryFromSnapshot(snapshot.getId());
         }
 
-        return removeMemoryVolumes(memoryVolume);
+        return removeMemoryVolumes(snapshot);
     }
 
-    private boolean removeMemoryVolumes(String memoryVolumes) {
-        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(memoryVolumes, getVmId());
-        parameters.setParentCommand(getActionType());
-        parameters.setEntityInfo(getParameters().getEntityInfo());
-        parameters.setParentParameters(getParameters());
-
-        return getBackend().runInternalAction(
+    private boolean removeMemoryVolumes(Snapshot snapshot) {
+        VdcReturnValueBase retVal = getBackend().runInternalAction(
                 VdcActionType.RemoveMemoryVolumes,
-                parameters,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext())).getSucceeded();
+                new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId()));
+
+        return retVal.getSucceeded();
     }
 
     protected boolean isLiveSnapshotApplicable() {
