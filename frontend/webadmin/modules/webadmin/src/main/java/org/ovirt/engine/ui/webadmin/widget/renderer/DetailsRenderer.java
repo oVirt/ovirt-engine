@@ -20,7 +20,7 @@ public class DetailsRenderer<V> extends AbstractRenderer<ArrayList<TextBoxLabelB
         StringBuilder formattedStr = new StringBuilder();
 
         for (int i = 0; i < widgets.size(); i++) {
-            formattedStr.append(widgets.get(i).getElement().getInnerHTML()).append(" ").append(delimiters[i]); //$NON-NLS-1$
+            formattedStr.append(widgets.get(i).getValue()).append(" ").append(delimiters[i]); //$NON-NLS-1$
             if (i < widgets.size() - 1) {
                 formattedStr.append(", "); //$NON-NLS-1$
             }
