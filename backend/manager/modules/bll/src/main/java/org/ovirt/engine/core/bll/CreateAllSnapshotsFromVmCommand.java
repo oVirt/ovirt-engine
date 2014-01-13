@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.NullableMemoryImageBuilder;
@@ -309,15 +308,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void removeMemoryVolumesOfSnapshot(Snapshot snapshot) {
-        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId());
-        parameters.setParentCommand(getActionType());
-        parameters.setEntityInfo(getParameters().getEntityInfo());
-        parameters.setParentParameters(getParameters());
-
         VdcReturnValueBase retVal = getBackend().runInternalAction(
                 VdcActionType.RemoveMemoryVolumes,
-                parameters,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId()));
 
         if (!retVal.getSucceeded()) {
             log.errorFormat("Failed to remove memory volumes of snapshot {0} ({1})",

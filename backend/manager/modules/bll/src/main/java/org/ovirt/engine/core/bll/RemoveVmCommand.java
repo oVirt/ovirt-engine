@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -25,6 +24,7 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
+import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -117,9 +117,30 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
         }
 
-        new MemoryImageRemoverOnDataDomain(getVm(), this).remove(memoryStates);
+        removeMemoryVolumes();
 
         return true;
+    }
+
+    private void removeMemoryVolumes() {
+        for (String memoryState : memoryStates) {
+            VdcReturnValueBase retVal = getBackend().runInternalAction(
+                    VdcActionType.RemoveMemoryVolumes,
+                    buildRemoveMemoryVolumesParameters(memoryState, getVmId()));
+
+            if (!retVal.getSucceeded()) {
+                log.errorFormat("Failed to remove memory volumes whie removing vm {0} (volumes: {1})",
+                        getVmId(), memoryState);
+            }
+        }
+    }
+
+    private RemoveMemoryVolumesParameters buildRemoveMemoryVolumesParameters(String memoryState, Guid vmId) {
+        RemoveMemoryVolumesParameters parameters =
+                new RemoveMemoryVolumesParameters(memoryState, getVmId());
+        parameters.setRemoveOnlyIfNotUsedAtAll(true);
+
+        return parameters;
     }
 
     @Override

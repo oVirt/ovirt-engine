@@ -1176,15 +1176,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     private void removeMemoryVolumes(String memoryVolume, Guid vmId) {
-        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(memoryVolume, vmId);
-        parameters.setParentCommand(getActionType());
-        parameters.setEntityInfo(getParameters().getEntityInfo());
-        parameters.setParentParameters(getParameters());
-
         VdcReturnValueBase retVal = getBackend().runInternalAction(
                 VdcActionType.RemoveMemoryVolumes,
-                parameters,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                new RemoveMemoryVolumesParameters(memoryVolume, vmId));
 
         if (!retVal.getSucceeded()) {
             log.errorFormat("Failed to remove memory volumes: {0}", memoryVolume);
