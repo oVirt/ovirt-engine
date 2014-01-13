@@ -2271,7 +2271,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     private boolean isConsoleCommandsExecutionAllowed() {
-        final List<VM> list = getSelectedItems();
+        final List<VM> list = getSelectedItem() == null ? null : getSelectedItems();
         if (list == null) {
             return false;
         }

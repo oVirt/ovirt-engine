@@ -7,7 +7,9 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 
 /**
  * Class that holds (caches) consoles for set of VM (typically contained in some ListModel).
@@ -24,12 +26,14 @@ public class ConsoleModelsCache {
     private final Map<Guid, VmConsoles> poolConsoles;
     private final Model parentModel;
     private final ConsoleContext consoleContext;
+    private final ConsoleOptionsFrontendPersister persister;
 
     public ConsoleModelsCache(ConsoleContext consoleContext, Model parentModel) {
         this.consoleContext = consoleContext;
         this.parentModel = parentModel;
         vmConsoles = new HashMap<Guid, VmConsoles>();
         poolConsoles = new HashMap<Guid, VmConsoles>();
+        persister = (ConsoleOptionsFrontendPersister) TypeResolver.getInstance().resolve(ConsoleOptionsFrontendPersister.class);
     }
 
     /**
@@ -93,6 +97,9 @@ public class ConsoleModelsCache {
                     VmConsoles consoles = isVmCache
                             ? new VmConsolesImpl(vm, parentModel, consoleContext)
                             : new PoolConsolesImpl(vm, parentModel, consoleContext);
+
+                    persister.loadFromLocalStorage(consoles);
+
                     cacheToUpdate.put(entityKey, consoles);
                 }
                 entityIdsToKeep.add(entityKey);

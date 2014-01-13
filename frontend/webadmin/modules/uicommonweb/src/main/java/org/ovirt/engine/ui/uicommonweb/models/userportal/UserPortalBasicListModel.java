@@ -300,48 +300,53 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
             // Merge VMs and Pools, and create item models.
             final List all = Linq.concat(getvms(), filteredPools);
 
-            List<VdcQueryType> poolQueryList = new ArrayList<VdcQueryType>();
-            List<VdcQueryParametersBase> poolParamList = new ArrayList<VdcQueryParametersBase>();
+            if (filteredPools.isEmpty()) {
+                finishSearch(all);
+            } else { // if we have pools we have to update their console cache and THEN finish search
+                List<VdcQueryType> poolQueryList = new ArrayList<VdcQueryType>();
+                List<VdcQueryParametersBase> poolParamList = new ArrayList<VdcQueryParametersBase>();
 
-            for (VmPool p : filteredPools) {
-                poolQueryList.add(VdcQueryType.GetVmDataByPoolId);
-                poolParamList.add(new IdQueryParameters(p.getVmPoolId()));
+                for (VmPool p : filteredPools) {
+                    poolQueryList.add(VdcQueryType.GetVmDataByPoolId);
+                    poolParamList.add(new IdQueryParameters(p.getVmPoolId()));
+                }
+
+                Frontend.getInstance().runMultipleQueries(
+                        poolQueryList, poolParamList,
+                        new IFrontendMultipleQueryAsyncCallback() {
+                            @Override
+                            public void executed(FrontendMultipleQueryAsyncResult result) {
+                                List<VM> poolRepresentants = new LinkedList<VM>();
+                                List<VdcQueryReturnValue> poolRepresentantsRetval = result.getReturnValues();
+                                for (VdcQueryReturnValue poolRepresentant : poolRepresentantsRetval) { // extract from return value
+                                    poolRepresentants.add((VM) poolRepresentant.getReturnValue());
+                                }
+                                consoleModelsCache.updatePoolCache(poolRepresentants);
+                                finishSearch(all);
+                            }});
             }
-
-            Frontend.getInstance().runMultipleQueries(
-                    poolQueryList, poolParamList,
-                    new IFrontendMultipleQueryAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleQueryAsyncResult result) {
-                            List<VM> vmsOfPools = new LinkedList<VM>();
-
-                            List<VdcQueryReturnValue> poolRepresentants = result.getReturnValues();
-                            for (VdcQueryReturnValue poolRepresentant : poolRepresentants) {
-                                vmsOfPools.add((VM) poolRepresentant.getReturnValue());
-                            }
-
-                            consoleModelsCache.updateVmCache(getvms());
-                            consoleModelsCache.updatePoolCache(vmsOfPools);
-
-                            Collections.sort(all, new NameableComparator());
-
-                            ArrayList<Model> items = new ArrayList<Model>();
-                            for (Object item : all) {
-                                VmConsoles consoles = consoleModelsCache.getVmConsolesForEntity (item);
-
-                                UserPortalItemModel model = new UserPortalItemModel(item, consoles);
-                                model.setEntity(item);
-                                items.add(model);
-                            }
-
-                            setItems(items);
-
-                            setvms(null);
-                            setpools(null);
-
-                            getSearchCompletedEvent().raise(this, EventArgs.EMPTY);
-                        }});
         }
+    }
+
+    private void finishSearch(List vmsAndFilteredPools) {
+        consoleModelsCache.updateVmCache(getvms());
+
+        Collections.sort(vmsAndFilteredPools, new NameableComparator());
+
+        ArrayList<Model> items = new ArrayList<Model>();
+        for (Object item : vmsAndFilteredPools) {
+            VmConsoles consoles = consoleModelsCache.getVmConsolesForEntity(item);
+            UserPortalItemModel model = new UserPortalItemModel(item, consoles);
+            model.setEntity(item);
+            items.add(model);
+        }
+
+        setItems(items);
+
+        setvms(null);
+        setpools(null);
+
+        getSearchCompletedEvent().raise(this, EventArgs.EMPTY);
     }
 
     @Override

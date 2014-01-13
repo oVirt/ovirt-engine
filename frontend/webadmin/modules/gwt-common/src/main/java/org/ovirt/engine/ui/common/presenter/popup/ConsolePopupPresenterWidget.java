@@ -132,7 +132,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     @Override
     public void init(final ConsolePopupModel model) {
         this.model = model;
-        initModel(model);
         initView(model);
         initListeners(model);
 
@@ -144,10 +143,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().setCtrlAltDeleteRemapHotkey(consoleUtils.getRemapCtrlAltDelHotkey());
 
         super.init(model);
-    }
-
-    private void initModel(ConsolePopupModel model) {
-        consoleOptionsPersister.loadFromLocalStorage(model.getVmConsoles());
     }
 
     private void initListeners(final ConsolePopupModel model) {
