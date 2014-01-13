@@ -3365,6 +3365,7 @@ actions:
           template.tunnel_migration: xs:boolean
           template.migration_downtime: xs:int
           template.virtio_scsi.enabled: xs:boolean
+          template.version.version_name: xs:string
         description: update the specified template in the system
     urlparams: {}
     headers:
@@ -3415,6 +3416,8 @@ actions:
           template.virtio_scsi.enabled: xs:boolean
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           template.permissions.clone: xs:boolean
+          template.version.version_name: xs:string
+          template.version.base_template.id: xs:string
           template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
         description: add a new template to the system
     urlparams: {}

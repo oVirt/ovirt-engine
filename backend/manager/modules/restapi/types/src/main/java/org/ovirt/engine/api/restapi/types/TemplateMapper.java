@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.Boot;
@@ -13,6 +14,7 @@ import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateStatus;
+import org.ovirt.engine.api.model.TemplateVersion;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmType;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.compat.Guid;
 
 import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne;
 import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
@@ -162,6 +165,17 @@ public class TemplateMapper {
         if (model.isSetMigrationDowntime()) {
             entity.setMigrationDowntime(mapMinusOneToNull(model.getMigrationDowntime()));
         }
+        if (model.getVersion() != null) {
+            if (model.getVersion().getBaseTemplate() != null
+                    && StringUtils.isNotEmpty(model.getVersion().getBaseTemplate().getId())) {
+                entity.setBaseTemplateId(Guid.createGuidFromString(model.getVersion().getBaseTemplate().getId()));
+            }
+            if (model.getVersion().isSetVersionName()) {
+                entity.setTemplateVersionName(model.getVersion().getVersionName());
+            }
+            // numbering is generated in the backend, hence even if user specified version number, we ignore it.
+        }
+
         return entity;
     }
 
@@ -371,6 +385,17 @@ public class TemplateMapper {
         model.setTimezone(entity.getTimeZone());
         model.setTunnelMigration(entity.getTunnelMigration());
         model.setMigrationDowntime(mapNullToMinusOne(entity.getMigrationDowntime()));
+        // if this is not a base template, that means this is a template version
+        // so need to populate template version properties
+        if (!entity.isBaseTemplate()) {
+            TemplateVersion version = new TemplateVersion();
+            version.setVersionName(entity.getTemplateVersionName());
+            version.setVersionNumber(entity.getTemplateVersionNumber());
+            Template baseTemplate = new Template();
+            baseTemplate.setId(entity.getBaseTemplateId().toString());
+            version.setBaseTemplate(baseTemplate);
+            model.setVersion(version);
+        }
 
         return model;
     }
