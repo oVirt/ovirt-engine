@@ -9,8 +9,10 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -20,6 +22,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     protected static final String BOOT_PROTOCOL = "bootproto";
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
+    private static final String DEFAULT_ROUTE = "defaultRoute";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
 
     public SetupNetworksVDSCommand(T parameters) {
@@ -59,13 +62,21 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.STP, network.getStp() ? "yes" : "no");
             }
 
+            Version version =
+                    getDbFacade().getVdsDao().get(getParameters().getVdsId()).getVdsGroupCompatibilityVersion();
             if (qosConfiguredOnInterface(iface, network)
-                    && FeatureSupported.hostNetworkQos(getDbFacade().getVdsDao()
-                            .get(getParameters().getVdsId())
-                            .getVdsGroupCompatibilityVersion())) {
+                    && FeatureSupported.hostNetworkQos(version)) {
                 NetworkQosMapper qosMapper =
                         new NetworkQosMapper(opts, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
                 qosMapper.serialize(iface.isQosOverridden() ? iface.getQos() : qosDao.get(network.getQosId()));
+            }
+
+            if (FeatureSupported.defaultRoute(version)
+                    && NetworkUtils.isManagementNetwork(network)
+                    && (iface.getBootProtocol() == NetworkBootProtocol.DHCP
+                    || (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
+                    && StringUtils.isNotEmpty(iface.getGateway())))) {
+                opts.put(DEFAULT_ROUTE, Boolean.TRUE);
             }
 
             networks.put(network.getName(), opts);
