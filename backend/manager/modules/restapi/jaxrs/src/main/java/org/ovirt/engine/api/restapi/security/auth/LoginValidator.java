@@ -71,10 +71,11 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
             return loginFailure(principal, NO_DOMAIN);
         }
 
-        LoginUserParameters params = new LoginUserParameters(principal.getUser(),
-                principal.getSecret(),
-                principal.getDomain(),
-                null, null, null);
+        LoginUserParameters params = new LoginUserParameters(
+            principal.getDomain(),
+            principal.getUser(),
+            principal.getSecret()
+        );
         params.setActionType(VdcActionType.LoginUser);
         sessionHelper.setSessionId(sessionId);
         VdcReturnValueBase ret = backend.login(sessionHelper.sessionize(params));

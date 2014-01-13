@@ -4,7 +4,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.DomainGroupResource;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ExternalId;
@@ -16,14 +16,14 @@ import org.ovirt.engine.core.compat.Guid;
  * permissions, roles or tags of the group, even if those have been already assigned and stored in the database.
  */
 public class BackendDomainGroupResource
-        extends AbstractBackendSubResource<Group, LdapGroup>
+        extends AbstractBackendSubResource<Group, DirectoryGroup>
         implements DomainGroupResource {
 
     private BackendDomainGroupsResource parent;
     private ExternalId id;
 
     public BackendDomainGroupResource(ExternalId id, BackendDomainGroupsResource parent) {
-        super(Hex.encodeHexString(id.getBytes()), Group.class, LdapGroup.class);
+        super(Hex.encodeHexString(id.getBytes()), Group.class, DirectoryGroup.class);
         this.parent = parent;
         this.id = id;
     }
@@ -44,7 +44,7 @@ public class BackendDomainGroupResource
     }
 
     @Override
-    protected Group doPopulate(Group model, LdapGroup entity) {
+    protected Group doPopulate(Group model, DirectoryGroup entity) {
         return model;
     }
 

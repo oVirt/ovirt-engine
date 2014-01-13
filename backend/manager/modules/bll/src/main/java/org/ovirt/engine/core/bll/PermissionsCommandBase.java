@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,8 +26,8 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
         super(parameters);
     }
 
-    protected DbUser _dbUser;
-    protected LdapGroup _adGroup;
+    protected DbUser dbUser;
+    protected DbGroup dbGroup;
 
     /**
      * Get the object translated type (e.g Host , VM), on which the MLA operation has been executed on.
@@ -60,18 +59,15 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
         // it would be nice to handle this from command execution rather than
         // audit log messages
         initUserAndGroupData();
-        return _dbUser == null ? (_adGroup == null ? "" : _adGroup.getname()) : _dbUser.getLoginName();
+        return dbUser == null ? (dbGroup == null ? "" : dbGroup.getName()) : dbUser.getLoginName();
     }
 
     public void initUserAndGroupData() {
-        if (_dbUser == null) {
-            _dbUser = getDbUserDAO().get(getParameters().getPermission().getad_element_id());
+        if (dbUser == null) {
+            dbUser = getDbUserDAO().get(getParameters().getPermission().getad_element_id());
         }
-        if (_adGroup == null) {
-            DbGroup dbGroup = getAdGroupDAO().get(getParameters().getPermission().getad_element_id());
-            if (dbGroup != null) {
-                _adGroup = new LdapGroup(dbGroup);
-            }
+        if (dbGroup == null) {
+            dbGroup = getAdGroupDAO().get(getParameters().getPermission().getad_element_id());
         }
     }
 

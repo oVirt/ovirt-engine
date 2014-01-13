@@ -126,7 +126,7 @@ public class LoginValidatorTest extends Assert {
         Principal principal = new Principal(USER, SECRET, DOMAIN);
         expect(
             backend.login((LoginUserParameters) eqActionParams(LoginUserParameters.class,
-                    new String[]{"UserName", "UserPassword", "Domain", "ActionType", "SessionId"},
+                    new String[]{"LoginName", "Password", "ProfileName", "ActionType", "SessionId"},
                     new Object[]{USER, SECRET, DOMAIN, VdcActionType.LoginUser, session.getSessionId()}))).andReturn(result);
         expect(result.getCanDoAction()).andReturn(canDo);
         expect(result.getSucceeded()).andReturn(success).anyTimes();

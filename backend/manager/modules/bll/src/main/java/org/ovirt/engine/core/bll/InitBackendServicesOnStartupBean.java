@@ -8,6 +8,17 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.ovirt.engine.core.authentication.AuthenticationProfile;
+import org.ovirt.engine.core.authentication.AuthenticationProfileManager;
+import org.ovirt.engine.core.authentication.Authenticator;
+import org.ovirt.engine.core.authentication.AuthenticatorManager;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryManager;
+import org.ovirt.engine.core.authentication.provisional.ProvisionalAuthenticator;
+import org.ovirt.engine.core.authentication.provisional.ProvisionalDirectory;
+import org.ovirt.engine.core.bll.adbroker.LdapBroker;
+import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
+import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -22,10 +33,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The following bean is created in order to initialize and start all related vdsms schedulers
@@ -36,7 +47,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 @DependsOn({ "Backend"})
 public class InitBackendServicesOnStartupBean implements InitBackendServicesOnStartup{
 
-    private static Log log = LogFactory.getLog(InitBackendServicesOnStartupBean.class);
+    private static Logger log = LoggerFactory.getLogger(InitBackendServicesOnStartupBean.class);
 
     /**
      * This method is called upon the bean creation as part
@@ -45,6 +56,17 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @Override
     @PostConstruct
     public void create() {
+
+        // Create authentication profiles for all the domains that exist in the database:
+        for (String domain : LdapBrokerUtils.getDomainsList()) {
+            LdapBroker broker = LdapFactory.getInstance(domain);
+            Authenticator authenticator = new ProvisionalAuthenticator(domain, broker);
+            Directory directory = new ProvisionalDirectory(domain, broker);
+            AuthenticationProfile profile = new AuthenticationProfile(domain, authenticator, directory);
+            AuthenticatorManager.getInstance().registerAuthenticator(domain, authenticator);
+            DirectoryManager.getInstance().registerDirectory(domain, directory);
+            AuthenticationProfileManager.getInstance().registerProfile(domain, profile);
+        }
 
         AsyncTaskManager.getInstance().initAsyncTaskManager();
         ResourceManager.getInstance().init();

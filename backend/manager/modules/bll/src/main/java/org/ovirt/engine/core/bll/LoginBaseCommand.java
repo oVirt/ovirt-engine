@@ -4,8 +4,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
-import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
+import org.ovirt.engine.core.authentication.AuthenticationProfile;
+import org.ovirt.engine.core.authentication.AuthenticationProfileManager;
+import org.ovirt.engine.core.authentication.AuthenticationResult;
+import org.ovirt.engine.core.authentication.Authenticator;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.authentication.DirectoryUtils;
+import org.ovirt.engine.core.authentication.PasswordAuthenticator;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,14 +20,14 @@ import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class LoginBaseCommand<T extends LoginUserParameters> extends CommandBase<T> {
-    private LdapUser directoryUser;
-    private DbUser dbUser;
+    protected static final Log log = LogFactory.getLog(LoginBaseCommand.class);
 
     public LoginBaseCommand(T parameters) {
         super(parameters);
@@ -37,20 +43,10 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         return (VdcLoginReturnValueBase) super.getReturnValue();
     }
 
-    public String getUserPassword() {
-        return getParameters().getUserPassword();
-    }
-
-    public String getDomain() {
-        return getParameters().getDomain();
-    }
-
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_VDC_LOGIN : AuditLogType.USER_VDC_LOGIN_FAILED;
     }
-
-    protected abstract UserAuthenticationResult authenticateUser();
 
     @Override
     protected void executeCommand() {
@@ -81,44 +77,102 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected boolean isUserCanBeAuthenticated() {
         // Check if the user is already logged in:
-        dbUser = SessionDataContainer.getInstance().getUser(false);
+        DbUser dbUser = SessionDataContainer.getInstance().getUser(false);
         if (dbUser != null) {
             addCanDoActionMessage(VdcBllMessages.USER_IS_ALREADY_LOGGED_IN);
             return false;
         }
 
-        // Find the name of the directory where the user should be
-        // authenticated:
-        List<String> directories = LdapBrokerUtils.getDomainsList();
-        boolean found = false;
-        for (String directory : directories) {
-            if (StringUtils.equalsIgnoreCase(directory, getDomain())) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_DOMAIN_NOT_SUPPORTED);
-            return false;
-        }
-
-        // Perform the actual authentication:
-        UserAuthenticationResult result = authenticateUser();
-        if (result == null) {
+        // Verify that the login name and password have been provided:
+        String loginName = getParameters().getLoginName();
+        if (loginName == null) {
+            log.errorFormat(
+                "Can't login user because no login name has been provided."
+            );
             addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
             return false;
         }
+        String password = getParameters().getPassword();
+        if (password == null) {
+            log.errorFormat(
+                "Can't login user \"{0}\" because no password has been provided.",
+                loginName
+            );
+            return false;
+        }
+
+        // Check that the authentication profile name has been provided:
+        String profileName = getParameters().getProfileName();
+        if (profileName == null) {
+            log.errorFormat(
+                "Can't login user \"{0}\" because no authentication profile name has been provided.",
+                loginName
+            );
+            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+            return false;
+        }
+
+        // Check that the authentication profile exists:
+        AuthenticationProfile profile = AuthenticationProfileManager.getInstance().getProfile(profileName);
+        if (profile == null) {
+            log.errorFormat(
+                "Can't login user \"{0}\" because authentication profile \"{1}\" doesn't exist.",
+                loginName, profileName
+            );
+            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+            return false;
+        }
+
+        // Check that the authenticator provided by the profile supports password authentication:
+        Authenticator authenticator = profile.getAuthenticator();
+        if (!(authenticator instanceof PasswordAuthenticator)) {
+            log.errorFormat(
+                "Can't login user \"{0}\" because the authentication profile \"{1}\" doesn't support password " +
+                "authentication.",
+                loginName, profileName
+            );
+            addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
+            return false;
+        }
+        PasswordAuthenticator passwordAuthenticator = (PasswordAuthenticator) authenticator;
+
+        // Perform the actual authentication:
+        AuthenticationResult<?> result = passwordAuthenticator.authenticate(loginName, password);
         if (!result.isSuccessful()) {
-            for (VdcBllMessages message : result.getErrorMessages()) {
-                addCanDoActionMessage(message);
+            log.infoFormat(
+                "Can't login user \"{0}\" with authentication profile \"{1}\" because the authentication failed.",
+                loginName,
+                profileName
+            );
+            for (VdcBllMessages msg : result.resolveMessage()) {
+                addCanDoActionMessage(msg);
             }
             return false;
         }
 
-        // Check that the user exists in the database, if it doesn't exist then
-        // we need to add it now:
-        directoryUser = result.getUser();
-        dbUser = UserCommandBase.persistAuthenticatedUser(directoryUser);
+        // Check that the user exists in the directory associated to the authentication profile:
+        Directory directory = profile.getDirectory();
+        DirectoryUser directoryUser = directory.findUser(loginName);
+        if (directoryUser == null) {
+            log.infoFormat(
+                "Can't login user \"{0}\" with authentication profile \"{1}\" because the user doesn't exist in the " +
+                "directory.",
+                loginName, profileName
+            );
+            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
+            return false;
+        }
+
+
+        // Check that the user exists in the database, if it doesn't exist then we need to add it now:
+        dbUser = getDbUserDAO().getByExternalId(directory.getName(), directoryUser.getId());
+        if (dbUser == null) {
+            dbUser = new DbUser(directoryUser);
+            dbUser.setId(Guid.newGuid());
+            String groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
+            dbUser.setGroupIds(groupIds);
+            getDbUserDAO().save(dbUser);
+        }
 
         // Check login permissions. We do it here and not via the
         // getPermissionCheckSubjects mechanism, because we need the user to be logged in to
@@ -139,7 +193,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
         // Add the user password to the session, as it will be needed later
         // when trying to log on to virtual machines:
-        SessionDataContainer.getInstance().setPassword(getUserPassword());
+        SessionDataContainer.getInstance().setPassword(password);
 
         return true;
     }
@@ -147,7 +201,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     @Override
     protected boolean isUserAuthorizedToRunAction() {
         if (log.isDebugEnabled()) {
-            log.debugFormat("IsUserAutorizedToRunAction: login - no permission check");
+            log.debug("IsUserAutorizedToRunAction: login - no permission check");
         }
         return true;
     }
@@ -162,7 +216,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                DbFacade.getInstance().updateLastAdminCheckStatus(dbUser.getId());
+                // TODO: Will look at this later.
+                // DbFacade.getInstance().updateLastAdminCheckStatus(dbUser.getId());
             }
         });
     }

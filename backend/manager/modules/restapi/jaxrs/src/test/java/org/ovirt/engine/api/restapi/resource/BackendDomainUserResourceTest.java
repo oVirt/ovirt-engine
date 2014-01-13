@@ -8,12 +8,13 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.authentication.DirectoryStub;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDomainUserResourceTest
-    extends AbstractBackendSubResourceTest<User, LdapUser, BackendDomainUserResource> {
+    extends AbstractBackendSubResourceTest<User, DirectoryUser, BackendDomainUserResource> {
 
     public BackendDomainUserResourceTest() {
         super(new BackendDomainUserResource(EXTERNAL_IDS[1], null));
@@ -37,7 +38,7 @@ public class BackendDomainUserResourceTest
     @Override
     protected void verifyModel(User model, int index) {
         assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
-        assertEquals(NAMES[index], model.getName());
+        assertEquals(NAMES[index], model.getUserName());
     }
 
     @Test
@@ -74,12 +75,8 @@ public class BackendDomainUserResourceTest
     }
 
     @Override
-    protected LdapUser getEntity(int index) {
-        LdapUser entity = new LdapUser();
-        entity.setUserId(EXTERNAL_IDS[index]);
-        entity.setName(NAMES[index]);
-        entity.setDepartment(DOMAIN);
-        return entity;
+    protected DirectoryUser getEntity(int index) {
+        return new DirectoryUser(new DirectoryStub(DOMAIN), EXTERNAL_IDS[index], NAMES[index]);
     }
 }
 

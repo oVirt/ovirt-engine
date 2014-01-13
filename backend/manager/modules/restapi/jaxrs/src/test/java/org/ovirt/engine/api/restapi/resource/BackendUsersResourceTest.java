@@ -12,11 +12,12 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.core.authentication.DirectoryStub;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -177,7 +178,7 @@ public class BackendUsersResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(
             query,
-            SearchType.AdUser,
+            SearchType.DirectoryUser,
             getDirectoryUser(0)
         );
         setUpCreationExpectations(
@@ -212,12 +213,8 @@ public class BackendUsersResourceTest
         return entity;
     }
 
-    private LdapUser getDirectoryUser(int index) {
-        LdapUser directoryUser = new LdapUser();
-        directoryUser.setUserId(EXTERNAL_IDS[index]);
-        directoryUser.setUserName(NAMES[index]);
-        directoryUser.setDomainControler(DOMAIN);
-        return directoryUser;
+    private DirectoryUser getDirectoryUser(int index) {
+        return new DirectoryUser(new DirectoryStub(DOMAIN), EXTERNAL_IDS[index], NAMES[index]);
     }
 
     @Override

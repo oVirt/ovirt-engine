@@ -706,9 +706,9 @@ public class FrontendActionTest {
     public void testLoginAsync_non_admin_ignored_failure() {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
-        String testDomain = "testdomain"; //$NON-NLS-1$
-        frontend.loginAsync(testUser, testPassword, testDomain, true, mockAsyncQuery);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginAdminUser),
+        String testProfile = "testprofile"; //$NON-NLS-1$
+        frontend.loginAsync(testUser, testPassword, testProfile, true, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testProfile), eq(VdcActionType.LoginAdminUser),
                 callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
@@ -732,9 +732,9 @@ public class FrontendActionTest {
     public void testLoginAsync_admin_ignored_failure() {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
-        String testDomain = "testdomain"; //$NON-NLS-1$
-        frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
+        String testProfile = "testprofile"; //$NON-NLS-1$
+        frontend.loginAsync(testUser, testPassword, testProfile, false, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testProfile), eq(VdcActionType.LoginUser),
                 callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
@@ -757,11 +757,11 @@ public class FrontendActionTest {
     public void testLoginAsync_404_failure() {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
-        String testDomain = "testdomain"; //$NON-NLS-1$
+        String testProfile = "testprofile"; //$NON-NLS-1$
         frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
-        frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
+        frontend.loginAsync(testUser, testPassword, testProfile, false, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testProfile), eq(VdcActionType.LoginUser),
                 callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
                 "404 status code"); //$NON-NLS-1$
@@ -788,17 +788,17 @@ public class FrontendActionTest {
         when(mockAsyncQuery.getModel()).thenReturn(model);
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
-        String testDomain = "testdomain"; //$NON-NLS-1$
+        String testProfile = "testprofile"; //$NON-NLS-1$
         frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
-        frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
+        frontend.loginAsync(testUser, testPassword, testProfile, false, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testProfile), eq(VdcActionType.LoginUser),
                 callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockAsyncCallback).onSuccess(model, returnValue);
-        verify(mockLoginHandler).onLoginSuccess(testUser, testPassword, testDomain);
+        verify(mockLoginHandler).onLoginSuccess(testUser, testPassword, testProfile);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
     }
 
@@ -818,17 +818,17 @@ public class FrontendActionTest {
         when(mockAsyncQuery.getModel()).thenReturn(model);
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
-        String testDomain = "testdomain"; //$NON-NLS-1$
+        String testProfile = "testprofile"; //$NON-NLS-1$
         frontend.initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
-        frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
+        frontend.loginAsync(testUser, testPassword, testProfile, false, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testProfile), eq(VdcActionType.LoginUser),
                 callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setSucceeded(false); // Yes I know this is the default, just to be sure.
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockAsyncCallback).onSuccess(model, returnValue);
-        verify(mockLoginHandler, never()).onLoginSuccess(testUser, testPassword, testDomain);
+        verify(mockLoginHandler, never()).onLoginSuccess(testUser, testPassword, testProfile);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
     }
 

@@ -3,15 +3,14 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.adbroker.AdActionType;
-import org.ovirt.engine.core.bll.adbroker.LdapFactory;
-import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,7 +21,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
 
     // We save a reference to the directory group to avoid looking it up once when checking the conditions and another
     // time when actually adding the group to the database:
-    private LdapGroup directoryGroup;
+    private DirectoryGroup directoryGroup;
 
     public AddGroupCommand(T params) {
         super(params);
@@ -35,18 +34,16 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
 
     @Override
     protected boolean canDoAction() {
-        String directory = getParameters().getDirectory();
+        String directoryName = getParameters().getDirectory();
         ExternalId id = getParameters().getId();
-        directoryGroup = (LdapGroup) LdapFactory.getInstance(directory).runAdAction(
-            AdActionType.GetAdGroupByGroupId,
-            new LdapSearchByIdParameters(directory, id)
-        ).getReturnValue();
+        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        directoryGroup = directory.findGroup(id);
         if (directoryGroup == null) {
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;
         }
 
-        addCustomValue("NewUserName", directoryGroup.getname());
+        addCustomValue("NewUserName", directoryGroup.getName());
 
         return true;
     }
@@ -56,7 +53,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
         // First check if the group is already in the database, if it is we
         // need to update, if not we need to insert:
         DbGroupDAO dao = getAdGroupDAO();
-        DbGroup dbGroup = dao.getByExternalId(directoryGroup.getdomain(), directoryGroup.getid());
+        DbGroup dbGroup = dao.getByExternalId(directoryGroup.getDirectory().getName(), directoryGroup.getId());
         if (dbGroup == null) {
             dbGroup = new DbGroup(directoryGroup);
             dbGroup.setId(Guid.newGuid());

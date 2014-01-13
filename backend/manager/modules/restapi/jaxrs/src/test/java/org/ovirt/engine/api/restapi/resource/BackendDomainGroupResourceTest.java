@@ -9,12 +9,13 @@ import org.junit.Test;
 
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryStub;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDomainGroupResourceTest
-    extends AbstractBackendSubResourceTest<Group, LdapGroup, BackendDomainGroupResource> {
+    extends AbstractBackendSubResourceTest<Group, DirectoryGroup, BackendDomainGroupResource> {
 
     public BackendDomainGroupResourceTest() {
         super(new BackendDomainGroupResource(EXTERNAL_IDS[1], null));
@@ -75,11 +76,8 @@ public class BackendDomainGroupResourceTest
     }
 
     @Override
-    protected LdapGroup getEntity(int index) {
-        LdapGroup entity = new LdapGroup();
-        entity.setid(EXTERNAL_IDS[index]);
-        entity.setname(NAMES[index]);
-        return entity;
+    protected DirectoryGroup getEntity(int index) {
+        return new DirectoryGroup(new DirectoryStub(DOMAIN), EXTERNAL_IDS[index], NAMES[index]);
     }
 }
 

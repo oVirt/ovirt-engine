@@ -37,6 +37,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         newUser = new DbUser();
 
         newUser.setExternalId(new ExternalId(new byte[0]));
+        newUser.setId(Guid.newGuid());
         newUser.setFirstName("Bob");
         newUser.setLastName("Milqtoste");
         newUser.setLoginName("newuser");
@@ -195,6 +196,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     public void testSaveUserWithTooManyGroups() {
         DbUser tooManyGroupsUser = new DbUser();
         tooManyGroupsUser.setExternalId(new ExternalId(0));
+        tooManyGroupsUser.setId(Guid.newGuid());
         tooManyGroupsUser.setFirstName("I");
         tooManyGroupsUser.setLastName("Have");
         tooManyGroupsUser.setLoginName("too");

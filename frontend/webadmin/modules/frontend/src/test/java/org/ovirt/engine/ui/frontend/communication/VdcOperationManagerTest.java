@@ -39,7 +39,7 @@ public class VdcOperationManagerTest {
         testManager = new VdcOperationManager(mockOperationProcessor);
         final VdcReturnValueBase loginResult = new VdcReturnValueBase();
         LoginUserParameters params = new LoginUserParameters("test", "test", //$NON-NLS-1$ //$NON-NLS-2$
-                "test", null, null, null); //$NON-NLS-1$
+                "test"); //$NON-NLS-1$
         VdcActionType action = VdcActionType.LoginUser;
         VdcOperation<VdcActionType, LoginUserParameters> loginOperation =
             new VdcOperation<VdcActionType, LoginUserParameters>(action, params, true, //Public action.

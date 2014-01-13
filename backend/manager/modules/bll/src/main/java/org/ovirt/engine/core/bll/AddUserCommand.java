@@ -3,15 +3,14 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.adbroker.AdActionType;
-import org.ovirt.engine.core.bll.adbroker.LdapFactory;
-import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryManager;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,7 +19,7 @@ import org.ovirt.engine.core.dao.DbUserDAO;
 public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase<T> {
     // We save a reference to the directory user to avoid looking it up once when checking the conditions and another
     // time when actually adding the user to the database:
-    private LdapUser directoryUser;
+    private DirectoryUser directoryUser;
 
     public AddUserCommand(T params) {
         super(params);
@@ -33,25 +32,55 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
 
     @Override
     protected boolean canDoAction() {
-        // Get the name of the directory and the identifier of the user from the parameters:
-        String directory = getParameters().getDirectory();
+        // Check that the directory name has been provided:
+        String directoryName = getParameters().getDirectory();
+        if (directoryName == null) {
+            log.error(
+                "Can't add user because directory name hasn't been provided."
+            );
+            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
+            return false;
+        }
+
+        // Check that the identifier of the directory user has been provided:
         ExternalId id = getParameters().getId();
+        if (id == null) {
+            log.errorFormat(
+                "Can't add user from directory \"{0}\" because the user identifier hasn't been provided.",
+                directoryName
+            );
+            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
+            return false;
+        }
+
+        // Check that the directory exists:
+        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        if (directory == null) {
+            log.errorFormat(
+                "Can't add user with id \"{0}\" because directory \"{1}\" doesn't exist.",
+                id, directoryName
+            );
+            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
+            return false;
+        }
 
         // Check that the user is available in the directory (and save the reference to avoid looking it up later when
         // actually adding the user to the database):
-        directoryUser = (LdapUser) LdapFactory.getInstance(directory).runAdAction(
-            AdActionType.GetAdUserByUserId,
-            new LdapSearchByIdParameters(directory, id)
-        ).getReturnValue();
+        directoryUser = directory.findUser(id);
         if (directoryUser == null) {
+            log.errorFormat(
+                "Can't add user with id \"{0}\" because it doesn't exist in directory \"{1}\".",
+                id, directoryName
+            );
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             return false;
         }
 
         // Populate information for the audit log:
-        addCustomValue("NewUserName", directoryUser.getUserName());
+        addCustomValue("NewUserName", directoryUser.getName());
 
         return true;
+
     }
 
     @Override
@@ -59,7 +88,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         DbUserDAO dao = getDbUserDAO();
 
         // First check if the user is already in the database, if it is we need to update, if not we need to insert:
-        DbUser dbUser = dao.getByExternalId(directoryUser.getDomainControler(), directoryUser.getUserId());
+        DbUser dbUser = dao.getByExternalId(directoryUser.getDirectory().getName(), directoryUser.getId());
         if (dbUser == null) {
             dbUser = new DbUser(directoryUser);
             dbUser.setId(Guid.newGuid());

@@ -5,8 +5,9 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UserMapper {
@@ -14,7 +15,7 @@ public class UserMapper {
     @Mapping(from = DbUser.class, to = User.class)
     public static User map(DbUser entity, User template) {
         User model = template != null ? template : new User();
-        model.setExternalId(entity.getExternalId().toString());
+        model.setExternalId(entity.getExternalId().toHex());
         model.setName(entity.getFirstName());
         model.setUserName(entity.getLoginName());
         model.setId(entity.getId().toString());
@@ -37,27 +38,27 @@ public class UserMapper {
         return model;
     }
 
-    @Mapping(from = LdapUser.class, to = User.class)
-    public static User map(LdapUser entity, User template) {
+    @Mapping(from = DirectoryUser.class, to = User.class)
+    public static User map(DirectoryUser entity, User template) {
         User model = template != null ? template : new User();
-        model.setName(entity.getName());
-        model.setExternalId(entity.getUserId().toString());
-        model.setUserName(entity.getUserName());
-        model.setId(entity.getUserId().toString());
-        model.setLastName(entity.getSurName());
+        model.setName(entity.getFirstName());
+        model.setExternalId(entity.getId().toString());
+        model.setUserName(entity.getName());
+        model.setId(entity.getId().toHex());
+        model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
         model.setDepartment(entity.getDepartment());
         if (entity.getGroups() != null) {
             model.setGroups(new Groups());
-            for (String name : entity.getGroups().keySet()) {
+            for (DirectoryGroup directoryGroup : entity.getGroups()) {
                 Group group = new Group();
-                group.setName(name);
+                group.setName(directoryGroup.getName());
                 model.getGroups().getGroups().add(group);
             }
         }
-        if (!StringUtils.isEmpty(entity.getDomainControler())) {
+        if (!StringUtils.isEmpty(entity.getDirectory().getName())) {
             Domain dom = new Domain();
-            dom.setId(new Guid(entity.getDomainControler().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getDirectory().getName().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;

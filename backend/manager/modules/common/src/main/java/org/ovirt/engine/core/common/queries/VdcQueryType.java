@@ -172,8 +172,6 @@ public enum VdcQueryType implements Serializable {
 
     // Search queries
     Search,
-    AdUsersSearch(VdcQueryAuthType.User),
-    AdGroupsSearch(VdcQueryAuthType.User),
 
     // Public services
     GetDomainList(VdcQueryAuthType.User),

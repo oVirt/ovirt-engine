@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.adbroker.AdActionType;
-import org.ovirt.engine.core.bll.adbroker.LdapBroker;
-import org.ovirt.engine.core.bll.adbroker.LdapFactory;
-import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryManager;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.utils.ExternalId;
 
@@ -16,13 +14,10 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
 
     @Override
     protected void executeQueryCommand() {
-        final String domain = getParameters().getDomain();
+        final String directoryName = getParameters().getDomain();
         final ExternalId id = getParameters().getId();
-        final LdapBroker broker = LdapFactory.getInstance(domain);
-        final LdapGroup group = (LdapGroup) broker.runAdAction(
-            AdActionType.GetAdGroupByGroupId,
-            new LdapSearchByIdParameters(domain, id)
-        ).getReturnValue();
+        final Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        final DirectoryGroup group = directory.findGroup(id);
         getQueryReturnValue().setReturnValue(group);
     }
 

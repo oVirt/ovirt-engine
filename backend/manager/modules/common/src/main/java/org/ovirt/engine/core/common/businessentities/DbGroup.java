@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.core.authentication.DirectoryGroup;
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,13 +36,10 @@ public class DbGroup extends IVdcQueryable {
         memberOf = new HashSet<String>();
     }
 
-    public DbGroup(LdapGroup ldapGroup) {
-        externalId = ldapGroup.getid();
-        domain = ldapGroup.getdomain();
-        name = ldapGroup.getname();
-        distinguishedName = ldapGroup.getDistinguishedName();
-        active = ldapGroup.isActive();
-        memberOf = ldapGroup.getMemberOf() != null ? new HashSet<String>(ldapGroup.getMemberOf()) : null;
+    public DbGroup(DirectoryGroup directoryGroup) {
+        externalId = directoryGroup.getId();
+        domain = directoryGroup.getDirectory().getName();
+        name = directoryGroup.getName();
     }
 
     public Guid getId() {

@@ -162,8 +162,8 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     }
 
     @Override
-    public VdcReturnValueBase Login(String userName, String password, String domain, VdcActionType loginType) {
-        LoginUserParameters params = new LoginUserParameters(userName, password, domain, null, null, null);
+    public VdcReturnValueBase Login(String userName, String password, String profileName, VdcActionType loginType) {
+        LoginUserParameters params = new LoginUserParameters(profileName, userName, password);
         params.setSessionId(getSessionId());
         params.setActionType(loginType);
         VdcReturnValueBase returnValue = getBackend().login(params);

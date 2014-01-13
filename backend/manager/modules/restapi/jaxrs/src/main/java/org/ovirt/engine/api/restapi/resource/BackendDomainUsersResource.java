@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.DomainUserResource;
 import org.ovirt.engine.api.resource.DomainUsersResource;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.utils.ExternalId;
 
@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.utils.ExternalId;
  * provide any method to modify the collection.
  */
 public class BackendDomainUsersResource
-       extends AbstractBackendSubResource<User, LdapUser>
+       extends AbstractBackendSubResource<User, DirectoryUser>
        implements DomainUsersResource {
 
     private static final String SEARCH_TEMPLATE = "ADUSER@{0}: ";
@@ -34,7 +34,7 @@ public class BackendDomainUsersResource
     private BackendDomainResource parent;
 
     public BackendDomainUsersResource(String id, BackendDomainResource parent) {
-        super(id, User.class, LdapUser.class);
+        super(id, User.class, DirectoryUser.class);
         this.parent = parent;
     }
 
@@ -69,23 +69,23 @@ public class BackendDomainUsersResource
     }
 
     private String getSearchPattern() {
-        String constraint = QueryHelper.getConstraint(getUriInfo(), LdapUser.class, false);
+        String constraint = QueryHelper.getConstraint(getUriInfo(), DirectoryUser.class, false);
         StringBuilder sb = new StringBuilder(128);
         sb.append(MessageFormat.format(SEARCH_TEMPLATE, parent.getDirectory().getName()));
         sb.append(StringUtils.isEmpty(constraint)? "allnames=*": constraint);
         return sb.toString();
     }
 
-    private List<LdapUser> getDomainUsers() {
-        return asCollection(LdapUser.class,
+    private List<DirectoryUser> getDomainUsers() {
+        return asCollection(DirectoryUser.class,
                 getEntity(ArrayList.class,
-                        SearchType.AdUser,
+                        SearchType.DirectoryUser,
                         getSearchPattern()));
     }
 
-    private Users mapUsers(List<LdapUser> entities) {
+    private Users mapUsers(List<DirectoryUser> entities) {
         Users collection = new Users();
-        for (LdapUser entity : entities) {
+        for (DirectoryUser entity : entities) {
             User user = map(entity);
             user = populate(user, entity);
             user = addLinks(user, true);
@@ -100,7 +100,7 @@ public class BackendDomainUsersResource
     }
 
     @Override
-    protected User doPopulate(User model, LdapUser entity) {
+    protected User doPopulate(User model, DirectoryUser entity) {
         return model;
     }
 

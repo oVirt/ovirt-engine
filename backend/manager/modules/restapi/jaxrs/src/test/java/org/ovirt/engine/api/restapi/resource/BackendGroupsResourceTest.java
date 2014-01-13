@@ -10,11 +10,12 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryStub;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -201,7 +202,7 @@ public class BackendGroupsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(
             "ADGROUP@" + DOMAIN + ": allnames=" + NAMES[0],
-            SearchType.AdGroup,
+            SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );
         setUpCreationExpectations(
@@ -240,7 +241,7 @@ public class BackendGroupsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(
             "ADGROUP@" + DOMAIN + ": allnames=" + GROUP_NAMES[0],
-            SearchType.AdGroup,
+            SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );
         setUpCreationExpectations(
@@ -370,12 +371,8 @@ public class BackendGroupsResourceTest
         return entity;
     }
 
-    private LdapGroup getDirectoryGroup(int index) {
-        LdapGroup directoryGroup = new LdapGroup();
-        directoryGroup.setid(EXTERNAL_IDS[index]);
-        directoryGroup.setname(GROUP_NAMES[index]);
-        directoryGroup.setdomain(DOMAIN);
-        return directoryGroup;
+    private DirectoryGroup getDirectoryGroup(int index) {
+        return new DirectoryGroup(new DirectoryStub(DOMAIN), EXTERNAL_IDS[index], GROUP_NAMES[index]);
     }
 
     @Override

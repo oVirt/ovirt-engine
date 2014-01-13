@@ -4,7 +4,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.DomainUserResource;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ExternalId;
@@ -18,14 +18,14 @@ import org.ovirt.engine.core.compat.Guid;
  * those have been already assigned and stored in the database.
  */
 public class BackendDomainUserResource
-        extends AbstractBackendSubResource<User, LdapUser>
+        extends AbstractBackendSubResource<User, DirectoryUser>
         implements DomainUserResource {
 
     private BackendDomainUsersResource parent;
     private ExternalId id;
 
     public BackendDomainUserResource(ExternalId id, BackendDomainUsersResource parent) {
-        super(Hex.encodeHexString(id.getBytes()), User.class, LdapUser.class);
+        super(Hex.encodeHexString(id.getBytes()), User.class, DirectoryUser.class);
         this.parent = parent;
         this.id = id;
     }
@@ -46,7 +46,7 @@ public class BackendDomainUserResource
     }
 
     @Override
-    protected User doPopulate(User model, LdapUser entity) {
+    protected User doPopulate(User model, DirectoryUser entity) {
         return model;
     }
 

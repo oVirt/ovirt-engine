@@ -1,31 +1,24 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.adbroker.AdActionType;
-import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
-import org.ovirt.engine.core.bll.adbroker.LdapFactory;
-import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
-import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserIdListParameters;
-import org.ovirt.engine.core.bll.adbroker.UsersDomainsCacheManagerService;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryManager;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ExternalId;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -34,27 +27,8 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 public class DbUserCacheManager {
     private static final Log log = LogFactory.getLog(DbUserCacheManager.class);
     private static final DbUserCacheManager _instance = new DbUserCacheManager();
-    private String jobId;
     private boolean initialized = false;
-
-    private static class UsersPerDomainPredicate implements Predicate<DbUser> {
-
-        private final List<String> domains;
-
-        public UsersPerDomainPredicate(List<String> domains) {
-            this.domains = domains;
-        }
-
-        @Override
-        public boolean eval(DbUser t) {
-
-            // The predicate is used to filter out users which are not in one of
-            // the domains that is defined by the "DomainName" configuration
-            // value
-            return domains.contains(t.getDomain());
-        }
-
-    }
+    private final Map<ExternalId, DbGroup> groupsMap = new HashMap<>();
 
     public static DbUserCacheManager getInstance() {
         return _instance;
@@ -68,241 +42,198 @@ public class DbUserCacheManager {
             log.info("Start initializing " + getClass().getSimpleName());
 
             int mRefreshRate = Config.<Integer> getValue(ConfigValues.UserRefreshRate);
-            jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this, "onTimer", new Class[] {},
-                    new Object[] {}, 0, mRefreshRate, TimeUnit.SECONDS);
+            SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(
+                this,
+                "refreshAllUsers",
+                new Class[] {},
+                new Object[] {},
+                0,
+                mRefreshRate,
+                TimeUnit.SECONDS
+            );
             initialized = true;
             log.info("Finished initializing " + getClass().getSimpleName());
 
         }
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        dispose();
+
+    /**
+     * Load all the users from the database and refresh them.
+     */
+    @OnTimerMethodAnnotation("refreshAllUsers")
+    public void refreshAllUsers() {
+        // We will need the DAO:
+        DbUserDAO dao = DbFacade.getInstance().getDbUserDao();
+
+        // Retrieve all the users from the database:
+        List<DbUser> dbUsers = dao.getAll();
+        List<DbGroup> dbGroups = DbFacade.getInstance().getDbGroupDao().getAll();
+        for (DbGroup group : dbGroups) {
+            groupsMap.put(group.getExternalId(), group);
+        }
+
+        // Classify the users by directory. Note that the resulting map may have an entry with a null key, that
+        // corresponds to the users whose directory has been removed from the configuration.
+        Map<Directory, List<DbUser>> index = new HashMap<>();
+        for (DbUser dbUser : dbUsers) {
+            Directory key = DirectoryManager.getInstance().getDirectory(dbUser.getDomain());
+            List<DbUser> value = index.get(key);
+            if (value == null) {
+                value = new ArrayList<DbUser>();
+                index.put(key, value);
+            }
+            value.add(dbUser);
+        }
+
+        // Refresh the users for each directory:
+        List<DbUser> updates = new ArrayList<>();
+        for (Map.Entry<Directory, List<DbUser>> entry : index.entrySet()) {
+            List<DbUser> refreshed = refreshUsers(entry.getValue(), entry.getKey());
+            updates.addAll(refreshed);
+        }
+
+        // Actually update the users in the database (note that this should be done with a batch update, but we don't
+        // have support for that yet):
+        for (DbUser dbUser : updates) {
+            dao.update(dbUser);
+        }
     }
 
     /**
-     * detect differences between current DB users and the directory server users/groups and persist them
+     * Refresh a list of users retrieving their data from a given directory.
      *
-     * @param dbUser
-     *            DB user
-     * @param ldapUser
-     *            LDAP user
-     * @param updatedUsers
-     *            list of changed users.
+     * @param dbUsers the list of users to refresh
+     * @param directory the directory where the data of the users will be extracted from, it may be {@code null} if the
+     *     directory has already been removed from the configuration
+     * @return the list of database users that have been actually modified and that need to be updated in the database
      */
-    private static void updateDBUserFromADUser(DbUser dbUser, LdapUser ldapUser, HashSet<Guid> updatedUsers) {
-        boolean succeeded = false;
+    private List<DbUser> refreshUsers(List<DbUser> dbUsers, Directory directory) {
+        // Find all the users in the directory using a batch operation to improve performance:
+        List<ExternalId> ids = new ArrayList<>(dbUsers.size());
+        for (DbUser dbUser : dbUsers) {
+            ids.add(dbUser.getExternalId());
+        }
+        List<DirectoryUser> directoryUsers = null;
+        if (directory != null) {
+            directoryUsers = directory.findUsers(ids);
+        }
+        else {
+            directoryUsers = Collections.emptyList();
+        }
 
-        if (ldapUser == null || !ldapUser.getUserId().equals(dbUser.getExternalId())) {
+        // Build a map of users indexed by directory id to simplify the next step where we want to find the directory
+        // user corresponding to each database user:
+        Map<ExternalId, DirectoryUser> index = new HashMap<>();
+        for (DirectoryUser directoryUser : directoryUsers) {
+            index.put(directoryUser.getId(), directoryUser);
+        }
+
+        // For each database user refresh it using the corresponding directory user and collect those users that need to
+        // be updated:
+        List<DbUser> refreshed = new ArrayList<>();
+        for (DbUser dbUser : dbUsers) {
+            DirectoryUser directoryUser = index.get(dbUser.getExternalId());
+            dbUser = refreshUser(dbUser, directoryUser);
+            if (dbUser != null) {
+                refreshed.add(dbUser);
+            }
+        }
+
+        return refreshed;
+    }
+
+    /**
+     * Detect differences between a user as stored in the database and the same user retrieved from the directory.
+     *
+     * @param dbUser the database user
+     * @param directoryUser the directory user, it may be {@code null} if the user doesn't exist in the directory
+     * @return the updated database user if it was actually updated or {@code null} if it doesn't need to be updated
+     */
+    private DbUser refreshUser(DbUser dbUser, DirectoryUser directoryUser) {
+        // If there the user doesn't exist in the directory then we only need to mark the database user as not active
+        // if it isn't marked already:
+        if (directoryUser == null) {
             if (dbUser.isActive()) {
-                log.warnFormat("User {0} not found in directory server, its status switched to InActive",
-                        dbUser.getFirstName());
+                log.warnFormat(
+                    "User \"{0}\" will be marked as not active as it wasn't found in the directory \"{1}\".",
+                    dbUser.getLoginName(), dbUser.getDomain()
+                );
                 dbUser.setActive(false);
-                succeeded = true;
             }
-        } else {
-            if (!dbUser.isActive()) {
-                log.warnFormat("Inactive User {0} found in directory server, its status switched to Active",
-                        dbUser.getFirstName());
-                dbUser.setActive(true);
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getFirstName(), ldapUser.getName())) {
-                dbUser.setFirstName(ldapUser.getName());
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getLastName(), ldapUser.getSurName())) {
-                dbUser.setLastName(ldapUser.getSurName());
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getDomain(), ldapUser.getDomainControler())) {
-                dbUser.setDomain(ldapUser.getDomainControler());
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getLoginName(), ldapUser.getUserName())) {
-                dbUser.setLoginName(ldapUser.getUserName());
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getGroupNames(), ldapUser.getGroup())) {
-                dbUser.setGroupNames(ldapUser.getGroup());
-                succeeded = true;
-                updatedUsers.add(dbUser.getId());
-            }
-            if (!StringUtils.equals(dbUser.getDepartment(), ldapUser.getDepartment())) {
-                dbUser.setDepartment(ldapUser.getDepartment());
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getRole(), ldapUser.getTitle())) {
-                dbUser.setRole(ldapUser.getTitle());
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getEmail(), ldapUser.getEmail())) {
-                dbUser.setEmail(ldapUser.getEmail());
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getGroupIds(), ldapUser.getGroupIds())) {
-                dbUser.setGroupIds(ldapUser.getGroupIds());
-                succeeded = true;
-            }
+            return dbUser;
         }
-        if (succeeded) {
-            DbFacade.getInstance().getDbUserDao().update(dbUser);
+
+        // This flag indicates if there are any differences and thus if the database update should actually be
+        // performed:
+        boolean update = false;
+
+        // If the user was marked as not active in the database then mark it as active:
+        if (!dbUser.isActive()) {
+            log.infoFormat(
+                "User \"{0}\" will be marked as active as it was found in directory \"{1}\".",
+                dbUser.getLoginName(), dbUser.getDomain()
+            );
+            dbUser.setActive(true);
+            update = true;
         }
-    }
 
-    public void refreshAllUserData(List<DbGroup> updatedGroups) {
-        try {
-            log.info("Start refreshing all users data");
-            List<DbUser> allUsers = DbFacade.getInstance().getDbUserDao().getAll();
-
-            List<String> domainsList = LdapBrokerUtils.getDomainsList(true);
-            List<DbUser> filteredUsers = LinqUtils.filter(allUsers, new UsersPerDomainPredicate(domainsList));
-            Map<String, Map<ExternalId, DbUser>> userByDomains = new HashMap<>();
-
-            // Map all users by domains
-            for (DbUser user : filteredUsers) {
-                Map<ExternalId, DbUser> domainUser;
-                if (!userByDomains.containsKey(user.getDomain())) {
-                    domainUser = new HashMap<>();
-                    userByDomains.put(user.getDomain(), domainUser);
-                } else {
-                    domainUser = userByDomains.get(user.getDomain());
-                }
-                domainUser.put(user.getExternalId(), user);
-            }
-
-            if (userByDomains.size() != 0) {
-                // Refresh users in each domain separately
-                for (Map.Entry<String, Map<ExternalId, DbUser>> entry : userByDomains.entrySet()) {
-                    String domain = entry.getKey();
-                    Collection<DbUser> users = entry.getValue().values();
-                    List<ExternalId> ids = new ArrayList<>(users.size());
-                    for (DbUser user : users) {
-                        ids.add(user.getExternalId());
-                    }
-                    List<LdapUser> adUsers =
-                            (List<LdapUser>) LdapFactory.getInstance(domain)
-                            .runAdAction(
-                                    AdActionType.GetAdUserByUserIdList,
-                                    new LdapSearchByUserIdListParameters(domain, ids, false))
-                                    .getReturnValue();
-                    HashSet<Guid> updatedUsers = new HashSet<Guid>();
-                    if (adUsers == null) {
-                        log.warn("No users returned from directory server during refresh users");
-                    } else {
-                        List<LdapGroup> ldapUpdatedGroups = new ArrayList<>(updatedGroups.size());
-                        for (DbGroup dbGroup : updatedGroups) {
-                            LdapGroup ldapGroup = new LdapGroup(dbGroup);
-                            ldapUpdatedGroups.add(ldapGroup);
-                        }
-                        LdapBrokerUtils.performGroupPopulationForUsers(adUsers, domain, ldapUpdatedGroups);
-                        for (LdapUser adUser : adUsers) {
-                            updateDBUserFromADUser(userByDomains.get(domain).get(adUser.getUserId()), adUser, updatedUsers);
-                            userByDomains.get(domain).remove(adUser.getUserId());
-                        }
-                    }
-                    Collection<DbUser> usersForDomain = entry.getValue().values();
-                    if (usersForDomain == null) {
-                        log.warnFormat("No users for domain {0}", domain);
-                    } else {
-                        for (DbUser dbUser : usersForDomain) {
-                            if (dbUser.isActive()) {
-                                log.warnFormat("User {0} not found in directory server, its status switched to InActive",
-                                        dbUser.getFirstName());
-                                dbUser.setActive(false);
-                                DbFacade.getInstance().getDbUserDao().update(dbUser);
-                            }
-                        }
-                    }
-                    // update lastAdminCheckStatus property for users that their
-                    // group or role was changed
-                    if (updatedUsers.size() > 0) {
-                        DbFacade.getInstance().updateLastAdminCheckStatus(updatedUsers.toArray(new Guid[updatedUsers
-                                .size()]));
-                    }
-                }
-            }
-        } catch (RuntimeException e) {
-            log.error("Failed to refresh users data.", e);
+        // Compare the attributes of the database user with those of the directory, copy those that changed and update
+        // the flag that indicates that the database needs to be updated:
+        if (!StringUtils.equals(dbUser.getFirstName(), directoryUser.getName())) {
+            dbUser.setFirstName(directoryUser.getName());
+            update = true;
         }
-    }
-
-    @OnTimerMethodAnnotation("onTimer")
-    public void onTimer() {
-        List<DbGroup> groups = updateGroups();
-        refreshAllUserData(groups);
-    }
-
-    private static List<DbGroup> updateGroups() {
-        List<DbGroup> groups = DbFacade.getInstance().getDbGroupDao().getAll();
-        for (DbGroup group : groups) {
-            /*
-             * Vitaly workaround. Temporary treatment on missing group domains
-             */
-
-            // Waiting for the GUI team to fix the ad_group class. When the
-            // class is fixed,
-            // domain name will be passed correctly to the backend, and the
-            // following code should not occur
-            if (group.getDomain() == null && group.getName().contains("@")) {
-                StringBuilder logMsg = new StringBuilder();
-                logMsg.append("domain name for ad group ")
-                        .append(group.getName())
-                        .append(" is null. This should not occur, please check that domain name is passed correctly from client");
-                log.warn(logMsg.toString());
-                String partAfterAtSign = group.getName().split("[@]", -1)[1];
-                String newDomainName = partAfterAtSign;
-                if (partAfterAtSign.contains("/")) {
-                    String partPreviousToSlashSign = partAfterAtSign.split("[/]", -1)[0];
-                    newDomainName = partPreviousToSlashSign;
-                }
-
-                group.setDomain(newDomainName);
-            }
-            // We check if the domain is null or empty for internal groups.
-            // An internal group does not have a domain, and there is no need to query
-            // the ldap server for it. Note that if we will add support in the future for
-            // domain-less groups in the ldap server then this code will have to change in order
-            // to fetch for them
-            if (group.getDomain() != null && !group.getDomain().isEmpty()) {
-                if (UsersDomainsCacheManagerService.getInstance().getDomain(group.getDomain()) == null) {
-                    log.errorFormat("Cannot query for group {0} from domain {1} because the domain is not configured. Please use the manage domains utility if you wish to add this domain.",
-                            group.getName(),
-                            group.getDomain());
-                } else {
-                    LdapGroup groupFromAD =
-                            (LdapGroup) LdapFactory
-                                    .getInstance(group.getDomain())
-                                    .runAdAction(AdActionType.GetAdGroupByGroupId,
-                                            new LdapSearchByIdParameters(group.getDomain(), group.getExternalId()))
-                                    .getReturnValue();
-
-                    if (group.isActive() && (groupFromAD == null || !groupFromAD.isActive())) {
-                        group.setActive(false);
-                    } else if (groupFromAD != null
-                            && (!StringUtils.equals(group.getName(), groupFromAD.getname())
-                                    || group.isActive() != groupFromAD.isActive()
-                                    || !StringUtils.equals(group.getDistinguishedName(),
-                                    groupFromAD.getDistinguishedName()))) {
-                        group = new DbGroup(groupFromAD);
-                    }
-                    DbFacade.getInstance().getDbGroupDao().update(group);
-
-                    // memberOf is not persistent and should be set in the returned groups list from the LDAP queries
-                    if (groupFromAD != null) {
-                        group.setMemberOf(new HashSet<>(groupFromAD.getMemberOf()));
-                    }
-                }
-            }
+        if (!StringUtils.equals(dbUser.getLastName(), directoryUser.getLastName())) {
+            dbUser.setLastName(directoryUser.getLastName());
+            update = true;
         }
-        return groups;
-
-    }
-
-    public void dispose() {
-        if (jobId != null) {
-            SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+        if (!StringUtils.equals(dbUser.getDomain(), directoryUser.getDirectory().getName())) {
+            dbUser.setDomain(directoryUser.getDirectory().getName());
+            update = true;
         }
+        if (!StringUtils.equals(dbUser.getLoginName(), directoryUser.getName())) {
+            dbUser.setLoginName(directoryUser.getName());
+            update = true;
+        }
+        if (!StringUtils.equals(dbUser.getDepartment(), directoryUser.getDepartment())) {
+            dbUser.setDepartment(directoryUser.getDepartment());
+            update = true;
+        }
+        if (!StringUtils.equals(dbUser.getRole(), directoryUser.getTitle())) {
+            dbUser.setRole(directoryUser.getTitle());
+            update = true;
+        }
+        if (!StringUtils.equals(dbUser.getEmail(), directoryUser.getEmail())) {
+            dbUser.setEmail(directoryUser.getEmail());
+            update = true;
+        }
+
+        // Compare the new list of group names and identifiers:
+        StringBuilder groupNamesBuffer = new StringBuilder();
+        StringBuilder groupIdsBuffer = new StringBuilder();
+        boolean first = true;
+        for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
+            DbGroup dbGroup = groupsMap.get(directoryGroup.getId());
+            if (!first) {
+                groupNamesBuffer.append(',');
+                groupIdsBuffer.append(dbGroup.getId());
+            }
+            groupNamesBuffer.append(directoryGroup.getName());
+            groupIdsBuffer.append(directoryGroup.getId());
+            first = false;
+        }
+        String groupNames = groupNamesBuffer.toString();
+        String groupIds = groupIdsBuffer.toString();
+        if (!StringUtils.equals(dbUser.getGroupNames(), groupNames)) {
+            dbUser.setGroupNames(groupNames);
+            update = true;
+        }
+        if (!StringUtils.equals(dbUser.getGroupIds(), groupIds)) {
+            dbUser.setGroupIds(groupIds);
+            update = true;
+        }
+
+        return update? dbUser: null;
     }
 }

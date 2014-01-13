@@ -551,6 +551,7 @@ public class ManageDomains {
                 ldapServersEntry,
                 adUserIdEntry,
                 ldapProviderTypesEntry);
+
         printSuccessMessage(domainName, "added");
     }
 

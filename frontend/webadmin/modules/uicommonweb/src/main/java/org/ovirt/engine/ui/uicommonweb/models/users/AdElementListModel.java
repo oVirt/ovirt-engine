@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -287,15 +287,16 @@ public class AdElementListModel extends SearchableListModel
                 adElementListModel.setgroups(new ArrayList<EntityModel>());
                 for (IVdcQueryable item : (ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
-                    LdapGroup a = (LdapGroup) item;
-                    if (!excludeUsers.contains(a.getid()))
+                    DirectoryGroup a = (DirectoryGroup) item;
+                    if (!excludeUsers.contains(a.getId()))
                     {
+                        // XXX: This should use DbGroup and not DbUser.
                         DbUser tempVar3 = new DbUser();
-                        tempVar3.setExternalId(a.getid());
-                        tempVar3.setFirstName(a.getname());
+                        tempVar3.setExternalId(a.getId());
+                        tempVar3.setFirstName(a.getName());
                         tempVar3.setLastName(""); //$NON-NLS-1$
                         tempVar3.setLoginName(""); //$NON-NLS-1$
-                        tempVar3.setDomain(a.getdomain());
+                        tempVar3.setDomain(a.getDirectory().getName());
                         DbUser user = tempVar3;
 
                         EntityModel tempVar4 = new EntityModel();
@@ -313,9 +314,9 @@ public class AdElementListModel extends SearchableListModel
     }
 
     protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<ExternalId> excludeUsers) {
-        for (IVdcQueryable item : (ArrayList<IVdcQueryable>) returnValue.getReturnValue()) {
-            LdapUser a = (LdapUser) item;
-            if (!excludeUsers.contains(a.getUserId())) {
+        for (IVdcQueryable item : (List<IVdcQueryable>) returnValue.getReturnValue()) {
+            DirectoryUser a = (DirectoryUser) item;
+            if (!excludeUsers.contains(a.getId())) {
                 EntityModel tempVar2 = new EntityModel();
                 tempVar2.setEntity(new DbUser(a));
                 getusers().add(tempVar2);
@@ -335,11 +336,11 @@ public class AdElementListModel extends SearchableListModel
     }
 
     protected void findGroups(String searchString, AsyncQuery query) {
-        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("ADGROUP@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("ADGROUP@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void findUsers(String searchString, AsyncQuery query) {
-        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("ADUSER@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdUser), query); //$NON-NLS-1$ //$NON-NLS-2$
+        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("ADUSER@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)

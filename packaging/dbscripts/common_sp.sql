@@ -308,14 +308,20 @@ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION attach_user_to_su_role(v_permission_id uuid, v_user_id VARCHAR(255), v_name VARCHAR(255), v_domain VARCHAR(255))
-  RETURNS void AS
+CREATE OR REPLACE FUNCTION attach_user_to_su_role(
+    v_permission_id uuid,
+    v_user_id VARCHAR(255),
+    v_name VARCHAR(255),
+    v_domain VARCHAR(255)
+)
+RETURNS void AS
 $BODY$
    DECLARE
    v_user_name VARCHAR(255);
    v_document  VARCHAR(64);
    v_index  INTEGER;
    input_uuid uuid;
+   v_external_id BYTEA;
 BEGIN
    input_uuid = CAST( v_user_id AS uuid );
 -- find if name already includes domain (@)
@@ -327,7 +333,11 @@ BEGIN
       v_user_name := v_name;
    end if;
 
-insert into users(user_id,name,domain,username,groups,active) select input_uuid, v_name, v_domain, v_user_name,'',true where not exists (select user_id,name,domain,username,groups,active from users where user_id = input_uuid);
+   -- The external identifier is the user identifier converted to an array of
+   -- bytes:
+   v_external_id := decode(replace(v_user_id::text, '-', ''), 'hex');
+
+insert into users(user_id,external_id,name,domain,username,groups,active) select input_uuid, v_external_id, v_name, v_domain, v_user_name,'',true where not exists (select user_id,name,domain,username,groups,active from users where user_id = input_uuid);
 
 insert into permissions(id,role_id,ad_element_id,object_id,object_type_id) select v_permission_id, '00000000-0000-0000-0000-000000000001', input_uuid, getGlobalIds('system'), 1 where not exists(select role_id,ad_element_id,object_id,object_type_id from permissions where role_id = '00000000-0000-0000-0000-000000000001' and ad_element_id = input_uuid and object_id= getGlobalIds('system') and object_type_id = 1);
 END; $BODY$

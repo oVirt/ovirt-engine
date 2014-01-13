@@ -320,8 +320,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     @Override
     public void login(final VdcOperation<VdcActionType, LoginUserParameters> loginOperation) {
-        getService().Login(loginOperation.getParameter().getUserName(), loginOperation.getParameter().getUserPassword(),
-                loginOperation.getParameter().getDomain(), loginOperation.getOperation(),
+        getService().Login(loginOperation.getParameter().getLoginName(), loginOperation.getParameter().getPassword(),
+                loginOperation.getParameter().getProfileName(), loginOperation.getOperation(),
                 new AsyncCallback<VdcReturnValueBase>() {
             @Override
             public void onSuccess(final VdcReturnValueBase result) {

@@ -15,11 +15,11 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.api.resource.UsersResource;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -178,9 +178,9 @@ public class BackendUsersResource
             validateParameters(user, "domain.id|name");
         }
         String domain = getDomain(user);
-        LdapUser directoryUser = getEntity(
-            LdapUser.class,
-            SearchType.AdUser,
+        DirectoryUser directoryUser = getEntity(
+            DirectoryUser.class,
+            SearchType.DirectoryUser,
             getDirectoryUserSearchPattern(user.getUserName(), domain)
         );
         if (directoryUser == null) {
@@ -189,8 +189,8 @@ public class BackendUsersResource
                     .build();
         }
         DirectoryIdParameters parameters = new DirectoryIdParameters();
-        parameters.setDirectory(directoryUser.getDomainControler());
-        parameters.setId(directoryUser.getUserId());
+        parameters.setDirectory(directoryUser.getDirectory().getName());
+        parameters.setId(directoryUser.getId());
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbUserByUserId, IdQueryParameters.class);
         return performCreate(VdcActionType.AddUser, parameters, resolver, BaseResource.class);
     }

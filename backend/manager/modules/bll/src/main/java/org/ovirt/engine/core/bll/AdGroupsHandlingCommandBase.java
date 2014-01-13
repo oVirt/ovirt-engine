@@ -3,16 +3,18 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extends CommandBase<T> {
-    private LdapGroup mGroup;
+    private DirectoryGroup mGroup;
     private String mGroupName;
 
     /**
@@ -34,15 +36,16 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
 
     public String getAdGroupName() {
         if (mGroupName == null && getAdGroup() != null) {
-            mGroupName = getAdGroup().getname();
+            mGroupName = getAdGroup().getName();
         }
         return mGroupName;
     }
 
-    protected LdapGroup getAdGroup() {
+    protected DirectoryGroup getAdGroup() {
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
             DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(getGroupId());
-            mGroup = new LdapGroup(dbGroup);
+            Directory directory = DirectoryManager.getInstance().getDirectory(dbGroup.getDomain());
+            mGroup = directory.findGroup(dbGroup.getExternalId());
         }
         return mGroup;
     }

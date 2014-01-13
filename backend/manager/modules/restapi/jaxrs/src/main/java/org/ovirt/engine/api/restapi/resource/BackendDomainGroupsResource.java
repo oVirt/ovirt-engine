@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.DomainGroupResource;
 import org.ovirt.engine.api.resource.DomainGroupsResource;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.utils.ExternalId;
 
@@ -25,14 +25,14 @@ import org.ovirt.engine.core.common.utils.ExternalId;
  * any method to modify the collection.
  */
 public class BackendDomainGroupsResource
-        extends AbstractBackendSubResource<Group, LdapGroup>
+        extends AbstractBackendSubResource<Group, DirectoryGroup>
         implements DomainGroupsResource {
     private static final String SEARCH_TEMPLATE = "ADGROUP@{0}: ";
 
     private BackendDomainResource parent;
 
     public BackendDomainGroupsResource(String id, BackendDomainResource parent) {
-        super(id, Group.class, LdapGroup.class);
+        super(id, Group.class, DirectoryGroup.class);
         this.parent = parent;
     }
 
@@ -68,7 +68,7 @@ public class BackendDomainGroupsResource
     private String getSearchPattern() {
         String constraint = QueryHelper.getConstraint(
             getUriInfo(),
-            LdapGroup.class,
+                DirectoryGroup.class,
             false
         );
         StringBuilder sb = new StringBuilder(128);
@@ -77,16 +77,16 @@ public class BackendDomainGroupsResource
         return sb.toString();
     }
 
-    private List<LdapGroup> getDomainGroups() {
+    private List<DirectoryGroup> getDomainGroups() {
         return asCollection(
-            LdapGroup.class,
-            getEntity(ArrayList.class, SearchType.AdGroup, getSearchPattern())
+                DirectoryGroup.class,
+            getEntity(ArrayList.class, SearchType.DirectoryGroup, getSearchPattern())
         );
     }
 
-    private Groups mapGroups(List<LdapGroup> entities) {
+    private Groups mapGroups(List<DirectoryGroup> entities) {
         Groups collection = new Groups();
-        for (LdapGroup entity : entities) {
+        for (DirectoryGroup entity : entities) {
             Group group = map(entity);
             group = populate(group, entity);
             group = addLinks(group, true);
@@ -101,7 +101,7 @@ public class BackendDomainGroupsResource
     }
 
     @Override
-    protected Group doPopulate(Group model, LdapGroup entity) {
+    protected Group doPopulate(Group model, DirectoryGroup entity) {
         return model;
     }
 

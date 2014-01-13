@@ -10,8 +10,10 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.ExternalId;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -105,7 +107,6 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
         GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator();
         proceedGroupsSearchResult(user.getMemberof(), groupsDict, generator);
-
         user.setGroups(groupsDict);
         if (user.getUserName() != null && !user.getUserName().contains("@")) {
             user.setUserName(user.getUserName() + "@" + user.getDomainControler());
@@ -155,12 +156,12 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
             if (!groupsDict.containsKey(groupName)) {
                 DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().getByName(groupName);
                 LdapGroup ldapGroup = null;
-                if (dbGroup == null) {
-                    ldapGroup = new LdapGroup();
-                    ldapGroup.setname(groupName);
-                }
-                else {
+                if (dbGroup != null) {
                     ldapGroup = new LdapGroup(dbGroup);
+                } else {
+                    ldapGroup = new LdapGroup();
+                    ldapGroup.setid(new ExternalId(Guid.Empty.toByteArray()));
+                    ldapGroup.setname(groupName);
                 }
                 ldapGroup.setDistinguishedName(groupDN);
                 groupsDict.put(groupName, ldapGroup);

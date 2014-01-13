@@ -3,13 +3,12 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.adbroker.AdActionType;
-import org.ovirt.engine.core.bll.adbroker.LdapFactory;
-import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryManager;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ExternalId;
@@ -57,18 +56,18 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
     }
 
     @SuppressWarnings("deprecation")
-    public static DbUser initUser(String sessionId, String domain, ExternalId id) {
-        DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(domain, id);
+    public static DbUser initUser(String sessionId, String directoryName, ExternalId id) {
+        DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(directoryName, id);
         if (dbUser == null) {
-            LdapUser adUser = (LdapUser) LdapFactory
-                    .getInstance(domain)
-                    .runAdAction(AdActionType.GetAdUserByUserId,
-                            new LdapSearchByIdParameters(sessionId, domain, id))
-                    .getReturnValue();
-            if (adUser == null) {
+            Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+            if (directory == null) {
                 throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
             }
-            dbUser = new DbUser(adUser);
+            DirectoryUser directoryUser = directory.findUser(id);
+            if (directoryUser == null) {
+                throw new VdcBLLException(VdcBllErrors.USER_FAILED_POPULATE_DATA);
+            }
+            dbUser = new DbUser(directoryUser);
             DbFacade.getInstance().getDbUserDao().save(dbUser);
         }
         return dbUser;
@@ -77,9 +76,9 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
     /**
      * Check if the authenticated user exist in the DB. Add it if its missing.
      */
-    public static DbUser persistAuthenticatedUser(LdapUser directoryUser) {
+    public static DbUser persistAuthenticatedUser(DirectoryUser directoryUser) {
         DbUserDAO dao = DbFacade.getInstance().getDbUserDao();
-        DbUser dbUser = dao.getByExternalId(directoryUser.getDomainControler(), directoryUser.getUserId());
+        DbUser dbUser = dao.getByExternalId(directoryUser.getDirectory().getName(), directoryUser.getId());
         if (dbUser != null) {
             dao.update(dbUser);
         }

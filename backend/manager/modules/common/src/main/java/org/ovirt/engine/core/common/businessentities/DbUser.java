@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryUser;
 import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -75,6 +77,8 @@ public class DbUser extends IVdcQueryable {
         firstName = "";
         lastName = "";
         department = "";
+        groupNames = "";
+        groupIds = "";
         role = "";
         note = "";
     }
@@ -89,9 +93,32 @@ public class DbUser extends IVdcQueryable {
         email = ldapUser.getEmail();
         active = true;
         groupNames = ldapUser.getGroup();
-        groupIds = ldapUser.getGroupIds();
         role = "";
         note = "";
+    }
+
+    public DbUser(DirectoryUser directoryUser) {
+        externalId = directoryUser.getId();
+        domain = directoryUser.getDirectory().getName();
+        loginName = directoryUser.getName();
+        firstName = directoryUser.getFirstName();
+        lastName = directoryUser.getLastName();
+        department = directoryUser.getDepartment();
+        email = directoryUser.getEmail();
+        active = true;
+        role = "";
+        note = "";
+
+        StringBuilder namesBuffer = new StringBuilder();
+        boolean first = true;
+        for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
+            if (!first) {
+                namesBuffer.append(",");
+            }
+            namesBuffer.append(directoryGroup.getName());
+            first = false;
+        }
+        groupNames = namesBuffer.toString();
     }
 
     public Guid getId() {

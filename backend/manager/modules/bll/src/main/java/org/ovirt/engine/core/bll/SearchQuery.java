@@ -1,27 +1,27 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.adbroker.AdActionType;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
+import org.ovirt.engine.core.authentication.DirectoryManager;
+import org.ovirt.engine.core.authentication.DirectoryUser;
+import org.ovirt.engine.core.authentication.provisional.ProvisionalDirectory;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
-import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryData;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryDataImpl;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
-import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
-import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -64,12 +64,12 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = searchVmsFromDb();
             break;
         }
-        case AdGroup: {
-            returnValue = searchAdGroups();
+        case DirectoryGroup: {
+            returnValue = searchDirectoryGroups();
             break;
         }
-        case AdUser: {
-            returnValue = searchAdUsers();
+        case DirectoryUser: {
+            returnValue = searchDirectoryUsers();
             break;
         }
         case AuditLog: {
@@ -173,41 +173,62 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         });
     }
 
-    private List<LdapUser> searchAdUsers() {
-        return adSearch(LdapQueryType.searchUsers, AdActionType.SearchUserByQuery);
-    }
-
-    private List<LdapGroup> searchAdGroups() {
-        return adSearch(LdapQueryType.searchGroups, AdActionType.SearchGroupsByQuery);
-    }
-
-    /**
-     * Performs an ldap query
-     * @param ldapQueryType The type of query to run
-     * @param adActionType The action to submit to the LdapBroker
-     * @return The result of the query
-     */
-    private <T extends IVdcQueryable> List<T> adSearch(LdapQueryType ldapQueryType, AdActionType adActionType) {
+    private List<DirectoryUser> searchDirectoryUsers() {
+        // Parse the query:
         QueryData data = initQueryData(true);
-
         if (data == null) {
-            return new ArrayList<T>();
+            return Collections.emptyList();
         }
 
-        LdapQueryData ldapQueryData = new LdapQueryDataImpl();
-        ldapQueryData.setLdapQueryType(ldapQueryType);
-        ldapQueryData.setDomain(data.getDomain());
-        ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
+        // Find the directory:
+        String directoryName = data.getDomain();
+        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        if (directory == null) {
+            return Collections.emptyList();
+        }
 
-        LdapReturnValueBase returnValue =
-                getLdapFactory(data.getDomain()).runAdAction(adActionType,
-                        new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData));
-        getQueryReturnValue().setSucceeded(returnValue.getSucceeded());
-        getQueryReturnValue().setExceptionString(returnValue.getExceptionString());
-        @SuppressWarnings("unchecked")
-        List<T> result = (List<T>) returnValue.getReturnValue();
+        // Run the query:
+        if (directory instanceof ProvisionalDirectory) {
+            LdapQueryData query = new LdapQueryDataImpl();
+            query.setLdapQueryType(LdapQueryType.searchUsers);
+            query.setDomain(directoryName);
+            query.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
+            ProvisionalDirectory provisional = (ProvisionalDirectory) directory;
+            return provisional.queryUsers(query);
+        }
+        else {
+            String query = data.getQuery();
+            return directory.queryUsers(query);
+        }
+    }
 
-        return (result != null) ? result : new ArrayList<T>();
+    private List<DirectoryGroup> searchDirectoryGroups() {
+        // Parse the query:
+        QueryData data = initQueryData(true);
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        // Find the directory:
+        String directoryName = data.getDomain();
+        Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
+        if (directory == null) {
+            return Collections.emptyList();
+        }
+
+        // Run the query:
+        if (directory instanceof ProvisionalDirectory) {
+            LdapQueryData query = new LdapQueryDataImpl();
+            query.setLdapQueryType(LdapQueryType.searchGroups);
+            query.setDomain(directoryName);
+            query.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
+            ProvisionalDirectory provisional = (ProvisionalDirectory) directory;
+            return provisional.queryGroups(query);
+        }
+        else {
+            String query = data.getQuery();
+            return directory.queryGroups(query);
+        }
     }
 
     private List<DbUser> searchDbUsers() {
@@ -392,7 +413,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     protected String getDefaultDomain() {
-        return LdapBrokerUtils.getDomainsList().get(0);
+        return DirectoryManager.getInstance().getDirectories().get(0).getName();
     }
 
     protected LdapBroker getLdapFactory(String domain) {

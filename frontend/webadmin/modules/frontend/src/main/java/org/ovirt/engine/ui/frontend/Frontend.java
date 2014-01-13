@@ -742,18 +742,18 @@ public class Frontend implements HasHandlers {
      * ASynchronous user login.
      * @param userName The name of the user.
      * @param password The password of the user.
-     * @param domain The domain to check for the user.
+     * @param profileName The authentication profile used to check the credentials of the user.
      * @param isAdmin If the user an admin user.
      * @param callback The callback to call when the operation is finished.
      */
     public void loginAsync(final String userName,
             final String password,
-            final String domain,
+            final String profileName,
             final boolean isAdmin,
             final AsyncQuery callback) {
         logger.finer("Frontend: Invoking async Login."); //$NON-NLS-1$
 
-        LoginUserParameters params = new LoginUserParameters(userName, password, domain, null, null, null);
+        LoginUserParameters params = new LoginUserParameters(profileName, userName, password);
         VdcActionType action = isAdmin ? VdcActionType.LoginAdminUser : VdcActionType.LoginUser;
         VdcOperation<VdcActionType, LoginUserParameters> loginOperation =
             new VdcOperation<VdcActionType, LoginUserParameters>(action, params, true, //Public action.
@@ -767,7 +767,7 @@ public class Frontend implements HasHandlers {
                     result.setCanDoActionMessages((ArrayList<String>) translateError(result));
                     callback.getDel().onSuccess(callback.getModel(), result);
                     if (getLoginHandler() != null && result.getSucceeded()) {
-                        getLoginHandler().onLoginSuccess(userName, password, domain);
+                        getLoginHandler().onLoginSuccess(userName, password, profileName);
                     }
                 }
 

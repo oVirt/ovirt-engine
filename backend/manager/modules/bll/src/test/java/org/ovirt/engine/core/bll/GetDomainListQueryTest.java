@@ -2,14 +2,23 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.ovirt.engine.core.authentication.AuthenticationProfile;
+import org.ovirt.engine.core.authentication.AuthenticationProfileManager;
+import org.ovirt.engine.core.authentication.Authenticator;
+import org.ovirt.engine.core.authentication.AuthenticatorManager;
+import org.ovirt.engine.core.authentication.Directory;
+import org.ovirt.engine.core.authentication.DirectoryManager;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -17,13 +26,60 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 /**
  * A test case for the {@link GetDomainListQuery} class.
  */
-public class GetDomainListQueryTest extends AbstractQueryTest<GetDomainListParameters, GetDomainListQuery<GetDomainListParameters>> {
+public class GetDomainListQueryTest
+        extends AbstractQueryTest<GetDomainListParameters, GetDomainListQuery<GetDomainListParameters>> {
+
+    // The name of the internal authentication profile:
+    private static final String INTERNAL = "internal";
+
+    // The list of authentication profile names:
+    private String[] NAMES = {
+        INTERNAL,
+        "zzz",
+        "aaa"
+    };
 
     @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.AdminDomain, "internal"),
-            mockConfig(ConfigValues.DomainName, "zzz,aaa")
-            );
+    public static final MockConfigRule MCR = new MockConfigRule(
+        mockConfig(ConfigValues.AdminDomain, INTERNAL)
+    );
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        for (String name : NAMES) {
+            setUpProfileMock(name);
+        }
+    }
+
+    /**
+     * Prepares a mock for an authentication profile, including the mocks for the dependent authenticator and directory,
+     * all of them with the same name.
+     *
+     * @param name the name for the mocked authenticator, directory and authentication profile
+     */
+    private void setUpProfileMock(String name) {
+        Directory directoryMock = mock(Directory.class);
+        doReturn(name).when(directoryMock).getName();
+        DirectoryManager.getInstance().registerDirectory(name, directoryMock);
+
+        Authenticator authenticatorMock = mock(Authenticator.class);
+        AuthenticatorManager.getInstance().registerAuthenticator(name, authenticatorMock);
+
+        AuthenticationProfile profileMock = mock(AuthenticationProfile.class);
+        doReturn(name).when(profileMock).getName();
+        doReturn(directoryMock).when(profileMock).getDirectory();
+        doReturn(authenticatorMock).when(profileMock).getAuthenticator();
+        AuthenticationProfileManager.getInstance().registerProfile(name, profileMock);
+    }
+
+    @After
+    public void tearDown() {
+        DirectoryManager.getInstance().clear();
+        AuthenticatorManager.getInstance().clear();
+        AuthenticationProfileManager.getInstance().clear();
+    }
 
     @Test
     public void testImplicitNoFilter() {

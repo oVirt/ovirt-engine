@@ -35,7 +35,7 @@ public abstract class Configuration {
                 in.close();
             }
         }
-        return new Root(properties);
+        return new Root(file, properties);
     }
 
     /**
@@ -273,11 +273,13 @@ public abstract class Configuration {
         /**
          * Creates a configuration object that serves as the root of a hierarchy.
          *
+         *
          * @param sourceFile
          */
-        private Root(Properties properties) {
+        private Root(File sourceFile, Properties properties) {
             super();
             this.properties = properties;
+            this.file = sourceFile;
         }
 
         /**

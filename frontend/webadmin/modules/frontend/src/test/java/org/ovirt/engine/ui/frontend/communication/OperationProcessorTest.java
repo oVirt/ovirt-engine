@@ -275,7 +275,7 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableMultipleQuery_failure() {
         VdcQueryParametersBase testParameter = new VdcQueryParametersBase();
-        VdcOperation testOperation1 = new VdcOperation(VdcQueryType.AdUsersSearch, testParameter,
+        VdcOperation testOperation1 = new VdcOperation(VdcQueryType.GetDirectoryGroupById, testParameter,
                 mockCallback1);
         VdcOperation testOperation2 = new VdcOperation(VdcQueryType.Search, testParameter,
                 mockCallback2);
@@ -308,7 +308,7 @@ public class OperationProcessorTest {
                 mockCallbackList1);
         testOperation1List.add(testOperation1);
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 =
-                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.AdGroupsSearch, testParameter,
+                new VdcOperation<VdcQueryType, VdcQueryParametersBase>(VdcQueryType.GetDirectoryGroupById, testParameter,
                 mockCallbackList2);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation1).
             thenReturn((VdcOperation) testOperation1).thenReturn((VdcOperation) testOperation2).thenReturn(null);

@@ -37,7 +37,7 @@ public class AdGroupConditionFieldAutoCompleterTest {
     @Test
     public void testGetDbFieldName() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
-        assertEquals("$CN", "$CN", comp.getDbFieldName("NAME"));
+        assertEquals("cn", "cn", comp.getDbFieldName("NAME"));
         assertNull("name", comp.getDbFieldType("name"));
         assertNull("22", comp.getDbFieldType("22"));
     }
@@ -55,8 +55,8 @@ public class AdGroupConditionFieldAutoCompleterTest {
     public void testBuildFreeTextConditionSql() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
         String sql = comp.buildFreeTextConditionSql("ATable", "=", "JarJar", false);
-        assertEquals(" (  ATable.$CN LIKE '%JarJar%' ) ", " (  ATable.$CN LIKE '%JarJar%' ) ", sql);
+        assertEquals(" (  ATable.cn LIKE '%JarJar%' ) ", " (  ATable.cn LIKE '%JarJar%' ) ", sql);
         sql = comp.buildFreeTextConditionSql("ATable", "!=", "JarJar", false);
-        assertEquals(" (  ATable.$CN NOT LIKE '%JarJar%' ) ", " (  ATable.$CN NOT LIKE '%JarJar%' ) ", sql);
+        assertEquals(" (  ATable.cn NOT LIKE '%JarJar%' ) ", " (  ATable.cn NOT LIKE '%JarJar%' ) ", sql);
     }
 }

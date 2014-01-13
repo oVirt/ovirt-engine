@@ -13,11 +13,11 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.api.resource.GroupsResource;
+import org.ovirt.engine.core.authentication.DirectoryGroup;
 import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -159,7 +159,7 @@ public class BackendGroupsResource
             validateParameters(group, "domain.id|name");
         }
         String directoryName = getDirectoryName(group);
-        LdapGroup directoryGroup = findDirectoryGroup(directoryName, group);
+        DirectoryGroup directoryGroup = findDirectoryGroup(directoryName, group);
         if (directoryGroup == null) {
             return Response.status(Status.BAD_REQUEST)
                 .entity("No such group: " + group.getName() + " in directory " + directoryName)
@@ -167,7 +167,7 @@ public class BackendGroupsResource
         }
         DirectoryIdParameters parameters = new DirectoryIdParameters();
         parameters.setDirectory(directoryName);
-        parameters.setId(directoryGroup.getid());
+        parameters.setId(directoryGroup.getId());
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbGroupById, IdQueryParameters.class);
         return performCreate(VdcActionType.AddGroup, parameters, resolver, BaseResource.class);
     }
@@ -179,12 +179,12 @@ public class BackendGroupsResource
      * @param groupModel the group model
      * @return the requested directory group or {@code null} if no such group exists
      */
-    private LdapGroup findDirectoryGroup(String directoryName, Group groupModel) {
+    private DirectoryGroup findDirectoryGroup(String directoryName, Group groupModel) {
         // Try to find a group that matches the identifier contained in the model:
         if (groupModel.isSetId()) {
             String groupId = groupModel.getId();
             return getEntity(
-                LdapGroup.class,
+                DirectoryGroup.class,
                 VdcQueryType.GetDirectoryGroupById,
                 new DirectoryIdQueryParameters(directoryName, ExternalId.fromHex(groupId)),
                 groupId,
@@ -195,8 +195,8 @@ public class BackendGroupsResource
         // Try to find a group that matches the name contained in the model:
         if (groupModel.isSetName()) {
             return getEntity(
-                LdapGroup.class,
-                SearchType.AdGroup,
+                DirectoryGroup.class,
+                SearchType.DirectoryGroup,
                 getDirectoryGroupSearchPattern(groupModel.getName(), directoryName)
             );
         }

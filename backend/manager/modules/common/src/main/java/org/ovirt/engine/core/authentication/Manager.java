@@ -258,11 +258,11 @@ public abstract class Manager<O> {
     protected O parseObject(Configuration config) throws ConfigurationException {
         // Verify that the configuration file contains an name for the object, otherwise it can't be created and
         // registered:
-        String name = config.getString(NAME_PARAMETER);
+        String name = config.getInheritedString(NAME_PARAMETER);
         if (name == null) {
             throw new ConfigurationException(
                 "Can't create object from configuration file \"" + config.getFile().getAbsolutePath() + "\" becuase " +
-                "it doesn't contain the mandatory parameter \"" + NAME_PARAMETER + "\"."
+                "it doesn't contain the mandatory parameter \"" + config.getAbsoluteKey(NAME_PARAMETER) + "\"."
             );
         }
 
