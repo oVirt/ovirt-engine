@@ -66,6 +66,9 @@ public class BackendTemplatesResource
             clusterId = getClusterId(template);
             cluster = lookupCluster(clusterId);
         }
+        if (template.getVersion() != null) {
+            validateParameters(template.getVersion(), "baseTemplate");
+        }
         VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, getVm(cluster, template));
         if (namedCluster(template)) {
             staticVm.setVdsGroupId(clusterId);
@@ -78,6 +81,10 @@ public class BackendTemplatesResource
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,
                                        template.getName(),
                                        template.getDescription());
+        if (template.getVersion() != null) {
+            params.setBaseTemplateId(Guid.createGuidFromString(template.getVersion().getBaseTemplate().getId()));
+            params.setTemplateVersionName(template.getVersion().getVersionName());
+        }
         params.setConsoleEnabled(template.getConsole() != null && template.getConsole().isSetEnabled() ?
                         template.getConsole().isEnabled() :
                         !getConsoleDevicesForEntity(staticVm.getId()).isEmpty());

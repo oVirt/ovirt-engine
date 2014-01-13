@@ -79,5 +79,7 @@ public class TemplateMapperTest
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
         assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
         assertEquals(model.getMigrationDowntime(), transform.getMigrationDowntime());
+        assertEquals(model.getVersion().getVersionName(), transform.getVersion().getVersionName());
+        assertEquals(model.getVersion().getBaseTemplate().getId(), transform.getVersion().getBaseTemplate().getId());
     }
 }

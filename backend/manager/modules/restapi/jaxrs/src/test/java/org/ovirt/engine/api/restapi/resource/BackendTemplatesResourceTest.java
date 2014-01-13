@@ -4,17 +4,17 @@ import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-
 import javax.ws.rs.core.UriInfo;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.TemplateVersion;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -35,6 +35,7 @@ public class BackendTemplatesResourceTest
     extends AbstractBackendCollectionResourceTest<Template, VmTemplate, BackendTemplatesResource> {
 
     protected VmHelper vmHelper = VmHelper.getInstance();
+    private static final String VERSION_NAME = "my new version";
 
     public BackendTemplatesResourceTest() {
         super(new BackendTemplatesResource(), SearchType.VmTemplate, "Template : ");
@@ -69,7 +70,7 @@ public class BackendTemplatesResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 setUpVm(GUIDS[1]));
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(0);
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
@@ -102,7 +103,7 @@ public class BackendTemplatesResourceTest
 
     @Test
     public void testRemove() throws Exception {
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
                                            VmTemplateParametersBase.class,
                                            new String[] { "VmTemplateId" },
@@ -129,12 +130,12 @@ public class BackendTemplatesResourceTest
         }
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
+    private void setUpGetEntityExpectations(int index) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                getEntity(0));
+                new Object[] { GUIDS[index] },
+                getEntity(index));
     }
 
     @Test
@@ -152,7 +153,7 @@ public class BackendTemplatesResourceTest
     }
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
                                            VmTemplateParametersBase.class,
                                            new String[] { "VmTemplateId" },
@@ -235,7 +236,7 @@ public class BackendTemplatesResourceTest
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(0);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -265,6 +266,64 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
+    public void testAddVersionNoBaseTemplateId() throws Exception {
+       setUriInfo(setUpBasicUriExpectations());
+       control.replay();
+       Template t = getModel(2);
+       t.getVersion().setBaseTemplate(null);
+       try {
+         collection.add(t);
+         fail("Should have failed with 400 error due to a missing base template");
+       }
+       catch (WebApplicationException e) {
+            assertNotNull(e.getResponse());
+            assertEquals(400, e.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testAddVersion() throws Exception {
+            setUriInfo(setUpBasicUriExpectations());
+            setUpHttpHeaderExpectations("Expect", "201-created");
+
+            setUpGetConsoleExpectations(new int[]{2, 0, 2});
+            setUpGetVirtioScsiExpectations(new int[]{2, 2});
+            setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
+                                       new Object[] { GUIDS[1] },
+                                       setUpVm(GUIDS[1]));
+            setUpGetEntityExpectations(2);
+            setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[2] },
+                    getVdsGroupEntity());
+
+            setUpCreationExpectations(VdcActionType.AddVmTemplate,
+                                      AddVmTemplateParameters.class,
+                                      new String[] { "Name", "Description" },
+                                      new Object[] { NAMES[2], DESCRIPTIONS[2] },
+                                      true,
+                                      true,
+                                      GUIDS[2],
+                                      asList(GUIDS[2]),
+                                      asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                                      VdcQueryType.GetVmTemplate,
+                                      GetVmTemplateParameters.class,
+                                      new String[] { "Id" },
+                                      new Object[] { GUIDS[2] },
+                                      getEntity(2));
+
+            Response response = collection.add(getModel(2));
+            assertEquals(201, response.getStatus());
+            assertTrue(response.getEntity() instanceof Template);
+            assertEquals(((Template) response.getEntity()).getVersion().getVersionName(), VERSION_NAME);
+            assertEquals(((Template) response.getEntity()).getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
+            verifyModel((Template)response.getEntity(), 2);
+    }
+
+    @Test
     public void testAddNamedVm() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
@@ -278,7 +337,7 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations("VM: name=" + NAMES[1],
                                    SearchType.VM,
                                    setUpVm(GUIDS[1]));
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(0);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
 
@@ -326,7 +385,7 @@ public class BackendTemplatesResourceTest
                                    new Object[] { NAMES[1] },
                                    setUpVm(GUIDS[1]));
 
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(0);
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
 
@@ -372,7 +431,7 @@ public class BackendTemplatesResourceTest
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(0);
 
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
@@ -418,7 +477,7 @@ public class BackendTemplatesResourceTest
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
-        setUpGetEntityExpectations();
+        setUpGetEntityExpectations(0);
 
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
         setUpGetVirtioScsiExpectations(new int[] {0, 0});
@@ -532,6 +591,18 @@ public class BackendTemplatesResourceTest
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
         expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
+        if(index == 2) {
+           expect(entity.getTemplateVersionName()).andReturn(VERSION_NAME).anyTimes();
+           expect(entity.getTemplateVersionNumber()).andReturn(2).anyTimes();
+           expect(entity.getBaseTemplateId()).andReturn(GUIDS[1]).anyTimes();
+           expect(entity.isBaseTemplate()).andReturn(false).anyTimes();
+        }
+        else {
+            expect(entity.getTemplateVersionNumber()).andReturn(1).anyTimes();
+            // same base template id as the template itself
+            expect(entity.getBaseTemplateId()).andReturn(GUIDS[index]).anyTimes();
+            expect(entity.isBaseTemplate()).andReturn(true).anyTimes();
+        }
         return entity;
     }
 
@@ -543,7 +614,20 @@ public class BackendTemplatesResourceTest
         model.getVm().setId(GUIDS[1].toString());
         model.setCluster(new Cluster());
         model.getCluster().setId(GUIDS[2].toString());
+        if(index == 2) {
+            populateVersion(model);
+        }
         return model;
+    }
+
+    public static void populateVersion(Template t) {
+        TemplateVersion templateVersion = new TemplateVersion();
+        templateVersion.setVersionName(VERSION_NAME);
+        templateVersion.setVersionNumber(2);
+        Template base = new Template();
+        base.setId(GUIDS[1].toString());
+        templateVersion.setBaseTemplate(base);
+        t.setVersion(templateVersion);
     }
 
     @Override
@@ -586,6 +670,14 @@ public class BackendTemplatesResourceTest
 
         for (Template template : collection) {
             assertTrue(populated ? template.isSetConsole() : !template.isSetConsole());
+            if(template.getId().equals(GUIDS[2].toString())) {
+                 assertEquals(template.getVersion().getVersionName(), VERSION_NAME);
+                 assertEquals(template.getVersion().getVersionNumber(), new Integer(2));
+                 assertEquals(template.getVersion().getBaseTemplate().getId(), GUIDS[1].toString());
+            }
+            else {
+                assertNull(template.getVersion());
+            }
         }
     }
 
@@ -602,6 +694,10 @@ public class BackendTemplatesResourceTest
         assertNotNull(model.getCpu().getTopology());
         assertEquals(4, model.getCpu().getTopology().getCores().intValue());
         assertEquals(2, model.getCpu().getTopology().getSockets().intValue());
+        if(index == 2) {
+            assertNotNull(model.getVersion());
+            assertNotSame(model.getVersion().getBaseTemplate().getId(), model.getId());
+        }
     }
 
     private void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
