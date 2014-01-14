@@ -46,7 +46,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.newGuid());
         mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
-        mNewCreatedDiskImage.setimage_group_id(Guid.newGuid());
+        mNewCreatedDiskImage.setId(Guid.newGuid());
         Guid storagePoolID = mNewCreatedDiskImage.getStoragePoolId() != null ? mNewCreatedDiskImage
                 .getStoragePoolId() : Guid.Empty;
 
@@ -60,8 +60,8 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                     .RunVdsCommand(
                             VDSCommandType.CopyImage,
                             new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getStorageIds().get(0),
-                                    getVmTemplateId(), getDiskImage().getimage_group_id(), getImage().getImageId(),
-                                    mNewCreatedDiskImage.getimage_group_id(), getDestinationImageId(),
+                                    getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
+                                    mNewCreatedDiskImage.getId(), getDestinationImageId(),
                                     "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
                                     mNewCreatedDiskImage.getVolumeFormat(), mNewCreatedDiskImage.getVolumeType(),
                                     getDiskImage().isWipeAfterDelete(), false));
