@@ -2,36 +2,29 @@ package org.ovirt.engine.ui.common.widget.editor;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.editor.UiCommonEditor;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
-import org.ovirt.engine.ui.common.widget.HasAccess;
-import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
-import org.ovirt.engine.ui.common.widget.HasValidation;
 
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.editor.client.adapters.OptionalFieldEditor;
-import com.google.gwt.event.dom.client.HasAllKeyHandlers;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Focusable;
 
 /**
- * Composite editor that exposes {@link AbstractValidatedWidgetWithLabel} functionality for the given sub-Editor.
+ * A {@link UiCommonEditor} adapted to work with {@link AbstractValidatedWidgetWithLabel} widget.
  *
  * @param <T>
  *            The type being edited.
- * @param <E>
- *            Editor type.
  * @param <W>
  *            Type that exposes validated widget functionality.
  *
  * @see OptionalFieldEditor
- *
  */
 public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel<T, ?>>
-        extends OptionalFieldEditor<T, LeafValueEditor<T>> implements HasValidation, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, Focusable {
+        extends OptionalFieldEditor<T, LeafValueEditor<T>> implements UiCommonEditor<T> {
 
     public static <T, W extends AbstractValidatedWidgetWithLabel<T, ?>> WidgetWithLabelEditor<T, W> of(
             LeafValueEditor<T> subEditor, W widgetWithLabel) {
@@ -49,6 +42,11 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
 
     public LeafValueEditor<T> getSubEditor() {
         return subEditor;
+    }
+
+    @Override
+    public LeafValueEditor<T> getActualEditor() {
+        return getSubEditor();
     }
 
     @Override

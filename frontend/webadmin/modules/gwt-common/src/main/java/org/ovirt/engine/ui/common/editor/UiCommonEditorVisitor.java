@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.widget.HasAccess;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
-import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -26,6 +25,11 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
+/**
+ * Editor visitor that implements integration with UiCommon models.
+ *
+ * @see UiCommonEditor
+ */
 public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
     private final UiCommonEventMap eventMap;
@@ -66,8 +70,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
             });
         }
 
-        final WidgetWithLabelEditor<T, ?> functionalEditor =
-                getFunctionalEditor(currentLeafEditor);
+        final UiCommonEditor<T> functionalEditor = getFunctionalEditor(currentLeafEditor);
 
         if (functionalEditor != null) {
             // Set tab index
@@ -160,17 +163,17 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
     @SuppressWarnings("unchecked")
     <T> LeafValueEditor<T> getActualEditor(LeafValueEditor<T> editor) {
-        if (editor instanceof WidgetWithLabelEditor) {
-            return ((WidgetWithLabelEditor<T, ?>) editor).getSubEditor();
+        if (editor instanceof UiCommonEditor) {
+            return ((UiCommonEditor<T>) editor).getActualEditor();
         } else {
             return editor;
         }
     }
 
     @SuppressWarnings("unchecked")
-    <T> WidgetWithLabelEditor<T, ?> getFunctionalEditor(LeafValueEditor<T> editor) {
-        if (editor instanceof WidgetWithLabelEditor) {
-            return (WidgetWithLabelEditor<T, ?>) editor;
+    <T> UiCommonEditor<T> getFunctionalEditor(LeafValueEditor<T> editor) {
+        if (editor instanceof UiCommonEditor) {
+            return (UiCommonEditor<T>) editor;
         } else {
             return null;
         }
