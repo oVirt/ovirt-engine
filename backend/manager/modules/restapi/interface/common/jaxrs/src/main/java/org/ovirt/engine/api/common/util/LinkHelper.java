@@ -466,15 +466,25 @@ public class LinkHelper {
         ArrayList<BaseResource> ret = new ArrayList<BaseResource>();
 
         for (Method method : obj.getClass().getMethods()) {
-            if (method.getName().startsWith("get") &&
-                BaseResource.class.isAssignableFrom(method.getReturnType())) {
-                try {
-                    BaseResource inline = (BaseResource)method.invoke(obj);
-                    if (inline != null) {
-                        ret.add(inline);
+            if (method.getName().startsWith("get")) {
+                // We need to recursively scan everything that is in the model package, as there may be references
+                // to resources deeply nested:
+                if (method.getReturnType().getPackage() == BaseResource.class.getPackage()) {
+                    Object inline = null;
+                    try {
+                        inline = method.invoke(obj);
                     }
-                } catch (Exception e) {
-                    // invocation target exception should not occur on simple getter
+                    catch (Exception e) {
+                        // invocation target exception should not occur on simple getter
+                    }
+                    if (inline != null) {
+                        if (inline instanceof BaseResource) {
+                            ret.add((BaseResource) inline);
+                        }
+                        else {
+                            ret.addAll(getInlineResources(inline));
+                        }
+                    }
                 }
             }
         }
