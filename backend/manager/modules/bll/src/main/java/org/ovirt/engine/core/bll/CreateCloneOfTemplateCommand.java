@@ -76,9 +76,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                                 getDestinationStorageDomainId()));
             }
         } catch (Exception e) {
-            log.errorFormat(
-                    "CreateCloneOfTemplateCommand::CreateSnapshotInIrsServer::Failed creating snapshot from image id -'{0}'",
-                    getImage().getImageId());
+            log.errorFormat("Failed creating snapshot from image id -'{0}'", getImage().getImageId());
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         }
         return vdsReturnValue;
