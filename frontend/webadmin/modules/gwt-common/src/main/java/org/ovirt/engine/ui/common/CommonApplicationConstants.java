@@ -1620,4 +1620,8 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Previewing memory may cause data loss when excluding disks!")
     String snapshotPreviewWithMemoryAndPartialDisksWarning();
+
+    @DefaultStringValue("Import as Template")
+    String importAsTemplate();
+
 }

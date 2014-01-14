@@ -39,6 +39,15 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     protected List<EntityModel> entities;
+    private EntityModel<Boolean> importAsTemplate;
+
+    public EntityModel getImportAsTemplate() {
+        return importAsTemplate;
+    }
+
+    public void setImportAsTemplate(EntityModel importAsTemplate) {
+        this.importAsTemplate = importAsTemplate;
+    }
 
     private ListModel dataCenter;
     private ListModel storageDomain;
@@ -113,6 +122,8 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
 
         setQuota(new ListModel());
         getQuota().setIsEmpty(true);
+        setImportAsTemplate(new EntityModel());
+        getImportAsTemplate().setEntity(false);
 
         setOkCommand(new UICommand("Ok", this));  //$NON-NLS-1$
         getOkCommand().setTitle(constants.ok());
@@ -236,4 +247,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             }
         }
     }
+
+    public abstract boolean showImportAsTemplateOption();
+
 }

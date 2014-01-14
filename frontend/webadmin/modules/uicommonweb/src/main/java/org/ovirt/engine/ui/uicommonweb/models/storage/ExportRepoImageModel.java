@@ -74,4 +74,9 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
                     }
                 }, this);
     }
+
+    @Override
+    public boolean showImportAsTemplateOption() {
+        return false;
+    }
 }

@@ -17,9 +17,11 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
@@ -67,6 +69,11 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     @UiField(provided = true)
     SimplePanel imageListPanel;
 
+    @UiField(provided = true)
+    @Path(value = "importAsTemplate.entity")
+    @WithElementId("importAsTemplate")
+    public EntityModelCheckBoxEditor importAsTemplateEditor;
+
     @Ignore
     EntityModelCellTable<ListModel> imageList;
 
@@ -100,6 +107,9 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
             }
         });
         quotaEditor.setLabel(constants.quota());
+
+        importAsTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        importAsTemplateEditor.setLabel(constants.importAsTemplate());
 
         imageListPanel = new SimplePanel();
 
@@ -148,6 +158,8 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     @Override
     public void edit(final ImportExportRepoImageBaseModel model) {
         driver.edit(model);
+
+        importAsTemplateEditor.setVisible(model.showImportAsTemplateOption());
 
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override

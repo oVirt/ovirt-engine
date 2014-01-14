@@ -1,16 +1,31 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DownloadImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+
+import java.util.List;
 
 
 public class ImportRepoImageCopyTaskHandler
@@ -75,9 +90,60 @@ public class ImportRepoImageCopyTaskHandler
     @Override
     public void endSuccessfully() {
         super.endSuccessfully();
+        if (getEnclosingCommand().getParameters().getImportAsTemplate()) {
+            Guid newTemplateId = createTemplate();
+            // No reason for this to happen, but checking just to make sure
+            if (newTemplateId != null) {
+                attachDiskToTemplate(newTemplateId);
+            }
+        }
         getEnclosingCommand().getParameters().getDiskImage().setImageStatus(ImageStatus.OK);
         ImagesHandler.updateImageStatus(
                 getEnclosingCommand().getParameters().getDiskImage().getImageId(), ImageStatus.OK);
+        getEnclosingCommand().getReturnValue().setSucceeded(true);
+    }
+
+    private Guid createTemplate() {
+
+        VmTemplate blankTemplate = DbFacade.getInstance().getVmTemplateDao().get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+        VmStatic masterVm = new VmStatic(blankTemplate);
+
+        // Following the same convention as the glance disk name, using a GlanceTemplate prefix, followed by a short identifier
+        String vmTemplateName = "GlanceTemplate-" + Guid.newGuid().toString().substring(0, 7);
+        AddVmTemplateParameters parameters = new AddVmTemplateParameters(masterVm, vmTemplateName, "Glance imported template");
+        VDSGroup vdsGroup = getVdsGroup();
+
+        if (vdsGroup != null) {
+            masterVm.setVdsGroupId(vdsGroup.getId());
+        }
+
+        VdcReturnValueBase addVmTemplateReturnValue =
+                Backend.getInstance().runInternalAction(VdcActionType.AddVmTemplate, parameters, ExecutionHandler.createDefaultContexForTasks(getEnclosingCommand().getExecutionContext()));
+
+        // No reason for this to return null, but checking just to make sure, and returning the created template, or null if failed
+        return addVmTemplateReturnValue.getActionReturnValue() != null ? (Guid) addVmTemplateReturnValue.getActionReturnValue() : null;
+    }
+
+    private void attachDiskToTemplate(Guid templateId) {
+        DiskImage templateDiskImage = getEnclosingCommand().getParameters().getDiskImage();
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(templateDiskImage.getId(),
+                templateId),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.DISK,
+                null,
+                true,
+                Boolean.FALSE,
+                null);
+    }
+
+    protected VDSGroup getVdsGroup() {
+        VDSGroup vdsGroup = null;
+        List<VDSGroup> vdsGroups = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(getEnclosingCommand().getParameters().getStoragePoolId());
+        if (!vdsGroups.isEmpty()) {
+            vdsGroup = vdsGroups.get(0);
+        }
+
+        return vdsGroup;
     }
 
     @Override

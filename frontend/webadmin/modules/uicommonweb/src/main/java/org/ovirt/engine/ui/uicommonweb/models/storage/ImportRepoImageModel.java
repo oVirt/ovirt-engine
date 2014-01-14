@@ -55,6 +55,11 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
     }
 
     @Override
+    public boolean showImportAsTemplateOption() {
+        return true;
+    }
+
+    @Override
     public void executeCommand(UICommand command)
     {
         super.executeCommand(command);
@@ -80,6 +85,8 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
             if (selectedQuota != null) {
                 importParameters.setQuotaId(selectedQuota.getId());
             }
+
+            importParameters.setImportAsTemplate((Boolean) getImportAsTemplate().getEntity());
 
             actionParameters.add(importParameters);
         }
