@@ -99,6 +99,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     // List of buttons that only show in the tool-bar.
     private final List<ActionButtonDefinition<T>> toolbarOnlyActionButtonList =
             new ArrayList<ActionButtonDefinition<T>>();
+    // List of original visibility state for each button
+    private final List<Boolean> originallyVisible = new ArrayList<Boolean>();
 
     private final SearchableModelProvider<T, ?> dataProvider;
     private final EventBus eventBus;
@@ -189,6 +191,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
                 if (widgetMinWidth > 0) {
                     siblingWidth = calculateSiblingWidth();
                 }
+                for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
+                    originallyVisible.add(contentPanel.getWidget(i).isVisible());
+                }
                 initializeCascadeMenuPanel();
             }
         });
@@ -240,6 +245,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         boolean foundEdge = false;
         if (contentPanel.getWidgetCount() > 1) {
             for (int i = 0; i < contentPanel.getWidgetCount() - 1; i++) {
+                if (!originallyVisible.get(i)) {
+                    continue;
+                }
                 Widget widget = contentPanel.getWidget(i);
                 widget.setVisible(true); //temporarily show the widget, so we get the actual width of the widget.
                 if (foundEdge || (widgetWidth + widget.getOffsetWidth() > currentWidth)) {
@@ -248,9 +256,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
                     foundEdge = true;
                 } else {
                     toolbarOnlyActionButtonList.get(i).setCascaded(false);
-                    widget.setVisible(true);
+                    widgetWidth += widget.getOffsetWidth();
                 }
-                widgetWidth += widget.getOffsetWidth();
             }
         }
     }
