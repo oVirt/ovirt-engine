@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -30,7 +31,7 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
         Mockito.when(getDbFacadeMockInstance().getVmDeviceDao()).thenReturn(vmDeviceDAO);
         Mockito.when(getQueryParameters().getId()).thenReturn(new Guid("ee655a4d-effc-4aab-be2b-2f80ff40cd1c"));
         getQuery().executeQueryCommand();
-        Assert.assertNull(getQuery().getReturnValue());
+        Assert.assertTrue(((List<?>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
     }
 
     @Test
