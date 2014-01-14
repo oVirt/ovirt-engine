@@ -110,7 +110,9 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     }
 
     private boolean destinationHasSpace(Collection<DiskImage> diskImages) {
-        return validate(new StorageDomainValidator(getStorageDomain()).isDomainHasSpaceForRequest((long) ImagesHandler.sumImagesTotalSizeWithSnapshotSize(diskImages)));
+        StorageDomainValidator sdv = new StorageDomainValidator(getStorageDomain());
+        return validate(sdv.isDomainWithinThresholds()) &&
+                validate(sdv.hasSpaceForClonedDisks(diskImages));
     }
 
     protected boolean checkTemplateInStorageDomain(List<DiskImage> diskImages) {
