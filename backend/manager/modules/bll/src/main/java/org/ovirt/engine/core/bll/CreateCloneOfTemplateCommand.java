@@ -54,17 +54,13 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
         try {
             Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmFromTemplate);
 
-            vdsReturnValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.CopyImage,
-                            new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getStorageIds().get(0),
-                                    getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
-                                    mNewCreatedDiskImage.getId(), getDestinationImageId(),
-                                    "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
-                                    mNewCreatedDiskImage.getVolumeFormat(), mNewCreatedDiskImage.getVolumeType(),
-                                    getDiskImage().isWipeAfterDelete(), false));
+            vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
+                    new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getStorageIds().get(0),
+                            getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
+                            mNewCreatedDiskImage.getId(), getDestinationImageId(),
+                            "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
+                            mNewCreatedDiskImage.getVolumeFormat(), mNewCreatedDiskImage.getVolumeType(),
+                            getDiskImage().isWipeAfterDelete(), false));
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalVdsmTaskIdList().add(
