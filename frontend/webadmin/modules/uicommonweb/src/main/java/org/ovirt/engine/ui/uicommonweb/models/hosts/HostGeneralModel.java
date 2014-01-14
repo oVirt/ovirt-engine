@@ -649,6 +649,46 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    private String hostedEngineHa;
+
+    public String getHostedEngineHa()
+    {
+        return hostedEngineHa;
+    }
+
+    public void setHostedEngineHa(String value)
+    {
+        if (hostedEngineHa == null && value == null)
+        {
+            return;
+        }
+        if (hostedEngineHa == null || !hostedEngineHa.equals(value))
+        {
+            hostedEngineHa = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HostedEngineHa")); //$NON-NLS-1$
+        }
+    }
+
+    private Boolean hostedEngineHaIsConfigured;
+
+    public Boolean getHostedEngineHaIsConfigured()
+    {
+        return hostedEngineHaIsConfigured;
+    }
+
+    public void setHostedEngineHaIsConfigured(Boolean value)
+    {
+        if (hostedEngineHaIsConfigured == null && value == null)
+        {
+            return;
+        }
+        if (hostedEngineHaIsConfigured == null || !hostedEngineHaIsConfigured.equals(value))
+        {
+            hostedEngineHaIsConfigured = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HostedEngineHaIsConfigured")); //$NON-NLS-1$
+        }
+    }
+
     // Alert section in general tab
 
     private boolean hasAnyAlert;
@@ -1097,6 +1137,22 @@ public class HostGeneralModel extends EntityModel
         setSharedMemory(vds.getMemSharedPercent());
         setMemoryPageSharing(vds.getKsmState());
         setAutomaticLargePage(vds.getTransparentHugePagesState());
+
+        if (!vds.getHighlyAvailableIsConfigured()) {
+            setHostedEngineHaIsConfigured(false);
+            setHostedEngineHa(constants.bracketedNotAvailableLabel());
+        } else {
+            setHostedEngineHaIsConfigured(true);
+            if (!vds.getHighlyAvailableIsActive()) {
+                setHostedEngineHa(constants.haNotActive());
+            } else if (vds.getHighlyAvailableGlobalMaintenance()) {
+                setHostedEngineHa(constants.haGlobalMaintenance());
+            } else if (vds.getHighlyAvailableLocalMaintenance()) {
+                setHostedEngineHa(constants.haLocalMaintenance());
+            } else {
+                setHostedEngineHa(messages.haActive(vds.getHighlyAvailableScore()));
+            }
+        }
     }
 
     private void updateAlerts()
