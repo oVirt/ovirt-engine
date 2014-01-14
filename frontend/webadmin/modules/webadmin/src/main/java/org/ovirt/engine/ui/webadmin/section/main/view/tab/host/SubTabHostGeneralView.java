@@ -67,6 +67,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     NullableNumberTextBoxLabel<Integer> numberOfSockets = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
     NullableNumberTextBoxLabel<Integer> coresPerSocket = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
     TextBoxLabel spmPriority = new TextBoxLabel();
+    TextBoxLabel hostedEngineHa = new TextBoxLabel();
 
     MemorySizeTextBoxLabel<Integer> physicalMemory;
     MemorySizeTextBoxLabel<Integer> usedMemory;
@@ -134,7 +135,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 7);
+        formBuilder = new FormBuilder(formPanel, 3, 8);
 
         formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 0).withAutoPlacement());
@@ -143,6 +144,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 0, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 0, glusterSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.hostedEngineHaHostGeneral(), hostedEngineHa, 0, virtSupported).withAutoPlacement());
 
         formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, virtSupported).withAutoPlacement());

@@ -25,6 +25,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("N/A")
     String notAvailableLabel();
 
+    @DefaultStringValue("[N/A]")
+    String bracketedNotAvailableLabel();
+
     @DefaultStringValue("Not Specified")
     String notSpecifiedLabel();
 
@@ -2137,7 +2140,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Not available when Templates are not configured.")
     String notAvailableWithNoTemplates();
-
     @DefaultStringValue("Connecting to pool not supported.")
     String connectToPoolNotSupported();
 
@@ -2197,5 +2199,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("An IDE disk can't be read-only.")
     String cannotEnableIdeInterfaceForReadOnlyDisk();
+
+    @DefaultStringValue("Global Maintenance Enabled")
+    String haGlobalMaintenance();
+
+    @DefaultStringValue("Local Maintenance Enabled")
+    String haLocalMaintenance();
+
+    @DefaultStringValue("Not Active")
+    String haNotActive();
 }
 

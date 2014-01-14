@@ -1428,6 +1428,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Shared Memory")
     String sharedMemHostGeneral();
 
+    @DefaultStringValue("Hosted Engine HA")
+    String hostedEngineHaHostGeneral();
+
     @DefaultStringValue("Action Items")
     String actionItemsHostGeneral();
 

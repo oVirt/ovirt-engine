@@ -346,4 +346,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
             "Storage Domains belonging to the Data Center, and make them unusable with versions older than {0}. " +
             "Are you sure you want to continue?")
     String youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg(String version);
+
+    @DefaultMessage("Active (Score: {0})")
+    String haActive(int score);
 }
