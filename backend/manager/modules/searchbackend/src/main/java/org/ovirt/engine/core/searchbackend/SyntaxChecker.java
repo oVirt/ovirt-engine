@@ -906,7 +906,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                                     syntax.getSearchFrom(), innerQuery);
                 }
             }
-            if (primeryKey.equals("vmt_guid") && wherePhrase.length() > 0
+            else if (primeryKey.equals("vmt_guid") && wherePhrase.length() > 0
                     && wherePhrase.toString().contains("storage_pool_name") && whereBuilder.size() == 1) {
                 inQuery = StringFormat
                         .format("(SELECT * FROM %1$s %2$s",
