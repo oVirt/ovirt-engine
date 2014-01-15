@@ -24,7 +24,7 @@ import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -419,7 +419,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
 
             for (Guid hostId : hostIdsToSync) {
-                SetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(hostId);
+                PersistentSetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(hostId);
                 setupNetworkParams.setNetworksToSync(Collections.singletonList(getNetworkName()));
                 parameters.add(setupNetworkParams);
             }

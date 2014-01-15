@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -35,7 +35,7 @@ public class RemoveNetworkParametersBuilder extends NetworkParametersBuilder {
         boolean vlanNetwork = NetworkUtils.isVlan(network);
 
         for (VdsNetworkInterface nic : nics) {
-            SetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(nic.getVdsId());
+            PersistentSetupNetworksParameters setupNetworkParams = createSetupNetworksParameters(nic.getVdsId());
             VdsNetworkInterface nicToConfigure = getNicToConfigure(setupNetworkParams.getInterfaces(), nic.getId());
             if (nicToConfigure == null) {
                 throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
