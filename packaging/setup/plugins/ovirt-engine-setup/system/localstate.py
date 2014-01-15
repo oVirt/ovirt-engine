@@ -52,9 +52,6 @@ class Plugin(plugin.PluginBase):
         uid = osetuputil.getUid(
             self.environment[osetupcons.SystemEnv.USER_ENGINE]
         )
-        gid = osetuputil.getGid(
-            self.environment[osetupcons.SystemEnv.GROUP_ENGINE]
-        )
         if os.path.exists(osetupcons.FileLocations.OVIRT_ENGINE_TMPDIR):
             # clean the directory only if it contains at least one file
             # not owned by engine
@@ -76,14 +73,6 @@ class Plugin(plugin.PluginBase):
                     )
                 )
                 shutil.rmtree(osetupcons.FileLocations.OVIRT_ENGINE_TMPDIR)
-
-        for root, dirs, files in os.walk(
-            top=osetupcons.FileLocations.OVIRT_ENGINE_DEPLOYMENTS_DIR,
-            followlinks=False,
-        ):
-            os.chown(root, uid, gid)
-            for name in dirs + files:
-                os.chown(os.path.join(root, name), uid, gid)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

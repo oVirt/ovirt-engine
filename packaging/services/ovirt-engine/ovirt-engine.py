@@ -15,7 +15,6 @@
 # limitations under the License.
 
 
-import glob
 import os
 import sys
 import re
@@ -54,7 +53,19 @@ class Daemon(service.Daemon):
         with open(out, 'w') as f:
             if mode is not None:
                 os.chmod(out, mode)
-            f.write(str(Template(file=template, searchList=[self._config])))
+            f.write(
+                '%s' % (
+                    Template(
+                        file=template,
+                        searchList=[
+                            self._config,
+                            {
+                                'tempdir': self._tempDir.directory,
+                            },
+                        ],
+                    )
+                ),
+            )
         return out
 
     def _linkModules(self, modulesDir):
@@ -114,15 +125,6 @@ class Daemon(service.Daemon):
             writable=True,
             mustExist=False,
         )
-        for dir in ('.', 'content', 'deployments'):
-            self.check(
-                os.path.join(
-                    self._config.get('ENGINE_VAR'),
-                    dir
-                ),
-                directory=True,
-                writable=True,
-            )
         self.check(
             self._config.get('ENGINE_LOG'),
             directory=True,
@@ -151,8 +153,14 @@ class Daemon(service.Daemon):
 
     def _setupEngineApps(self):
 
+        deploymentsDir = os.path.join(
+            self._tempDir.directory,
+            'deployments',
+        )
+        os.mkdir(deploymentsDir)
+
         # The list of applications to be deployed:
-        for engineAppDir in self._config.get('ENGINE_APPS').split():
+        for engineAppDir in shlex.split(self._config.get('ENGINE_APPS')):
             self.logger.debug('Deploying: %s', engineAppDir)
             if not os.path.isabs(engineAppDir):
                 engineAppDir = os.path.join(
@@ -170,61 +178,13 @@ class Daemon(service.Daemon):
                 )
                 continue
 
-            # Make sure the application is linked in the deployments
-            # directory, if not link it now:
             engineAppLink = os.path.join(
-                self._config.get('ENGINE_VAR'),
-                'deployments',
+                deploymentsDir,
                 os.path.basename(engineAppDir),
             )
-            if not os.path.islink(engineAppLink):
-                try:
-                    os.symlink(engineAppDir, engineAppLink)
-                except OSError as e:
-                    self.logger.debug('exception', exc_info=True)
-                    raise RuntimeError(
-                        _(
-                            "Cannot create symbolic link '{file}': "
-                            "{error}"
-                        ).format(
-                            file=engineAppLink,
-                            error=e,
-                        ),
-                    )
-
-            # Remove all existing deployment markers:
-            for markerFile in glob.glob('%s.*' % engineAppLink):
-                try:
-                    os.remove(markerFile)
-                except OSError as e:
-                    self.logger.debug('exception', exc_info=True)
-                    raise RuntimeError(
-                        _(
-                            "Cannot remove deployment marker file '{file}': "
-                            "{error}"
-                        ).format(
-                            file=markerFile,
-                            error=e,
-                        ),
-                    )
-
-            # Create the new marker file to trigger deployment
-            # of the application:
-            markerFile = "%s.dodeploy" % engineAppLink
-            try:
-                with open(markerFile, "w"):
-                    pass
-            except IOError as e:
-                self.logger.debug('exception', exc_info=True)
-                raise RuntimeError(
-                    _(
-                        "Cannot create deployment marker file '{file}': "
-                        "{error}"
-                    ).format(
-                        file=markerFile,
-                        error=e,
-                    )
-                )
+            os.symlink(engineAppDir, engineAppLink)
+            with open('%s.dodeploy' % engineAppLink, 'w'):
+                pass
 
     def daemonSetup(self):
 
