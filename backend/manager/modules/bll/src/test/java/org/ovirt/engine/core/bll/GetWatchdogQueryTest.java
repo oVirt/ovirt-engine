@@ -57,8 +57,8 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
         Assert.assertNotNull(result);
         Assert.assertFalse(result.isEmpty());
         VmWatchdog watchdog = result.get(0);
-        Assert.assertEquals(watchdog.getAction().name().toLowerCase(), "reset");
-        Assert.assertEquals(watchdog.getModel().name().toLowerCase(), "i6300esb");
+        Assert.assertEquals("reset", watchdog.getAction().name().toLowerCase());
+        Assert.assertEquals("i6300esb", watchdog.getModel().name().toLowerCase());
     }
 
 }
