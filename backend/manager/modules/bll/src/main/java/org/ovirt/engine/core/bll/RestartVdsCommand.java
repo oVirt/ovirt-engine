@@ -111,6 +111,10 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         FenceVdsActionParameters params = new FenceVdsActionParameters(vdsId, fenceAction);
         params.setParentCommand(VdcActionType.RestartVds);
         params.setSessionId(sessionId);
+        // If Host was in Maintenance, and was restarted manually , it should preserve its status after reboot
+        if (getParameters().getParentCommand() != VdcActionType.VdsNotRespondingTreatment && getVds().getStatus() == VDSStatus.Maintenance) {
+            params.setChangeHostToMaintenanceOnStart(true);
+        }
         return Backend.getInstance().runInternalAction(action, params, getContext());
     }
 
