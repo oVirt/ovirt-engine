@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -25,12 +25,17 @@ public abstract class NetworkParametersBuilder {
     public NetworkParametersBuilder() {
     }
 
-    protected SetupNetworksParameters createSetupNetworksParameters(Guid hostId) {
+    protected PersistentSetupNetworksParameters createSetupNetworksParameters(Guid hostId) {
         VDS host = new VDS();
         host.setId(hostId);
         NetworkConfigurator configurator = new NetworkConfigurator(host);
         List<VdsNetworkInterface> nics = configurator.filterBondsWithoutSlaves(getHostInterfaces(hostId));
-        return configurator.createSetupNetworkParams(nics);
+
+        PersistentSetupNetworksParameters parameters = new PersistentSetupNetworksParameters();
+        parameters.setVdsId(host.getId());
+        parameters.setInterfaces(nics);
+        parameters.setCheckConnectivity(true);
+        return parameters;
     }
 
     private List<VdsNetworkInterface> getHostInterfaces(Guid hostId) {

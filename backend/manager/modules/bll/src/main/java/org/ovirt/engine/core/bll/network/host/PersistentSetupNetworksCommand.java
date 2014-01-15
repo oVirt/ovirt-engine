@@ -3,14 +3,14 @@ package org.ovirt.engine.core.bll.network.host;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.network.host.SetupNetworksCommand.SETUP_NETWORKS_RESOLUTION;
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 @NonTransactiveCommandAttribute
-public class PersistentSetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
+public class PersistentSetupNetworksCommand<T extends PersistentSetupNetworksParameters> extends VdsCommand<T> {
 
     public PersistentSetupNetworksCommand(T parameters) {
         super(parameters);

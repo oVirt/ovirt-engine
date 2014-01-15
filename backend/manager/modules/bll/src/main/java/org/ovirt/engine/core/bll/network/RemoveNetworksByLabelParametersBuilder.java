@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -21,8 +21,8 @@ public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBui
     /**
      * Removes labeled networks from an interface by a given label
      */
-    public SetupNetworksParameters buildParameters(VdsNetworkInterface nic, String label, Guid clusterId) {
-        SetupNetworksParameters parameters = createSetupNetworksParameters(nic.getVdsId());
+    public PersistentSetupNetworksParameters buildParameters(VdsNetworkInterface nic, String label, Guid clusterId) {
+        PersistentSetupNetworksParameters parameters = createSetupNetworksParameters(nic.getVdsId());
         List<Network> labeledNetworks =
                 DbFacade.getInstance().getNetworkDao().getAllByLabelForCluster(label, clusterId);
         VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), nic.getId());
@@ -44,10 +44,10 @@ public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBui
     /**
      * Removes a given list of labeled networks from a host
      */
-    public SetupNetworksParameters buildParameters(Guid hostId,
+    public PersistentSetupNetworksParameters buildParameters(Guid hostId,
             List<Network> networksToRemove,
             List<VdsNetworkInterface> nics) {
-        SetupNetworksParameters parameters = createSetupNetworksParameters(hostId);
+        PersistentSetupNetworksParameters parameters = createSetupNetworksParameters(hostId);
 
         for (VdsNetworkInterface nic : nics) {
             VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), nic.getId());

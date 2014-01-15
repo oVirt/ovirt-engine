@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -20,10 +20,10 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
     /**
      * Adds a list of labeled networks to a given interface
      */
-    public SetupNetworksParameters buildParameters(VdsNetworkInterface nic,
+    public PersistentSetupNetworksParameters buildParameters(VdsNetworkInterface nic,
             String label,
             List<Network> labeledNetworks) {
-        SetupNetworksParameters parameters = createSetupNetworksParameters(nic.getVdsId());
+        PersistentSetupNetworksParameters parameters = createSetupNetworksParameters(nic.getVdsId());
         Set<Network> networkToAdd = getNetworksToConfigure(parameters.getInterfaces(), labeledNetworks);
         VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), nic.getId());
         if (nicToConfigure == null) {
@@ -41,10 +41,10 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
     /**
      * Adds a list of labeled networks to a host
      */
-    public SetupNetworksParameters buildParameters(Guid vdsId,
+    public PersistentSetupNetworksParameters buildParameters(Guid vdsId,
             List<Network> labeledNetworks,
             Map<String, VdsNetworkInterface> nicsByLabel) {
-        SetupNetworksParameters parameters = createSetupNetworksParameters(vdsId);
+        PersistentSetupNetworksParameters parameters = createSetupNetworksParameters(vdsId);
         Set<Network> networkToAdd = getNetworksToConfigure(parameters.getInterfaces(), labeledNetworks);
 
         for (Network network : networkToAdd) {

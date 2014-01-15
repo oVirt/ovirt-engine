@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -228,7 +228,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private void configureNetworks() {
         ChangeClusterParametersBuilder builder = new ChangeClusterParametersBuilder();
-        final SetupNetworksParameters params;
+        final PersistentSetupNetworksParameters params;
 
         try {
             params = builder.buildParameters(getVdsId(), getSourceCluster().getId(), getTargetCluster().getId());
@@ -354,11 +354,11 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private class ChangeClusterParametersBuilder extends NetworkParametersBuilder {
 
-        public SetupNetworksParameters buildParameters(Guid hostId, Guid sourceClusterId, Guid targetClusterId) {
+        public PersistentSetupNetworksParameters buildParameters(Guid hostId, Guid sourceClusterId, Guid targetClusterId) {
             List<Network> targetClusterNetworks = getNetworkDAO().getAllForCluster(targetClusterId);
             Map<String, Network> targetClusterNetworksByName = Entities.entitiesByName(targetClusterNetworks);
 
-            SetupNetworksParameters params = createSetupNetworksParameters(hostId);
+            PersistentSetupNetworksParameters params = createSetupNetworksParameters(hostId);
             Map<String, VdsNetworkInterface> nicsByNetwork =
                     Entities.hostInterfacesByNetworkName(params.getInterfaces());
             Map<String, List<Network>> targetNetworksByLabel = getClusterNetworksByLabel(targetClusterNetworks);
@@ -402,7 +402,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         public void adjustNetworksByLabel(Map<String, List<Network>> sourceNetworksByLabel,
                 Map<String, Network> targetNetworksByName,
                 Map<String, List<Network>> targetNetworksByLabel,
-                SetupNetworksParameters params,
+                PersistentSetupNetworksParameters params,
                 Map<String, VdsNetworkInterface> nicsByNetwork,
                 VdsNetworkInterface nic) {
             if (!NetworkUtils.isLabeled(nic)) {
@@ -441,7 +441,9 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return nicsByNetwork.containsKey(net.getName()) && !targetNetworksByName.containsKey(net.getName());
         }
 
-        public void removeNetworkFromParameters(SetupNetworksParameters params, VdsNetworkInterface nic, Network net) {
+        public void removeNetworkFromParameters(PersistentSetupNetworksParameters params,
+                VdsNetworkInterface nic,
+                Network net) {
             if (NetworkUtils.isVlan(net)) {
                 VdsNetworkInterface vlan = getVlanDevice(params.getInterfaces(), nic, net);
                 if (vlan == null) {
