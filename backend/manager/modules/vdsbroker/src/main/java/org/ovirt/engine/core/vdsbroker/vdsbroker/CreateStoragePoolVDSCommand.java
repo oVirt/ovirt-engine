@@ -20,7 +20,8 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
             ids[i] = guids[i].toString();
         }
 
-        status = getBroker().createStoragePool(getParameters().getStorageType().getValue(),
+        //The first parameter, poolType parameter is ignored by VDSM and thus can be set to any arbitrary value
+        status = getBroker().createStoragePool(0,
                 getParameters().getStoragePoolId().toString(), getParameters().getStoragePoolName(),
                 getParameters().getMasterDomainId().toString(), ids, getParameters().getMasterVersion(),
                 Config.<String> getValue(ConfigValues.LockPolicy),

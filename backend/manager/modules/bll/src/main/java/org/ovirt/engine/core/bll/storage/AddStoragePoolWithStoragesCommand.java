@@ -156,7 +156,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         boolean staticDomainChanged = false;
                         StorageFormatType requiredFormatType =
                                 VersionStorageFormatUtil.getRequiredForVersion
-                                        (getStoragePool().getcompatibility_version(), getStoragePool().getStorageType());
+                                        (getStoragePool().getcompatibility_version(), storageDomain.getStorageType());
                         if (staticDomain.getStorageFormat().compareTo(requiredFormatType) < 0) {
                             if (!staticDomainChanged) {
                                 getCompensationContext().snapshotEntity(staticDomain);
@@ -208,8 +208,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     private VDSReturnValue addStoragePoolInIrs() {
         return runVdsCommand(VDSCommandType.CreateStoragePool,
-                new CreateStoragePoolVDSCommandParameters(getVds().getId(), getStoragePool()
-                        .getStorageType(), getStoragePool().getId(), getStoragePool().getName(),
+                new CreateStoragePoolVDSCommandParameters(getVds().getId(), getStoragePool().getId(),
+                        getStoragePool().getName(),
                         masterStorageDomain.getId(), getParameters().getStorages(), getStoragePool()
                                 .getmaster_domain_version()));
     }
