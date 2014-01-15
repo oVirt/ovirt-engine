@@ -19,9 +19,9 @@ package org.ovirt.engine.api.common.resource;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.ObjectFactory;
+import org.ovirt.engine.api.utils.ReflectionHelper;
 
 import org.ovirt.engine.api.common.util.MutabilityAssertor;
-import org.ovirt.engine.api.common.util.ReflectionHelper;
 
 
 public abstract class AbstractUpdatableResource<R extends BaseResource> {

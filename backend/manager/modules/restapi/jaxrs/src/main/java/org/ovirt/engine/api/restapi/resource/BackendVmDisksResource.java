@@ -7,7 +7,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
@@ -22,6 +21,7 @@ import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;

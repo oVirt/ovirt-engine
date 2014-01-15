@@ -8,13 +8,13 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;

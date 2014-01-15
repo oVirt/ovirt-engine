@@ -1,7 +1,7 @@
 
 
 
-!!org.ovirt.engine.api.restapi.rsdl.MetaData
+!!org.ovirt.engine.api.rsdl.MetaData
 actions:
 - name: /vms|rel=get
   description: get all the virtual machines in the system

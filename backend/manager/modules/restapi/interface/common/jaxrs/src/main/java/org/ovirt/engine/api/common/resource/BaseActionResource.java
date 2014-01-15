@@ -26,7 +26,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.resource.ActionResource;
-import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.utils.LinkHelper;
 
 
 public class BaseActionResource<R extends BaseResource> implements ActionResource {

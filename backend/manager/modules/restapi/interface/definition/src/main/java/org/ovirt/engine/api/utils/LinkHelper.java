@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.api.utils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

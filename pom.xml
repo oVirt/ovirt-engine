@@ -32,6 +32,7 @@
   </modules>
 
   <properties>
+    <application.baseuri>/ovirt-engine/api</application.baseuri>
     <!--  Version Info -->
     <engine.version>3.5.0-SNAPSHOT</engine.version>
     <engine.groupId>org.ovirt.engine</engine.groupId>

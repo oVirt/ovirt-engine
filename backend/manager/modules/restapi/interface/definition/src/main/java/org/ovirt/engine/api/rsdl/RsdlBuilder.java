@@ -14,10 +14,9 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.restapi.rsdl;
+package org.ovirt.engine.api.rsdl;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -36,12 +35,8 @@ import java.util.Set;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.UriInfo;
 
-import org.ovirt.engine.api.common.util.FileUtils;
-import org.ovirt.engine.api.common.util.ReflectionHelper;
 import org.ovirt.engine.api.model.Actionable;
-import org.ovirt.engine.api.model.Body;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.DetailedLinks;
 import org.ovirt.engine.api.model.GeneralMetadata;
@@ -57,11 +52,7 @@ import org.ovirt.engine.api.model.Schema;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.RsdlIgnore;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
+import org.ovirt.engine.api.utils.ReflectionHelper;
 
 public class RsdlBuilder {
 
@@ -75,8 +66,9 @@ public class RsdlBuilder {
     private Schema schema;
     private GeneralMetadata generalMetadata;
     private String description;
-    private UriInfo uriInfo;
+    private String baseUri;
     private List<String> rels;
+    private MetaData metadata;
 
     private static final String ACTION = "Action";
     private static final String DELETE = "delete";
@@ -84,43 +76,28 @@ public class RsdlBuilder {
     private static final String GET = "get";
     private static final String ADD = "add";
 
-    protected static final Log LOG = LogFactory.getLog(RsdlBuilder.class);
-
     private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
-    private static final String PARAMS_METADATA = "rsdl_metadata.yaml";
 
-    public RsdlBuilder(UriInfo uriInfo, List<String> rels) {
-        this.uriInfo = uriInfo;
+    public RsdlBuilder(String baseUri, List<String> rels, MetaData metadata) {
+        /**
+         * uriInfo.getBaseUri().getPath() might be: /ovirt-engine/api/ (with trailing '/') or: /ovirt-engine/api
+         * (without trailing '/') - depending on the context of the request. The reason for this variability is not
+         * clear. In any case - we assume no trailing '/' when creating the action name, so we add a check and eliminate
+         * the trailing slash if necessary.
+         */
+        if (baseUri.endsWith("/")) {
+            baseUri = baseUri.substring(0, baseUri.length() - 1);
+        }
+        this.baseUri = baseUri;
         this.rels = rels;
-        this.parametersMetaData = loadParametersMetaData();
+        this.metadata = metadata;
+        this.parametersMetaData = addParametersMetaData();
     }
 
-    public Map<String, Action> loadParametersMetaData() {
+    public Map<String, Action> addParametersMetaData() {
         parametersMetaData = new HashMap<String, Action>();
-        try {
-            InputStream stream = FileUtils.get(RESOURCES_PACKAGE, PARAMS_METADATA);
-            if (stream != null) {
-                Constructor constructor =
-                        new CustomClassLoaderConstructor(Thread.currentThread().getContextClassLoader());
-                Object result = new Yaml(constructor).load(stream);
-                /**
-                 * uriInfo.getBaseUri().getPath() might be: /ovirt-engine/api/ (with trailing '/') or: /ovirt-engine/api
-                 * (without trailing '/') - depending on the context of the request. The reason for this variability is
-                 * not clear. In any case - we assume no trailing '/' when creating the action name, so we add a check
-                 * and eliminate the trailing slash if necessary.
-                 */
-                String baseUri = uriInfo.getBaseUri().getPath();
-                if (baseUri.endsWith("/")) {
-                    baseUri = baseUri.substring(0, baseUri.length() - 1);
-                }
-                for (Action action : ((MetaData) result).getActions()) {
-                    parametersMetaData.put(baseUri + action.getName(), action);
-                }
-            } else {
-                LOG.error("Parameters metatdata file not found.");
-            }
-        } catch (Exception e) {
-            LOG.error("Loading parameters metatdata failed.", e);
+        for (Action action : metadata.getActions()) {
+            parametersMetaData.put(baseUri + action.getName(), action);
         }
         return parametersMetaData;
     }
@@ -145,18 +122,13 @@ public class RsdlBuilder {
         return rsdl;
     }
 
-    public RSDL build() {
-        try {
+    public RSDL build() throws ClassNotFoundException, IOException {
             rsdl = construct();
             rsdl.setRel(getRel());
             rsdl.setHref(getHref());
             rsdl.setDescription(getDescription());
             rsdl.setSchema(getSchema());
             rsdl.setGeneral(getGeneralMetadata());
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("RSDL generation failure.", e);
-        }
         return rsdl;
     }
 
@@ -228,7 +200,11 @@ public class RsdlBuilder {
         }
         public LinkBuilder requestParameter(final String requestParameter) {
             link.setRequest(new Request());
-            link.getRequest().setBody(new Body(){{setType(requestParameter);}});
+            link.getRequest().setBody(new org.ovirt.engine.api.model.Body() {
+                {
+                    setType(requestParameter);
+                }
+            });
             return this;
         }
         public LinkBuilder responseType(final String responseType) {
@@ -244,7 +220,7 @@ public class RsdlBuilder {
         }
         public DetailedLink build() {
             if (!link.getRequest().isSetBody()) {
-                link.getRequest().setBody(new Body());
+                link.getRequest().setBody(new org.ovirt.engine.api.model.Body());
             }
             return addParametersMetadata(link);
         }
@@ -254,10 +230,9 @@ public class RsdlBuilder {
         //SortedSet<Link> results = new TreeSet<Link>();
         List<DetailedLink> results = new ArrayList<DetailedLink>();
         List<Class<?>> classes = ReflectionHelper.getClasses(RESOURCES_PACKAGE);
-        String entryPointPath = uriInfo.getBaseUri().getPath();
         for (String path : rels) {
             Class<?> resource = findResource(path, classes);
-            String prefix = entryPointPath.endsWith("/") ? entryPointPath + path : entryPointPath + "/" + path;
+            String prefix = baseUri + "/" + path;
             results.addAll(describe(resource, prefix, new HashMap<String, Type>()));
         }
         return results;

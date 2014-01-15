@@ -41,6 +41,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.utils.LinkHelper;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;

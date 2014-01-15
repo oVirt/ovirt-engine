@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.restapi.rsdl;
+package org.ovirt.engine.api.rsdl;
 
 public class Argument {
 

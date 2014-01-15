@@ -1,5 +1,6 @@
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.api.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +9,7 @@ import java.net.URLClassLoader;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+
 
 public class FileUtils {
     /**
@@ -48,6 +50,10 @@ public class FileUtils {
             }
         }
         return null;
+    }
+
+    public static InputStream get(String fileName) throws IOException {
+        return new FileInputStream(new File(fileName)); // replace with the right implementation.
     }
 
     private static void closeQuietly(InputStream stream) {

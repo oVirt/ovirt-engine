@@ -22,16 +22,14 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.ovirt.engine.api.common.util.FileUtils;
 import org.ovirt.engine.api.common.util.JAXBHelper;
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.API;
 import org.ovirt.engine.api.model.Action;
@@ -49,13 +47,13 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ApiResource;
-import org.ovirt.engine.api.restapi.rsdl.GeneralMetadataBuilder;
-import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
-import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
 import org.ovirt.engine.api.restapi.types.DateMapper;
-import org.ovirt.engine.api.restapi.util.ApiRootLinksCreator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
+import org.ovirt.engine.api.rsdl.RsdlManager;
+import org.ovirt.engine.api.utils.ApiRootLinksCreator;
+import org.ovirt.engine.api.utils.FileUtils;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.constants.QueryConstants;
@@ -75,16 +73,8 @@ public class BackendApiResource
     private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
     private static final String API_SCHEMA = "api.xsd";
     private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
-    private static final String RSDL_REL = "rsdl";
-    private static final String SCHEMA_REL = "schema";
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
-    private static final String RSDL_DESCRIPTION = "The oVirt RESTful API description language.";
-    private static final String SCHEMA_DESCRIPTION = "oVirt API entities schema.";
     private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
-    private static final String QUERY_PARAMETER = "?";
-    private static final String GENERAL_METADATA_REL = "*";
-    private static final String GENERAL_METADATA_NAME = "The oVirt RESTful API generic descriptor.";
-    private static final String GENERAL_METADATA_DESCRIPTION = "These options are valid for entire application.";
 
     private static RSDL rsdl = null;
 
@@ -96,11 +86,11 @@ public class BackendApiResource
     }
 
     private Collection<DetailedLink> getLinks() {
-        return ApiRootLinksCreator.getLinks(getUriInfo());
+        return ApiRootLinksCreator.getLinks(getUriInfo().getBaseUri().getPath());
     }
 
     private Collection<DetailedLink> getGlusterLinks() {
-        return ApiRootLinksCreator.getGlusterLinks(getUriInfo());
+        return ApiRootLinksCreator.getGlusterLinks(getUriInfo().getBaseUri().getPath());
     }
 
     private Link createBlankTemplateLink() {
@@ -231,8 +221,12 @@ public class BackendApiResource
     public Response get() {
         appMode = getCurrent().get(ApplicationMode.class);
         if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
-            RSDL rsdl = addSystemVersion(getRSDL());
-            return Response.ok().entity(rsdl).build();
+            try {
+                RSDL rsdl = addSystemVersion(getRSDL());
+                return Response.ok().entity(rsdl).build();
+            } catch (Exception e) {
+                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
+            }
         } else if (QueryHelper.hasConstraint(getUriInfo(), SCHEMA_CONSTRAINT_PARAMETER)) {
             return getSchema();
         } else {
@@ -277,29 +271,10 @@ public class BackendApiResource
             return rsdl;
     }
 
-    public synchronized RSDL getRSDL() {
+    public synchronized RSDL getRSDL() throws ClassNotFoundException, IOException {
         if (rsdl == null) {
-            List<String> rels =
-                    getCurrent().get(ApplicationMode.class) == ApplicationMode.GlusterOnly ? ApiRootLinksCreator.getGlusterRels(uriInfo)
-                            : ApiRootLinksCreator.getAllRels(uriInfo);
-            rsdl = new RsdlBuilder(getUriInfo(), rels).description(RSDL_DESCRIPTION)
-                    .rel(RSDL_REL)
-                    .href(getUriInfo().getBaseUri().getPath() +
-                            QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER)
-                    .schema(new SchemaBuilder()
-                            .rel(SCHEMA_REL)
-                            .href(getUriInfo().getBaseUri().getPath() +
-                                    QUERY_PARAMETER + SCHEMA_CONSTRAINT_PARAMETER)
-                            .name(SCHEMA_NAME)
-                            .description(SCHEMA_DESCRIPTION)
-                            .build())
-                    .generalMetadata(new GeneralMetadataBuilder()
-                            .rel(GENERAL_METADATA_REL)
-                            .href(getUriInfo().getBaseUri().getPath().replace("api", "*"))
-                            .name(GENERAL_METADATA_NAME)
-                            .description(GENERAL_METADATA_DESCRIPTION)
-                            .build())
-                    .build();
+            RsdlManager rsdlManager = new RsdlManager();
+            rsdl = rsdlManager.loadRsdl(getCurrent().get(ApplicationMode.class));
         }
         return rsdl;
     }

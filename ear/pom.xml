@@ -200,7 +200,7 @@
               <groupId>org.ovirt.engine.api</groupId>
               <artifactId>restapi-webapp</artifactId>
               <bundleFileName>restapi.war</bundleFileName>
-              <contextRoot>/ovirt-engine/api</contextRoot>
+              <contextRoot>${application.baseuri}</contextRoot>
             </webModule>
 
             <webModule>

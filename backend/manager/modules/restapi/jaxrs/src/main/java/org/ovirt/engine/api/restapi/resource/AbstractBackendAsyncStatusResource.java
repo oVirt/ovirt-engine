@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.utils.LinkHelper;
 
 public abstract class AbstractBackendAsyncStatusResource<R extends BaseResource>
         extends AbstractBackendSubResource<R, List/*<AsyncTaskStatus>*/> {

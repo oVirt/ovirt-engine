@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootDevices;
 import org.ovirt.engine.api.model.BootProtocol;
@@ -119,6 +118,7 @@ import org.ovirt.engine.api.restapi.util.FenceOptionsParser;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.VersionUtils;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;

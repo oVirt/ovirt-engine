@@ -18,7 +18,7 @@
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
       <version>${resteasy.version}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -52,6 +52,12 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -125,6 +131,37 @@
                 </plugin>
             </plugins>
         </build>
+    </profile>
+
+    <profile>
+      <id>build-rsdl</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>compile</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>org.ovirt.engine.api.rsdl.RsdlManager</mainClass>
+                  <arguments>
+                    <argument>${application.baseuri}</argument>
+                    <argument>${project.build.outputDirectory}/rsdl.xml</argument>
+                    <argument>${project.build.outputDirectory}/rsdl_gluster.xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <profile>

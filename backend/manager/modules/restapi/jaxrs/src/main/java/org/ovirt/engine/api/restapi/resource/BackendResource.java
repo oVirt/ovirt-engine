@@ -10,7 +10,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.invocation.MetaData;
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
@@ -21,6 +20,7 @@ import org.ovirt.engine.api.restapi.resource.exception.UrlParamException;
 import org.ovirt.engine.api.restapi.resource.validation.Validator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;

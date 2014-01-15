@@ -24,9 +24,9 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 
-import static org.ovirt.engine.api.common.util.ReflectionHelper.capitalize;
-import static org.ovirt.engine.api.common.util.ReflectionHelper.different;
-import static org.ovirt.engine.api.common.util.ReflectionHelper.isSet;
+import static org.ovirt.engine.api.utils.ReflectionHelper.capitalize;
+import static org.ovirt.engine.api.utils.ReflectionHelper.different;
+import static org.ovirt.engine.api.utils.ReflectionHelper.isSet;
 
 /**
  * Used to assert that fields set on a model type do not conflict with

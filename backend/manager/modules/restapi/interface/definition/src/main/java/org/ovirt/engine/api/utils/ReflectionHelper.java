@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.api.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.ovirt.engine.api.common.resource.AbstractUpdatableResource;
 import org.ovirt.engine.api.model.BaseResource;
 
 public class ReflectionHelper {
@@ -52,8 +51,8 @@ public class ReflectionHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static <R extends BaseResource> R newModel(AbstractUpdatableResource<R> resource) {
-        return newModel((Class<R>)((ParameterizedType)resource.getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
+    public static <R extends BaseResource> R newModel(Object resource) {
+        return newModel((Class<R>) ((ParameterizedType) resource.getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
     }
 
     public static <R extends BaseResource> R assignChildModel(BaseResource parent, Class<R> childType) {

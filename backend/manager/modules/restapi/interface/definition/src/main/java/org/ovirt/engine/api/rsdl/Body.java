@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.restapi.rsdl;
+package org.ovirt.engine.api.rsdl;
 
 import java.util.LinkedList;
 import java.util.List;

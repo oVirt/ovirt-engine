@@ -13,7 +13,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthorizedKey;
 import org.ovirt.engine.api.model.CdRom;
@@ -41,6 +40,7 @@ import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;

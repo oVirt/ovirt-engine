@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -20,7 +21,8 @@ public class UsageFinder {
     private static final String UUID_REGEX =
             "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}";
 
-    public UsageMessage getUsageMessage(Application application, UriInfo uriInfo, Request request) {
+    public UsageMessage getUsageMessage(Application application, UriInfo uriInfo, Request request)
+            throws ClassNotFoundException, IOException {
         UsageMessage usage = new UsageMessage();
         usage.setMessage(RESPONSE);
         usage.setDetailedLink(findUsage(getRSDL(application), uriInfo, request.getMethod()));
@@ -39,7 +41,7 @@ public class UsageFinder {
         return link;
     }
 
-    private RSDL getRSDL(Application application) {
+    private RSDL getRSDL(Application application) throws ClassNotFoundException, IOException {
         RSDL rsdl = null;
         for (Object obj : application.getSingletons()) {
             if (obj instanceof BackendApiResource) {

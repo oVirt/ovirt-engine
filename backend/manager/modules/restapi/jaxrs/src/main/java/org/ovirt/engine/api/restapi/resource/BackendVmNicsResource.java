@@ -10,7 +10,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.ReportedDevice;
@@ -21,6 +20,7 @@ import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.api.restapi.types.ReportedDeviceMapper;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;

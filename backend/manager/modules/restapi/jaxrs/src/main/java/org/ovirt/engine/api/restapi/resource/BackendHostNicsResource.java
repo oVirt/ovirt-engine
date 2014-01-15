@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.Host;
@@ -27,6 +26,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;

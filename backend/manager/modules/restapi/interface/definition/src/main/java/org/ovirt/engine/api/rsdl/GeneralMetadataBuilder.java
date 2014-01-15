@@ -14,9 +14,8 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.restapi.rsdl;
+package org.ovirt.engine.api.rsdl;
 
-import org.ovirt.engine.api.common.security.auth.SessionUtils;
 import org.ovirt.engine.api.model.GeneralMetadata;
 import org.ovirt.engine.api.model.Header;
 import org.ovirt.engine.api.model.Headers;
@@ -24,6 +23,7 @@ import org.ovirt.engine.api.model.Request;
 
 public class GeneralMetadataBuilder {
 
+    public final static String SESSION_TTL_HEADER_FIELD = "Session-TTL";
     private GeneralMetadata generalMetadata;
 
     public GeneralMetadataBuilder() {
@@ -51,7 +51,7 @@ public class GeneralMetadataBuilder {
         if (headers != null) {
             Header header = new Header();
             header.setRequired(false);
-            header.setName(SessionUtils.SESSION_TTL_HEADER_FIELD);
+            header.setName(SESSION_TTL_HEADER_FIELD);
             header.setValue("minutes");
             header.setDescription(DESCRIPTION);
 

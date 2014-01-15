@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.restapi.rsdl;
+package org.ovirt.engine.api.rsdl;
 
 import org.ovirt.engine.api.model.Schema;
 

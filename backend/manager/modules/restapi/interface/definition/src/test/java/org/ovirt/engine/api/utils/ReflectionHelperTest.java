@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.api.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.common.util.ReflectionHelper.assignChildModel;
+import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
 import java.util.List;
 
