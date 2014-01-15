@@ -546,7 +546,7 @@ make %{make_common_opts} install DESTDIR="%{buildroot}"
 #
 # /var creation
 #
-install -dm 755 "%{buildroot}/%{engine_state}"/{deployments,content,setup/answers}
+install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
 install -dm 755 "%{buildroot}/%{engine_log}"/{host-deploy,setup,notifier,engine-manage-domains,dump}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
@@ -804,7 +804,6 @@ fi
 
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
-%attr(-, %{engine_user}, %{engine_group}) %{engine_state}/deployments
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
 %dir %{engine_data}/bin

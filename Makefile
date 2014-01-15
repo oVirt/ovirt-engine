@@ -64,6 +64,7 @@ PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
 PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
 PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
 PKG_STATE_DIR=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
+PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
 JBOSS_HOME=/usr/share/jboss-as
 PYTHON_DIR=$(PYTHON_SYS_DIR)
 DEV_PYTHON_DIR=
@@ -446,7 +447,6 @@ install-dev:	\
 
 	install -d "$(DESTDIR)$(PKG_TMP_DIR)"
 	install -d "$(DESTDIR)$(PKG_CACHE_DIR)"
-	install -d "$(DESTDIR)$(PKG_STATE_DIR)/deployments"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/content"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/setup/answers"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/host-deploy"
@@ -455,4 +455,6 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/engine-manage-domains"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/dump"
 
-	touch "$(DESTDIR)$(PKG_STATE_DIR)/deployments/engine.ear.deployed"
+	if [ -e "$(DESTDIR)$(PKG_TMP_DIR)/deployments" ]; then \
+		touch "$(DESTDIR)$(PKG_TMP_DIR)/deployments/engine.ear.deployed"; \
+	fi
