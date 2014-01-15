@@ -111,6 +111,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc disconnectStoragePool(String spUUID, int hostSpmId, String SCSIKey);
 
+    // The poolType parameter is ignored by VDSM
     StatusOnlyReturnForXmlRpc createStoragePool(int poolType, String spUUID, String poolName, String msdUUID,
             String[] domList, int masterVersion, String lockPolicy, int lockRenewalIntervalSec, int leaseTimeSec,
             int ioOpTimeoutSec, int leaseRetries);
