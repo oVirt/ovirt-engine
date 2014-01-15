@@ -69,6 +69,22 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
             return failCanDoAction(VdcBllMessages.IMPROPER_INTERFACE_IS_LABELED);
         }
 
+        if (Boolean.TRUE.equals(getNic().getBonded())) {
+            int slavesCount = 0;
+            for (VdsNetworkInterface nic : getHostInterfaces()) {
+                if (StringUtils.equals(getNic().getName(), nic.getBondName())) {
+                    slavesCount++;
+                    if (slavesCount == 2) {
+                        break;
+                    }
+                }
+            }
+
+            if (slavesCount < 2) {
+                return failCanDoAction(VdcBllMessages.IMPROPER_INTERFACE_IS_LABELED);
+            }
+        }
+
         for (VdsNetworkInterface nic : getHostInterfaces()) {
             if (!StringUtils.equals(nic.getName(), getNicName()) && NetworkUtils.isLabeled(nic)
                     && nic.getLabels().contains(getLabel())) {
