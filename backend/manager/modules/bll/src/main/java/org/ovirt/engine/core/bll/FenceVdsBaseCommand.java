@@ -52,7 +52,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private FenceInvocationResult primaryResult;
     private FenceInvocationResult secondaryResult;
 
-
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -156,7 +155,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         VDSReturnValue vdsReturnValue = null;
         try {
             // Set status immediately to prevent a race (BZ 636950/656224)
-            setStatus();
+            // Skip setting status if action is manual Start and Host was in Maintenance
+            if (! (getParameters().getAction() == FenceActionType.Start && lastStatus == VDSStatus.Maintenance)) {
+                setStatus();
+            }
             // Check which fence invocation pattern to invoke
             // Regular (no secondary agent) , multiple sequential agents or multiple concurrent agents
             if (StringUtils.isEmpty(getVds().getPmSecondaryIp())){

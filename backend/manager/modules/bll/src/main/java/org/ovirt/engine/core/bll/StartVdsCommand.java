@@ -50,7 +50,12 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
 
     @Override
     protected void setStatus() {
-        setStatus(VDSStatus.NonResponsive);
+        if (getParameters().isChangeHostToMaintenanceOnStart()) {
+            setStatus(VDSStatus.Maintenance);
+        }
+        else {
+            setStatus(VDSStatus.NonResponsive);
+        }
     }
 
     @Override

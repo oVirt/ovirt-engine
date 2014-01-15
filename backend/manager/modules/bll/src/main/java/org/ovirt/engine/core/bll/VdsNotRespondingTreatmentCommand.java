@@ -61,6 +61,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         VdsValidator validator = new VdsValidator(getVds());
         boolean shouldBeFenced = validator.shouldVdsBeFenced();
         if (shouldBeFenced) {
+            getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
             super.executeCommand();
         } else {
             setCommandShouldBeLogged(false);
