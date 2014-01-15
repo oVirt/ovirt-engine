@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
@@ -119,6 +120,17 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         if (getTargetCluster().getArchitecture() != ArchitectureType.undefined &&
                 getTargetCluster().getArchitecture() != vds.getCpuName().getArchitecture()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_CLUSTER_DIFFERENT_ARCHITECTURES);
+        }
+
+        if (FeatureSupported.hostNetworkQos(getSourceCluster().getcompatibility_version())
+                && !FeatureSupported.hostNetworkQos(getTargetCluster().getcompatibility_version())) {
+            for (VdsNetworkInterface iface : getDbFacade().getInterfaceDao().getAllInterfacesForVds(vds.getId())) {
+                if (iface.getQos() != null) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                            String.format("$ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED_LIST %s",
+                                    iface.getNetworkName()));
+                }
+            }
         }
 
         return true;
