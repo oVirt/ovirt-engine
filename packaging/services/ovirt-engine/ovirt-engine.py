@@ -152,19 +152,19 @@ class Daemon(service.Daemon):
     def _setupEngineApps(self):
 
         # The list of applications to be deployed:
-        for engineApp in self._config.get('ENGINE_APPS').split():
-            # Do nothing if the application is not available:
-            engineAppDir = os.path.join(
-                self._config.get('ENGINE_USR'),
-                engineApp,
-            )
+        for engineAppDir in self._config.get('ENGINE_APPS').split():
+            self.logger.debug('Deploying: %s', engineAppDir)
+            if not os.path.isabs(engineAppDir):
+                engineAppDir = os.path.join(
+                    self._config.get('ENGINE_USR'),
+                    engineAppDir,
+                )
             if not os.path.exists(engineAppDir):
                 self.logger.warning(
                     _(
-                        "Application '{application}' directory '{directory}' "
+                        "Application directory '{directory}' "
                         "does not exist, it will be ignored"
                     ).format(
-                        application=engineApp,
                         directory=engineAppDir,
                     ),
                 )
@@ -175,7 +175,7 @@ class Daemon(service.Daemon):
             engineAppLink = os.path.join(
                 self._config.get('ENGINE_VAR'),
                 'deployments',
-                engineApp,
+                os.path.basename(engineAppDir),
             )
             if not os.path.islink(engineAppLink):
                 try:
