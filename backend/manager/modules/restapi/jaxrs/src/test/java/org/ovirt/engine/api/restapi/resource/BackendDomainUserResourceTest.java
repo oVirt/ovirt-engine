@@ -37,7 +37,6 @@ public class BackendDomainUserResourceTest
 
     @Override
     protected void verifyModel(User model, int index) {
-        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(NAMES[index], model.getUserName());
     }
 

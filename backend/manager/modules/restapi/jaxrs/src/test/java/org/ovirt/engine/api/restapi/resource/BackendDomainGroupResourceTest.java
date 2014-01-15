@@ -38,7 +38,6 @@ public class BackendDomainGroupResourceTest
 
     @Override
     protected void verifyModel(Group model, int index) {
-        assertEquals(EXTERNAL_IDS[index].toHex(), model.getExternalId());
         assertEquals(NAMES[index], model.getName());
     }
 
