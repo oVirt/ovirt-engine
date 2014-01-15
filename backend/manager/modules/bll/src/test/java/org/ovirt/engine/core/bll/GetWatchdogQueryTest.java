@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
 
     @Test
     public void executeQueryCommandWithWatchdog() {
-        HashMap<String, Object> watchdogSpecParams = new HashMap<String, Object>();
+        Map<String, Object> watchdogSpecParams = new HashMap<>();
         watchdogSpecParams.put("model", "i6300esb");
         watchdogSpecParams.put("action", "reset");
         VmDevice vmDevice = new VmDevice(new VmDeviceId(new Guid("6f86b8a4-e721-4149-b2df-056eb621b16a"),
