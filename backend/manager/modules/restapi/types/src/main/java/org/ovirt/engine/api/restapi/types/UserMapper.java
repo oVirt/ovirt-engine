@@ -42,7 +42,6 @@ public class UserMapper {
     public static User map(DirectoryUser entity, User template) {
         User model = template != null ? template : new User();
         model.setName(entity.getFirstName());
-        model.setExternalId(entity.getId().toString());
         model.setUserName(entity.getName());
         model.setId(entity.getId().toHex());
         model.setLastName(entity.getLastName());
