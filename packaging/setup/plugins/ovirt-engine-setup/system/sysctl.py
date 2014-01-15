@@ -68,14 +68,7 @@ class Plugin(plugin.PluginBase):
         interactive = self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
 
         while True:
-            rc, shmmax, stderr = self.execute(
-                (
-                    self.command.get('sysctl'),
-                    '-n',
-                    'kernel.shmmax',
-                ),
-            )
-            shmmax = int(shmmax[0])
+            shmmax = self._get_shmmax()
 
             if shmmax >= self.environment[osetupcons.SystemEnv.SHMMAX]:
                 break
@@ -129,29 +122,55 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.SYSTEM_SYSCTL_CONFIG_AVAILABLE,
         priority=plugin.Stages.PRIORITY_HIGH,
-        condition=lambda self: self._enabled,
     )
     def _misc(self):
-        sysctl = filetransaction.FileTransaction(
-            name=osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL,
-            content=self._content,
-            modifiedList=self.environment[
-                otopicons.CoreEnv.MODIFIED_FILES
-            ],
-        )
-        self.environment[
-            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ].append(osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL)
+        if self._enabled:
+            sysctl = filetransaction.FileTransaction(
+                name=osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL,
+                content=self._content,
+                modifiedList=self.environment[
+                    otopicons.CoreEnv.MODIFIED_FILES
+                ],
+            )
+            self.environment[
+                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+            ].append(osetupcons.FileLocations.OVIRT_ENGINE_SYSCTL)
 
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(sysctl)
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(sysctl)
 
-        # we must do this here as postgres requires it
-        self.execute(
+            # we must do this here as postgres requires it
+            self.execute(
+                (
+                    self.command.get('sysctl'),
+                    '-p', sysctl.tmpname,
+                ),
+            )
+
+        # Verify shmmax is set correctly
+        shmmax = self._get_shmmax()
+
+        if shmmax <= self.environment[osetupcons.SystemEnv.SHMMAX]:
+            self.logger.debug(
+                'sysctl kernel.shmmax is %s lower than %s' % (
+                    shmmax,
+                    self.environment[osetupcons.SystemEnv.SHMMAX],
+                )
+            )
+
+            raise RuntimeError(
+                _('Unable to set sysctl kernel.shmmax to minimum requirement')
+            )
+
+    def _get_shmmax(self):
+        rc, shmmax, stderr = self.execute(
             (
                 self.command.get('sysctl'),
-                '-p', sysctl.tmpname,
+                '-n',
+                'kernel.shmmax',
             ),
         )
+        return int(shmmax[0])
+
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
