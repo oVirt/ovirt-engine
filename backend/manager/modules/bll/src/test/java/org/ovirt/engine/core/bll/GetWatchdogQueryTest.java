@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
                 TEST_VM_ID), VmDeviceGeneralType.WATCHDOG, VmDeviceType.WATCHDOG.getName(), "", 1, watchdogSpecParams,
                 true, true, true, "", null, null);
         Mockito.when(vmDeviceDAO.getVmDeviceByVmIdAndType(TEST_VM_ID, VmDeviceGeneralType.WATCHDOG))
-                .thenReturn(Arrays.asList(vmDevice));
+                .thenReturn(Collections.singletonList(vmDevice));
 
         getQuery().executeQueryCommand();
 
