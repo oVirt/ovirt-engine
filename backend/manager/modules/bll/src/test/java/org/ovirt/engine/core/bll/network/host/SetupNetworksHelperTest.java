@@ -56,7 +56,7 @@ public class SetupNetworksHelperTest {
             mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_2.toString(), false),
             mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_2.toString(), false),
             mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_3.toString(), false),
-            mockConfig(ConfigValues.HostNetworkQosSupported, new Version(3, 4).toString(), true));
+            mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_4.toString(), true));
 
     @Mock
     private NetworkDao networkDAO;
@@ -354,8 +354,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(iface);
         iface.setQosOverridden(true);
 
-        VDS host = mock(VDS.class);
-        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), host);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface));
 
         validateAndExpectViolation(helper,
                 VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
@@ -370,9 +369,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(iface);
         iface.setQosOverridden(true);
 
-        VDS host = mock(VDS.class);
-        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), host);
-        when(host.getVdsGroupCompatibilityVersion()).thenReturn(new Version(3, 4));
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_4);
 
         validateAndAssertQosOverridden(helper, iface);
     }
@@ -385,15 +382,9 @@ public class SetupNetworksHelperTest {
         iface.setQosOverridden(true);
         mockExistingIfaces(iface);
 
-        NetworkQoS qos = new NetworkQoS();
-        qos.setInboundAverage(30);
-        qos.setInboundPeak(30);
-        qos.setInboundBurst(30);
-        iface.setQos(qos);
+        iface.setQos(createQos());
 
-        VDS host = mock(VDS.class);
-        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), host);
-        when(host.getVdsGroupCompatibilityVersion()).thenReturn(new Version(3, 4));
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_4);
 
         validateAndAssertNetworkModified(helper, network);
     }
@@ -507,6 +498,24 @@ public class SetupNetworksHelperTest {
     }
 
     @Test
+    public void syncNetworkQosNotSupported() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(network);
+        VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
+        mockExistingIfaces(iface);
+
+        Guid qosId = Guid.newGuid();
+        when(qosDao.get(qosId)).thenReturn(createQos());
+        network.setQosId(qosId);
+
+        SetupNetworksHelper helper = createHelper(createParametersForSync(iface));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
+                MANAGEMENT_NETWORK_NAME);
+    }
+
+    @Test
     public void networkToSyncMovedToAnotherNic() {
         Network net = createNetwork("net");
         VdsNetworkInterface nic1 = createNicSyncedWithNetwork("nic0", net);
@@ -589,9 +598,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(iface);
         iface.setQosOverridden(true);
 
-        VDS host = mock(VDS.class);
-        SetupNetworksHelper helper = createHelper(createParametersForSync(iface), host);
-        when(host.getVdsGroupCompatibilityVersion()).thenReturn(new Version(3, 4));
+        SetupNetworksHelper helper = createHelper(createParametersForSync(iface), Version.v3_4);
 
         validateAndExpectNoViolations(helper);
         assertNoBondsRemoved(helper);
@@ -1753,6 +1760,19 @@ public class SetupNetworksHelperTest {
         return params;
     }
 
+    /**
+     * Create QoS with some non-empty values.
+     *
+     * @return the QoS entity.
+     */
+    private NetworkQoS createQos() {
+        NetworkQoS qos = new NetworkQoS();
+        qos.setInboundAverage(30);
+        qos.setInboundPeak(30);
+        qos.setInboundBurst(30);
+        return qos;
+    }
+
     private void mockExistingNetworks(Network... networks) {
         when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(Arrays.asList(networks));
     }
@@ -1783,13 +1803,21 @@ public class SetupNetworksHelperTest {
     }
 
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
+        return createHelper(params, Version.v3_3);
+    }
+
+    private SetupNetworksHelper createHelper(SetupNetworksParameters params, Version compatibilityVersion) {
         VDS vds = mock(VDS.class);
         when(vds.getId()).thenReturn(Guid.Empty);
-        return createHelper(params, vds);
+        return createHelper(params, vds, compatibilityVersion);
     }
 
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds) {
-        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_3);
+        return createHelper(params, vds, Version.v3_3);
+    }
+
+    private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds, Version compatibilityVersion) {
+        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(compatibilityVersion);
 
         SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, vds));
 

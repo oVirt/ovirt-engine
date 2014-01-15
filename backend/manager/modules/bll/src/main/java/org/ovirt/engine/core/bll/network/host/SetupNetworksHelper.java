@@ -52,9 +52,12 @@ public class SetupNetworksHelper {
 
     private Map<String, List<NetworkType>> ifacesWithExclusiveNetwork = new HashMap<String, List<NetworkType>>();
 
+    private final boolean hostNetworkQosSupported;
+
     public SetupNetworksHelper(SetupNetworksParameters parameters, VDS vds) {
         params = parameters;
         this.vds = vds;
+        hostNetworkQosSupported = FeatureSupported.hostNetworkQos(vds.getVdsGroupCompatibilityVersion());
     }
 
     /**
@@ -197,10 +200,9 @@ public class SetupNetworksHelper {
      * with it are valid.
      */
     private void validateNetworkQos() {
-        boolean featureSupported = FeatureSupported.hostNetworkQos(vds.getVdsGroupCompatibilityVersion());
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             if (iface.isQosOverridden()) {
-                if (!featureSupported) {
+                if (!hostNetworkQosSupported) {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, iface.getNetworkName());
                 }
 
@@ -375,6 +377,9 @@ public class SetupNetworksHelper {
                         && !existingIface.getNetworkImplementationDetails().isInSync()) {
                     if (networkShouldBeSynced(networkName)) {
                         modifiedNetworks.add(network);
+                        if (network.getQosId() != null && !hostNetworkQosSupported) {
+                            addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
+                        }
                     } else if (networkWasModified(iface)) {
                         addViolation(VdcBllMessages.NETWORKS_NOT_IN_SYNC, networkName);
                     }
