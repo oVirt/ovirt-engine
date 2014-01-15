@@ -67,7 +67,9 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     public native String loadActiveX(String id, String codebase, String classId) /*-{
                                                                                  var container = $wnd.document.createElement("div");
                                                                                  container.innerHTML = '<object id="' + id + '" codebase="' + codebase + '" classid="CLSID:' + classId
-                                                                                 + '" width="0" height="0"></object>';
+                                                                                 + '" width="0" height="0">' +
+                                                                                     '<PARAM NAME="SecurePort" VALUE="0">'
+                                                                                     '</object>'; // <PARAM ...> element is workaround to make spice activex addon working with ie 11
                                                                                  container.style.width = "0px";
                                                                                  container.style.height = "0px";
                                                                                  container.style.position = "absolute";
