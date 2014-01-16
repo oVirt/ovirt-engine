@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -274,6 +275,41 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VmTemplate, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
+    }
+
+    @Override
+    public void setItems(Iterable value) {
+        genVersionToBaseTemplate(value);
+        super.setItems(value);
+    }
+
+    private Map<Guid, String> templateIdToBaseTemplateName;
+
+    private void genVersionToBaseTemplate(Iterable<VmTemplate> items) {
+        if (items == null) {
+            templateIdToBaseTemplateName = null;
+            return;
+        }
+
+        Map<Guid, VmTemplate> templateIdToTemplate = new HashMap<Guid, VmTemplate>();
+        for (VmTemplate template : items) {
+            templateIdToTemplate.put(template.getId(), template);
+        }
+
+        templateIdToBaseTemplateName = new HashMap<Guid, String>();
+        for (VmTemplate template : items) {
+            VmTemplate baseTemplate = templateIdToTemplate.get(template.getBaseTemplateId());
+            templateIdToBaseTemplateName.put(template.getId(),
+                    baseTemplate != null ? baseTemplate.getName() : "");  //$NON-NLS-1$
+        }
+    }
+
+    public String resolveBaseTemplateNameForTemplate(Guid templateId) {
+        if (templateIdToBaseTemplateName == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return templateIdToBaseTemplateName.get(templateId);
     }
 
     private void edit()
