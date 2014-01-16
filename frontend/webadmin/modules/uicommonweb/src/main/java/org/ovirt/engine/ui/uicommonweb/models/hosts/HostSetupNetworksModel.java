@@ -422,8 +422,10 @@ public class HostSetupNetworksModel extends EntityModel {
                         entity.setGateway((String) networkDialogModel.getGateway().getEntity());
                     }
 
-                    entity.setQosOverridden(networkDialogModel.getQosOverridden().getEntity());
-                    entity.setQos(networkDialogModel.getQosModel().flush());
+                    if (networkDialogModel.getQosModel().getIsAvailable()) {
+                        entity.setQosOverridden(networkDialogModel.getQosOverridden().getEntity());
+                        entity.setQos(networkDialogModel.getQosModel().flush());
+                    }
 
                     if ((Boolean) networkDialogModel.getIsToSync().getEntity()) {
                         networksToSync.add(logicalNetwork.getName());

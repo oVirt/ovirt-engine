@@ -75,6 +75,10 @@ public class BaseNetworkQosModel extends Model {
     }
 
     public boolean validate() {
+        if (!getIsAvailable()) {
+            return true;
+        }
+
         getInbound().validate();
         getOutbound().validate();
 
