@@ -2500,9 +2500,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot disable VirtIO-SCSI when disks with a VirtIO-SCSI interface are plugged into the VM.")
     String CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS();
 
-    // Suspected (not in use?)
     @DefaultStringValue("Cannot Login. User Password has expired, Please change your password.")
     String USER_PASSWORD_EXPIRED();
+
+    @DefaultStringValue("Cannot Login. User Password has expired. Use the following URL to change the password: ${URL}")
+    String USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED();
 
     @DefaultStringValue("Cannot Login. The Domain provided is not configured, please contact your system administrator.")
     String USER_CANNOT_LOGIN_DOMAIN_NOT_SUPPORTED();
