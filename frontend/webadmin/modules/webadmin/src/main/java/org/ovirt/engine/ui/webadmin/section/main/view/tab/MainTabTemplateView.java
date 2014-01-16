@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -44,6 +45,20 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
             }
         };
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VmTemplate> versionNameColumn = new TextColumnWithTooltip<VmTemplate>() {
+            @Override
+            public String getValue(VmTemplate object) {
+                if (object.getId().equals(object.getBaseTemplateId())) {
+                    return ""; //$NON-NLS-1$
+                }
+
+                return StringFormat.format("%s (%s)",  //$NON-NLS-1$
+                        getMainModel().resolveBaseTemplateNameForTemplate(object.getId()),
+                        object.getTemplateVersionName() != null ? object.getTemplateVersionName() : " "); //$NON-NLS-1$
+            }
+        };
+        getTable().addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VmTemplate> commentColumn = new CommentColumn<VmTemplate>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$

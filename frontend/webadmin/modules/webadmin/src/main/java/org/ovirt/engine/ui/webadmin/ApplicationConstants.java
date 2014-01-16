@@ -1694,6 +1694,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String descriptionTemplate();
 
+    @DefaultStringValue("Version")
+    String versionTemplate();
+
     @DefaultStringValue("Edit")
     String editTemplate();
 
