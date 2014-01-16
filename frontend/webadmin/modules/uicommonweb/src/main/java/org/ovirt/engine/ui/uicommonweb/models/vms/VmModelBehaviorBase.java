@@ -127,6 +127,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
+    protected List<VmTemplate> filterNotBaseTemplates(List<VmTemplate> templates) {
+        List<VmTemplate> baseTemplates = new ArrayList<VmTemplate>();
+        for (VmTemplate template : templates) {
+            if (template.getId().equals(template.getBaseTemplateId())) {
+                baseTemplates.add(template);
+            }
+        }
+
+        return baseTemplates;
+    }
+
     public boolean validate()
     {
         return true;

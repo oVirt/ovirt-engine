@@ -28,6 +28,10 @@
 			padding-bottom: 5px;
 			padding-top: 10px;
 		}
+
+		.generalExpanderContent {
+			padding-left: 15px;
+		}
 	</ui:style>
 
 	<g:FlowPanel>
@@ -36,6 +40,11 @@
 		<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
 		<e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" />
 		<e:ListModelListBoxEditor ui:field="quotaEditor" />
+		<ge:EntityModelCheckBoxEditor ui:field="isSubTemplateEditor"/>
+		<g:FlowPanel ui:field="subTemplateExpanderContent" addStyleNames="{style.generalExpanderContent}">
+			<e:ListModelTypeAheadListBoxEditor ui:field="baseTemplateEditor" />
+			<ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" />
+		</g:FlowPanel>
 		<g:Label ui:field="disksAllocationLabel" addStyleNames="{style.disksAllocationLabel}" />
 		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="145px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />
 		<g:FlowPanel>

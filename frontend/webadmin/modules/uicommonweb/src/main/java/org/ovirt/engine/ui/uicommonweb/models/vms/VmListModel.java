@@ -1321,7 +1321,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    public void postNameUniqueCheck()
+    private void postNameUniqueCheck()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         VM vm = (VM) getSelectedItem();
@@ -1382,6 +1382,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
         model.startProgress(null);
         addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        if (model.getIsSubTemplate().getEntity()) {
+            addVmTemplateParameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
+            addVmTemplateParameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
+        }
 
         Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
