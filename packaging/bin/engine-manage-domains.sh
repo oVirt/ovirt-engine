@@ -11,16 +11,17 @@ usage() {
 	cat << __EOF__
 engine-manage-domains: add/edit/delete/validate/list domains
 USAGE:
-        engine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions -forceDelete -ldapServers=LDAP_SERVERS] -report
+        engine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions -forceDelete -ldapServers=LDAP_SERVERS -changePasswordUrl] -report
 Where:
-        ACTION             action to perform (add/edit/delete/validate/list). See details below.
-        DOMAIN             (mandatory for add, edit and delete) the domain you wish to perform the action on.
-        PROVIDER           (mandatory for add, optional for edit) the LDAP provider type of server used for the domain. Among the supported providers IPA, RHDS, ITDS, ActiveDirectory and OpenLDAP.
-        USER               (optional for edit, mandatory for add) the domain user.
-        PASSWORD_FILE      (optional for edit, mandatory for add) a file containing the password in the first line.
-        interactive        alternative for using -passwordFile - read the password interactively.
-        PATH               (optional) use the given alternate configuration file.
-        LDAP_SERVERS       (optional) a comma delimited list of LDAP servers to be set to the domain.
+        ACTION             	action to perform (add/edit/delete/validate/list). See details below.
+        DOMAIN             	(mandatory for add, edit and delete) the domain you wish to perform the action on.
+        PROVIDER           	(mandatory for add, optional for edit) the LDAP provider type of server used for the domain. Among the supported providers IPA, RHDS, ITDS, ActiveDirectory and OpenLDAP.
+        USER               	(optional for edit, mandatory for add) the domain user.
+        PASSWORD_FILE      	(optional for edit, mandatory for add) a file containing the password in the first line.
+        interactive        	alternative for using -passwordFile - read the password interactively.
+        PATH               	(optional) use the given alternate configuration file.
+        LDAP_SERVERS       	(optional) a comma delimited list of LDAP servers to be set to the domain.
+        CHANGE_PASSWORD_URL	(optional) a URL to be returned to the user in case the password has expired.
 
         Available actions:
         add
@@ -100,6 +101,7 @@ AdUserId=
 LdapServers=
 LDAPProviderTypes=
 LDAPServerPort=
+ChangePasswordUrl=
 __EOF__
 
 #

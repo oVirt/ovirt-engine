@@ -615,6 +615,8 @@ select fn_db_add_config_value('EnableVdsHaReservation','true','general');
 select fn_db_add_config_value('VdsHaReservationIntervalInMinutes','5','general');
 
 select fn_db_add_config_value('DefaultMaximumMigrationDowntime','0','general');
+--Password URL change
+select fn_db_add_config_value('ChangePasswordUrl','','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
