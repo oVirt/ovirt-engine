@@ -16,8 +16,10 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -36,6 +38,10 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public NewTemplateVmModelBehavior(VM vm)
     {
         this.vm = vm;
+    }
+
+    protected VM getVm() {
+        return vm;
     }
 
     @Override
@@ -106,6 +112,93 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 },
                 getModel().getHash()),
                 vm.getStoragePoolId());
+    }
+
+    protected void updateTemplate()
+    {
+        final DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        StoragePool dataCenter = dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
+        if (dataCenter == null) {
+            return;
+        }
+
+        // Filter according to system tree selection.
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
+        {
+            StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
+
+            AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target1, Object returnValue1) {
+
+                            Object[] array1 = (Object[]) target1;
+                            NewTemplateVmModelBehavior behavior1 = (NewTemplateVmModelBehavior) array1[0];
+                            StorageDomain storage1 = (StorageDomain) array1[1];
+                            AsyncDataProvider.getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
+                                    returnValue1 },
+                                    new INewAsyncCallback() {
+                                        @Override
+                                        public void onSuccess(Object target2, Object returnValue2) {
+
+                                            Object[] array2 = (Object[]) target2;
+                                            NewTemplateVmModelBehavior behavior2 = (NewTemplateVmModelBehavior) array2[0];
+                                            ArrayList<VmTemplate> templatesByDataCenter =
+                                                    (ArrayList<VmTemplate>) array2[1];
+                                            ArrayList<VmTemplate> templatesByStorage =
+                                                    (ArrayList<VmTemplate>) returnValue2;
+                                            VmTemplate blankTemplate =
+                                                    Linq.firstOrDefault(templatesByDataCenter,
+                                                            new Linq.TemplatePredicate(Guid.Empty));
+                                            if (blankTemplate != null)
+                                            {
+                                                templatesByStorage.add(0, blankTemplate);
+                                            }
+
+                                            ArrayList<VmTemplate> templateList = AsyncDataProvider.filterTemplatesByArchitecture(templatesByStorage,
+                                                            dataCenterWithCluster.getCluster().getArchitecture());
+
+                                            behavior2.postInitTemplate(templateList);
+
+                                        }
+                                    }),
+                                    storage1.getId());
+
+                        }
+                    }, getModel().getHash()),
+                    dataCenter.getId());
+        }
+        else
+        {
+            AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
+
+                            NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
+
+                            ArrayList<VmTemplate> templates = (ArrayList<VmTemplate>) returnValue;
+
+                            behavior.postInitTemplate(AsyncDataProvider.filterTemplatesByArchitecture(templates,
+                                    dataCenterWithCluster.getCluster().getArchitecture()));
+
+                        }
+                    }, getModel().getHash()), dataCenter.getId());
+        }
+    }
+
+    private void postInitTemplate(List<VmTemplate> templates)
+    {
+        List<VmTemplate> baseTemplates = filterNotBaseTemplates(templates);
+
+        VmTemplate currentTemplate = Linq.firstOrDefault(templates,
+                new Linq.TemplatePredicate(vm.getVmtGuid()));
+
+        getModel().getBaseTemplate().setItems(baseTemplates);
+
+        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(baseTemplates,
+                new Linq.TemplatePredicate(currentTemplate.getBaseTemplateId())));
     }
 
     @Override
@@ -183,6 +276,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
         updateOSValues();
+        updateTemplate();
     }
 
     @Override
@@ -341,12 +435,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getIsTemplatePublic().setIsChangable(false);
         getModel().getDefaultCommand().setIsAvailable(false);
-    }
-
-    @Override
-    public boolean validate()
-    {
-        return super.validate();
     }
 
     @Override

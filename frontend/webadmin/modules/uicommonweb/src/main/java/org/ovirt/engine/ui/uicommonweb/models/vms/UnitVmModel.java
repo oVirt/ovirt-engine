@@ -447,6 +447,18 @@ public class UnitVmModel extends Model {
         privateTemplate = value;
     }
 
+    private NotChangableForVmInPoolListModel<VmTemplate> baseTemplate;
+
+    public ListModel<VmTemplate> getBaseTemplate()
+    {
+        return baseTemplate;
+    }
+
+    private void setBaseTemplate(NotChangableForVmInPoolListModel<VmTemplate> value)
+    {
+        baseTemplate = value;
+    }
+
     private NotChangableForVmInPoolListModel<VmType> vmType;
 
     public void setVmType(NotChangableForVmInPoolListModel<VmType> vmType) {
@@ -540,6 +552,18 @@ public class UnitVmModel extends Model {
     private void setComment(NotChangableForVmInPoolEntityModel<String> value)
     {
         privateComment = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<String> templateVersionName;
+
+    public EntityModel<String> getTemplateVersionName()
+    {
+        return templateVersionName;
+    }
+
+    private void setTemplateVersionName(NotChangableForVmInPoolEntityModel<String> value)
+    {
+        templateVersionName = value;
     }
 
     private NotChangableForVmInPoolListModel<String> privateDomain;
@@ -874,6 +898,16 @@ public class UnitVmModel extends Model {
     private void setCdImage(NotChangableForVmInPoolListModel<String> value)
     {
         privateCdImage = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Boolean> isSubTemplate;
+
+    public EntityModel<Boolean> getIsSubTemplate() {
+        return isSubTemplate;
+    }
+
+    public void setIsSubTemplate(NotChangableForVmInPoolEntityModel<Boolean> value) {
+        isSubTemplate = value;
     }
 
     private NotChangableForVmInPoolEntityModel<Boolean> cdAttached;
@@ -1276,6 +1310,10 @@ public class UnitVmModel extends Model {
 
         setSpiceProxyEnabled(new EntityModel<Boolean>());
         setSpiceProxy(new EntityModel<String>());
+
+        setIsSubTemplate(new NotChangableForVmInPoolEntityModel<Boolean>(false));
+        setTemplateVersionName(new NotChangableForVmInPoolEntityModel<String>());
+        setBaseTemplate(new NotChangableForVmInPoolListModel<VmTemplate>());
 
         setCdAttached(new NotChangableForVmInPoolEntityModel<Boolean>());
         getCdAttached().getEntityChangedEvent().addListener(new IEventListener() {
@@ -2573,6 +2611,13 @@ public class UnitVmModel extends Model {
     }
 
     private class NotChangableForVmInPoolEntityModel<T> extends EntityModel<T> {
+        public NotChangableForVmInPoolEntityModel() {
+        }
+
+        public NotChangableForVmInPoolEntityModel(T entity) {
+            super(entity);
+        }
+
         @Override
         public EntityModel<T> setIsChangable(boolean value) {
             if (!isVmAttachedToPool()) {

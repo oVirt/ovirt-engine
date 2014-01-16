@@ -1,15 +1,16 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -28,6 +29,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 
 public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
@@ -61,6 +63,25 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @Path(value = "dataCenterWithClustersList.selectedItem")
     @WithElementId("dataCenterWithCluster")
     public ListModelTypeAheadListBoxEditor<DataCenterWithCluster> clusterEditor;
+
+    @UiField(provided = true)
+    @Path(value = "isSubTemplate.entity")
+    @WithElementId("isSubTemplate")
+    EntityModelCheckBoxEditor isSubTemplateEditor;
+
+    @UiField
+    @Ignore
+    Panel subTemplateExpanderContent;
+
+    @UiField(provided = true)
+    @Path(value = "baseTemplate.selectedItem")
+    @WithElementId("baseTemplate")
+    public ListModelTypeAheadListBoxEditor<VmTemplate> baseTemplateEditor;
+
+    @UiField
+    @Path(value = "templateVersionName.entity")
+    @WithElementId("templateVersionName")
+    StringEntityModelTextBoxEditor templateVersionNameEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -117,6 +138,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     void addStyle() {
         isTemplatePublicEditor.setContentWidgetStyleName(style.editorLabel());
         copyVmPermissions.setContentWidgetStyleName(style.editorLabel());
+        isSubTemplateEditor.setContentWidgetStyleName(style.editorLabel());
     }
 
     void initListBoxEditors() {
@@ -150,11 +172,36 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
                 return object.getQuotaName();
             }
         });
+
+        baseTemplateEditor = new ListModelTypeAheadListBoxEditor<VmTemplate>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<VmTemplate>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(VmTemplate data) {
+                        return data.getName();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(VmTemplate data) {
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                data.getName(),
+                                data.getDescription()
+                        );
+                    }
+                });
+    }
+
+    private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
+        return applicationTemplates.typeAheadNameDescription(
+                name != null ? name : "",
+                description != null ? description : "")
+                .asString();
     }
 
     void initCheckBoxEditors() {
         isTemplatePublicEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         copyVmPermissions = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isSubTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize(CommonApplicationConstants constants) {
@@ -166,6 +213,9 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         isTemplatePublicEditor.setLabel(constants.makeTemplateIsTemplatePublicEditorLabel());
         copyVmPermissions.setLabel(constants.copyVmPermissions());
         disksAllocationLabel.setText(constants.disksAllocation());
+        isSubTemplateEditor.setLabel(constants.createAsSubTemplate());
+        baseTemplateEditor.setLabel(constants.baseTemplate());
+        templateVersionNameEditor.setLabel(constants.templateVersionName());
     }
 
     @Override
@@ -186,6 +236,14 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
                 if ("Message".equals(propName)) { //$NON-NLS-1$
                     appendMessage(model.getMessage());
                 }
+            }
+        });
+
+        subTemplateExpanderContent.setVisible(false);
+        model.getIsSubTemplate().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                subTemplateExpanderContent.setVisible(model.getIsSubTemplate().getEntity());
             }
         });
     }
@@ -212,6 +270,9 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         commentEditor.setTabIndex(nextTabIndex++);
         clusterEditor.setTabIndex(nextTabIndex++);
         quotaEditor.setTabIndex(nextTabIndex++);
+        isSubTemplateEditor.setTabIndex(nextTabIndex++);
+        baseTemplateEditor.setTabIndex(nextTabIndex++);
+        templateVersionNameEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
         isTemplatePublicEditor.setTabIndex(nextTabIndex++);
         copyVmPermissions.setTabIndex(nextTabIndex++);

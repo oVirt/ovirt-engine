@@ -55,11 +55,11 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
-import org.ovirt.engine.ui.uicommonweb.models.vms.NewTemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalExistingVmModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalNewTemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalNewVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalRunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
@@ -514,7 +514,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
 
         VM vm = (VM) selectedItem.getEntity();
-        UnitVmModel windowModel = new UnitVmModel(new NewTemplateVmModelBehavior(vm));
+        UnitVmModel windowModel = new UnitVmModel(new UserPortalNewTemplateVmModelBehavior(vm));
         setWindow(windowModel);
         windowModel.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
         windowModel.setHashName("new_template"); //$NON-NLS-1$
@@ -587,7 +587,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
     }
 
-    public void postNameUniqueCheck(UserPortalListModel userPortalListModel)
+    private void postNameUniqueCheck(UserPortalListModel userPortalListModel)
     {
         UnitVmModel model = (UnitVmModel) userPortalListModel.getWindow();
         UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
@@ -648,6 +648,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         addVmTemplateParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
+        if (model.getIsSubTemplate().getEntity()) {
+            addVmTemplateParameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
+            addVmTemplateParameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
+        }
 
         Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
