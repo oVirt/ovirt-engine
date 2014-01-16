@@ -79,6 +79,7 @@ public class ManageDomains {
     private boolean reportAllErrors;
     private boolean addPermissions;
     private boolean useDnsLookup;
+    private boolean changePasswordUrl;
 
     private final static Logger log = Logger.getLogger(ManageDomains.class);
     private static final String DEFAULT_LDAP_SERVER_PORT = "389";
@@ -97,6 +98,7 @@ public class ManageDomains {
         provider,
         forceDelete,
         ldapServers,
+        changePasswordUrl,
     }
 
     public enum ActionType {
@@ -195,6 +197,9 @@ public class ManageDomains {
         if (parser.hasArg(Arguments.addPermissions.name())) {
             util.addPermissions = true;
         }
+        if (parser.hasArg(Arguments.changePasswordUrl.name())) {
+            util.changePasswordUrl = true;
+        }
 
         try {
             // it's existence is checked during the parser validation
@@ -251,6 +256,11 @@ public class ManageDomains {
             if (ldapPort == null) {
                 ldapPort = DEFAULT_LDAP_SERVER_PORT;
             }
+            String changePasswordUrl =
+                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.ChangePasswordUrl);
+            if (changePasswordUrl == null) {
+                changePasswordUrl = "";
+            }
 
             configurationProvider =
                     new ConfigurationProvider(adUserName,
@@ -261,7 +271,7 @@ public class ManageDomains {
                             adUserId,
                             ldapProviderTypes,
                             utilityConfiguration.getEngineConfigExecutablePath(),
-                            engineConfigProperties, ldapPort);
+                            engineConfigProperties, ldapPort, changePasswordUrl);
 
         } catch (Throwable e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CURRENT_CONFIGURATION, e.getMessage());
@@ -333,6 +343,26 @@ public class ManageDomains {
             sb.append(" " + t.name() + "\n");
         }
         throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND, sb.toString());
+    }
+
+    protected String getChangePasswordUrl(CLIParser parser) throws ManageDomainsResult {
+        if (!changePasswordUrl) {
+            return null;
+        }
+
+        String changePasswordUrl = parser.getArg(Arguments.changePasswordUrl.name());
+        if (StringUtils.isEmpty(changePasswordUrl)) {
+            throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
+                    "Password change URL must not be empty");
+        }
+        try {
+            URL url = new URL(changePasswordUrl);
+            log.debug("Validated that " + url + " is in correct format");
+        } catch (MalformedURLException e) {
+            throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
+                    "The provided string for Password change URL is not a valid URL");
+        }
+        return changePasswordUrl;
     }
 
     private String getPasswordInput(CLIParser parser) throws ManageDomainsResult {
@@ -498,6 +528,7 @@ public class ManageDomains {
         List<String> ldapServers = getLdapServers(parser, domainName);
         validateKdcServers(authMode, domainName);
         domainNameEntry.setValueForDomain(domainName, null);
+        String changePasswordUrlStr = getChangePasswordUrl(parser);
 
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
         String currentAdUserPasswordEntry = configurationProvider.getConfigValue(ConfigValues.AdUserPassword);
@@ -506,6 +537,7 @@ public class ManageDomains {
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String currentLDAPProviderTypes = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
         String ldapServerPort = configurationProvider.getConfigValue(ConfigValues.LDAPServerPort);
+        String currentChangePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordUrl);
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
@@ -519,6 +551,9 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentAdUserIdEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry ldapProviderTypesEntry =
                 new DomainsConfigurationEntry(currentLDAPProviderTypes, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+        DomainsConfigurationEntry changePasswordUrlEntry =
+                new DomainsConfigurationEntry(currentChangePasswordUrl, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+
 
         LdapProviderType ldapProviderType = getLdapProviderType(parser);
         adUserNameEntry.setValueForDomain(domainName, userName);
@@ -526,6 +561,10 @@ public class ManageDomains {
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
         setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
+        if (changePasswordUrl) {
+            changePasswordUrlEntry.setValueForDomain(domainName, changePasswordUrlStr);
+        }
+
 
 
         testConfiguration(domainName,
@@ -550,7 +589,7 @@ public class ManageDomains {
                 authModeEntry,
                 ldapServersEntry,
                 adUserIdEntry,
-                ldapProviderTypesEntry);
+                ldapProviderTypesEntry, changePasswordUrlEntry);
 
         printSuccessMessage(domainName, "added");
     }
@@ -605,6 +644,7 @@ public class ManageDomains {
     }
 
     public void editDomain(CLIParser parser) throws ManageDomainsResult {
+        System.out.println("editting domain");
         String authMode;
         String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
         authMode = getDomainAuthMode(domainName);
@@ -627,6 +667,7 @@ public class ManageDomains {
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String currentLdapProviderTypeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
         String ldapServerPort = configurationProvider.getConfigValue(ConfigValues.LDAPServerPort);
+        String currentChangePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordUrl);
 
 
         DomainsConfigurationEntry adUserNameEntry =
@@ -639,6 +680,9 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentAdUserIdEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry ldapProviderTypeEntry =
                 new DomainsConfigurationEntry(currentLdapProviderTypeEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+        DomainsConfigurationEntry changePaswordUrlEntry =
+                new DomainsConfigurationEntry(currentChangePasswordUrl, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+
 
         if (userName != null) {
             adUserNameEntry.setValueForDomain(domainName, userName);
@@ -663,6 +707,9 @@ public class ManageDomains {
         if (ldapProviderType != null) {
             ldapProviderTypeEntry.setValueForDomain(domainName, ldapProviderType.name());
         }
+        if (parser.hasArg(Arguments.changePasswordUrl.name())) {
+            changePaswordUrlEntry.setValueForDomain(domainName, getChangePasswordUrl(parser));
+        }
 
         testConfiguration(domainName,
                 domainNameEntry,
@@ -685,7 +732,8 @@ public class ManageDomains {
                 authModeEntry,
                 ldapServersEntry,
                 adUserIdEntry,
-                ldapProviderTypeEntry);
+                ldapProviderTypeEntry,
+                changePaswordUrlEntry);
 
         printSuccessMessage(domainName, "edited");
     }
@@ -930,7 +978,8 @@ public class ManageDomains {
             DomainsConfigurationEntry authModeEntry,
             DomainsConfigurationEntry ldapServersEntry,
             DomainsConfigurationEntry adUserIdEntry,
-            DomainsConfigurationEntry ldapProviderTypeEntry) throws ManageDomainsResult {
+            DomainsConfigurationEntry ldapProviderTypeEntry, DomainsConfigurationEntry changePasswordUrlEntry)
+            throws ManageDomainsResult {
         // Update the configuration
         configurationProvider.setConfigValue(ConfigValues.AdUserName,
                 adUserNameEntry);
@@ -952,6 +1001,10 @@ public class ManageDomains {
 
         configurationProvider.setConfigValue(ConfigValues.LDAPProviderTypes,
                 ldapProviderTypeEntry);
+
+        if (changePasswordUrl) {
+            configurationProvider.setConfigValue(ConfigValues.ChangePasswordUrl, changePasswordUrlEntry);
+        }
     }
 
     public void deleteDomain(String domainName, boolean forceDelete) throws ManageDomainsResult {
@@ -983,6 +1036,7 @@ public class ManageDomains {
         String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
         String currentAdUserId = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String ldapProviderType = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
+        String changePasswordUrl = configurationProvider.getConfigValue(ConfigValues.ChangePasswordUrl);
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
@@ -997,12 +1051,16 @@ public class ManageDomains {
         DomainsConfigurationEntry ldapProviderTypeEntry =
                 new DomainsConfigurationEntry(ldapProviderType, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
+        DomainsConfigurationEntry changePasswordUrlEntry =
+                new DomainsConfigurationEntry(changePasswordUrl, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+
         adUserNameEntry.removeValueForDomain(domainName);
         adUserIdEntry.removeValueForDomain(domainName);
         adUserPasswordEntry.removeValueForDomain(domainName);
         authModeEntry.removeValueForDomain(domainName);
         ldapServersEntry.removeValueForDomain(domainName);
         ldapProviderTypeEntry.removeValueForDomain(domainName);
+        changePasswordUrlEntry.removeValueForDomain(domainName);
 
         // Update the configuration
         setConfigurationEntries(domainNameEntry,
@@ -1011,7 +1069,7 @@ public class ManageDomains {
                 authModeEntry,
                 ldapServersEntry,
                 adUserIdEntry,
-                ldapProviderTypeEntry);
+                ldapProviderTypeEntry, changePasswordUrlEntry);
 
         System.out.println(String.format(DELETE_DOMAIN_SUCCESS, domainName));
     }
