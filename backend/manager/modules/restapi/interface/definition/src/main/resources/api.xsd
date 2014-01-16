@@ -1285,6 +1285,7 @@
           <xs:element name="ha_reservation" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="ballooning_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="ksm" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>

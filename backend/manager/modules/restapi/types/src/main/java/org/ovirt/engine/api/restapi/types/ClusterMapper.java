@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.ErrorHandling;
+import org.ovirt.engine.api.model.KSM;
 import org.ovirt.engine.api.model.MemoryOverCommit;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.MigrateOnError;
@@ -95,6 +96,9 @@ public class ClusterMapper {
         if (model.isSetBallooningEnabled()) {
             entity.setEnableBallooning(model.isBallooningEnabled());
         }
+        if (model.isSetKsm() && model.getKsm().isSetEnabled()) {
+            entity.setEnableKsm(model.getKsm().isEnabled());
+        }
         if (model.isSetDisplay() && model.getDisplay().isSetProxy()) {
             entity.setSpiceProxy("".equals(model.getDisplay().getProxy()) ? null : model.getDisplay().getProxy());
         }
@@ -137,6 +141,8 @@ public class ClusterMapper {
         model.setTrustedService(entity.supportsTrustedService());
         model.setHaReservation(entity.supportsHaReservation());
         model.setBallooningEnabled(entity.isEnableBallooning());
+        model.setKsm(new KSM());
+        model.getKsm().setEnabled(entity.isEnableKsm());
         if (StringUtils.isNotBlank(entity.getSpiceProxy())) {
             Display display = new Display();
             display.setProxy(entity.getSpiceProxy());
