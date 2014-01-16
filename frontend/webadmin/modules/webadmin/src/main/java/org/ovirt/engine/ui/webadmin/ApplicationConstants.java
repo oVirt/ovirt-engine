@@ -142,6 +142,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable HA Reservation")
     String clusterPolicyEnableHaReservationLabel();
 
+    @DefaultStringValue("KSM control")
+    String ksmLabelTitle();
+
+    @DefaultStringValue("Enable KSM")
+    String enableKsmLabel();
+
     @DefaultStringValue("Enable Memory Balloon Optimization")
     String enableBallooningLabel();
 

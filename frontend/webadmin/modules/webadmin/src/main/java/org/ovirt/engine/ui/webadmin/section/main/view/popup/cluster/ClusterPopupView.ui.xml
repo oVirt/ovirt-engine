@@ -14,7 +14,7 @@
 			background-color: #D3D3D3;
 			margin-bottom: 8px;
 			margin-top: 4px;
-			margin-right: 3px;			
+			margin-right: 3px;
 			padding-top: 6px;
 			padding-bottom: 6px;
 		}
@@ -29,7 +29,7 @@
 			margin-bottom: 10px;
 			width: 300px;
 		}
-		
+
 		.label {
 			width: 100%;
 		}
@@ -154,7 +154,7 @@
 							<g:FlowPanel>
 								<g:FlowPanel ui:field="dataCenterPanel" addStyleNames="{style.generalTabTopDecorator}">
 									<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
-								</g:FlowPanel>	
+								</g:FlowPanel>
 								<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 								<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 								<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
@@ -199,6 +199,10 @@
                                 <g:FlowPanel addStyleNames="{style.nestedSubsequentPanel}">
                                     <g:Label text="{constants.ballooningLabelTitle}" addStyleNames="{style.panelTitle}" />
                                     <ge:EntityModelCheckBoxEditor ui:field="enableBallooning" />
+                                </g:FlowPanel>
+                                <g:FlowPanel addStyleNames="{style.nestedSubsequentPanel}">
+                                    <g:Label text="{constants.ksmLabelTitle}" addStyleNames="{style.panelTitle}" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableKsm" />
                                 </g:FlowPanel>
 							</g:FlowPanel>
 						</t:content>

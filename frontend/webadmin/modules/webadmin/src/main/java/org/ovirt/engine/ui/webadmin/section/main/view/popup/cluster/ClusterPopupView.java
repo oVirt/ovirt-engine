@@ -263,6 +263,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     protected KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
     @UiField(provided = true)
+    @Path(value = "enableKsm.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor enableKsm;
+
+    @UiField(provided = true)
     @Path(value = "enableBallooning.entity")
     @WithElementId
     EntityModelCheckBoxEditor enableBallooning;
@@ -393,6 +398,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         enableHaReservationEditor.setLabel(constants.clusterPolicyEnableHaReservationLabel());
         clusterPolicyEditor.setLabel(constants.clusterPolicySelectPolicyLabel());
 
+        enableKsm.setLabel(constants.enableKsmLabel());
         enableBallooning.setLabel(constants.enableBallooningLabel());
 
         schedulerOptimizationPanelTitle.setText(constants.schedulerOptimizationPanelLabel());
@@ -472,6 +478,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         enableTrustedServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableHaReservationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        enableKsm = new EntityModelCheckBoxEditor(Align.RIGHT);
+        enableKsm.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
 
         enableBallooning = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableBallooning.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
