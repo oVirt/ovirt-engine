@@ -46,6 +46,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private boolean enableBallooning;
 
+    private boolean enableKsm;
+
     private boolean countThreadsAsCores;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
@@ -277,6 +279,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.clusterPolicyProperties = clusterPolicyProperties;
     }
 
+    public boolean isEnableKsm() {
+        return enableKsm;
+    }
+
+    public void setEnableKsm(boolean enableKsm) {
+        this.enableKsm = enableKsm;
+    }
+
     public boolean isEnableBallooning() {
         return enableBallooning;
     }
@@ -341,6 +351,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (haReservation ? 1231 : 1237);
         result = prime * result + ((clusterPolicyName == null) ? 0 : clusterPolicyName.hashCode());
         result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
+        result = prime * result + (enableKsm ? 1231 : 1237);
         result = prime * result + (enableBallooning ? 1231 : 1237);
         result = prime * result + ((optimizationType == null) ? 0 : optimizationType.hashCode());
         return result;
@@ -379,6 +390,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(clusterPolicyId, other.clusterPolicyId)
                 && ObjectUtils.objectsEqual(clusterPolicyName, other.clusterPolicyName)
                 && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties)
+                && enableKsm == other.enableKsm
                 && enableBallooning == other.enableBallooning
                 && detectEmulatedMachine == other.detectEmulatedMachine
                 && optimizationType == other.optimizationType);
