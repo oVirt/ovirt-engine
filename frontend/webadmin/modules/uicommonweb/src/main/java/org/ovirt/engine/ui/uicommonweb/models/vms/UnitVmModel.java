@@ -162,6 +162,7 @@ public class UnitVmModel extends Model {
             getPrestartedVms().setIsChangable(false);
             getMaxAssignedVmsPerUser().setIsChangable(false);
 
+            getBaseTemplate().setIsChangable(false);
             getTemplate().setIsChangable(false);
             getMemSize().setIsChangable(false);
             getTotalCPUCores().setIsChangable(false);
@@ -1314,6 +1315,7 @@ public class UnitVmModel extends Model {
         setIsSubTemplate(new NotChangableForVmInPoolEntityModel<Boolean>(false));
         setTemplateVersionName(new NotChangableForVmInPoolEntityModel<String>());
         setBaseTemplate(new NotChangableForVmInPoolListModel<VmTemplate>());
+        getBaseTemplate().getSelectedItemChangedEvent().addListener(this);
 
         setCdAttached(new NotChangableForVmInPoolEntityModel<Boolean>());
         getCdAttached().getEntityChangedEvent().addListener(new IEventListener() {
@@ -1581,6 +1583,9 @@ public class UnitVmModel extends Model {
             else if (sender == getCpuSharesAmountSelection())
             {
                 behavior.updateCpuSharesAmountChangeability();
+            }
+            else if (sender == getBaseTemplate()) {
+                behavior.baseTemplateSelectedItemChanged();
             }
         }
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))

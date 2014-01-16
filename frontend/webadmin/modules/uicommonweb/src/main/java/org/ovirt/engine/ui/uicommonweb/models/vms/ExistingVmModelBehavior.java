@@ -153,6 +153,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
+    protected void baseTemplateSelectedItemChanged() {
+    }
+
+    @Override
     public void template_SelectedItemChanged()
     {
         // This method will be called even if a VM created from Blank template.
@@ -354,9 +358,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         }
     }
 
-    public void initTemplate()
+    protected void initTemplate()
     {
-        setupTemplate(vm, getModel().getTemplate());
+        setupTemplate(vm.getVmtGuid(), vm.isUseLatestVersion());
     }
 
     public void initCdImage()

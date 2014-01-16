@@ -51,9 +51,11 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class PoolListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
+    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private UICommand privateNewCommand;
 
@@ -504,6 +506,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setVmType(model.getVmType().getSelectedItem());
                         vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
                         vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
+
+                        vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
                         AddVmPoolWithVmsParameters param =
                                 new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity(), 0);

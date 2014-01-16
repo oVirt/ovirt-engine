@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -65,6 +66,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -168,6 +170,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "comment.entity")
     @WithElementId("comment")
     public StringEntityModelTextBoxEditor commentEditor;
+
+    @UiField(provided = true)
+    @Path(value = "baseTemplate.selectedItem")
+    @WithElementId("baseTemplate")
+    public ListModelTypeAheadListBoxEditor<VmTemplate> baseTemplateEditor;
 
     @UiField(provided = true)
     @Path(value = "template.selectedItem")
@@ -869,7 +876,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 },
                 new ModeSwitchingVisibilityRenderer());
 
-        templateEditor = new ListModelTypeAheadListBoxEditor<VmTemplate>(
+        baseTemplateEditor = new ListModelTypeAheadListBoxEditor<VmTemplate>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<VmTemplate>() {
 
                     @Override
@@ -887,6 +894,36 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 },
                 new ModeSwitchingVisibilityRenderer());
 
+        templateEditor = new ListModelTypeAheadListBoxEditor<VmTemplate>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<VmTemplate>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(VmTemplate data) {
+                        return getDisplayableTemplateVersionName(data);
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(VmTemplate data) {
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                getDisplayableTemplateVersionName(data),
+                                data.getDescription()
+                        );
+                    }
+
+                    private String getDisplayableTemplateVersionName(VmTemplate template) {
+                        String versionName = template.getTemplateVersionName();
+                        if (ConstantsManager.getInstance().getConstants().latestTemplateVersionName().equals(versionName)) {
+                            return constants.latest();
+                        }
+
+                        versionName = template.getId().equals(template.getBaseTemplateId()) ?
+                                constants.baseTemplate() : template.getTemplateVersionName();
+
+                        return (versionName == null ? "" : versionName) //$NON-NLS-1$
+                                + StringFormat.format(" (%d)", template.getTemplateVersionNumber()); //$NON-NLS-1$
+                    }
+                },
+                new ModeSwitchingVisibilityRenderer());
 
         oSTypeEditor = new ListModelListBoxEditor<Integer>(new AbstractRenderer<Integer>() {
             @Override
@@ -1017,7 +1054,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nameLabel.setText(constants.nameVmPopup());
         descriptionEditor.setLabel(constants.descriptionVmPopup());
         commentEditor.setLabel(constants.commentLabel());
-        templateEditor.setLabel(constants.basedOnTemplateVmPopup());
+        baseTemplateEditor.setLabel(constants.basedOnTemplateVmPopup());
+        templateEditor.setLabel(constants.templateSubVersion());
 
         oSTypeEditor.setLabel(constants.osVmPopup());
         vmTypeEditor.setLabel(constants.optimizedFor());
@@ -1447,6 +1485,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = generalTab.setTabIndexes(nextTabIndex);
         quotaEditor.setTabIndex(nextTabIndex++);
         oSTypeEditor.setTabIndex(nextTabIndex++);
+        baseTemplateEditor.setTabIndex(nextTabIndex++);
         templateEditor.setTabIndex(nextTabIndex++);
 
         nameEditor.setTabIndex(nextTabIndex++);
@@ -1622,6 +1661,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         quotaEditor.setEnabled(false);
         dataCenterWithClusterEditor.setEnabled(false);
         templateEditor.setEnabled(false);
+        baseTemplateEditor.setEnabled(false);
         vmTypeEditor.setEnabled(false);
     }
 

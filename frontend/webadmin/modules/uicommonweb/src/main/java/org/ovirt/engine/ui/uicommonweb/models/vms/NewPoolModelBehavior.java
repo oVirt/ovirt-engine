@@ -9,9 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NewPoolNameLengthValidation;
@@ -38,8 +36,30 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    protected void setupSelectedTemplate(ListModel model, List<VmTemplate> templates) {
-        getModel().getTemplate().setSelectedItem(Linq.<VmTemplate> firstOrDefault(templates));
+    public void postDataCenterWithClusterSelectedItemChanged() {
+        super.postDataCenterWithClusterSelectedItemChanged();
+
+        final DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        StoragePool dataCenter = getModel().getSelectedDataCenter();
+        if (dataCenter == null) {
+            return;
+        }
+
+        AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target1, Object returnValue1) {
+
+                List<VmTemplate> baseTemplates =
+                        filterNotBaseTemplates((List<VmTemplate>) returnValue1);
+
+                List<VmTemplate> filteredTemplates =
+                        AsyncDataProvider.filterTemplatesByArchitecture(baseTemplates,
+                                dataCenterWithCluster.getCluster().getArchitecture());
+
+                getModel().getBaseTemplate().setItems(filteredTemplates);
+            }
+        }), dataCenter.getId());
     }
 
     @Override

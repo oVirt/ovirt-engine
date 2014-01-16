@@ -12,14 +12,12 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.validation.ExistingPoolNameLengthValidation;
@@ -35,6 +33,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
+        initTemplate();
         super.initialize(systemTreeSelectedItem);
 
         if (!StringHelper.isNullOrEmpty(pool.getVmPoolSpiceProxy())) {
@@ -52,18 +51,9 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    protected void setupSelectedTemplate(ListModel model, List<VmTemplate> templates) {
-        setupTemplate(pool, model);
-    }
+    public void postDataCenterWithClusterSelectedItemChanged() {
+        super.postDataCenterWithClusterSelectedItemChanged();
 
-    @Override
-    public void template_SelectedItemChanged() {
-        getModel().setIsDisksAvailable(true);
-        updateHostPinning(pool.getMigrationSupport());
-    }
-
-    @Override
-    protected void postInitTemplate() {
         setupWindowModelFrom(pool.getStaticData());
         getModel().setIsDisksAvailable(true);
 
@@ -75,6 +65,21 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         getModel().getDataCenterWithClustersList()
                 .setSelectedItem((selectDataCenterWithCluster != null) ? selectDataCenterWithCluster
                         : Linq.firstOrDefault(dataCenterWithClusters));
+
+    }
+
+    public void initTemplate() {
+        setupTemplate(pool.getVmtGuid(), pool.isUseLatestVersion());
+    }
+
+    @Override
+    public void template_SelectedItemChanged() {
+        getModel().setIsDisksAvailable(true);
+        updateHostPinning(pool.getMigrationSupport());
+    }
+
+    @Override
+    protected void baseTemplateSelectedItemChanged() {
     }
 
     @Override

@@ -60,10 +60,19 @@ public interface CommonApplicationConstants extends Constants {
     String createAsSubTemplate();
 
     @DefaultStringValue("Root Template")
-    String baseTemplate();
+    String rootTemplate();
 
     @DefaultStringValue("Sub Version Name")
     String templateVersionName();
+
+    @DefaultStringValue("Template Sub Version")
+    String templateSubVersion();
+
+    @DefaultStringValue("latest")
+    String latest();
+
+    @DefaultStringValue("base template")
+    String baseTemplate();
 
     @DefaultStringValue("Disk ")
     String diskNamePrefix();

@@ -356,14 +356,16 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         }
     }
 
-    private void postInitTemplate(ArrayList<VmTemplate> templates)
+    private void postInitTemplate(List<VmTemplate> templates)
     {
+        List<VmTemplate> rootTemplates = filterNotBaseTemplates(templates);
+
         // If there was some template selected before, try select it again.
-        VmTemplate oldTemplate = getModel().getTemplate().getSelectedItem();
+        VmTemplate oldTemplate = getModel().getBaseTemplate().getSelectedItem();
 
-        getModel().getTemplate().setItems(templates);
+        getModel().getBaseTemplate().setItems(rootTemplates);
 
-        getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(templates,
+        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(rootTemplates,
                 oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
                         : new Linq.TemplatePredicate(Guid.Empty)));
 

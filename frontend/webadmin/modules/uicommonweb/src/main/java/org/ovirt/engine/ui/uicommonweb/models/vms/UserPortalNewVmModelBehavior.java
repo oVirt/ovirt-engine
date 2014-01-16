@@ -112,8 +112,10 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         initCdImage();
     }
 
-    private void initTemplates(ArrayList<VmTemplate> templates)
+    private void initTemplates(List<VmTemplate> templates)
     {
+        List<VmTemplate> rootTemplates = filterNotBaseTemplates(templates);
+
         // Filter templates list (include only templates that belong to the selected datacenter)
         ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
         VmTemplate blankTemplate = null;
@@ -124,7 +126,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
             return;
         }
 
-        for (VmTemplate template : templates)
+        for (VmTemplate template : rootTemplates)
         {
             Guid datacenterId =
                     template.getStoragePoolId() == null ? Guid.Empty : template.getStoragePoolId();
@@ -145,22 +147,21 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         // Sort list and position "Blank" template as first
         Collections.sort(templatesList, new NameableComparator());
-        if (blankTemplate != null && templates.contains(blankTemplate))
+        if (blankTemplate != null && rootTemplates.contains(blankTemplate))
         {
             templatesList.add(0, blankTemplate);
         }
 
-        ArrayList<VmTemplate> filteredTemplates = AsyncDataProvider.filterTemplatesByArchitecture(templatesList,
+        List<VmTemplate> filteredTemplates = AsyncDataProvider.filterTemplatesByArchitecture(templatesList,
                 dataCenterWithCluster.getCluster().getArchitecture());
 
         // If there was some template selected before, try select it again.
-        VmTemplate oldTemplate = getModel().getTemplate().getSelectedItem();
+        VmTemplate prevBaseTemplate = getModel().getBaseTemplate().getSelectedItem();
 
-        getModel().getTemplate().setItems(filteredTemplates);
+        getModel().getBaseTemplate().setItems(filteredTemplates);
 
-        getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(filteredTemplates,
-                oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
-                        : new Linq.TemplatePredicate(Guid.Empty)));
+        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(filteredTemplates,
+                new Linq.TemplatePredicate(prevBaseTemplate != null ? prevBaseTemplate.getId() : Guid.Empty)));
 
         updateIsDisksAvailable();
     }

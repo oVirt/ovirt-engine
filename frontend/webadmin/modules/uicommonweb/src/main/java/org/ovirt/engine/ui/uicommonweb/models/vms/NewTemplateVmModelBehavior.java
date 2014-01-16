@@ -443,4 +443,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             getModel().getOSType().setSelectedItem(vm.getOs());
         }
     }
+
+    @Override
+    protected void baseTemplateSelectedItemChanged() {
+    }
 }
