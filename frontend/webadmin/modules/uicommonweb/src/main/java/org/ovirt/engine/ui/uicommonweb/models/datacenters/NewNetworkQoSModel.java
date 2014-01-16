@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -31,6 +32,7 @@ public class NewNetworkQoSModel extends NetworkQoSModel {
                 boolean succeeded = false;
                 if (retVal != null && retVal.getSucceeded()) {
                     succeeded = true;
+                    networkQoS.setId((Guid) retVal.getActionReturnValue());
                 }
                 postSaveAction(succeeded);
             }
