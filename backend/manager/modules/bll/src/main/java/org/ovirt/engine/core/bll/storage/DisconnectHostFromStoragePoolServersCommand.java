@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class DisconnectHostFromStoragePoolServersCommand extends
-        ConnectHostToStoragePooServerCommandBase<HostStoragePoolParametersBase> {
+        ConnectHostToStoragePoolServerCommandBase<HostStoragePoolParametersBase> {
 
     public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);

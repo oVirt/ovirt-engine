@@ -23,7 +23,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class ConnectHostToStoragePoolServersCommand extends
-        ConnectHostToStoragePooServerCommandBase<HostStoragePoolParametersBase> {
+        ConnectHostToStoragePoolServerCommandBase<HostStoragePoolParametersBase> {
 
     public ConnectHostToStoragePoolServersCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);

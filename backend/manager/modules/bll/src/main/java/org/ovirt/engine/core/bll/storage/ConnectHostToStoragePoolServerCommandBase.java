@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
-public abstract class ConnectHostToStoragePooServerCommandBase<T extends StoragePoolParametersBase> extends
+public abstract class ConnectHostToStoragePoolServerCommandBase<T extends StoragePoolParametersBase> extends
         StorageHandlingCommandBase<T> {
     private List<StorageServerConnections> _connections;
     private List<StorageServerConnections> _isoConnections;
@@ -25,7 +25,7 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
     private boolean _needToConnectIso = false;
     private boolean _needToConnectExport = false;
 
-    public ConnectHostToStoragePooServerCommandBase(T parameters) {
+    public ConnectHostToStoragePoolServerCommandBase(T parameters) {
         super(parameters);
     }
 
