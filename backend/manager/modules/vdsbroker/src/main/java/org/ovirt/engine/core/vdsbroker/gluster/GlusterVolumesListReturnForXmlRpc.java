@@ -8,10 +8,12 @@ import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -33,6 +35,9 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     private static final String VOLUME_STATUS_ONLINE = "ONLINE";
     private static final String REPLICA_COUNT = "replicaCount";
     private static final String STRIPE_COUNT = "stripeCount";
+    private static final String BRICKS_INFO = "bricksInfo"; //contains brick name and server uuid
+    private static final String NAME = "name";
+    private static final String HOST_UUID = "hostUuid";
 
     private Guid clusterId;
     private final Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
@@ -88,7 +93,11 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         }
 
         try {
-            volume.setBricks(getBricks(volume.getId(), (Object[])map.get(BRICKS)));
+            if (map.get(BRICKS_INFO) != null && ((Object[])map.get(BRICKS_INFO)).length > 0) {
+                volume.setBricks(getBricks(volume.getId(), (Object[])map.get(BRICKS_INFO), true));
+            } else {
+                volume.setBricks(getBricks(volume.getId(), (Object[])map.get(BRICKS), false));
+            }
         } catch (Exception e) {
             log.errorFormat("Could not populate bricks of volume {0} on cluster {1}.", volume.getName(), clusterId, e);
         }
@@ -115,14 +124,20 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
      * @return
      * @throws Exception
      */
-    private List<GlusterBrickEntity> getBricks(Guid volumeId, Object[] brickList) throws Exception {
+    private List<GlusterBrickEntity> getBricks(Guid volumeId, Object[] brickList, boolean withUuid) throws Exception {
         List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
 
         int brickOrder = 0;
 
         try {
-            for (Object brick : brickList) {
-                bricks.add(getBrick(clusterId, volumeId, (String) brick, brickOrder++));
+            if (withUuid) {
+                for (Object brick : brickList) {
+                    bricks.add(getBrick(clusterId, volumeId, (Map<String, Object>) brick, brickOrder++));
+                }
+            } else {
+                for (Object brick : brickList) {
+                    bricks.add(getBrick(clusterId, volumeId, (String) brick, brickOrder++));
+                }
             }
         } catch (Exception e) {
             // We do not want the command to fail if bricks for one of the volumes could not be fetched. Hence log the
@@ -152,18 +167,48 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         String hostnameOrIp = brickParts[0];
         String brickDir = brickParts[1];
 
+        VdsStatic server = dbUtils.getServer(clusterId, hostnameOrIp);
+        if (server == null) {
+            log.warnFormat("Could not add brick {0} to volume {1} - server {2} not found in cluster {3}", brickInfo, volumeId, hostnameOrIp, clusterId);
+            return null;
+        }
+
+        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir);
+    }
+
+    private GlusterBrickEntity getBrick(Guid clusterId, Guid volumeId, Map<String, Object> brickInfoMap, int brickOrder) {
+        String brickName = (String) brickInfoMap.get(NAME);
+
+        String[] brickParts = brickName.split(":", -1);
+        if (brickParts.length != 2) {
+            throw new RuntimeException("Invalid brick representation [" + brickName + "]");
+        }
+
+        String hostUuid = (String) brickInfoMap.get(HOST_UUID);
+        String brickDir = brickParts[1];
+
+        GlusterServer glusterServer = dbUtils.getServerByUuid(Guid.createGuidFromString(hostUuid));
+        if (glusterServer == null) {
+            log.warnFormat("Could not add brick {0} to volume {1} - server uuid {2} not found in cluster {3}", brickName, volumeId, hostUuid, clusterId);
+            return null;
+        }
+        VdsStatic server = DbFacade.getInstance().getVdsStaticDao().get(glusterServer.getId());
+        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir);
+    }
+
+    private GlusterBrickEntity getBrickEntity(Guid clusterId,
+            Guid volumeId,
+            int brickOrder,
+            VdsStatic server,
+            String brickDir) {
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setVolumeId(volumeId);
         brick.setBrickOrder(brickOrder);
         brick.setBrickDirectory(brickDir);
 
-        VdsStatic server = dbUtils.getServer(clusterId, hostnameOrIp);
-        if (server == null) {
-            log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, clusterId);
-        } else {
-            brick.setServerId(server.getId());
-            brick.setServerName(server.getHostName());
-        }
+        brick.setServerId(server.getId());
+        brick.setServerName(server.getHostName());
+
         return brick;
     }
 
