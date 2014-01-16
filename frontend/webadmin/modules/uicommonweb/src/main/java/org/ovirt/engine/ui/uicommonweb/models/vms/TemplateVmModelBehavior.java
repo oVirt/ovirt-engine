@@ -32,6 +32,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     {
         super.initialize(systemTreeSelectedItem);
         getModel().getTemplate().setIsChangable(false);
+        getModel().getBaseTemplate().setIsChangable(false);
         getModel().getProvisioning().setIsChangable(false);
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getIsSoundcardEnabled().setIsChangable(true);
@@ -102,7 +103,14 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                 }
             }
         }), template.getId());
+
         getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());
+
+        setupBaseTemplate(template.getBaseTemplateId());
+    }
+
+    @Override
+    protected void baseTemplateSelectedItemChanged() {
     }
 
     @Override
@@ -150,33 +158,33 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     private void initTemplate()
     {
         // Update model state according to VM properties.
-        getModel().getName().setEntity(this.template.getName());
-        getModel().getDescription().setEntity(this.template.getDescription());
-        getModel().getComment().setEntity(this.template.getComment());
-        getModel().getMinAllocatedMemory().setEntity(this.template.getMinAllocatedMem());
+        getModel().getName().setEntity(template.getName());
+        getModel().getDescription().setEntity(template.getDescription());
+        getModel().getComment().setEntity(template.getComment());
+        getModel().getMinAllocatedMemory().setEntity(template.getMinAllocatedMem());
         getModel().getMinAllocatedMemory().setIsChangable(false);
-        getModel().getMemSize().setEntity(this.template.getMemSizeMb());
-        getModel().getOSType().setSelectedItem(this.template.getOsId());
-        getModel().getUsbPolicy().setSelectedItem(this.template.getUsbPolicy());
-        getModel().getNumOfMonitors().setSelectedItem(this.template.getNumOfMonitors());
-        getModel().getAllowConsoleReconnect().setEntity(this.template.isAllowConsoleReconnect());
-        getModel().setBootSequence(this.template.getDefaultBootSequence());
-        getModel().getIsHighlyAvailable().setEntity(this.template.isAutoStartup());
-        getModel().getTotalCPUCores().setEntity(Integer.toString(this.template.getNumOfCpus()));
-        getModel().getNumOfSockets().setSelectedItem(this.template.getNumOfSockets());
-        getModel().getIsStateless().setEntity(this.template.isStateless());
-        getModel().getIsRunAndPause().setEntity(this.template.isRunAndPause());
-        getModel().getIsDeleteProtected().setEntity(this.template.isDeleteProtected());
-        getModel().selectSsoMethod(this.template.getSsoMethod());
-        getModel().getIsSmartcardEnabled().setEntity(this.template.isSmartcardEnabled());
-        getModel().getVncKeyboardLayout().setSelectedItem(this.template.getVncKeyboardLayout());
-        getModel().setSelectedMigrationDowntime(this.template.getMigrationDowntime());
 
-        getModel().getKernel_parameters().setEntity(this.template.getKernelParams());
-        getModel().getKernel_path().setEntity(this.template.getKernelUrl());
-        getModel().getInitrd_path().setEntity(this.template.getInitrdUrl());
+        getModel().getMemSize().setEntity(template.getMemSizeMb());
+        getModel().getOSType().setSelectedItem(template.getOsId());
+        getModel().getUsbPolicy().setSelectedItem(template.getUsbPolicy());
+        getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
+        getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
+        getModel().setBootSequence(template.getDefaultBootSequence());
+        getModel().getIsHighlyAvailable().setEntity(template.isAutoStartup());
+        getModel().getTotalCPUCores().setEntity(Integer.toString(template.getNumOfCpus()));
+        getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
+        getModel().getIsStateless().setEntity(template.isStateless());
+        getModel().getIsRunAndPause().setEntity(template.isRunAndPause());
+        getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
+        getModel().selectSsoMethod(template.getSsoMethod());
+        getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
+        getModel().getVncKeyboardLayout().setSelectedItem(template.getVncKeyboardLayout());
 
-        getModel().getIsSingleQxlEnabled().setEntity(this.template.getSingleQxlPci());
+        getModel().getKernel_parameters().setEntity(template.getKernelParams());
+        getModel().getKernel_path().setEntity(template.getKernelUrl());
+        getModel().getInitrd_path().setEntity(template.getInitrdUrl());
+
+        getModel().getIsSingleQxlEnabled().setEntity(template.getSingleQxlPci());
 
         updateTimeZone(template.getTimeZone());
 
@@ -192,7 +200,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         {
             DisplayType displayType = model.getEntity();
 
-            if (displayType == this.template.getDefaultDisplayType())
+            if (displayType == template.getDefaultDisplayType())
             {
                 getModel().getDisplayProtocol().setSelectedItem(model);
                 break;
@@ -203,7 +211,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
         getModel().getVmInitModel().init(template);
 
-        initPriority(this.template.getPriority());
+        initPriority(template.getPriority());
     }
 
     private void initCdImage()

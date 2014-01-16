@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -82,9 +83,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class UserPortalListModel extends AbstractUserPortalListModel {
 
+    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final EventDefinition searchCompletedEventDefinition;
     private Event privateSearchCompletedEvent;
 
@@ -1135,7 +1138,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             UserPortalListModel userPortalListModel1 = (UserPortalListModel) model;
                             final UnitVmModel unitVmModel = (UnitVmModel) userPortalListModel1.getWindow();
 
-                            AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(gettempVm(),
+                            VM vm = gettempVm();
+                            vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+                            AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(vm,
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setMakeCreatorExplicitOwner(true);
@@ -1150,7 +1156,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 }
                 else
                 {
-                    VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
+                    VM vm = gettempVm();
+                    vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+                    VmManagementParametersBase param = new VmManagementParametersBase(vm);
                     param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     param.setMakeCreatorExplicitOwner(true);
                     param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
@@ -1171,20 +1180,27 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
-                                VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
+                                VM vm = gettempVm();
+                                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+                                VmManagementParametersBase param = new VmManagementParametersBase(vm);
                                 param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                                 param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
 
-                                Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
+                                Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), this);
                             }
                         }, this);
             }
             else
             {
-                VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
+                VM vm = gettempVm();
+                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+                VmManagementParametersBase param = new VmManagementParametersBase(vm);
                 param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                 param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
+
+                Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), this);
             }
         }
     }

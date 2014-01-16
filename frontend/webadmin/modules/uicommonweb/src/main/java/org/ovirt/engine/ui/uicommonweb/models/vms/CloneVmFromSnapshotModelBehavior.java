@@ -1,46 +1,15 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 @SuppressWarnings("unused")
 public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
 {
     public CloneVmFromSnapshotModelBehavior() {
         super(null);
-    }
-
-    @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
-    {
-        super.initialize(systemTreeSelectedItem);
-    }
-
-    public void initTemplate()
-    {
-        AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        UnitVmModel model = (UnitVmModel) target;
-                        VmTemplate template = (VmTemplate) returnValue;
-                        model.getTemplate()
-                                .setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
-                        model.getTemplate().setSelectedItem(template);
-                        model.getTemplate().setIsChangable(false);
-                    }
-                },
-                getModel().getHash()),
-                vm.getVmtGuid());
     }
 
     @Override

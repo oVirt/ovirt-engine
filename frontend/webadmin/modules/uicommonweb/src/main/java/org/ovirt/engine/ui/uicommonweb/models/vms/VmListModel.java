@@ -91,6 +91,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
+    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
     private UICommand newVMCommand;
 
@@ -2032,8 +2033,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             VmListModel vmListModel = (VmListModel) model1;
                             UnitVmModel unitVmModel = (UnitVmModel) vmListModel.getWindow();
 
-                            AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(
-                                    vmListModel.getcurrentVm(),
+                            VM vm = vmListModel.getcurrentVm();
+                            vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+                            AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(vm,
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
@@ -2056,7 +2059,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                     model.startProgress(null);
 
-                    VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
+                    VM vm = getcurrentVm();
+                    vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+                    VmManagementParametersBase params = new VmManagementParametersBase(vm);
                     params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                     params.setBalloonEnabled(balloonEnabled(model));
@@ -2101,8 +2107,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
-                                    VmManagementParametersBase updateVmParams =
-                                            new VmManagementParametersBase(vmListModel.getcurrentVm());
+                                    VM vm = vmListModel.getcurrentVm();
+                                    vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+                                    VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vm);
                                     setVmWatchdogToParams(model, updateVmParams);
                                     updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled()
                                             .getEntity());
@@ -2110,7 +2118,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
                                     Frontend.getInstance().runAction(VdcActionType.UpdateVm,
-                                            updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vmListModel.getcurrentVm().getId()), vmListModel);
+                                            updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
                                 }
                                 else
                                 {
@@ -2129,13 +2137,18 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
 
                 model.startProgress(null);
-                VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
+
+                VM vm = getcurrentVm();
+                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+
+                VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vm);
 
                 setVmWatchdogToParams(model, updateVmParams);
                 updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                 updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                 updateVmParams.setBalloonEnabled(balloonEnabled(model));
                 updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+
                 Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }

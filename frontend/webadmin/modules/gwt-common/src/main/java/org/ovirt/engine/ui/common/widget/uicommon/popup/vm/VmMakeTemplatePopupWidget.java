@@ -214,7 +214,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         copyVmPermissions.setLabel(constants.copyVmPermissions());
         disksAllocationLabel.setText(constants.disksAllocation());
         isSubTemplateEditor.setLabel(constants.createAsSubTemplate());
-        baseTemplateEditor.setLabel(constants.baseTemplate());
+        baseTemplateEditor.setLabel(constants.rootTemplate());
         templateVersionNameEditor.setLabel(constants.templateVersionName());
     }
 

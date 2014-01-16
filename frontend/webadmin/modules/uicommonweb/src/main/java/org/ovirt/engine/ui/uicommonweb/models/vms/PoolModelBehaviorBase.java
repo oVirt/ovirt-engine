@@ -13,10 +13,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
@@ -224,7 +222,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         updateMemoryBalloon();
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
-        updateTemplate();
     }
 
     @Override
@@ -250,52 +247,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         double overCommitFactor = 100.0 / cluster.getmax_vds_memory_over_commit();
         getModel().getMinAllocatedMemory()
                 .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
-    }
-
-    private void updateTemplate()
-    {
-        final DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
-        StoragePool dataCenter = getModel().getSelectedDataCenter();
-        if (dataCenter == null) {
-            return;
-        }
-
-        AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target1, Object returnValue1) {
-
-                ArrayList<VmTemplate> loadedTemplates = (ArrayList<VmTemplate>) returnValue1;
-
-                ArrayList<VmTemplate> templates = new ArrayList<VmTemplate>();
-                for (VmTemplate template : loadedTemplates) {
-                    if (!template.getId().equals(Guid.Empty)) {
-                        templates.add(template);
-                    }
-                }
-
-                ArrayList<VmTemplate> filteredTemplates = AsyncDataProvider.filterTemplatesByArchitecture(templates,
-                                dataCenterWithCluster.getCluster().getArchitecture());
-
-                getModel().getTemplate().setItems(filteredTemplates);
-                setupSelectedTemplate(getModel().getTemplate(), filteredTemplates);
-            }
-        }), dataCenter.getId());
-
-    }
-
-    protected abstract void setupSelectedTemplate(ListModel model, List<VmTemplate> templates);
-
-    private void postInitTemplate(ArrayList<VmTemplate> templates)
-    {
-        // If there was some template selected before, try select it again.
-        VmTemplate oldTemplate = getModel().getTemplate().getSelectedItem();
-
-        getModel().getTemplate().setItems(templates);
-
-        getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(templates,
-                oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
-                        : new Linq.TemplatePredicate(Guid.Empty)));
     }
 
     public void initCdImage()

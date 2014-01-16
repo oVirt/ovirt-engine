@@ -2,7 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.TimeZoneType;
@@ -18,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -50,6 +52,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private TModel privateModel;
+    private HashMap<Guid, List<VmTemplate>> templateToSubVersions = new HashMap<Guid, List<VmTemplate>>();
 
     public TModel getModel() {
         return privateModel;
@@ -123,19 +126,62 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    protected void postInitTemplate() {
-
-    }
-
     protected List<VmTemplate> filterNotBaseTemplates(List<VmTemplate> templates) {
         List<VmTemplate> baseTemplates = new ArrayList<VmTemplate>();
         for (VmTemplate template : templates) {
             if (template.getId().equals(template.getBaseTemplateId())) {
                 baseTemplates.add(template);
+                templateToSubVersions.put(template.getId(),
+                        new ArrayList<VmTemplate>());
             }
         }
 
+        for (VmTemplate template : templates) {
+            Guid baseTemplateId = template.getBaseTemplateId();
+            if (templateToSubVersions.containsKey(baseTemplateId)) {
+                templateToSubVersions.get(baseTemplateId).add(template);
+            }
+        }
+
+        for (List<VmTemplate> subversions : (Collection<List<VmTemplate>>) templateToSubVersions.values()) {
+            Collections.sort(subversions, new Comparator<VmTemplate>() {
+                @Override
+                public int compare(VmTemplate o1, VmTemplate o2) {
+                    return o2.getTemplateVersionNumber() - o1.getTemplateVersionNumber();
+                }
+            });
+        }
+
+        for (List<VmTemplate> subversions : templateToSubVersions.values()) {
+            subversions.add(0, createLatestTemplate(subversions.get(0)));
+        }
+
         return baseTemplates;
+    }
+
+    /**
+     *
+     * @param template - the template that the latest template should be based on
+     * @return template representing the latest template
+     */
+    private VmTemplate createLatestTemplate(VmTemplate template) {
+        VmTemplate latestTemplate = new VmTemplate(template);
+        latestTemplate.setTemplateVersionName(constants.latestTemplateVersionName());
+        latestTemplate.setDescription(constants.latestTemplateVersionDescription());
+
+        return latestTemplate;
+    }
+
+    protected void baseTemplateSelectedItemChanged() {
+        VmTemplate baseTemplate = getModel().getBaseTemplate().getSelectedItem();
+        if (baseTemplate != null) {
+            List<VmTemplate> subVersions = templateToSubVersions.get(baseTemplate.getId());
+            getModel().getTemplate().setItems(new ArrayList<VmTemplate>(subVersions));
+
+            // it's safe because in index 0 there's the latest version and
+            // in index 1 the base version or the last custom version
+            getModel().getTemplate().setSelectedItem(subVersions.get(1));
+        }
     }
 
     public boolean validate()
@@ -739,7 +785,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getIsVirtioScsiEnabled().setIsAvailable(isVirtioScsiEnabled);
     }
 
-    protected void setupTemplate(VM vm, ListModel model) {
+    protected void setupTemplate(Guid templateId, final boolean useLatest) {
         AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
@@ -747,18 +793,41 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                         UnitVmModel model = (UnitVmModel) target;
                         VmTemplate template = (VmTemplate) returnValue;
-                        model.getTemplate()
-                                .setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
+
+                        if (useLatest) {
+                            template = createLatestTemplate(template);
+                        }
+
+                        setupBaseTemplate(template.getBaseTemplateId());
+
+                        model.getTemplate().setItems(Collections.singletonList(template));
                         model.getTemplate().setSelectedItem(template);
                         model.getTemplate().setIsChangable(false);
-                        postInitTemplate();
                         if (!template.getId().equals(Guid.Empty)) {
                             getModel().getVmInitModel().init(template);
                         }
                     }
                 },
                 getModel().getHash()),
-                vm.getVmtGuid());
+                templateId);
+    }
+
+    protected void setupBaseTemplate(Guid baseTemplateId) {
+        AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+
+                        UnitVmModel model = (UnitVmModel) target;
+                        VmTemplate template = (VmTemplate) returnValue;
+
+                        model.getBaseTemplate().setItems(Collections.singletonList(template));
+                        model.getBaseTemplate().setSelectedItem(template);
+                        model.getBaseTemplate().setIsChangable(false);
+                    }
+                },
+                getModel().getHash()),
+                baseTemplateId);
     }
 
     protected void updateCpuPinningVisibility() {
