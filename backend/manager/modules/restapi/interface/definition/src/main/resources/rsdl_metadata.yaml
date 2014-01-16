@@ -604,7 +604,7 @@ actions:
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
         description: add a new direct lun disk to the virtual machine, this operation does not require size but needs lun connection details
       - mandatoryArguments: {disk.id: 'xs:string'}
-        optionalArguments: 
+        optionalArguments:
           disk.active: xs:boolean
           disk.read_only: xs:boolean
         description: attach a disk to the virtual machine
@@ -1275,7 +1275,7 @@ actions:
         description: add a new storage domain to the system using a direct lun
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
           storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
-          storagedomain.format: 'xs:boolean',storagedomain.storage.address: 'xs:string', 
+          storagedomain.format: 'xs:boolean',storagedomain.storage.address: 'xs:string',
           storagedomain.storage.path: 'xs:string'}
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string'}
         description: add a new storage domain to the system using the storage on the given host and path
@@ -1575,7 +1575,7 @@ actions:
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
         cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean',
-        cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string'}
+        cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean'}
         description: update the specified cluster in the system. The capabilities like virt service, cluster service, tarnsparent huge pages etc can be changed.
     urlparams: {}
     headers:
@@ -1591,7 +1591,8 @@ actions:
         optionalArguments: {cluster.description: 'xs:string', cluster.comment: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
         cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
-        cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean',  cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string'}
+        cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean',  cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string',
+        cluster.ksm.enabled: 'xs:boolean'}
         description: add a new cluster to the system
     urlparams: {}
     headers:
@@ -1920,7 +1921,7 @@ actions:
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
         cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean',
-        cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string'}
+        cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean',}
         description: update specified cluster in the data center
     urlparams: {}
     headers:
@@ -1936,7 +1937,7 @@ actions:
         optionalArguments: {cluster.description: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
         cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
-        cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string'}
+        cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean',}
         description: add a new cluster to the data center
     urlparams: {}
     headers:
@@ -3940,7 +3941,7 @@ actions:
           gluster_volume.stripe_count: 'xs:unsignedShort'
           gluster_volume.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}
         description: add a new gluster volume to the cluster with bricks
-    urlparams: 
+    urlparams:
       force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -4055,7 +4056,7 @@ actions:
           brick--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
         optionalArguments: {replica_count: 'xs:unsignedShort', stripe_count: 'xs:unsignedShort'}
         description: add a new brick to the gluster volume attached to the cluster
-    urlparams: 
+    urlparams:
       force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
