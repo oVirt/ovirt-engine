@@ -2038,6 +2038,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Cluster Policy")
     String removeClusterPolicyTitle();
 
+    @DefaultStringValue("KSM control is only available for Cluster compatibility version 3.4 and higher")
+    String ksmNotAvailable();
+
     @DefaultStringValue("Ballooning is only available for Cluster compatibility version 3.3 and higher")
     String ballooningNotAvailable();
 

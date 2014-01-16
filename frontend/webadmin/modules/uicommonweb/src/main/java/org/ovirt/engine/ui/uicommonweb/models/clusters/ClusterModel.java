@@ -494,6 +494,16 @@ public class ClusterModel extends EntityModel
         privateMigrateOnErrorOption_HA_ONLY = value;
     }
 
+    private EntityModel<Boolean> enableKsm;
+
+    public EntityModel<Boolean> getEnableKsm() {
+        return enableKsm;
+    }
+
+    public void setEnableKsm(EntityModel<Boolean> enableKsm) {
+        this.enableKsm = enableKsm;
+    }
+
     private EntityModel<Boolean> enableBallooning;
 
     public EntityModel<Boolean> getEnableBallooning() {
@@ -902,6 +912,8 @@ public class ClusterModel extends EntityModel
         tempVar7.setEntity(false);
         setMigrateOnErrorOption_HA_ONLY(tempVar7);
         getMigrateOnErrorOption_HA_ONLY().getEntityChangedEvent().addListener(this);
+        setEnableKsm(new EntityModel<Boolean>());
+        getEnableKsm().setEntity(false);
         setEnableBallooning(new EntityModel<Boolean>());
         getEnableBallooning().setEntity(false);
         // Optimization methods:
@@ -1165,6 +1177,7 @@ public class ClusterModel extends EntityModel
 
         getCountThreadsAsCores().setEntity(getEntity().getCountThreadsAsCores());
         getEnableBallooning().setEntity(getEntity().isEnableBallooning());
+        getEnableKsm().setEntity(getEntity().isEnableKsm());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1337,6 +1350,12 @@ public class ClusterModel extends EntityModel
         getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
         getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
         getEnableBallooning().setIsChangable(version.compareTo(Version.v3_3) >= 0);
+        boolean isSmallerThanVersion3_4 = version.compareTo(Version.v3_4) < 0;
+        getEnableKsm().setIsChangable(!isSmallerThanVersion3_4);
+        getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
+        if (isSmallerThanVersion3_4) {
+            getEnableKsm().setEntity(true);
+        }
     }
 
     private void populateCPUList(ClusterModel clusterModel, List<ServerCpu> cpus, boolean canChangeArchitecture)
