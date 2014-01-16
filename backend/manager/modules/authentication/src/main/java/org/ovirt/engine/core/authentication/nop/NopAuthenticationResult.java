@@ -4,12 +4,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.authentication.AuthenticationResult;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
-public class NopAuthenticationResult extends AuthenticationResult<Object> {
+public class NopAuthenticationResult extends AuthenticationResult {
 
     public NopAuthenticationResult() {
-        super(null);
     }
 
     @Override
@@ -18,7 +16,7 @@ public class NopAuthenticationResult extends AuthenticationResult<Object> {
     }
 
     @Override
-    public List<VdcBllMessages> resolveMessage() {
+    public List<String> resolveMessage() {
         return Collections.emptyList();
     }
 }

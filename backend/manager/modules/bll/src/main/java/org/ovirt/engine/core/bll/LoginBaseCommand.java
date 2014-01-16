@@ -137,15 +137,15 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         PasswordAuthenticator passwordAuthenticator = (PasswordAuthenticator) authenticator;
 
         // Perform the actual authentication:
-        AuthenticationResult<?> result = passwordAuthenticator.authenticate(loginName, password);
+        AuthenticationResult result = passwordAuthenticator.authenticate(loginName, password);
         if (!result.isSuccessful()) {
             log.infoFormat(
                 "Can't login user \"{0}\" with authentication profile \"{1}\" because the authentication failed.",
                 loginName,
                 profileName
             );
-            for (VdcBllMessages msg : result.resolveMessage()) {
-                addCanDoActionMessage(msg);
+            for (String msg : result.resolveMessage()) {
+                getReturnValue().getCanDoActionMessages().add(msg);
             }
             return false;
         }
