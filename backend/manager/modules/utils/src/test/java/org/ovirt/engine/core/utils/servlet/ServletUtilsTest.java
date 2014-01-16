@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -26,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ServletUtilsTest {
@@ -34,9 +34,13 @@ public class ServletUtilsTest {
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#canReadFile(java.io.File)}.
      */
-    @Ignore("Fails when run as root")
     @Test
     public void testCanReadFile() {
+        // Make sure the user is not root
+        // This tests relies on EXISTING files which only root can access
+        String userName = System.getProperty("user.name");
+        assumeTrue(!"root".equals(userName));
+
         //Does not exist.
         File file = new File("/doesnotexist/iamprettysure");
         assertFalse("We should not be able to read this file.", ServletUtils.canReadFile(file));
