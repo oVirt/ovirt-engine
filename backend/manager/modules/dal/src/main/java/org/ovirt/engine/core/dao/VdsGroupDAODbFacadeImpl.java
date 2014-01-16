@@ -195,7 +195,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("architecture", group.getArchitecture())
                 .addValue("enable_balloon", group.isEnableBallooning())
                 .addValue("optimization_type", group.getOptimizationType())
-                .addValue("enable_balloon", group.isEnableBallooning())
+                .addValue("enable_ksm", group.isEnableKsm())
                 .addValue("spice_proxy", group.getSpiceProxy());
         return parameterSource;
     }
@@ -236,6 +236,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("cluster_policy_custom_properties"), LinkedHashMap.class));
             entity.setEnableBallooning(rs.getBoolean("enable_balloon"));
+            entity.setEnableKsm(rs.getBoolean("enable_ksm"));
             entity.setArchitecture(ArchitectureType.forValue(rs.getInt("architecture")));
             entity.setOptimizationType(OptimizationType.from(rs.getInt("optimization_type")));
             entity.setSpiceProxy(rs.getString("spice_proxy"));

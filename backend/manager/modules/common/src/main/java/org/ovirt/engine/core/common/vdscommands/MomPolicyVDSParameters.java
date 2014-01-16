@@ -7,10 +7,12 @@ import org.ovirt.engine.core.common.businessentities.VDS;
  */
 public class MomPolicyVDSParameters extends VdsIdVDSCommandParametersBase {
     private boolean enableBalloon;
+    private boolean enableKsm;
 
-    public MomPolicyVDSParameters(VDS vds, boolean enableBalloon) {
+    public MomPolicyVDSParameters(VDS vds, boolean enableBalloon, boolean enableKsm) {
         super(vds.getId());
         this.enableBalloon = enableBalloon;
+        this.enableKsm = enableKsm;
     }
 
     public MomPolicyVDSParameters() {
@@ -22,5 +24,13 @@ public class MomPolicyVDSParameters extends VdsIdVDSCommandParametersBase {
 
     public void setEnableBalloon(boolean enableBalloon) {
         this.enableBalloon = enableBalloon;
+    }
+
+    public boolean isEnableKsm() {
+        return enableKsm;
+    }
+
+    public void setEnableKsm(boolean enableKsm) {
+        this.enableKsm = enableKsm;
     }
 }

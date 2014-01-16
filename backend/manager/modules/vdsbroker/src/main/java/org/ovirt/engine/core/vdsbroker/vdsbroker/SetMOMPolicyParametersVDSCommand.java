@@ -27,6 +27,7 @@ public class SetMOMPolicyParametersVDSCommand extends VdsBrokerCommand<MomPolicy
     protected Map<String, Object> initDeviceStructure() {
         Map<String, Object> deviceStruct = new HashMap<>();
         deviceStruct.put(VdsProperties.balloonEnabled, getParameters().isEnableBalloon());
+        deviceStruct.put(VdsProperties.ksmEnabled, getParameters().isEnableKsm());
         return deviceStruct;
     }
 }

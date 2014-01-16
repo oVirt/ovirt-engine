@@ -326,6 +326,7 @@ public final class VdsProperties {
 
     // MoM policy tuning
     public static final String balloonEnabled = "balloonEnabled";
+    public static final String ksmEnabled = "ksmEnabled";
 
     // properties for ServerConnectionListReturnForXmlRpc
     public static final String serverType = "serverType";
