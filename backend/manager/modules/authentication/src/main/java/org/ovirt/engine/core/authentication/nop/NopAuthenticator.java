@@ -11,11 +11,8 @@ import org.slf4j.LoggerFactory;
 public class NopAuthenticator implements PasswordAuthenticator {
     private static final Logger log = LoggerFactory.getLogger(NopAuthenticator.class);
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public AuthenticationResult<?> authenticate(String name, String password) {
+    public AuthenticationResult authenticate(String name, String password) {
         return new NopAuthenticationResult();
     }
 }

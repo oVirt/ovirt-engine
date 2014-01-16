@@ -33,12 +33,12 @@ public class ProvisionalAuthenticator implements PasswordAuthenticator {
      * {@inheritDoc}
      */
     @Override
-    public AuthenticationResult<?> authenticate(String name, String password) {
+    public AuthenticationResult authenticate(String name, String password) {
         LdapReturnValueBase ldapResult = broker.runAdAction(
             AdActionType.AuthenticateUser,
             new LdapUserPasswordBaseParameters(domain, name, password)
         );
         UserAuthenticationResult authResult = (UserAuthenticationResult) ldapResult.getReturnValue();
-        return new ProvisionalAuthenticationResult(authResult);
+        return new ProvisionalAuthenticationResult(domain, authResult);
     }
 }

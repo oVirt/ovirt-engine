@@ -16,11 +16,8 @@ import org.slf4j.LoggerFactory;
 public class InternalAuthenticator implements PasswordAuthenticator {
     private static final Logger log = LoggerFactory.getLogger(InternalAuthenticator.class);
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public AuthenticationResult<?> authenticate(String user, String password) {
+    public AuthenticationResult authenticate(String user, String password) {
         String adminName = Config.<String> getValue(ConfigValues.AdminUser);
         String adminPassword = Config.<String> getValue(ConfigValues.AdminPassword);
         return new BooleanAuthenticationResult(ObjectUtils.equals(user, adminName) &&
