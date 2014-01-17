@@ -312,10 +312,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
                                             Object[] array2 = (Object[]) target2;
                                             NewVmModelBehavior behavior2 = (NewVmModelBehavior) array2[0];
-                                            ArrayList<VmTemplate> templatesByDataCenter =
-                                                    (ArrayList<VmTemplate>) array2[1];
-                                            ArrayList<VmTemplate> templatesByStorage =
-                                                    (ArrayList<VmTemplate>) returnValue2;
+                                            List<VmTemplate> templatesByDataCenter = (List<VmTemplate>) array2[1];
+                                            List<VmTemplate> templatesByStorage = (List<VmTemplate>) returnValue2;
                                             VmTemplate blankTemplate =
                                                     Linq.firstOrDefault(templatesByDataCenter,
                                                             new Linq.TemplatePredicate(Guid.Empty));
@@ -324,7 +322,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                                 templatesByStorage.add(0, blankTemplate);
                                             }
 
-                                            ArrayList<VmTemplate> templateList = AsyncDataProvider.filterTemplatesByArchitecture(templatesByStorage,
+                                            List<VmTemplate> templateList = AsyncDataProvider.filterTemplatesByArchitecture(templatesByStorage,
                                                             dataCenterWithCluster.getCluster().getArchitecture());
 
                                             behavior2.postInitTemplate(templateList);
@@ -346,7 +344,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
                             NewVmModelBehavior behavior = (NewVmModelBehavior) target;
 
-                            ArrayList<VmTemplate> templates = (ArrayList<VmTemplate>) returnValue;
+                            List<VmTemplate> templates = (List<VmTemplate>) returnValue;
 
                             behavior.postInitTemplate(AsyncDataProvider.filterTemplatesByArchitecture(templates,
                                     dataCenterWithCluster.getCluster().getArchitecture()));
@@ -358,16 +356,15 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
     private void postInitTemplate(List<VmTemplate> templates)
     {
-        List<VmTemplate> rootTemplates = filterNotBaseTemplates(templates);
+        List<VmTemplate> baseTemplates = filterNotBaseTemplates(templates);
 
         // If there was some template selected before, try select it again.
-        VmTemplate oldTemplate = getModel().getBaseTemplate().getSelectedItem();
+        VmTemplate prevBaseTemplate = getModel().getBaseTemplate().getSelectedItem();
 
-        getModel().getBaseTemplate().setItems(rootTemplates);
+        getModel().getBaseTemplate().setItems(baseTemplates);
 
-        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(rootTemplates,
-                oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
-                        : new Linq.TemplatePredicate(Guid.Empty)));
+        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(baseTemplates,
+                new Linq.TemplatePredicate(prevBaseTemplate != null ? prevBaseTemplate.getId() : Guid.Empty)));
 
         updateIsDisksAvailable();
     }

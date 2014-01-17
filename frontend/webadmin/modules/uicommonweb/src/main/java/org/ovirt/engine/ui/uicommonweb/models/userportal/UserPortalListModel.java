@@ -526,14 +526,15 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         windowModel.initialize(null);
         windowModel.getIsTemplatePublic().setEntity(false);
 
-        UICommand tempVar = new UICommand("OnNewTemplate", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        windowModel.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        windowModel.getCommands().add(tempVar2);
+        windowModel.getCommands().add(
+                new UICommand("OnNewTemplate", this) //$NON-NLS-1$)
+                .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                .setIsDefault(true));
+
+        windowModel.getCommands().add(
+                new UICommand("Cancel", this) //$NON-NLS-1$
+                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                .setIsCancel(true));
     }
 
     private void onNewTemplate()

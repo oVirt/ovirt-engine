@@ -1237,12 +1237,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void newTemplate()
     {
         VM vm = (VM) getSelectedItem();
-        if (vm == null)
-        {
-            return;
-        }
-
-        if (getWindow() != null)
+        if (vm == null || getWindow() != null)
         {
             return;
         }
@@ -1256,14 +1251,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.initialize(getSystemTreeSelectedItem());
 
-        UICommand tempVar = new UICommand("OnNewTemplate", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+        model.getCommands().add(
+                new UICommand("OnNewTemplate", this) //$NON-NLS-1$
+                .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                .setIsDefault(true));
+
+        model.getCommands().add(
+                new UICommand("Cancel", this) //$NON-NLS-1$
+                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                .setIsCancel(true));
 
         model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
     }
