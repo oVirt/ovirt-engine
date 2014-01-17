@@ -52,7 +52,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private TModel privateModel;
-    private HashMap<Guid, List<VmTemplate>> templateToSubVersions = new HashMap<Guid, List<VmTemplate>>();
+    private HashMap<Guid, List<VmTemplate>> baseTemplateToSubTemplates = new HashMap<Guid, List<VmTemplate>>();
 
     public TModel getModel() {
         return privateModel;
@@ -131,19 +131,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         for (VmTemplate template : templates) {
             if (template.getId().equals(template.getBaseTemplateId())) {
                 baseTemplates.add(template);
-                templateToSubVersions.put(template.getId(),
+                baseTemplateToSubTemplates.put(template.getId(),
                         new ArrayList<VmTemplate>());
             }
         }
 
         for (VmTemplate template : templates) {
             Guid baseTemplateId = template.getBaseTemplateId();
-            if (templateToSubVersions.containsKey(baseTemplateId)) {
-                templateToSubVersions.get(baseTemplateId).add(template);
+            if (baseTemplateToSubTemplates.containsKey(baseTemplateId)) {
+                baseTemplateToSubTemplates.get(baseTemplateId).add(template);
             }
         }
 
-        for (List<VmTemplate> subversions : (Collection<List<VmTemplate>>) templateToSubVersions.values()) {
+        for (List<VmTemplate> subversions : (Collection<List<VmTemplate>>) baseTemplateToSubTemplates.values()) {
             Collections.sort(subversions, new Comparator<VmTemplate>() {
                 @Override
                 public int compare(VmTemplate o1, VmTemplate o2) {
@@ -152,7 +152,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             });
         }
 
-        for (List<VmTemplate> subversions : templateToSubVersions.values()) {
+        for (List<VmTemplate> subversions : baseTemplateToSubTemplates.values()) {
             subversions.add(0, createLatestTemplate(subversions.get(0)));
         }
 
@@ -175,7 +175,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void baseTemplateSelectedItemChanged() {
         VmTemplate baseTemplate = getModel().getBaseTemplate().getSelectedItem();
         if (baseTemplate != null) {
-            List<VmTemplate> subVersions = templateToSubVersions.get(baseTemplate.getId());
+            List<VmTemplate> subVersions = baseTemplateToSubTemplates.get(baseTemplate.getId());
             getModel().getTemplate().setItems(new ArrayList<VmTemplate>(subVersions));
 
             // it's safe because in index 0 there's the latest version and
