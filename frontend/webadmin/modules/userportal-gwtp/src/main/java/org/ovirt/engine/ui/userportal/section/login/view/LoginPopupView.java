@@ -245,8 +245,8 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     }
 
     @Override
-    public void setErrorMessage(String text) {
-        errorMessage.setText(text);
+    public void setErrorMessageHtml(String text) {
+        setErrorMessageLabel(errorMessage, text);
         errorMessage.setVisible(text != null);
         if (errorMessage.isVisible()) {
             errorMessagePanel.setVisible(true);
@@ -258,7 +258,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
     @Override
     public void clearErrorMessage() {
-        setErrorMessage(null);
+        setErrorMessageHtml(null);
     }
 
     @Override
