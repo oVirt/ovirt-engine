@@ -111,4 +111,8 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
         asWidget().setKeyPressHandler(keyPressHandler);
     }
 
+    protected void setErrorMessageLabel(Label errorMessage, String text) {
+            errorMessage.getElement().setInnerHTML(text);
+    }
+
 }

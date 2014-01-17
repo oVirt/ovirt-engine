@@ -32,7 +32,7 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
 
         void resetAndFocus();
 
-        void setErrorMessage(String text);
+        void setErrorMessageHtml(String text);
 
         void clearErrorMessage();
 
@@ -83,9 +83,10 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 lockInteractionManager.hideLoadingIndicator();
-                getView().setErrorMessage(loginModel.getMessage());
+                formatAndSetErrorMessage(loginModel.getMessage());
                 logger.warning("Login failed for user [" + loginModel.getUserName().getEntity() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             }
+
         });
 
         getView().getLoginButton().setCommand(loginModel.getLoginCommand());
@@ -155,6 +156,21 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
         }
 
         clientStorage.setLocalItem(getSelectedDomainKey(), selectedItem);
+    }
+
+    private void formatAndSetErrorMessage(String message) {
+        if (message != null) {
+            int urlIndex = message.indexOf("http");//$NON-NLS-1$
+            if (urlIndex != -1) { //$NON-NLS-1$
+                String beforeURL = message.substring(0, urlIndex);
+                String url = message.substring(urlIndex);
+                StringBuilder htmlPart = new StringBuilder();
+                htmlPart.append(beforeURL)
+                    .append("<a href=\"").append(url).append("\" target=\"_blank\">").append(url).append("</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                message = htmlPart.toString();
+            }
+        }
+        getView().setErrorMessageHtml(message);
     }
 
     @Override
