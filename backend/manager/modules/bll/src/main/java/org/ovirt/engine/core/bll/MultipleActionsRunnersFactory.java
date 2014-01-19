@@ -70,6 +70,11 @@ public final class MultipleActionsRunnersFactory {
             break;
         }
 
+        case AttachNetworkToVdsGroup: {
+            runner = new NetworkClusterAttachmentActionRunner(actionType, parameters, isInternal);
+            break;
+        }
+
         default: {
             runner = new MultipleActionsRunner(actionType, parameters, isInternal);
             break;

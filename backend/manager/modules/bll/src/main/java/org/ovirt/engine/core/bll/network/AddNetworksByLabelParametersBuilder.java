@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.compat.Guid;
 
 public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilder {
 
@@ -33,6 +35,29 @@ public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilde
 
         // configure networks on the nic
         parameters.getInterfaces().addAll(configureNetworks(nicToConfigure, networkToAdd));
+        return parameters;
+    }
+
+    /**
+     * Adds a list of labeled networks to a host
+     */
+    public SetupNetworksParameters buildParameters(Guid vdsId,
+            List<Network> labeledNetworks,
+            Map<String, VdsNetworkInterface> nicsByLabel) {
+        SetupNetworksParameters parameters = createSetupNetworksParameters(vdsId);
+        Set<Network> networkToAdd = getNetworksToConfigure(parameters.getInterfaces(), labeledNetworks);
+
+        for (Network network : networkToAdd) {
+            VdsNetworkInterface labeledNic = nicsByLabel.get(network.getLabel());
+            VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), labeledNic.getId());
+            if (nicToConfigure == null) {
+                throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
+            }
+
+            // configure the network on the nic
+            parameters.getInterfaces().addAll(configureNetworks(nicToConfigure, Collections.singleton(network)));
+        }
+
         return parameters;
     }
 

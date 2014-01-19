@@ -186,5 +186,4 @@ public class MultipleActionsRunner {
     public void setIsRunOnlyIfAllCanDoPass(boolean isRunOnlyIfAllCanDoPass) {
         this.isRunOnlyIfAllCanDoPass = isRunOnlyIfAllCanDoPass;
     }
-
 }
