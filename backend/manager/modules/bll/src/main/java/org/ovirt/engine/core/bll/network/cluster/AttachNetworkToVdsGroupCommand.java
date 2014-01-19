@@ -20,6 +20,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -62,25 +64,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
             @Override
             public Void runInTransaction() {
-                if (networkExists()) {
-                    getNetworkClusterDAO().update(getNetworkCluster());
-                } else {
-                    getNetworkClusterDAO().save(new NetworkCluster(getVdsGroupId(), getNetwork().getId(),
-                            NetworkStatus.OPERATIONAL,
-                            false,
-                            getNetworkCluster().isRequired(),
-                            getNetworkCluster().isMigration()));
-                }
-
-                if (getNetwork().getCluster().isDisplay()) {
-                    getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
-                }
-
-                if (getNetwork().getCluster().isMigration()) {
-                    getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(), getNetwork().getId());
-                }
-
-                NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
+                updateNetworkAttachment(getVdsGroupId(), getNetworkCluster(), getNetwork());
                 return null;
             }
         });
@@ -156,18 +140,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return true;
     }
 
-    private boolean networkExists() {
-        List<NetworkCluster> networks = getNetworkClusterDAO().getAllForCluster(getVdsGroupId());
-        for (NetworkCluster networkCluster : networks) {
-            if (networkCluster.getNetworkId().equals(
-                    getNetworkCluster().getNetworkId())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private boolean vdsGroupExists() {
         if (!vdsGroupInDb()) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
@@ -201,7 +173,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 getActionType().getActionGroup()));
 
         // require permissions on cluster the network is attached to
-        if (networkExists()) {
+        if (networkExists(getVdsGroupId(), getNetworkCluster())) {
             permissions.add(new PermissionSubject(getParameters().getVdsGroupId(),
                     VdcObjectType.VdsGroups,
                     ActionGroup.CONFIGURE_CLUSTER_NETWORK));
@@ -225,5 +197,42 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
         getReturnValue().getCanDoActionMessages().addAll(messages);
         return false;
+    }
+
+    public static void updateNetworkAttachment(Guid clusterId, NetworkCluster networkCluster, Network network) {
+        if (networkExists(clusterId, networkCluster)) {
+            getNetworkClusterDao().update(networkCluster);
+        } else {
+            getNetworkClusterDao().save(new NetworkCluster(clusterId, network.getId(),
+                    NetworkStatus.OPERATIONAL,
+                    false,
+                    networkCluster.isRequired(),
+                    networkCluster.isMigration()));
+        }
+
+        if (network.getCluster().isDisplay()) {
+            getNetworkClusterDao().setNetworkExclusivelyAsDisplay(clusterId, network.getId());
+        }
+
+        if (network.getCluster().isMigration()) {
+            getNetworkClusterDao().setNetworkExclusivelyAsMigration(clusterId, network.getId());
+        }
+
+        NetworkClusterHelper.setStatus(clusterId, network);
+    }
+
+    private static boolean networkExists(Guid clusterId, NetworkCluster networkCluster) {
+        List<NetworkCluster> networks = getNetworkClusterDao().getAllForCluster(clusterId);
+        for (NetworkCluster nc : networks) {
+            if (nc.getNetworkId().equals(networkCluster.getNetworkId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static NetworkClusterDao getNetworkClusterDao() {
+        return DbFacade.getInstance().getNetworkClusterDao();
     }
 }

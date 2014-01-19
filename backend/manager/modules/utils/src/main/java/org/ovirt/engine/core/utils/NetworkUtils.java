@@ -263,6 +263,17 @@ public final class NetworkUtils {
     }
 
     /**
+     * Determine if a given network interface should be configured on hosts
+     *
+     * @param network
+     *            the network to check.
+     * @return <code>true</code> iff the network is labeled and not an external network.
+     */
+    public static boolean isConfiguredByLabel(Network network) {
+        return isLabeled(network) && !network.isExternal();
+    }
+
+    /**
      * Constructs the vlan device name in the format of "{nic name}.{vlan-id}"
      *
      * @param underlyingNic
