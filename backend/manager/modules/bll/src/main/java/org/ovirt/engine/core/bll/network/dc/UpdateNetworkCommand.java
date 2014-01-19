@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -67,16 +68,19 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         });
 
-        if (applyChangesToHostsRequired()) {
-            applyNetworkChangesToHosts();
+        if (!getNetwork().isExternal()) {
+            if (NetworkHelper.setupNetworkSupported(getStoragePool().getcompatibility_version())) {
+                applyNetworkChangesToHosts();
+            } else if (!onlyPermittedFieldsChanged()) {
+                List<VdsNetworkInterface> nics =
+                        getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(getNetwork().getId());
+                if (!nics.isEmpty()) {
+                    AuditLogDirector.log(this, AuditLogType.MULTI_UPDATE_NETWORK_NOT_POSSIBLE);
+                }
+            }
         }
 
         setSucceeded(true);
-    }
-
-    private boolean applyChangesToHostsRequired() {
-        return !getNetwork().isExternal()
-                && NetworkHelper.setupNetworkSupported(getStoragePool().getcompatibility_version());
     }
 
     private void applyNetworkChangesToHosts() {
