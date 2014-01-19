@@ -850,6 +850,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.PERSIST_NETWORK_ON_HOST, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.PERSIST_NETWORK_ON_HOST_FINISHED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.PERSIST_NETWORK_ON_HOST_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.MULTI_UPDATE_NETWORK_NOT_POSSIBLE, AuditLogSeverity.WARNING);
     }
 
     private static void initExtrnalEvents() {
