@@ -63,6 +63,7 @@ public final class AuditLogDirector {
         initExtrnalEvents();
         initMomPoliciesSeverities();
         initPmPolicySeverities();
+        initIscsiBondSeverities();
     }
 
     private static void initProviderSeverities() {
@@ -889,6 +890,15 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.PM_POLICY_MAINTENANCE_TO_DOWN, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.PM_POLICY_UP_TO_MAINTENANCE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.PM_POLICY_TO_UP, AuditLogSeverity.NORMAL);
+    }
+
+    private static void initIscsiBondSeverities() {
+        severities.put(AuditLogType.ISCSI_BOND_ADD_SUCCESS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.ISCSI_BOND_ADD_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.ISCSI_BOND_EDIT_SUCCESS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.ISCSI_BOND_EDIT_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.ISCSI_BOND_REMOVE_SUCCESS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.ISCSI_BOND_REMOVE_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initMessages() {
