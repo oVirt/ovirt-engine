@@ -736,6 +736,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Affinity Group")
     String VAR__TYPE__AFFINITY_GROUP();
 
+    @DefaultStringValue("$type iSCSI Bond")
+    String VAR__TYPE__ISCSI_BOND();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -3013,4 +3016,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("iSCSI Bond description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
     String VALIDATION_SCSI_BOND_DESCRIPTION_INVALID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. iSCSI bond with the same name already exists in the Data Center.")
+    String ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The specified iSCSI bond doesn't exist.")
+    String ISCSI_BOND_NOT_EXIST();
 }
