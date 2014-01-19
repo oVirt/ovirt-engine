@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -73,7 +72,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         // check problematic vds status
         if (IsLegalStatus(_problematicVds.getStatus())) {
             if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
-                if(getStoragePool().getStorageType() != StorageType.LOCALFS) {
+                if(!getStoragePool().isLocal()) {
                     returnValue = returnValue && initializeVds();
                 }
                 if (returnValue && getStoragePool().getStatus() != StoragePoolStatus.NotOperational
@@ -178,7 +177,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 && masterDomain.getStatus() != null
                 && (masterDomain.getStatus() == StorageDomainStatus.Active
                         || masterDomain.getStatus() == StorageDomainStatus.Unknown || masterDomain.getStatus() == StorageDomainStatus.InActive)) {
-            if (getStoragePool().getStorageType() != StorageType.LOCALFS) {
+            if (!getStoragePool().isLocal()) {
                 for (VDS vds : getAllRunningVdssInPool()) {
                     try {
                         SpmStatusResult statusResult = (SpmStatusResult) Backend

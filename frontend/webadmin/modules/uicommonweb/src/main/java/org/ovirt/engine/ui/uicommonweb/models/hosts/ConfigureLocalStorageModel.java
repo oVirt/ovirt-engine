@@ -235,7 +235,7 @@ public class ConfigureLocalStorageModel extends Model {
                 useCurrentSettings = true;
             } else {
 
-                if (tempCandidate != null && tempCandidate.getStorageType() == StorageType.LOCALFS) {
+                if (tempCandidate != null && tempCandidate.isLocal()) {
                     setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .noteLocalStorageAlreadyConfiguredForThisHostMsg()
@@ -571,7 +571,7 @@ public class ConfigureLocalStorageModel extends Model {
 
     private boolean isLocalDataCenterEmpty(StoragePool dataCenter) {
 
-        if (dataCenter != null && dataCenter.getStorageType() == StorageType.LOCALFS
+        if (dataCenter != null && dataCenter.isLocal()
                 && dataCenter.getStatus() == StoragePoolStatus.Uninitialized) {
             return true;
         }

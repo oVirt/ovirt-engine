@@ -106,7 +106,13 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     public StorageType getStorageType() {
         return storageType;
+    }
 
+    /**
+     * @return True is the Storage Pool is local, false if it's shared
+     */
+    public boolean isLocal() {
+        return getStorageType() == StorageType.LOCALFS;
     }
 
     public void setStorageType(StorageType value) {

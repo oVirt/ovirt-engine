@@ -59,7 +59,7 @@ public class StoragePoolValidator {
     }
 
     public ValidationResult isNotLocalfsWithDefaultCluster() {
-        if (storagePool.getStorageType() == StorageType.LOCALFS && containsDefaultCluster()) {
+        if (storagePool.isLocal() && containsDefaultCluster()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
         }
         return ValidationResult.VALID;

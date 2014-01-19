@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -1422,7 +1421,7 @@ public class ClusterModel extends EntityModel
         {
             return;
         }
-        if (selectedDataCenter.getStorageType() == StorageType.LOCALFS)
+        if (selectedDataCenter.isLocal())
         {
             setIsResiliencePolicyTabAvailable(false);
         }

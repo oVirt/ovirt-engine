@@ -692,7 +692,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            getAttachStorageCommand().setIsExecutionAllowed(getEntity().getStorageType() != StorageType.LOCALFS);
+            getAttachStorageCommand().setIsExecutionAllowed(!getEntity().isLocal());
         }
 
         boolean isMasterPresents = false;

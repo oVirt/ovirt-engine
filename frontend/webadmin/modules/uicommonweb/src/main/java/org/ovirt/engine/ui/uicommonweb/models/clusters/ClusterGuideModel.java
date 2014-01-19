@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -229,7 +228,7 @@ public class ClusterGuideModel extends GuideModel
                             model.dataCenter = (StoragePool) returnValue;
 
                             if (model.dataCenter == null
-                                    || model.dataCenter.getStorageType() != StorageType.LOCALFS)
+                                    || !model.dataCenter.isLocal())
                             {
                                 model.updateOptionsNonLocalFSData();
                             }
@@ -280,7 +279,7 @@ public class ClusterGuideModel extends GuideModel
                     public void onSuccess(Object target, Object returnValue) {
                         dataCenter = (StoragePool) returnValue;
 
-                        boolean isMultiHostDC = dataCenter.getStorageType() == StorageType.LOCALFS;
+                        boolean isMultiHostDC = dataCenter.isLocal();
                         if (isMultiHostDC) {
                             model.setMultiSelection(false);
                         }
