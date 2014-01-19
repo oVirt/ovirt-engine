@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -100,7 +99,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateMigrationForLocalSD() {
         boolean isLocalSD =
                 getModel().getSelectedDataCenter() != null
-                        && StorageType.LOCALFS.equals(getModel().getSelectedDataCenter().getStorageType());
+                        && getModel().getSelectedDataCenter().isLocal();
         if(isLocalSD) {
             getModel().getIsAutoAssign().setEntity(false);
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.PINNED_TO_HOST);
@@ -753,7 +752,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             VDSGroup cluster = getModel().getSelectedCluster();
             String compatibilityVersion = cluster.getcompatibility_version().toString();
             boolean isLocalSD = getModel().getSelectedDataCenter() != null
-                    && StorageType.LOCALFS.equals(getModel().getSelectedDataCenter().getStorageType());
+                    && getModel().getSelectedDataCenter().isLocal();
 
             // cpu pinning is available on Local SD with no consideration for auto assign value
             boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity()) || isLocalSD;

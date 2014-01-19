@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -538,7 +537,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         {
             startProgress(null);
 
-            if (getEntity().getStorageType() != StorageType.LOCALFS)
+            if (!getEntity().isLocal())
             {
                 updateOptionsNonLocalFSData();
             }
@@ -1430,7 +1429,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         // In case of local storage, do not show the cluster selection in host select menu as there can be only one cluster in that case
         //also only one host is allowed in the cluster so we should disable multi selection
-        boolean isMultiHostDC = getEntity().getStorageType() == StorageType.LOCALFS;
+        boolean isMultiHostDC = getEntity().isLocal();
         if (isMultiHostDC) {
             model.getCluster().setIsAvailable(false);
             model.setMultiSelection(false);

@@ -47,7 +47,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
             if (retVal &&
                     getStorageDomain().getStorageType() == StorageType.LOCALFS &&
-                    storagePool.getStorageType() != StorageType.LOCALFS) {
+                    !storagePool.isLocal()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
                 retVal = false;
             }

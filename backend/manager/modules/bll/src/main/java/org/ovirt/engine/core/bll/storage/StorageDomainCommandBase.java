@@ -108,7 +108,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean isNotLocalData(final boolean isInternal) {
         boolean returnValue = true;
-        if (this.getStoragePool().getStorageType() == StorageType.LOCALFS
+        if (this.getStoragePool().isLocal()
                 && getStorageDomain().getStorageDomainType() == StorageDomainType.Data
                 && !isInternal) {
             returnValue = false;

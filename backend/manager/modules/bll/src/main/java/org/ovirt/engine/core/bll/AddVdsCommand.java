@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -486,7 +485,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(
                 getParameters().getVdsStaticData().getVdsGroupId());
 
-        if (storagePool != null && storagePool.getStorageType() == StorageType.LOCALFS) {
+        if (storagePool != null && storagePool.isLocal()) {
             if (!DbFacade.getInstance()
                     .getVdsStaticDao()
                     .getAllForVdsGroup(getParameters().getVdsStaticData().getVdsGroupId())

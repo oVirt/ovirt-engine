@@ -859,7 +859,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
 
         getRecoveryStorageCommand().setIsExecutionAllowed(items != null && items.size() == 1
-                && !items.iterator().next().getStorageType().equals(StorageType.LOCALFS));
+                && !items.iterator().next().isLocal());
 
         // System tree dependent actions.
         boolean isAvailable =

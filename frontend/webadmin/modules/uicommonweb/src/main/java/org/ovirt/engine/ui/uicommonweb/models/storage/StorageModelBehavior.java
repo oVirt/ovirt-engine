@@ -112,8 +112,4 @@ public abstract class StorageModelBehavior extends Model
     protected boolean isLocalStorage(IStorageModel storage) {
         return storage.getType() == StorageType.LOCALFS;
     }
-
-    protected boolean isLocalDataCenter(StoragePool dataCenter) {
-        return dataCenter.getStorageType() == StorageType.LOCALFS;
-    }
 }

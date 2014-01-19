@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -112,7 +111,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                         VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST
                                 .toString());
                 result = false;
-            } else if (storagePool.getStorageType() == StorageType.LOCALFS) {
+            } else if (storagePool.isLocal()) {
                 // we allow only one cluster in localfs data center
                 if (!DbFacade.getInstance()
                         .getVdsGroupDao().getAllForStoragePool(getVdsGroup().getStoragePoolId())

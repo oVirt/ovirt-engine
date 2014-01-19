@@ -199,7 +199,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         });
 
         setSucceeded(true);
-        if (getStoragePool().getStorageType() != StorageType.LOCALFS) {
+        if (!getStoragePool().isLocal()) {
             for (VDS vds : vdss) {
                 StorageHelperDirector.getInstance().getItem(getStoragePool().getStorageType())
                         .disconnectStorageFromDomainByVdsId(masterDomain, vds.getId());

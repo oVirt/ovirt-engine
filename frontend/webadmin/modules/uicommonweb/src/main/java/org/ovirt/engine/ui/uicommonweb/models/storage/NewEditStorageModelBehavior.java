@@ -82,12 +82,11 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
             return true;
         }
 
-        if (isLocalStorage(item) && !isLocalDataCenter(dataCenter)) {
+        if (isLocalStorage(item) != dataCenter.isLocal()) {
             return false;
         }
 
-        boolean isNoneDataCenter = dataCenter != null &&
-                dataCenter.getId().equals(StorageModel.UnassignedDataCenterId);
+        boolean isNoneDataCenter = dataCenter.getId().equals(StorageModel.UnassignedDataCenterId);
         boolean isDataDomain = item.getRole() == StorageDomainType.Data;
 
         if (isNoneDataCenter) {
