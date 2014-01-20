@@ -188,6 +188,16 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                         .addValue("storage_pool_id", storagePoolId));
     }
 
+    @Override
+    public List<Guid> getVmAndTemplatesIdsByStorageDomainId(Guid storageDomainId, boolean includeShareableDisks, boolean includeSnapshotDisks) {
+        return getCallsHandler().executeReadList("GetVmAndTemplatesIdsByStorageDomainId",
+                createGuidMapper(),
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_domain_id", storageDomainId)
+                        .addValue("include_shareable", includeShareableDisks)
+                        .addValue("active_only", !includeSnapshotDisks));
+    }
+
     /**
      * Gets the storage domain id of the given type for the given storage pool
      *

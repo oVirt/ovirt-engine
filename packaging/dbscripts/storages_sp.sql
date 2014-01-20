@@ -222,6 +222,21 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmAndTemplatesIdsByStorageDomainId(v_storage_domain_id UUID, v_include_shareable BOOLEAN, v_active_only BOOLEAN)
+RETURNS SETOF UUID STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT DISTINCT vd.vm_id
+      FROM vm_device vd
+      INNER JOIN images_storage_domain_view i ON i.image_group_id = vd.device_id
+      WHERE i.storage_id = v_storage_domain_id AND i.active = v_active_only AND i.shareable = v_include_shareable;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
 Create or replace FUNCTION Getstorage_poolsByVdsId(v_vdsId UUID)
 RETURNS SETOF storage_pool STABLE
    AS $procedure$

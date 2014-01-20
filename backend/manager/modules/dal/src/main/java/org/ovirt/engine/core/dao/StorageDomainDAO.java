@@ -181,4 +181,9 @@ public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRec
      * @return the list of storage domains (empty if no storage matches the criteria)
      */
     List<StorageDomain> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId);
+
+    /**
+     * Retrieves all ids of vms and templates that has image disks on the given domain
+     */
+    List<Guid> getVmAndTemplatesIdsByStorageDomainId(Guid storageDomainId, boolean includeShareableDisks, boolean includeSnapshotDisks);
 }
