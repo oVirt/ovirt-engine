@@ -1342,9 +1342,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();
 
-    @DefaultStringValue("Cannot recover Data Center. Mismatch between Storage Domain type and Data Center type.")
-    String ERROR_CANNOT_RECOVERY_STORAGE_POOL_STORAGE_TYPE_MISSMATCH();
-
     @DefaultStringValue("Cannot remove the master Storage Domain from the Data Center without another active Storage Domain to take its place.\n-Either activate another Storage Domain in the Data Center, or remove the Data Center.")
     String ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN();
 
