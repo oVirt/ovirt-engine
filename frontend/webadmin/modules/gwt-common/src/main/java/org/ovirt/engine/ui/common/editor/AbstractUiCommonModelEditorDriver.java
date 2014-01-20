@@ -25,8 +25,8 @@ import com.google.gwt.editor.client.impl.BaseEditorDriver;
 public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E extends Editor<T>>
         extends BaseEditorDriver<T, E> implements SimpleBeanEditorDriver<T, E> {
 
-    private IEventListener propertyChangeListener = null;
-    private EditorVisitor visitor = null;
+    private IEventListener propertyChangeListener;
+    private EditorVisitor visitor;
 
     /**
      * {@inheritDoc} <BR>
@@ -97,7 +97,6 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
     /**
      * Returns a Map of the parent ListModel for all the ListModelBoxes being edited.
      *
-     * @param absolutePath
      * @return
      */
     protected abstract Map<String, EntityModel> getOwnerModels();

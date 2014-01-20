@@ -17,8 +17,7 @@ import com.google.gwt.editor.rebind.model.EditorData;
 import com.google.gwt.editor.rebind.model.EditorModel;
 import com.google.gwt.user.rebind.SourceWriter;
 
-public class UiCommonEditorDriverGenerator extends
-        AbstractEditorDriverGenerator {
+public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator {
 
     private JClassType entityModelType;
     private JClassType listModelType;
@@ -64,7 +63,7 @@ public class UiCommonEditorDriverGenerator extends
         this.model = model;
         this.sw = sw;
 
-        logger.log(Type.DEBUG, "Strating to write additional Driver code"); //$NON-NLS-1$
+        logger.log(Type.DEBUG, "Starting to write additional Driver code"); //$NON-NLS-1$
         writeListenerMap();
         writeEventMap();
         writeOwnerModels();
@@ -75,7 +74,7 @@ public class UiCommonEditorDriverGenerator extends
      * Writes the UiCommonListenerMap for the edited model
      */
     private void writeListenerMap() {
-        logger.log(Type.DEBUG, "Strating to write ListenerMap"); //$NON-NLS-1$
+        logger.log(Type.DEBUG, "Starting to write ListenerMap"); //$NON-NLS-1$
         sw.println();
         sw.println("@Override"); //$NON-NLS-1$
         sw.println("protected " + UiCommonListenerMap.class.getName() + " getListenerMap() {"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -127,7 +126,7 @@ public class UiCommonEditorDriverGenerator extends
      * Writes the UiCommonEventMap for the edited model
      */
     private void writeEventMap() {
-        logger.log(Type.DEBUG, "Strating to write EventMap"); //$NON-NLS-1$
+        logger.log(Type.DEBUG, "Starting to write EventMap"); //$NON-NLS-1$
 
         sw.println();
         sw.println("@Override"); //$NON-NLS-1$
@@ -177,7 +176,7 @@ public class UiCommonEditorDriverGenerator extends
      * Writes the map of the owner Models
      */
     private void writeOwnerModels() {
-        logger.log(Type.DEBUG, "Strating to write OwnerModels"); //$NON-NLS-1$
+        logger.log(Type.DEBUG, "Starting to write OwnerModels"); //$NON-NLS-1$
         sw.println();
         sw.println("@Override"); //$NON-NLS-1$
         sw.println("protected java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel> getOwnerModels() {"); //$NON-NLS-1$
