@@ -130,6 +130,57 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setTemplateVersionName(templateVersionName);
     }
 
+    public VmTemplate(VmTemplate template) {
+        this();
+        setChildCount(template.getChildCount());
+        setCreationDate(template.getCreationDate());
+        setDescription(template.getDescription());
+        setMemSizeMb(template.getMemSizeMb());
+        setName(template.getName());
+        setNumOfSockets(template.getNumOfSockets());
+        setCpuPerSocket(template.getCpuPerSocket());
+        setOsId(template.getOsId());
+        setVdsGroupId(template.getVdsGroupId());
+        setId(template.getId());
+        setNumOfMonitors(template.getNumOfMonitors());
+        setSingleQxlPci(template.getSingleQxlPci());
+        setStatus(template.getStatus());
+        setUsbPolicy(template.getUsbPolicy());
+        setTimeZone(template.getTimeZone());
+        setNiceLevel(template.getNiceLevel());
+        setCpuShares(template.getCpuShares());
+        setFailBack(template.isFailBack());
+        setDefaultBootSequence(template.getDefaultBootSequence());
+        setVmType(template.getVmType());
+        setSmartcardEnabled(template.isSmartcardEnabled());
+        setDeleteProtected(template.isDeleteProtected());
+        setSsoMethod(template.getSsoMethod());
+        setTunnelMigration(template.getTunnelMigration());
+        setVncKeyboardLayout(template.getVncKeyboardLayout());
+        setMinAllocatedMem(template.getMinAllocatedMem());
+        setStateless(template.isStateless());
+        setRunAndPause(template.isRunAndPause());
+        setCreatedByUserId(template.getCreatedByUserId());
+        setTemplateType(template.getTemplateType());
+        setAutoStartup(template.isAutoStartup());
+        setPriority(template.getPriority());
+        setDefaultDisplayType(template.getDefaultDisplayType());
+        setInitrdUrl(template.getInitrdUrl());
+        setKernelUrl(template.getKernelUrl());
+        setKernelParams(template.getKernelParams());
+        setQuotaId(template.getQuotaId());
+        setDedicatedVmForVds(template.getDedicatedVmForVds());
+        setMigrationSupport(template.getMigrationSupport());
+        setAllowConsoleReconnect(template.isAllowConsoleReconnect());
+        setIsoPath(template.getIsoPath());
+        setMigrationDowntime(template.getMigrationDowntime());
+        setBaseTemplateId(template.getBaseTemplateId());
+        setTemplateVersionName(template.getTemplateVersionName());
+        setTemplateVersionNumber(template.getTemplateVersionNumber());
+        setComment(template.getComment());
+        setOrigin(template.getOrigin());
+    }
+
     public ArchitectureType getClusterArch() {
         return clusterArch;
     }
