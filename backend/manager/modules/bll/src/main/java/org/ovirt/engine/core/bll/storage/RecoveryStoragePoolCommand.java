@@ -68,9 +68,6 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                 if (domain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
                     returnValue = false;
-                } else if (domain.getStorageType() != getStoragePool().getStorageType()) {
-                    addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_RECOVERY_STORAGE_POOL_STORAGE_TYPE_MISSMATCH);
-                    returnValue = false;
                 }
             }
         }
@@ -90,7 +87,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
 
     @Override
     protected void executeCommand() {
-        if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+        if (StorageHelperDirector.getInstance().getItem(getNewMaster(false).getStorageType())
                 .connectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
 
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getParameters().getStoragePoolId(),
