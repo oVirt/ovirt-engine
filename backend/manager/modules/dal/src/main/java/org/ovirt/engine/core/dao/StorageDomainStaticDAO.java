@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -19,18 +18,6 @@ public interface StorageDomainStaticDAO extends GenericDao<StorageDomainStatic, 
     StorageDomainStatic getByName(String name);
 
     /**
-     * Retrieves all domains of the specified type for the specified pool.
-     *
-     * @param type
-     *            the domain type
-     * @param pool
-     *            the storage pool
-     * @return the list of domains
-     */
-    List<StorageDomainStatic> getAllForStoragePoolOfStorageType(
-            StorageType type, Guid pool);
-
-    /**
      * Retrieves all storage domains for the given storage pool.
      *
      * @param pool
@@ -38,15 +25,6 @@ public interface StorageDomainStaticDAO extends GenericDao<StorageDomainStatic, 
      * @return the list of domains
      */
     List<StorageDomainStatic> getAllForStoragePool(Guid pool);
-
-    /**
-     * Retrieves all domains for the given type.
-     *
-     * @param type
-     *            the domain type
-     * @return the list of domains
-     */
-    List<StorageDomainStatic> getAllOfStorageType(StorageType type);
 
     /**
      * Return all the domains of the given status which belong to the given pool.

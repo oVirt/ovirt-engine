@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -89,15 +88,6 @@ public interface StoragePoolDAO extends GenericDao<StoragePool, Guid>, StatusAwa
      * @return The list of storage pools with the given status
      */
     List<StoragePool> getAllByStatus(StoragePoolStatus status);
-
-    /**
-     * Retrieves the list of all storage pools of a given type.
-     *
-     * @param type
-     *            the storage pool type
-     * @return the list of storage pool
-     */
-    List<StoragePool> getAllOfType(StorageType type);
 
     /**
      * Retrieves all storage pools for the given storage domain.

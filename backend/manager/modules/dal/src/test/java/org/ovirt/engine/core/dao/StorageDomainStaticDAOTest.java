@@ -13,7 +13,6 @@ import java.util.Set;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -117,46 +116,6 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-    }
-
-    /**
-     * Ensures the right set is returned.
-     */
-    @Test
-    public void testGetAllForStoragePoolOfStorageType() {
-        List<StorageDomainStatic> result = dao.getAllForStoragePoolOfStorageType(StorageType.ISCSI, EXISTING_POOL_ID);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (StorageDomainStatic domain : result) {
-            assertEquals(StorageType.ISCSI, domain.getStorageType());
-        }
-    }
-
-    /**
-     * Ensures that an empty collection is returned when no static domains of the specified type exist.
-     */
-    @Test
-    public void testGetAllOfStorageTypeWithInvalidType() {
-        List<StorageDomainStatic> result = dao.getAllOfStorageType(StorageType.FCP);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    /**
-     * Ensures the right collection of domains is returned.
-     */
-    @Test
-    public void testGetAllOfStorageType() {
-        List<StorageDomainStatic> result = dao
-                .getAllOfStorageType(StorageType.ISCSI);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (StorageDomainStatic domain : result) {
-            assertEquals(StorageType.ISCSI, domain.getStorageType());
-        }
     }
 
     @Test

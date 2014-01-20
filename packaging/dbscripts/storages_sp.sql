@@ -196,20 +196,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_poolsByType(v_storage_pool_type INTEGER)
-RETURNS SETOF storage_pool STABLE
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM storage_pool
-   WHERE storage_pool_type = v_storage_pool_type;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION Getstorage_poolsByStorageDomainId(v_storage_domain_id UUID)
 RETURNS SETOF storage_pool STABLE
    AS $procedure$
@@ -526,32 +512,6 @@ BEGIN
                                        WHERE user_id = v_user_id AND entity_id = id));
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-Create or replace FUNCTION Getstorage_domain_staticBystorage_pool_type(v_storage_pool_type INTEGER)
-RETURNS SETOF storage_domain_static STABLE
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM storage_domain_static
-   WHERE storage_type = v_storage_pool_type;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-Create or replace FUNCTION Getstorage_domain_staticBystorage_type_and_storage_pool_id(v_storage_type INTEGER, v_storage_pool_id UUID) RETURNS SETOF storage_domains STABLE
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM storage_domains
-   WHERE storage_pool_id = v_storage_pool_id and storage_type = v_storage_type;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
 
 
 

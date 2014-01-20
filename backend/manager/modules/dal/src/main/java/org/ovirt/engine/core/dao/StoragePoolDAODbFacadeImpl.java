@@ -115,13 +115,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public List<StoragePool> getAllOfType(StorageType type) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_pool_type", type);
-        return getCallsHandler().executeReadList("Getstorage_poolsByType", mapper, parameterSource);
-    }
-
-    @Override
     public List<StoragePool> getAllForStorageDomain(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", id);

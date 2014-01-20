@@ -30,24 +30,6 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
-    public List<StorageDomainStatic> getAllOfStorageType(
-            StorageType type) {
-        return getCallsHandler().executeReadList("Getstorage_domain_staticBystorage_pool_type",
-                StorageDomainStaticRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("storage_pool_type", type));
-    }
-
-    @Override
-    public List<StorageDomainStatic> getAllForStoragePoolOfStorageType(
-            StorageType type, Guid pool) {
-        return getCallsHandler().executeReadList("Getstorage_domain_staticBystorage_type_and_storage_pool_id",
-                StorageDomainStaticRowMapper.instance,
-                getStoragePoolIdParameterSource(pool)
-                        .addValue("storage_type", type));
-    }
-
-    @Override
     public List<StorageDomainStatic> getAllForStoragePool(Guid id) {
         return getCallsHandler().executeReadList("Getstorage_domain_staticBystorage_pool_id",
                 StorageDomainStaticRowMapper.instance,
