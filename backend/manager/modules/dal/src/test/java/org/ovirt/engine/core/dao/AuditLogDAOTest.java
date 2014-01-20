@@ -266,15 +266,21 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
 
     /**
      * Ensures that saving a AuditLog works as expected.
+     * <strong>Note:</strong> Since inserting a new AuditLog autogenerates its
+     * ID, we cannot rely on the {@link AuditLogDAO#get(long)} method.
+     * Instead, we'll use the {@link AuditLogDAO#getAllAfterDate(Date)} method
+     * to check that a new one was added.
      */
     @Test
-    @Ignore
     public void testSave() {
+        Date newAuditLogDateCuttoff = newAuditLog.getlog_time();
+        newAuditLogDateCuttoff.setTime(newAuditLogDateCuttoff.getTime() - 1);
+        int countBefore = dao.getAllAfterDate(newAuditLogDateCuttoff).size();
+
         dao.save(newAuditLog);
 
-        AuditLog result = dao.get(newAuditLog.getaudit_log_id());
-        assertNotNull(result);
-        assertEquals(newAuditLog, result);
+        int countAfter = dao.getAllAfterDate(newAuditLogDateCuttoff).size();
+        assertEquals(countBefore + 1, countAfter);
     }
 
     /**
