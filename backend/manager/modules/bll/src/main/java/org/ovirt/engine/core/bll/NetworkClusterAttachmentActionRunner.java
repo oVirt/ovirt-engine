@@ -19,10 +19,14 @@ import org.ovirt.engine.core.utils.NetworkUtils;
  */
 public class NetworkClusterAttachmentActionRunner extends MultipleActionsRunner {
 
+    private VdcActionType massAction;
+
     public NetworkClusterAttachmentActionRunner(VdcActionType actionType,
             List<VdcActionParametersBase> parameters,
-            boolean isInternal) {
+            boolean isInternal,
+            VdcActionType massAction) {
         super(actionType, parameters, isInternal);
+        this.massAction = massAction;
     }
 
     protected void runCommands() {
@@ -49,7 +53,7 @@ public class NetworkClusterAttachmentActionRunner extends MultipleActionsRunner 
 
         // multiple networks can be either attached or detached from a single cluster
         if (!params.isEmpty()) {
-            Backend.getInstance().runInternalAction(VdcActionType.AttachNetworksToCluster,
+            Backend.getInstance().runInternalAction(massAction,
                     new ClusterNetworksParameters(params.get(0).getVdsGroupId(), params));
         }
     }

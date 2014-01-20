@@ -18,6 +18,9 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBuilder {
 
+    /**
+     * Removes labeled networks from an interface by a given label
+     */
     public SetupNetworksParameters buildParameters(VdsNetworkInterface nic, String label, Guid clusterId) {
         SetupNetworksParameters parameters = createSetupNetworksParameters(nic.getVdsId());
         List<Network> labeledNetworks =
@@ -35,6 +38,29 @@ public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBui
 
         // remove the networks from all of the nics
         parameters.getInterfaces().removeAll(nicsToRemove);
+        return parameters;
+    }
+
+    /**
+     * Removes a given list of labeled networks from a host
+     */
+    public SetupNetworksParameters buildParameters(Guid hostId,
+            List<Network> networksToRemove,
+            Map<String, VdsNetworkInterface> nicsBylabels) {
+        SetupNetworksParameters parameters = createSetupNetworksParameters(hostId);
+
+        for (String label : nicsBylabels.keySet()) {
+            VdsNetworkInterface nicToConfigure =
+                    getNicToConfigure(parameters.getInterfaces(), nicsBylabels.get(label).getId());
+            if (nicToConfigure == null) {
+                throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
+            }
+
+            Set<VdsNetworkInterface> nicsToRemove =
+                    getNicsToRemove(parameters.getInterfaces(), networksToRemove, nicToConfigure);
+            parameters.getInterfaces().removeAll(nicsToRemove);
+        }
+
         return parameters;
     }
 

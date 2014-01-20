@@ -190,6 +190,7 @@ public enum VdcActionType {
     UpdateDisplayToVdsGroup(710, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
     UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
     AttachNetworksToCluster(712, false, QuotaDependency.NONE),
+    DetachNetworksFromCluster(713, false, QuotaDependency.NONE),
 
     /**
      * MultiLevelAdministration
