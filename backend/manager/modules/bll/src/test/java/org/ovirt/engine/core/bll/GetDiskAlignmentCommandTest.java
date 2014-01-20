@@ -4,6 +4,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -29,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -54,6 +58,9 @@ public class GetDiskAlignmentCommandTest {
     private VdsDAO vdsDao;
 
     @Mock
+    private StorageDomainStaticDAO storageDomainStaticDAO;
+
+    @Mock
     private StoragePoolDAO spDao;
 
     @Mock
@@ -64,12 +71,13 @@ public class GetDiskAlignmentCommandTest {
 
     private GetDiskAlignmentCommand<GetDiskAlignmentParameters> cmd;
 
-    private Guid vmId, diskId, poolId, groupId, vdsId;
+    private Guid vmId, diskId, poolId, storageDomainId, groupId, vdsId;
     private DiskImage disk;
     private VM vm;
     private VDS vds;
     private VmDevice vmDevice;
     private StoragePool storagePool;
+    private StorageDomain storageDomain;
     private VDSGroup vdsGroup;
 
     @Before
@@ -77,6 +85,7 @@ public class GetDiskAlignmentCommandTest {
         vmId = Guid.newGuid();
         diskId = Guid.newGuid();
         poolId = Guid.newGuid();
+        storageDomainId = Guid.newGuid();
         groupId = Guid.newGuid();
         vdsId = Guid.newGuid();
 
@@ -84,6 +93,7 @@ public class GetDiskAlignmentCommandTest {
         disk.setId(diskId);
         disk.setVmEntityType(VmEntityType.VM);
         disk.setImageStatus(ImageStatus.OK);
+        disk.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
 
         vm = new VM();
         vm.setId(vmId);
@@ -103,13 +113,16 @@ public class GetDiskAlignmentCommandTest {
 
         storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
-        storagePool.setStorageType(StorageType.ISCSI);
+
+        storageDomain = new StorageDomain();
+        storageDomain.setStorageType(StorageType.ISCSI);
 
         when(vmDao.getVmsListForDisk(diskId, Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
         when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up)).thenReturn(Collections.singletonList(vds));
         when(spDao.get(poolId)).thenReturn(storagePool);
         when(vdsGroupDao.get(groupId)).thenReturn(vdsGroup);
+        when(storageDomainStaticDAO.get(storageDomainId)).thenReturn(storageDomain.getStorageStaticData());
 
         cmd = spy(new GetDiskAlignmentCommand<GetDiskAlignmentParameters>(new GetDiskAlignmentParameters(diskId)));
 
@@ -118,6 +131,7 @@ public class GetDiskAlignmentCommandTest {
         doReturn(vmDao).when(cmd).getVmDAO();
         doReturn(spDao).when(cmd).getStoragePoolDao();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
+        doReturn(storageDomainStaticDAO).when(cmd).getStorageDomainStaticDAO();
     }
 
     /* Tests for canDoAction() flow */
@@ -171,8 +185,8 @@ public class GetDiskAlignmentCommandTest {
     }
 
     @Test
-    public void testCanDoActionStoragePoolFile() {
-        storagePool.setStorageType(StorageType.NFS);
+    public void testCanDoActionStorageDomainIsFileStorage() {
+        storageDomain.setStorageType(StorageType.NFS);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
     }

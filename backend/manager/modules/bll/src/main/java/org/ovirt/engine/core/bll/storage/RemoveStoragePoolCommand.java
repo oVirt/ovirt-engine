@@ -201,7 +201,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         setSucceeded(true);
         if (!getStoragePool().isLocal()) {
             for (VDS vds : vdss) {
-                StorageHelperDirector.getInstance().getItem(getStoragePool().getStorageType())
+                StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
                         .disconnectStorageFromDomainByVdsId(masterDomain, vds.getId());
             }
         } else {
@@ -215,7 +215,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             } catch (VdcBLLException e) {
                 // Do nothing, exception already printed at logs
             }
-            StorageHelperDirector.getInstance().getItem(getStoragePool().getStorageType())
+            StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
                     .disconnectStorageFromDomainByVdsId(masterDomain, vdss.get(0).getId());
             removeDomainFromDb(masterDomain);
         }

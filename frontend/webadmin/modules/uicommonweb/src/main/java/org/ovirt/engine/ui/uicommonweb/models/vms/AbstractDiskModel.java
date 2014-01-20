@@ -643,12 +643,13 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void volumeType_SelectedItemChanged() {
-        if (getVolumeType().getSelectedItem() == null || getDataCenter().getSelectedItem() == null) {
+        if (getVolumeType().getSelectedItem() == null || getDataCenter().getSelectedItem() == null
+                || getStorageDomain().getSelectedItem() == null) {
             return;
         }
 
         VolumeType volumeType = (VolumeType) getVolumeType().getSelectedItem();
-        StorageType storageType = ((StoragePool) getDataCenter().getSelectedItem()).getStorageType();
+        StorageType storageType = ((StorageDomain) getStorageDomain().getSelectedItem()).getStorageType();
 
         updateVolumeFormat(volumeType, storageType);
         updateShareable(volumeType, storageType);
@@ -710,7 +711,6 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
 
-        updateVolumeType(datacenter.getStorageType());
         updateShareableDiskEnabled(datacenter);
         updateDirectLunDiskEnabled(datacenter);
         updateInterface(isInVm ? getVm().getVdsGroupCompatibilityVersion() : null);
@@ -724,6 +724,10 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void storageDomain_SelectedItemChanged() {
+        StorageDomain selectedStorage = (StorageDomain) getStorageDomain().getSelectedItem();
+        if (selectedStorage != null) {
+            updateVolumeType(selectedStorage.getStorageType());
+        }
         updateQuota((StoragePool) getDataCenter().getSelectedItem());
     }
 

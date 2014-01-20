@@ -372,7 +372,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     private VolumeType getMemoryVolumeType() {
-        return getMemoryVolumeTypeForPool(getStoragePool().getStorageType());
+        return getMemoryVolumeTypeForStorageDomain(getStorageDomain().getStorageType());
     }
 
     /**
@@ -381,7 +381,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
      *
      * @return - VolumeType of allocation type to use.
      */
-    public static VolumeType getMemoryVolumeTypeForPool(StorageType storageType) {
+    public static VolumeType getMemoryVolumeTypeForStorageDomain(StorageType storageType) {
         return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
     }
 

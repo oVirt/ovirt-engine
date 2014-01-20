@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -100,17 +101,22 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
 
+        if (getVm() == null) {
+            addCanDoActionMessage(String.format("$diskAliases %1$s", getDiskAlias()));
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
+        }
+
         if (getDiskType() == DiskStorageType.IMAGE) {
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Arrays.asList((DiskImage) getDisk()));
             if (!validate(diskImagesValidator.diskImagesNotLocked()) ||
                     !validate(diskImagesValidator.diskImagesNotIllegal())) {
                 return false;
             }
-        }
 
-        if (getVm() == null) {
-            addCanDoActionMessage(String.format("$diskAliases %1$s", getDiskAlias()));
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
+            StorageDomainStatic sds = getStorageDomainStaticDAO().get(((DiskImage) getDisk()).getStorageIds().get(0));
+            if (!sds.getStorageType().isBlockDomain()) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
+            }
         }
 
         if (isImageExclusiveLockNeeded() && getVm().isRunningOrPaused()) {
@@ -124,10 +130,6 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         StoragePool sp = getStoragePoolDao().get(getStoragePoolId());
         if (!validate(new StoragePoolValidator(sp).isUp())) {
             return false;
-        }
-
-        if (!sp.getStorageType().isBlockDomain()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ALIGNMENT_SCAN_STORAGE_TYPE);
         }
 
         return true;

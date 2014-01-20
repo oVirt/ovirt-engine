@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.HibernateVmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * This builder creates the memory images for live snapshots with memory operation
@@ -79,6 +81,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     private void createImageForMemoryDump() {
+        StorageDomainStatic storageDomainStatic = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
         VDSReturnValue retVal =
                 Backend
                 .getInstance()
@@ -90,7 +93,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 storageDomainId,
                                 memoryDumpImageGroupId,
                                 vm.getTotalMemorySizeInBytes(),
-                                HibernateVmCommand.getMemoryVolumeTypeForPool(storagePool.getStorageType()),
+                                HibernateVmCommand.getMemoryVolumeTypeForStorageDomain(storageDomainStatic.getStorageType()),
                                 VolumeFormat.RAW,
                                 memoryDumpVolumeId,
                                 ""));
