@@ -32,7 +32,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final long EXISTING_ENTRY_ID = 44291;
     private static final long EXTERNAL_ENTRY_ID = 44296;
-    private final SimpleDateFormat EXPECTED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat EXPECTED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final int FILTERED_COUNT = 5;
     private static final int TOTAL_COUNT = 6;
 
