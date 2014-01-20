@@ -46,6 +46,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class NetworkModel extends Model
 {
+    private static final Integer MAX_MTU =
+            (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxMTU);
     protected static final String ENGINE_NETWORK =
             (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
@@ -458,7 +460,7 @@ public abstract class NetworkModel extends Model
         {
             IntegerValidation tempVar5 = new IntegerValidation();
             tempVar5.setMinimum(68);
-            tempVar5.setMaximum(9000);
+            tempVar5.setMaximum(MAX_MTU);
             getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
         }
 
