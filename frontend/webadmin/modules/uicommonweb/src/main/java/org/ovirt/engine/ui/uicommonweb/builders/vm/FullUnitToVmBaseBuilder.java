@@ -1,0 +1,33 @@
+package org.ovirt.engine.ui.uicommonweb.builders.vm;
+
+import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.ui.uicommonweb.builders.CompositeBuilder;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+
+/**
+ * Builder that performs FULL mapping of UnitVmModel to VM/Template.
+ * Typically used when saving or cloning existing VM/Template.
+ *
+ * Note that if you are adding a new property mapping, please consider that more appropriate place for it may be
+ * in {@link CommonUnitToVmBaseBuilder} if this mapping should be also performed in onNewTemplate actions
+ * or further yet in {@link CoreUnitToVmBaseBuilder} if this mapping should also apply to pool Vms.
+ * (most fields fall into the "Core" category)
+ */
+public class FullUnitToVmBaseBuilder extends CompositeBuilder<UnitVmModel, VmBase> {
+    public FullUnitToVmBaseBuilder() {
+        super(
+                new CommonUnitToVmBaseBuilder(),
+                new DedicatedVmForVdsUnitToVmBaseBuilder(),
+                new KernelParamsUnitToVmBaseBuilder(),
+                new MigrationOptionsUnitToVmBaseBuilder(),
+                new NameUnitToVmBaseBuilder(),
+                new UsbPolicyUnitToVmBaseBuilder()
+        );
+    }
+
+    @Override
+    protected void postBuild(UnitVmModel model, VmBase vm) {
+        vm.setComment(model.getComment().getEntity());
+        vm.setDescription(model.getDescription().getEntity());
+    }
+}

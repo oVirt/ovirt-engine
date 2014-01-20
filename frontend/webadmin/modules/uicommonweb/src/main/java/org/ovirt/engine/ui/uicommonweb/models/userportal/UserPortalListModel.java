@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -43,6 +42,12 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
@@ -597,55 +602,16 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
         VM vm = (VM) selectedItem.getEntity();
 
-        VM tempVar = new VM();
-        tempVar.setId(vm.getId());
-        tempVar.setVmType(model.getVmType().getSelectedItem());
-        tempVar.setVmOs(model.getOSType().getSelectedItem());
+        VM newVm = buildVmOnNewTemplate(model, vm);
 
-        tempVar.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
-        tempVar.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
-        tempVar.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
-        tempVar.setVmMemSizeMb(model.getMemSize().getEntity());
-        tempVar.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
-
-        tempVar.setVdsGroupId(model.getSelectedCluster().getId());
-        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? model.getTimeZone()
-                .getSelectedItem().getTimeZoneKey() : ""); //$NON-NLS-1$
-        tempVar.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-        tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
-                / model.getNumOfSockets().getSelectedItem());
-        tempVar.setDeleteProtected(model.getIsDeleteProtected().getEntity());
-        tempVar.setSsoMethod(model.extractSelectedSsoMethod());
-        tempVar.setStateless(model.getIsStateless().getEntity());
-        tempVar.setRunAndPause(model.getIsRunAndPause().getEntity());
-        tempVar.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-        tempVar.setDefaultBootSequence(model.getBootSequence());
-        tempVar.setAutoStartup(model.getIsHighlyAvailable().getEntity());
-        tempVar.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
-        tempVar.setUsbPolicy(vm.getUsbPolicy());
-        tempVar.setInitrdUrl(vm.getInitrdUrl());
-        tempVar.setKernelUrl(vm.getKernelUrl());
-        tempVar.setKernelParams(vm.getKernelParams());
-        tempVar.setDefaultVncKeyboardLayout(vm.getDefaultVncKeyboardLayout());
-        tempVar.setMigrationDowntime(vm.getMigrationDowntime());
-        VM newvm = tempVar;
-
-        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        newvm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
-
-        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
-        newvm.setPriority(prioritySelectedItem.getEntity());
+        newVm.setMigrationDowntime(vm.getMigrationDowntime());
 
         AddVmTemplateParameters addVmTemplateParameters =
-                new AddVmTemplateParameters(newvm,
+                new AddVmTemplateParameters(newVm,
                         model.getName().getEntity(),
                         model.getDescription().getEntity());
 
         addVmTemplateParameters.setPublicUse(model.getIsTemplatePublic().getEntity());
-
-        if (model.getQuota().getSelectedItem() != null) {
-            newvm.setQuotaId(model.getQuota().getSelectedItem().getId());
-        }
 
         addVmTemplateParameters.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                 .getImageToDestinationDomainMap());
@@ -665,6 +631,17 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         cancel();
                     }
                 }, this);
+    }
+
+    protected static VM buildVmOnNewTemplate(UnitVmModel model, VM vm) {
+        VM tempVar = new VM();
+        tempVar.setId(vm.getId());
+
+        BuilderExecutor.build(model, tempVar.getStaticData(), new CommonUnitToVmBaseBuilder());
+        BuilderExecutor.build(vm.getStaticData(), tempVar.getStaticData(),
+                              new KernelParamsVmBaseToVmBaseBuilder(),
+                              new UsbPolicyVmBaseToVmBaseBuilder());
+        return tempVar;
     }
 
     @Override
@@ -718,16 +695,16 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 VdcActionType.RunVmOnce));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
-                && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
-                VM.class,
-                VdcActionType.ChangeDisk));
+                                                           && !selectedItem.isPool()
+                                                           && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[] {(VM) selectedItem.getEntity()})),
+                                                                                        VM.class,
+                                                                                        VdcActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
-                && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
-                VM.class,
-                VdcActionType.AddVmTemplate));
+                                                              && !selectedItem.isPool()
+                                                              && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[] {(VM) selectedItem.getEntity()})),
+                                                                                           VM.class,
+                                                                                           VdcActionType.AddVmTemplate));
     }
 
     private void newInternal()
@@ -790,7 +767,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm));
 
         model.setTitle(ConstantsManager.getInstance()
-                .getConstants().editVmTitle());
+                               .getConstants().editVmTitle());
         model.setHashName("edit_vm"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(vm.getVmType());
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
@@ -1042,72 +1019,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
         UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
-        String name = model.getName().getEntity();
 
         // Save changes.
-        VmTemplate template = model.getTemplate().getSelectedItem();
-
-        gettempVm().setVmType(model.getVmType().getSelectedItem());
-        gettempVm().setVmtGuid(template.getId());
-        gettempVm().setName(name);
-        gettempVm().setVmOs(model.getOSType().getSelectedItem());
-        gettempVm().setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
-        gettempVm().setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
-        gettempVm().setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
-        gettempVm().setComment(model.getComment().getEntity());
-        gettempVm().setVmDescription(model.getDescription().getEntity());
-        gettempVm().setVmMemSizeMb(model.getMemSize().getEntity());
-        gettempVm().setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
-        Guid newClusterID = model.getSelectedCluster().getId();
-        gettempVm().setVdsGroupId(newClusterID);
-        gettempVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
-                .getSelectedItem() != null) ? model.getTimeZone()
-                .getSelectedItem().getTimeZoneKey() : ""); //$NON-NLS-1$
-        gettempVm().setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-        gettempVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
-                / model.getNumOfSockets().getSelectedItem());
-        gettempVm().setUsbPolicy(model.getUsbPolicy().getSelectedItem());
-        gettempVm().setStateless(model.getIsStateless().getEntity());
-        gettempVm().setRunAndPause(model.getIsRunAndPause().getEntity());
-        gettempVm().setDeleteProtected(model.getIsDeleteProtected().getEntity());
-        gettempVm().setSsoMethod(model.extractSelectedSsoMethod());
-        gettempVm().setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-        gettempVm().setDefaultBootSequence(model.getBootSequence());
-        gettempVm().setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage()
-                .getSelectedItem() : ""); //$NON-NLS-1$
-        gettempVm().setAutoStartup(model.getIsHighlyAvailable().getEntity());
-        gettempVm().setDefaultVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
-
-        gettempVm().setInitrdUrl(model.getInitrd_path().getEntity());
-        gettempVm().setKernelUrl(model.getKernel_path().getEntity());
-        gettempVm().setKernelParams(model.getKernel_parameters().getEntity());
-
-        gettempVm().setCustomProperties(model.getCustomPropertySheet().serialize());
-
-        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        gettempVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
-
-        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
-        gettempVm().setPriority(prioritySelectedItem.getEntity());
-
-        if (model.getQuota().getSelectedItem() != null) {
-            gettempVm().setQuotaId(model.getQuota().getSelectedItem().getId());
-        }
+        buildVmOnSave(model, gettempVm());
 
         gettempVm().setCpuPinning(model.getCpuPinning().getEntity());
-        gettempVm().setMigrationDowntime(model.getSelectedMigrationDowntime());
-
-        VDS defaultHost = model.getDefaultHost().getSelectedItem();
-        if (model.getIsAutoAssign().getEntity())
-        {
-            gettempVm().setDedicatedVmForVds(null);
-        }
-        else
-        {
-            gettempVm().setDedicatedVmForVds(defaultHost.getId());
-        }
-
-        gettempVm().setMigrationSupport(model.getMigrationMode().getSelectedItem());
 
         gettempVm().setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
 
@@ -1153,7 +1069,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(unitVmModel, defaultNetworkCreatingManager), this);
                         }
                     };
-                    AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
+                    AsyncDataProvider.getTemplateDiskList(_asyncQuery, gettempVm().getVmtGuid());
                 }
                 else
                 {
@@ -1174,6 +1090,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         else
         {
             Guid oldClusterID = ((VM) selectedItem.getEntity()).getVdsGroupId();
+            Guid newClusterID = model.getSelectedCluster().getId();
             if (oldClusterID.equals(newClusterID) == false)
             {
                 Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
@@ -1204,6 +1121,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 Frontend.getInstance().runAction(VdcActionType.UpdateVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), this);
             }
         }
+    }
+
+    protected static void buildVmOnSave(UnitVmModel model, VM vm) {
+        BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
     }
 
     private void updateDataCenterWithCluster() {

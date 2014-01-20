@@ -24,6 +24,12 @@ public class CompositeBuilder<S, D> implements Builder<S, D> {
     }
 
     /**
+     * Hook for descendant builders to implement additional build steps after the parent builders execute
+     */
+    protected void postBuild(S source, D destination) {
+    }
+
+    /**
      * It gets called when the last of the child builders finished it's job. Than this builder calls the next builder
      * after this one
      */
@@ -37,6 +43,8 @@ public class CompositeBuilder<S, D> implements Builder<S, D> {
 
         @Override
         public void build(S source, D destination, BuilderList<S, D> rest) {
+            // finish this builder and delegate
+            postBuild(source, destination);
             // ignoring the "rest" because this class is always the last in the chain
             parentsRest.head().build(source, destination, parentsRest.tail());
         }

@@ -12,15 +12,12 @@ import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -33,6 +30,9 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -141,18 +141,6 @@ public class VmSnapshotListModel extends SearchableListModel
     private void setCanSelectSnapshot(EntityModel value)
     {
         privateCanSelectSnapshot = value;
-    }
-
-    private VM privatecurrentVm;
-
-    public VM getcurrentVm()
-    {
-        return privatecurrentVm;
-    }
-
-    public void setcurrentVm(VM value)
-    {
-        privatecurrentVm = value;
     }
 
     private SystemTreeItemModel systemTreeSelectedItem;
@@ -598,73 +586,21 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
-        setcurrentVm(behavior.getVm());
-
-        String name = model.getName().getEntity();
+        VM vm = behavior.getVm();
 
         // Save changes.
-        VmTemplate template = model.getTemplate().getSelectedItem();
+        buildVmOnClone(model, vm);
 
-        getcurrentVm().setVmType(model.getVmType().getSelectedItem());
-        getcurrentVm().setVmtGuid(template.getId());
-        getcurrentVm().setName(name);
-        getcurrentVm().setVmOs(model.getOSType().getSelectedItem());
-        getcurrentVm().setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
-        getcurrentVm().setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
-        getcurrentVm().setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
-        getcurrentVm().setVmDescription(model.getDescription().getEntity());
-        getcurrentVm().setComment(model.getComment().getEntity());
-        getcurrentVm().setVmMemSizeMb(model.getMemSize().getEntity());
-        getcurrentVm().setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
-        Guid newClusterID = model.getSelectedCluster().getId();
-        getcurrentVm().setVdsGroupId(newClusterID);
-        getcurrentVm().setTimeZone(
-                (model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ?
-                        (model.getTimeZone().getSelectedItem()).getTimeZoneKey() : ""); //$NON-NLS-1$
-        getcurrentVm().setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity()) /
-                model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setUsbPolicy(model.getUsbPolicy().getSelectedItem());
-        getcurrentVm().setStateless(model.getIsStateless().getEntity());
-        getcurrentVm().setRunAndPause(model.getIsRunAndPause().getEntity());
-        getcurrentVm().setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-        getcurrentVm().setDeleteProtected(model.getIsDeleteProtected().getEntity());
-        getcurrentVm().setSsoMethod(model.extractSelectedSsoMethod());
-        getcurrentVm().setDefaultBootSequence(model.getBootSequence());
-        getcurrentVm().setIsoPath(model.getCdImage().getIsChangable() ?
-                model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
-        getcurrentVm().setAutoStartup(model.getIsHighlyAvailable().getEntity());
-        getcurrentVm().setInitrdUrl(model.getInitrd_path().getEntity());
-        getcurrentVm().setKernelUrl(model.getKernel_path().getEntity());
-        getcurrentVm().setKernelParams(model.getKernel_parameters().getEntity());
-        getcurrentVm().setCustomProperties(model.getCustomPropertySheet().serialize());
-        if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
-            getcurrentVm().setQuotaId(model.getQuota().getSelectedItem().getId());
-        }
+        vm.setCustomProperties(model.getCustomProperties().getEntity());
 
-        getcurrentVm().setDefaultVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
-
-        getcurrentVm().setMigrationDowntime(model.getSelectedMigrationDowntime());
-
-        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        getcurrentVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
-
-        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
-        getcurrentVm().setPriority(prioritySelectedItem.getEntity());
-
-        VDS defaultHost = model.getDefaultHost().getSelectedItem();
-        getcurrentVm().setDedicatedVmForVds(
-                model.getIsAutoAssign().getEntity() ? null : defaultHost.getId());
-
-        getcurrentVm().setMigrationSupport(model.getMigrationMode().getSelectedItem());
-        getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
-        getcurrentVm().setDiskMap(behavior.getVm().getDiskMap());
+        vm.setUseHostCpuFlags(model.getHostCpu().getEntity());
+        vm.setDiskMap(behavior.getVm().getDiskMap());
 
         HashMap<Guid, DiskImage> imageToDestinationDomainMap =
                 model.getDisksAllocationModel().getImageToDestinationDomainMap();
 
         AddVmFromSnapshotParameters parameters =
-                new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), snapshot.getId());
+                new AddVmFromSnapshotParameters(vm.getStaticData(), snapshot.getId());
         parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
         setupAddVmFromSnapshotParameters(parameters);
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
@@ -687,6 +623,11 @@ public class VmSnapshotListModel extends SearchableListModel
                         }
                     }
                 }, this);
+    }
+
+    protected static void buildVmOnClone(UnitVmModel model, VM vm) {
+        BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
     }
 
     protected void setupAddVmFromSnapshotParameters(AddVmFromSnapshotParameters parameters) {

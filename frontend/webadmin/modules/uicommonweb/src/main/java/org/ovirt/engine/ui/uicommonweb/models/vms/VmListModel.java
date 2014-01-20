@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -61,6 +60,14 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
@@ -597,20 +604,20 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         AsyncDataProvider.getVmById(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmListModel vmListModel = (VmListModel) target;
-                        VmGuideModel model = (VmGuideModel) vmListModel.getWindow();
-                        model.setEntity(returnValue);
+                                                   new INewAsyncCallback() {
+                                                       @Override
+                                                       public void onSuccess(Object target, Object returnValue) {
+                                                           VmListModel vmListModel = (VmListModel) target;
+                                                           VmGuideModel model = (VmGuideModel) vmListModel.getWindow();
+                                                           model.setEntity(returnValue);
 
-                        UICommand tempVar = new UICommand("Cancel", vmListModel); //$NON-NLS-1$
-                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
-                        tempVar.setIsDefault(true);
-                        tempVar.setIsCancel(true);
-                        model.getCommands().add(tempVar);
-                    }
-                }), (Guid) getGuideContext());
+                                                           UICommand tempVar = new UICommand("Cancel", vmListModel); //$NON-NLS-1$
+                                                           tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
+                                                           tempVar.setIsDefault(true);
+                                                           tempVar.setIsCancel(true);
+                                                           model.getCommands().add(tempVar);
+                                                       }
+                                                   }), (Guid) getGuideContext());
     }
 
     @Override
@@ -1246,8 +1253,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.getCommands().add(
                 new UICommand("OnNewTemplate", this) //$NON-NLS-1$
-                .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                .setIsDefault(true));
+                        .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                        .setIsDefault(true));
 
         model.getCommands().add(
                 new UICommand("Cancel", this) //$NON-NLS-1$
@@ -1316,52 +1323,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         UnitVmModel model = (UnitVmModel) getWindow();
         VM vm = (VM) getSelectedItem();
 
-        VM tempVar = new VM();
-        tempVar.setId(vm.getId());
-        tempVar.setVmType(model.getVmType().getSelectedItem());
-        if (model.getQuota().getSelectedItem() != null) {
-            tempVar.setQuotaId(model.getQuota().getSelectedItem().getId());
-        }
-        tempVar.setVmOs(model.getOSType().getSelectedItem());
-        tempVar.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
-        tempVar.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
-        tempVar.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
-        tempVar.setVmMemSizeMb(model.getMemSize().getEntity());
-        tempVar.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
-        tempVar.setVdsGroupId(model.getSelectedCluster().getId());
-        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? (model.getTimeZone()
-                .getSelectedItem()).getTimeZoneKey()
-                : ""); //$NON-NLS-1$
-        tempVar.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-        tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
-                / model.getNumOfSockets().getSelectedItem());
-        tempVar.setStateless(model.getIsStateless().getEntity());
-        tempVar.setRunAndPause(model.getIsRunAndPause().getEntity());
-        tempVar.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-        tempVar.setDeleteProtected(model.getIsDeleteProtected().getEntity());
-        tempVar.setSsoMethod(model.extractSelectedSsoMethod());
-        tempVar.setDefaultBootSequence(model.getBootSequence());
-        tempVar.setAutoStartup(model.getIsHighlyAvailable().getEntity());
-        tempVar.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
-        tempVar.setUsbPolicy(vm.getUsbPolicy());
-        tempVar.setInitrdUrl(vm.getInitrdUrl());
-        tempVar.setKernelUrl(vm.getKernelUrl());
-        tempVar.setKernelParams(vm.getKernelParams());
-        tempVar.setDedicatedVmForVds(vm.getDedicatedVmForVds());
-        tempVar.setMigrationSupport(vm.getMigrationSupport());
-        tempVar.setDefaultVncKeyboardLayout(vm.getDefaultVncKeyboardLayout());
-        tempVar.setMigrationDowntime(vm.getMigrationDowntime());
-
-        VM newvm = tempVar;
-
-        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        newvm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
-
-        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
-        newvm.setPriority(prioritySelectedItem.getEntity());
+        VM newVm = buildVmOnNewTemplate(model, vm);
 
         AddVmTemplateParameters addVmTemplateParameters =
-                new AddVmTemplateParameters(newvm,
+                new AddVmTemplateParameters(newVm,
                         model.getName().getEntity(),
                         model.getDescription().getEntity());
         addVmTemplateParameters.setPublicUse(model.getIsTemplatePublic().getEntity());
@@ -1392,6 +1357,18 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                     }
                 }, this);
+    }
+
+    protected static VM buildVmOnNewTemplate(UnitVmModel model, VM vm) {
+        VM tempVar = new VM();
+        tempVar.setId(vm.getId());
+        BuilderExecutor.build(model, tempVar.getStaticData(), new CommonUnitToVmBaseBuilder());
+        BuilderExecutor.build(vm.getStaticData(), tempVar.getStaticData(),
+                              new KernelParamsVmBaseToVmBaseBuilder(),
+                              new DedicatedVmForVdsVmBaseToVmBaseBuilder(),
+                              new MigrationOptionsVmBaseToVmBaseBuilder(),
+                              new UsbPolicyVmBaseToVmBaseBuilder());
+        return tempVar;
     }
 
     private void migrate()
@@ -1887,74 +1864,16 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         final UnitVmModel model = (UnitVmModel) getWindow();
         VM selectedItem = (VM) getSelectedItem();
 
-        String name = model.getName().getEntity();
-
         // Save changes.
-        VmTemplate template = model.getTemplate().getSelectedItem();
+        buildVmOnSave(model, getcurrentVm());
 
-        getcurrentVm().setVmType(model.getVmType().getSelectedItem());
-        getcurrentVm().setVmtGuid(template.getId());
-        getcurrentVm().setName(name);
-        if (model.getQuota().getSelectedItem() != null) {
-            getcurrentVm().setQuotaId(model.getQuota().getSelectedItem().getId());
-        }
-        getcurrentVm().setVmOs(model.getOSType().getSelectedItem());
-        getcurrentVm().setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
-        getcurrentVm().setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
-        getcurrentVm().setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
-        getcurrentVm().setVmDescription(model.getDescription().getEntity());
-        getcurrentVm().setComment(model.getComment().getEntity());
-        getcurrentVm().setVmMemSizeMb(model.getMemSize().getEntity());
-        getcurrentVm().setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
-        Guid newClusterID = model.getSelectedCluster().getId();
-        getcurrentVm().setVdsGroupId(newClusterID);
-        getcurrentVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? model.getTimeZone()
-                .getSelectedItem().getTimeZoneKey()
-                : ""); //$NON-NLS-1$
-        getcurrentVm().setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
-                / model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setUsbPolicy(model.getUsbPolicy().getSelectedItem());
-        getcurrentVm().setStateless(model.getIsStateless().getEntity());
-        getcurrentVm().setRunAndPause(model.getIsRunAndPause().getEntity());
-        getcurrentVm().setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-        getcurrentVm().setDeleteProtected(model.getIsDeleteProtected().getEntity());
-        getcurrentVm().setSsoMethod(model.extractSelectedSsoMethod());
-        getcurrentVm().setDefaultBootSequence(model.getBootSequence());
-        getcurrentVm().setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem()
-                : ""); //$NON-NLS-1$
-        getcurrentVm().setAutoStartup(model.getIsHighlyAvailable().getEntity());
-
-        getcurrentVm().setInitrdUrl(model.getInitrd_path().getEntity());
-        getcurrentVm().setKernelUrl(model.getKernel_path().getEntity());
-        getcurrentVm().setKernelParams(model.getKernel_parameters().getEntity());
-
-        getcurrentVm().setCustomProperties(model.getCustomPropertySheet().serialize());
         getcurrentVm().setBalloonEnabled(balloonEnabled(model));
 
-        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        getcurrentVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
-
-        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
-        getcurrentVm().setPriority(prioritySelectedItem.getEntity());
-
         getcurrentVm().setCpuPinning(model.getCpuPinning().getEntity());
-        getcurrentVm().setDefaultVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
 
         if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) {  // $NON-NLS-1$
             getcurrentVm().setCpuShares(model.getCpuSharesAmount().getEntity());
         }
-
-        if (model.getIsAutoAssign().getEntity()) {
-            getcurrentVm().setDedicatedVmForVds(null);
-        }
-        else {
-            VDS defaultHost = model.getDefaultHost().getSelectedItem();
-            getcurrentVm().setDedicatedVmForVds(defaultHost.getId());
-        }
-
-        getcurrentVm().setMigrationSupport(model.getMigrationMode().getSelectedItem());
-        getcurrentVm().setMigrationDowntime(model.getSelectedMigrationDowntime());
 
         getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
 
@@ -2037,7 +1956,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                         }
                     };
-                    AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
+                    AsyncDataProvider.getTemplateDiskList(_asyncQuery, getcurrentVm().getVmtGuid());
                 }
                 else
                 {
@@ -2080,6 +1999,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             // runEditVM: should be true if Cluster hasn't changed or if
             // Cluster has changed and Editing it in the Backend has succeeded:
             Guid oldClusterID = selectedItem.getVdsGroupId();
+            Guid newClusterID = model.getSelectedCluster().getId();
             if (oldClusterID.equals(newClusterID) == false)
             {
                 ChangeVMClusterParameters parameters =
@@ -2141,6 +2061,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }
+    }
+
+    protected static void buildVmOnSave(UnitVmModel model, VM vm) {
+        BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
     }
 
     private boolean balloonEnabled(UnitVmModel model) {

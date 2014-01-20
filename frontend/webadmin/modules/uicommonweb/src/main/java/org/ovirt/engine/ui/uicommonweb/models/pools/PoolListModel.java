@@ -10,9 +10,7 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -33,6 +31,14 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.NameUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -457,64 +463,19 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                             pool.setSpiceProxy(model.getSpiceProxy().getEntity());
                         }
 
-                        Guid default_host;
-                        VDS defaultHost = model.getDefaultHost().getSelectedItem();
-                        if (model.getIsAutoAssign().getEntity())
-                        {
-                            default_host = null;
-                        }
-                        else
-                        {
-                            default_host = defaultHost.getId();
-                        }
 
-
-                        VM vm = new VM();
-                        vm.setVmtGuid((model.getTemplate().getSelectedItem()).getId());
-                        vm.setName(name);
-                        vm.setVmOs(model.getOSType().getSelectedItem());
-                        vm.setDeleteProtected(model.getIsDeleteProtected().getEntity());
-                        vm.setSsoMethod(model.extractSelectedSsoMethod());
-                        vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-                        vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
-                        vm.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
-                        vm.setVmMemSizeMb(model.getMemSize().getEntity());
-                        vm.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
-                        vm.setVdsGroupId(model.getSelectedCluster().getId());
-                        vm.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
-                                .getSelectedItem() != null) ? model.getTimeZone().getSelectedItem().getTimeZoneKey()
-                                : ""); //$NON-NLS-1$
-                        vm.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-                        vm.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
-                                / model.getNumOfSockets().getSelectedItem());
-                        vm.setUsbPolicy(model.getUsbPolicy().getSelectedItem());
-                        vm.setStateless(false);
-                        vm.setDefaultBootSequence(model.getBootSequence());
-                        vm.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage()
-                                .getSelectedItem() : ""); //$NON-NLS-1$
-                        vm.setDedicatedVmForVds(default_host);
-                        vm.setKernelUrl(model.getKernel_path().getEntity());
-                        vm.setKernelParams(model.getKernel_parameters().getEntity());
-                        vm.setInitrdUrl(model.getInitrd_path().getEntity());
-                        vm.setMigrationSupport(model.getMigrationMode().getSelectedItem());
-                        vm.setMigrationDowntime(model.getSelectedMigrationDowntime());
-                        vm.setDefaultVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
-
-                        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-                        vm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
-                        vm.setCustomProperties(model.getCustomPropertySheet().serialize());
-                        vm.setVmType(model.getVmType().getSelectedItem());
-                        vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
+                        VM vm = buildVmOnSave(model);
                         vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
 
                         vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+                        vm.setStateless(false);
 
                         AddVmPoolWithVmsParameters param =
                                 new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity(), 0);
 
                         param.setStorageDomainId(Guid.Empty);
                         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
-                                .getImageToDestinationDomainMap());
+                                                                .getImageToDestinationDomainMap());
                         param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                         param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
 
@@ -555,6 +516,19 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                     }
                 }),
                 name);
+    }
+
+    protected static VM buildVmOnSave(PoolModel model) {
+        VM vm = new VM();
+        BuilderExecutor.build(model, vm.getStaticData(),
+                              new NameUnitToVmBaseBuilder(),
+                              new CoreUnitToVmBaseBuilder(),
+                              new KernelParamsUnitToVmBaseBuilder(),
+                              new MigrationOptionsUnitToVmBaseBuilder(),
+                              new DedicatedVmForVdsUnitToVmBaseBuilder(),
+                              new UsbPolicyUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
+        return vm;
     }
 
     public void cancel()

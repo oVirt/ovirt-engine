@@ -11,9 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -32,6 +30,8 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -477,62 +477,8 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
 
         // Save changes.
-        template.setVmType(model.getVmType().getSelectedItem());
-        template.setName(name);
-        template.setOsId(model.getOSType().getSelectedItem());
-        template.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
-        template.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
-        template.setDescription(model.getDescription().getEntity());
-        template.setComment(model.getComment().getEntity());
-        template.setMemSizeMb(model.getMemSize().getEntity());
-        template.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
-
-        template.setVdsGroupId((model.getSelectedCluster()).getId());
-        template.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? (model.getTimeZone()
-                .getSelectedItem()).getTimeZoneKey()
-                : ""); //$NON-NLS-1$
-        template.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-        template.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity())
-                / model.getNumOfSockets().getSelectedItem());
-        template.setUsbPolicy(model.getUsbPolicy().getSelectedItem());
-        template.setStateless(model.getIsStateless().getEntity());
-        template.setRunAndPause(model.getIsRunAndPause().getEntity());
-        template.setDeleteProtected(model.getIsDeleteProtected().getEntity());
-        template.setSsoMethod(model.extractSelectedSsoMethod());
-        template.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-        template.setDefaultBootSequence(model.getBootSequence());
-        template.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
-        template.setAutoStartup(model.getIsHighlyAvailable().getEntity());
-        template.setKernelUrl(model.getKernel_path().getEntity());
-        template.setKernelParams(model.getKernel_parameters().getEntity());
-        template.setInitrdUrl(model.getInitrd_path().getEntity());
-        template.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
+        buildTemplateOnSave(model, template);
         template.setCreatedByUserId(selectedItem.getCreatedByUserId());
-        template.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
-        template.setMigrationDowntime(model.getSelectedMigrationDowntime());
-
-        if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
-            template.setQuotaId(model.getQuota().getSelectedItem().getId());
-        }
-
-        EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        template.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
-
-        EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
-        template.setPriority(prioritySelectedItem.getEntity());
-
-        // host migration configuration
-        VDS defaultHost = model.getDefaultHost().getSelectedItem();
-        if (model.getIsAutoAssign().getEntity())
-        {
-            template.setDedicatedVmForVds(null);
-        }
-        else
-        {
-            template.setDedicatedVmForVds(defaultHost.getId());
-        }
-
-        template.setMigrationSupport(model.getMigrationMode().getSelectedItem());
 
         model.startProgress(null);
 
@@ -552,6 +498,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
                     }
                 }, this);
+    }
+
+    protected static void buildTemplateOnSave(UnitVmModel model, VmTemplate template) {
+        BuilderExecutor.build(model, template, new FullUnitToVmBaseBuilder());
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, UpdateVmTemplateParameters updateVmParams) {
