@@ -449,12 +449,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private void addDiskPermissions(Disk disk) {
-        Permissions perms =
-                new Permissions(getCurrentUser().getId(),
-                        PredefinedRoles.DISK_OPERATOR.getId(),
-                        disk.getId(),
-                        VdcObjectType.Disk);
-        MultiLevelAdministrationHandler.addPermission(perms);
+        if (getCurrentUser() != null) {
+            Permissions perms =
+                    new Permissions(getCurrentUser().getId(),
+                            PredefinedRoles.DISK_OPERATOR.getId(),
+                            disk.getId(),
+                            VdcObjectType.Disk);
+            MultiLevelAdministrationHandler.addPermission(perms);
+        }
     }
 
     @Override
