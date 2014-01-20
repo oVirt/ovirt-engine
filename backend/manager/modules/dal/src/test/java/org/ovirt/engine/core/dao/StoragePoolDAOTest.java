@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -199,31 +198,6 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-    }
-
-    /**
-     * Ensures that an empty collection is returned for a type that's not in the database.
-     */
-    @Test
-    public void testGetAllOfTypeForUnrepresentedType() {
-        List<StoragePool> result = dao.getAllOfType(StorageType.UNKNOWN);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    /**
-     * Ensures that only pools of the given type are returned.
-     */
-    @Test
-    public void testGetAllOfType() {
-        List<StoragePool> result = dao.getAllOfType(StorageType.ISCSI);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (StoragePool pool : result) {
-            assertEquals(StorageType.ISCSI, pool.getStorageType());
-        }
     }
 
     /**
