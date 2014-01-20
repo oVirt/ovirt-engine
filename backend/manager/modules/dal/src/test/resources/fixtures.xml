@@ -38,6 +38,12 @@
             <value>true</value>
             <value>3.2</value>
         </row>
+        <!-- Required by InsertExternalAuditLog -->
+        <row>
+            <value>MaxAuditLogMessageLength</value>
+            <value>1000</value>
+            <value>general</value>
+        </row>
     </table>
 
 

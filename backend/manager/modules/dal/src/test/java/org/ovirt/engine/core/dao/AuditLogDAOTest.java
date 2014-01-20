@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -285,18 +284,30 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
 
     /**
      * Ensures that saving a AuditLog with long message works as expected.
+     * <strong>Note:</strong> Since inserting a new AuditLog autogenerates its
+     * ID, we cannot rely on the {@link AuditLogDAO#get(long)} method.
+     * Instead, we'll use the {@link AuditLogDAO#getAllAfterDate(Date)} method
+     * to check that a new one was added.
      */
     @Test
-    @Ignore
     public void testLongMessageSave() {
+        Date newAuditLogDateCuttoff = newAuditLog.getlog_time();
+        newAuditLogDateCuttoff.setTime(newAuditLogDateCuttoff.getTime() - 1);
+        List<AuditLog> before = dao.getAllAfterDate(newAuditLogDateCuttoff);
+
         // generate a value that is longer than the max configured.
         char[] fill = new char[Config.<Integer> getValue(ConfigValues.MaxAuditLogMessageLength) + 1];
         Arrays.fill(fill, '0');
         newAuditLog.setaudit_log_id(45000);
         newAuditLog.setmessage(new String(fill));
+        newAuditLog.setExternal(true);
         dao.save(newAuditLog);
 
-        AuditLog result = dao.get(newAuditLog.getaudit_log_id());
+        List<AuditLog> after = dao.getAllAfterDate(newAuditLogDateCuttoff);
+        after.removeAll(before);
+
+        assertEquals(1, after.size());
+        AuditLog result = after.get(0);
         assertNotNull(result);
         assertTrue(result.getmessage().endsWith("..."));
     }
