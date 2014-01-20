@@ -504,6 +504,14 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetStorageServerConnectionsByIds(v_ids TEXT)
+RETURNS SETOF storage_server_connections STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM storage_server_connections WHERE id = any(string_to_array(v_ids,',')::VARCHAR[]);
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_server_connectionsByVolumeGroupId(v_volume_group_id VARCHAR(50)) RETURNS SETOF storage_server_connections STABLE

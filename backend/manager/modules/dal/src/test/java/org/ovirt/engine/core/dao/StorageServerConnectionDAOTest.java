@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -231,5 +232,11 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
       List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
       assertEquals(connections.size(), 2);
       assertTrue((connections.get(0).getid().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk")) || (connections.get(0).getid().equals("0cc146e8-e5ed-482c-8814-270bc48c297e")));
+    }
+
+    @Test
+    public void testGetConnectionsBySpecificIds() {
+        List<StorageServerConnections> connections = dao.getByIds(Arrays.asList("0cc146e8-e5ed-482c-8814-270bc48c297f"));
+        assertEquals(1, connections.size());
     }
 }

@@ -1252,3 +1252,24 @@ RETURN QUERY SELECT *
    WHERE network_qos_id = v_network_qos_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetIscsiIfacesByHostIdAndStorageTargetId(v_host_id UUID, v_target_id varchar(50)) RETURNS SETOF vds_interface_view STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vds_interface_view.*
+   FROM vds_interface_view,
+        network_cluster,
+        network,
+        iscsi_bonds_networks_map,
+        iscsi_bonds_storage_connections_map
+   WHERE
+       iscsi_bonds_storage_connections_map.connection_id = v_target_id AND
+       iscsi_bonds_storage_connections_map.iscsi_bond_id = iscsi_bonds_networks_map.iscsi_bond_id AND
+       iscsi_bonds_networks_map.network_id = network.id AND
+       network.id = network_cluster.network_id AND
+       network.name = vds_interface_view.network_name AND
+       network_cluster.cluster_id = vds_interface_view.vds_group_id AND
+       vds_interface_view.vds_id = v_host_id;
+END; $procedure$
+LANGUAGE plpgsql;

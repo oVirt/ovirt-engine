@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
@@ -30,6 +31,12 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     @Override
     public StorageServerConnections get(String id) {
         return getCallsHandler().executeRead("Getstorage_server_connectionsByid", mapper, getIdParameterSource(id));
+    }
+
+    @Override
+    public List<StorageServerConnections> getByIds(List<String> ids) {
+        return getCallsHandler().executeReadList("GetStorageServerConnectionsByIds",
+                mapper, getCustomMapSqlParameterSource().addValue("ids", StringUtils.join(ids, ",")));
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
@@ -45,6 +46,10 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
     protected Pair<Boolean, Integer> connectHostToStorage() {
         List<StorageServerConnections> connections = Arrays.asList(getConnection());
+
+        if (getConnection().getstorage_type() == StorageType.ISCSI) {
+            connections = ISCSIStorageHelper.updateIfaces(connections, getVds().getId());
+        }
 
         Map<String, String> result = (HashMap<String, String>) runVdsCommand(
                 VDSCommandType.ConnectStorageServer,

@@ -78,6 +78,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         con.put("iqn", connection.getiqn(), "");
         con.put("user", connection.getuser_name(), "");
         con.put("password", connection.getpassword(), "");
+        con.putIfNotEmpty("initiatorName", connection.getIface());
 
         // storage_pool can be null when discovering iscsi send targets or when connecting
         // through vds which has no storage pool

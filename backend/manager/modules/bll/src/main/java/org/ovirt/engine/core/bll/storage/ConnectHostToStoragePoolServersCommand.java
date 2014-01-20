@@ -57,6 +57,10 @@ public class ConnectHostToStoragePoolServersCommand extends
     private boolean connectStorageServer(StorageType type, List<StorageServerConnections> connections) {
         boolean connectSucceeded = true;
         if (connections != null && connections.size() > 0) {
+            if (type == StorageType.ISCSI) {
+                connections = ISCSIStorageHelper.updateIfaces(connections, getVds().getId());
+            }
+
             Map<String, String> retValues = (HashMap<String, String>) Backend
                     .getInstance()
                     .getResourceManager()

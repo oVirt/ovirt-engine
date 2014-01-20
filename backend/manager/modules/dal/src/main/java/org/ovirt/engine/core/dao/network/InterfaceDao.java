@@ -177,4 +177,16 @@ public interface InterfaceDao extends DAO {
      * @return all labels defined for the data-center's networks
      */
     Set<String> getAllNetworkLabelsForDataCenter(Guid id);
+
+    /**
+     * Retrieve the list of the host endpoints (nics or vlans) that configured as iscsi session
+     * initiators to the relevant iscsi target
+     *
+     * @param hostId
+     *             the host id
+     * @param storageTargetId
+     *             the iscsi target id
+     * @return
+     */
+    List<VdsNetworkInterface> getIscsiIfacesByHostIdAndStorageTargetId(Guid hostId, String storageTargetId);
 }

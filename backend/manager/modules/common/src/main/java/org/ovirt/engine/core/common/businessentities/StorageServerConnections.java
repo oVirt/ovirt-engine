@@ -177,6 +177,16 @@ public class StorageServerConnections implements Serializable {
     @Max(value = Short.MAX_VALUE, message = "VALIDATION_STORAGE_CONNECTION_NFS_RETRANS")
     private Short nfsRetrans;
 
+    private String iface;
+
+    public String getIface() {
+        return iface;
+    }
+
+    public void setIface(String iface) {
+        this.iface = iface;
+    }
+
     @Override
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
@@ -232,6 +242,10 @@ public class StorageServerConnections implements Serializable {
         sb.append(this.getNfsRetrans());
         sb.append(", nfsTimeo: ");
         sb.append(this.getNfsTimeo());
+        if (getIface() != null) {
+            sb.append(", iface: ");
+            sb.append(this.getIface());
+        }
         sb.append(" };");
         return sb.toString();
     }

@@ -29,6 +29,15 @@ public interface StorageServerConnectionDAO extends DAO {
     StorageServerConnections get(String id);
 
     /**
+     * Retrieves connections which id is one of the specified ids.
+     *
+     * @param ids
+     *            the list of connection ids
+     * @return
+     */
+    List<StorageServerConnections> getByIds(List<String> ids);
+
+    /**
      * Retrieves the connection for the given iqn.
      *
      * @param iqn
