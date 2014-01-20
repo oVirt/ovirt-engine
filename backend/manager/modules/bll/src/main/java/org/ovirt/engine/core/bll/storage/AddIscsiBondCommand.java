@@ -54,6 +54,7 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
             }
         });
 
+        connectAllHostsToStorage(iscsiBond.getStorageConnectionIds());
         setSucceeded(true);
     }
 

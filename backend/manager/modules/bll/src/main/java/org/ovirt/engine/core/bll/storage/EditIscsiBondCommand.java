@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +21,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends BaseIscsiBondCommand<T> {
 
     private IscsiBond existingIscsiBond;
+
+    private List<String> addedConnections = new ArrayList<>();
+    private List<Guid> addedNetworks = new ArrayList<>();
 
     public EditIscsiBondCommand(T parameters) {
         super(parameters);
@@ -62,6 +66,10 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
             }
         });
 
+        if (!addedConnections.isEmpty() || !addedNetworks.isEmpty()) {
+            connectAllHostsToStorage(getIscsiBond().getStorageConnectionIds());
+        }
+
         setSucceeded(true);
     }
 
@@ -70,6 +78,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
 
         for (Guid networkId : getIscsiBond().getNetworkIds()) {
             if (!beforeChangeNetworkIds.remove(networkId)) {
+                addedNetworks.add(networkId);
                 getDbFacade().getIscsiBondDao().addNetworkToIscsiBond(getExistingIscsiBond().getId(), networkId);
             }
         }
@@ -84,6 +93,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
 
         for (String connectionId : getIscsiBond().getStorageConnectionIds()) {
             if (!beforeChangeConnectionIds.remove(connectionId)) {
+                addedConnections.add(connectionId);
                 getDbFacade().getIscsiBondDao().addStorageConnectionToIscsiBond(getExistingIscsiBond().getId(), connectionId);
             }
         }

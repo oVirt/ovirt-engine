@@ -271,6 +271,13 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
 
     }
 
+    @Override
+    public List<VdsNetworkInterface> getIscsiIfacesByHostIdAndStorageTargetId(Guid hostId, String storageTargetId) {
+        return getCallsHandler().executeReadList("GetIscsiIfacesByHostIdAndStorageTargetId",
+                vdsNetworkInterfaceRowMapper,
+                getCustomMapSqlParameterSource().addValue("host_id", hostId).addValue("target_id", storageTargetId));
+    }
+
     private static final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
             new RowMapper<VdsNetworkInterface>() {
                 @SuppressWarnings("unchecked")

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -47,6 +48,8 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             if (VDSCommandType.forValue(type) == VDSCommandType.DisconnectStorageServer) {
                 list = filterConnectionsUsedByOthers(list, storageDomain.getStorage(), lun != null ? lun.getLUN_id()
                         : "");
+            } else if (VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {
+                list = updateIfaces(list, vdsId);
             }
             Guid poolId = storagePoolId;
             if (storageDomain != null && storageDomain.getStoragePoolId() != null) {
@@ -72,6 +75,32 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             }
         }
         return isSuccess;
+    }
+
+    public static List<StorageServerConnections> updateIfaces(List<StorageServerConnections> conns, Guid vdsId) {
+        List<StorageServerConnections> res = new ArrayList<>(conns);
+
+        for (StorageServerConnections conn : conns) {
+            // Get list of endpoints (nics or vlans) that will initiate iscsi sessions.
+            // Targets are represented by StorageServerConnections object (connection, iqn, port, portal).
+            List<VdsNetworkInterface> ifaces = DbFacade.getInstance().getInterfaceDao()
+                    .getIscsiIfacesByHostIdAndStorageTargetId(vdsId, conn.getid());
+
+            if (!ifaces.isEmpty()) {
+                conn.setIface(ifaces.remove(0).getName());
+
+                // Iscsi target is represented by connection object, therefore if this target is approachable
+                // from more than one endpoint(initiator) we have to clone this connection per endpoint.
+                for (VdsNetworkInterface iface : ifaces) {
+                    StorageServerConnections newConn = StorageServerConnections.copyOf(conn);
+                    newConn.setid(Guid.newGuid().toString());
+                    newConn.setIface(iface.getName());
+                    res.add(newConn);
+                }
+            }
+        }
+
+        return res;
     }
 
     @SuppressWarnings("unchecked")
