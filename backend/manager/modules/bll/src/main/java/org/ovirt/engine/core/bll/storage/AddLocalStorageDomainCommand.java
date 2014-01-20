@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -76,6 +77,9 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
     @Override
     protected void executeCommand() {
+        getStorageDomain().setStorageFormat(
+                VersionStorageFormatUtil.getPreferredForVersion(
+                        getStoragePool().getcompatibility_version(), getStorageDomain().getStorageType()));
         super.executeCommand();
         if (getSucceeded()) {
             VdcReturnValueBase returnValue = Backend.getInstance()
