@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -733,7 +734,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
         params.setParentParameters(getParameters());
 
-        if (getStoragePool().getStorageType().isBlockDomain()) {
+        StorageDomainStatic storageDomain = getStorageDomainStaticDAO().get(storageId);
+        if (storageDomain.getStorageType().isBlockDomain()) {
             params.setUseCopyCollapse(true);
             params.setVolumeType(VolumeType.Preallocated);
             params.setVolumeFormat(VolumeFormat.RAW);

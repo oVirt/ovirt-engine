@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -339,9 +340,11 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         params.setEntityInfo(getParameters().getEntityInfo());
         params.setParentParameters(getParameters());
 
-        // if the data domains are block based storage, the memory volume type is preallocated
+        StorageDomainStatic sourceDomain = getStorageDomainStaticDAO().get(storageDomainId);
+
+        // if the data domain is a block based storage, the memory volume type is preallocated
         // so we need to use copy collapse in order to convert it to be sparsed in the export domain
-        if (getStoragePool().getStorageType().isBlockDomain()) {
+        if (sourceDomain.getStorageType().isBlockDomain()) {
             params.setUseCopyCollapse(true);
             params.setVolumeType(VolumeType.Sparse);
             params.setVolumeFormat(VolumeFormat.RAW);
