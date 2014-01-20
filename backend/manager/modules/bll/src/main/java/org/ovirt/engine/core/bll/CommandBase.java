@@ -1087,6 +1087,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return getReturnValue().getActionReturnValue();
     }
 
+    protected boolean isExecutedAsChildCommand() {
+        return getParameters().getParentCommand() != VdcActionType.Unknown;
+    }
+
     /**
      * Calculates the proper parameters for the task
      * @param parentCommandType parent command type for which the task is created

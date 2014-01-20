@@ -397,10 +397,17 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setDiskAlias(getDiskAlias());
         parameters.setShouldRemainIllegalOnFailedExecution(getParameters().isShouldRemainIllegalOnFailedExecution());
         parameters.setStorageDomainId(getStorageDomainId());
-        parameters.setParentCommand(VdcActionType.AddDisk);
+
+        if (isExecutedAsChildCommand()) {
+            parameters.setParentCommand(getParameters().getParentCommand());
+            parameters.setParentParameters(getParameters().getParentParameters());
+        } else {
+            parameters.setParentCommand(VdcActionType.AddDisk);
+            parameters.setParentParameters(getParameters());
+        }
+
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setStoragePoolId(getStorageDomain().getStoragePoolId());
-        parameters.setParentParameters(getParameters());
         if (getVm() != null) {
             setVmSnapshotIdForDisk(parameters);
             getCompensationContext().snapshotNewEntity(VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo()
@@ -420,7 +427,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
         // Setting lock to null because the lock is released in the child command
         setLock(null);
-        getReturnValue().getVdsmTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
+        ArrayList<Guid> taskList = isExecutedAsChildCommand() ? getReturnValue().getInternalVdsmTaskIdList() : getReturnValue().getVdsmTaskIdList();
+        taskList.addAll(tmpRetValue.getInternalVdsmTaskIdList());
         if (tmpRetValue.getActionReturnValue() != null) {
             DiskImage diskImage = (DiskImage) tmpRetValue.getActionReturnValue();
             addDiskPermissions(diskImage);
