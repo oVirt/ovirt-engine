@@ -184,6 +184,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Set Styles
+        bootProtocolLabel.asValueBox().setVisible(false);
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
         qosOverridden.setContentWidgetStyleName(style.syncInfo());
         isToSync.setContentWidgetStyleName(style.syncInfo());
