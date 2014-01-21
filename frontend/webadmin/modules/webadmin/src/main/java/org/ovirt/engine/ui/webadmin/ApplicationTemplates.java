@@ -19,6 +19,11 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "<div class='engine-progress-text'>{1}</div></div>")
     SafeHtml progressBar(int progress, String text, String color);
 
+    @Template("<div title='{3}' class='engine-progress-box'>" +
+            "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
+            "<div class='engine-progress-text'>{1}</div></div>")
+    SafeHtml glusterCapcityProgressBar(int progress, String sizeString, String color, String toolTip);
+
     /**
      * Creates a tree-item HTML
      *

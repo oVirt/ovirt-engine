@@ -18,9 +18,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.BrickCapacityCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MenuCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivitySeperatorCell;
@@ -71,16 +71,12 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
 
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new PercentColumn<GlusterBrickEntity>() {
+        getTable().addColumn(new Column<GlusterBrickEntity, BrickProperties>( new BrickCapacityCell()) {
             @Override
-            protected Integer getProgressValue(GlusterBrickEntity object) {
-                if(object.getBrickProperties() == null) {
-                    return 0;
-                }
-                BrickProperties brickProperties = object.getBrickProperties();
-                return (int)(((brickProperties.getTotalSize() - brickProperties.getFreeSize())/ (brickProperties.getTotalSize())) * 100);
+            public BrickProperties getValue(GlusterBrickEntity object) {
+                return object.getBrickProperties();
             }
-        }, constants.volumeCapacity(), "60px");//$NON-NLS-1$
+        }, constants.volumeCapacity(), "100px");//$NON-NLS-1$
 
         getTable().addColumn(new VolumeActivityColumn<GlusterBrickEntity>(getActivityCell(constants)),
                 constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$

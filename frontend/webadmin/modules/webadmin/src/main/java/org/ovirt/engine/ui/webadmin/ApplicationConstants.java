@@ -1552,6 +1552,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Physical Memory")
     String physMemHostGeneral();
 
+    @DefaultStringValue("Capacity")
+    String volumeCapacityStatistics();
+
     @DefaultStringValue("Swap Size")
     String swapSizeHostGeneral();
 
