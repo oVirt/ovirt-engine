@@ -33,6 +33,11 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "</div>")
     SafeHtml lineChartWithoutImage(int textWidth, String textColor, String fontWeight, int percentage);
 
+    @Template("<div title='{3}' class='engine-progress-box'>" +
+            "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
+            "<div class='engine-progress-text'>{1}</div></div>")
+    SafeHtml glusterCapcityProgressBar(int progress, String sizeString, String color, String toolTip);
+
     /**
      * Creates a tree-item HTML
      *

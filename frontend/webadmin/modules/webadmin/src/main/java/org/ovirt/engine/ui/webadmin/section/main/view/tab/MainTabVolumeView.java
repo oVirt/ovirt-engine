@@ -136,12 +136,13 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             }
         });
 
-        getTable().addColumn(new Column<GlusterVolumeEntity, GlusterVolumeEntity>(new VolumeCapacityCell()) {
+        Column<GlusterVolumeEntity, GlusterVolumeEntity> capacityColumn = new Column<GlusterVolumeEntity, GlusterVolumeEntity>(new VolumeCapacityCell()) {
             @Override
             public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
                 return object;
             }
-        }, constants.volumeCapacity(), "100px");//$NON-NLS-1$
+        };
+        getTable().addColumn(capacityColumn, constants.volumeCapacity(), "100px");//$NON-NLS-1$
 
         getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList) {
             @Override

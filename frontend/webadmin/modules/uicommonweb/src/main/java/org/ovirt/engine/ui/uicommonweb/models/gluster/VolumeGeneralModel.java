@@ -22,6 +22,9 @@ public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
     private String nfsMountPoint;
     private Set<TransportType> transportTypes;
     private String snapMaxLimit;
+    private Long volumeTotalCapacity;
+    private Long volumeFreeCapacity;
+    private Long volumeUsedCapacity;
 
     public String getName() {
         return name;
@@ -143,6 +146,15 @@ public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
         setNumOfBricks(entity.getBricks() != null ? Integer.toString(entity.getBricks().size()) : null);
         setTransportTypes(entity.getTransportTypes());
         setSnapMaxLimit(entity.getSnapMaxLimit() != null ? entity.getSnapMaxLimit().toString() : null);
+        if(entity.getAdvancedDetails() != null && entity.getAdvancedDetails().getCapacityInfo() != null) {
+            setVolumeFreeCapacity(entity.getAdvancedDetails().getCapacityInfo().getFreeSize());
+            setVolumeTotalCapacity(entity.getAdvancedDetails().getCapacityInfo().getTotalSize());
+            setVolumeUsedCapacity(entity.getAdvancedDetails().getCapacityInfo().getUsedSize());
+        } else {
+            setVolumeFreeCapacity(null);
+            setVolumeTotalCapacity(null);
+            setVolumeUsedCapacity(null);
+        }
     }
 
     public Set<TransportType> getTransportTypes() {
@@ -151,5 +163,29 @@ public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
 
     public void setTransportTypes(Set<TransportType> transportTypes) {
         this.transportTypes = transportTypes;
+    }
+
+    public Long getVolumeTotalCapacity() {
+        return volumeTotalCapacity;
+    }
+
+    public void setVolumeTotalCapacity(Long volumeTotalCapacity) {
+        this.volumeTotalCapacity = volumeTotalCapacity;
+    }
+
+    public Long getVolumeFreeCapacity() {
+        return volumeFreeCapacity;
+    }
+
+    public void setVolumeFreeCapacity(Long volumeFreeCapacity) {
+        this.volumeFreeCapacity = volumeFreeCapacity;
+    }
+
+    public Long getVolumeUsedCapacity() {
+        return volumeUsedCapacity;
+    }
+
+    public void setVolumeUsedCapacity(Long volumeUsedCapacity) {
+        this.volumeUsedCapacity = volumeUsedCapacity;
     }
 }

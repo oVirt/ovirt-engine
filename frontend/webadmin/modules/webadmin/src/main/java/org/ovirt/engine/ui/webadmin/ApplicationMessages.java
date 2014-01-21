@@ -113,4 +113,6 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("Default ({0})")
     String defaultMtu(int mtu);
 
+    @DefaultMessage("Free {0}\nUsed {1} of total available {2}")
+    String glusterCapacityInfo(String freeSize, String usedSize, String totalSize);
 }

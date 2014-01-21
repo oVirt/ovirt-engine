@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityCompositeCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivitySeperatorCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.BrickCapacityCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
@@ -78,16 +78,12 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
 
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new AbstractPercentColumn<GlusterBrickEntity>() {
+        getTable().addColumn(new Column<GlusterBrickEntity, BrickProperties>( new BrickCapacityCell()) {
             @Override
-            protected Integer getProgressValue(GlusterBrickEntity object) {
-                if(object.getBrickProperties() == null) {
-                    return 0;
-                }
-                BrickProperties brickProperties = object.getBrickProperties();
-                return (int)(((brickProperties.getTotalSize() - brickProperties.getFreeSize())/ (brickProperties.getTotalSize())) * 100);
+            public BrickProperties getValue(GlusterBrickEntity object) {
+                return object.getBrickProperties();
             }
-        }, constants.volumeCapacity(), "60px");//$NON-NLS-1$
+        }, constants.volumeCapacity(), "100px");//$NON-NLS-1$
 
         getTable().addColumn(new VolumeActivityColumn<GlusterBrickEntity>(getActivityCell()),
                 constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$

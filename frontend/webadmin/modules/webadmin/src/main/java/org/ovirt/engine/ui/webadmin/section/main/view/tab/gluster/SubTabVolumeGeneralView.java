@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -11,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabelBase;
 import org.ovirt.engine.ui.common.widget.label.VolumeTransportTypeLabel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
@@ -21,6 +25,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
+import org.ovirt.engine.ui.webadmin.widget.label.VolumeCapacityLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -51,10 +57,17 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     VolumeTransportTypeLabel transportTypes = new VolumeTransportTypeLabel();
     TextBoxLabel snapMaxLimit = new TextBoxLabel();
 
+    VolumeCapacityLabel<Long> volumeTotalCapacity;
+    VolumeCapacityLabel<Long> volumeUsedCapacity;
+    VolumeCapacityLabel<Long> volumeFreeCapacity;
+
     FormBuilder formBuilder;
 
     FormItem replicaFormItem;
     FormItem stripeFormItem;
+
+    @Ignore
+    DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long> volumeCapacityDetailsLabel = new DetailsTextBoxLabel<ArrayList<TextBoxLabelBase<Long>>, Long>(constants.total(), constants.used(), constants.free());
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -63,6 +76,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     @Inject
     public SubTabVolumeGeneralView(DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider) {
         super(modelProvider);
+
+        initCapacityLabel();
 
         // Init form panel:
         formPanel = new GeneralFormPanel();
@@ -73,9 +88,10 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 10);
+        formBuilder = new FormBuilder(formPanel, 1, 11);
 
         formBuilder.addFormItem(new FormItem(constants.NameVolume(), name, 0, 0));
+
         formBuilder.addFormItem(new FormItem(constants.volumeIdVolume(), volumeId, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeTypeVolume(), volumeType, 2, 0));
 
@@ -94,6 +110,9 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
         formBuilder.addFormItem(new FormItem(constants.redundancyCount(), redundancyCount, 9, 0));
 
+        volumeCapacityDetailsLabel.setWidth("275px");//$NON-NLS-1$
+        formBuilder.addFormItem(new FormItem(constants.volumeCapacityStatistics(), volumeCapacityDetailsLabel, 10, 0));
+
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
@@ -103,7 +122,13 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
                 }
             }
         });
-        formBuilder.setRelativeColumnWidth(0, 3);
+        formBuilder.setRelativeColumnWidth(0, 4);
+    }
+
+    private void initCapacityLabel() {
+        this.volumeTotalCapacity = new VolumeCapacityLabel<Long>(constants);
+        this.volumeFreeCapacity = new VolumeCapacityLabel<Long>(constants);
+        this.volumeUsedCapacity = new VolumeCapacityLabel<Long>(constants);
     }
 
     @Override
@@ -119,6 +144,10 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         stripeFormItem.setIsAvailable(selectedItem.getVolumeType().isStripedType());
         disperseCount.setVisible(selectedItem.getVolumeType().isDispersedType());
         redundancyCount.setVisible(selectedItem.getVolumeType().isDispersedType());
+
+        ArrayList<TextBoxLabelBase<Long>> volumeCapacityDetails =
+                new ArrayList<TextBoxLabelBase<Long>>(Arrays.asList(volumeTotalCapacity, volumeUsedCapacity, volumeFreeCapacity));
+        volumeCapacityDetailsLabel.setValue(volumeCapacityDetails);
 
         formBuilder.update(getDetailModel());
     }
