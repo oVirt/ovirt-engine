@@ -498,4 +498,26 @@ public class FixturesTool {
     public static final String DATA_CENTER_NAME = "rhel6.iscsi";
 
     public static final Guid EXISTING_AFFINITY_GROUP_ID = new Guid("6d849ebf-0ccc-4552-ad09-ccc90cda105d");
+
+    /**
+     * Id of predefined iscsi bond with the following properties:
+     *
+     * <ul>
+     * <li>name: IscsiBond1</li>
+     * <li>storage_pool_id_id: 6d849ebf-755f-4552-ad09-9a090cda105d</li>
+     * </ul>
+     */
+    public static final Guid ISCSI_BOND_ID = new Guid("7368f2be-1263-41f8-b95e-70cdaf23b80d");
+
+    /**
+     * Id of predefined iscsi storage connection id with the following properties:
+     *
+     * <ul>
+     * <li>connection: 10.35.64.25</li>
+     * <li>iqn: iqn.2008-09.com.hateya:server.targeta</li>
+     * <li>port: 3260</li>
+     * <li>portal: 1</li>
+     * </ul>
+     */
+    public static final String STORAGE_CONNECTION_ID = "0cc146e8-e5ed-482c-8814-270bc48c297e";
 }
