@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -954,15 +955,17 @@ public class SyntaxChecker implements ISyntaxChecker {
         PagingType pagingType = getPagingType();
         if (pagingType != null) {
             String pagingSyntax = Config.<String> getValue(ConfigValues.DBPagingSyntax);
+            BigInteger bigPage = BigInteger.valueOf(page);
+            BigInteger bigCount = BigInteger.valueOf(syntax.getMaxCount());
+            BigInteger bigX = bigPage.subtract(BigInteger.ONE).multiply(bigCount).add(BigInteger.ONE);
+            BigInteger bigY = bigPage.multiply(bigCount);
             switch (pagingType) {
             case Range:
                 result =
-                        StringFormat.format(pagingSyntax,
-                                (page - 1) * syntax.getMaxCount() + 1,
-                                page * syntax.getMaxCount());
+                        StringFormat.format(pagingSyntax, bigX, bigY);
                 break;
             case Offset:
-                result = StringFormat.format(pagingSyntax, (page - 1) * syntax.getMaxCount() + 1, syntax.getMaxCount());
+                result = StringFormat.format(pagingSyntax, bigX, bigCount);
                 break;
             }
         }
