@@ -79,20 +79,32 @@ public class XmlRpcUtils {
      */
     public static <T> Pair<T, HttpClient> getConnection(String hostName, int port, int clientTimeOut,
             int connectionTimeOut, int clientRetries, Class<T> type, boolean isSecure) {
+        Pair<String, URL> urlInfo = getConnectionUrl(hostName, port, null, isSecure);
+        if (urlInfo == null) {
+            return null;
+        }
+
+        return getHttpConnection(urlInfo.getSecond(), clientTimeOut, connectionTimeOut, clientRetries, type);
+    }
+
+    public static Pair<String, URL> getConnectionUrl(String hostName, int port, String path, boolean isSecure) {
         URL serverUrl;
         String prefix;
+        String url;
         if (isSecure) {
             prefix = HTTPS;
         } else {
             prefix = HTTP;
         }
         try {
-            serverUrl = new URL(prefix + hostName + ":" + port);
+            url = prefix + hostName + ":" + port + (path != null ? "/" + path : "");
+            serverUrl = new URL(url);
         } catch (MalformedURLException mfue) {
-            log.error("failed to forme the xml-rpc url", mfue);
+            log.error("failed to form the xml-rpc url", mfue);
             return null;
         }
-        return getHttpConnection(serverUrl, clientTimeOut, connectionTimeOut, clientRetries, type);
+
+        return new Pair<>(url, serverUrl);
     }
 
     public static void shutDownConnection(HttpClient httpClient) {
