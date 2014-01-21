@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -151,6 +152,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                     .getTimestamp("lastModified")));
             entity.setAppList(rs.getString("app_list"));
             entity.setStorageIds(GuidUtils.getGuidListFromString(rs.getString("storage_id")));
+            entity.setStorageTypes(getStorageTypesList(rs.getString("storage_type")));
             entity.setStoragesNames(split(rs.getString("storage_name")));
             entity.setVmSnapshotId(getGuid(rs, "vm_snapshot_id"));
             entity.setVolumeType(VolumeType.forValue(rs
@@ -178,6 +180,24 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         @Override
         protected DiskImage createDiskEntity() {
             return new DiskImage();
+        }
+
+        private ArrayList<StorageType> getStorageTypesList(String storageTypesString) throws SQLException {
+            List<String> splitTypes = split(storageTypesString);
+            if (splitTypes == null) {
+                return null;
+            }
+
+            ArrayList<StorageType> types = new ArrayList<>(splitTypes.size());
+            for (String typeStr : splitTypes) {
+                try {
+                    types.add(StorageType.forValue(Integer.parseInt(typeStr)));
+                }
+                catch (NumberFormatException e) {
+                    throw new SQLException("Could not parse disk image storage domain type " + typeStr, e);
+                }
+            }
+            return types;
         }
 
         /**

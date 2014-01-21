@@ -38,6 +38,7 @@ SELECT images.image_guid as image_guid,
     storage_domain_static_view.storage_name as storage_name,
     storage_domain_static_view.storage as storage_path,
 	storage_domain_static_view.storage_pool_id as storage_pool_id,
+	storage_domain_static_view.storage_type as storage_type,
 	images.creation_date as creation_date,
     images.size as size,
     images.it_guid as it_guid,
@@ -113,6 +114,7 @@ AS
 SELECT images.image_guid as image_id,
 	   array_to_string(array_agg(storage_domain_static.storage), ',') as storage_path,
 	   array_to_string(array_agg(storage_domain_static.id), ',') storage_id,
+	   array_to_string(array_agg(storage_domain_static.storage_type), ',') storage_type,
 	   array_to_string(array_agg(storage_domain_static.storage_name), ',') as storage_name,
 	   array_to_string(array_agg(COALESCE(CAST(quota.id as varchar), '')), ',') as quota_id,
 	   array_to_string(array_agg(COALESCE(quota.quota_name, '')), ',') as quota_name
@@ -125,7 +127,7 @@ GROUP BY images.image_guid;
 CREATE OR REPLACE VIEW vm_images_view
 AS
 SELECT                storage_for_image_view.storage_id as storage_id, storage_for_image_view.storage_path as storage_path, storage_for_image_view.storage_name as storage_name,
-					  images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
+					  storage_for_image_view.storage_type, images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
                       images_storage_domain_view.creation_date as creation_date, disk_image_dynamic.actual_size as actual_size, disk_image_dynamic.read_rate as read_rate,
                       disk_image_dynamic.read_latency_seconds as read_latency_seconds, disk_image_dynamic.write_latency_seconds as write_latency_seconds,
                       disk_image_dynamic.flush_latency_seconds as flush_latency_seconds, disk_image_dynamic.write_rate as write_rate,
@@ -166,6 +168,7 @@ FROM
            storage_for_image_view.storage_id as storage_id, -- Storage fields
            storage_for_image_view.storage_path as storage_path,
            storage_for_image_view.storage_name as storage_name,
+           storage_for_image_view.storage_type as storage_type,
            storage_pool_id,
            image_guid, -- Image fields
            creation_date,
@@ -208,6 +211,7 @@ FROM
            null AS storage_id, -- Storage domain fields
            null AS storage_path,
            null AS storage_name,
+           null AS storage_type,
            null AS storage_pool_id,
            null AS image_guid, -- Image fields
            null AS creation_date,

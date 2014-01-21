@@ -203,6 +203,7 @@ public class DiskImage extends DiskImageBase implements IImage {
     }
 
     private ArrayList<Guid> storageIds;
+    private ArrayList<StorageType> storageTypes;
 
     public ArrayList<Guid> getStorageIds() {
         return storageIds;
@@ -210,6 +211,14 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     public void setStorageIds(ArrayList<Guid> storageIds) {
         this.storageIds = storageIds;
+    }
+
+    public ArrayList<StorageType> getStorageTypes() {
+        return storageTypes;
+    }
+
+    public void setStorageTypes(ArrayList<StorageType> storageTypes) {
+        this.storageTypes = storageTypes;
     }
 
     public Guid getVmSnapshotId() {
