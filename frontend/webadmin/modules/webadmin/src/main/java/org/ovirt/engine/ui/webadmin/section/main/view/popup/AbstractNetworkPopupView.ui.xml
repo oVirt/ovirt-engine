@@ -10,7 +10,7 @@
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractNetworkPopupView.WidgetStyle">
 
@@ -43,6 +43,16 @@
 		.checkBox {
 			padding: 0px !important;
 			width: 230px !important;
+		}
+
+		.vmNetworkStyle {
+			padding: 0px !important;
+			width: auto !important;
+		}
+
+		.vmNetworkImage {
+			margin-left: 3px;
+			margin-top: 4px;
 		}
 
 		.tree {
@@ -95,7 +105,10 @@
 										<e:EntityModelCheckBoxEditor ui:field="vlanTagging"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="vlanTag" />
 									</g:HorizontalPanel>
-									<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" addStyleNames="{style.dependentField}" />
+									<g:HorizontalPanel addStyleNames="{style.dependentField}">
+										<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
+										<g:Image resource="{resources.networkVm}" addStyleNames="{style.vmNetworkImage}" />
+									</g:HorizontalPanel>
 									<g:HorizontalPanel addStyleNames="{style.dependentField}">
 										<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
