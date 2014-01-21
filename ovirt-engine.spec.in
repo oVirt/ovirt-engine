@@ -149,7 +149,7 @@ Summary:	Management server for Open Virtualization
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
 URL:		http://www.ovirt.org
-Source0:	http://ovirt.org/releases/nightly/src/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
+Source0:	http://ovirt.org/releases/3.4_pre/src/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
 
 BuildArch:	noarch
 
@@ -1017,8 +1017,8 @@ fi
 %endif
 
 %changelog
-* Mon Jan 20 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.4.0-0.3.beta1
-- 3.4.0-0.3.beta1
+* Tue Jan 21 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.4.0-0.5.beta1
+- 3.4.0-0.5.beta1
 
 * Thu Jan 17 2013 Juan Hernandez <juan.hernandez@redhat.com> - 3.3.0-1
 - Bump version to 3.3.0
