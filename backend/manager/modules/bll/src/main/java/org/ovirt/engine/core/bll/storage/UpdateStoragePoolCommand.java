@@ -10,11 +10,11 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -51,6 +51,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     private StoragePool _oldStoragePool;
+    private StorageDomain masterDomainForPool;
 
     @Override
     protected void executeCommand() {
@@ -95,8 +96,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             return;
         }
 
-        StorageType spType = storagePool.getStorageType();
-        final StorageFormatType targetFormat = VersionStorageFormatUtil.getPreferredForVersion(spVersion, spType);
+
+
+        final StorageFormatType targetFormat =
+                VersionStorageFormatUtil.getPreferredForVersion(spVersion, getMasterDomain() == null ? null : getMasterDomain().getStorageType());
 
         storagePool.setStoragePoolFormatType(targetFormat);
 
@@ -161,8 +164,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
         if (returnValue
-                && _oldStoragePool.getStorageType() != getStoragePool()
-                        .getStorageType()
+                && _oldStoragePool.isLocal() != getStoragePool().isLocal()
                 && getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId()).size() > 0) {
             returnValue = false;
             getReturnValue()
@@ -192,12 +194,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         if (returnValue) {
             returnValue = validate(validator.isNotLocalfsWithDefaultCluster());
         }
-        if (returnValue) {
-            returnValue = validate(validator.isPosixDcAndMatchingCompatiblityVersion());
-        }
-        if (returnValue) {
-            returnValue = validate(validator.isGlusterDcAndMatchingCompatiblityVersion());
-        }
         return returnValue;
     }
 
@@ -220,6 +216,16 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                             .toString());
         }
         return returnValue;
+    }
+
+    private StorageDomain getMasterDomain() {
+        if (masterDomainForPool == null) {
+            Guid masterId = getStorageDomainDAO().getMasterStorageDomainIdForPool(getStoragePoolId());
+            if (Guid.Empty.equals(masterId)) {
+                masterDomainForPool = getStorageDomainDAO().get(masterId);
+            }
+        }
+        return masterDomainForPool;
     }
 
     protected StoragePoolValidator createStoragePoolValidator() {

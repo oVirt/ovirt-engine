@@ -31,8 +31,11 @@ public class DataCenterMapper {
         if (model.isSetStorageType()) {
             StorageType storageType = StorageType.fromValue(model.getStorageType());
             if (storageType != null) {
-                entity.setStorageType(StorageDomainMapper.map(storageType, null));
+                entity.setIsLocal(StorageDomainMapper.map(storageType, null) == org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS);
             }
+        }
+        if (model.isSetLocal()) {
+            entity.setIsLocal(model.isLocal());
         }
         if (model.isSetStorageFormat()) {
             StorageFormat storageFormat =  StorageFormat.fromValue(model.getStorageFormat());
@@ -52,13 +55,14 @@ public class DataCenterMapper {
         DataCenter model = template != null ? template : new DataCenter();
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
+        model.setLocal(entity.isLocal());
+
         if (!StringUtils.isEmpty(entity.getdescription())) {
                 model.setDescription(entity.getdescription());
         }
         if (!StringUtils.isEmpty(entity.getComment())) {
             model.setComment(entity.getComment());
         }
-        model.setStorageType(StorageDomainMapper.map(entity.getStorageType(), null));
         if (entity.getStatus()!=null) {
             model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
         }

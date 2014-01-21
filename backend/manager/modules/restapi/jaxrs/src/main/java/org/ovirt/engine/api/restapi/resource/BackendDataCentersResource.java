@@ -48,9 +48,14 @@ public class BackendDataCentersResource extends
 
     @Override
     public Response add(DataCenter dataCenter) {
-        validateParameters(dataCenter, "name", "storageType");
+        validateParameters(dataCenter, "name");
         validateEnums(DataCenter.class, dataCenter);
-        validateEnum(StorageType.class, dataCenter.getStorageType().toUpperCase());
+        if (dataCenter.isSetStorageType()) {
+            validateEnum(StorageType.class, dataCenter.getStorageType().toUpperCase());
+        }
+        else if(!dataCenter.isSetLocal()) {
+            validateParameters(dataCenter, "local");
+        }
         StoragePool entity = map(dataCenter);
         return performCreate(VdcActionType.AddEmptyStoragePool,
                                new StoragePoolManagementParameter(entity),

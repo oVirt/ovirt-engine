@@ -233,6 +233,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Type")
     String dataCenterPopupStorageTypeLabel();
 
+    @DefaultStringValue("Shared")
+    String storageTypeShared();
+
+    @DefaultStringValue("Local")
+    String storageTypeLocal();
+
     @DefaultStringValue("Compatibility Version")
     String dataCenterPopupVersionLabel();
 

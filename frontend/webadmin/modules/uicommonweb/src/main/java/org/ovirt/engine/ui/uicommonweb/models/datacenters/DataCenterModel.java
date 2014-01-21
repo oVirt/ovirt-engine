@@ -2,10 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -27,7 +28,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 @SuppressWarnings("unused")
 public class DataCenterModel extends Model
 {
-
     private StoragePool privateEntity;
 
     public StoragePool getEntity()
@@ -112,16 +112,16 @@ public class DataCenterModel extends Model
         privateComment = value;
     }
 
-    private ListModel<StorageType> privateStorageTypeList;
+    private ListModel<Boolean> storagePoolType;
 
-    public ListModel<StorageType> getStorageTypeList()
+    public ListModel<Boolean> getStoragePoolType()
     {
-        return privateStorageTypeList;
+        return storagePoolType;
     }
 
-    public void setStorageTypeList(ListModel<StorageType> value)
+    public void setStoragePoolType(ListModel<Boolean> value)
     {
-        privateStorageTypeList = value;
+        this.storagePoolType = value;
     }
 
     private ListModel<Version> privateVersion;
@@ -165,9 +165,9 @@ public class DataCenterModel extends Model
         setComment(new EntityModel<String>());
         setVersion(new ListModel<Version>());
 
-        setStorageTypeList(new ListModel<StorageType>());
-        getStorageTypeList().getSelectedItemChangedEvent().addListener(this);
-        getStorageTypeList().setItems(AsyncDataProvider.getStoragePoolTypeList());
+        setStoragePoolType(new ListModel<Boolean>());
+        getStoragePoolType().getSelectedItemChangedEvent().addListener(this);
+        getStoragePoolType().setItems(Arrays.asList(Boolean.FALSE, Boolean.TRUE));
 
         setQuotaEnforceTypeListModel(new ListModel<QuotaEnforcementTypeEnum>());
         List<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
@@ -194,13 +194,13 @@ public class DataCenterModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStorageTypeList())
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStoragePoolType())
         {
-            storageType_SelectedItemChanged();
+            storagePoolType_SelectedItemChanged();
         }
     }
 
-    private void storageType_SelectedItemChanged()
+    private void storagePoolType_SelectedItemChanged()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -213,28 +213,14 @@ public class DataCenterModel extends Model
 
                 // Rebuild version items.
                 ArrayList<Version> list = new ArrayList<Version>();
-                StorageType type = dataCenterModel.getStorageTypeList().getSelectedItem();
+                Boolean isLocalType = dataCenterModel.getStoragePoolType().getSelectedItem();
 
                 for (Version item : versions)
                 {
-                    if (AsyncDataProvider.isVersionMatchStorageType(item, type))
+                    if (AsyncDataProvider.isVersionMatchStorageType(item, isLocalType))
                     {
                         list.add(item);
                     }
-                }
-
-                if (type == StorageType.LOCALFS)
-                {
-                    ArrayList<Version> tempList = new ArrayList<Version>();
-                    for (Version version : list)
-                    {
-                        Version version3_0 = new Version(3, 0);
-                        if (version.compareTo(version3_0) >= 0)
-                        {
-                            tempList.add(version);
-                        }
-                    }
-                    list = tempList;
                 }
 
                 Version selectedVersion = null;
@@ -303,8 +289,6 @@ public class DataCenterModel extends Model
                 new LengthValidation(getMaxNameLength()),
                 new AsciiNameValidation() });
 
-        getStorageTypeList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-
         getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getDescription().validateEntity(new IValidation[] { new AsciiOrNoneValidation() });
@@ -320,7 +304,6 @@ public class DataCenterModel extends Model
         // }
 
         return getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
-                && getStorageTypeList().getIsValid()
                 && getVersion().getIsValid();
     }
 

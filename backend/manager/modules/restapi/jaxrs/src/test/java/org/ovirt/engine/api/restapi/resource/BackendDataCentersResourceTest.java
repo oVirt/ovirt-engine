@@ -12,7 +12,6 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
-import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -200,14 +199,13 @@ public class BackendDataCentersResourceTest
     @Test
     public void testAddIncompleteParameters() throws Exception {
         DataCenter model = new DataCenter();
-        model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "DataCenter", "add", "storageType");
+             verifyIncompleteException(wae, "DataCenter", "add", "name");
         }
     }
 
@@ -228,8 +226,7 @@ public class BackendDataCentersResourceTest
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getStorageType()).andReturn(
-                org.ovirt.engine.core.common.businessentities.StorageType.NFS).anyTimes();
+        expect(entity.isLocal()).andReturn(false).anyTimes();
         return entity;
     }
 
@@ -237,7 +234,7 @@ public class BackendDataCentersResourceTest
         DataCenter model = new DataCenter();
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
-        model.setStorageType(StorageType.NFS.value());
+        model.setLocal(false);
         return model;
     }
 
@@ -262,7 +259,7 @@ public class BackendDataCentersResourceTest
     }
 
     static void verifyModelSpecific(DataCenter model, int index) {
-        assertEquals(StorageType.NFS.value(), model.getStorageType());
+        assertEquals(false, model.isLocal());
         assertFalse(model.getLinks().isEmpty());
         assertEquals("storagedomains", model.getLinks().get(0).getRel());
         assertEquals(BASE_PATH + "/datacenters/" + GUIDS[index] + "/storagedomains", model.getLinks().get(0).getHref());

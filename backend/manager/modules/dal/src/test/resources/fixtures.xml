@@ -436,8 +436,8 @@
         <column>id</column>
         <column>name</column>
         <column>description</column>
-        <column>storage_pool_type</column>
-        <column>status</column>
+        <column>is_local</column>
+	<column>status</column>
         <column>master_domain_version</column>
         <column>spm_vds_id</column>
         <column>compatibility_version</column>
@@ -447,7 +447,7 @@
             <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
             <value>rhel6.iscsi</value>
             <value></value>
-            <value>3</value>
+            <value>false</value>
             <value>1</value>
             <value>1127</value>
             <value>787c5473-9a82-4191-930b-814db3451531</value>
@@ -459,7 +459,7 @@
             <value>6d849ebf-755f-4552-ad09-9a090cda105e</value>
             <value>rhel6.iscsi2</value>
             <value></value>
-            <value>3</value>
+            <value>false</value>
             <value>1</value>
             <value>1127</value>
             <value>787c5473-9a82-4191-930b-814db3451531</value>
@@ -471,7 +471,7 @@
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
             <value>rhel6.NFS</value>
             <value></value>
-            <value>1</value>
+            <value>false</value>
             <value>1</value>
             <value>1</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -483,7 +483,7 @@
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
             <value>rhel6.NFS2</value>
             <value></value>
-            <value>1</value>
+            <value>false</value>
             <value>1</value>
             <value>1</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -495,7 +495,7 @@
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
             <value>rhel6.NFS3</value>
             <value></value>
-            <value>1</value>
+            <value>false</value>
             <value>1</value>
             <value>1</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -507,7 +507,7 @@
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a2</value>
             <value>rhel6.LOCALFS</value>
             <value></value>
-            <value>4</value>
+            <value>true</value>
             <value>1</value>
             <value>1</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>

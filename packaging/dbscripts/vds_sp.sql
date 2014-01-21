@@ -861,7 +861,7 @@ BEGIN
         LEFT JOIN storage_pool sp ON vds.storage_pool_id = sp.id
         WHERE (v_storage_pool_id IS NULL OR vds.storage_pool_id = v_storage_pool_id)
         AND (vg.virt_service = true)
-        AND (NOT v_local_fs_only OR sp.storage_pool_type = 4)
+        AND (NOT v_local_fs_only OR sp.is_local = true)
         AND (v_storage_pool_id IS NOT NULL OR vds.status = 3); -- if DC is unspecified return only hosts with status = UP
     END;
     RETURN;

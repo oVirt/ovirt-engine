@@ -3088,22 +3088,8 @@ public final class AsyncDataProvider {
         return VmInterfaceType.pv;
     }
 
-    public static ArrayList<StorageType> getStoragePoolTypeList() {
-
-        return new ArrayList<StorageType>(Arrays.asList(new StorageType[] {
-                StorageType.NFS,
-                StorageType.ISCSI,
-                StorageType.FCP,
-                StorageType.LOCALFS,
-                StorageType.POSIXFS,
-                StorageType.GLUSTERFS
-        }));
-    }
-
-    public static boolean isVersionMatchStorageType(Version version, StorageType type) {
-        return !((type == StorageType.LOCALFS && version.compareTo(new Version(2, 2)) <= 0)
-                || (type == StorageType.POSIXFS && version.compareTo(new Version(3, 0)) <= 0)
-                || (type == StorageType.GLUSTERFS && version.compareTo(new Version(3, 2)) <= 0));
+    public static boolean isVersionMatchStorageType(Version version, boolean isLocalType) {
+        return version.compareTo(new Version(3, 0)) >= 0;
     }
 
     public static int getClusterDefaultMemoryOverCommit() {

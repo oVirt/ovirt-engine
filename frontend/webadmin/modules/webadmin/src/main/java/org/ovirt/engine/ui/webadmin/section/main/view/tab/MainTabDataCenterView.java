@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -59,10 +59,10 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         CommentColumn<StoragePool> commentColumn = new CommentColumn<StoragePool>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StoragePool> storageTypeColumn = new EnumColumn<StoragePool, StorageType>() {
+        TextColumnWithTooltip<StoragePool> storageTypeColumn = new BooleanColumn<StoragePool>(constants.storageTypeLocal(), constants.storageTypeShared()) {
             @Override
-            public StorageType getRawValue(StoragePool object) {
-                return object.getStorageType();
+            protected Boolean getRawValue(StoragePool object) {
+                return object.isLocal();
             }
         };
         getTable().addColumn(storageTypeColumn, constants.storgeTypeDc(), "150px"); //$NON-NLS-1$

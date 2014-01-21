@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -9,6 +8,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
@@ -53,9 +53,9 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     StringEntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
-    @Path(value = "storageTypeList.selectedItem")
+    @Path(value = "storagePoolType.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<StorageType> storageTypeListEditor;
+    ListModelListBoxEditor<Boolean> storagePoolTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
@@ -75,7 +75,7 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @Inject
     public DataCenterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        initListBoxEditors();
+        initListBoxEditors(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
@@ -83,9 +83,8 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         driver.initialize(this);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    void initListBoxEditors() {
-        storageTypeListEditor = new ListModelListBoxEditor<StorageType>(new EnumRenderer());
+    void initListBoxEditors(ApplicationConstants constants) {
+        storagePoolTypeEditor = new ListModelListBoxEditor<Boolean>(new BooleanRenderer(constants.storageTypeLocal(), constants.storageTypeShared()));
 
         versionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
             @Override
@@ -101,7 +100,7 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         nameEditor.setLabel(constants.nameLabel());
         descriptionEditor.setLabel(constants.descriptionLabel());
         commentEditor.setLabel(constants.commentLabel());
-        storageTypeListEditor.setLabel(constants.dataCenterPopupStorageTypeLabel());
+        storagePoolTypeEditor.setLabel(constants.dataCenterPopupStorageTypeLabel());
         versionEditor.setLabel(constants.dataCenterPopupVersionLabel());
         quotaEnforceTypeEditor.setLabel(constants.dataCenterPopupQuotaEnforceTypeLabel());
     }

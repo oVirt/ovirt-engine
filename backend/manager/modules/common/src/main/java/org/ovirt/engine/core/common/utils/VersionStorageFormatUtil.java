@@ -37,7 +37,7 @@ public class VersionStorageFormatUtil {
     private static class V2FormatTypeMapper implements StorageFormatTypeMapper {
         @Override
         public StorageFormatType getPreferred(StorageType type) {
-            if (type.isBlockDomain()) {
+            if (type != null && type.isBlockDomain()) {
                 return StorageFormatType.V2;
             }
             return StorageFormatType.V1;

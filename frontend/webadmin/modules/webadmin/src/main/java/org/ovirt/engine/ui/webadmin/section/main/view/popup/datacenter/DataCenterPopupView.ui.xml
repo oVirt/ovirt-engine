@@ -14,7 +14,7 @@
 			<g:FlowPanel>
 				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 				<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
-				<e:ListModelListBoxEditor ui:field="storageTypeListEditor" />
+				<e:ListModelListBoxEditor ui:field="storagePoolTypeEditor" />
 				<e:ListModelListBoxEditor ui:field="versionEditor" />
 				<e:ListModelListBoxEditor ui:field="quotaEnforceTypeEditor" />
 				<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />

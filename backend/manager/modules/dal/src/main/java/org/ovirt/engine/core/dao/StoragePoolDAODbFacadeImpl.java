@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,8 +30,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             entity.setComment(rs.getString("free_text_comment"));
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
-            entity.setStorageType(StorageType.forValue(rs
-                    .getInt("storage_pool_type")));
+            entity.setIsLocal(rs.getBoolean("is_local"));
             entity.setStatus(StoragePoolStatus.forValue(rs.getInt("status")));
             entity.setmaster_domain_version(rs
                     .getInt("master_domain_version"));
@@ -134,7 +132,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getName())
-                .addValue("storage_pool_type", pool.getStorageType())
+                .addValue("is_local", pool.isLocal())
                 .addValue("status", pool.getStatus())
                 .addValue("master_domain_version",
                         pool.getmaster_domain_version())
@@ -154,8 +152,8 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getName())
-                .addValue("storage_pool_type", pool.getStorageType())
                 .addValue("status", pool.getStatus())
+                .addValue("is_local", pool.isLocal())
                 .addValue("storage_pool_format_type", pool.getStoragePoolFormatType())
                 .addValue("master_domain_version",
                         pool.getmaster_domain_version())
@@ -175,7 +173,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getName())
-                .addValue("storage_pool_type", pool.getStorageType())
+                .addValue("is_local", pool.isLocal())
                 .addValue("storage_pool_format_type", pool.getStoragePoolFormatType())
                 .addValue("compatibility_version",
                         pool.getcompatibility_version())

@@ -247,6 +247,10 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
         getStorageStaticData().setStorageType(storageType);
     }
 
+    public boolean isLocal() {
+        return getStorageType().isLocal();
+    }
+
     private StorageDomainSharedStatus storageDomainSharedStatus;
 
     public StorageDomainSharedStatus getStorageDomainSharedStatus() {

@@ -17,8 +17,10 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -250,7 +252,6 @@ public class VmDiskListModel extends VmDiskListModelBase
             getSearchCommand().execute();
             updateIsDiskHotPlugAvailable();
             updateLiveStorageMigrationEnabled();
-            updateScanAlignmentEnabled();
         }
 
         updateActionAvailability();
@@ -573,6 +574,8 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         updateGetAlignmentCommandAvailability();
 
+        updateScanAlignmentEnabled();
+
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
         getUnPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(false));
@@ -812,32 +815,26 @@ public class VmDiskListModel extends VmDiskListModelBase
     }
 
     private void updateScanAlignmentEnabled() {
-        final VM vm = getEntity();
+        if (getSelectedItem() == null) {
+            setIsScanAlignmentEnabled(false);
+            return;
+        }
 
-        AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VmDiskListModel model = (VmDiskListModel) target;
-                StoragePool dataCenter = (StoragePool) returnValue;
+        setIsScanAlignmentEnabled((getSelectedItem() instanceof LunDisk || isDiskOnBlockDevice((Disk) getSelectedItem())));
+    }
 
-                if (!dataCenter.getStorageType().isBlockDomain()) {
-                    // scan alignment is applicable only for block storage domains
-                    model.setIsScanAlignmentEnabled(false);
-                    return;
+    private boolean isDiskOnBlockDevice(Disk disk) {
+        if (disk instanceof DiskImage) {
+
+            List<StorageType> diskStorageTypes = ((DiskImage) disk).getStorageTypes();
+            for (StorageType type : diskStorageTypes) {
+                if (!type.isBlockDomain()) {
+                    return false;
                 }
-
-                Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
-                Version minDcVersion = dataCenter.getcompatibility_version();
-
-                AsyncDataProvider.isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmDiskListModel model = (VmDiskListModel) target;
-                        model.setIsScanAlignmentEnabled((Boolean) returnValue);
-                    }
-                }), VdcActionType.GetDiskAlignment, minClusterVersion, minDcVersion);
             }
-        }), vm.getStoragePoolId());
+            return true;
+        }
+        return false; // Should never happen but we might add other Disk types in the future
     }
 
     protected void updateDataCenterVersion()

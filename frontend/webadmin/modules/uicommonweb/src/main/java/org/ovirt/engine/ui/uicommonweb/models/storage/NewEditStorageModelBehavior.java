@@ -101,11 +101,9 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
             boolean canAttachIsoDomain = isNoExportOrIsoStorageAttached &&
                     dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
 
-            boolean canAttachDataDomain = item.getType() == dataCenter.getStorageType();
-
             return isExportDomain && canAttachExportDomain ||
                     isIsoDomain && canAttachIsoDomain ||
-                    isDataDomain && canAttachDataDomain;
+                    isDataDomain;
 
         }
     }

@@ -5,7 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -24,31 +23,28 @@ public class StoragePoolValidator {
     }
 
     /**
-     * Checks in case the DC is of POSIX type that the compatibility version matches. In case there is mismatch, a
-     * proper canDoAction message will be added
+     * Checks that the DC compatibility version supports Posix domains.
+     * In case there is mismatch, a proper canDoAction message will be added
      *
      * @return The result of the validation
      */
-    public ValidationResult isPosixDcAndMatchingCompatiblityVersion() {
-        if (storagePool.getStorageType() == StorageType.POSIXFS
-                && !Config.<Boolean> getValue
-                        (ConfigValues.PosixStorageEnabled, storagePool.getcompatibility_version().toString())) {
+    public ValidationResult isPosixSupportedInDC() {
+        if (!storagePool.isLocal() &&
+                !Config.<Boolean> getValue(ConfigValues.PosixStorageEnabled, storagePool.getcompatibility_version().toString())) {
             return new ValidationResult(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
         return ValidationResult.VALID;
     }
 
     /**
-     * Checks in case the DC is of GLUSTER type that the compatibility version matches.
-     * In case there is mismatch, a
-     * proper canDoAction message will be added
+     * Checks that the DC compatibility version supports Gluster domains.
+     * In case there is mismatch, a proper canDoAction message will be added
      *
      * @return true if the version matches
      */
-    public ValidationResult isGlusterDcAndMatchingCompatiblityVersion() {
-        if (storagePool.getStorageType() == StorageType.GLUSTERFS
-                && !Config.<Boolean> getValue
-                        (ConfigValues.GlusterFsStorageEnabled, storagePool.getcompatibility_version().toString())) {
+    public ValidationResult isGlusterSupportedInDC() {
+        if (!storagePool.isLocal() &&
+                !Config.<Boolean> getValue(ConfigValues.GlusterFsStorageEnabled, storagePool.getcompatibility_version().toString())) {
             return new ValidationResult(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
         return ValidationResult.VALID;

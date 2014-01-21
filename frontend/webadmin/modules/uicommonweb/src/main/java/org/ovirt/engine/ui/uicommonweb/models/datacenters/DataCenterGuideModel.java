@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -327,7 +328,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         {
             addToList = false;
             if (item.getStorageDomainType() == StorageDomainType.Data
-                    && item.getStorageType() == getEntity().getStorageType()
                     && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
             {
                 if (getEntity().getStoragePoolFormatType() == null)
@@ -1295,8 +1295,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         {
                             addToList = false;
                             if (item.getStorageDomainType() == StorageDomainType.Data
-                                    && item.getStorageType() == dataCenterGuideModel.getEntity()
-                                            .getStorageType()
+                                    && (item.getStorageType() == StorageType.LOCALFS) == dataCenterGuideModel.getEntity()
+                                            .isLocal()
                                     && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
                             {
                                 if (getEntity().getStoragePoolFormatType() == null)

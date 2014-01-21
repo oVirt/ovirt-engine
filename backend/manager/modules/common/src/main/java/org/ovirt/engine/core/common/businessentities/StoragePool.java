@@ -28,8 +28,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     private String comment;
 
-    /** Pool's storage type */
-    private StorageType storageType;
+    private boolean local;
 
     private StorageFormatType storagePoolFormatType;
 
@@ -52,7 +51,6 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     public StoragePool() {
         id = Guid.Empty;
-        storageType = StorageType.UNKNOWN;
         status = StoragePoolStatus.Uninitialized;
         spmVdsId = Guid.Empty;
         recovery_mode = RecoveryMode.Manual;
@@ -104,19 +102,15 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         this.name = value;
     }
 
-    public StorageType getStorageType() {
-        return storageType;
-    }
-
     /**
      * @return True is the Storage Pool is local, false if it's shared
      */
     public boolean isLocal() {
-        return getStorageType() == StorageType.LOCALFS;
+        return local;
     }
 
-    public void setStorageType(StorageType value) {
-        storageType = value;
+    public void setIsLocal(boolean isLocal) {
+        this.local = isLocal;
     }
 
     public StorageFormatType getStoragePoolFormatType() {
@@ -200,7 +194,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         result = prime * result + ((recovery_mode == null) ? 0 : recovery_mode.hashCode());
         result = prime * result + ((spmVdsId == null) ? 0 : spmVdsId.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
+        result = prime * result + (local ? 1231 : 1237);
         result = prime * result + ((storagePoolFormatType == null) ? 0 : storagePoolFormatType.hashCode());
         result = prime * result + ((quotaEnforcementType == null) ? 0 : quotaEnforcementType.hashCode());
         return result;
@@ -228,7 +222,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
                 && recovery_mode == other.recovery_mode
                 && ObjectUtils.objectsEqual(spmVdsId, other.spmVdsId)
                 && status == other.status
-                && ObjectUtils.objectsEqual(storageType, other.storageType)
+                && local == other.local
                 && ObjectUtils.objectsEqual(storagePoolFormatType, other.storagePoolFormatType)
                 && quotaEnforcementType == other.quotaEnforcementType);
     }
