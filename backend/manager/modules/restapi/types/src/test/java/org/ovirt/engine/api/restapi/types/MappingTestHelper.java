@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -15,13 +16,6 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 
 public class MappingTestHelper {
 
-    private static final String USAGES = "Usages";
-    private static final String SLAVE_SINGLE = "HostNIC";
-    private static final String SLAVES_PLURAL = "Slaves";
-    private static final String FLOPPY_SINGLE = "Floppy";
-    private static final String FLOPPIES_PLURAL = "Floppies";
-    private static final String NIC_SINGLE = "NIC";
-    private static final String NICS_PLURAL = "Nics";
     private static final String SET_ROOT = "set";
     private static final String GET_ROOT = "get";
 
@@ -141,10 +135,8 @@ public class MappingTestHelper {
 
     @SuppressWarnings("unchecked")
     private static void fill(Method method, Object model, List<Class<?>> seen, int level) throws Exception {
-        // List<T> type parameter removed by erasure, hence we attempt to
-        // infer from method name
-        String elementType = method.getName().substring(GET_ROOT.length());
-        Class<?> childType = getChildType(model, elementType);
+        ParameterizedType returnType = (ParameterizedType) method.getGenericReturnType();
+        Class<?> childType = (Class<?>) returnType.getActualTypeArguments()[0];
         if (level == 1 || unseen(childType, seen)) {
             List<Object> list = (List<Object>) method.invoke(model);
             Object child = null;
@@ -205,59 +197,6 @@ public class MappingTestHelper {
 
     private static boolean returnsList(Method m) {
         return List.class.equals(m.getReturnType());
-    }
-
-    private static Class<?> getChildType(Object model, String elementType) throws ClassNotFoundException {
-        if (isSpecialType(elementType)) {
-            return handleSpecialType(elementType);
-        } else {
-            return coPackaged(model, elementType);
-        }
-    }
-
-    private static Class<?> coPackaged(Object model, String elementType) throws ClassNotFoundException {
-        String packageRoot = model.getClass().getPackage().getName() + ".";
-        try {
-            return Class.forName(packageRoot + singular(elementType));
-        } catch (ClassNotFoundException cnf) {
-            try {
-                return Class.forName(packageRoot + elementType);
-            } catch (ClassNotFoundException cnfe) {
-                // try inner class
-                return Class.forName(model.getClass().getName() + "$" + elementType);
-            }
-        }
-    }
-
-    private static boolean isSpecialType(String elementType) {
-        // Right now there's only one special case ('Usages'), but this
-        // was assigned a method for prospective future special cases.
-        return elementType.equals(USAGES);
-    }
-
-    private static Class<String> handleSpecialType(String elementType) {
-        // Consider special case: "Usages" contains a list of Strings, not 'Usage' elements.
-        if (elementType.equals(USAGES)) {
-            return String.class;
-        } // else... other special cases in the future.
-        return String.class; // default which should never be reached.
-    }
-
-    private static String singular(String s) {
-        return isSingularSpecialCase(s) ? handleSingularSpecialCase(s) :
-                s.endsWith("s") ? s.substring(0, s.length() - 1) : s;
-    }
-
-    private static boolean isSingularSpecialCase(String s) {
-        return s.equals(NICS_PLURAL) || s.equals(FLOPPIES_PLURAL) || s.equals(SLAVES_PLURAL);
-    }
-
-    private static String handleSingularSpecialCase(String s) {
-        // 'Nics' is plural of 'NIC' (uppercase)
-        // 'Floppies' is plural of 'Floppy' (not 'Floppie')
-        // 'Slaves' is plural of 'HostNIC' (we don't have a 'Slave' entity)
-        return s.equals(NICS_PLURAL) ? NIC_SINGLE : s.equals(FLOPPIES_PLURAL) ? FLOPPY_SINGLE
-                : s.equals(SLAVES_PLURAL) ? SLAVE_SINGLE : s;
     }
 
     private static boolean unseen(Class<?> type, List<Class<?>> seen) {
