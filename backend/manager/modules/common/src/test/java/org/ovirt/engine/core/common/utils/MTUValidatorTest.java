@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.validation.annotation.MTU;
 
 public class MTUValidatorTest {
 
-    private static final int TEST_MAX_MTU = 9000;
     private static final String TEST_MANAGEMENT_NETWORK = "ovirtmgmt";
     private Validator validator;
 
@@ -30,7 +29,6 @@ public class MTUValidatorTest {
         validator = ValidationUtils.getValidator();
 
         IConfigUtilsInterface confUtils = mock(IConfigUtilsInterface.class);
-        when(confUtils.getValue(ConfigValues.MaxMTU, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MAX_MTU);
         when(confUtils.getValue(ConfigValues.ManagementNetwork, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MANAGEMENT_NETWORK);
         Config.setConfigUtils(confUtils);
     }
@@ -43,13 +41,6 @@ public class MTUValidatorTest {
     @Test
     public void invalidLowMTU() {
         Set<ConstraintViolation<MtuContainer>> validate = validate(new MtuContainer(30));
-        Assert.assertTrue(validate.size() > 0);
-
-    }
-
-    @Test
-    public void invalidHighMTU() {
-        Set<ConstraintViolation<MtuContainer>> validate = validate(new MtuContainer(TEST_MAX_MTU + 1));
         Assert.assertTrue(validate.size() > 0);
 
     }

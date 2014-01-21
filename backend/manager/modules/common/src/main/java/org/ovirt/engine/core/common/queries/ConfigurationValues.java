@@ -69,7 +69,6 @@ public enum ConfigurationValues {
     HotPlugEnabled(ConfigAuthType.User),
     NetworkLinkingSupported(ConfigAuthType.User),
     SupportBridgesReportByVDSM(ConfigAuthType.User),
-    MaxMTU,
     ManagementNetwork,
     ApplicationMode(ConfigAuthType.User),
     ShareableDiskEnabled(ConfigAuthType.User),

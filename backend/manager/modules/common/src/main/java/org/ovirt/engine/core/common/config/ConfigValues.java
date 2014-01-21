@@ -977,10 +977,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     LiveSnapshotEnabled,
 
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("9000")
-    MaxMTU,
-
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     PosixStorageEnabled,
