@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -331,6 +332,8 @@ public class VdsBrokerObjectsBuilder {
     }
 
     public static void updateVDSDynamicData(VDS vds, Map<String, Object> xmlRpcStruct) {
+        vds.setSupportedClusterLevels(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_cluster_levels));
+
         updateNetworkData(vds, xmlRpcStruct);
 
         vds.setCpuThreads(AssignIntValue(xmlRpcStruct, VdsProperties.cpuThreads));
@@ -350,7 +353,6 @@ public class VdsBrokerObjectsBuilder {
 
         UpdatePackagesVersions(vds, xmlRpcStruct);
 
-        vds.setSupportedClusterLevels(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_cluster_levels));
         vds.setSupportedEngines(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_engines));
         vds.setIScsiInitiatorName(AssignStringValue(xmlRpcStruct, VdsProperties.iSCSIInitiatorName));
 
@@ -1263,7 +1265,7 @@ public class VdsBrokerObjectsBuilder {
                 addBootProtocol(networkConfig, host, iface);
             }
 
-            if (FeatureSupported.hostNetworkQos(host.getVdsGroupCompatibilityVersion())) {
+            if (FeatureSupported.hostNetworkQos(Collections.max(host.getSupportedClusterVersionsSet()))) {
                 NetworkQosMapper qosMapper =
                         new NetworkQosMapper(network, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
                 iface.setQos(qosMapper.deserialize());
