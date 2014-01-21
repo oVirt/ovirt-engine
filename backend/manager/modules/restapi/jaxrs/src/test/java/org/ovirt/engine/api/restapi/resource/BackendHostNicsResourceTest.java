@@ -233,6 +233,7 @@ public class BackendHostNicsResourceTest
     @Test
     public void testSetupNetworksNotSyncsNetwork() throws Exception {
         setUpNetworkQueryExpectations(1);
+        setUpEntityQueryExpectations(1);
 
         doTestSetupNetworksSyncsNetwork(false, Collections.<String> emptyList());
     }
@@ -240,6 +241,7 @@ public class BackendHostNicsResourceTest
     @Test
     public void testSetupNetworksSyncsNetwork() throws Exception {
         setUpNetworkQueryExpectations(2);
+        setUpEntityQueryExpectations(1);
 
         doTestSetupNetworksSyncsNetwork(true, Collections.singletonList(NETWORK_NAME));
     }
