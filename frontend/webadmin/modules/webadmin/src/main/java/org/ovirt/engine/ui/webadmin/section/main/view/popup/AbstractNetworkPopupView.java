@@ -256,8 +256,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         mtuEditor.addContentWidgetStyleName(style.valueBox());
         networkLabel.addContentWidgetStyleName(style.valueBox());
         qosEditor.addContentWidgetStyleName(style.valueBox());
-        isVmNetworkEditor.addContentWidgetStyleName(style.checkBox());
-        isVmNetworkEditor.asCheckBox().addStyleName(style.checkBox());
+        isVmNetworkEditor.addContentWidgetStyleName(style.vmNetworkStyle());
+        isVmNetworkEditor.asCheckBox().addStyleName(style.vmNetworkStyle());
         vlanTagging.addContentWidgetStyleName(style.checkBox());
         vlanTagging.asCheckBox().addStyleName(style.checkBox());
         hasMtuEditor.addContentWidgetStyleName(style.checkBox());
@@ -444,6 +444,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         String valueBox();
 
         String checkBox();
+
+        String vmNetworkStyle();
 
         String inlineLabel();
     }
