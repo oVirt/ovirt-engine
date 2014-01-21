@@ -2179,5 +2179,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("VirtIO-SCSI is not supported for the selected OS")
     String cannotEnableVirtioScsiForOs();
+
+    @DefaultStringValue("Maintenance Storage Domain(s)")
+    String maintenanceStorageDomainsTitle();
+
+    @DefaultStringValue("Are you sure you want to place the following storage domain(s) into maintenance mode?")
+    String areYouSureYouWantToPlaceFollowingStorageDomainsIntoMaintenanceModeMsg();
 }
 

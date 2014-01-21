@@ -215,7 +215,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, tempVar, _asyncQuery);
     }
 
-    public void maintenance()
+    public void onMaintenance()
     {
         // Frontend.RunMultipleActions(VdcActionType.DeactivateStorageDomain,
         // SelectedItems.Cast<storage_domains>()
@@ -228,7 +228,41 @@ public class DataCenterStorageListModel extends SearchableListModel
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomain, pb);
+        final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
+        confirmationModel.startProgress(null);
+
+        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomain, pb, new IFrontendMultipleActionAsyncCallback() {
+            @Override
+            public void executed(FrontendMultipleActionAsyncResult result) {
+                confirmationModel.stopProgress();
+                setWindow(null);
+            }
+        });
+    }
+
+    private void maintenance()
+    {
+        ConfirmationModel model = new ConfirmationModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().maintenanceStorageDomainsTitle());
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToPlaceFollowingStorageDomainsIntoMaintenanceModeMsg());
+        model.setHashName("maintenance_storage_domain"); //$NON-NLS-1$
+        setWindow(model);
+
+        ArrayList<String> items = new ArrayList<String>();
+        for (Object selected : getSelectedItems()) {
+            items.add(((StorageDomain) selected).getName());
+        }
+        model.setItems(items);
+
+        UICommand maintenance = new UICommand("OnMaintenance", this); //$NON-NLS-1$
+        maintenance.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        maintenance.setIsDefault(true);
+        model.getCommands().add(maintenance);
+
+        UICommand cancel = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancel.setIsCancel(true);
+        model.getCommands().add(cancel);
     }
 
     public void activate()
@@ -778,6 +812,10 @@ public class DataCenterStorageListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
         {
             onDetach();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnMaintenance")) //$NON-NLS-1$
+        {
+            onMaintenance();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
