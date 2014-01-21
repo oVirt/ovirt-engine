@@ -8,13 +8,11 @@ import java.lang.reflect.Method;
 
 import org.easymock.IArgumentMatcher;
 import org.easymock.classextension.EasyMock;
-import org.junit.Ignore;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
-@Ignore
 public class TestHelper {
 
     public static VdcActionParametersBase eqActionParams(
@@ -102,7 +100,6 @@ public class TestHelper {
      * This generic matcher for ActionParameters is required because this types
      * don't override Object.equals() with a deep comparison
      */
-    @Ignore
     protected static class ActionParametersEquals implements IArgumentMatcher {
         Class<? extends VdcActionParametersBase> clz;
         String[] names;
@@ -147,7 +144,6 @@ public class TestHelper {
      * This specialized matcher for SearchParameters is required because this
      * type doesn't override Object.equals() with a deep comparison
      */
-    @Ignore
     protected static class SearchParametersEquals implements IArgumentMatcher {
         private SearchParameters expected;
 
@@ -186,7 +182,6 @@ public class TestHelper {
      * This generic matcher for QueryParameters is required because this types
      * don't override Object.equals() with a deep comparison
      */
-    @Ignore
     protected static class QueryParametersEquals implements IArgumentMatcher {
         Class<? extends VdcQueryParametersBase> clz;
         String[] names;
