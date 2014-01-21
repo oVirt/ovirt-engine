@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -83,9 +84,11 @@ public class AttachNetworksToClusterCommand<T extends ClusterNetworksParameters>
     private void configureNetworksOnHosts(Map<Guid, List<Network>> networksByHost,
             Map<Guid, Map<String, VdsNetworkInterface>> labelsToNicsByHost) {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        for (Guid hostId : networksByHost.keySet()) {
+        for (Entry<Guid, List<Network>> entry : networksByHost.entrySet()) {
             AddNetworksByLabelParametersBuilder builder = new AddNetworksByLabelParametersBuilder();
-            parameters.add(builder.buildParameters(hostId, networksByHost.get(hostId), labelsToNicsByHost.get(hostId)));
+            parameters.add(builder.buildParameters(entry.getKey(),
+                    entry.getValue(),
+                    labelsToNicsByHost.get(entry.getKey())));
         }
 
         getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);

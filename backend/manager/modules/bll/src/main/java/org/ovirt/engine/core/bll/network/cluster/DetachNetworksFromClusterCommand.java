@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -49,7 +50,7 @@ public class DetachNetworksFromClusterCommand<T extends ClusterNetworksParameter
         if (NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
             Set<Network> networks = new HashSet<>();
             Map<Guid, List<Network>> networksByHost = new HashMap<>();
-            Map<Guid, Map<String, VdsNetworkInterface>> labelsToNicsByHost = new HashMap<>();
+            Map<Guid, List<VdsNetworkInterface>> nicsByHost = new HashMap<>();
 
             for (AttachNetworkToVdsGroupParameter param : getParameters().getClusterNetworksParameters()) {
                 networks.add(getNetworkDAO().get(param.getNetworkCluster().getNetworkId()));
@@ -63,16 +64,16 @@ public class DetachNetworksFromClusterCommand<T extends ClusterNetworksParameter
                 for (VdsNetworkInterface nic : nics) {
                     if (!networksByHost.containsKey(nic.getVdsId())) {
                         networksByHost.put(nic.getVdsId(), new ArrayList<Network>());
-                        labelsToNicsByHost.put(nic.getVdsId(), new HashMap<String, VdsNetworkInterface>());
+                        nicsByHost.put(nic.getVdsId(), new ArrayList<VdsNetworkInterface>());
                     }
 
-                    labelsToNicsByHost.get(nic.getVdsId()).put(network.getLabel(), nic);
+                    nicsByHost.get(nic.getVdsId()).add(nic);
                     networksByHost.get(nic.getVdsId()).add(network);
                 }
             }
 
             if (!networksByHost.isEmpty()) {
-                removeNetworksFromHosts(networksByHost, labelsToNicsByHost);
+                removeNetworksFromHosts(networksByHost, nicsByHost);
             }
         }
 
@@ -80,11 +81,13 @@ public class DetachNetworksFromClusterCommand<T extends ClusterNetworksParameter
     }
 
     private void removeNetworksFromHosts(Map<Guid, List<Network>> networksByHost,
-            Map<Guid, Map<String, VdsNetworkInterface>> labelsToNicsByHost) {
+            Map<Guid, List<VdsNetworkInterface>> nicsByHost) {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        for (Guid hostId : networksByHost.keySet()) {
+        for (Entry<Guid, List<Network>> entry : networksByHost.entrySet()) {
             RemoveNetworksByLabelParametersBuilder builder = new RemoveNetworksByLabelParametersBuilder();
-            parameters.add(builder.buildParameters(hostId, networksByHost.get(hostId), labelsToNicsByHost.get(hostId)));
+            parameters.add(builder.buildParameters(entry.getKey(),
+                    entry.getValue(),
+                    nicsByHost.get(entry.getKey())));
         }
 
         getBackend().runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);

@@ -46,12 +46,11 @@ public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBui
      */
     public SetupNetworksParameters buildParameters(Guid hostId,
             List<Network> networksToRemove,
-            Map<String, VdsNetworkInterface> nicsBylabels) {
+            List<VdsNetworkInterface> nics) {
         SetupNetworksParameters parameters = createSetupNetworksParameters(hostId);
 
-        for (String label : nicsBylabels.keySet()) {
-            VdsNetworkInterface nicToConfigure =
-                    getNicToConfigure(parameters.getInterfaces(), nicsBylabels.get(label).getId());
+        for (VdsNetworkInterface nic : nics) {
+            VdsNetworkInterface nicToConfigure = getNicToConfigure(parameters.getInterfaces(), nic.getId());
             if (nicToConfigure == null) {
                 throw new VdcBLLException(VdcBllErrors.LABELED_NETWORK_INTERFACE_NOT_FOUND);
             }
