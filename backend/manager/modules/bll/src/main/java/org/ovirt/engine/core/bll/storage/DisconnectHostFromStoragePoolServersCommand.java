@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -24,50 +28,24 @@ public class DisconnectHostFromStoragePoolServersCommand extends
     @Override
     protected void executeCommand() {
         initConnectionList();
-        // TODO: check if host belong to more than one storage pool
+
+        for (Map.Entry<StorageType, List<StorageServerConnections>> connectionToType : getConnectionsTypeMap().entrySet()) {
+            disconnectStorageByType(connectionToType.getKey(), connectionToType.getValue());
+        }
+    }
+
+    private void disconnectStorageByType(StorageType storageType, List<StorageServerConnections> connections) {
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.DisconnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getVds().getId(), getStoragePool().getId(),
-                                getStoragePool().getStorageType(), getConnections()));
+                                storageType, connections));
         setSucceeded(vdsReturnValue.getSucceeded());
         if (!vdsReturnValue.getSucceeded()) {
-            StorageHelperDirector.getInstance().getItem(getStoragePool().getStorageType())
-                    .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(), getConnections());
-        }
-        if (getIsoConnections() != null && getIsoConnections().size() != 0) {
-            vdsReturnValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.DisconnectStorageServer,
-                            new StorageServerConnectionManagementVDSParameters(getVds().getId(),
-                                    getStoragePool().getId(), getIsoType(), getIsoConnections()));
-            setSucceeded(vdsReturnValue.getSucceeded());
-            if (!vdsReturnValue.getSucceeded()) {
-                StorageHelperDirector.getInstance()
-                        .getItem(getIsoType())
-                        .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(),
-                                getIsoConnections());
-            }
-        }
-        if (getExportConnections() != null && getExportConnections().size() != 0) {
-            vdsReturnValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.DisconnectStorageServer,
-                            new StorageServerConnectionManagementVDSParameters(getVds().getId(),
-                                    getStoragePool().getId(), getExportType(), getExportConnections()));
-            setSucceeded(vdsReturnValue.getSucceeded());
-            if (!vdsReturnValue.getSucceeded()) {
-                StorageHelperDirector.getInstance()
-                        .getItem(getExportType())
-                        .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(),
-                                getExportConnections());
-            }
+            StorageHelperDirector.getInstance().getItem(storageType)
+                    .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(), connections);
         }
     }
 }

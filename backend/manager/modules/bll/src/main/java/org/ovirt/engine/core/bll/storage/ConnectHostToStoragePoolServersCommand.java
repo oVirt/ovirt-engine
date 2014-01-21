@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -34,45 +32,36 @@ public class ConnectHostToStoragePoolServersCommand extends
     @Override
     protected void executeCommand() {
         initConnectionList();
-        setSucceeded(connectStorageServer(getStoragePool().getStorageType(), getConnections()));
-
-        if (getNeedToConnectIso()) {
-            if (!connectStorageServer(getIsoType(), getIsoConnections())) {
-                log.infoFormat("Failed to connect host {0} to StoragePool {1} Iso domain/s connections", getVds()
-                        .getName(), getStoragePool().getName());
-            }
-        }
-        if (getNeedToConnectExport()) {
-            if (!connectStorageServer(getExportType(), getExportConnections())) {
-                log.infoFormat("Failed to connect host {0} to StoragePool {1} Export domain/s connections", getVds()
-                        .getName(), getStoragePool().getName());
-            }
-        }
+        setSucceeded(connectStorageServer(getConnectionsTypeMap()));
 
         if (!getSucceeded()) {
            AuditLogDirector.log(this, AuditLogType.CONNECT_STORAGE_SERVERS_FAILED);
         }
     }
 
-    private boolean connectStorageServer(StorageType type, List<StorageServerConnections> connections) {
+    private boolean connectStorageServer(Map<StorageType, List<StorageServerConnections>> connectionsByType) {
         boolean connectSucceeded = true;
-        if (connections != null && connections.size() > 0) {
-            if (type == StorageType.ISCSI) {
-                connections = ISCSIStorageHelper.updateIfaces(connections, getVds().getId());
-            }
 
-            Map<String, String> retValues = (HashMap<String, String>) Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.ConnectStorageServer,
-                            new StorageServerConnectionManagementVDSParameters(getVds().getId(),
-                                    getStoragePool().getId(), type, connections)).getReturnValue();
-            connectSucceeded =
-                    StorageHelperDirector.getInstance().getItem(type).isConnectSucceeded(retValues, connections);
-            log.infoFormat("Host {0} storage connection was {1} ", getVds().getName(),
-                    connectSucceeded ? "succeeded" : "failed");
+        for (Map.Entry<StorageType, List<StorageServerConnections>> connectionToType : connectionsByType.entrySet()) {
+            StorageType connectionsType = connectionToType.getKey();
+            List<StorageServerConnections> connections = connectionToType.getValue();
+            connectSucceeded = connectStorageServersByType(connectionsType, connections) && connectSucceeded;
         }
+
+        log.infoFormat("Host {0} storage connection was {1} ", getVds().getName(), connectSucceeded ? "succeeded" : "failed");
+
         return connectSucceeded;
+    }
+
+    private boolean connectStorageServersByType(StorageType storageType, List<StorageServerConnections> connections) {
+        if (storageType == StorageType.ISCSI) {
+            connections = ISCSIStorageHelper.updateIfaces(connections, getVds().getId());
+        }
+
+        Map<String, String> retValues = (Map<String, String>) runVdsCommand(
+                        VDSCommandType.ConnectStorageServer,
+                        new StorageServerConnectionManagementVDSParameters(getVds().getId(),
+                                getStoragePool().getId(), storageType, connections)).getReturnValue();
+        return StorageHelperDirector.getInstance().getItem(storageType).isConnectSucceeded(retValues, connections);
     }
 }
