@@ -1101,7 +1101,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster")
     String clusterTabNetworkPopup();
 
-    @DefaultStringValue("Profiles")
+    @DefaultStringValue("vNIC Profiles")
     String profilesTabNetworkPopup();
 
     @DefaultStringValue("Subnet")
@@ -1109,9 +1109,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("General")
     String networkGeneralSubTabLabel();
-
-    @DefaultStringValue("Profiles")
-    String networkProfileSubTabLabel();
 
     @DefaultStringValue("Subnets")
     String networkExternalSubnetSubTabLabel();
