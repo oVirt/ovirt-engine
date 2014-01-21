@@ -36,7 +36,7 @@ public class SubTabNetworkProfilePresenter extends AbstractSubTabPresenter<Netwo
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.networkProfileSubTabLabel(), 1,
+        return new ModelBoundTabData(applicationConstants.vnicProfilesMainTabLabel(), 1,
                 modelProvider);
     }
 
