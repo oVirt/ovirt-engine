@@ -147,6 +147,21 @@ public class NotificationProperties extends LocalConfig {
                     ));
         }
 
+        boolean mailPortValid = false;
+        try {
+            int port = new Integer(getProperty(MAIL_PORT));
+            if (port > 0 && port < 65536) {
+                mailPortValid = true;
+            }
+        } catch (NumberFormatException ex) {
+        }
+        if (!mailPortValid) {
+            throw new IllegalArgumentException(
+                    String.format("Check configuration file, MAIL_PORT value has to be in range from 1 to 65535,"
+                            + " currently '%s'",
+                            getProperty(MAIL_PORT)));
+        }
+
         // try to resolve MAIL_SERVER host
         try {
             InetAddress.getAllByName(getProperty(NotificationProperties.MAIL_SERVER));
