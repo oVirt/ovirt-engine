@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -16,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,7 +35,6 @@ import org.mockito.runners.MockitoJUnitRunner;
  * Unit tests for the {@code DocsServlet} class.
  */
 @RunWith(MockitoJUnitRunner.class)
-@Ignore
 public class DocsServletTest {
     DocsServlet testServlet;
 
@@ -123,7 +121,7 @@ public class DocsServletTest {
         when(mockRequest.getPathInfo()).thenReturn("/ja/index.html");
         when(mockRequest.getServletPath()).thenReturn("/docs");
         testServlet.doGet(mockRequest, mockResponse);
-        verify(mockRequest).getRequestDispatcher("/WEB-INF/help/no_lang.jsp");
+        verify(mockResponse).sendError(eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), anyString());
     }
 
     /**
@@ -141,45 +139,7 @@ public class DocsServletTest {
         when(mockRequest.getPathInfo()).thenReturn("/ja/index.html");
         when(mockRequest.getServletPath()).thenReturn("/docs");
         testServlet.doGet(mockRequest, mockResponse);
-        verify(mockRequest).getRequestDispatcher("/WEB-INF/help/no_lang.jsp");
-    }
-
-    /**
-     * Test method for {@link org.ovirt.engine.core.DocsServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
-     */
-    @Test
-    public void testDoGet_LangMissingFirstTimeDispatcher() throws ServletException, IOException {
-        ServletOutputStream responseOut = mock(ServletOutputStream.class);
-        ServletContext mockContext = mock(ServletContext.class);
-        RequestDispatcher mockDispatcher = mock(RequestDispatcher.class);
-        when(mockRequest.getRequestDispatcher("/WEB-INF/help/no_lang.jsp")).thenReturn(mockDispatcher);
-        when(mockConfig.getServletContext()).thenReturn(mockContext);
-        when(mockResponse.getOutputStream()).thenReturn(responseOut);
-        when(mockRequest.getPathInfo()).thenReturn("/ja/index.html");
-        when(mockRequest.getServletPath()).thenReturn("/docs");
-        testServlet.doGet(mockRequest, mockResponse);
-        //Verify that the dispatcher is called with the proper request and response.
-        verify(mockDispatcher).include(mockRequest, mockResponse);
-    }
-
-    /**
-     * Test method for {@link org.ovirt.engine.core.DocsServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
-     * @throws IOException
-     * @throws ServletException
-     */
-    @Test
-    public void testDoGet_LangMissingSecondTime() throws ServletException, IOException {
-        ServletOutputStream responseOut = mock(ServletOutputStream.class);
-        ServletContext mockContext = mock(ServletContext.class);
-        when(mockSession.getAttribute(DocsServlet.LANG_PAGE_SHOWN)).thenReturn(Boolean.TRUE);
-        when(mockConfig.getServletContext()).thenReturn(mockContext);
-        when(mockResponse.getOutputStream()).thenReturn(responseOut);
-        when(mockRequest.getPathInfo()).thenReturn("/ja/index.html");
-        when(mockRequest.getServletPath()).thenReturn("/docs");
-        testServlet.doGet(mockRequest, mockResponse);
-        verify(mockResponse).sendRedirect("/docs/en-US/index.html");
+        verify(mockResponse).sendError(eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), anyString());
     }
 
     /**
