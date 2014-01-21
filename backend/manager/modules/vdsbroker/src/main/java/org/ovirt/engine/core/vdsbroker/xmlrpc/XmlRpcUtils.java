@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
@@ -124,7 +125,7 @@ public class XmlRpcUtils {
         xmlRpcClient.setConfig(config);
 
         XmlRpcCommonsTransportFactory transportFactory = new CustomXmlRpcCommonsTransportFactory(xmlRpcClient);
-        HttpClient httpclient = createHttpClient(clientRetries);
+        HttpClient httpclient = createHttpClient(clientRetries, connectionTimeOut);
         transportFactory.setHttpClient(httpclient);
         xmlRpcClient.setTransportFactory(transportFactory);
 
@@ -138,9 +139,13 @@ public class XmlRpcUtils {
         return returnValue;
     }
 
-    private static HttpClient createHttpClient(int clientRetries) {
+    private static HttpClient createHttpClient(int clientRetries, int connectionTimeout) {
+        HttpConnectionManagerParams params = new HttpConnectionManagerParams();
+        params.setConnectionTimeout(connectionTimeout);
+        MultiThreadedHttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
+        httpConnectionManager.setParams(params);
         // Create the client:
-        HttpClient client = new HttpClient(new MultiThreadedHttpConnectionManager());
+        HttpClient client = new HttpClient(httpConnectionManager);
 
         // Configure the HTTP client so it will retry the execution of
         // methods when there are IO errors:
