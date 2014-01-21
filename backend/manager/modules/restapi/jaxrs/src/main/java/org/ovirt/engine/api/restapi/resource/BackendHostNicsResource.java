@@ -26,10 +26,12 @@ import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -374,6 +376,10 @@ public class BackendHostNicsResource
 
     private List<VdsNetworkInterface> nicsToInterfaces(List<HostNIC> hostNics) {
         List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(hostNics.size());
+        List<VdsNetworkInterface> existingNics = getCollection();
+        Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(existingNics);
+        Map<Guid, VdsNetworkInterface> nicsById = Entities.businessEntitiesById(existingNics);
+
         for (HostNIC nic : hostNics) {
             VdsNetworkInterface iface = map(nic, null);
             ifaces.add(iface);
@@ -385,6 +391,16 @@ public class BackendHostNicsResource
                     ifaces.add(slaveIface);
                 }
             }
+
+            if (nic.isSetName() && nicsByName.containsKey(nic.getName())) {
+                iface.setLabels(nicsByName.get(nic.getName()).getLabels());
+            } else if (nic.isSetId()) {
+                Guid nicId = GuidUtils.asGuid(nic.getId());
+                if (nicsById.containsKey(nicId)) {
+                    iface.setLabels(nicsById.get(nicId).getLabels());
+                }
+            }
+
         }
         return ifaces;
     }
