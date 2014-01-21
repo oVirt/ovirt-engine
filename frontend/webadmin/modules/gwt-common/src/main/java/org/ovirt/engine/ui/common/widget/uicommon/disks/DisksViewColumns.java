@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -153,6 +154,18 @@ public class DisksViewColumns {
     };
 
     public static final StorageDomainsColumn storageDomainsColumn = new StorageDomainsColumn();
+
+    public static final TextColumnWithTooltip<Disk> storageTypeColumn = new EnumColumn<Disk, StorageType>() {
+        @Override
+        protected StorageType getRawValue(Disk object) {
+            if (object.getDiskStorageType() != DiskStorageType.IMAGE) {
+                return null;
+            }
+            DiskImage disk = (DiskImage) object;
+
+            return disk.getStorageTypes().isEmpty() ? null : disk.getStorageTypes().get(0);
+        }
+    };
 
     public static final DiskSizeColumn<Disk> sizeColumn = new DiskSizeColumn<Disk>() {
         @Override

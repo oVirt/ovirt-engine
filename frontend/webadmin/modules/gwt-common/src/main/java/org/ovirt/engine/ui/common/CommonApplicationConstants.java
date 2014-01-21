@@ -825,6 +825,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Storage Domain")
     String storageDomainDisk();
 
+    @DefaultStringValue("Storage Type")
+    String storageTypeDisk();
+
     @DefaultStringValue("Storage Domain(s)")
     String storageDomainsDisk();
 

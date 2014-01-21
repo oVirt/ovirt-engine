@@ -188,7 +188,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 return null;
             }
 
-            ArrayList<StorageType> types = new ArrayList<>(splitTypes.size());
+            ArrayList<StorageType> types = new ArrayList<>();
             for (String typeStr : splitTypes) {
                 try {
                     types.add(StorageType.forValue(Integer.parseInt(typeStr)));
