@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Edit
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindMultiStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.IscsiBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewDataCenterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
@@ -131,6 +132,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterIscsiBondPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkQoSPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterPermissionPresenter;
@@ -249,6 +251,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.EditDataC
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.EditNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindMultiStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindSingleStoragePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.IscsiBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.NewDataCenterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.RecoveryStorageConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.event.EventPopupView;
@@ -350,6 +353,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.DataCenterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterEventView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterIscsiBondView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkQoSView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterPermissionView;
@@ -576,6 +580,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDataCenterStoragePresenter.ViewDef.class,
                 SubTabDataCenterStorageView.class,
                 SubTabDataCenterStoragePresenter.ProxyDef.class);
+        bindPresenter(SubTabDataCenterIscsiBondPresenter.class,
+                SubTabDataCenterIscsiBondPresenter.ViewDef.class,
+                SubTabDataCenterIscsiBondView.class,
+                SubTabDataCenterIscsiBondPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterNetworkPresenter.class,
                 SubTabDataCenterNetworkPresenter.ViewDef.class,
                 SubTabDataCenterNetworkView.class,
@@ -1365,5 +1373,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ExternalSubnetPopupPresenterWidget.class,
                 ExternalSubnetPopupPresenterWidget.ViewDef.class,
                 ExternalSubnetPopupView.class);
+
+        // ISCSI Bond
+        bindPresenterWidget(IscsiBondPopupPresenterWidget.class,
+                IscsiBondPopupPresenterWidget.ViewDef.class,
+                IscsiBondPopupView.class);
     }
 }

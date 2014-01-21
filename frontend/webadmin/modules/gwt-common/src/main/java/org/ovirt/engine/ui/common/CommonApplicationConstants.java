@@ -1632,4 +1632,19 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Migration downtime (ms)")
     String migrationDowntimeLabel();
+
+    @DefaultStringValue("Logical Networks")
+    String logicalNetworks();
+
+    @DefaultStringValue("Storage Targets")
+    String storageTargets();
+
+    @DefaultStringValue("Name")
+    String name();
+
+    @DefaultStringValue("Description")
+    String description();
+
+    @DefaultStringValue("IQN")
+    String iqn();
 }

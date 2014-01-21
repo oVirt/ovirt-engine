@@ -5,6 +5,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -50,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterIscsiBondListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
@@ -140,7 +142,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 
-/**
+/**                                                                                                       H
  * WebAdmin {@code Ginjector} extension interface.
  */
 public interface ClientGinjectorExtension {
@@ -195,6 +197,8 @@ public interface ClientGinjectorExtension {
     SearchableDetailModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel> getSubTabDataCenterStorageModelProvider();
 
     SearchableDetailModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> getSubTabDataCenterNetworkModelProvider();
+
+    SearchableDetailModelProvider<IscsiBond, DataCenterListModel, DataCenterIscsiBondListModel> getSubTabDataCenterIscsiBondModelProvider();
 
     SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> getSubTabDataCenterClusterModelProvider();
 

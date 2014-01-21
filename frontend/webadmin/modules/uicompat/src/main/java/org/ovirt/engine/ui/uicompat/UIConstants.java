@@ -2146,5 +2146,20 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("No available VMs")
     String noAvailableVms();
+
+    @DefaultStringValue("iSCSI Bonds")
+    String iscsiBondsTitle();
+
+    @DefaultStringValue("Add iSCSI Bond")
+    String addIscsiBondTitle();
+
+    @DefaultStringValue("Edit iSCSI Bond")
+    String editIscsiBondTitle();
+
+    @DefaultStringValue("Remove iSCSI Bond(s)")
+    String removeIscsiBondTitle();
+
+    @DefaultStringValue("No networks selected")
+    String noNetworksSelected();
 }
 
