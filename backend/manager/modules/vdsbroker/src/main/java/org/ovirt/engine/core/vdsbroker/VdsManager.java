@@ -499,7 +499,7 @@ public class VdsManager {
                 setStatus(VDSStatus.Up, vds);
                 DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
             }
-            log.infoFormat("onVdsDuringFailureTimer of vds {0} entered. Attempts after {1}", vds.getName(),
+            log.infoFormat("onVdsDuringFailureTimer of Host {0} entered after {1} attempts to run a VM", vds.getName(),
                     mFailedToRunVmAttempts);
         }
     }
