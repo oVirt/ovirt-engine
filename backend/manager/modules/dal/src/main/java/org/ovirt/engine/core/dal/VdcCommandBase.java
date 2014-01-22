@@ -6,6 +6,9 @@ import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
 
+import java.util.Arrays;
+import java.util.Map;
+
 @Logged(errorLevel = LogLevel.WARN)
 public abstract class VdcCommandBase {
 
@@ -26,7 +29,7 @@ public abstract class VdcCommandBase {
 
         try {
             executeCommand();
-            LoggedUtils.logReturn(log, logId, this, getReturnValue());
+            LoggedUtils.logReturn(log, logId, this, getReturnValue() != null && getReturnValue() instanceof Map[] ? Arrays.asList((Map[])getReturnValue()) : getReturnValue());
         } catch (Exception e) {
             LoggedUtils.logError(log, logId, this, e);
             // throw e;
