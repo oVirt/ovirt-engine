@@ -55,6 +55,7 @@
 		<include name="common/businessentities/OpenStackImageProviderProperties.java" />
         <include name="common/businessentities/VmBalloonInfo.java" />
 		<include name="common/businessentities/ArchitectureType.java" />
+        <include name="common/businessentities/IscsiBond.java" />
 
 		<!-- Network business entities -->
 		<include name="common/businessentities/network/VdsNetworkInterface.java" />

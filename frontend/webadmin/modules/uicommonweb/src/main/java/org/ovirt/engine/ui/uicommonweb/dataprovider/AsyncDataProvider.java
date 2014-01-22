@@ -2497,6 +2497,30 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, params, aQuery);
     }
 
+    public static void getAllDataCenterNetworks(AsyncQuery aQuery, Guid storagePoolId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (ArrayList<Network>) source : new ArrayList<Network>();
+            }
+        };
+        IdQueryParameters params = new IdQueryParameters(storagePoolId);
+        Frontend.getInstance().runQuery(VdcQueryType.GetNetworksByDataCenterId, params, aQuery);
+    }
+
+    public static void getAllDataCenterStorageConnections(AsyncQuery aQuery, Guid storagePoolId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (ArrayList<StorageServerConnections>) source : new ArrayList<StorageServerConnections>();
+            }
+        };
+        IdQueryParameters params = new IdQueryParameters(storagePoolId);
+        Frontend.getInstance().runQuery(VdcQueryType.GetConnectableStorageServerConnectionsByStoragePoolId, params, aQuery);
+    }
+
     public static void getRedirectServletReportsPage(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

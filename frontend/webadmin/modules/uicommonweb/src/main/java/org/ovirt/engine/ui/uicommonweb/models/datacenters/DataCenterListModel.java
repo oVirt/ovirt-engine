@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -175,6 +176,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     }
 
     DataCenterQuotaListModel quotaListModel;
+    DataCenterIscsiBondListModel iscsiBondListModel;
 
     public DataCenterListModel()
     {
@@ -236,6 +238,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new DataCenterStorageListModel());
+        iscsiBondListModel = new DataCenterIscsiBondListModel();
+        list.add(iscsiBondListModel);
         list.add(new DataCenterNetworkListModel());
         list.add(new DataCenterClusterListModel());
         quotaListModel = new DataCenterQuotaListModel();
@@ -805,11 +809,11 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
-        if (getSelectedItem() != null
-                && ((StoragePool) getSelectedItem()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            quotaListModel.setIsAvailable(true);
-        } else {
-            quotaListModel.setIsAvailable(false);
+
+        if (getSelectedItem() != null) {
+            StoragePool storagePool = (StoragePool) getSelectedItem();
+            quotaListModel.setIsAvailable(storagePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
+            updateIscsiBondListAvailability(storagePool);
         }
     }
 
@@ -864,6 +868,27 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         getNewCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
         getForceRemoveCommand().setIsAvailable(isAvailable);
+    }
+
+    private void updateIscsiBondListAvailability(StoragePool storagePool) {
+        AsyncDataProvider.getAllDataCenterStorageConnections(new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                boolean hasIscsiStorage = false;
+
+                ArrayList<StorageServerConnections> connections = (ArrayList<StorageServerConnections>) returnValue;
+
+                for (StorageServerConnections connection : connections) {
+                    if (connection.getstorage_type() == StorageType.ISCSI) {
+                        hasIscsiStorage = true;
+                        break;
+                    }
+                }
+
+                iscsiBondListModel.setIsAvailable(hasIscsiStorage);
+            }
+        }), storagePool.getId());
     }
 
     @Override

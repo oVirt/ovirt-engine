@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+
+    <ui:style>
+        .logicalNetworksPanel,
+        .storageTargetsPanel {
+            border-top: 1px #C0C0C0 solid;
+            border-bottom: 1px #C0C0C0 solid;
+            margin: 5px 5px 0px 5px;
+            padding: 0px;
+            height: 200px;
+            overflow: auto;
+        }
+
+        .textBox {
+            width: 60%;
+        }
+
+        .labelStyle {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333333;
+            margin-top: 30px;
+            margin-left: 5px;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <e:EntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.textBox}" />
+        <e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.textBox}" />
+
+        <g:Label text="{constants.logicalNetworks}" addStyleNames="{style.labelStyle}" />
+        <w:ValidatedPanelWidget ui:field="logicalNetworksPanel" addStyleNames="{style.logicalNetworksPanel}" />
+
+        <g:Label text="{constants.storageTargets}" addStyleNames="{style.labelStyle}" />
+        <w:ValidatedPanelWidget ui:field="storageTargetsPanel" addStyleNames="{style.storageTargetsPanel}" />
+    </g:FlowPanel>
+
+
+</ui:UiBinder>

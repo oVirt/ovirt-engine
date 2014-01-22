@@ -1627,4 +1627,18 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Import as Template")
     String importAsTemplate();
 
+    @DefaultStringValue("Logical Networks")
+    String logicalNetworks();
+
+    @DefaultStringValue("Storage Targets")
+    String storageTargets();
+
+    @DefaultStringValue("Name")
+    String name();
+
+    @DefaultStringValue("Description")
+    String description();
+
+    @DefaultStringValue("IQN")
+    String iqn();
 }

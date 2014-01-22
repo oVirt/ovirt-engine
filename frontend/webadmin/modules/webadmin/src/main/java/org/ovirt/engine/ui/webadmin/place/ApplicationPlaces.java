@@ -54,6 +54,9 @@ public class ApplicationPlaces {
     public static final String dataCenterStorageSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
             + "storage"; //$NON-NLS-1$
 
+    public static final String dataCenterIscsiBondSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
+            + "iscsi_bond"; //$NON-NLS-1$
+
     public static final String dataCenterNetworkSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
             + "logical_networks"; //$NON-NLS-1$
 

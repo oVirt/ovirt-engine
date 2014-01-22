@@ -3524,4 +3524,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Soft")
     String softEnforcingAffinity();
+
+    @DefaultStringValue("Add")
+    String addIscsiBond();
+
+    @DefaultStringValue("Edit")
+    String editIscsiBond();
+
+    @DefaultStringValue("Remove")
+    String removeIscsiBond();
+
+    @DefaultStringValue("iSCSI Multipathing")
+    String dataCenterIscsiMultipathingSubTabLabel();
 }
