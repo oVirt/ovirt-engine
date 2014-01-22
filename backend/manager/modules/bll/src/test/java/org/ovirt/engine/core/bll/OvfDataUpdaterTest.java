@@ -242,7 +242,7 @@ public class OvfDataUpdaterTest {
                 return null;
             }
 
-        }).when(vmAndTemplatesGenerationsDAO).updateOvfGenerations(anyList(), anyList());
+        }).when(vmAndTemplatesGenerationsDAO).updateOvfGenerations(anyList(), anyList(), anyList());
     }
 
     private List<StoragePool> buildStoragePoolsList() {

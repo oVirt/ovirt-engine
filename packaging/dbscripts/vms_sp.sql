@@ -1,31 +1,48 @@
 ----------------------------------------------------------------
 -- [vm_ovf_generations] Table
 
-Create or replace FUNCTION UpdateOvfGenerations(v_vms_ids VARCHAR(5000), v_vms_db_generations VARCHAR(5000))
+Create or replace FUNCTION UpdateOvfGenerations(v_vms_ids VARCHAR(5000), v_vms_db_generations VARCHAR(5000), v_ovf_data TEXT, v_ovf_data_seperator VARCHAR(10))
     RETURNS VOID
     AS $procedure$
 DECLARE
 curs_vmids CURSOR FOR SELECT * FROM fnSplitterUuid(v_vms_ids);
 curs_newovfgen CURSOR FOR SELECT * FROM fnSplitter(v_vms_db_generations);
+curs_newovfdata CURSOR FOR SELECT * FROM fnSplitterWithSeperator(v_ovf_data, v_ovf_data_seperator);
 id UUID;
 new_ovf_gen BIGINT;
+new_ovf_config TEXT;
 BEGIN
  OPEN curs_vmids;
  OPEN curs_newovfgen;
+ OPEN curs_newovfdata;
 LOOP
     FETCH curs_vmids INTO id;
     FETCH curs_newovfgen INTO new_ovf_gen;
+    FETCH curs_newovfdata INTO new_ovf_config;
     IF NOT FOUND THEN
      EXIT;
     END IF;
     UPDATE vm_ovf_generations
-    SET ovf_generation = new_ovf_gen WHERE vm_guid = id;
+    SET ovf_generation = new_ovf_gen, ovf_data = new_ovf_config WHERE vm_guid = id;
 END LOOP;
 CLOSE curs_vmids;
 CLOSE curs_newovfgen;
+CLOSE curs_newovfdata;
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+
+
+
+Create or replace FUNCTION LoadOvfDataForIds(v_ids VARCHAR(5000)) RETURNS SETOF vm_ovf_generations STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+   FROM vm_ovf_generations ovf
+   WHERE ovf.vm_guid IN (SELECT * FROM fnSplitterUuid(v_ids));
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface VmAndTemplatesGenerationsDAO extends DAO {
@@ -9,13 +10,15 @@ public interface VmAndTemplatesGenerationsDAO extends DAO {
     /**
      * Updates the vms/templates ovf update version to the given value
      *
+     *
      * @param ids
      *            - vm/template ids
      * @param values
      *            - new ovf generations
+     * @param ovfData
      * @return
      */
-    public void updateOvfGenerations(List<Guid> ids, List<Long> values);
+    public void updateOvfGenerations(List<Guid> ids, List<Long> values, List<String> ovfData);
 
     /**
      * Get the current ovf generation of the vm/template with the given guid.
@@ -39,6 +42,11 @@ public interface VmAndTemplatesGenerationsDAO extends DAO {
      * @return
      */
     public List<Guid> getVmTemplatesIdsForOvfUpdate(Guid storagePoolId);
+
+    /**
+     * Get ovf data for the given ids
+     */
+    public List<Pair<Guid, String>> loadOvfDataForIds(List<Guid> ids);
 
     /**
      * Get ids for ovf deletion from storage

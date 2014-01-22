@@ -53,6 +53,17 @@ LANGUAGE plpgsql;
 
 
 
+CREATE OR REPLACE FUNCTION public.fnSplitterWithSeperator(ids TEXT, separator VARCHAR(10))  RETURNS SETOF idTextType IMMUTABLE AS
+$function$
+BEGIN
+  RETURN QUERY
+    SELECT regexp_split_to_table(ids, separator) AS id;
+END; $function$
+LANGUAGE plpgsql;
+
+
+
+
 --All permissions of current user (include groups)
 DROP TYPE IF EXISTS user_permissions CASCADE;
 CREATE TYPE user_permissions AS(permission_id UUID, role_id UUID, user_id UUID);

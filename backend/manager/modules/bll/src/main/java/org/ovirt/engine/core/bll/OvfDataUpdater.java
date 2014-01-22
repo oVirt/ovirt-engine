@@ -52,6 +52,7 @@ public class OvfDataUpdater {
 
     private List<Guid> proccessedIdsInfo;
     private List<Long> proccessedOvfGenerationsInfo;
+    private List<String> proccessedOvfConfigurationsInfo;
 
     private OvfManager ovfManager;
 
@@ -166,7 +167,8 @@ public class OvfDataUpdater {
             int sizeToUpdate = Math.min(MAX_ITEMS_PER_SQL_STATEMENT, proccessedIdsInfo.size() - i);
             List<Guid> guidsForUpdate = proccessedIdsInfo.subList(i, i + sizeToUpdate);
             List<Long> ovfGenerationsForUpdate = proccessedOvfGenerationsInfo.subList(i, i + sizeToUpdate);
-            getVmAndTemplatesGenerationsDao().updateOvfGenerations(guidsForUpdate, ovfGenerationsForUpdate);
+            List<String> ovfConfigurationsInfo = proccessedOvfConfigurationsInfo.subList(i, i + sizeToUpdate);
+            getVmAndTemplatesGenerationsDao().updateOvfGenerations(guidsForUpdate, ovfGenerationsForUpdate, ovfConfigurationsInfo);
             i += sizeToUpdate;
             initProcessedInfoLists();
         }
@@ -189,7 +191,7 @@ public class OvfDataUpdater {
                     Long currentDbGeneration = getVmStaticDao().getDbGeneration(template.getId());
                     // currentDbGeneration can be null in case that the template was deleted during the run of OvfDataUpdater.
                     if (currentDbGeneration != null && template.getDbGeneration() == currentDbGeneration) {
-                        buildMetadataDictionaryForTemplate(template, vmsAndTemplateMetadata);
+                        proccessedOvfConfigurationsInfo.add(buildMetadataDictionaryForTemplate(template, vmsAndTemplateMetadata));
                         proccessedIdsInfo.add(template.getId());
                         proccessedOvfGenerationsInfo.add(template.getDbGeneration());
                     }
@@ -243,7 +245,7 @@ public class OvfDataUpdater {
                     Long currentDbGeneration = getVmStaticDao().getDbGeneration(vm.getId());
                     // currentDbGeneration can be null in case that the vm was deleted during the run of OvfDataUpdater.
                     if (currentDbGeneration != null && vm.getStaticData().getDbGeneration() == currentDbGeneration) {
-                        buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata);
+                        proccessedOvfConfigurationsInfo.add(buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata));
                         proccessedIdsInfo.add(vm.getId());
                         proccessedOvfGenerationsInfo.add(vm.getStaticData().getDbGeneration());
                     }
@@ -272,7 +274,7 @@ public class OvfDataUpdater {
     /**
      * Adds the given template metadata to the given map
      */
-    protected void buildMetadataDictionaryForTemplate(VmTemplate template,
+    protected String buildMetadataDictionaryForTemplate(VmTemplate template,
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
         List<DiskImage> allTemplateImages = template.getDiskList();
         String templateMeta = generateVmTemplateMetadata(template, allTemplateImages);
@@ -283,6 +285,7 @@ public class OvfDataUpdater {
                         return diskImage.getId();
                     }
                 })));
+        return templateMeta;
     }
 
     /**
@@ -324,7 +327,7 @@ public class OvfDataUpdater {
     /**
      * Adds the given vm metadata to the given map
      */
-    protected void buildMetadataDictionaryForVm(VM vm, Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
+    protected String buildMetadataDictionaryForVm(VM vm, Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
         ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
         List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
 
@@ -342,6 +345,7 @@ public class OvfDataUpdater {
                                 return a.getId();
                             }
                         })));
+        return vmMeta;
     }
 
     protected VmDAO getVmDao() {
@@ -370,6 +374,7 @@ public class OvfDataUpdater {
     private void initProcessedInfoLists() {
         proccessedIdsInfo = new LinkedList<Guid>();
         proccessedOvfGenerationsInfo = new LinkedList<Long>();
+        proccessedOvfConfigurationsInfo = new LinkedList<>();
     }
 
     /**
