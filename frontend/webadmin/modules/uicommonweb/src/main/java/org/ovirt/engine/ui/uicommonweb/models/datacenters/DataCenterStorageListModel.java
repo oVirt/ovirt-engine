@@ -336,7 +336,6 @@ public class DataCenterStorageListModel extends SearchableListModel
                                 && a.getStorageDomainType() == dcStorageModel.getStorageDomainType())
                         {
                             if (dcStorageModel.getStorageDomainType() == StorageDomainType.Data
-                                    && a.getStorageType() == dcStorageModel.getEntity().getStorageType()
                                     && a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
                             {
                                 if (dcStorageModel.getEntity().getStoragePoolFormatType() == null)

@@ -1,11 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -29,7 +27,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
     @UiField
     Label messageLabel;
 
-    public AbstractFindDcPopupView(EventBus eventBus, ApplicationResources resources, boolean multiSelection, ApplicationConstants constants) {
+    public AbstractFindDcPopupView(EventBus eventBus, ApplicationResources resources, boolean multiSelection, final ApplicationConstants constants) {
         super(eventBus, resources);
         table = new EntityModelCellTable<ListModel>(multiSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -42,12 +40,13 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
             }
         }, constants.nameDc());
 
-        table.addEntityModelColumn(new EntityModelEnumColumn<StoragePool, StorageType>() {
+        table.addEntityModelColumn(new EntityModelTextColumn<StoragePool>() {
             @Override
-            protected StorageType getEnum(StoragePool storage) {
-                return storage.getStorageType();
+            protected String getText(StoragePool entity) {
+                return entity.isLocal() ? constants.storageTypeLocal() : constants.storageTypeShared();
             }
-        }, constants.storgeTypeDc());
+        }
+        , constants.storgeTypeDc());
     }
 
     @Override

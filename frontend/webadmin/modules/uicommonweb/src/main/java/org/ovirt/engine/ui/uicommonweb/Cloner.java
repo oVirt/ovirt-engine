@@ -267,7 +267,7 @@ public final class Cloner
         obj.setComment(instance.getComment());
         obj.setId(instance.getId());
         obj.setName(instance.getName());
-        obj.setStorageType(instance.getStorageType());
+        obj.setIsLocal(instance.isLocal());
         obj.setStatus(instance.getStatus());
 
         obj.setmaster_domain_version(instance.getmaster_domain_version());

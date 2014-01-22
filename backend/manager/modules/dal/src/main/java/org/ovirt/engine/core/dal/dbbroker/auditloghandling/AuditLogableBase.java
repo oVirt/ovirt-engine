@@ -81,7 +81,6 @@ public class AuditLogableBase extends TimeoutBase {
     private int eventFloodInSec = 30;
     private String customData = "";
     private boolean external = false;
-    private String storagePoolType;
     private String compatibilityVersion;
     private String quotaEnforcementType;
     private Guid quotaIdForLog;
@@ -689,14 +688,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public void setExternal(boolean external) {
         this.external = external;
-    }
-
-    public String getStoragePoolType() {
-        return storagePoolType;
-    }
-
-    public void setStoragePoolType(String storagePoolType) {
-        this.storagePoolType = storagePoolType;
     }
 
     public String getCompatibilityVersion() {

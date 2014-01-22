@@ -1712,7 +1712,8 @@ actions:
           datacenter.name: xs:string
           datacenter.description: xs:string
           datacenter.comment: xs:string
-          datacenter.storage_type: xs:string
+          datacenter.storage_type--DEPRECATED: xs:string
+          datacenter.local: xs:boolean
           datacenter.version.major: xs:int
           datacenter.version.minor: xs:int
           datacenter.description: xs:string
@@ -1764,8 +1765,10 @@ actions:
     body:
       parameterType: DataCenter
       signatures:
-      - mandatoryArguments: {datacenter.name: 'xs:string', datacenter.storage_type: 'xs:string', datacenter.version.major: 'xs:int', datacenter.version.minor: 'xs:int'}
+      - mandatoryArguments: {datacenter.name: 'xs:string', datacenter.version.major: 'xs:int', datacenter.version.minor: 'xs:int'}
         optionalArguments:
+          datacenter.storage_type--DEPRECATED: xs:string
+          datacenter.local: xs:boolean
           datacenter.description: xs:string
           datacenter.comment: xs:string
           datacenter.storage_format: xs:string

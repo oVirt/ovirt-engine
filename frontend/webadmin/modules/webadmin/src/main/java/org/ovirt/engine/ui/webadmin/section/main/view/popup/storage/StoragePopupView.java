@@ -104,7 +104,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @Inject
     public StoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        initListBoxEditors();
+        initListBoxEditors(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         asWidget().enableResizeSupport(true);
@@ -114,7 +114,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    void initListBoxEditors() {
+    void initListBoxEditors(final ApplicationConstants constants) {
         datacenterListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
             @Override
             public String render(Object object) {
@@ -124,16 +124,18 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                     StoragePool storage = (StoragePool) object;
 
                     // Get formatted storage type and format using Enum renders
-                    String storageType = storage.getStorageType() == StorageType.UNKNOWN ? "" : //$NON-NLS-1$
-                            (new EnumRenderer<StorageType>()).render(storage.getStorageType());
+                    String storageType = storage.isLocal() ?  constants.storageTypeLocal() : ""; //$NON-NLS-1$
                     String storageFormatType = storage.getStoragePoolFormatType() == null ? "" : //$NON-NLS-1$
                             (new EnumRenderer<StorageFormatType>()).render(storage.getStoragePoolFormatType());
 
                     // Add storage type and format if available
-                    if (storageType.length() > 0) {
-                        formattedString = " (" + storageType; //$NON-NLS-1$
-                        if (storageFormatType.length() > 0) {
-                            formattedString += ", " + storageFormatType; //$NON-NLS-1$
+                    if (!storageType.isEmpty() || !storageFormatType.isEmpty()) {
+                        formattedString = " ("; //$NON-NLS-1$
+                        if (storage.isLocal()) {
+                            formattedString += storageType;
+                        }
+                        else {
+                            formattedString += storageFormatType;
                         }
                         formattedString += ")"; //$NON-NLS-1$
                     }

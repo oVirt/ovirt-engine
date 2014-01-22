@@ -43,7 +43,6 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     private String customData;
     private boolean external;
     private boolean deleted;
-    private String storagePoolType;
     private String compatibilityVersion;
     private String quotaEnforcementType;
     private String callStack;
@@ -385,14 +384,6 @@ public class AuditLog extends IVdcQueryable implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public String getStoragePoolType() {
-        return storagePoolType;
-    }
-
-    public void setStoragePoolType(String storagePoolType) {
-        this.storagePoolType = storagePoolType;
     }
 
     public String getCompatibilityVersion() {

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -190,21 +189,21 @@ public class UpdateStoragePoolCommandTest {
 
     private static StoragePool createNewStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setStorageType(StorageType.NFS);
+        pool.setIsLocal(false);
         pool.setcompatibility_version(VERSION_1_1);
         return pool;
     }
 
     private static StoragePool createDefaultStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setStorageType(StorageType.LOCALFS);
+        pool.setIsLocal(true);
         pool.setcompatibility_version(VERSION_1_1);
         return pool;
     }
 
     private static StoragePool createLowerVersionStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setStorageType(StorageType.LOCALFS);
+        pool.setIsLocal(true);
         pool.setcompatibility_version(VERSION_1_0);
         return pool;
     }
@@ -218,14 +217,14 @@ public class UpdateStoragePoolCommandTest {
 
     private static StoragePool createHigherVersionStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setStorageType(StorageType.LOCALFS);
+        pool.setIsLocal(true);
         pool.setcompatibility_version(VERSION_1_2);
         return pool;
     }
 
     private static StoragePool createInvalidVersionStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setStorageType(StorageType.LOCALFS);
+        pool.setIsLocal(true);
         pool.setcompatibility_version(VERSION_2_0);
         return pool;
     }

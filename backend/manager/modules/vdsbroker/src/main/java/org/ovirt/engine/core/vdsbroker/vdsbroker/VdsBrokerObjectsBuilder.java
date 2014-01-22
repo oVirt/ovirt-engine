@@ -81,7 +81,7 @@ public class VdsBrokerObjectsBuilder {
     public static StoragePool buildStoragePool(Map<String, Object> xmlRpcStruct) {
         StoragePool sPool = new StoragePool();
         if (xmlRpcStruct.containsKey("type")) {
-            sPool.setStorageType(StorageType.valueOf(xmlRpcStruct.get("type").toString()));
+            sPool.setIsLocal(StorageType.valueOf(xmlRpcStruct.get("type").toString()).isLocal());
         }
         sPool.setName(AssignStringValue(xmlRpcStruct, "name"));
         Integer masterVersion = AssignIntValue(xmlRpcStruct, "master_ver");

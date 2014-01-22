@@ -13,7 +13,6 @@ AS
 SELECT     	id AS datacenter_id,
 			name AS datacenter_name,
 			description AS datacenter_description,
-			cast(storage_pool_type as smallint) AS storage_type,
 			_create_date AS create_date,
             _update_date AS update_date
 FROM        storage_pool

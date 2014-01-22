@@ -278,7 +278,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterTitle());
         model.setHashName("new_data_center"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.getStorageTypeList().setSelectedItem(StorageType.NFS);
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -326,15 +325,15 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                         List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
 
                         if (storageDomainList.size() != 0) {
-                            model.getStorageTypeList().setChangeProhibitionReason(
+                            model.getStoragePoolType().setChangeProhibitionReason(
                                     constants.cannotChangeRepositoryTypeWithSDAttached());
-                            model.getStorageTypeList().setIsChangable(false);
+                            model.getStoragePoolType().setIsChangable(false);
                         }
 
                     }
                 }), dataCenter.getId());
 
-        model.getStorageTypeList().setSelectedItem(dataCenter.getStorageType());
+        model.getStoragePoolType().setEntity(dataCenter.isLocal());
 
         model.getQuotaEnforceTypeListModel().setSelectedItem(dataCenter.getQuotaEnforcementType());
 
@@ -422,7 +421,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 List<EntityModel> models = new ArrayList<EntityModel>();
                 for (StorageDomain a : storageDomainList) {
                     if (a.getStorageDomainType() == StorageDomainType.Data
-                            && a.getStorageType() == ((StoragePool) getSelectedItem()).getStorageType()
                             && (a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
                         EntityModel tempVar = new EntityModel();
                         tempVar.setEntity(a);
@@ -596,41 +594,69 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     public void onSave()
     {
-        DataCenterModel model = (DataCenterModel) getWindow();
+        final DataCenterModel dcModel = (DataCenterModel) getWindow();
 
-        if (!model.validate())
+        if (!dcModel.validate())
         {
             return;
         }
 
-        if ((model.getIsNew() || model.getEntity() == null)
-                && model.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
+        if ((dcModel.getIsNew() || dcModel.getEntity() == null)
+                && dcModel.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             promptNoQuotaInDCMessage();
         }
-        else if (!model.getIsNew()
+        else if (!dcModel.getIsNew()
                 && getSelectedItem() != null
-                && !model.getVersion().getSelectedItem().equals(((StoragePool) getSelectedItem()).getcompatibility_version())) {
-            ConfirmationModel confirmModel = new ConfirmationModel();
+                && !dcModel.getVersion().getSelectedItem().equals(((StoragePool) getSelectedItem()).getcompatibility_version())) {
+            final ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .changeDataCenterCompatibilityVersionTitle());
             confirmModel.setHashName("change_data_center_compatibility_version"); //$NON-NLS-1$
 
-            StoragePool sp = (StoragePool) getSelectedItem();
-            StorageFormatType newFormat = VersionStorageFormatUtil.getPreferredForVersion(
-                model.getVersion().getSelectedItem(), sp.getStorageType());
-            StorageFormatType oldFormat = VersionStorageFormatUtil.getPreferredForVersion(
-                sp.getcompatibility_version(), sp.getStorageType());
-            if (newFormat == oldFormat) {
-                confirmModel.setMessage(ConstantsManager.getInstance()
-                        .getConstants()
-                        .youAreAboutChangeDcCompatibilityVersionMsg());
-            } else {
-                confirmModel.setMessage(ConstantsManager.getInstance()
-                        .getConstants()
-                        .youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg());
-            }
+            final StoragePool sp = (StoragePool) getSelectedItem();
+
+            startProgress(null);
+
+            AsyncQuery _asyncQuery = new AsyncQuery();
+            _asyncQuery.setModel(this);
+            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object ReturnValue)
+                {
+                    List<StorageDomain> storages = (List<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+
+                    StorageDomain storage = null;
+                    for (StorageDomain sd : storages) {
+                        if (sd.getStorageDomainType().isDataDomain()) {
+                            storage = sd;
+                        }
+                    }
+
+                    StorageFormatType newFormat = null;
+                    StorageFormatType oldFormat = null;
+                    if (storage != null) {
+                        newFormat = VersionStorageFormatUtil.getPreferredForVersion(
+                            dcModel.getVersion().getSelectedItem(), storage.getStorageType());
+                        oldFormat = VersionStorageFormatUtil.getPreferredForVersion(
+                            sp.getcompatibility_version(), storage.getStorageType());
+                    }
+
+                    if (newFormat == oldFormat) {
+                        confirmModel.setMessage(ConstantsManager.getInstance()
+                                .getConstants()
+                                .youAreAboutChangeDcCompatibilityVersionMsg());
+                    } else {
+                        confirmModel.setMessage(ConstantsManager.getInstance()
+                                .getConstants()
+                                .youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg());
+                    }
+                    ((DataCenterListModel) model).stopProgress();
+                }
+            };
+            IdQueryParameters params = new IdQueryParameters(sp.getId());
+            Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, params, _asyncQuery);
 
             UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -643,9 +669,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
         else if (getSelectedItem() != null
                 && ((StoragePool) getSelectedItem()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.HARD_ENFORCEMENT
-                && model.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT)
+                && dcModel.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT)
         {
-            checkForQuotaInDC(model.getEntity(), this);
+            checkForQuotaInDC(dcModel.getEntity(), this);
         }
         else
         {
@@ -712,7 +738,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         dataCenter.setName(model.getName().getEntity());
         dataCenter.setdescription(model.getDescription().getEntity());
         dataCenter.setComment(model.getComment().getEntity());
-        dataCenter.setStorageType(model.getStorageTypeList().getSelectedItem());
+        dataCenter.setIsLocal(model.getStoragePoolType().getSelectedItem());
         dataCenter.setcompatibility_version(model.getVersion().getSelectedItem());
         dataCenter.setQuotaEnforcementType(model.getQuotaEnforceTypeListModel()
                 .getSelectedItem());

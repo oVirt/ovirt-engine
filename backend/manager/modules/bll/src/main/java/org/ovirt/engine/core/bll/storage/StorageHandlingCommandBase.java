@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -156,9 +158,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected boolean isStorageDomainTypeCorrect(StorageDomain storageDomain) {
-        if (storageDomain.getStorageDomainType() != StorageDomainType.ISO
-                && storageDomain.getStorageDomainType() != StorageDomainType.ImportExport
-                && getStoragePool().getStorageType() != storageDomain.getStorageType()) {
+        if (storageDomain.isLocal() != getStoragePool().isLocal()) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
             return false;
         }
@@ -177,25 +177,84 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return returnValue;
     }
 
+    protected boolean isStorageDomainCompatibleWithDC(StorageDomain storageDomain) {
+        StoragePoolValidator spv = new StoragePoolValidator(getStoragePool());
+        if (storageDomain.getStorageType() == StorageType.GLUSTERFS) {
+            ValidationResult result = spv.isGlusterSupportedInDC();
+            return validate(result);
+        }
+
+        if (storageDomain.getStorageType() == StorageType.POSIXFS) {
+            ValidationResult result = spv.isPosixSupportedInDC();
+            return validate(result);
+        }
+
+        return true;
+    }
+
     protected boolean checkDomainCanBeAttached(StorageDomain storageDomain) {
-        return checkStorageDomainType(storageDomain)
-                && isStorageDomainFormatCorrectForPool(storageDomain, getStoragePool())
-                && checkStorageDomainSharedStatusNotLocked(storageDomain)
-                && ((storageDomain.getStorageDomainType() == StorageDomainType.ISO || storageDomain.getStorageDomainType() ==
-                StorageDomainType.ImportExport) || isStorageDomainNotInPool(storageDomain))
-                && isStorageDomainTypeCorrect(storageDomain);
+        if (!validateAmountOfIsoAndExportDomainsInDC(storageDomain)) {
+            return false;
+        }
+        if (!isStorageDomainFormatCorrectForDC(storageDomain, getStoragePool())) {
+            return false;
+        }
+        if (!checkStorageDomainSharedStatusNotLocked(storageDomain)) {
+            return false;
+        }
+        if (!(isStorageDomainOfTypeIsoOrExport(storageDomain) || isStorageDomainNotInPool(storageDomain))) {
+            return false;
+        }
+        if (!isStorageDomainTypeCorrect(storageDomain)) {
+            return false;
+        }
+        if (!isStorageDomainCompatibleWithDC(storageDomain)) {
+            return false;
+        }
+        if (!isMixedTypesAllowedInDC() && isMixedTypeDC(storageDomain)) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // TODO: Should be removed when 3.0 compatibility will not be supported, for now we are blocking the possibility
+    // to mix NFS domains with block domains on 3.0 pools since block domains on 3.0 pools can be in V2 format while NFS
+    // domains on 3.0 can only be in V1 format
+    protected boolean isMixedTypesAllowedInDC() {
+        return getStoragePool().getcompatibility_version().compareTo(Version.v3_0) > 0;
+    }
+
+    public boolean isMixedTypeDC(StorageDomain storageDomain) {
+        boolean isBlockDomain = storageDomain.getStorageType().isBlockDomain();
+
+        List<StorageDomain> poolDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePoolId());
+        for (StorageDomain currSD : poolDomains) {
+            if (!isStorageDomainOfTypeIsoOrExport(currSD) && currSD.getStorageType().isBlockDomain() != isBlockDomain) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private boolean isStorageDomainOfTypeIsoOrExport(StorageDomain storageDomain) {
+        return storageDomain.getStorageDomainType() == StorageDomainType.ISO || storageDomain.getStorageDomainType() == StorageDomainType.ImportExport;
     }
 
     /**
      * Check that we are not trying to attach more than one ISO or export
      * domain to the same data center.
      */
-    protected boolean checkStorageDomainType(final StorageDomain storageDomain) {
+    protected boolean validateAmountOfIsoAndExportDomainsInDC(StorageDomain storageDomain) {
         // Nothing to check if the storage domain is not an ISO or export:
-        final StorageDomainType type = storageDomain.getStorageDomainType();
-        if (type != StorageDomainType.ISO && type != StorageDomainType.ImportExport) {
+        if (!isStorageDomainOfTypeIsoOrExport(storageDomain)) {
             return true;
         }
+
+        final StorageDomainType type = storageDomain.getStorageDomainType();
 
         // Get the number of storage domains of the given type currently attached
         // to the pool:
@@ -319,7 +378,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      *            - the pool object
      * @return
      */
-    protected boolean isStorageDomainFormatCorrectForPool(StorageDomain storageDomain, StoragePool storagePool) {
+    protected boolean isStorageDomainFormatCorrectForDC(StorageDomain storageDomain, StoragePool storagePool) {
         if (storageDomain.getStorageDomainType() == StorageDomainType.ISO
                 || storageDomain.getStorageDomainType() == StorageDomainType.ImportExport) {
             return true;

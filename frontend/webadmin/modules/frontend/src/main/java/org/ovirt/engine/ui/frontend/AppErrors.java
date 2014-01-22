@@ -1255,6 +1255,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Unknown Data Center status.")
     String ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL();
 
+    @DefaultStringValue("Data Center version does not support mixed storage types.")
+    String ACTION_TYPE_FAILED_MIXED_STORAGE_TYPES_NOT_ALLOWED();
+
     @DefaultStringValue("Bond name already exists.")
     String NETWORK_BOND_NAME_EXISTS();
 

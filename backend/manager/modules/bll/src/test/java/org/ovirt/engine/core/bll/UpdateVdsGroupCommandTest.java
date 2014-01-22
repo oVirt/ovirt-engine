@@ -23,7 +23,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -424,7 +423,7 @@ public class UpdateVdsGroupCommandTest {
 
     private static StoragePool createStoragePoolLocalFS() {
         StoragePool pool = new StoragePool();
-        pool.setStorageType(StorageType.LOCALFS);
+        pool.setIsLocal(true);
         return pool;
     }
 

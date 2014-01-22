@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -149,9 +148,9 @@ public class ConfigureLocalStorageModel extends Model {
         });
 
         // Set the storage type to be Local.
-        for (StorageType item : getDataCenter().getStorageTypeList().getItems()) {
-            if (item == StorageType.LOCALFS) {
-                getDataCenter().getStorageTypeList().setSelectedItem(item);
+        for (Boolean bool : getDataCenter().getStoragePoolType().getItems()) {
+            if (bool) {
+                getDataCenter().getStoragePoolType().setSelectedItem(bool);
                 break;
             }
         }

@@ -37,7 +37,6 @@ import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -136,12 +135,10 @@ public class OvfDataUpdaterTest {
         templates = new HashMap<Guid, VmTemplate>();
         pool1 = new StoragePool();
         pool1.setId(Guid.newGuid());
-        pool1.setStorageType(StorageType.NFS);
         pool1.setStatus(StoragePoolStatus.Up);
 
         pool2 = new StoragePool();
         pool2.setId(Guid.newGuid());
-        pool2.setStorageType(StorageType.NFS);
         pool2.setStatus(StoragePoolStatus.Up);
 
         performStoragePoolInitOps(pool1);
