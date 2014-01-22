@@ -394,6 +394,8 @@ public class StorageDomainMapper {
             return StorageDomainStatus.LOCKED;
         case PreparingForMaintenance:
             return StorageDomainStatus.PREPARING_FOR_MAINTENANCE;
+        case Detaching:
+            return StorageDomainStatus.DETACHING;
         case Maintenance:
             return StorageDomainStatus.MAINTENANCE;
         case Unknown:

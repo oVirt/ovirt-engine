@@ -25,6 +25,7 @@ public enum StorageDomainStatus {
     UNATTACHED,
     MAINTENANCE,
     PREPARING_FOR_MAINTENANCE,
+    DETACHING,
     UNKNOWN;
 
     public String value() {

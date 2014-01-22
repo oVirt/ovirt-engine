@@ -1122,7 +1122,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
         boolean isInMaintenance = (storageDomain.getStatus() == StorageDomainStatus.Maintenance
                 || storageDomain.getStatus() == StorageDomainStatus.PreparingForMaintenance);
-        boolean isUnattached = (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
+        boolean isUnattached = (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached
+                || storageDomain.getStatus() == StorageDomainStatus.Detaching);
         boolean isDataDomain = storageDomain.getStorageDomainType().isDataDomain();
         boolean isBlockStorage = storageDomain.getStorageType().isBlockDomain();
 

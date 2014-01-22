@@ -26,6 +26,9 @@ public class StoragePoolDomainHelper {
         Map<String, String> storageDomains = new HashMap<String, String>();
 
         for (StoragePoolIsoMap domain : storagePoolIsoMaps) {
+            if (domain.getStatus() == StorageDomainStatus.Detaching) {
+                continue;
+            }
             if (domain.getStatus() == StorageDomainStatus.Maintenance ||
                     domain.getStatus() == StorageDomainStatus.PreparingForMaintenance ) {
                 storageDomains.put(domain.getstorage_id().toString(), "attached");

@@ -8,7 +8,8 @@ public enum StorageDomainStatus {
     Inactive,
     Locked,
     Maintenance,
-    PreparingForMaintenance;
+    PreparingForMaintenance,
+    Detaching;
 
     public int getValue() {
         return this.ordinal();
@@ -19,6 +20,6 @@ public enum StorageDomainStatus {
     }
 
     public boolean isStorageDomainInProcess() {
-        return this == Locked || this == PreparingForMaintenance;
+        return this == Locked || this == PreparingForMaintenance || this == Detaching;
     }
 }
