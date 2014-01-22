@@ -608,6 +608,8 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setName(name);
         getcurrentVm().setVmOs(model.getOSType().getSelectedItem());
         getcurrentVm().setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
+        getcurrentVm().setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
+        getcurrentVm().setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
         getcurrentVm().setVmDescription(model.getDescription().getEntity());
         getcurrentVm().setComment(model.getComment().getEntity());
         getcurrentVm().setVmMemSizeMb(model.getMemSize().getEntity());
@@ -622,6 +624,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 model.getNumOfSockets().getSelectedItem());
         getcurrentVm().setUsbPolicy(model.getUsbPolicy().getSelectedItem());
         getcurrentVm().setStateless(model.getIsStateless().getEntity());
+        getcurrentVm().setRunAndPause(model.getIsRunAndPause().getEntity());
         getcurrentVm().setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
         getcurrentVm().setDeleteProtected(model.getIsDeleteProtected().getEntity());
         getcurrentVm().setSsoMethod(model.extractSelectedSsoMethod());
@@ -632,7 +635,7 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setInitrdUrl(model.getInitrd_path().getEntity());
         getcurrentVm().setKernelUrl(model.getKernel_path().getEntity());
         getcurrentVm().setKernelParams(model.getKernel_parameters().getEntity());
-        getcurrentVm().setCustomProperties(model.getCustomProperties().getEntity());
+        getcurrentVm().setCustomProperties(model.getCustomPropertySheet().serialize());
         if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
             getcurrentVm().setQuotaId(model.getQuota().getSelectedItem().getId());
         }
