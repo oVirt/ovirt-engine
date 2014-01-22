@@ -471,7 +471,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             if (reboot) {
                 _messages.post(
                     InstallerMessages.Severity.INFO,
-                    "Enfocing host reboot"
+                    "Enforcing host reboot"
                 );
             }
             _parser.cliEnvironmentSet(
