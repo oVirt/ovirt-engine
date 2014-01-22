@@ -43,6 +43,8 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
                 options.put(VdsProperties.GATEWAY, getParameters().getGateway());
             }
             break;
+        default:
+            break;
         }
 
         options.put(VdsProperties.STP, (getParameters().getStp()) ? "yes" : "no");

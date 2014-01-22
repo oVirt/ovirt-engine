@@ -39,6 +39,8 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
                 options.put(VdsProperties.GATEWAY, getParameters().getGateway());
             }
             break;
+        default:
+            break;
         }
 
         if (!StringUtils.isEmpty(getParameters().getBondingOptions())) {
