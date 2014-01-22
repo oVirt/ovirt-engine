@@ -399,7 +399,6 @@ public class UpdateVmDiskCommandTest {
 
         when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
 
         VmDevice device = createVmDevice(diskImageGuid, vmId);
@@ -451,6 +450,27 @@ public class UpdateVmDiskCommandTest {
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+    }
+
+    @Test
+    public void testUpdateOvfDiskNotSupported() {
+        DiskImage updatedDisk = createDiskImage();
+        updatedDisk.setReadOnly(true);
+        updatedDisk.setDiskInterface(DiskInterface.IDE);
+
+        DiskImage diskFromDB = createDiskImage();
+        diskFromDB.setReadOnly(false);
+        diskFromDB.setDiskInterface(DiskInterface.IDE);
+        diskFromDB.setOvfStore(true);
+
+        when(diskDao.get(diskImageGuid)).thenReturn(diskFromDB);
+
+        initializeCommand(new UpdateVmDiskParameters(vmId, diskImageGuid, updatedDisk));
+
+        when(diskValidator.isDiskUsedAsOvfStore()).thenCallRealMethod();
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
     }
 
     @Test
@@ -526,6 +546,8 @@ public class UpdateVmDiskCommandTest {
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
+        when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(diskValidator.isDiskUsedAsOvfStore()).thenReturn(ValidationResult.VALID);
 
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
 

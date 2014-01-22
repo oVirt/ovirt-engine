@@ -209,6 +209,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return true;
     }
 
+    protected boolean checkDiskUsedAsOvfStore(Disk disk) {
+        return checkDiskUsedAsOvfStore(getDiskValidator(disk));
+    }
+
+    protected boolean checkDiskUsedAsOvfStore(DiskValidator diskValidator) {
+        return validate(diskValidator.isDiskUsedAsOvfStore());
+    }
+
     private boolean isDiskExistInVm(Disk disk) {
         List<VM> listVms = getVmDAO().getVmsListForDisk(disk.getId(), true);
         for (VM vm : listVms) {

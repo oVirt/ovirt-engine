@@ -57,6 +57,12 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
+        DiskValidator diskValidator = getDiskValidator(disk);
+
+        if (!checkDiskUsedAsOvfStore(diskValidator)) {
+            return false;
+        }
+
         if (isOperationPerformedOnDiskSnapshot()
                 && (!validate(getSnapshotsValidator().snapshotExists(getSnapshot())) || !validate(getSnapshotsValidator().snapshotTypeSupported(getSnapshot(),
                 Collections.singletonList(SnapshotType.REGULAR))))) {
@@ -121,7 +127,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
                 return false;
             }
         }
-        DiskValidator diskValidator = getDiskValidator(disk);
+
         if (!validate(diskValidator.isVirtIoScsiValid(getVm()))) {
             return false;
         }

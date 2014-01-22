@@ -129,6 +129,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
+        if (!checkDiskUsedAsOvfStore(getOldDisk())) {
+            return false;
+        }
+
         if (!canRunActionOnNonManagedVm()) {
             return false;
         }

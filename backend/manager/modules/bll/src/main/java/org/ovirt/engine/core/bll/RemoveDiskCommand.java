@@ -112,6 +112,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveDiskBasedOnImageStorageCheck() {
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Collections.singletonList(diskImage));
+
+        if (diskImage.isOvfStore() && !validate(diskImagesValidator.disksInStatus(ImageStatus.ILLEGAL))) {
+            return false;
+        }
+
         if (diskImage.getVmEntityType() != null && diskImage.getVmEntityType().isTemplateType()) {
             // Temporary fix until re factoring vm_images_view and image_storage_domain_view
             diskImage.setStorageIds(getDiskImageDao().get(diskImage.getImageId()).getStorageIds());

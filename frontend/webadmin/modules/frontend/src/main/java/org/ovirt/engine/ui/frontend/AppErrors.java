@@ -196,6 +196,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot switch the following Hosts to Maintenance mode: ${HostsList}.\nThe following VMs cannot be migrated because they have activated Disk Snapshot attached (VM/Disk Snapshots): \n \n ${disksInfo} \n \nplease deactivate/detach the Disk snapshots or turn off those VMs and try again.")
     String VDS_CANNOT_MAINTENANCE_VM_HAS_PLUGGED_DISK_SNAPSHOT();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The operation is currently not supported for disks used as OVF store.")
+    String ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The operation can be performed only for disks that are in ${status} status.")
+    String ACTION_TYPE_FAILED_DISK_NOT_IN_APPLICABLE_STATUS();
+
     @DefaultStringValue("Cannot remove default Host Cluster.")
     String VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP();
 

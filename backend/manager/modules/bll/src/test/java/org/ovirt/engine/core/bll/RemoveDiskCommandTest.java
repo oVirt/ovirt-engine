@@ -15,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -90,5 +91,13 @@ public class RemoveDiskCommandTest {
         vm.setStatus(VMStatus.Up);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+    @Test
+    public void testCanDoActionOvfDiskNotIllegal() {
+        disk.setImageStatus(ImageStatus.OK);
+        disk.setOvfStore(true);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_IN_APPLICABLE_STATUS);
     }
 }

@@ -181,6 +181,17 @@ public class DiskImagesValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult disksInStatus(ImageStatus applicableStatus) {
+        for (DiskImage diskImage : diskImages) {
+            if (diskImage.getImageStatus() != applicableStatus) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_IN_APPLICABLE_STATUS,
+                        String.format("$status %s", diskImage.getImageStatus().name()));
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
     private DbFacade getDbFacade() {
        return DbFacade.getInstance();
     }

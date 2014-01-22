@@ -78,6 +78,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return isImageExist()
                 && checkOperationIsCorrect()
                 && canFindVmOrTemplate()
+                && isDiskUsedAsOvfStore()
                 && isImageNotLocked()
                 && isSourceAndDestTheSame()
                 && validateSourceStorageDomain()
@@ -115,6 +116,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             }
         }
         return true;
+    }
+
+    protected boolean isDiskUsedAsOvfStore() {
+        return validate(new DiskValidator(getImage()).isDiskUsedAsOvfStore());
     }
 
     /**

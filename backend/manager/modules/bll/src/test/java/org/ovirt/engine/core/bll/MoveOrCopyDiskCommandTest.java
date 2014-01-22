@@ -154,6 +154,15 @@ public class MoveOrCopyDiskCommandTest {
     }
 
     @Test
+    public void canDoActionDiskIsOvfStore() throws Exception {
+        initializeCommand(ImageOperation.Move);
+        initVmDiskImage();
+        command.getImage().setOvfStore(true);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
+    }
+
+    @Test
     public void canDoActionTemplateImageIsLocked() throws Exception {
         initializeCommand(ImageOperation.Copy);
         initTemplateDiskImage();
