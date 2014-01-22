@@ -9,9 +9,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.Timer;
 
 /**
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.Timer;
  *     refresh rate). This mode is triggered by the fastForward() method. each call reset the cycle
  *     to the start point.
  */
-public abstract class GridTimer extends Timer implements HasValueChangeHandlers<String> {
+public abstract class GridTimer extends Timer implements HasValueChangeHandlers<Integer> {
 
     private enum RATE {
         FAST {
@@ -111,7 +111,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
 
     private int currentRate = 0;
 
-    private final SimpleEventBus eventBus;
+    private final EventBus eventBus;
 
     private final String name;
 
@@ -125,13 +125,14 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
 
     private int repetitions;
 
-    public GridTimer(String name) {
+    public GridTimer(String name, final EventBus eventBus) {
         this.name = name;
-        eventBus = new SimpleEventBus();
+        assert(eventBus != null);
+        this.eventBus = eventBus;
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Integer> handler) {
         return eventBus.addHandler(ValueChangeEvent.getType(), handler);
     }
 
@@ -202,14 +203,13 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
         logger.fine("GridTimer[" + name + "]: Refresh Rate set to: " + interval); //$NON-NLS-1$ //$NON-NLS-2$
         // set the NORMAL interval
         normalInterval = interval;
-        start();
+        ValueChangeEvent.fire(this, getRefreshRate());
     }
 
     public void start() {
         logger.fine("GridTimer[" + name + "].start()"); //$NON-NLS-1$ //$NON-NLS-2$
         active = true;
         scheduleRepeating(getRefreshRate());
-        ValueChangeEvent.fire(this, getValue());
     }
 
     public void stop() {
@@ -242,7 +242,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
         return active;
     }
 
-    private String getValue() {
+    public String getTimerRefreshStatus() {
         logger.fine((isActive() ? "Refresh Status: Active(" : "Inactive(") + (isPaused() ? "paused)" : "running)") + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 + " Rate: " + rateCycle[currentRate] + "(" + getRefreshRate() / 1000 + " sec)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$); }
         return ConstantsManager.getInstance().getMessages().refreshInterval(getRefreshRate() / 1000);
@@ -251,7 +251,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
     private void doStop() {
         reset();
         cancel();
-        ValueChangeEvent.fire(this, getValue());
+        ValueChangeEvent.fire(this, getRefreshRate());
     }
 
     private void cycleRate() {
