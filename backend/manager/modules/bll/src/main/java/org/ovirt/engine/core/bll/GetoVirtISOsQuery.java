@@ -4,21 +4,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
-import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -29,11 +24,8 @@ import org.ovirt.engine.core.compat.Version;
  * verifies image files exist, and returns list of ISOs sorted by their version.
  */
 public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCommandBase<P> {
-    private static Pattern isoPattern;
     private static final String OVIRT_ISO_VERSION_PREFIX = "version";
     private static final String OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX = "vdsm-compatibility";
-    private static final String OVIRT_ISO_VERSION_PATTERN = OVIRT_ISO_VERSION_PREFIX + "-.*.txt";
-    private static final Pattern isoVersionPattern = Pattern.compile(OVIRT_ISO_VERSION_PATTERN);
 
     public GetoVirtISOsQuery(P parameters) {
         super(parameters);
@@ -41,20 +33,37 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
     @Override
     protected void executeQueryCommand() {
-
-        RpmVersion vdsOsVersion = getOvirtOsVersion();
-
         List<RpmVersion> availableISOsList = new ArrayList<RpmVersion>();
-        File directory = new File(Config.resolveOVirtISOsRepositoryPath());
 
-        if (directory.isDirectory()) {
-            List<String> listOfIsoFiles = getListOfIsoFiles(directory);
-            if (!listOfIsoFiles.isEmpty()) {
+        VDS vds = getVdsByVdsId(getParameters().getVdsId());
+        if (vds == null) {
+            getQueryReturnValue().setReturnValue(availableISOsList);
+            return;
+        }
 
-                File[] ovirtVersionFiles = filterOvirtFiles(directory, isoVersionPattern);
+        RpmVersion vdsOsVersion = VdsHandler.getOvirtHostOsVersion(vds);
+        String nodeOS = vds.getHostOs();
+        for (OVirtNodeInfo.Entry info : OVirtNodeInfo.getInstance().get()) {
+            log.debugFormat(
+                "nodeOS [{0}] | osPattern [{1}] | minimumVersion [{2}]",
+                nodeOS,
+                info.osPattern,
+                info.minimumVersion
+            );
 
-                for (File versionFile : ovirtVersionFiles) {
-                    try {
+            Matcher matcher = info.osPattern.matcher(nodeOS);
+            if (matcher.matches() && info.path.isDirectory()) {
+                log.debugFormat("Looking for list of ISOs in [{0}], regex [{1}]", info.path, info.isoPattern);
+                for (File file : info.path.listFiles()) {
+                    matcher = info.isoPattern.matcher(file.getName());
+                    if (matcher.matches()) {
+                        log.debugFormat("ISO Found [{0}]", file);
+                        String version = matcher.group(1);
+                        log.debugFormat("ISO Version [{0}]", version);
+                        File versionFile = new File(info.path, String.format("version-%s.txt", version));
+                        log.debugFormat("versionFile [{0}]", versionFile);
+
+                        // Setting IsoData Class to get further [version] and [vdsm compatibility version] data
                         IsoData isoData = new IsoData();
                         isoData.setVersion(readIsoVersion(versionFile));
                         String isoVersionText = isoData.getVersion();
@@ -62,7 +71,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
                                 versionFile.getAbsolutePath().replace(OVIRT_ISO_VERSION_PREFIX,
                                         OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX))));
 
-                        if (StringUtils.isBlank(isoVersionText)) {
+                        if (StringUtils.isEmpty(isoVersionText)) {
                             log.debugFormat("Iso version file {0} is empty.", versionFile.getAbsolutePath());
                             continue;
                         }
@@ -74,46 +83,16 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
                             continue;
                         }
 
-                        String majorVersionStr = versionParts[0];
-                        String releaseStr = versionParts[1];
-                        String isoFileName = getIsoFileNameByVersion(listOfIsoFiles, majorVersionStr, releaseStr);
-                        if (isoFileName == null) {
-                            log.debugFormat("Iso version file {0} has no matching iso file searched by version parts: {1} and {2}.",
-                                    versionFile.getAbsolutePath(),
-                                    majorVersionStr,
-                                    releaseStr);
-                            continue;
-                        }
+                        RpmVersion isoVersion = new RpmVersion(file.getName());
 
-                        RpmVersion isoVersion = new RpmVersion(isoFileName, getOvirtIsoPrefix(), true);
-                        boolean shouldAdd = false;
-
-                        String rpmParts[] = RpmVersionUtils.splitRpmToParts(isoFileName);
-                        if (isoVersion != null && isIsoVersionSupported(rpmParts[1])) {
-                            if (isoData.getVdsmCompatibilityVersion() != null) {
-                                shouldAdd = isIsoCompatibleForUpgradeByClusterVersion(isoData);
-                            } else if (vdsOsVersion != null) {
-                                if (VdsHandler.isIsoVersionCompatibleForUpgrade(vdsOsVersion, isoVersion)) {
-                                    shouldAdd = true;
-                                }
-                            } else {
-                                shouldAdd = true;
-                            }
-                        }
-
-                        if (shouldAdd) {
+                        if (isoData.getVdsmCompatibilityVersion() != null && isIsoCompatibleForUpgradeByClusterVersion(isoData) ||
+                            vdsOsVersion != null && VdsHandler.isIsoVersionCompatibleForUpgrade(vdsOsVersion, isoVersion)
+                        ) {
                             availableISOsList.add(isoVersion);
                         }
-                    } catch (RuntimeException e) {
-                        log.errorFormat("Failed to parse ovirt iso version {0} with error {1}",
-                                versionFile.getAbsolutePath(),
-                                ExceptionUtils.getMessage(e));
                     }
-
                 }
             }
-        } else {
-            log.errorFormat("ovirt ISOs directory not found. Search in: {0}", directory.getPath());
         }
         Collections.sort(availableISOsList);
         getQueryReturnValue().setReturnValue(availableISOsList);
@@ -132,35 +111,12 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
     private boolean isNewerVersion(Version isoClusterVersion) {
         VDS vds = getVdsByVdsId(getParameters().getVdsId());
         Version vdsClusterVersion = vds.getVdsGroupCompatibilityVersion();
+        log.debugFormat(
+            "vdsClusterVersion {0} isoClusterVersion {1}",
+            vdsClusterVersion,
+            isoClusterVersion
+        );
         return (vdsClusterVersion.getMajor() == isoClusterVersion.getMajor() && vdsClusterVersion.getMinor() <= isoClusterVersion.getMinor());
-    }
-
-    private RpmVersion getOvirtOsVersion() {
-        VDS vds = getVdsByVdsId(getParameters().getVdsId());
-        RpmVersion vdsOsVersion = null;
-        if (vds != null && vds.getVdsType() == VDSType.oVirtNode) {
-            vdsOsVersion = VdsHandler.getOvirtHostOsVersion(vds);
-        }
-        return vdsOsVersion;
-    }
-
-    private static String getIsoFileNameByVersion(List<String> listOfIsoFiles, String majorVersionStr, String releaseStr) {
-        Pattern pattern = Pattern.compile(majorVersionStr + ".*" + releaseStr);
-        for (String fileName : listOfIsoFiles) {
-            if (pattern.matcher(fileName).find()) {
-                return fileName;
-            }
-        }
-        return null;
-    }
-
-    private static List<String> getListOfIsoFiles(File directory) {
-        List<String> isoFileList = new ArrayList<String>();
-        File[] filterOvirtFiles = filterOvirtFiles(directory, getIsoPattern());
-        for (File file : filterOvirtFiles) {
-            isoFileList.add(file.getName());
-        }
-        return isoFileList;
     }
 
     private String[] readVdsmCompatibiltyVersion(String fileName) {
@@ -222,20 +178,6 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         return isoVersionText;
     }
 
-    private static File[] filterOvirtFiles(File directory, final Pattern pattern) {
-        return directory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return pattern.matcher(name).find();
-            }
-        });
-    }
-
-    private boolean isIsoVersionSupported(String isoVersion) {
-        String supported = Config.<String> getValue(ConfigValues.OvirtInitialSupportedIsoVersion);
-        return RpmVersionUtils.compareRpmParts(isoVersion, supported) >= 0;
-    }
-
     public VDS getVdsByVdsId(Guid vdsId) {
         VDS vds = null;
 
@@ -243,24 +185,6 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
             vds = getDbFacade().getVdsDao().get(vdsId);
         }
         return vds;
-    }
-
-    /** @return The prefix for oVirt ISO files, from the configuration */
-    private static String getOvirtIsoPrefix() {
-        return Config.<String> getValue(ConfigValues.OvirtIsoPrefix);
-    }
-
-    /**
-     * Returns the pattern for ISO files.
-     * Since the prefix from the configuration may change (reloadable configuration), it is checked each time.
-     * A cached version of pattern is saved, though, to avoid the overhead of re-compiling it.
-     */
-    private static Pattern getIsoPattern() {
-        String expectedPattern = getOvirtIsoPrefix() + "-.*.iso";
-        if (isoPattern == null || !expectedPattern.equals(isoPattern.toString())) {
-            isoPattern = Pattern.compile(expectedPattern);
-        }
-        return isoPattern;
     }
 
     private class IsoData {

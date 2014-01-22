@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -36,6 +34,51 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
     private static Log log = LogFactory.getLog(InstallVdsCommand.class);
     private static final String GENERIC_ERROR = "Please refer to engine.log and log files under /var/log/ovirt-engine/host-deploy/ on the engine for further details.";
     protected String _failureMessage = null;
+    protected File _iso = null;
+
+    private File resolveISO(String iso) {
+        File ret = null;
+
+        // do not allow exiting the designated paths
+        if (iso != null && iso.indexOf(File.pathSeparatorChar) == -1) {
+            for (OVirtNodeInfo.Entry info : OVirtNodeInfo.getInstance().get()) {
+                File path = new File(info.path, iso);
+                if (path.exists()) {
+                    ret = path;
+                    break;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    private boolean isISOCompatible(
+        File iso,
+        RpmVersion ovirtHostOsVersion
+    ) {
+        boolean ret = false;
+
+        log.debugFormat("Check if ISO compatible: {0}", iso);
+
+        for (OVirtNodeInfo.Entry info : OVirtNodeInfo.getInstance().get()) {
+            if (info.path.equals(iso.getParentFile())) {
+                Matcher matcher = info.isoPattern.matcher(iso.getName());
+                if (matcher.find()) {
+                    String rpmLike = matcher.group(1).replaceAll("-", ".");
+                    log.debugFormat("ISO version: {0} {1} {3}", iso, rpmLike, ovirtHostOsVersion);
+                    RpmVersion isoVersion = new RpmVersion(rpmLike, "", true);
+                    if (VdsHandler.isIsoVersionCompatibleForUpgrade(ovirtHostOsVersion, isoVersion)) {
+                        log.debugFormat("ISO compatible: {0}", iso);
+                        ret = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return ret;
+    }
 
     public InstallVdsCommand(T parameters) {
         super(parameters);
@@ -43,40 +86,32 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue=true;
         if (getVdsId() == null || getVdsId().equals(Guid.Empty)) {
-            addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
-            retValue = false;
-        } else if (getVds() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
-            retValue = false;
-        } else if (isOvirtReInstallOrUpgrade()) {
-            String isoFile = getParameters().getoVirtIsoFile();
+            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
+        }
+        if (getVds() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
+        }
+        if (isOvirtReInstallOrUpgrade()) {
             // Block re-install on non-operational Host
             if  (getVds().getStatus() == VDSStatus.NonOperational) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
-                retValue = false;
+                return failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
             }
-            if (!isIsoFileValid(isoFile)) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
-                retValue = false;
-            } else {
-                RpmVersion ovirtHostOsVersion = VdsHandler.getOvirtHostOsVersion(getVds());
-                if (ovirtHostOsVersion != null && !isIsoVersionCompatible(ovirtHostOsVersion, isoFile)) {
+
+            File iso = resolveISO(getParameters().getoVirtIsoFile());
+            if (iso == null) {
+                return failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
+            }
+
+            RpmVersion ovirtHostOsVersion = VdsHandler.getOvirtHostOsVersion(getVds());
+            if (!isISOCompatible(iso, ovirtHostOsVersion)) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION);
                     addCanDoActionMessage(String.format("$IsoVersion %1$s", ovirtHostOsVersion.getMajor()));
-                    retValue = false;
-                }
+                    return false;
             }
+            _iso = iso;
         }
-        return retValue;
-    }
-
-    private boolean isIsoFileValid(String isoFile) {
-        return (
-            StringUtils.isNotBlank(isoFile) &&
-            new File(Config.resolveOVirtISOsRepositoryPath() + File.separator + isoFile).exists()
-        );
+        return true;
     }
 
     @Override
@@ -223,7 +258,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         try (
             final OVirtNodeUpgrade upgrade = new OVirtNodeUpgrade(
                 getVds(),
-                getParameters().getoVirtIsoFile()
+                _iso
             )
         ) {
             upgrade.setCorrelationId(getCorrelationId());
@@ -297,40 +332,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 e
             );
         }
-    }
-
-    /**
-     * Upgrade of image version is allowed only between the same major version of operating system. Both oVirt node OS
-     * version and suggested ISO file version are compared to validate version compatibility.
-     *
-     * @param ovirtOsVersion
-     *            the version of the RHEV-H host
-     * @param isoFile
-     *            the ISO file for upgrade
-     * @return true if ISO is compatible with oVirt node OS version or if failed to resolve Host or RHEV-H version
-     */
-    public boolean isIsoVersionCompatible(RpmVersion ovirtOsVersion, String isoFile) {
-        boolean retValue = true;
-        if (ovirtOsVersion != null) {
-            try {
-                RpmVersion isoVersion = new RpmVersion(
-                    isoFile,
-                    Config.<String> getValue(ConfigValues.OvirtIsoPrefix),
-                    true
-                );
-
-                if (!VdsHandler.isIsoVersionCompatibleForUpgrade(ovirtOsVersion, isoVersion)) {
-                    retValue = false;
-                }
-            } catch (RuntimeException e) {
-                log.warnFormat(
-                    "Failed to parse ISO file version {0} with error {1}",
-                    isoFile,
-                    ExceptionUtils.getMessage(e)
-                );
-            }
-        }
-        return retValue;
     }
 
     /**

@@ -28,19 +28,21 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, GetoVirtISOsQuery<VdsIdParametersBase>> {
 
     private static final String OVIRT_INIT_SUPPORTED_VERSION = "5.8";
-    private static final String OVIRT_ISO_PREFIX = "rhevh";
+    private static final String OVIRT_ISO_PREFIX = "^rhevh-(.*)\\.*\\.iso$";
     private static final String OVIRT_ISOS_REPOSITORY_PATH = "src/test/resources/ovirt-isos";
     private static final String OVIRT_ISOS_DATA_DIR = ".";
     private static final String AVAILABLE_OVIRT_ISO_VERSION = "RHEV Hypervisor - 6.2 - 20111010.0.el6";
     private static final String UNAVAILABLE_OVIRT_ISO_VERSION = "RHEV Hypervisor - 8.2 - 20111010.0.el6";
     private static final Version EXISTING_CLUSTER_VERSION = new Version("3.1");
+    private static final String OVIRT_NODEOS = "^rhevh.*";
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
             mockConfig(ConfigValues.DataDir, OVIRT_ISOS_DATA_DIR),
             mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
-            mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, OVIRT_INIT_SUPPORTED_VERSION)
+            mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, OVIRT_INIT_SUPPORTED_VERSION),
+            mockConfig(ConfigValues.OvirtNodeOS, OVIRT_NODEOS)
             );
 
     @Mock
@@ -60,6 +62,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         vds.setId(vdsId);
         vds.setVdsType(VDSType.oVirtNode);
         vds.setHostOs(AVAILABLE_OVIRT_ISO_VERSION);
+        vds.setVdsGroupCompatibilityVersion(EXISTING_CLUSTER_VERSION);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
 
         when(getQueryParameters().getVdsId()).thenReturn(vdsId);
@@ -68,7 +71,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
-        checkReturnValue(getQuery());
+        checkReturnValueEmpty(getQuery());
     }
 
     @Test
@@ -87,7 +90,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
-        checkReturnValue(getQuery());
+        checkReturnValueEmpty(getQuery());
     }
 
     @Test
@@ -97,7 +100,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
-        checkReturnValue(getQuery());
+        checkReturnValueEmpty(getQuery());
     }
 
     @Test
@@ -106,7 +109,17 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
-        checkReturnValue(getQuery());
+        checkReturnValueEmpty(getQuery());
+    }
+
+    @Test
+    public void testQueryMultiplePaths() {
+        mcr.mockConfigValue(ConfigValues.oVirtISOsRepositoryPath, "src/test/resources/ovirt-isos:src/test/resources/rhev-isos");
+        getQuery().setInternalExecution(true);
+        getQuery().executeCommand();
+
+        checkSucceeded(getQuery(), true);
+        checkReturnValueEmpty(getQuery());
     }
 
     @SuppressWarnings("unchecked")
@@ -117,8 +130,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
-        assertTrue("Prefix was changed, no ISOs should be returned",
-                ((List<RpmVersion>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
+        checkReturnValueEmpty(getQuery());
     }
 
     @SuppressWarnings("unchecked")
@@ -127,4 +139,9 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         assertTrue(!isosList.isEmpty());
     }
 
+    @SuppressWarnings("unchecked")
+    private static void checkReturnValueEmpty(GetoVirtISOsQuery<VdsIdParametersBase> query) {
+        List<RpmVersion> isosList = (List<RpmVersion>) query.getQueryReturnValue().getReturnValue();
+        assertTrue(isosList.isEmpty());
+    }
 }
