@@ -30,7 +30,8 @@ public class StoragePoolDomainHelper {
                 continue;
             }
             if (domain.getStatus() == StorageDomainStatus.Maintenance ||
-                    domain.getStatus() == StorageDomainStatus.PreparingForMaintenance ) {
+                    domain.getStatus() == StorageDomainStatus.PreparingForMaintenance ||
+                    domain.getStatus() == StorageDomainStatus.Activating) {
                 storageDomains.put(domain.getstorage_id().toString(), "attached");
             } else {
                 storageDomains.put(domain.getstorage_id().toString(),

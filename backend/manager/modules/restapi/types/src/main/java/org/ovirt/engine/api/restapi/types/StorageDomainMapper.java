@@ -395,6 +395,8 @@ public class StorageDomainMapper {
         switch (status) {
         case Unattached:
             return StorageDomainStatus.UNATTACHED;
+        case Activating:
+            return StorageDomainStatus.ACTIVATING;
         case Active:
             return StorageDomainStatus.ACTIVE;
         case Inactive:

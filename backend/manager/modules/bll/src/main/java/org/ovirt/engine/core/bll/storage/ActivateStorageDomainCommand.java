@@ -78,7 +78,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                         .getStoragePoolIsoMapDao()
                         .get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
-        changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
+        changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Activating);
         freeLock();
 
         log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new Date());
@@ -87,7 +87,6 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                 new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain().getId()));
         log.infoFormat("ActivateStorage Domain. After Connect all hosts to pool. Time:{0}", new Date());
 
-        refreshAllVdssInPool();
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -99,6 +98,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                 return null;
             }
         });
+        refreshAllVdssInPool();
 
         log.infoFormat("ActivateStorage Domain. After change storage pool status in vds. Time:{0}",
                 new Date());

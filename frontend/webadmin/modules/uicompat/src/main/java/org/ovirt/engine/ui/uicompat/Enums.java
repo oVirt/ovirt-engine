@@ -5,6 +5,8 @@ public interface Enums extends LocalizedEnums {
 
     String NetworkStatus___OPERATIONAL();
 
+    String StorageDomainStatus___Activating();
+
     String StorageDomainStatus___Active();
 
     String StorageDomainStatus___Inactive();
