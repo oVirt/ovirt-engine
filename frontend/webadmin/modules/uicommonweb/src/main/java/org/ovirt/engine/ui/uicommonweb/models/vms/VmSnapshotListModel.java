@@ -497,17 +497,10 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
-        SnapshotModel model = new SnapshotModel();
+        SnapshotModel model = SnapshotModel.createNewSnapshotModel(this);
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().createSnapshotTitle());
-        model.setHashName("create_snapshot"); //$NON-NLS-1$
-
         model.setVm(vm);
         model.initialize();
-
-        model.setCancelCommand(new UICommand("Cancel", this) //$NON-NLS-1$
-                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-                .setIsCancel(true));
     }
 
     public void postOnNew(List<VdcReturnValueBase> returnValues) {

@@ -886,18 +886,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        SnapshotModel model = new SnapshotModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().createSnapshotTitle());
-        model.setHashName("create_snapshot"); //$NON-NLS-1$
-
-        model.setVm(vm);
+        SnapshotModel model = SnapshotModel.createNewSnapshotModel(this);
         model.setValidateByVmSnapshots(true);
+        setWindow(model);
+        model.setVm(vm);
         model.initialize();
-
-        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
-                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-                .setIsCancel(true));
     }
 
     @Override
