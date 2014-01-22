@@ -20,4 +20,13 @@
        <Field name="converterCallback"/>
        <Bug pattern="UWF_NULL_FIELD"/>
      </Match>
+
+    <!--
+      findbugs complains that class is too big of analysis.
+      This class cannot be smaller since it should contain all the errors
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.frontend.AppErrors" />
+       <Bug pattern="SKIPPED_CLASS_TOO_BIG"/>
+     </Match>
 </FindBugsFilter>
