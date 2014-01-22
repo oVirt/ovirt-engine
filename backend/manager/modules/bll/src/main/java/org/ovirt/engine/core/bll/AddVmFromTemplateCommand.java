@@ -128,9 +128,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 }
             }
 
-            if (getVm().isUseLatestVersion()) {
-                retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE);
+            if (getParameters().getVm().isUseLatestVersion()) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE);
             }
         }
         return retValue;
