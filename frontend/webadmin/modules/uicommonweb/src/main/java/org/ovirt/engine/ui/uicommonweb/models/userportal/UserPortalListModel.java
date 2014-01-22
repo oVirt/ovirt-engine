@@ -1054,6 +1054,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         gettempVm().setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
         gettempVm().setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
         gettempVm().setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
+        gettempVm().setComment(model.getComment().getEntity());
         gettempVm().setVmDescription(model.getDescription().getEntity());
         gettempVm().setVmMemSizeMb(model.getMemSize().getEntity());
         gettempVm().setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
