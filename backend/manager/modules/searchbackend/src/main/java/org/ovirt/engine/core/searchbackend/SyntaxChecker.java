@@ -889,6 +889,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                 sortExpr.append(mSearchObjectAC.getDefaultSort(searchObjStr));
             }
 
+            // TODO: The database configuration PostgresSearchTemplate has an extra closing braces. Hence our
+            // queries in this code have an extra opening one. Fix it in a future patch.
+
             // only audit log search supports the SearchFrom which enables getting records starting from a certain
             // audit_log_id, this is done to make search queries from the client more efficient and eliminate the client
             // from registering to such queries and comparing last data with previous.
@@ -899,14 +902,19 @@ public class SyntaxChecker implements ISyntaxChecker {
                             .format("SELECT * FROM %1$s WHERE ( %2$s > %3$s and not deleted",
                                     tableNameWithOutTags, primeryKey,
                                     syntax.getSearchFrom());
+                } else if (whereBuilder.size() == 1 && wherePhrase.toString().contains("severity")) {
+                    inQuery =
+                            StringFormat.format("SELECT %1$s.* FROM %2$s %3$s and (not deleted",
+                                    tableName,
+                                    fromStatement,
+                                    wherePhrase);
                 } else {
                     inQuery = StringFormat
                             .format("SELECT * FROM %1$s WHERE ( %2$s > %3$s and %2$s IN (%4$s) and not deleted",
                                     tableNameWithOutTags, primeryKey,
                                     syntax.getSearchFrom(), innerQuery);
                 }
-            }
-            else if (primeryKey.equals("vmt_guid") && wherePhrase.length() > 0
+            } else if (primeryKey.equals("vmt_guid") && wherePhrase.length() > 0
                     && wherePhrase.toString().contains("storage_pool_name") && whereBuilder.size() == 1) {
                 inQuery = StringFormat
                         .format("(SELECT * FROM %1$s %2$s",

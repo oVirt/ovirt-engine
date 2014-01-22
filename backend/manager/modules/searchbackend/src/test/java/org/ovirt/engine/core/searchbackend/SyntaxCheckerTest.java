@@ -4,9 +4,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import junit.framework.Assert;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class SyntaxCheckerTest {
@@ -16,6 +23,21 @@ public class SyntaxCheckerTest {
 
     public boolean contains(SyntaxContainer res, String item) {
         return Arrays.asList(res.getCompletionArray()).contains(item);
+    }
+
+    @Before
+    public void setup() {
+        final IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
+        Mockito.when(configUtils.getValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
+                .thenReturn(100);
+        Mockito.when(configUtils.getValue(ConfigValues.DBPagingType, ConfigCommon.defaultConfigurationVersion))
+                .thenReturn("Range");
+        Mockito.when(configUtils.getValue(ConfigValues.DBSearchTemplate, ConfigCommon.defaultConfigurationVersion))
+                .thenReturn("SELECT * FROM (%2$s) %1$s) as T1 %3$s");
+        Mockito.when(configUtils.getValue(ConfigValues.DBPagingSyntax, ConfigCommon.defaultConfigurationVersion))
+                .thenReturn("OFFSET (%1$s -1) LIMIT %2$s");
+
+        Config.setConfigUtils(configUtils);
     }
 
     /**
@@ -41,6 +63,7 @@ public class SyntaxCheckerTest {
      * Test the following where each word should be the completion for the earlier portion Host : sortby migrating_vms
      * asc
      */
+    @Test
     public void testHostCompletion() {
         SyntaxChecker chkr = new SyntaxChecker(20);
         SyntaxContainer res = null;
@@ -75,4 +98,17 @@ public class SyntaxCheckerTest {
         // check valid config values
         assertTrue(chkr.getPagePhrase(res, "1") != "");
     }
+
+    @Test
+    public void testAlerts() {
+        SyntaxChecker chkr = new SyntaxChecker(100);
+
+        ISyntaxChecker curSyntaxChecker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");
+
+        SyntaxContainer res = curSyntaxChecker.analyzeSyntaxState("Events: severity=error", true);
+        String query = chkr.generateQueryFromSyntaxContainer(res, true);
+        Assert.assertEquals("SELECT * FROM (SELECT audit_log.* FROM  audit_log   WHERE  audit_log.severity = '2'  and (not deleted)  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0",
+                query);
+    }
+
 }
