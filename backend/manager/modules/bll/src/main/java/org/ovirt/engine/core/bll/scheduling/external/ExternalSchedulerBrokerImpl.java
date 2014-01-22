@@ -203,7 +203,6 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
     @Override
     public Pair<List<Guid>, Guid> runBalance(String balanceName, List<Guid> hostIDs, Map<String, String> propertiesMap) {
-        // TODO Auto-generated method stub
         try {
             XmlRpcClient client = new XmlRpcClient();
             client.setConfig(config);
