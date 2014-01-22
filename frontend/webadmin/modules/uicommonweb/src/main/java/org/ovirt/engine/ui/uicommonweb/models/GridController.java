@@ -7,11 +7,13 @@ public interface GridController {
 
     /**
      * Returns the refresh timer used by the Grid.
+     * @return The Grid timer.
      */
     GridTimer getTimer();
 
     /**
      * Returns the controller ID.
+     * @return The controller ID.
      */
     String getId();
 
