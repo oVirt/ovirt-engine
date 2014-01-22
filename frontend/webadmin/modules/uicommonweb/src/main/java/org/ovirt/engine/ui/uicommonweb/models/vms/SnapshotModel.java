@@ -21,6 +21,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -166,6 +167,22 @@ public class SnapshotModel extends EntityModel
         setApps(new ArrayList<String>());
 
         setSnapshotDisks(new ListModel());
+    }
+
+    public static SnapshotModel createNewSnapshotModel(VM vm, ICommandTarget cancelCommandTarget) {
+        SnapshotModel model = new SnapshotModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().createSnapshotTitle());
+        model.setHashName("create_snapshot"); //$NON-NLS-1$
+        model.setVm(vm);
+
+        // the cancel command has to be created be before the call to initialize to avoid race condition
+        model.setCancelCommand(new UICommand("Cancel", cancelCommandTarget) //$NON-NLS-1$
+                                       .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                                       .setIsCancel(true));
+
+        model.initialize();
+
+        return model;
     }
 
     @Override
