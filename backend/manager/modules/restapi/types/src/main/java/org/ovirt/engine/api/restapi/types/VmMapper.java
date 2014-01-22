@@ -145,8 +145,17 @@ public class VmMapper {
           //TODO: Get rid of this logic code when Backend supports default memory.
             staticVm.setMemSizeMb(DEFAULT_MEMORY_SIZE);
         }
-        if (vm.isSetTemplate() && vm.getTemplate().getId() != null) {
-            staticVm.setVmtGuid(GuidUtils.asGuid(vm.getTemplate().getId()));
+        if (vm.isSetTemplate()) {
+            if (vm.getTemplate().getId() != null) {
+                staticVm.setVmtGuid(GuidUtils.asGuid(vm.getTemplate().getId()));
+            }
+            // There is no need to pass this property to backend if
+            // no template was specified.
+            // If user passes this property for a stateful vm which is not supported,
+            // it will be handled by the backend.
+            if (vm.isSetUseLatestTemplateVersion()) {
+                staticVm.setUseLatestVersion(vm.isUseLatestTemplateVersion());
+            }
         }
         if (vm.isSetCluster() && vm.getCluster().getId() != null) {
             staticVm.setVdsGroupId(GuidUtils.asGuid(vm.getCluster().getId()));
@@ -346,6 +355,11 @@ public class VmMapper {
         if (entity.getVmtGuid() != null) {
             model.setTemplate(new Template());
             model.getTemplate().setId(entity.getVmtGuid().toString());
+            // display this property only if the vm is stateless
+            // otherwise the value of this property is meaningless and misleading
+            if(entity.isStateless()) {
+                model.setUseLatestTemplateVersion(entity.isUseLatestVersion());
+            }
         }
         if (entity.getStatus() != null) {
             model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
