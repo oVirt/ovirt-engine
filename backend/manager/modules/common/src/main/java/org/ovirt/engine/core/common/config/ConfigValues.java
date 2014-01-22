@@ -1239,6 +1239,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     ProductKeyWindows2012x64,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("^ovirt.*$")
+    OvirtNodeOS,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")

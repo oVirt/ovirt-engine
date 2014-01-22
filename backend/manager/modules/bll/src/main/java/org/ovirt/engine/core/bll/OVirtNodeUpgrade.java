@@ -39,7 +39,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
     private BufferedReader _incoming;
 
     private VDS _vds;
-    private String _iso;
+    private File _iso;
 
     private Exception _failException = null;
     private DeployStatus _deployStatus = DeployStatus.Failed;
@@ -83,9 +83,9 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
      * @param vds vds to install.
      * @param iso image to send.
      */
-    public OVirtNodeUpgrade(VDS vds, String iso) {
+    public OVirtNodeUpgrade(VDS vds, File iso) {
         _vds = vds;
-        _iso = Config.resolveOVirtISOsRepositoryPath() + File.separator + iso;
+        _iso = iso;
 
         _messages = new InstallerMessages(_vds);
         _dialog = new EngineSSHDialog();
@@ -198,7 +198,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
                 throw _failException;
             }
             _dialog.sendFile(
-                _iso,
+                _iso.getAbsolutePath(),
                 dest
             );
 
