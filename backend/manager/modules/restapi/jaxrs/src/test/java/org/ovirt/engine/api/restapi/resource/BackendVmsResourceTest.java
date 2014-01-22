@@ -609,7 +609,7 @@ public class BackendVmsResourceTest
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAddStatelessWithLatestTemplateVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
@@ -627,23 +627,70 @@ public class BackendVmsResourceTest
                                     new String[] { "Id" },
                                     new Object[] { GUIDS[2] },
                                     getVdsGroupEntity());
+
+        org.ovirt.engine.core.common.businessentities.VM vm = getEntity(2);
+        expect(vm.getVmtGuid()).andReturn(GUIDS[1]).anyTimes();
+        expect(vm.isStateless()).andReturn(true).anyTimes();
+        expect(vm.isUseLatestVersion()).andReturn(true).anyTimes();
+
         setUpCreationExpectations(VdcActionType.AddVm,
-                                  VmManagementParametersBase.class,
-                                  new String[] { "StorageDomainId" },
-                                  new Object[] { GUIDS[0] },
-                                  true,
-                                  true,
-                                  GUIDS[2],
-                                  VdcQueryType.GetVmByVmId,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[2] },
-                                  getEntity(2));
+                VmManagementParametersBase.class,
+                new String[]{"StorageDomainId"},
+                new Object[]{GUIDS[0]},
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[2]},
+                vm);
+
         Response response = collection.add(createModel(null));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 2);
+        VM returnValueVM = (VM) response.getEntity();
+        verifyModel(returnValueVM, 2);
+        assertTrue(returnValueVM.isStateless());
+        assertTrue(returnValueVM.isUseLatestTemplateVersion());
     }
+
+    @Test
+        public void testAdd() throws Exception {
+            setUriInfo(setUpBasicUriExpectations());
+            setUpGetPayloadExpectations(1, 2);
+            setUpGetBallooningExpectations(1, 2);
+            setUpGetCertuficateExpectations(1, 2);
+            setUpGetConsoleExpectations(new int[]{1, 2});
+            setUpGetVirtioScsiExpectations(new int[]{2});
+            setUpGetVmOvfExpectations(new int[]{2});
+            setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                                         GetVmTemplateParameters.class,
+                                         new String[] { "Id" },
+                                         new Object[] { GUIDS[1] },
+                                         getTemplateEntity(0));
+            setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                                        IdQueryParameters.class,
+                                        new String[] { "Id" },
+                                        new Object[] { GUIDS[2] },
+                                        getVdsGroupEntity());
+            setUpCreationExpectations(VdcActionType.AddVm,
+                                      VmManagementParametersBase.class,
+                                      new String[] { "StorageDomainId" },
+                                      new Object[] { GUIDS[0] },
+                                      true,
+                                      true,
+                                      GUIDS[2],
+                                      VdcQueryType.GetVmByVmId,
+                                      IdQueryParameters.class,
+                                      new String[] { "Id" },
+                                      new Object[] { GUIDS[2] },
+                                      getEntity(2));
+            Response response = collection.add(createModel(null));
+            assertEquals(201, response.getStatus());
+            assertTrue(response.getEntity() instanceof VM);
+            verifyModel((VM) response.getEntity(), 2);
+        }
 
     @Test
     public void testAddFromConfiguration() throws Exception {
