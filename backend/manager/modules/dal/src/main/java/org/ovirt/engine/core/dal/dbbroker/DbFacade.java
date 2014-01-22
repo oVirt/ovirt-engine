@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.Image;
+import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -64,6 +65,7 @@ import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.LunDAO;
@@ -170,6 +172,7 @@ public class DbFacade {
             put(VnicProfile.class, VnicProfileDao.class);
             put(VnicProfileView.class, VnicProfileDao.class);
             put(DwhHistoryTimekeeping.class, DwhHistoryTimekeepingDao.class);
+            put(IscsiBond.class, IscsiBondDao.class);
         }
     };
 
@@ -978,5 +981,9 @@ public class DbFacade {
                     .addValue("os_name", e.getValue()));
         }
         getCallsHandler().executeStoredProcAsBatch("insert_osinfo", executions);
+    }
+
+    public IscsiBondDao getIscsiBondDao() {
+        return getDao(IscsiBondDao.class);
     }
 }

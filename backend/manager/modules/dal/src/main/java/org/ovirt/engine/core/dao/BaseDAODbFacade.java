@@ -89,6 +89,17 @@ public abstract class BaseDAODbFacade {
         return integerRowMapper;
     }
 
+    private static RowMapper<String> stringRowMapper = new RowMapper<String>() {
+        @Override
+        public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return rs.getString(1);
+        };
+    };
+
+    protected RowMapper<String> getStringMapper() {
+        return stringRowMapper;
+    }
+
     protected SimpleJdbcCallsHandler getCallsHandler() {
         return dbFacade.getCallsHandler();
     }

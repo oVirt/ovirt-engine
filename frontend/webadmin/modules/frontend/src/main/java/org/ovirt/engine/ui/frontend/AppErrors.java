@@ -2995,4 +2995,19 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("VM is associated with both positive and negative Affinity Groups, please reconfigure VM's affinity groups")
     String ACTION_TYPE_FAILED_MIX_POSITIVE_NEGATIVE_AFFINITY_GROUP();
+
+    @DefaultStringValue("iSCSI bond name must not exceed 50 characters")
+    String VALIDATION_ISCSI_BOND_NAME_MAX();
+
+    @DefaultStringValue("iSCSI bond name is required")
+    String VALIDATION_ISCSI_BOND_NAME_NOT_NULL();
+
+    @DefaultStringValue("iSCSI bond description must not exceed 4000 characters")
+    String VALIDATION_ISCSI_BOND_DESCRIPTION_MAX();
+
+    @DefaultStringValue("iSCSI Bond name must be formed from alpha-numeric characters or \"-_.\"")
+    String VALIDATION_ISCSI_BOND_NAME_INVALID_CHARACTER();
+
+    @DefaultStringValue("iSCSI Bond description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
+    String VALIDATION_SCSI_BOND_DESCRIPTION_INVALID();
 }
