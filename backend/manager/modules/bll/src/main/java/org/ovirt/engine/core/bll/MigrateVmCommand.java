@@ -97,7 +97,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             determineMigrationFailureForAuditLog();
             _isRerun = false;
             setSucceeded(false);
-            log();
             failedToRunVm();
         }
         finally {

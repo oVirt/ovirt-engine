@@ -252,9 +252,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         else {
-            failedToRunVm();
+            setCommandShouldBeLogged(false);
             setSucceeded(false);
             _isRerun = false;
+            failedToRunVm();
         }
     }
 
