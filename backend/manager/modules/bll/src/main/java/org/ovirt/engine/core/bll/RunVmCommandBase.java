@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
@@ -138,7 +137,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         ExecutionHandler.endJob(getExecutionContext(), false);
     }
 
-    private void processVmPoolOnStopVm() {
+    protected void processVmPoolOnStopVm() {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
@@ -223,13 +222,16 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Override
     public void reportCompleted() {
         ExecutionContext executionContext = getExecutionContext();
-        if (executionContext != null && executionContext.isMonitored()) {
-            if (!executionContext.isCompleted()) {
-                if (executionContext.getExecutionMethod() == ExecutionMethod.AsJob) {
-                    ExecutionHandler.endJob(executionContext, false);
-                } else if (executionContext.getExecutionMethod() == ExecutionMethod.AsStep) {
-                    ExecutionHandler.endStep(executionContext, executionContext.getStep(), false);
-                }
+        if (executionContext != null && executionContext.isMonitored()
+                && !executionContext.isCompleted()) {
+            switch (executionContext.getExecutionMethod()) {
+            case AsJob:
+                ExecutionHandler.endJob(executionContext, false);
+                break;
+            case AsStep:
+                ExecutionHandler.endStep(executionContext, executionContext.getStep(), false);
+                break;
+            default:
             }
         }
     }
