@@ -55,6 +55,7 @@ public class PolicyUnitImpl {
             } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
                 return new HostedEngineHAClusterFilterPolicyUnit(policyUnit);
             }
+            break;
         case "OptimalForHaReservation":
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
                 return new HaReservationWeightPolicyUnit(policyUnit);
