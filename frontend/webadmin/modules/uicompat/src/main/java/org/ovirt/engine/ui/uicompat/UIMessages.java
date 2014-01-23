@@ -326,7 +326,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     String cannotConnectToTheConsole(String vmName);
 
     @DefaultMessage("Optimize scheduling for host weighing (ordering):\n" +
-            "Utilization: include weight modules in shceduling to allow best selection\n" +
+            "Utilization: include weight modules in scheduling to allow best selection\n" +
             "Speed: skip host weighing in case there are more than {0} pending requests")
     String schedulerOptimizationInfo(int numOfRequests);
 
