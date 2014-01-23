@@ -67,8 +67,4 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
             setSucceeded(returnVal);
         }
     }
-
-    private void overrideVmComfig() {
-
-    }
 }
