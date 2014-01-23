@@ -21,6 +21,7 @@
 
 import os
 import sys
+import platform
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -459,7 +460,15 @@ class Defaults(object):
     DEFAULT_SYSTEM_GROUP_ENGINE = 'ovirt'
     DEFAULT_SYSTEM_USER_POSTGRES = 'postgres'
 
-    DEFAULT_SYSTEM_SHMMAX = 41943040
+    @classproperty
+    def DEFAULT_SYSTEM_SHMMAX(self):
+        SHMMAX = {
+            'x86_64': 68719476736,
+            'i686': 4294967295,
+            'ppc64':  137438953472,
+            'default': 4294967295,
+        }
+        return SHMMAX.get(platform.machine(), SHMMAX['default'])
 
     DEFAULT_SYSTEM_MEMCHECK_MINIMUM_MB = 4096
     DEFAULT_SYSTEM_MEMCHECK_RECOMMENDED_MB = 16384
