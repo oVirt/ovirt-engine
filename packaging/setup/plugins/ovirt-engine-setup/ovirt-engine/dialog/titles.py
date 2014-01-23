@@ -245,6 +245,28 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _title_e_system(self):
+        pass
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_S_MISC,
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+        ),
+    )
+    def _title_s_misc(self):
+        self._title(
+            text=_('MISC CONFIGURATION'),
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_E_MISC,
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_MISC,
+        ),
+    )
+    def _title_e_misc(self):
         self._title(
             text=_('END OF CONFIGURATION'),
         )
