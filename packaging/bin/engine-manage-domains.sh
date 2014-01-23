@@ -36,7 +36,7 @@ Where:
                         Default behaviour is prompt for confirmation of delete.
                 -action=validate
                         Validate the current configuration (go over all the domains, try to authenticate to each domain using the configured user/password.).
-                -report In combination with -action=validate will report all validation error, if occured.
+                -report In combination with -action=validate will report all validation error, if occurred.
                         Default behaviour is to exit when a validation error occurs.
                 -addPermissions In combination with -action=add/edit will add engine superuser permissions to the user.
                         Default behaviour is not to add permissions.
