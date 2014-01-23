@@ -374,7 +374,41 @@ class OvirtUtils(base.Base):
         )
         return ret[0]['count'] == 0
 
+    def createLanguage(self, language):
+        statement = Statement(
+            environment=self.environment,
+            dbenvkeys=self._dbenvkeys,
+        )
+
+        if not statement.execute(
+            statement="""
+                select count(*)
+                from pg_language
+                where lanname=%(language)s;
+            """,
+            args=dict(
+                language=language,
+            ),
+            ownConnection=True,
+            transaction=False,
+        ):
+            statement.execute(
+                statement=(
+                    """
+                        create language {language};
+                    """
+                ).format(
+                    language=language,
+                ),
+                args=dict(),
+                ownConnection=True,
+                transaction=False,
+            )
+
     def clearDatabase(self):
+
+        self.createLanguage('plpgsql')
+
         statement = Statement(
             environment=self.environment,
             dbenvkeys=self._dbenvkeys,
