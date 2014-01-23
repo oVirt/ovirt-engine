@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -28,6 +29,10 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
@@ -39,6 +44,9 @@ import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -316,7 +324,15 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected void disconnectAllHostsInPool() {
-        runSynchronizeOperation(new RefreshStoragePoolAndDisconnectAsyncOperationFactory());
+        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(
+                new Event(getParameters().getStoragePoolId(), getParameters().getStorageDomainId(), null, EventType.POOLREFRESH, ""),
+                new Callable<EventResult>() {
+                    @Override
+                    public EventResult call() {
+                        runSynchronizeOperation(new RefreshStoragePoolAndDisconnectAsyncOperationFactory());
+                        return null;
+                    }
+        });
     }
 
     /**

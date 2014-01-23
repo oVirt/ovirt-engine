@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
@@ -24,6 +25,10 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
@@ -34,6 +39,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -246,9 +254,17 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
 
         if (!getParameters().isInactive()) {
-            runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
-                    _isLastMaster,
-                    _newMasterStorageDomainId);
+            ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(
+                    new Event(getParameters().getStoragePoolId(), getParameters().getStorageDomainId(), null, EventType.POOLREFRESH, ""),
+                    new Callable<EventResult>() {
+                        @Override
+                        public EventResult call() {
+                            runSynchronizeOperation(new AfterDeactivateSingleAsyncOperationFactory(),
+                                    _isLastMaster,
+                                    _newMasterStorageDomainId);
+                            return null;
+                        }
+                    });
         }
 
         if (!getParameters().isInactive() && spm != null) {

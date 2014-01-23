@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
@@ -22,6 +23,10 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -30,6 +35,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -102,8 +110,19 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     }
 
     private void refreshAllVdssInPool() {
-        List<Guid> vdsIdsToSetNonOperational = new ArrayList<Guid>();
-        runSynchronizeOperation(new RefreshPoolSingleAsyncOperationFactory(), vdsIdsToSetNonOperational);
+        final List<Guid> vdsIdsToSetNonOperational = new ArrayList<Guid>();
+
+        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(
+                new Event(getParameters().getStoragePoolId(), getParameters().getStorageDomainId(), null, EventType.POOLREFRESH, ""),
+                new Callable<EventResult>() {
+                    @Override
+                    public EventResult call() {
+                        runSynchronizeOperation(new RefreshPoolSingleAsyncOperationFactory(), vdsIdsToSetNonOperational);
+                        return null;
+                    }
+                }
+        );
+
         for (Guid vdsId : vdsIdsToSetNonOperational) {
             SetNonOperationalVdsParameters tempVar =
                     new SetNonOperationalVdsParameters(vdsId, STORAGE_DOMAIN_UNREACHABLE);
