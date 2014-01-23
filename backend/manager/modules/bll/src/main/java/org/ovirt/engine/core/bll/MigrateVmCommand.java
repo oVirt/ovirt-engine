@@ -78,11 +78,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     @Override
-    protected void failedToRunVm() {
+    protected void processVmPoolOnStopVm() {
         // In case the migration failed and the VM turned back to Up in the
         // source, we don't need to handle it as a VM that failed to run
         if (getVm().getStatus() != VMStatus.Up) {
-            super.failedToRunVm();
+            super.processVmPoolOnStopVm();
         }
     }
 
