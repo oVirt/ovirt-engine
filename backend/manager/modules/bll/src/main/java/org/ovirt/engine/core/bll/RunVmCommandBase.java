@@ -94,6 +94,10 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         _isRerun = true;
         log();
 
+        // set _isRerun flag to false so that we'll be able to know if
+        // there is another rerun attempt within the method
+        _isRerun = false;
+
         /**
          * Rerun VM only if not exceeded maximum rerun attempts. for example if there are 10 hosts that can run VM and
          * predefine maximum 3 attempts to rerun VM - on 4th turn vm will stop to run despite there are still available
@@ -110,16 +114,12 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                     JobRepositoryFactory.getJobRepository().closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
                 }
             }
-            // set the _isRerun flag to false before calling executeAction so that we'll know if
-            // there is another rerun attempt within the method
-            _isRerun = false;
             insertAsyncTaskPlaceHolders();
             executeAction();
 
             // if there was no rerun attempt in the previous executeAction call and the command
             // wasn't done because canDoAction check returned false..
             if (!_isRerun && !getReturnValue().getCanDoAction()) {
-                log();
                 failedToRunVm();
             }
 
@@ -128,25 +128,24 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         } else {
             Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
             failedToRunVm();
-            _isRerun = false;
-            log();
         }
     }
 
     protected void failedToRunVm() {
-        ThreadPoolUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                processVmPoolOnStopVm();
-            }
-        });
+        log();
+        processVmPoolOnStopVm();
         ExecutionHandler.setAsyncJob(getExecutionContext(), false);
         ExecutionHandler.endJob(getExecutionContext(), false);
     }
 
     private void processVmPoolOnStopVm() {
-        VmPoolHandler.processVmPoolOnStopVm(getVm().getId(),
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                VmPoolHandler.processVmPoolOnStopVm(getVm().getId(),
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            }
+        });
     }
 
     /**
