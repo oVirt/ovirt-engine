@@ -214,7 +214,7 @@ Requires:	xmlrpc-client
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independently as part
 # of the update process implemented in the engine-upgrade script:
-Requires:	%{name}-setup-plugin-ovirt-engine >= %{version}-%{release}
+Requires:	%{name}-setup >= %{version}-%{release}
 
 # rhbz#1028966
 Conflicts:	java-1.7.0-openjdk = 1:1.7.0.45-2.4.3.3.el6
