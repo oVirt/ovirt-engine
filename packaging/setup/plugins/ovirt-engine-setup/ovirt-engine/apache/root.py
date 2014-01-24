@@ -63,9 +63,20 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _setup(self):
-        self._enabled = not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ]
+        if (
+            self.environment[
+                osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
+            ] is None and
+            (
+                self.environment[
+                    osetupcons.CoreEnv.DEVELOPER_MODE
+                ] or
+                self.environment[
+                    osetupcons.ApacheEnv.CONFIGURED
+                ]
+            )
+        ):
+            self._enabled = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
