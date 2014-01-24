@@ -23,6 +23,7 @@ import signal
 import subprocess
 import sys
 import time
+import resource
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
 
@@ -362,6 +363,12 @@ class Daemon(base.Base):
 
             raise
 
+    def _setLimits(self):
+        self.logger.debug('Setting rlimits')
+        for limit in (resource.RLIMIT_NPROC, resource.RLIMIT_NOFILE):
+            soft, hard = resource.getrlimit(resource.RLIMIT_NPROC)
+            resource.setrlimit(resource.RLIMIT_NPROC, (hard, hard))
+
     def _daemon(self):
 
         self.logger.debug('daemon entry pid=%s', os.getpid())
@@ -400,6 +407,8 @@ class Daemon(base.Base):
             umask=0o022,
         ):
             self.logger.debug('I am a daemon %s', os.getpid())
+
+            self._setLimits()
 
             try:
                 with PidFile(self._options.pidfile):
