@@ -45,12 +45,6 @@ __EOF__
 	return 0
 }
 
-# TODO:
-# why do we need CONF_FILE here?
-# we do not use any vairable
-CONF_DIR="${ENGINE_ETC}/engine-manage-domains"
-CONF_FILE="${CONF_DIR}/engine-manage-domains.conf"
-
 parseArgs() {
 	if [ "$#" -eq 0 ] ; then
 		usage
@@ -61,13 +55,6 @@ parseArgs() {
 		local v="${x#*=}"
 		shift
 		case "${x}" in
-			-c)
-				CONF_FILE="$1"
-				shift
-			;;
-			-configFile=*)
-				CONF_FILE="${v}"
-			;;
 			-h|-help|--help)
 				usage
 				exit 0
@@ -77,9 +64,6 @@ parseArgs() {
 }
 # do this in function so we do not lose $@
 parseArgs "$@"
-
-[ -s "${CONF_FILE}" ] || die "Configuration file '${CONF_FILE}' is either empty or does not exist"
-. "${CONF_FILE}"
 
 # TODO:
 # what is the benefit of creating this here
