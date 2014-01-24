@@ -8,7 +8,6 @@
 
   <dependencies>
     <module name="javax.api"/>
-    <module name="org.apache.mina"/>
     <module name="org.slf4j"/>
   </dependencies>
 

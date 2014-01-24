@@ -201,7 +201,6 @@ Requires:	yum-plugin-versionlock
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
-Requires:	apache-sshd
 Requires:	jakarta-commons-httpclient
 Requires:	objectweb-asm
 Requires:	openstack-java-client >= %{openstack_java_version}
@@ -699,7 +698,6 @@ org/apache/commons/compress/main/commons-compress.jar
 org/apache/commons/configuration/main/commons-configuration.jar commons-configuration.jar
 org/apache/commons/httpclient/main/commons-httpclient.jar
 org/apache/commons/jxpath/main/commons-jxpath.jar commons-jxpath.jar
-org/apache/mina/main/mina-core.jar apache-mina/mina-core.jar
 org/apache/xmlrpc/main/xmlrpc-client.jar
 org/apache/xmlrpc/main/xmlrpc-common.jar
 org/postgresql/main/postgresql.jar postgresql-jdbc.jar

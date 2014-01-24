@@ -68,8 +68,7 @@
     <jcraft.jsch.version>0.1.42</jcraft.jsch.version>
     <dozer.version>5.2.0</dozer.version>
     <cxf.version>2.2.7</cxf.version>
-    <mina-core.version>2.0.1</mina-core.version>
-    <sshd-core.version>0.7.0</sshd-core.version>
+    <sshd-core.version>0.11.0</sshd-core.version>
     <otopi.version>1.2.0</otopi.version>
     <ovirt-host-deploy.version>1.2.0</ovirt-host-deploy.version>
     <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
@@ -226,11 +225,6 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
         <version>${commons-compress.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.mina</groupId>
-        <artifactId>mina-core</artifactId>
-        <version>${mina-core.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.sshd</groupId>

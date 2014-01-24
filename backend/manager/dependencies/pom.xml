@@ -46,12 +46,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.mina</groupId>
-      <artifactId>mina-core</artifactId>
-      <version>${mina-core.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.sshd</groupId>
       <artifactId>sshd-core</artifactId>
       <version>${sshd-core.version}</version>
@@ -271,12 +265,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <moduleName>org.apache.commons.compress</moduleName>
-              </module>
-
-              <module>
-                <groupId>org.apache.mina</groupId>
-                <artifactId>mina-core</artifactId>
-                <moduleName>org.apache.mina</moduleName>
               </module>
 
               <module>
