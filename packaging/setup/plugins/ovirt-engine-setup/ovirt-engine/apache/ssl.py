@@ -172,6 +172,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc(self):
+        self.environment[osetupcons.ApacheEnv.NEED_RESTART] = True
         changed_lines = []
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
