@@ -97,7 +97,6 @@ public class ManageDomains {
         configFile,
         propertiesFile,
         report,
-        interactive,
         addPermissions,
         provider,
         forceDelete,
@@ -388,7 +387,7 @@ public class ManageDomains {
             if (pass == null) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.EMPTY_PASSWORD_FILE);
             }
-        } else if (parser.hasArg(Arguments.interactive.name())) {
+        } else {
             pass = readInteractively("Enter password:", true);
         }
 
@@ -1126,7 +1125,6 @@ public class ManageDomains {
                 }
                 if (actionType.equals(ActionType.add)) {
                     requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
-                    requireAtLeastOneArg(parser, Arguments.passwordFile, Arguments.interactive);
                     requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
                             Arguments.passwordFile);
                     checkInvalidArgs(parser,
@@ -1146,14 +1144,12 @@ public class ManageDomains {
                             Arguments.domain,
                             Arguments.user,
                             Arguments.passwordFile,
-                            Arguments.interactive,
                             Arguments.forceDelete);
                 } else if (actionType.equals(ActionType.list)) {
                     checkInvalidArgs(parser,
                             Arguments.domain,
                             Arguments.user,
                             Arguments.passwordFile,
-                            Arguments.interactive,
                             Arguments.forceDelete);
                 }
             } else {
