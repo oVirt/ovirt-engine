@@ -703,7 +703,10 @@ public class ManageDomains {
         if (parser.hasArg(Arguments.ldapServers.name())) {
             setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
         }
-        LdapProviderType ldapProviderType = getLdapProviderType(parser);
+        LdapProviderType ldapProviderType = null;
+        if (parser.hasArg(Arguments.provider.name())) {
+            ldapProviderType = getLdapProviderType(parser);
+        }
         if (ldapProviderType != null) {
             ldapProviderTypeEntry.setValueForDomain(domainName, ldapProviderType.name());
         }
