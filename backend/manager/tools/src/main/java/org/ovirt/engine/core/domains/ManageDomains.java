@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -95,7 +96,6 @@ public class ManageDomains {
         passwordFile,
         servers,
         configFile,
-        propertiesFile,
         report,
         addPermissions,
         provider,
@@ -210,10 +210,9 @@ public class ManageDomains {
 
         try {
             // it's existence is checked during the parser validation
-            String engineConfigProperties = parser.getArg(Arguments.propertiesFile.name());
             util.init(configFilePath);
             util.validate(parser);
-            util.createConfigurationProvider(engineConfigProperties);
+            util.createConfigurationProvider();
             util.runCommand(parser);
         } catch (ManageDomainsResult e) {
             exitOnError(e);
@@ -242,7 +241,8 @@ public class ManageDomains {
         }
     }
 
-    private void createConfigurationProvider(String engineConfigProperties) throws ManageDomainsResult {
+    private void createConfigurationProvider() throws ManageDomainsResult {
+        String engineConfigProperties = createTempPropFile();
         try {
             String engineConfigExecutable = utilityConfiguration.getEngineConfigExecutablePath();
             String adUserName = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserName);
@@ -1113,50 +1113,46 @@ public class ManageDomains {
 
     private void validate(CLIParser parser) throws ManageDomainsResult {
 
-        if (parser.hasArg(Arguments.propertiesFile.name())) {
-            if (parser.hasArg(Arguments.action.name())) {
-                String action = parser.getArg(Arguments.action.name());
-                ActionType actionType;
-                try {
-                    actionType = ActionType.valueOf(action);
-                } catch (IllegalArgumentException ex) {
-                    throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION,
-                            action);
-                }
-                if (actionType.equals(ActionType.add)) {
-                    requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
-                    requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
-                            Arguments.passwordFile);
-                    checkInvalidArgs(parser,
-                            Arguments.forceDelete);
-                } else if (actionType.equals(ActionType.edit)) {
-                    requireArgs(parser, Arguments.domain);
-                    requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
-                            Arguments.passwordFile);
-                    checkInvalidArgs(parser,
-                            Arguments.forceDelete);
-                } else if (actionType.equals(ActionType.delete)) {
-                    requireArgs(parser, Arguments.domain);
-                    requireArgsValue(parser, Arguments.domain, Arguments.passwordFile);
-                    checkInvalidArgs(parser);
-                } else if (actionType.equals(ActionType.validate)) {
-                    checkInvalidArgs(parser,
-                            Arguments.domain,
-                            Arguments.user,
-                            Arguments.passwordFile,
-                            Arguments.forceDelete);
-                } else if (actionType.equals(ActionType.list)) {
-                    checkInvalidArgs(parser,
-                            Arguments.domain,
-                            Arguments.user,
-                            Arguments.passwordFile,
-                            Arguments.forceDelete);
-                }
-            } else {
-                throw new ManageDomainsResult(ManageDomainsResultEnum.ACTION_IS_NOT_SPECIFIED);
+        if (parser.hasArg(Arguments.action.name())) {
+            String action = parser.getArg(Arguments.action.name());
+            ActionType actionType;
+            try {
+                actionType = ActionType.valueOf(action);
+            } catch (IllegalArgumentException ex) {
+                throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION,
+                        action);
+            }
+            if (actionType.equals(ActionType.add)) {
+                requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
+                requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
+                        Arguments.passwordFile);
+                checkInvalidArgs(parser,
+                        Arguments.forceDelete);
+            } else if (actionType.equals(ActionType.edit)) {
+                requireArgs(parser, Arguments.domain);
+                requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
+                        Arguments.passwordFile);
+                checkInvalidArgs(parser,
+                        Arguments.forceDelete);
+            } else if (actionType.equals(ActionType.delete)) {
+                requireArgs(parser, Arguments.domain);
+                requireArgsValue(parser, Arguments.domain, Arguments.passwordFile);
+                checkInvalidArgs(parser);
+            } else if (actionType.equals(ActionType.validate)) {
+                checkInvalidArgs(parser,
+                        Arguments.domain,
+                        Arguments.user,
+                        Arguments.passwordFile,
+                        Arguments.forceDelete);
+            } else if (actionType.equals(ActionType.list)) {
+                checkInvalidArgs(parser,
+                        Arguments.domain,
+                        Arguments.user,
+                        Arguments.passwordFile,
+                        Arguments.forceDelete);
             }
         } else {
-            throw new ManageDomainsResult(ManageDomainsResultEnum.PROPERTIES_FILE_IS_NOT_SPECIFIED);
+            throw new ManageDomainsResult(ManageDomainsResultEnum.ACTION_IS_NOT_SPECIFIED);
         }
         if (parser.getArgs().size() > Arguments.values().length) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.TOO_MANY_ARGUMENTS);
@@ -1239,5 +1235,50 @@ public class ManageDomains {
                 log.info("Failed deleting file " + file.getAbsolutePath() + ". Continuing anyway.");
             }
         }
+    }
+
+    /**
+     * Creates temporary properties file for engine-config to work with configuration values that
+     * are not exposed by standard {@code engine-config.properties} file
+     *
+     * @return absolute path of properties file
+     */
+    private String createTempPropFile() throws ManageDomainsResult {
+        File propFile = null;
+        try {
+            propFile = File.createTempFile("engine-config", "properties");
+            propFile.deleteOnExit();
+        } catch (IOException ex) {
+            throw new ManageDomainsResult(ManageDomainsResultEnum.ERROR_CREATING_PROPERTIES_FILE,
+                    ex.getMessage());
+        }
+
+        try (FileWriter fw = new FileWriter(propFile)) {
+            fw.write(new StringBuilder()
+                    .append(ConfigValues.AdUserName.name())
+                    .append("=\n")
+                    .append(ConfigValues.AdUserPassword.name())
+                    .append(".type=CompositePassword\n")
+                    .append(ConfigValues.LDAPSecurityAuthentication.name())
+                    .append("=\n")
+                    .append(ConfigValues.DomainName.name())
+                    .append("=\n")
+                    .append(ConfigValues.AdUserId.name())
+                    .append("=\n")
+                    .append(ConfigValues.LdapServers.name())
+                    .append("=\n")
+                    .append(ConfigValues.LDAPProviderTypes.name())
+                    .append("=\n")
+                    .append(ConfigValues.LDAPServerPort.name())
+                    .append("=\n")
+                    .append(ConfigValues.ChangePasswordMsg.name())
+                    .append("=\n")
+                    .toString());
+            fw.flush();
+        } catch (IOException ex) {
+            throw new ManageDomainsResult(ManageDomainsResultEnum.ERROR_CREATING_PROPERTIES_FILE,
+                    ex.getMessage());
+        }
+        return propFile.getAbsolutePath();
     }
 }

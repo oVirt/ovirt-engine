@@ -65,26 +65,6 @@ parseArgs() {
 # do this in function so we do not lose $@
 parseArgs "$@"
 
-# TODO:
-# what is the benefit of creating this here
-# and not at java code?
-PROPERTIES_FILE="$(mktemp)" || die "Temporary properties file cannot be created"
-cleanup() {
-	rm -fr "${PROPERTIES_FILE}"
-}
-trap cleanup 0
-cat << __EOF__ > "${PROPERTIES_FILE}"
-AdUserName=
-AdUserPassword.type=CompositePassword
-LDAPSecurityAuthentication=
-DomainName=
-AdUserId=
-LdapServers=
-LDAPProviderTypes=
-LDAPServerPort=
-ChangePasswordMsg=
-__EOF__
-
 #
 # Add this option to the java command line to enable remote debugging in
 # all IP addresses and port 8787:
@@ -102,4 +82,4 @@ exec "${JAVA_HOME}/bin/java" \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \
 	-dependencies org.ovirt.engine.core.tools \
 	-class org.ovirt.engine.core.domains.ManageDomains \
-	"$@" -propertiesFile="${PROPERTIES_FILE}"
+	"$@"
