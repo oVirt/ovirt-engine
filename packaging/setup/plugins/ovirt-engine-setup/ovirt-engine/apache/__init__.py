@@ -22,6 +22,7 @@
 from otopi import util
 
 
+from . import misc
 from . import root
 from . import ssl
 from . import selinux
@@ -30,6 +31,7 @@ from . import engine
 
 @util.export
 def createPlugins(context):
+    misc.Plugin(context=context)
     root.Plugin(context=context)
     ssl.Plugin(context=context)
     engine.Plugin(context=context)

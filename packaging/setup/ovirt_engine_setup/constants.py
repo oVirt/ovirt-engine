@@ -1010,10 +1010,15 @@ class ApacheEnv(object):
     NEED_RESTART = 'OVESETUP_APACHE/needRestart'
 
     @osetupattrs(
+        postinstallfile=True,
+    )
+    def CONFIGURED(self):
+        return 'OVESETUP_APACHE/configured'
+
+    @osetupattrs(
         answerfile=True,
         summary=True,
         description=_('Configure Apache SSL'),
-        postinstallfile=True,
     )
     def CONFIGURE_SSL(self):
         return 'OVESETUP_APACHE/configureSsl'
@@ -1022,7 +1027,6 @@ class ApacheEnv(object):
         answerfile=True,
         summary=True,
         description=_('Set application as default page'),
-        postinstallfile=True,
     )
     def CONFIGURE_ROOT_REDIRECTION(self):
         return 'OVESETUP_APACHE/configureRootRedirection'
