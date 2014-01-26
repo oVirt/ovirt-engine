@@ -333,7 +333,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     }
                 }), dataCenter.getId());
 
-        model.getStoragePoolType().setEntity(dataCenter.isLocal());
+        model.getStoragePoolType().setSelectedItem(dataCenter.isLocal());
 
         model.getQuotaEnforceTypeListModel().setSelectedItem(dataCenter.getQuotaEnforcementType());
 
