@@ -370,11 +370,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             super.reportCompleted();
         }
         finally {
-            /*
-             * Decrement the pending counters here as this is the only place which
-             * is called consistently regardless of the migration result.
-             */
-            decreasePendingVms(getVdsDestinationId());
+            // Decrement the pending counters here as this is the only place which
+            // is called consistently regardless of the migration result.
+            if (getVdsDestinationId() != null) {
+                decreasePendingVms(getVdsDestinationId());
+            }
 
             freeLock();
         }
