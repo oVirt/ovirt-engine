@@ -144,6 +144,21 @@ public class DiskImagesValidatorTest {
     }
 
     @Test
+    public void diskImagesDontExist() {
+        doReturn(false).when(validator).isDiskExists(disk1.getId());
+        doReturn(false).when(validator).isDiskExists(disk2.getId());
+        assertThat(validator.diskImagesNotExist(),
+                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_NOT_EXIST)));
+    }
+
+    @Test
+    public void diskImagesExist() {
+        doReturn(true).when(validator).isDiskExists(disk1.getId());
+        doReturn(true).when(validator).isDiskExists(disk2.getId());
+        assertEquals(validator.diskImagesNotExist(), ValidationResult.VALID);
+    }
+
+    @Test
     public void diskImagesNotLockedBothOK() {
         assertThat("Neither disk is Locked", validator.diskImagesNotLocked(), isValid());
     }
