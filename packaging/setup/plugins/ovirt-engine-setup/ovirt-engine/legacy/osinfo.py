@@ -44,9 +44,14 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: not self.environment[
-            osetupcons.DBEnv.NEW_DATABASE
-        ],
+        condition=lambda self: (
+            not self.environment[
+                osetupcons.DBEnv.NEW_DATABASE
+            ] and
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ]
+        ),
         after=[
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
         ],
