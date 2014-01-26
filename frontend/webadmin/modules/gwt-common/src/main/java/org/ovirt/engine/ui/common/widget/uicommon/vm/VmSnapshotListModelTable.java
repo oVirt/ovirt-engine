@@ -174,12 +174,6 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 return getModel().getCommitCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.commitSnapshot()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getCommitCommand();
-            }
-        });
         getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.undoSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
