@@ -116,8 +116,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     protected List<DiskImage> getDisksListForChecks() {
-        List<DiskImage> disksListForChecks = getParameters().getDisks() == null ?
-                getDisksList() : getParameters().getDisks();
+        List<DiskImage> disksListForChecks = getDisksList();
         if (getParameters().getDiskIdsToIgnoreInChecks().isEmpty()) {
             return disksListForChecks;
         }
@@ -434,6 +433,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             return false;
         }
 
+        if (!isSpecifiedDisksExist(getParameters().getDisks())) {
+            return false;
+        }
+
         // Initialize validators.
         VmValidator vmValidator = createVmValidator();
         SnapshotsValidator snapshotValidator = createSnapshotValidator();
@@ -492,6 +495,19 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected boolean validateVM(VmValidator vmValidator) {
         return canDoSnapshot(getVm()) &&
                 validate(vmValidator.vmNotSavingRestoring());
+    }
+
+    private boolean isSpecifiedDisksExist(List<DiskImage> disks) {
+        if (disks == null || disks.isEmpty()) {
+            return true;
+        }
+
+        DiskImagesValidator diskImagesValidator = createDiskImageValidator(disks);
+        if (!validate(diskImagesValidator.diskImagesNotExist())) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

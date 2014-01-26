@@ -2541,6 +2541,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The specified disk does not exist.")
     String ACTION_TYPE_FAILED_DISK_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following disk(s) ID(s) does not exist: ${diskIds}.")
+    String ACTION_TYPE_FAILED_DISKS_NOT_EXIST();
+
     @DefaultStringValue("Cannot ${action} ${type}. No disks have been specified.")
     String ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED();
 

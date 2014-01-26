@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -220,6 +221,24 @@ public class CreateAllSnapshotsFromVmCommandTest {
     }
 
     @Test
+    public void testImagesDoesNotExist() {
+        setUpGeneralValidations();
+        setUpDiskValidations();
+
+        DiskImage diskImage1 = getNewDiskImage();
+        DiskImage diskImage2 = getNewDiskImage();
+
+        List<DiskImage> diskImagesFromParams = new ArrayList<>();
+        diskImagesFromParams.addAll(Arrays.asList(diskImage1, diskImage2));
+        cmd.getParameters().setDisks(diskImagesFromParams);
+
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_NOT_EXIST)).when(diskImagesValidator)
+                .diskImagesNotExist();
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_NOT_EXIST);
+    }
+
+    @Test
     public void testAllDomainsExistAndActive() {
         setUpGeneralValidations();
         setUpDiskValidations();
@@ -273,5 +292,11 @@ public class CreateAllSnapshotsFromVmCommandTest {
         DiskImage newDiskImage = new DiskImage();
         diskList.add(newDiskImage);
         return diskList;
+    }
+
+    private static DiskImage getNewDiskImage() {
+        DiskImage diskImage = new DiskImage();
+        diskImage.setId(Guid.newGuid());
+        return diskImage;
     }
 }
