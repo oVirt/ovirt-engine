@@ -886,9 +886,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        SnapshotModel model = SnapshotModel.createNewSnapshotModel(vm, this);
+        SnapshotModel model = SnapshotModel.createNewSnapshotModel(this);
         model.setValidateByVmSnapshots(true);
         setWindow(model);
+        model.setVm(vm);
+        model.initialize();
     }
 
     @Override

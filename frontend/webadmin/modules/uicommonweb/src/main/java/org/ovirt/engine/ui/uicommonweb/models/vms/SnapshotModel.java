@@ -169,18 +169,15 @@ public class SnapshotModel extends EntityModel
         setSnapshotDisks(new ListModel());
     }
 
-    public static SnapshotModel createNewSnapshotModel(VM vm, ICommandTarget cancelCommandTarget) {
+    public static SnapshotModel createNewSnapshotModel(ICommandTarget cancelCommandTarget) {
         SnapshotModel model = new SnapshotModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().createSnapshotTitle());
         model.setHashName("create_snapshot"); //$NON-NLS-1$
-        model.setVm(vm);
 
         // the cancel command has to be created be before the call to initialize to avoid race condition
         model.setCancelCommand(new UICommand("Cancel", cancelCommandTarget) //$NON-NLS-1$
                                        .setTitle(ConstantsManager.getInstance().getConstants().cancel())
                                        .setIsCancel(true));
-
-        model.initialize();
 
         return model;
     }

@@ -497,8 +497,10 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
-        SnapshotModel model = SnapshotModel.createNewSnapshotModel(vm, this);
+        SnapshotModel model = SnapshotModel.createNewSnapshotModel(this);
         setWindow(model);
+        model.setVm(vm);
+        model.initialize();
     }
 
     public void postOnNew(List<VdcReturnValueBase> returnValues) {
