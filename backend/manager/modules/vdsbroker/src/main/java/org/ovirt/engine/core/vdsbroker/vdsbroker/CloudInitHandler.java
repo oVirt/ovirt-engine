@@ -81,7 +81,7 @@ public class CloudInitHandler {
         files.put("openstack/latest/user_data", userDataStr.getBytes("UTF-8"));
 
         // mask password for log if exists
-        if (metaDataStr.contains(passwordKey)) {
+        if (metaDataStr.contains(passwordKey) && vmInit != null && vmInit.getRootPassword() != null) {
             String oldStr = String.format("\"%s\" : \"%s\"", passwordKey, vmInit.getRootPassword());
             String newStr = String.format("\"%s\" : ***", passwordKey);
             metaDataStr = metaDataStr.replace(oldStr, newStr);
