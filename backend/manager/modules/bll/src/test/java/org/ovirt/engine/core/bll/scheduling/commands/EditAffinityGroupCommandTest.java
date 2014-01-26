@@ -27,7 +27,6 @@ import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 public class EditAffinityGroupCommandTest {
     private static final String AFFINITY_GROUP_NAME = "test123";
     Guid clusterId = Guid.newGuid();
-    Guid vmId = Guid.newGuid();
     EditAffinityGroupCommand command;
 
     @Mock
@@ -51,7 +50,7 @@ public class EditAffinityGroupCommandTest {
                 affinityGroup2.setClusterId(clusterId);
                 affinityGroup2.setName(AFFINITY_GROUP_NAME + "##");
                 return affinityGroup2;
-            };
+            }
         });
         doReturn(affinityGroupDao).when(command).getAffinityGroupDao();
         doReturn(vmStaticDao).when(command).getVmStaticDAO();
