@@ -362,11 +362,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void clearAsyncTasksWithOutVdsmId() {
-        for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
-            AsyncTasks task = getAsyncTaskDao().get(asyncTaskId);
-            if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                AsyncTaskManager.removeTaskFromDbByTaskId(task.getTaskId());
-            }
+        if (!getReturnValue().getTaskPlaceHolderIdList().isEmpty()) {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
+                        AsyncTasks task = getAsyncTaskDao().get(asyncTaskId);
+                        if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
+                            AsyncTaskManager.removeTaskFromDbByTaskId(task.getTaskId());
+                        }
+
+                    }
+                    return null;
+                }
+            });
         }
     }
 
