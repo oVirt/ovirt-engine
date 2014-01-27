@@ -451,12 +451,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     }
 
     public String getVmHost() {
+        String vmDomain = (getVmInit() != null) ? getVmInit().getDomain() : null;
         String vmHost = this.vmDynamic.getVmHost();
         if (!StringHelper.isNullOrEmpty(this.getVmIp())) {
             this.vmDynamic.setVmHost(getVmIp());
-        } else if (getVmInit() != null) {
-            String vmDomain = getVmInit().getDomain();
-
+        } else {
             // If VM's host name isn't available - set as VM's name
             // If no IP address is available - assure that 'vm_host' is FQN by concatenating
             // vmHost and vmDomain.
