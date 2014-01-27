@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDetailsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumesListVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -134,7 +136,7 @@ public class GlusterSyncJob extends GlusterJob {
         try {
             List<GlusterServerInfo> fetchedServers = fetchServers(cluster, upServer, existingServers);
             if (fetchedServers != null) {
-                removeDetachedServers(existingServers, fetchedServers);
+                syncServers(existingServers, fetchedServers);
             }
         } catch(Exception e) {
             log.errorFormat("Error while refreshing server data for cluster {0} from database!", cluster.getName(), e);
@@ -143,22 +145,35 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private void removeDetachedServers(List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
+    private void syncServers(List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
         log.debugFormat("Existing servers list returned {0} comparing with fetched servers {1)", existingServers, fetchedServers);
 
         boolean serverRemoved = false;
         for (VDS server : existingServers) {
-            if (isRemovableStatus(server.getStatus()) && serverDetached(server, fetchedServers)) {
-                log.infoFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
-                        server.getName());
-                logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
-                try (EngineLock lock = getGlusterUtil().acquireGlusterLockWait(server.getId())) {
-                    removeServerFromDb(server);
-                    // remove the server from resource manager
-                    runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
-                    serverRemoved = true;
-                } catch (Exception e) {
-                    log.errorFormat("Error while removing server {0} from database!", server.getName(), e);
+
+            if (isRemovableStatus(server.getStatus())) {
+                GlusterServerInfo glusterServer = findGlusterServer(server, fetchedServers);
+                if (glusterServer == null) {
+                    log.infoFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
+                            server.getName());
+                    logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
+                    try (EngineLock lock = getGlusterUtil().acquireGlusterLockWait(server.getId())) {
+                        removeServerFromDb(server);
+                        // remove the server from resource manager
+                        runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
+                        serverRemoved = true;
+                    } catch (Exception e) {
+                        log.errorFormat("Error while removing server {0} from database!", server.getName(), e);
+                    }
+                }
+                else if (server.getStatus() == VDSStatus.Up && glusterServer.getStatus() == PeerStatus.DISCONNECTED) {
+                    // check gluster is running, if down then move the host to Non-Operational
+                    VDSReturnValue returnValue =
+                            runVdsCommand(VDSCommandType.GlusterServersList,
+                                    new VdsIdVDSCommandParametersBase(server.getId()));
+                    if (!returnValue.getSucceeded()) {
+                        setNonOperational(server);
+                    }
                 }
             }
         }
@@ -202,32 +217,31 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     /**
-     * Returns true if the given server has been detached i.e. cannot be found in the list of fetched servers.
+     * Returns the equivalent GlusterServer from the list of fetched servers.
      *
      * @param server
      * @param fetchedServers
-     * @return
+     * @return GlusterServerInfo
      */
-    private boolean serverDetached(VDS server, List<GlusterServerInfo> fetchedServers) {
+    private GlusterServerInfo findGlusterServer(VDS server, List<GlusterServerInfo> fetchedServers) {
         if (GlusterFeatureSupported.glusterHostUuidSupported(server.getVdsGroupCompatibilityVersion())) {
             // compare gluster host uuid stored in server with the ones fetched from list
             GlusterServer glusterServer = getGlusterServerDao().getByServerId(server.getId());
             for (GlusterServerInfo fetchedServer : fetchedServers) {
                 if (fetchedServer.getUuid().equals(glusterServer.getGlusterServerUuid())) {
-                    return false;
+                    return fetchedServer;
                 }
             }
-            return true;
         } else {
             List<String> vdsIps = getVdsIps(server);
             for (GlusterServerInfo fetchedServer : fetchedServers) {
                 if (fetchedServer.getHostnameOrIp().equals(server.getHostName())
                         || vdsIps.contains(fetchedServer.getHostnameOrIp())) {
-                    return false;
+                    return fetchedServer;
                 }
             }
-            return true;
         }
+        return null;
     }
 
     private List<String> getVdsIps(VDS vds) {
