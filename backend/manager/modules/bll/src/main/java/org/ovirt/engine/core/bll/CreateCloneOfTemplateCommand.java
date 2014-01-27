@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -63,7 +62,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
         } catch (VdcBLLException e) {
             log.errorFormat("Failed creating snapshot from image id -'{0}'", getImage().getImageId());
-            throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
+            throw e;
         }
 
         if (vdsReturnValue.getSucceeded()) {
