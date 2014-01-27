@@ -245,8 +245,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             imagesToRestore = imagesFromPreviewSnapshot;
             updateSnapshotIdForSkipRestoreImages(
                     ImagesHandler.imagesSubtract(imagesFromActiveSnapshot, imagesToRestore), targetSnapshot.getId());
+            restoreConfiguration(targetSnapshot);
+            break;
 
         case STATELESS:
+            imagesToRestore = getParameters().getImages();
             restoreConfiguration(targetSnapshot);
             break;
 
