@@ -617,12 +617,20 @@ public abstract class NetworkModel extends Model
 
     private void addQos() {
         NewNetworkQoSModel qosModel = new NewNetworkQoSModel(this, getSelectedDc()) {
+
+            @Override
+            protected void postSaveAction(boolean succeeded) {
+                if (succeeded) {
+                    List<NetworkQoS> qosItems = new ArrayList<NetworkQoS>((Collection<NetworkQoS>) getQos().getItems());
+                    qosItems.add(1, networkQoS);
+                    getQos().setItems(qosItems);
+                    getQos().setSelectedItem(networkQoS);
+                }
+                super.postSaveAction(succeeded);
+            }
+
             @Override
             protected void cancel() {
-                List<NetworkQoS> qosItems = new ArrayList<NetworkQoS>((Collection<NetworkQoS>) getQos().getItems());
-                qosItems.add(1, networkQoS);
-                getQos().setItems(qosItems);
-                getQos().setSelectedItem(networkQoS);
                 sourceListModel.setConfirmWindow(null);
             }
         };
