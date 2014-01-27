@@ -3,6 +3,9 @@ package org.ovirt.engine.ui.common.widget.dialog;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -16,6 +19,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleDialogPanel extends AbstractDialogPanel {
+
+    private static final int IMAGE_MARGIN = 10;
 
     interface WidgetUiBinder extends UiBinder<Widget, SimpleDialogPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -72,6 +77,7 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     @UiChild(tagname = "logo", limit = 1)
     public void setLogo(Widget widget) {
         logoPanel.setWidget(widget);
+        updateTitlePadding();
     }
 
     @Override
@@ -79,6 +85,19 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     public void setContent(Widget widget) {
         contentPanel.setWidget(widget);
         widget.addStyleName(style.contentWidget());
+    }
+
+    void updateTitlePadding() {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                int logoWidth = logoPanel.getOffsetWidth();
+                if (logoWidth > 0) {
+                    logoWidth += IMAGE_MARGIN; //Add some pixels to account for margins/left style of the image div.
+                    headerTitlePanel.getParent().getElement().getStyle().setMarginLeft(logoWidth, Unit.PX);
+                }
+            }
+        });
     }
 
     @Override
