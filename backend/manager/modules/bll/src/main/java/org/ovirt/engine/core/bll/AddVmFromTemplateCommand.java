@@ -87,11 +87,10 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 // if couldn't create snapshot then stop the transaction and the command
                 if (!result.getSucceeded()) {
                     throw new VdcBLLException(result.getFault().getError());
-                } else {
-                    getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-                    DiskImage newImage = (DiskImage) result.getActionReturnValue();
-                    getSrcDiskIdToTargetDiskIdMapping().put(disk.getId(), newImage.getId());
                 }
+                getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
+                DiskImage newImage = (DiskImage) result.getActionReturnValue();
+                getSrcDiskIdToTargetDiskIdMapping().put(disk.getId(), newImage.getId());
             }
         }
         return true;
