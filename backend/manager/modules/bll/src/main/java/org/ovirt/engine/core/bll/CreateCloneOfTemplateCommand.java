@@ -51,9 +51,8 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                 .getStoragePoolId() : Guid.Empty;
 
         VDSReturnValue vdsReturnValue = null;
+        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmFromTemplate);
         try {
-            Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmFromTemplate);
-
             vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
                     new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getStorageIds().get(0),
                             getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
@@ -62,19 +61,21 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                             mNewCreatedDiskImage.getVolumeFormat(), mNewCreatedDiskImage.getVolumeType(),
                             getDiskImage().isWipeAfterDelete(), false));
 
-            if (vdsReturnValue.getSucceeded()) {
-                getReturnValue().getInternalVdsmTaskIdList().add(
-                        createTask(taskId,
-                                vdsReturnValue.getCreationInfo(),
-                                VdcActionType.AddVmFromTemplate,
-                                VdcObjectType.Storage,
-                                getParameters().getStorageDomainId(),
-                                getDestinationStorageDomainId()));
-            }
-        } catch (Exception e) {
+        } catch (VdcBLLException e) {
             log.errorFormat("Failed creating snapshot from image id -'{0}'", getImage().getImageId());
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         }
+
+        if (vdsReturnValue.getSucceeded()) {
+            getReturnValue().getInternalVdsmTaskIdList().add(
+                    createTask(taskId,
+                            vdsReturnValue.getCreationInfo(),
+                            VdcActionType.AddVmFromTemplate,
+                            VdcObjectType.Storage,
+                            getParameters().getStorageDomainId(),
+                            getDestinationStorageDomainId()));
+        }
+
         return vdsReturnValue;
     }
 
