@@ -927,6 +927,9 @@ fi
 %endif
 
 %changelog
+* Mon Jan 27 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.3.3-2
+- Respin including blockers found while testing 3.3.3-1
+
 * Tue Jan 21 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.3.3-1
 - Bump version to 3.3.3
 
