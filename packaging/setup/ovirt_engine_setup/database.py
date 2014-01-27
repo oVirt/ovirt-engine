@@ -358,11 +358,9 @@ class OvirtUtils(base.Base):
             statement="""
                 select count(*) as count
                 from information_schema.tables
-                where table_name=%(table)s
+                where table_schema = 'public';
             """,
-            args=dict(
-                table='schema_version',
-            ),
+            args=dict(),
             host=host,
             port=port,
             secured=secured,
