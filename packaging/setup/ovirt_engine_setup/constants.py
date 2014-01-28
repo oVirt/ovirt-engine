@@ -723,7 +723,7 @@ class DBEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Datbase port'),
+        description=_('Database port'),
     )
     def PORT(self):
         return 'OVESETUP_DB/port'
