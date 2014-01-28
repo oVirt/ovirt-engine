@@ -86,6 +86,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public final String DataCenterConfigureHostsAction = ConstantsManager.getInstance()
             .getConstants()
             .dataCenterConfigureHostsAction();
+    public final String DataCenterAddAnotherHostAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterAddAnotherHostAction();
     public final String DataCenterSelectHostsAction = ConstantsManager.getInstance()
             .getConstants()
             .dataCenterSelectHostsAction();
@@ -298,8 +301,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         tempVar.setIsExecutionAllowed(clusters.size() > 0);
         UICommand addHostAction = tempVar;
 
-        addHostAction.setTitle(DataCenterConfigureHostsAction);
-        getCompulsoryActions().add(addHostAction);
+        if (hosts.isEmpty()){
+            addHostAction.setTitle(DataCenterConfigureHostsAction);
+            getCompulsoryActions().add(addHostAction);
+        } else {
+            addHostAction.setTitle(DataCenterAddAnotherHostAction);
+            getOptionalActions().add(addHostAction);
+        }
 
         // Select host action.
         UICommand selectHostAction = new UICommand("SelectHost", this); //$NON-NLS-1$

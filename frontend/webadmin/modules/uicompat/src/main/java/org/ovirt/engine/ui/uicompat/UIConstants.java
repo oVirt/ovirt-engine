@@ -953,6 +953,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Configure Host")
     String dataCenterConfigureHostsAction();
 
+    @DefaultStringValue("Add another Host")
+    String dataCenterAddAnotherHostAction();
+
     @DefaultStringValue("Select Hosts")
     String dataCenterSelectHostsAction();
 
