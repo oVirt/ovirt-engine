@@ -334,7 +334,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Invalid Host Cluster id.")
     String VM_INVALID_SERVER_CLUSTER_ID();
 
-    @DefaultStringValue("Cannot ${action} ${type}. VM still running, stop the VM and try again.")
+    @DefaultStringValue("Cannot ${action} ${type}. VM is locked or still running, try again once VM is in the Down state.")
     String VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM();
 
     @DefaultStringValue("Cannot ${action} ${type}. Removing Blank Template is not allowed.")
