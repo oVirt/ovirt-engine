@@ -1,13 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -46,9 +38,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -61,6 +53,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionList
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.CloneVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
@@ -92,6 +85,14 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 public class UserPortalListModel extends AbstractUserPortalListModel {
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
@@ -106,6 +107,16 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private void setSearchCompletedEvent(Event value)
     {
         privateSearchCompletedEvent = value;
+    }
+
+    private UICommand cloneVmCommand;
+
+    public UICommand getCloneVmCommand() {
+        return cloneVmCommand;
+    }
+
+    public void setCloneVmCommand(UICommand cloneVmCommand) {
+        this.cloneVmCommand = cloneVmCommand;
     }
 
     private UICommand privateNewVmCommand;
@@ -273,6 +284,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         setSearchCompletedEvent(new Event(searchCompletedEventDefinition));
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
+        setCloneVmCommand(new UICommand("CloneVm", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setSaveCommand(new UICommand("Save", this)); //$NON-NLS-1$
@@ -466,6 +478,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         {
             newInternal();
         }
+        else if (command == getCloneVmCommand())
+        {
+            cloneVm();
+        }
         else if (command == getEditCommand())
         {
             edit();
@@ -513,6 +529,38 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         else if (command.getName().equals("closeVncInfo")) { //$NON-NLS-1$
             setWindow(null);
         }
+        else if ("OnClone".equals(command.getName())) { //$NON-NLS-1$
+            onClone();
+        }
+    }
+
+    private void cloneVm() {
+        final UserPortalItemModel vm = (UserPortalItemModel) getSelectedItem();
+        if (vm == null) {
+            return;
+        }
+
+        CloneVmModel model = new CloneVmModel(vm.getVM(), constants);
+        setWindow(model);
+
+        model.initialize();
+        model.setTitle(ConstantsManager.getInstance().getConstants().cloneVmTitle());
+
+        model.setHelpTag(HelpTag.clone_vm);
+        model.setHashName("clone_vm"); //$NON-NLS-1$
+
+        UICommand okCommand = new UICommand("OnClone", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    private void onClone() {
+        ((CloneVmModel) getWindow()).onClone(this, true);
     }
 
     private void newTemplate()
@@ -699,6 +747,12 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 VdcActionType.RunVmOnce));
+
+        getCloneVmCommand().setIsExecutionAllowed(selectedItem != null
+                && !selectedItem.isPool()
+                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                VM.class,
+                VdcActionType.CloneVm));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
                                                            && !selectedItem.isPool()

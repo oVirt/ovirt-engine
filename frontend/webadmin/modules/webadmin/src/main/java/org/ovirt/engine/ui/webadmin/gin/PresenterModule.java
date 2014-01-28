@@ -90,6 +90,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPre
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
@@ -309,6 +310,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.CloneVmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
@@ -1219,6 +1221,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmChangeCDPopupPresenterWidget.class,
                 VmChangeCDPopupPresenterWidget.ViewDef.class,
                 VmChangeCDPopupView.class);
+
+        // Clone VM
+        bindPresenterWidget(CloneVmPopupPresenterWidget.class,
+                CloneVmPopupPresenterWidget.ViewDef.class,
+                CloneVmPopupView.class);
 
         // VM Migrate
         bindPresenterWidget(VmMigratePopupPresenterWidget.class,

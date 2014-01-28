@@ -231,6 +231,12 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 return getModel().getRemoveCommand();
             }
         });
+        getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.cloneVm()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getCloneVmCommand();
+            }
+        });
         getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.runOnceVm()) {
             @Override
             protected UICommand resolveCommand() {

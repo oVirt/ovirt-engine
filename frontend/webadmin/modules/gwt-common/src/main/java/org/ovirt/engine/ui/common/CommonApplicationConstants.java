@@ -411,6 +411,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("New VM")
     String newVm();
 
+    @DefaultStringValue("Clone VM")
+    String cloneVm();
+
     @DefaultStringValue("Power Off")
     String powerOffVm();
 
@@ -702,6 +705,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Specific")
     String specificVmPopup();
+
+    @DefaultStringValue("Clone Name")
+    String clonedVmName();
 
     // Permissions
     @DefaultStringValue("Inherited Permission")

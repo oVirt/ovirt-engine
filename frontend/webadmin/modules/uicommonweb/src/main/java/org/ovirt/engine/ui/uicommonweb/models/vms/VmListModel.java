@@ -1,13 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -66,12 +58,12 @@ import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -101,10 +93,29 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
+
+    private UICommand cloneVmCommand;
+
+    public UICommand getCloneVmCommand() {
+        return cloneVmCommand;
+    }
+
+    public void setCloneVmCommand(UICommand cloneVmCommand) {
+        this.cloneVmCommand = cloneVmCommand;
+    }
+
     private UICommand newVMCommand;
 
     private final static String SHUTDOWN = "Shutdown"; //$NON-NLS-1$
@@ -434,6 +445,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setConsoleHelpers();
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
+        setCloneVmCommand(new UICommand("CloneVm", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setRunCommand(new UICommand("Run", this, true)); //$NON-NLS-1$
@@ -2323,11 +2335,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
                         : new ArrayList();
 
+        getCloneVmCommand().setIsExecutionAllowed(items.size() == 1);
         getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RunVm));
+        getCloneVmCommand().setIsExecutionAllowed(items.size() == 1
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CloneVm));
         getPauseCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.HibernateVm));
         getShutdownCommand().setIsExecutionAllowed(items.size() > 0
@@ -2436,6 +2451,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             newVm();
         }
+        else if (command == getCloneVmCommand())
+        {
+            cloneVm();
+        }
         else if (command == getEditCommand())
         {
             edit();
@@ -2531,6 +2550,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             onRemove();
         }
+        else if ("OnClone".equals(command.getName())) //$NON-NLS-1$
+        {
+            onClone();
+        }
         else if ("OnExport".equals(command.getName())) //$NON-NLS-1$
         {
             onExport();
@@ -2580,6 +2603,36 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             setWindow(null);
         }
 
+    }
+
+    private void cloneVm() {
+        final VM vm = (VM) getSelectedItem();
+        if (vm == null) {
+            return;
+        }
+
+        CloneVmModel model = new CloneVmModel(vm, constants);
+        setWindow(model);
+
+        model.initialize();
+        model.setTitle(ConstantsManager.getInstance()
+                .getConstants().cloneVmTitle());
+
+        model.setHelpTag(HelpTag.clone_vm);
+        model.setHashName("clone_vm"); //$NON-NLS-1$
+
+        UICommand okCommand = new UICommand("OnClone", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    private void onClone() {
+        ((CloneVmModel) getWindow()).onClone(this, false);
     }
 
     private void connectToConsoles() {

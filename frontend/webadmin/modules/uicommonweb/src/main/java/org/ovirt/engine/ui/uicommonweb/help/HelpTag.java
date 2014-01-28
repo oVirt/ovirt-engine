@@ -288,6 +288,8 @@ public enum HelpTag {
 
     new_vm("new_vm", HelpTagType.COMMON, "'VMs' main tab -> 'New VM' dialog [replaces the old 'New Desktop' (new_desktop) and 'New Server' (new_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    clone_vm("clone_vm", HelpTagType.COMMON, "'VMs tab > Clone VM"), //$NON-NLS-1$ //$NON-NLS-2$
+
     new_vnic_profile("new_vnic_profile", HelpTagType.WEBADMIN, "'Networks' main tab -> 'Profiles' sub-tab -> '(New) VM (Network) Interface Profile' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_volume("new_volume", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> New"), //$NON-NLS-1$ //$NON-NLS-2$

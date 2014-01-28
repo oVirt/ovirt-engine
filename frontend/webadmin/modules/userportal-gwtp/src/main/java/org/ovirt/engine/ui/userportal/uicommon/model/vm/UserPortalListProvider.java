@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceToGuestWithNonRespAgentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPresenterWidget;
@@ -32,6 +33,7 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
     private final Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider;
     private final Provider<ConsolePopupPresenterWidget> consolePopupProvider;
     private final Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider;
+    private final Provider<CloneVmPopupPresenterWidget> cloneVmProvider;
 
     @Inject
     public UserPortalListProvider(EventBus eventBus,
@@ -44,7 +46,8 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider,
             Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider,
-            Provider<ConsolePopupPresenterWidget> consolePopupProvider) {
+            Provider<ConsolePopupPresenterWidget> consolePopupProvider,
+            Provider<CloneVmPopupPresenterWidget> cloneVmProvider) {
         super(eventBus, defaultConfirmPopupProvider, user);
         this.newVmPopupProvider = newVmPopupProvider;
         this.runOncePopupProvider = runOncePopupProvider;
@@ -54,6 +57,7 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
         this.vncInfoPopupProvider = vncInfoPopupProvider;
         this.consolePopupProvider = consolePopupProvider;
         this.spiceToGuestWithNonRespAgentPopupProvider = spiceToGuestWithNonRespAgentPopupProvider;
+        this.cloneVmProvider = cloneVmProvider;
     }
 
     @Override
@@ -80,6 +84,8 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             return spiceToGuestWithNonRespAgentPopupProvider.get();
         } else if (lastExecutedCommand == getModel().getEditConsoleCommand()) {
             return consolePopupProvider.get();
+        } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
+            return cloneVmProvider.get();
         }
         else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
