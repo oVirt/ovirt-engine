@@ -48,7 +48,6 @@ public abstract class ConsolesBase implements VmConsoles {
         setDefaultSelectedProtocol();
     }
 
-
     private void fillModels() {
         SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel(vm, parentModel);
         spiceConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(parentModel));
@@ -64,7 +63,6 @@ public abstract class ConsolesBase implements VmConsoles {
         rdpConsoleModel.setForceVmStatusUp(myContext == ConsoleOptionsFrontendPersister.ConsoleContext.UP_BASIC);
         consoleModels.put(ConsoleProtocol.RDP, rdpConsoleModel);
     }
-
 
     protected void setDefaultSelectedProtocol() {
         List<ConsoleProtocol> allProtocols = new ArrayList<ConsoleProtocol>(Arrays.asList(ConsoleProtocol.values()));
@@ -83,10 +81,12 @@ public abstract class ConsolesBase implements VmConsoles {
     }
 
     public boolean canSelectProtocol(ConsoleProtocol protocol) {
-        return consoleModels.get(protocol).canBeSelected();
+        return (protocol == null)
+            ? false
+            : consoleModels.get(protocol).canBeSelected();
     }
 
-        public void selectProtocol(ConsoleProtocol protocol) throws IllegalArgumentException {
+    public void selectProtocol(ConsoleProtocol protocol) throws IllegalArgumentException {
         if (!canSelectProtocol(protocol)) {
             throw new IllegalArgumentException("Cannot select " +protocol.toString() + " protocol for vm " + getVm().getName()); // $NON-NLS-1$ $NON-NLS-2$
         }
@@ -102,7 +102,9 @@ public abstract class ConsolesBase implements VmConsoles {
     }
 
     public boolean canConnectToConsole() {
-        return consoleModels.get(selectedProtocol).canConnect();
+        return (selectedProtocol == null)
+                ? false
+                : consoleModels.get(selectedProtocol).canConnect();
     }
 
     public ConsoleOptionsFrontendPersister.ConsoleContext getConsoleContext() {

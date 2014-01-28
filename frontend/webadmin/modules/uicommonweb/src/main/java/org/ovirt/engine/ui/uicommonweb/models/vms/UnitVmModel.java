@@ -1359,7 +1359,17 @@ public class UnitVmModel extends Model {
         setDefaultHost(new NotChangableForVmInPoolListModel<VDS>());
         getDefaultHost().getSelectedItemChangedEvent().addListener(this);
 
-        setOSType(new NotChangableForVmInPoolListModel<Integer>());
+        setOSType(new NotChangableForVmInPoolListModel<Integer>() {
+            @Override
+            public void setSelectedItem(Integer value) {
+                if (!AsyncDataProvider.osNameExists(value)) {
+                    super.setSelectedItem(AsyncDataProvider.DEFAULT_OS_ID);
+                } else {
+                    super.setSelectedItem(value);
+                }
+            }
+        });
+
         getOSType().getSelectedItemChangedEvent().addListener(this);
 
         setFirstBootDevice(new NotChangableForVmInPoolListModel<EntityModel<BootSequence>>());
@@ -1550,8 +1560,7 @@ public class UnitVmModel extends Model {
             {
                 defaultHost_SelectedItemChanged(sender, args);
             }
-            else if (sender == getOSType())
-            {
+            else if (sender == getOSType()) {
                 oSType_SelectedItemChanged(sender, args);
                 getBehavior().oSType_SelectedItemChanged();
                 getVmInitModel().osTypeChanged(getOSType().getSelectedItem());

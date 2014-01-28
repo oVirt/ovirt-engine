@@ -127,6 +127,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameter
 import org.ovirt.engine.core.common.queries.gluster.GlusterServiceQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
+import org.ovirt.engine.ui.uicommonweb.MapWithDefaults;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -158,6 +159,8 @@ public final class AsyncDataProvider {
 
     private static final String GENERAL = "general"; //$NON-NLS-1$
 
+    public static final int DEFAULT_OS_ID = 0;
+
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
     private static HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues =
             new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
@@ -168,7 +171,7 @@ public final class AsyncDataProvider {
     private static String _defaultConfigurationVersion = null;
 
     // cached OS names
-    private static HashMap<Integer, String> osNames;
+    private static MapWithDefaults<Integer, String> osNames;
 
     // cached list of os ids
     private static List<Integer> osIds;
@@ -192,9 +195,8 @@ public final class AsyncDataProvider {
     // default OS per architecture
     private static HashMap<ArchitectureType, Integer> defaultOSes;
 
-
     // cached os's support for display types (given compatibility version)
-    private static Map<Integer, Map<Version, List<DisplayType>>> displayTypes;
+    private static MapWithDefaults<Integer, Map<Version, List<DisplayType>>> displayTypes;
 
     public static String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
@@ -1096,10 +1098,6 @@ public final class AsyncDataProvider {
         IdQueryParameters params = new IdQueryParameters(vmId);
         params.setRefresh(isRefresh);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllDisksByVmId, params, aQuery);
-    }
-
-    public static HashMap<Integer, String> getOsNames() {
-        return osNames;
     }
 
     public static HashMap<Integer, String> getOsUniqueOsNames() {
@@ -3323,7 +3321,9 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                osNames = (HashMap<Integer, String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                HashMap<Integer, String> result = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                String defaultValue = result.get(DEFAULT_OS_ID);
+                osNames = new MapWithDefaults<Integer, String>(result, defaultValue);
                 initOsIds();
             }
         };
@@ -3351,6 +3351,10 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsArchitectures), callback);
     }
 
+    public static boolean osNameExists(Integer osId) {
+        return osNames.keySet().contains(osId);
+    }
+
     public static String getOsName(Integer osId) {
         // can be null as a consequence of setItems on ListModel
         if (osId == null) {
@@ -3373,7 +3377,9 @@ public final class AsyncDataProvider {
         callback.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                displayTypes = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                Map<Integer, Map<Version, List<DisplayType>>> result =
+                        ((VdcQueryReturnValue) returnValue).getReturnValue();
+                displayTypes = new MapWithDefaults<Integer, Map<Version, List<DisplayType>>>(result, result.get(DEFAULT_OS_ID));
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes), callback);

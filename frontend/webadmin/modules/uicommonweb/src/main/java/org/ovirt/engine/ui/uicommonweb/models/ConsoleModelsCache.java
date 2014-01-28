@@ -57,20 +57,6 @@ public class ConsoleModelsCache {
      */
     public void updateVmCache(Iterable<VM> newItems) {
         updateCache(true, newItems);
-        Set<Guid> vmIds = new HashSet<Guid>();
-
-        if (newItems != null) {
-            for (VM vm : newItems) {
-                if (vmConsoles.containsKey(vm.getId())) {
-                    vmConsoles.get(vm.getId()).setVm(vm); // only update vm
-                } else {
-                    vmConsoles.put(vm.getId(), new VmConsolesImpl(vm, parentModel, consoleContext));
-                }
-                vmIds.add(vm.getId());
-            }
-        }
-
-        vmConsoles.keySet().retainAll(vmIds);
     }
 
     public void updatePoolCache(Iterable<VM> poolRepresentants) {
