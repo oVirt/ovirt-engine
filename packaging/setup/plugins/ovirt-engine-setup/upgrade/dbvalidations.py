@@ -23,6 +23,7 @@ import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+from otopi import constants as otopicons
 from otopi import util
 from otopi import plugin
 
@@ -56,6 +57,11 @@ class Plugin(plugin.PluginBase):
             '--database={database}'.format(
                 database=self.environment[
                     osetupcons.DBEnv.DATABASE
+                ],
+            ),
+            '--log={logfile}'.format(
+                logfile=self.environment[
+                    otopicons.CoreEnv.LOG_FILE_NAME
                 ],
             ),
         ]

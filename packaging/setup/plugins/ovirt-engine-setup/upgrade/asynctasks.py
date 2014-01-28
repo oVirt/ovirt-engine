@@ -24,6 +24,7 @@ import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+from otopi import constants as otopicons
 from otopi import util
 from otopi import plugin
 from otopi import base
@@ -123,6 +124,7 @@ class Plugin(plugin.PluginBase):
         rc, tasks, stderr = self.execute(
             args=(
                 osetupcons.FileLocations.OVIRT_ENGINE_TASKCLEANER,
+                '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
                 '-u', self.environment[osetupcons.DBEnv.USER],
                 '-s', self.environment[osetupcons.DBEnv.HOST],
                 '-p', str(self.environment[osetupcons.DBEnv.PORT]),

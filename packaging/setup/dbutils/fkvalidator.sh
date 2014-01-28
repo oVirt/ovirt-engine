@@ -69,7 +69,7 @@ validate_db_fks() {
            CMD="copy (select fk_violation,fk_status from fn_db_validate_fks(false,false) where fk_status=1) to stdout with csv;"
        fi
    fi
-   res="$(psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" -L ${LOGFILE} "${DATABASE}")"
+   res="$(psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" -L "${LOGFILE}" "${DATABASE}")"
    exit_code=$?
 
    out="$(echo "${res}" | cut -f1 -d,)"
