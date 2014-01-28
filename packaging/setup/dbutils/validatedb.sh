@@ -31,6 +31,7 @@ while [ -n "$1" ]; do
     shift
     case "${x}" in
         --log=*)
+            LOGFILE="${v}"
         ;;
         --user=*)
             USERNAME="-u ${v}"
@@ -60,6 +61,6 @@ done
 validationlist="fkvalidator.sh"
 
 for script in ${validationlist}; do
-        $dbutils/${script} ${USERNAME} ${SERVERNAME} ${PORT} ${DATABASE} -q ${extra_params} || error=1
+        $dbutils/${script} ${USERNAME} ${SERVERNAME} ${PORT} ${DATABASE} ${LOGFILE:+-l "$LOGFILE"} -q ${extra_params} || error=1
 done
 exit ${error}
