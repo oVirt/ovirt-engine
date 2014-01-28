@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -16,17 +16,34 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This abstract class holds helper methods for concrete command classes that require to add a VM and clone an image in
@@ -121,37 +138,91 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
 
     @Override
     protected boolean canDoAction() {
-        if (super.canDoAction()) {
-            for (DiskImage diskImage : getDiskImagesToBeCloned()) {
-                if (!checkImageConfiguration(diskImage)) {
-                    return false;
-                }
-            }
-            return true;
+        List<DiskImage> disksToCheck =
+                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getSourceVmFromDb().getId()), true, false, true);
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
+        if (!validate(diskImagesValidator.diskImagesNotLocked())) {
+            return false;
         }
-        return false;
+
+        Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(disksToCheck);
+        MultipleStorageDomainsValidator storageValidator =
+                new MultipleStorageDomainsValidator(getStoragePoolId(), storageIds);
+        if (!validate(storageValidator.allDomainsExistAndActive())) {
+            return false;
+        }
+
+        if (!validate(new VmValidator(getSourceVmFromDb()).vmNotLocked())) {
+            return false;
+        }
+
+        // Run all checks for AddVm, now that it is determined snapshot exists
+        if (!super.canDoAction()) {
+            return false;
+        }
+
+        for (DiskImage diskImage : getDiskImagesToBeCloned()) {
+            if (!checkImageConfiguration(diskImage)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    protected abstract boolean checkImageConfiguration(DiskImage diskImage);
+    protected boolean checkImageConfiguration(DiskImage diskImage) {
+        return ImagesHandler.checkImageConfiguration(destStorages.get(diskInfoDestinationMap.get(diskImage.getId())
+                .getStorageIds()
+                .get(0))
+                .getStorageStaticData(),
+                diskImage,
+                getReturnValue().getCanDoActionMessages());
+    }
 
     protected DiskImage cloneDiskImage(Guid newVmId,
-            Guid storageDomainId,
-            Guid newImageGroupId,
-            Guid newImageGuid,
-            DiskImage srcDiskImage) {
-        DiskImage retDiskImage = DiskImage.copyOf(srcDiskImage);
-        retDiskImage.setImageId(newImageGuid);
-        retDiskImage.setParentId(Guid.Empty);
-        retDiskImage.setImageTemplateId(Guid.Empty);
-        retDiskImage.setVmSnapshotId(getVmSnapshotId());
-        retDiskImage.setId(newImageGroupId);
-        retDiskImage.setLastModifiedDate(new Date());
-        retDiskImage.setvolumeFormat(srcDiskImage.getVolumeFormat());
-        retDiskImage.setVolumeType(srcDiskImage.getVolumeType());
+                                       Guid storageDomainId,
+                                       Guid newImageGroupId,
+                                       Guid newImageGuid,
+                                       DiskImage srcDiskImage) {
+
+        DiskImage clonedDiskImage = DiskImage.copyOf(srcDiskImage);
+        clonedDiskImage.setImageId(newImageGuid);
+        clonedDiskImage.setParentId(Guid.Empty);
+        clonedDiskImage.setImageTemplateId(Guid.Empty);
+        clonedDiskImage.setVmSnapshotId(getVmSnapshotId());
+        clonedDiskImage.setId(newImageGroupId);
+        clonedDiskImage.setLastModifiedDate(new Date());
+        clonedDiskImage.setvolumeFormat(srcDiskImage.getVolumeFormat());
+        clonedDiskImage.setVolumeType(srcDiskImage.getVolumeType());
         ArrayList<Guid> storageIds = new ArrayList<Guid>();
         storageIds.add(storageDomainId);
-        retDiskImage.setStorageIds(storageIds);
-        return retDiskImage;
+        clonedDiskImage.setStorageIds(storageIds);
+
+        // If volume information was changed at client , use its volume information.
+        // If volume information was not changed at client - use the volume information of the ancestral image
+        if (diskInfoDestinationMap != null && diskInfoDestinationMap.containsKey(srcDiskImage.getId())) {
+            DiskImage diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getId());
+            if (volumeInfoChanged(diskImageFromClient, srcDiskImage)) {
+                changeVolumeInfo(clonedDiskImage, diskImageFromClient);
+            } else {
+                DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
+                changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
+            }
+        } else {
+            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
+            changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
+        }
+
+        return clonedDiskImage;
+    }
+
+    private boolean volumeInfoChanged(DiskImage diskImageFromClient, DiskImage srcDiskImage) {
+        return (diskImageFromClient.getVolumeFormat() != srcDiskImage.getVolumeFormat() || diskImageFromClient.getVolumeType() != srcDiskImage.getVolumeType());
+    }
+
+    protected void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {
+        clonedDiskImage.setvolumeFormat(diskImageFromClient.getVolumeFormat());
+        clonedDiskImage.setVolumeType(diskImageFromClient.getVolumeType());
     }
 
     /**
@@ -238,7 +309,11 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
      *
      * @return
      */
-    protected abstract Collection<DiskImage> getDiskImagesToBeCloned();
+    protected Collection<DiskImage> getDiskImagesToBeCloned() {
+        return getDiskImagesFromConfiguration();
+    }
+
+    protected abstract Collection<DiskImage> getDiskImagesFromConfiguration();
 
     protected DiskImage getDiskImageToRemoveByParam(MoveOrCopyImageGroupParameters param) {
         Guid imageGroupId = param.getDestImageGroupId();
@@ -257,4 +332,164 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         getVmStaticDao().update(getVm().getStaticData());
     }
 
+    @Override
+    protected boolean checkTemplateImages(List<String> reasons) {
+        return true;
+    }
+
+    @Override
+    protected abstract Guid getStoragePoolIdFromSourceImageContainer();
+
+    @Override
+    protected boolean shouldCheckSpaceInStorageDomains() {
+        return !getImagesToCheckDestinationStorageDomains().isEmpty();
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        permissionList.add(new PermissionSubject(getVdsGroupId(),
+                VdcObjectType.VdsGroups,
+                getActionType().getActionGroup()));
+        for (DiskImage disk : getParameters().getDiskInfoDestinationMap().values()) {
+            if (disk.getStorageIds() != null && !disk.getStorageIds().isEmpty()) {
+                permissionList.add(new PermissionSubject(disk.getStorageIds().get(0),
+                        VdcObjectType.Storage, ActionGroup.CREATE_DISK));
+            }
+        }
+        addPermissionSubjectForAdminLevelProperties(permissionList);
+        return permissionList;
+    }
+
+    @Override
+    protected List<VmNic> getVmInterfaces() {
+        if (_vmInterfaces == null) {
+            _vmInterfaces = Entities.<VmNic, VmNetworkInterface> upcast(getVmFromConfiguration().getInterfaces());
+        }
+        return _vmInterfaces;
+    }
+
+    @Override
+    protected void addVmNetwork() {
+        VnicProfileHelper vnicProfileHelper =
+                new VnicProfileHelper(getVdsGroupId(),
+                        getStoragePoolId(),
+                        getVdsGroup().getcompatibility_version(),
+                        AuditLogType.ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES);
+
+        for (VmNetworkInterface iface : getVmFromConfiguration().getInterfaces()) {
+            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
+        }
+
+        vnicProfileHelper.auditInvalidInterfaces(getVmName());
+        super.addVmNetwork();
+    }
+
+    @Override
+    protected boolean addVmImages() {
+        int numberOfStartedCopyTasks = 0;
+        try {
+            if (!getDiskImagesFromConfiguration().isEmpty()) {
+                lockEntities();
+                for (DiskImage diskImage : getDiskImagesFromConfiguration()) {
+                    // For illegal image check if it was snapshot as illegal (therefore
+                    // still exists at DB, or was it erased after snapshot - therefore the
+                    // query returned to UI an illegal image)
+                    if (diskImage.getImageStatus() == ImageStatus.ILLEGAL) {
+                        DiskImage snapshotImageInDb =
+                                getDiskImageDao().getSnapshotById(diskImage.getImageId());
+                        if (snapshotImageInDb == null) {
+                            // If the snapshot diskImage is null, it means the disk was probably
+                            // erased after the snapshot was created.
+                            // Create a disk to reflect the fact the disk existed during snapshot
+                            saveIllegalDisk(diskImage);
+                        }
+                    } else {// Only legal images can be copied
+                        copyDiskImage(diskImage,
+                                diskImage.getStorageIds().get(0),
+                                diskInfoDestinationMap.get(diskImage.getId()).getStorageIds().get(0),
+                                getActionType());
+                        numberOfStartedCopyTasks++;
+                    }
+                }
+            }
+        } finally {
+            // If no tasks were created, endAction will not be called, but
+            // it is still needed to unlock the entities
+            if (numberOfStartedCopyTasks == 0) {
+                unlockEntities();
+            }
+        }
+        return true;
+    }
+
+    private void saveIllegalDisk(final DiskImage diskImage) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                // Allocating new IDs for image and disk as it's possible
+                // that more than one clone will be made from this source
+                // So this is required to avoid PK violation at DB.
+                diskImage.setImageId(Guid.newGuid());
+                diskImage.setId(Guid.newGuid());
+                diskImage.setParentId(Guid.Empty);
+                diskImage.setImageTemplateId(Guid.Empty);
+
+                ImagesHandler.setDiskAlias(diskImage, getVm());
+                ImagesHandler.addDiskImage(diskImage, getVmId());
+                return null;
+            }
+        });
+    }
+
+    @Override
+    protected void copyVmDevices() {
+        List<VmDevice> devices = new ArrayList<VmDevice>(getVmFromConfiguration().getVmUnamagedDeviceList());
+        devices.addAll(getVmFromConfiguration().getManagedVmDeviceMap().values());
+        VmDeviceUtils.copyVmDevices(getSourceVmId(),
+                getVmId(),
+                getVm(),
+                getVm().getStaticData(),
+                true,
+                devices,
+                getSrcDeviceIdToTargetDeviceIdMapping(),
+                getParameters().isSoundDeviceEnabled(),
+                getParameters().isConsoleEnabled(),
+                isVirtioScsiEnabled(),
+                isBalloonEnabled(),
+                false);
+    }
+
+    @Override
+    protected int getNeededDiskSize(Guid storageDomainId) {
+        // Get the needed disk size by accumulating disk size
+        // of images on a given storage domain
+        int result = 0;
+        for (DiskImage img : getDiskImagesFromConfiguration()) {
+            if (img.getImageStatus() != ImageStatus.ILLEGAL) {
+                if (img.getStorageIds().get(0).equals(storageDomainId)) {
+                    result = result + (int) Math.ceil(img.getActualSize());
+                }
+            }
+        }
+        return result;
+    }
+
+    protected abstract VM getVmFromConfiguration();
+
+    protected abstract Guid getSourceVmId();
+
+    @Override
+    protected VdcActionType getChildActionType() {
+        return VdcActionType.CopyImageGroup;
+    }
+
+    protected abstract VM getSourceVmFromDb();
+
+    protected void unlockEntities() {
+
+    }
+    protected void lockEntities() {
+
+    }
 }

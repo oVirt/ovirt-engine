@@ -101,7 +101,7 @@ public final class VdcActionUtils {
         Map<Enum<?>, Set<VdcActionType>> vmMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
         vmMatrix.put(
                 VMStatus.WaitForLaunch,
-                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.AddVmTemplate, VdcActionType.RemoveVm,
                         VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
@@ -109,13 +109,13 @@ public final class VdcActionUtils {
                         VdcActionType.ExtendImageSize, VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.Up,
-                EnumSet.of(VdcActionType.RunVm,
-                        VdcActionType.RunVmOnce, VdcActionType.AddVmTemplate, VdcActionType.RemoveVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
+                        VdcActionType.RunVmOnce, VdcActionType.AddVmTemplate, VdcActionType.RemoveVm, VdcActionType.CloneVm,
                         VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm,
                         VdcActionType.CancelMigrateVm));
         vmMatrix.put(
                 VMStatus.PoweringDown,
-                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce,
                         VdcActionType.AddVmTemplate, VdcActionType.RemoveVm, VdcActionType.MigrateVm,
                         VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm,
@@ -125,7 +125,7 @@ public final class VdcActionUtils {
                         VdcActionType.ExtendImageSize, VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.PoweringUp,
-                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.AddVmTemplate, VdcActionType.RemoveVm,
                         VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
@@ -133,7 +133,7 @@ public final class VdcActionUtils {
                         VdcActionType.ExtendImageSize));
         vmMatrix.put(
                 VMStatus.RebootInProgress,
-                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.AddVmTemplate, VdcActionType.RemoveVm,
                         VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
@@ -141,7 +141,7 @@ public final class VdcActionUtils {
                         VdcActionType.ExtendImageSize, VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.MigratingFrom,
-                EnumSet.of(VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.AddVmTemplate, VdcActionType.RemoveVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.ExportVm,
                         VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
@@ -150,21 +150,21 @@ public final class VdcActionUtils {
                         VdcActionType.ExtendImageSize, VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.Suspended,
-                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.AddVmTemplate,
+                EnumSet.of(VdcActionType.HibernateVm, VdcActionType.AddVmTemplate, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.MigrateVm, VdcActionType.ExportVm, VdcActionType.MoveVm,
                         VdcActionType.ImportVm, VdcActionType.ChangeDisk, VdcActionType.RemoveVm,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm, VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.Paused,
-                EnumSet.of(VdcActionType.RemoveVm, VdcActionType.HibernateVm,
+                EnumSet.of(VdcActionType.RemoveVm, VdcActionType.HibernateVm, VdcActionType.CloneVm,
                         VdcActionType.AddVmTemplate, VdcActionType.RunVmOnce, VdcActionType.ExportVm,
                         VdcActionType.MoveVm, VdcActionType.ImportVm,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm, VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.SavingState,
-                EnumSet.of(VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
@@ -174,7 +174,7 @@ public final class VdcActionUtils {
                         VdcActionType.ExtendImageSize, VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.PreparingForHibernate,
-                EnumSet.of(VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
@@ -184,7 +184,7 @@ public final class VdcActionUtils {
                         VdcActionType.ExtendImageSize, VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.RestoringState,
-                EnumSet.of(VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
@@ -217,10 +217,11 @@ public final class VdcActionUtils {
                         VdcActionType.RemoveVmInterface,
                         VdcActionType.CancelMigrateVm,
                         VdcActionType.ExtendImageSize,
-                        VdcActionType.RebootVm));
+                        VdcActionType.RebootVm,
+                        VdcActionType.CloneVm));
         vmMatrix.put(
                 VMStatus.ImageLocked,
-                EnumSet.of(VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
@@ -230,7 +231,7 @@ public final class VdcActionUtils {
                         VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.NotResponding,
-                EnumSet.of(VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.HibernateVm, VdcActionType.MigrateVm,
                         VdcActionType.RemoveVm, VdcActionType.AddVmTemplate, VdcActionType.ExportVm,
                         VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
@@ -240,7 +241,7 @@ public final class VdcActionUtils {
 
         vmMatrix.put(
                 VMStatus.Unassigned,
-                EnumSet.of(VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
@@ -250,7 +251,7 @@ public final class VdcActionUtils {
                         VdcActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.Unknown,
-                EnumSet.of(VdcActionType.RunVm,
+                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,

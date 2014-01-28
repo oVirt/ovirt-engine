@@ -105,6 +105,8 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     }
 
     public void setVm(VM value) {
+        // to make the getVm() use the new value
+        vm = null;
         _vmStatic = value.getStaticData();
     }
 

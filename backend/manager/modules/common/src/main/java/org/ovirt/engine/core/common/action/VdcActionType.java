@@ -51,6 +51,7 @@ public enum VdcActionType {
     CancelMigrateVm(41, ActionGroup.MIGRATE_VM, false, QuotaDependency.NONE),
     ActivateDeactivateVmNic(42, QuotaDependency.NONE),
     AddVmFromSnapshot(52, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
+    CloneVm(53, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     ImportVmFromConfiguration(43, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     UpdateVmVersion(44, QuotaDependency.NONE),
     // VdsCommands

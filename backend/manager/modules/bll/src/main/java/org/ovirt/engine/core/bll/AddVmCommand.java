@@ -188,7 +188,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 .toString();
     }
 
-    private String getDiskSharedLockMessage() {
+    protected String getDiskSharedLockMessage() {
         if (cachedDiskSharedLockMessage == null) {
             cachedDiskSharedLockMessage = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM.name())
             .append(String.format("$VmName %1$s", getVmName()))
