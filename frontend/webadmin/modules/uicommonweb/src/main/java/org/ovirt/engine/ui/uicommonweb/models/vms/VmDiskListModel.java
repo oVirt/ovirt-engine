@@ -496,11 +496,14 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         MoveDiskModel model = new MoveDiskModel();
         setWindow(model);
-        model.setVmId(vm.getStatus() == VMStatus.Up ? vm.getId() : null);
-        model.setWarningAvailable(vm.getStatus() == VMStatus.Up);
-        model.setMessage(vm.getStatus() == VMStatus.Up ?
-                ConstantsManager.getInstance().getConstants().liveStorageMigrationWarning() :
-                null);
+        boolean vmIsUp = vm.getStatus() == VMStatus.Up;
+        model.setVmUp(vmIsUp);
+        model.setWarningAvailable(vmIsUp);
+        if (vmIsUp) {
+            model.setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationWarning());
+            model.setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationStorageFilteringNote());
+        }
+
         model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
         model.setHashName("move_disk"); //$NON-NLS-1$
         model.setIsSourceStorageDomainNameAvailable(true);
