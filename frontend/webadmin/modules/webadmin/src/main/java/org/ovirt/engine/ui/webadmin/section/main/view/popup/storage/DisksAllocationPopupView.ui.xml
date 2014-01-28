@@ -9,7 +9,7 @@
 			color: #CD2127;
             position: absolute;
             bottom: 0;
-            height: 35px;
+            height: 50px;
             overflow: auto;
 		}
 	</ui:style>
@@ -17,7 +17,7 @@
 	<d:SimpleDialogPanel width="540px" height="400px">
 		<d:content>
 			<g:FlowPanel>
-				<w:DisksAllocationView ui:field="disksAllocationView" listHeight="245px" listWidth="525px" showSource="true" />
+				<w:DisksAllocationView ui:field="disksAllocationView" listHeight="230px" listWidth="525px" showSource="true" />
                 <g:FlowPanel ui:field="messagePanel" visible="false" addStyleNames="{style.messagePanel}" />
 			</g:FlowPanel>
 		</d:content>

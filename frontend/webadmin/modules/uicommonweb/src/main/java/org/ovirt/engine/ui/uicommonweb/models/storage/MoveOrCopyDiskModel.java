@@ -62,16 +62,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
     }
 
-    private Guid vmId;
-
-    public Guid getVmId() {
-        return vmId;
-    }
-
-    public void setVmId(Guid vmId) {
-        this.vmId = vmId;
-    }
-
     // Disks that cannot be moved/copied
     protected List<String> problematicDisks = new ArrayList<String>();
 
@@ -155,6 +145,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             ArrayList<StorageDomain> destStorageDomains =
                     Linq.except(getActiveStorageDomains(), sourceStorageDomains);
             destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getStoragePoolId());
+
+            if (isFilterDestinationDomainsBySourceType()) {
+                destStorageDomains = filterDestinationDomainsByDiskStorageSubtype(destStorageDomains, diskImage);
+            }
 
             // Filter storage domains with missing template disk
             boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(Guid.Empty);
@@ -316,6 +310,20 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         params.setQuotaId(disk.getQuotaId());
 
         parameters.add(params);
+    }
+
+    protected ArrayList<StorageDomain> filterDestinationDomainsByDiskStorageSubtype(List<StorageDomain> destDomains, DiskImage disk) {
+        ArrayList<StorageDomain> filteredDomains = new ArrayList<StorageDomain>();
+        for (StorageDomain sd : destDomains) {
+            if (sd.getStorageType().getStorageSubtype() == disk.getStorageTypes().get(0).getStorageSubtype()) {
+                filteredDomains.add(sd);
+            }
+        }
+        return filteredDomains;
+    }
+
+    protected boolean isFilterDestinationDomainsBySourceType() {
+        return false;
     }
 
     @Override

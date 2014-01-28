@@ -92,6 +92,24 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
                 destStorageDomainGuid);
     }
 
+
+    boolean isVmUp;
+
+    // If the VM is up we are in fact performing a live storage migration, in the case the destination storage domain
+    // to move to has to be the same type (file/block) of the source storage domain
+    public boolean isVmUp() {
+        return isVmUp;
+    }
+
+    public void setVmUp(boolean isVmUp) {
+        this.isVmUp = isVmUp;
+    }
+
+    @Override
+    protected boolean isFilterDestinationDomainsBySourceType() {
+        return isVmUp;
+    }
+
     @Override
     protected void onExecute() {
         super.onExecute();
