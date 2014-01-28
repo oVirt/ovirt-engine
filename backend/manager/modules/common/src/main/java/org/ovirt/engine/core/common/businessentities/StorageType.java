@@ -36,6 +36,10 @@ public enum StorageType implements Identifiable {
         return this.value;
     }
 
+    public Subtype getStorageSubtype() {
+        return subtype;
+    }
+
     public boolean isConcreteStorageType() {
         return subtype != Subtype.NONE;
     }

@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -184,6 +185,27 @@ public class LiveMigrateVmDisksCommandTest {
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL.toString()));
+    }
+
+    @Test
+    public void canDoActionInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes() {
+        createParameters();
+
+        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
+        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+        srcStorageDomain.setStorageType(StorageType.ISCSI);
+
+        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
+        dstStorageDomain.setStatus(StorageDomainStatus.Active);
+        srcStorageDomain.setStorageType(StorageType.NFS);
+
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DESTINATION_AND_SOURCE_STORAGE_SUB_TYPES_DIFFERENT.toString()));
     }
 
     @Test
