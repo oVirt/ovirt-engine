@@ -111,4 +111,16 @@ public class SyntaxCheckerTest {
                 query);
     }
 
+    @Test
+    public void testTemplates() {
+        SyntaxChecker chkr = new SyntaxChecker(100);
+
+        ISyntaxChecker curSyntaxChecker = SyntaxCheckerFactory.CreateBackendSyntaxChecker("foo");
+
+        SyntaxContainer res = curSyntaxChecker.analyzeSyntaxState("Templates: ", true);
+        String query = chkr.generateQueryFromSyntaxContainer(res, true);
+        Assert.assertEquals(
+                "SELECT * FROM ((SELECT * FROM vm_templates_view )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0",
+                query);
+    }
 }
