@@ -95,11 +95,11 @@ public class ConfigurationTest {
     @Test
     public void testGetFile() throws Exception {
         File file = writeConf(
-            "file=/file"
+                "file=file"
         );
         Configuration config = Configuration.loadFile(file);
         assertNotNull(config);
-        assertEquals(new File("/file"), config.getFile("file"));
+        assertEquals(new File("file"), config.getFile("file"));
     }
 
     /**
@@ -347,13 +347,13 @@ public class ConfigurationTest {
     @Test
     public void testTypedFile() throws Exception {
         File file = writeConf(
-            "a=/b"
+                "a=b"
         );
         Configuration config = Configuration.loadFile(file);
         assertNotNull(config);
         TypedFile view = config.getView(TypedFile.class);
         assertNotNull(view);
-        assertEquals(new File("/b"), view.getA());
+        assertEquals(new File("b"), view.getA());
     }
 
     public interface TypedFile {

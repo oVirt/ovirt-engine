@@ -17,8 +17,12 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
         final String directoryName = getParameters().getDomain();
         final ExternalId id = getParameters().getId();
         final Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
-        final DirectoryGroup group = directory.findGroup(id);
-        getQueryReturnValue().setReturnValue(group);
+        if (directory == null) {
+            getQueryReturnValue().setSucceeded(false);
+        } else {
+            final DirectoryGroup group = directory.findGroup(id);
+            getQueryReturnValue().setReturnValue(group);
+        }
     }
 
 }

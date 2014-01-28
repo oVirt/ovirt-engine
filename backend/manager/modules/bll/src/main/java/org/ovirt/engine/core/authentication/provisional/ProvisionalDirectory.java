@@ -27,6 +27,11 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * It will exist only while the engine is migrated to use the new directory interfaces, then it will be removed.
  */
 public class ProvisionalDirectory implements Directory {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
     private Log log = LogFactory.getLog(ProvisionalDirectory.class);
 
     /**

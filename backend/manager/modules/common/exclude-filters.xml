@@ -59,20 +59,6 @@
        <Bug code="Se"/>
      </Match>
 
- <!--
-      findbugs complains that getBoolean returns null.
-      In the method usages there are null checks.
-
-      findbugs reason:
-      NP: Method with Boolean return type returns explicit null (NP_BOOLEAN_RETURN_NULL)
-     -->
-
-     <Match>
-       <Class name="org.ovirt.engine.core.authentication.Configuration" />
-       <Method name="getBoolean"/>
-       <Bug code="NP"/>
-     </Match>
-
      <!--
       findbugs complains that file is an unwritten field.
       This is meant to be - the file field is initialized at the CTOR

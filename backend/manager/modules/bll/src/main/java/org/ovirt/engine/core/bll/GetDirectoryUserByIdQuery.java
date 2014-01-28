@@ -17,8 +17,12 @@ public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> ext
         String directoryName = getParameters().getDomain();
         ExternalId id = getParameters().getId();
         Directory directory = DirectoryManager.getInstance().getDirectory(directoryName);
-        DirectoryUser user = directory.findUser(id);
-        getQueryReturnValue().setReturnValue(user);
+        if (directory == null) {
+            getQueryReturnValue().setSucceeded(false);
+        } else {
+            DirectoryUser user = directory.findUser(id);
+            getQueryReturnValue().setReturnValue(user);
+        }
     }
 
 }

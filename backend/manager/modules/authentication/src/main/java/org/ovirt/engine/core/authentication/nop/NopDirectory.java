@@ -12,6 +12,10 @@ import org.ovirt.engine.core.common.utils.ExternalId;
 
 public class NopDirectory implements Directory {
     /**
+     *
+     */
+    private static final long serialVersionUID = 3719648746441818198L;
+    /**
      * The name of the directory.
      */
     private String name;

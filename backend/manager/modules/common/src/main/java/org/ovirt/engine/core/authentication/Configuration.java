@@ -208,12 +208,16 @@ public abstract class Configuration {
         return getKeys().isEmpty();
     }
 
-    public Boolean getBoolean(String key) {
+    public boolean getBoolean(String key, boolean defaultValueIfNull) {
         String image = getString(key);
         if (image == null) {
-            return null;
+            return defaultValueIfNull;
         }
         return Boolean.parseBoolean(image);
+    }
+
+    public boolean getBoolean(String key) {
+        return getBoolean(key, false);
     }
 
     public Integer getInteger(String key) {

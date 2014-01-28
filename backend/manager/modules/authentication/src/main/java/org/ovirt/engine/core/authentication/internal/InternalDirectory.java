@@ -16,6 +16,11 @@ import org.ovirt.engine.core.common.utils.ExternalId;
  */
 public class InternalDirectory implements Directory {
     /**
+     *
+     */
+    private static final long serialVersionUID = 6614140186031169227L;
+
+    /**
      * The name of the directory:
      */
     private String name;

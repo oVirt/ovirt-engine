@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.authentication;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ExternalId;
@@ -8,7 +9,7 @@ import org.ovirt.engine.core.common.utils.ExternalId;
  * A directory is an object that manages a collection of users and groups, usually stored in an external system like an
  * LDAP database.
  */
-public interface Directory {
+public interface Directory extends Serializable {
     /**
      * Returns the name of the directory.
      *

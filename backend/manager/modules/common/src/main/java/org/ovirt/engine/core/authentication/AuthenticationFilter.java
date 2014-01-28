@@ -5,6 +5,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -60,9 +61,12 @@ public class AuthenticationFilter implements Filter {
                 if (profiles == null) {
                     profiles = new ArrayList<AuthenticationProfile>(1);
                     for (AuthenticationProfile profile : AuthenticationProfileManager.getInstance().getProfiles()) {
-                        Authenticator authenticator = profile.getAuthenticator();
-                        if (authenticator instanceof NegotiatingAuthenticator) {
-                            profiles.add(0, profile);
+                        if (profile != null) {
+                            Authenticator authenticator = profile.getAuthenticator();
+                            if (authenticator instanceof NegotiatingAuthenticator) {
+                                profiles.add(0, profile);
+                            }
+
                         }
                     }
                 }
@@ -113,6 +117,12 @@ public class AuthenticationFilter implements Filter {
         while (!stack.isEmpty()) {
             // Resume the negotiation with the profile at the top of the stack:
             AuthenticationProfile profile = AuthenticationProfileManager.getInstance().getProfile(stack.peek());
+            if (profile == null) {
+                session.invalidate();
+                rsp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
             NegotiatingAuthenticator authenticator = (NegotiatingAuthenticator) profile.getAuthenticator();
             NegotiationResult result = authenticator.negotiate(req, rsp);
 

@@ -6,12 +6,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
@@ -42,12 +42,12 @@ public abstract class Manager<O> {
     /**
      * Here we store factories indexed by type.
      */
-    private Map<String, Factory<O>> factoriesByType;
+    private ConcurrentMap<String, Factory<O>> factoriesByType;
 
     /**
      * Here we store the objects, indexed by name.
      */
-    private Map<String, O> objectsByName;
+    private ConcurrentMap<String, O> objectsByName;
 
     /**
      * We need to remember which class loaders have already been used in order to avoid instantiating factories multiple
@@ -59,10 +59,8 @@ public abstract class Manager<O> {
         // Save the factory interface class:
         this.factoryInterface = factoryInterface;
 
-        // Create the indexes for factories and objects (note that these don't need to be concurrent hash maps because
-        // we use the copy on write technique to avoid synchronization issues):
-        factoriesByType = new HashMap<String, Factory<O>>();
-        objectsByName = new HashMap<String, O>();
+        factoriesByType = new ConcurrentHashMap<String, Factory<O>>();
+        objectsByName = new ConcurrentHashMap<String, O>();
 
         // Create the set of already use class visitedClassLoaders:
         visitedClassLoaders = new HashSet<ClassLoader>();
@@ -74,10 +72,8 @@ public abstract class Manager<O> {
      *
      * @param factory the factory to register
      */
-    public synchronized void registerFactory(Factory<O> factory) {
-        HashMap<String, Factory<O>> newFactories = new HashMap<String, Factory<O>>(factoriesByType);
-        newFactories.put(factory.getType(), factory);
-        factoriesByType = newFactories;
+    public void registerFactory(Factory<O> factory) {
+        factoriesByType.put(factory.getType(), factory);
     }
 
     /**
@@ -202,10 +198,12 @@ public abstract class Manager<O> {
         // the files are processed, so it is better to sort them so that objects will always be created in the same
         // order regardless of how the filesystem decides to store the entries of the directory:
         File[] files = directory.listFiles();
-        sort(files);
-        for (File file : files) {
-            if (file.getName().endsWith(".conf")) {
-                loadFile(file);
+        if (files != null) {
+            sort(files);
+            for (File file : files) {
+                if (file.getName().endsWith(".conf")) {
+                    loadFile(file);
+                }
             }
         }
     }
@@ -230,8 +228,8 @@ public abstract class Manager<O> {
         }
 
         // Check if the object has been explicitly disabled, if it is then return immediately:
-        Boolean enabled = config.getBoolean(ENABLED_PARAMETER);
-        if (enabled != null && !enabled.booleanValue()) {
+        Boolean enabled = config.getBoolean(ENABLED_PARAMETER, false);
+        if (!enabled.booleanValue()) {
             return;
         }
 
@@ -342,16 +340,14 @@ public abstract class Manager<O> {
      * @param name th ename of the object to register
      * @param object the object to register
      */
-    protected synchronized void registerObject(String name, O object) {
-        HashMap<String, O> newObjects = new HashMap<String, O>(objectsByName);
-        newObjects.put(name, object);
-        objectsByName = newObjects;
+    protected void registerObject(String name, O object) {
+        objectsByName.put(name, object);
     }
 
     /**
      * Forget all the factories and objects.
      */
-    public synchronized void clear() {
+    public void clear() {
         factoriesByType.clear();
         objectsByName.clear();
     }
