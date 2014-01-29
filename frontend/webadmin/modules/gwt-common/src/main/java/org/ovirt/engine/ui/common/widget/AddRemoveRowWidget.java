@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -88,11 +89,17 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             return;
         }
 
-        for (T value : modelItems) {
-            addEntry(value);
+        if (modelItems.isEmpty()) {
+            T ghostValue = addGhostEntry().getFirst();
+            modelItems.add(ghostValue);
+        } else {
+            Iterator<T> i = modelItems.iterator();
+            while (i.hasNext()) {
+                T value = i.next();
+                addEntry(value, !i.hasNext());
+            }
         }
-        T additionalValue = addGhostEntry().getFirst();
-        modelItems.add(additionalValue);
+
     }
 
     @Override
@@ -121,15 +128,15 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
     private Pair<T, V> addGhostEntry() {
         T value = createGhostValue();
-        V widget = addEntry(value);
+        V widget = addEntry(value, true);
         return new Pair<T, V>(value, widget);
     }
 
-    private V addEntry(T value) {
+    private V addEntry(T value, boolean lastItem) {
         final V widget = createWidget(value);
         Pair<T, V> item = new Pair<T, V>(value, widget);
         items.add(item);
-        PushButton button = createButton(item);
+        PushButton button = createButton(item, lastItem);
 
         AddRemoveRowPanel entry = new AddRemoveRowPanel(widget, button);
         contentPanel.add(entry);
@@ -160,22 +167,21 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         removeWidget(item.getSecond());
     }
 
-    private PushButton createButton(final Pair<T, V> item) {
+    private PushButton createButton(final Pair<T, V> item, boolean plusButton) {
         final T value = item.getFirst();
         final V widget = item.getSecond();
 
-        boolean ghostItem = isGhost(value);
         final PushButton button =
-                new PushButton(new Image(ghostItem ? resources.increaseIcon() : resources.decreaseIcon()));
+                new PushButton(new Image(plusButton ? resources.increaseIcon() : resources.decreaseIcon()));
         button.addStyleName(style.buttonStyle());
-        button.setEnabled(!ghostItem);
+        button.setEnabled(!isGhost(value));
 
-        button.addClickHandler(ghostItem ?
+        button.addClickHandler(plusButton ?
                 new ClickHandler() {
 
                     @Override
                     public void onClick(ClickEvent event) {
-                        getEntry(widget).swapButton(createButton(item));
+                        getEntry(widget).swapButton(createButton(item, false));
                         Pair<T, V> item = addGhostEntry();
                         onAdd(item.getFirst(), item.getSecond());
                     }
