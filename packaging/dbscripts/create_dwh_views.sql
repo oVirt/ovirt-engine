@@ -13,6 +13,7 @@ AS
 SELECT     	id AS datacenter_id,
 			name AS datacenter_name,
 			description AS datacenter_description,
+			is_local AS is_local_storage,
 			_create_date AS create_date,
             _update_date AS update_date
 FROM        storage_pool
