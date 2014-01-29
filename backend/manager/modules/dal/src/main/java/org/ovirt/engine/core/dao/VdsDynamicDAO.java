@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAwareDao<Guid, VDSStatus>, MassOperationsDao<VdsDynamic, Guid> {
+public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAwareDao<Guid, VDSStatus>, MassOperationsDao<VdsDynamic, Guid>, CheckedUpdate<VdsDynamic> {
 
    /**
      * Update entity net_config_dirty field
@@ -35,4 +35,5 @@ public interface VdsDynamicDAO extends GenericDao<VdsDynamic, Guid>, StatusAware
      * @param controlledByPmPolicy - a new value for the flag
      */
     void updateVdsDynamicPowerManagementPolicyFlag(Guid id, boolean controlledByPmPolicy);
+
 }

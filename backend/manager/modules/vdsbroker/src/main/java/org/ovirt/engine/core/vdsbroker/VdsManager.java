@@ -370,7 +370,7 @@ public class VdsManager {
      * @param dynamicData
      */
     public void updateDynamicData(VdsDynamic dynamicData) {
-        DbFacade.getInstance().getVdsDynamicDao().update(dynamicData);
+        DbFacade.getInstance().getVdsDynamicDao().updateIfNeeded(dynamicData);
     }
 
     /**

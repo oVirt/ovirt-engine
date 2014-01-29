@@ -14,6 +14,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,6 +28,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  */
 public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VdsDynamic, Guid> implements VdsDynamicDAO {
+
+    private static Log log = LogFactory.getLog(VdsDynamicDAODbFacadeImpl.class);
 
     public VdsDynamicDAODbFacadeImpl() {
         super("VdsDynamic");
@@ -261,5 +265,15 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
     @Override
     protected RowMapper<VdsDynamic> createEntityRowMapper() {
         return VdcDynamicRowMapper.instance;
+    }
+
+    @Override
+    public void updateIfNeeded(VdsDynamic vdsDynamic) {
+        VdsDynamic dbData = get(vdsDynamic.getId());
+        if (!dbData.equals(vdsDynamic)) {
+            update(vdsDynamic);
+        } else {
+            log.debug("Ignored an unneeded update of VdsDynamic");
+        }
     }
 }
