@@ -365,7 +365,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         setNetworkStaticDetailsStyle(false);
 
         windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
-        windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
+        networkStartOnBootEditor.addStyleName(customizableStyle.primaryOption());
+        networkDhcpEditor.addStyleName(customizableStyle.primaryOption());
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
         hostnameEditor.addStyleName(customizableStyle.primaryOption());
         domainEditor.addStyleName(customizableStyle.primaryOption());
@@ -381,7 +382,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         customScriptEditor.setContentWidgetStyleName(customizableStyle.customScript());
 
         authenticationExpanderContent.addStyleName(customizableStyle.expanderContent());
-        networkExpanderContent.addStyleName(customizableStyle.expanderContent());
         customScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
     }
 
