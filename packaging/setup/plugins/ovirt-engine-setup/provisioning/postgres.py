@@ -455,6 +455,10 @@ class Plugin(plugin.PluginBase):
                     false=_('Manual'),
                     default=True,
                 )
+            else:
+                self.environment[
+                    osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+                ] = False
 
         self._enabled = self.environment[
             osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
