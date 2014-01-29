@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -41,6 +42,10 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
     @Override
     protected boolean canDoAction() {
+        if (!super.canDoAction()) {
+            return false;
+        }
+
         if (!validate(linkedToTemplate())) {
             return false;
         }
@@ -68,21 +73,23 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        Version clusterCompatibilityVersion = getVdsGroup().getcompatibility_version();
-        VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion, getVmTemplate().getOsId());
+        // not relevant for instance types - will be checked when a VM will be created out of it
+        if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+            Version clusterCompatibilityVersion = getVdsGroup().getcompatibility_version();
+            VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion, getVmTemplate().getOsId());
+            if (!validate(nicValidator.linkedCorrectly())
+                    || !validate(nicValidator.isCompatibleWithOs())
+                    || !validate(nicValidator.emptyNetworkValid())
+                    || !validate(nicValidator.profileValid(getVmTemplate().getVdsGroupId()))) {
+                return false;
+            }
 
-        if (!validate(nicValidator.linkedCorrectly())
-                || !validate(nicValidator.isCompatibleWithOs())
-                || !validate(nicValidator.emptyNetworkValid())
-                || !validate(nicValidator.profileValid(getVmTemplate().getVdsGroupId()))) {
-            return false;
+            if (!checkPciAndIdeLimit(oldIface, new ArrayList<VmNic>(interfaces), clusterCompatibilityVersion)) {
+                return false;
+            }
         }
 
         if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !interfaceNameUnique(interfaces)) {
-            return false;
-        }
-
-        if (!checkPciAndIdeLimit(oldIface, new ArrayList<VmNic>(interfaces), clusterCompatibilityVersion)) {
             return false;
         }
 

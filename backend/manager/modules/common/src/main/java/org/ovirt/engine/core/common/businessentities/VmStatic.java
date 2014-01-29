@@ -48,6 +48,7 @@ public class VmStatic extends VmBase {
     @EditableField
     private boolean useHostCpuFlags;
 
+    @EditableField
     private Guid instanceTypeId;
     private Guid imageTypeId;
 
@@ -71,6 +72,7 @@ public class VmStatic extends VmBase {
         setCustomProperties(vmStatic.getCustomProperties());
         setInitialized(vmStatic.isInitialized());
         setUseLatestVersion(vmStatic.isUseLatestVersion());
+        setInstanceTypeId(vmStatic.getInstanceTypeId());
     }
 
     public VmStatic(VmBase vmBase) {

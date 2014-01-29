@@ -391,7 +391,7 @@ public class VmDeviceUtils {
             if (isVm) {
                 addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
             } else {
-                VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId());
+                VDSGroup cluster = vmBase.getVdsGroupId() != null ? DbFacade.getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId()) : null;
                 if (cluster != null) {
                     addSoundCard(vmBase, cluster.getcompatibility_version());
                 }

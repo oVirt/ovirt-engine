@@ -407,6 +407,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     @Override
     protected boolean canDoAction() {
+        if (getVdsGroup() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+        }
+
         if (getVmTemplate() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ObjectUtils;
@@ -211,7 +212,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void UpdateVmNetworks() {
         // check if the cluster has changed
-        if (!getVm().getVdsGroupId().equals(getParameters().getVmStaticData().getVdsGroupId())) {
+        if (!Objects.equals(getVm().getVdsGroupId(), getParameters().getVmStaticData().getVdsGroupId())) {
             List<Network> networks =
                     getNetworkDAO().getAllForCluster(getParameters().getVmStaticData().getVdsGroupId());
             List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmStaticData().getId());
@@ -250,8 +251,22 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected boolean canDoAction() {
+        if (!super.canDoAction()) {
+            return false;
+        }
+
         VM vmFromDB = getVm();
         VM vmFromParams = getParameters().getVm();
+
+        if (getVdsGroup() == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return false;
+        }
+
+        if (vmFromDB.getVdsGroupId() == null) {
+            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return false;
+        }
 
         if (!isVmExist()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);

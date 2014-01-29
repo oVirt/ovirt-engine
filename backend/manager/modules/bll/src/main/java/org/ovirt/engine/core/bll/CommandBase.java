@@ -794,7 +794,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return result;
     }
 
-    private boolean isQuotaDependant() {
+    protected boolean isQuotaDependant() {
         return getActionType().getQuotaDependency() != VdcActionType.QuotaDependency.NONE;
     }
 

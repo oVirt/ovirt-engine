@@ -619,6 +619,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The relevant Template doesn't exist.")
     String ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The relevant Cluster doesn't exist.")
+    String ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY();
+
     @DefaultStringValue("Cannot ${action} ${type}. Only the first template version can be selected as the base template.")
     String ACTION_TYPE_FAILED_TEMPLATE_VERSION_CANNOT_BE_BASE_TEMPLATE();
 

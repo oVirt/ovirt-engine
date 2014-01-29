@@ -178,6 +178,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     protected boolean canDoAction() {
         Map<Guid, StorageDomain> domainsMap = new HashMap<Guid, StorageDomain>();
 
+        if (getVdsGroup() == null || getVm().getVdsGroupId() == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return false;
+        }
+
         if (!canDoActionBeforeCloneVm(domainsMap)) {
             return false;
         }

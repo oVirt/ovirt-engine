@@ -409,6 +409,7 @@ public class AddVmCommandTest {
         cmd.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID,
                 new ArrayList<DiskImage>(diskImageMap.values()));
+        doReturn(new VDSGroup()).when(cmd).getVdsGroup();
     }
 
     private void mockBackend(AddVmCommand<?> cmd) {
@@ -574,6 +575,7 @@ public class AddVmCommandTest {
         cmd = spy(cmd);
         mockDAOs(cmd);
         mockBackend(cmd);
+        doReturn(new VDSGroup()).when(cmd).getVdsGroup();
         return cmd;
     }
 

@@ -286,7 +286,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setMemSizeMb(rs.getInt("mem_size_mb"));
             entity.setName(rs.getString("name"));
             entity.setOsId(rs.getInt("os"));
-            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
+            entity.setVdsGroupId(getGuid(rs, "vds_group_id"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setSingleQxlPci(rs.getBoolean("single_qxl_pci"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));

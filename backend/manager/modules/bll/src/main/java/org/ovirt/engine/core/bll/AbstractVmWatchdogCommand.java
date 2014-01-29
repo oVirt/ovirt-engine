@@ -69,7 +69,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
         }
     }
 
-    protected VmWatchdogValidator getVmWatchdogValidator() {
+    private VmWatchdogValidator getVmWatchdogValidator() {
         VmWatchdogValidator vmWatchdogValidator = null;
         VmWatchdog watchdog = new VmWatchdog();
         watchdog.setAction(getParameters().getAction());
@@ -80,11 +80,22 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
             vmWatchdogValidator = new VmWatchdogValidator(getVm().getOs(), watchdog,
                     getVm().getVdsGroupCompatibilityVersion());
         } else {
-            vmWatchdogValidator = new VmWatchdogValidator(getVmTemplate().getOsId(), watchdog,
-                    (getVdsGroupDAO().get(getVmTemplate().getVdsGroupId())).getcompatibility_version());
+            if (getVmTemplate().getVdsGroupId() != null) {
+                vmWatchdogValidator = new VmWatchdogValidator(getVmTemplate().getOsId(), watchdog,
+                        (getVdsGroupDAO().get(getVmTemplate().getVdsGroupId())).getcompatibility_version());
+            }
         }
 
         return vmWatchdogValidator;
+    }
+
+    protected ValidationResult validateModelCompatibleWithOs() {
+        VmWatchdogValidator validator = getVmWatchdogValidator();
+        if (validator != null) {
+            return validator.isModelCompatibleWithOs();
+        } else {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+        }
     }
 
 }

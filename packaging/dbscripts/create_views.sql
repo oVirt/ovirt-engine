@@ -419,7 +419,7 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.serial_number_policy as serial_number_policy,
        vm_templates.custom_serial_number as custom_serial_number,
        vm_templates.is_boot_menu_enabled as is_boot_menu_enabled
-FROM       vm_static AS vm_templates  INNER JOIN
+FROM       vm_static AS vm_templates  LEFT OUTER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
 storage_pool ON storage_pool.id = vds_groups.storage_pool_id
@@ -456,7 +456,7 @@ AS
                     vm_templates.template_version_name as template_version_name,
                     vm_templates.serial_number_policy as serial_number_policy, vm_templates.custom_serial_number as custom_serial_number,
                     vm_templates.is_boot_menu_enabled as is_boot_menu_enabled
-FROM                  vm_static AS vm_templates INNER JOIN
+FROM                  vm_static AS vm_templates LEFT OUTER JOIN
 	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
                       vm_device ON vm_device.vm_id = vm_templates.vm_guid LEFT JOIN
@@ -483,7 +483,7 @@ SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name
                       vm_templates_1.serial_number_policy as serial_number_policy,
                       vm_templates_1.custom_serial_number as custom_serial_number,
                       vm_templates_1.is_boot_menu_enabled as is_boot_menu_enabled
-FROM                  vm_static AS vm_templates_1 INNER JOIN
+FROM                  vm_static AS vm_templates_1 LEFT OUTER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN
                       vm_device AS vm_device_1 ON vm_device_1.vm_id = vm_templates_1.vm_guid INNER JOIN

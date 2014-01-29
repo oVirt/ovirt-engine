@@ -94,6 +94,10 @@ public class NetworkHelper {
     }
 
     public static boolean isNetworkInCluster(Network network, Guid clusterId) {
+        if (clusterId == null) {
+            return false;
+        }
+
         List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(clusterId);
         for (Network clusterNetwork : networks) {
             if (clusterNetwork.getId().equals(network.getId())) {

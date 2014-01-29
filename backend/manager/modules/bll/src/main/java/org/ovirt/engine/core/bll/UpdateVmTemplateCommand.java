@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -53,6 +54,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected boolean canDoAction() {
+        boolean isInstanceType = getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE;
+        if (getVdsGroup() == null && !isInstanceType) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return false;
+        }
+
         if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVmTemplate().getId())) {
             return failCanDoAction(VdcBllMessages.VMT_CANNOT_EDIT_BLANK_TEMPLATE);
         }
@@ -62,9 +69,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
-        VmTemplateHandler.updateDisksFromDb(mOldTemplate);
-        if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
-            return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
+        if (!isInstanceType) {
+            VmTemplateHandler.updateDisksFromDb(mOldTemplate);
         }
 
         if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())) {
@@ -75,9 +81,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
-        if (getVdsGroup() == null) {
-            addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
-        } else if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
+
+        if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
                 .getCanDoActionMessages()) && checkDomain()) {
             returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
             if (!returnValue) {
@@ -85,10 +90,21 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-        // Check that the USB policy is legal
-        if (returnValue) {
-            returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getUsbPolicy(), getParameters().getVmTemplateData().getOsId(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+        if (!isInstanceType && returnValue) {
+            return doClusterRelatedChecks();
+        } else {
+            return returnValue;
         }
+    }
+
+    private boolean doClusterRelatedChecks() {
+
+        if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
+            return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
+        }
+
+        // Check that the USB policy is legal
+        boolean returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getUsbPolicy(), getParameters().getVmTemplateData().getOsId(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
 
         // Check if the OS type is supported
         if (returnValue) {
@@ -133,15 +149,15 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
 
             if (!VmCommand.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),
-                            getVdsGroup().getcompatibility_version(),
-                            getParameters().getVmTemplateData().getNumOfMonitors(),
-                            interfaces,
-                            new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
-                            VmDeviceUtils.isVirtioScsiControllerAttached(getParameters().getVmTemplateData().getId()),
-                            hasWatchdog(getParameters().getVmTemplateData().getId()),
-                            VmDeviceUtils.isBalloonEnabled(getParameters().getVmTemplateData().getId()),
-                            isSoundDeviceEnabled(),
-                            getReturnValue().getCanDoActionMessages())) {
+                    getVdsGroup().getcompatibility_version(),
+                    getParameters().getVmTemplateData().getNumOfMonitors(),
+                    interfaces,
+                    new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
+                    VmDeviceUtils.isVirtioScsiControllerAttached(getParameters().getVmTemplateData().getId()),
+                    hasWatchdog(getParameters().getVmTemplateData().getId()),
+                    VmDeviceUtils.isBalloonEnabled(getParameters().getVmTemplateData().getId()),
+                    isSoundDeviceEnabled(),
+                    getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
             }
         }
@@ -174,8 +190,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected void executeCommand() {
-        VmHandler.warnMemorySizeLegal(getParameters().getVmTemplateData(),
-                getVdsGroup().getcompatibility_version());
+        if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+            VmHandler.warnMemorySizeLegal(getParameters().getVmTemplateData(),
+                    getVdsGroup().getcompatibility_version());
+        }
 
         if (getVmTemplate() != null) {
             getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
@@ -188,6 +206,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     private void checkTrustedService() {
+        if (getVdsGroup() == null) {
+            return;
+        }
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmTemplateName", getVmTemplateName());
         if (getVmTemplate().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
@@ -253,8 +274,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // update audio device
         VmDeviceUtils.updateAudioDevice(mOldTemplate,
                 getVmTemplate(),
-                getVdsGroup().getcompatibility_version(),
+                getVdsGroup() != null ? getVdsGroup().getcompatibility_version() : null,
                 getParameters().isSoundDeviceEnabled());
+
         VmDeviceUtils.updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
     }
 
@@ -308,7 +330,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     public List<PermissionSubject> getPermissionCheckSubjects() {
         final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
-        if (getVmTemplate() != null) {
+        if (getVmTemplate() != null && getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
             // host-specific parameters can be changed by administration role only
             if (!(getVmTemplate().getDedicatedVmForVds() == null ?
                     getParameters().getVmTemplateData().getDedicatedVmForVds() == null :
@@ -322,6 +344,15 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         return permissionList;
+    }
+
+    @Override
+    protected boolean isQuotaDependant() {
+        if (getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
+            return false;
+        }
+
+        return super.isQuotaDependant();
     }
 
 }

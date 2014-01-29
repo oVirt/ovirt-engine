@@ -43,8 +43,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -263,18 +263,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             VmDeviceUtils.isBalloonEnabled(getVmId()),
                             false);
                 } else {
-                    // sending true for isVm in order to create basic devices needed
-                    VmDeviceUtils.copyVmDevices(getVmId(),
+                    // for instance type and new template without a VM
+                    VmDeviceUtils.copyVmDevices(VmTemplateHandler.BLANK_VM_TEMPLATE_ID,
                             getVmTemplateId(),
-                            getVm(),
-                            getVmTemplate(),
-                            true,
-                            Collections.<VmDevice> emptyList(),
                             srcDeviceIdToTargetDeviceIdMapping,
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
-                            getVm().isBalloonEnabled(),
+                            getParameters().isBalloonEnabled(),
                             false);
                 }
 
@@ -283,7 +279,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         });
 
-        VmHandler.warnMemorySizeLegal(getVmTemplate(), getVdsGroup().getcompatibility_version());
+        if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+            VmHandler.warnMemorySizeLegal(getVmTemplate(), getVdsGroup().getcompatibility_version());
+        }
 
         // means that there are no asynchronous tasks to execute and that we can
         // end the command synchronously
@@ -293,13 +291,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
     }
 
-    @Override
-    protected boolean canDoAction() {
-        if (getVdsGroup() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-            return false;
-        }
-
+    private boolean doClusterRelatedChecks() {
         // A Template cannot be added in a cluster without a defined architecture
         if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
@@ -307,21 +299,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         if (!VmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
                 getVdsGroup().getArchitecture(), getReturnValue().getCanDoActionMessages())) {
-            return false;
-        }
-
-        if (!isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
-                .getCanDoActionMessages())) {
-            return false;
-        }
-
-        if (isVmInDb && getVm().getStatus() != VMStatus.Down) {
-            addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM.toString());
-            return false;
-        }
-
-        if (!isTemplateVersion() && isVmTemlateWithSameNameExist(getVmTemplateName())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }
 
@@ -363,6 +340,31 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
 
+        return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
+                getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
+                .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        boolean isInstanceType = getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE;
+        if (getVdsGroup() == null && !isInstanceType) {
+            return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+        }
+
+        if (!isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
+                .getCanDoActionMessages())) {
+            return false;
+        }
+
+        if (isVmInDb && getVm().getStatus() != VMStatus.Down) {
+            return failCanDoAction(VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
+        }
+
+        if (!isTemplateVersion() && isVmTemlateWithSameNameExist(getVmTemplateName())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        }
+
         if (isTemplateVersion()) {
             VmTemplate userSelectedBaseTemplate = getBaseTemplate();
             if (userSelectedBaseTemplate == null) {
@@ -374,9 +376,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
 
-        return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
-                getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
-                .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+        if (isInstanceType) {
+            return true;
+        } else {
+            return doClusterRelatedChecks();
+        }
     }
 
     private VmTemplate getBaseTemplate() {
@@ -686,18 +690,24 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permissionCheckSubject == null) {
             permissionCheckSubject = new ArrayList<PermissionSubject>();
-            Guid storagePoolId = getVdsGroup() == null ? null : getVdsGroup().getStoragePoolId();
-            permissionCheckSubject.add(new PermissionSubject(storagePoolId,
-                    VdcObjectType.StoragePool,
-                    getActionType().getActionGroup()));
+            if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+                Guid storagePoolId = getVdsGroup() == null ? null : getVdsGroup().getStoragePoolId();
+                permissionCheckSubject.add(new PermissionSubject(storagePoolId,
+                        VdcObjectType.StoragePool,
+                        getActionType().getActionGroup()));
 
-            // host-specific parameters can be changed by administration role only
-            if (getParameters().getMasterVm().getDedicatedVmForVds() != null ||
-                    !StringUtils.isEmpty(getParameters().getMasterVm().getCpuPinning())) {
-                permissionCheckSubject.add(
-                        new PermissionSubject(storagePoolId,
-                                VdcObjectType.StoragePool,
-                                ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES));
+                // host-specific parameters can be changed by administration role only
+                if (getParameters().getMasterVm().getDedicatedVmForVds() != null ||
+                        !StringUtils.isEmpty(getParameters().getMasterVm().getCpuPinning())) {
+                    permissionCheckSubject.add(
+                            new PermissionSubject(storagePoolId,
+                                    VdcObjectType.StoragePool,
+                                    ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES));
+                }
+            } else {
+                permissionCheckSubject.add(new PermissionSubject(Guid.SYSTEM,
+                        VdcObjectType.System,
+                        getActionType().getActionGroup()));
             }
         }
 
@@ -797,5 +807,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return super.getSharedLocks();
+    }
+
+    @Override
+    protected boolean isQuotaDependant() {
+        if (getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
+            return false;
+        }
+
+        return super.isQuotaDependant();
     }
 }

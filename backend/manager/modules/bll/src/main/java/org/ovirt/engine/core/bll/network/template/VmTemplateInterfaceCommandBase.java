@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -62,5 +63,19 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
 
     protected boolean updateVnicForBackwardCompatibility() {
         return updateVnicForBackwardCompatibility(null);
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        if (!super.canDoAction()) {
+            return false;
+        }
+
+        if (getVdsGroup() == null && getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return false;
+        }
+
+        return true;
     }
 }

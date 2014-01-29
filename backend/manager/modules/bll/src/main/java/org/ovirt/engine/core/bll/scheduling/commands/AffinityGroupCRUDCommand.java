@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.commands;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -40,7 +41,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
                 if (vmStatic == null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VM_FOR_AFFINITY_GROUP);
                 }
-                if (!vmStatic.getVdsGroupId().equals(getVdsGroupId())) {
+                if (!Objects.equals(vmStatic.getVdsGroupId(), getVdsGroupId())) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_IN_AFFINITY_GROUP_CLUSTER);
                 }
                 if (vmSet.contains(vmStatic.getId())) {

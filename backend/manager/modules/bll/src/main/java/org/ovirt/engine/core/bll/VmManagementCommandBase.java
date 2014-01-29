@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,7 +54,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             Guid guid = vm.getDedicatedVmForVds();
             // get dedicated host cluster and comparing it to VM cluster
             VDS vds = getVdsDAO().get(guid);
-            result = vds != null && (vm.getVdsGroupId().equals(vds.getVdsGroupId()));
+            result = vds != null && (Objects.equals(vm.getVdsGroupId(), vds.getVdsGroupId()));
         }
         if (!result) {
             getReturnValue().getCanDoActionMessages()

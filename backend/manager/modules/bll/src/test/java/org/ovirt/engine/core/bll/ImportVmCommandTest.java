@@ -149,6 +149,7 @@ public class ImportVmCommandTest {
 
         v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
         v.setImages(new ArrayList<DiskImage>(Arrays.asList(baseImage, activeImage)));
+        v.setVdsGroupId(Guid.Empty);
 
         return v;
     }
@@ -290,6 +291,8 @@ public class ImportVmCommandTest {
         doReturn(Collections.<VM> singletonList(params.getVm())).when(cmd).getVmsFromExportDomain();
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
+        doReturn(new VDSGroup()).when(cmd).getVdsGroup();
+
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()

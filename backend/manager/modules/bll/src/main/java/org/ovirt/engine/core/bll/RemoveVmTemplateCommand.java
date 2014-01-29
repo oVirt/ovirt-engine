@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -67,6 +68,17 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         Guid vmTemplateId = getVmTemplateId();
         VmTemplate template = getVmTemplate();
 
+        if (!super.canDoAction()) {
+            return false;
+        }
+
+        boolean isInstanceType = getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE;
+
+        if (getVdsGroup() == null && !isInstanceType) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+            return false;
+        }
+
         // check template exists
         if (!validate(templateExists())) {
             return false;
@@ -77,7 +89,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check storage pool valid
-        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+        if (!isInstanceType && !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
 
@@ -86,7 +98,10 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
         }
 
-        fetchImageTemplates();
+        if (!isInstanceType) {
+            fetchImageTemplates();
+        }
+
         List<Guid> storageDomainsList = getParameters().getStorageDomainsList();
         Set<Guid> allDomainsList = getStorageDomainsByDisks(imageTemplates, true);
 
@@ -169,7 +184,11 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             }
         }
 
-        return validate(checkNoDisksBasedOnTemplateDisks());
+        if (isInstanceType) {
+            return true;
+        } else {
+            return validate(checkNoDisksBasedOnTemplateDisks());
+        }
     }
 
     private ValidationResult checkNoDisksBasedOnTemplateDisks() {

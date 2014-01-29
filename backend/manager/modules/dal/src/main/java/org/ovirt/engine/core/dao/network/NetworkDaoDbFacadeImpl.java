@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao.network;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -92,6 +93,9 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
 
     @Override
     public List<Network> getAllForCluster(Guid id) {
+        if (id == null) {
+            return Collections.emptyList();
+        }
         return getAllForCluster(id, null, false);
     }
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -203,6 +204,10 @@ public class VnicProfileHelper {
             }
         }
 
+        if (vm.getVdsGroupId() == null) {
+            return new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
+        }
+
         // if the network was provided with changed name, resolve a suitable profile for it
         Network network = getNetworkDao().getByNameAndCluster(networkName, vm.getVdsGroupId());
         if (network == null) {
@@ -222,7 +227,11 @@ public class VnicProfileHelper {
 
     private Map<String, Network> getNetworksInCluster() {
         if (networksInClusterByName == null) {
-            networksInClusterByName = Entities.entitiesByName(getNetworkDao().getAllForCluster(clusterId));
+            if (clusterId != null) {
+                networksInClusterByName = Entities.entitiesByName(getNetworkDao().getAllForCluster(clusterId));
+            } else {
+                networksInClusterByName = new HashMap<>();
+            }
         }
 
         return networksInClusterByName;
