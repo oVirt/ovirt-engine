@@ -206,7 +206,6 @@ $procedure$
    v_user_id  UUID;
    v_name  VARCHAR(255);
    v_domain  VARCHAR(255);
-   v_user_name  VARCHAR(255);
 
    v_document  VARCHAR(64);
    v_index  INTEGER;
@@ -227,17 +226,7 @@ BEGIN
       v_name := substring( v_name from v_index + 1 );
    end if;
 
--- find if name already includes domain (@)
-   v_index := POSITION('@' IN v_name);
-
-   if (v_index = 0) then
-      v_user_name := coalesce(v_name,'') || '@' || coalesce(v_domain,'');
-   else
-      v_user_name := v_name;
-   end if;
-
-
-insert into users(user_id,name,domain,username,groups,active) select v_user_id, v_name, v_domain, v_user_name,'',true where not exists (select user_id,name,domain,username,groups,active from users where user_id = v_user_id and name = v_name and domain = v_domain and username = v_user_name and groups = '' and active);
+insert into users(user_id,name,domain,username,groups,active) select v_user_id, v_name, v_domain, v_name,'',true where not exists (select user_id,name,domain,username,groups,active from users where user_id = v_user_id and name = v_name and domain = v_domain and username = v_name and groups = '' and active);
 
 insert into permissions(id,role_id,ad_element_id,object_id,object_type_id) select v_permission_id, '00000000-0000-0000-0000-000000000001', v_user_id, getGlobalIds('system'), 1 where not exists(select role_id,ad_element_id,object_id,object_type_id from permissions where role_id = '00000000-0000-0000-0000-000000000001' and ad_element_id = v_user_id and object_id= getGlobalIds('system') and object_type_id = 1);
 END; $procedure$
@@ -317,27 +306,17 @@ CREATE OR REPLACE FUNCTION attach_user_to_su_role(
 RETURNS void AS
 $BODY$
    DECLARE
-   v_user_name VARCHAR(255);
    v_document  VARCHAR(64);
-   v_index  INTEGER;
    input_uuid uuid;
    v_external_id BYTEA;
 BEGIN
    input_uuid = CAST( v_user_id AS uuid );
--- find if name already includes domain (@)
-   v_index := POSITION('@' IN v_name);
-
-   if (v_index = 0) then
-      v_user_name := coalesce(v_name,'') || '@' || coalesce(v_domain,'');
-   else
-      v_user_name := v_name;
-   end if;
 
    -- The external identifier is the user identifier converted to an array of
    -- bytes:
    v_external_id := decode(replace(v_user_id::text, '-', ''), 'hex');
 
-insert into users(user_id,external_id,name,domain,username,groups,active) select input_uuid, v_external_id, v_name, v_domain, v_user_name,'',true where not exists (select user_id,name,domain,username,groups,active from users where user_id = input_uuid);
+insert into users(user_id,external_id,name,domain,username,groups,active) select input_uuid, v_external_id, v_name, v_domain, v_name,'',true where not exists (select user_id,name,domain,username,groups,active from users where user_id = input_uuid);
 
 insert into permissions(id,role_id,ad_element_id,object_id,object_type_id) select v_permission_id, '00000000-0000-0000-0000-000000000001', input_uuid, getGlobalIds('system'), 1 where not exists(select role_id,ad_element_id,object_id,object_type_id from permissions where role_id = '00000000-0000-0000-0000-000000000001' and ad_element_id = input_uuid and object_id= getGlobalIds('system') and object_type_id = 1);
 END; $BODY$

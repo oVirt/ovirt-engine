@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.frontend.utils.FormatUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -51,7 +52,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
-                return object.getLoginName();
+                return FormatUtils.getFullLoginName(object);
             }
         }, constants.userNameUser(), "150px"); //$NON-NLS-1$
 

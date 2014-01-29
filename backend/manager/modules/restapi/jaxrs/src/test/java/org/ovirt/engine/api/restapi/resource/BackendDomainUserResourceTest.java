@@ -37,7 +37,7 @@ public class BackendDomainUserResourceTest
 
     @Override
     protected void verifyModel(User model, int index) {
-        assertEquals(NAMES[index], model.getUserName());
+        assertEquals(NAMES[index] + "@" + DOMAIN, model.getUserName());
     }
 
     @Test

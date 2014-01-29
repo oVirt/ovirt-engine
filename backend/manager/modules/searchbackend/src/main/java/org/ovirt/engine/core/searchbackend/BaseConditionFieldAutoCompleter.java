@@ -363,7 +363,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     @Override
-    public final String buildConditionSql(String fieldName, String customizedValue, String customizedRelation,
+    public String buildConditionSql(String fieldName, String customizedValue, String customizedRelation,
             String tableName, boolean caseSensitive) {
         Pair<String, String> pair = new Pair<String, String>();
         pair.setFirst(customizedRelation);
