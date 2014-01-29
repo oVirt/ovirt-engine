@@ -43,7 +43,7 @@ class Plugin(plugin.PluginBase):
     VDSM configuration plugin.
     """
 
-    ENGINE_RETRIES = 20
+    ENGINE_RETRIES = 60
     ENGINE_DELAY = 3
     VDSM_RETRIES = 600
     VDSM_DELAY = 1
