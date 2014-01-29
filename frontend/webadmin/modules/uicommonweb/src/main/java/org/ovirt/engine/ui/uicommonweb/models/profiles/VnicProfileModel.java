@@ -32,7 +32,10 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class VnicProfileModel extends Model {
@@ -136,6 +139,21 @@ public abstract class VnicProfileModel extends Model {
         publicUse.setEntity(true);
         setPublicUse(publicUse);
         setDescription(new EntityModel());
+
+        getNetwork().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                Network network = (Network) getNetwork().getSelectedItem();
+                boolean portMirroringAllowed = (network == null || !network.isExternal());
+                if (!portMirroringAllowed) {
+                    getPortMirroring().setEntity(false);
+                    getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                            .getConstants()
+                            .portMirroringNotSupportedExternalNetworks());
+                }
+                getPortMirroring().setIsChangable(portMirroringAllowed);
+            }
+        });
 
         initCustomPropertySheet(dcCompatibilityVersion);
         initNetworkQoSList(dcId);

@@ -1928,6 +1928,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("'CPU Pinning topology' is only available for cluster compatible with ver 3.1 or higher")
     String cpuPinningUnavailableLocalStorage();
 
+    @DefaultStringValue("'Port Mirroring' is not supported for externally-provided networks")
+    String portMirroringNotSupportedExternalNetworks();
+
     @DefaultStringValue("Low")
     String vmLowPriority();
 
