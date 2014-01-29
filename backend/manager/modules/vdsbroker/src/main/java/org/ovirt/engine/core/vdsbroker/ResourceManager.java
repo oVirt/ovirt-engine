@@ -116,10 +116,7 @@ public class ResourceManager {
             }
         }
 
-        // TODO replace this with batch processing once it becomes available
-        for (VdsDynamic entity: updatedEntities) {
-            DbFacade.getInstance().getVdsDynamicDao().update(entity);
-        }
+        DbFacade.getInstance().getVdsDynamicDao().updateAllInBatch(updatedEntities);
 
         // Populate the VDS dictionary
         for (VDS curVds : allVdsList) {

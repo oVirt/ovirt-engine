@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -8,15 +13,11 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * <code>VdsDAODbFacadeImpl</code> provides an implementation of {@link VdsDAO} that uses previously written code from
@@ -24,7 +25,11 @@ import java.util.List;
  *
  *
  */
-public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDynamicDAO {
+public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VdsDynamic, Guid> implements VdsDynamicDAO {
+
+    public VdsDynamicDAODbFacadeImpl() {
+        super("VdsDynamic");
+    }
 
     private static final class VdcDynamicRowMapper implements RowMapper<VdsDynamic> {
         public static final VdcDynamicRowMapper instance = new VdcDynamicRowMapper();
@@ -103,119 +108,12 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
 
     @Override
     public void save(VdsDynamic vds) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cpu_cores", vds.getcpu_cores())
-                .addValue("cpu_threads", vds.getCpuThreads())
-                .addValue("cpu_model", vds.getcpu_model())
-                .addValue("cpu_speed_mh", vds.getcpu_speed_mh())
-                .addValue("if_total_speed", vds.getif_total_speed())
-                .addValue("kvm_enabled", vds.getkvm_enabled())
-                .addValue("mem_commited", vds.getmem_commited())
-                .addValue("physical_mem_mb", vds.getphysical_mem_mb())
-                .addValue("status", vds.getStatus())
-                .addValue("vds_id", vds.getId())
-                .addValue("vm_active", vds.getvm_active())
-                .addValue("vm_count", vds.getvm_count())
-                .addValue("vms_cores_count", vds.getvms_cores_count())
-                .addValue("vm_migrating", vds.getvm_migrating())
-                .addValue("reserved_mem", vds.getreserved_mem())
-                .addValue("guest_overhead", vds.getguest_overhead())
-                .addValue("rpm_version", vds.getVersion().getRpmName())
-                .addValue("software_version", vds.getsoftware_version())
-                .addValue("version_name", vds.getversion_name())
-                .addValue("build_name", vds.getbuild_name())
-                .addValue("previous_status", vds.getprevious_status())
-                .addValue("cpu_flags", vds.getcpu_flags())
-                .addValue("cpu_over_commit_time_stamp",
-                        vds.getcpu_over_commit_time_stamp())
-                .addValue("pending_vcpus_count", vds.getpending_vcpus_count())
-                .addValue("pending_vmem_size", vds.getpending_vmem_size())
-                .addValue("cpu_sockets", vds.getcpu_sockets())
-                .addValue("net_config_dirty", vds.getnet_config_dirty())
-                .addValue("supported_cluster_levels",
-                        vds.getsupported_cluster_levels())
-                .addValue("supported_engines", vds.getsupported_engines())
-                .addValue("host_os", vds.gethost_os())
-                .addValue("kvm_version", vds.getkvm_version())
-                .addValue("libvirt_version", vds.getlibvirt_version().getRpmName())
-                .addValue("spice_version", vds.getspice_version())
-                .addValue("gluster_version", vds.getGlusterVersion().getRpmName())
-                .addValue("kernel_version", vds.getkernel_version())
-                .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
-                .addValue("transparent_hugepages_state",
-                        vds.getTransparentHugePagesState().getValue())
-                .addValue("hooks", vds.getHooksStr())
-                .addValue("non_operational_reason",
-                        vds.getNonOperationalReason().getValue())
-                .addValue("hw_manufacturer", vds.getHardwareManufacturer())
-                .addValue("hw_product_name", vds.getHardwareProductName())
-                .addValue("hw_version", vds.getHardwareVersion())
-                .addValue("hw_serial_number", vds.getHardwareSerialNumber())
-                .addValue("hw_uuid", vds.getHardwareUUID())
-                .addValue("hw_family", vds.getHardwareFamily())
-                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()))
-                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines())
-                .addValue("controlled_by_pm_policy", vds.isPowerManagementControlledByPolicy());
-
-        getCallsHandler().executeModification("InsertVdsDynamic", parameterSource);
+        getCallsHandler().executeModification("InsertVdsDynamic", createFullParametersMapperForSave(vds));
     }
 
     @Override
     public void update(VdsDynamic vds) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cpu_cores", vds.getcpu_cores())
-                .addValue("cpu_threads", vds.getCpuThreads())
-                .addValue("cpu_model", vds.getcpu_model())
-                .addValue("cpu_speed_mh", vds.getcpu_speed_mh())
-                .addValue("if_total_speed", vds.getif_total_speed())
-                .addValue("kvm_enabled", vds.getkvm_enabled())
-                .addValue("mem_commited", vds.getmem_commited())
-                .addValue("physical_mem_mb", vds.getphysical_mem_mb())
-                .addValue("status", vds.getStatus())
-                .addValue("vds_id", vds.getId())
-                .addValue("vm_active", vds.getvm_active())
-                .addValue("vm_count", vds.getvm_count())
-                .addValue("vms_cores_count", vds.getvms_cores_count())
-                .addValue("vm_migrating", vds.getvm_migrating())
-                .addValue("reserved_mem", vds.getreserved_mem())
-                .addValue("guest_overhead", vds.getguest_overhead())
-                .addValue("rpm_version", vds.getVersion().getRpmName())
-                .addValue("software_version", vds.getsoftware_version())
-                .addValue("version_name", vds.getversion_name())
-                .addValue("build_name", vds.getbuild_name())
-                .addValue("previous_status", vds.getprevious_status())
-                .addValue("cpu_flags", vds.getcpu_flags())
-                .addValue("cpu_over_commit_time_stamp",
-                        vds.getcpu_over_commit_time_stamp())
-                .addValue("pending_vcpus_count", vds.getpending_vcpus_count())
-                .addValue("pending_vmem_size", vds.getpending_vmem_size())
-                .addValue("cpu_sockets", vds.getcpu_sockets())
-                .addValue("net_config_dirty", vds.getnet_config_dirty())
-                .addValue("supported_cluster_levels",
-                        vds.getsupported_cluster_levels())
-                .addValue("supported_engines", vds.getsupported_engines())
-                .addValue("host_os", vds.gethost_os())
-                .addValue("kvm_version", vds.getkvm_version())
-                .addValue("libvirt_version", vds.getlibvirt_version().getRpmName())
-                .addValue("spice_version", vds.getspice_version())
-                .addValue("gluster_version", vds.getGlusterVersion().getRpmName())
-                .addValue("kernel_version", vds.getkernel_version())
-                .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
-                .addValue("transparent_hugepages_state",
-                        vds.getTransparentHugePagesState().getValue())
-                .addValue("hooks", vds.getHooksStr())
-                .addValue("non_operational_reason",
-                        vds.getNonOperationalReason().getValue())
-                .addValue("hw_manufacturer", vds.getHardwareManufacturer())
-                .addValue("hw_product_name", vds.getHardwareProductName())
-                .addValue("hw_version", vds.getHardwareVersion())
-                .addValue("hw_serial_number", vds.getHardwareSerialNumber())
-                .addValue("hw_uuid", vds.getHardwareUUID())
-                .addValue("hw_family", vds.getHardwareFamily())
-                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()))
-                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines());
-
-        getCallsHandler().executeModification("UpdateVdsDynamic", parameterSource);
+        getCallsHandler().executeModification("UpdateVdsDynamic", createFullParametersMapper(vds));
     }
 
     @Override
@@ -277,5 +175,91 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
 
         getCallsHandler().executeModification("UpdateVdsDynamicPowerManagementPolicyFlag", parameterSource);
 
+    }
+
+    @Override
+    public MapSqlParameterMapper<VdsDynamic> getBatchMapper() {
+        return new MapSqlParameterMapper<VdsDynamic>() {
+
+            @Override
+            public MapSqlParameterSource map(VdsDynamic entity) {
+                return createFullParametersMapper(entity);
+            }
+
+        };
+    }
+
+    private MapSqlParameterSource createFullParametersMapperForSave(VdsDynamic vds) {
+        MapSqlParameterSource parameterSource = createFullParametersMapper(vds);
+        parameterSource.addValue("controlled_by_pm_policy", vds.isPowerManagementControlledByPolicy());
+        return parameterSource;
+    }
+
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(VdsDynamic vds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cpu_cores", vds.getcpu_cores())
+                .addValue("cpu_threads", vds.getCpuThreads())
+                .addValue("cpu_model", vds.getcpu_model())
+                .addValue("cpu_speed_mh", vds.getcpu_speed_mh())
+                .addValue("if_total_speed", vds.getif_total_speed())
+                .addValue("kvm_enabled", vds.getkvm_enabled())
+                .addValue("mem_commited", vds.getmem_commited())
+                .addValue("physical_mem_mb", vds.getphysical_mem_mb())
+                .addValue("status", vds.getStatus())
+                .addValue("vds_id", vds.getId())
+                .addValue("vm_active", vds.getvm_active())
+                .addValue("vm_count", vds.getvm_count())
+                .addValue("vms_cores_count", vds.getvms_cores_count())
+                .addValue("vm_migrating", vds.getvm_migrating())
+                .addValue("reserved_mem", vds.getreserved_mem())
+                .addValue("guest_overhead", vds.getguest_overhead())
+                .addValue("rpm_version", vds.getVersion().getRpmName())
+                .addValue("software_version", vds.getsoftware_version())
+                .addValue("version_name", vds.getversion_name())
+                .addValue("build_name", vds.getbuild_name())
+                .addValue("previous_status", vds.getprevious_status())
+                .addValue("cpu_flags", vds.getcpu_flags())
+                .addValue("cpu_over_commit_time_stamp",
+                        vds.getcpu_over_commit_time_stamp())
+                .addValue("pending_vcpus_count", vds.getpending_vcpus_count())
+                .addValue("pending_vmem_size", vds.getpending_vmem_size())
+                .addValue("cpu_sockets", vds.getcpu_sockets())
+                .addValue("net_config_dirty", vds.getnet_config_dirty())
+                .addValue("supported_cluster_levels",
+                        vds.getsupported_cluster_levels())
+                .addValue("supported_engines", vds.getsupported_engines())
+                .addValue("host_os", vds.gethost_os())
+                .addValue("kvm_version", vds.getkvm_version())
+                .addValue("libvirt_version", vds.getlibvirt_version().getRpmName())
+                .addValue("spice_version", vds.getspice_version())
+                .addValue("gluster_version", vds.getGlusterVersion().getRpmName())
+                .addValue("kernel_version", vds.getkernel_version())
+                .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
+                .addValue("transparent_hugepages_state",
+                        vds.getTransparentHugePagesState().getValue())
+                .addValue("hooks", vds.getHooksStr())
+                .addValue("non_operational_reason",
+                        vds.getNonOperationalReason().getValue())
+                .addValue("hw_manufacturer", vds.getHardwareManufacturer())
+                .addValue("hw_product_name", vds.getHardwareProductName())
+                .addValue("hw_version", vds.getHardwareVersion())
+                .addValue("hw_serial_number", vds.getHardwareSerialNumber())
+                .addValue("hw_uuid", vds.getHardwareUUID())
+                .addValue("hw_family", vds.getHardwareFamily())
+                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()))
+                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines());
+
+        return parameterSource;
+    }
+
+    @Override
+    protected MapSqlParameterSource createIdParameterMapper(Guid id) {
+        return getCustomMapSqlParameterSource().addValue("vds_id", id);
+    }
+
+    @Override
+    protected RowMapper<VdsDynamic> createEntityRowMapper() {
+        return VdcDynamicRowMapper.instance;
     }
 }
