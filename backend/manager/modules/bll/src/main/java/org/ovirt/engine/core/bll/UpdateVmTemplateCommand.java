@@ -137,7 +137,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                             VmDeviceUtils.isVirtioScsiControllerAttached(getParameters().getVmTemplateData().getId()),
                             hasWatchdog(getParameters().getVmTemplateData().getId()),
                             VmDeviceUtils.isBalloonEnabled(getParameters().getVmTemplateData().getId()),
-                            getParameters().isSoundDeviceEnabled(),
+                            isSoundDeviceEnabled(),
                             getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
             }
@@ -157,6 +157,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     protected boolean hasWatchdog(Guid templateId) {
         return getParameters().getWatchdog() != null;
+    }
+
+    protected boolean isSoundDeviceEnabled() {
+        Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
+        return soundDeviceEnabled != null ? soundDeviceEnabled :
+                VmDeviceUtils.isSoundDeviceEnabled(getParameters().getVmTemplateData().getId());
     }
 
     @Override

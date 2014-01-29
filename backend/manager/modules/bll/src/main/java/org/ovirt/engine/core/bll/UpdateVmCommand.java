@@ -444,7 +444,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 isVirtioScsiEnabled(),
                 hasWatchdog(),
                 getParameters().isBalloonEnabled(),
-                getParameters().isSoundDeviceEnabled(),
+                isSoundDeviceEnabled(),
                 getReturnValue().getCanDoActionMessages());
     }
 
@@ -607,6 +607,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
         return virtioScsiEnabled != null ? virtioScsiEnabled :
                 VmDeviceUtils.isVirtioScsiControllerAttached(getVmId());
+    }
+
+    protected boolean isSoundDeviceEnabled() {
+        Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
+        return soundDeviceEnabled != null ? soundDeviceEnabled :
+                VmDeviceUtils.isSoundDeviceEnabled(getVmId());
     }
 
     protected boolean hasWatchdog() {
