@@ -362,7 +362,8 @@ class OvirtUtils(base.Base):
                         union
                         select
                             'drop type if exists ' ||
-                            c.relname::information_schema.sql_identifier || ' ' ||
+                            c.relname::information_schema.sql_identifier ||
+                            ' ' ||
                             'cascade;'
                         from
                             pg_namespace n, pg_class c, pg_type t
