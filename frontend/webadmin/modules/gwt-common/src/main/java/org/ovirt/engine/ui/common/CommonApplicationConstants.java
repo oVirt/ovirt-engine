@@ -232,6 +232,15 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Remove selected")
     String cloudInitObjectRemoveLabel();
 
+    @DefaultStringValue("Use already configured password")
+    String vmInitPasswordSetLabel();
+
+    @DefaultStringValue("Password is set, uncheck to change password")
+    String vmInitPasswordSetToolTip();
+
+    @DefaultStringValue("Password is not set")
+    String vmInitPasswordNotSetToolTip();
+
     @DefaultStringValue("Enter the hostname to be assigned to the guest")
     String cloudInitHostnameToolTip();
 

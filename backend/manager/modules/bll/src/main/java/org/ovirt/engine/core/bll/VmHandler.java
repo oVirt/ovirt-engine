@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -286,8 +287,13 @@ public class VmHandler {
     public static void updateVmInitFromDB(VmBase vm, boolean secure) {
         VmInitDAO db = DbFacade.getInstance().getVmInitDao();
         vm.setVmInit(db.get(vm.getId()));
-        if (secure && vm.getVmInit() != null) {
-            vm.getVmInit().setRootPassword(null);
+        if (vm.getVmInit() != null) {
+            if (secure) {
+                vm.getVmInit().setPasswordAlreadyStored(!StringUtils.isEmpty(vm.getVmInit().getRootPassword()));
+                vm.getVmInit().setRootPassword(null);
+            } else {
+                vm.getVmInit().setPasswordAlreadyStored(false);
+            }
         }
     }
 
@@ -295,9 +301,18 @@ public class VmHandler {
         if (vm.getVmInit() != null) {
             vm.getVmInit().setId(vm.getId());
             VmInitDAO db = DbFacade.getInstance().getVmInitDao();
-            if (db.get(vm.getId()) == null) {
+            VmInit oldVmInit = db.get(vm.getId());
+            if (oldVmInit == null) {
                 db.save(vm.getVmInit());
             } else {
+                if (vm.getVmInit().isPasswordAlreadyStored()) {
+                    // since we are not always returning the password in
+                    // updateVmInitFromDB()
+                    // method (we don't want to display it in the UI/API) we
+                    // don't want to override
+                    // the password if the flag is on
+                    vm.getVmInit().setRootPassword(oldVmInit.getRootPassword());
+                }
                 db.update(vm.getVmInit());
             }
         }

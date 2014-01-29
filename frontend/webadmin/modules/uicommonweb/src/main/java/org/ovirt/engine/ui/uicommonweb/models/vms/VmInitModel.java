@@ -132,6 +132,15 @@ public class VmInitModel extends Model {
         privateRootPassword = value;
     }
 
+    private EntityModel privatePasswordSet;
+    public EntityModel getPasswordSet() {
+        return privatePasswordSet;
+    }
+
+    private void setPasswordSet(EntityModel value) {
+        privatePasswordSet = value;
+    }
+
     private EntityModel privateRootPasswordVerification;
     public EntityModel getRootPasswordVerification() {
         return privateRootPasswordVerification;
@@ -330,6 +339,8 @@ public class VmInitModel extends Model {
         setTimeZoneList(new ListModel());
         setRootPassword(new EntityModel());
         setRootPasswordVerification(new EntityModel());
+        setPasswordSet(new EntityModel());
+        getPasswordSet().getEntityChangedEvent().addListener(this);
 
         setNetworkEnabled(new EntityModel());
         setNetworkSelectedName(new EntityModel());
@@ -374,6 +385,9 @@ public class VmInitModel extends Model {
         getTimeZoneEnabled().setEntity(false);
         getNetworkEnabled().setEntity(false);
         getAttachmentEnabled().setEntity(false);
+
+        getPasswordSet().setEntity(false);
+        getPasswordSet().setIsChangable(false);
 
         getHostname().setEntity("");
         getDomain().setEntity("");
@@ -428,6 +442,9 @@ public class VmInitModel extends Model {
                 getRootPassword().setEntity(vmInit.getRootPassword());
                 getRootPasswordVerification().setEntity(vmInit.getRootPassword());
             }
+            getPasswordSet().setEntity(vmInit.isPasswordAlreadyStored());
+            getPasswordSet().setIsChangable(vmInit.isPasswordAlreadyStored());
+
             if (!StringHelper.isNullOrEmpty(vmInit.getAuthorizedKeys())) {
                 getAuthorizedKeys().setEntity(vmInit.getAuthorizedKeys());
             }
@@ -688,6 +705,7 @@ public class VmInitModel extends Model {
         vmInit.setDnsServers((String) getDnsServers().getEntity());
         vmInit.setDnsSearch((String) getDnsSearchDomains().getEntity());
         vmInit.setCustomScript((String) getCustomScript().getEntity());
+        vmInit.setPasswordAlreadyStored((Boolean) getPasswordSet().getEntity());
 
         return vmInit;
     }
@@ -713,8 +731,16 @@ public class VmInitModel extends Model {
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
             if (sender == getNetworkSelectedName()) {
                 networkSelectedName_SelectionChanged();
+            } else if (sender == getPasswordSet()) {
+                passwordSetChanged();
             }
         }
+    }
+
+    private void passwordSetChanged() {
+        Boolean passwordChangable = !(Boolean) getPasswordSet().getEntity();
+        getRootPassword().setIsChangable(passwordChangable);
+        getRootPasswordVerification().setIsChangable(passwordChangable);
     }
 
     @Override

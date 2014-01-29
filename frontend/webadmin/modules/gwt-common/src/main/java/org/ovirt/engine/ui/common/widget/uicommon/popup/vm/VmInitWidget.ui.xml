@@ -67,6 +67,7 @@
             <d:AdvancedParametersExpander ui:field="authenticationExpander"/>
 
             <g:FlowPanel ui:field="authenticationExpanderContent">
+                <e:EntityModelCheckBoxEditor ui:field="passwordSetEditor" />
                 <e:EntityModelPasswordBoxEditor ui:field="rootPasswordEditor" />
                 <e:EntityModelPasswordBoxEditor ui:field="rootPasswordVerificationEditor" />
                 <e:EntityModelTextAreaEditor ui:field="authorizedKeysEditor" />

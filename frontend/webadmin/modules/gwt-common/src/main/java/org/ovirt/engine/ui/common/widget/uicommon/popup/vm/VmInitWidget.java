@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInitModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import java.util.Map;
 
@@ -111,6 +112,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Path(value = "authorizedKeys.entity")
     @WithElementId
     EntityModelTextAreaEditor authorizedKeysEditor;
+
+    @UiField
+    @Path(value = "passwordSet.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor passwordSetEditor;
 
     @UiField
     @Path(value = "customScript.entity")
@@ -304,6 +310,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     void localize() {
         hostnameEditor.setLabel(constants.cloudInitHostnameLabel());
         authorizedKeysEditor.setLabel(constants.cloudInitAuthorizedKeysLabel());
+        passwordSetEditor.setLabel(constants.vmInitPasswordSetLabel());
         regenerateKeysEnabledEditor.setLabel(constants.cloudInitRegenerateKeysLabel());
         timeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
         timeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
@@ -333,6 +340,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         hostnameEditor.setTitle(constants.cloudInitHostnameToolTip());
         authorizedKeysEditor.setTitle(constants.cloudInitAuthorizedKeysToolTip());
+        passwordSetEditor.setTitle(constants.vmInitPasswordSetToolTip());
         customScriptEditor.setTitle(constants.customScriptToolTip());
         regenerateKeysEnabledEditor.setTitle(constants.cloudInitRegenerateKeysToolTip());
         timeZoneEditor.setTitle(constants.cloudInitTimeZoneToolTip());
@@ -374,6 +382,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         rootPasswordEditor.addStyleName(customizableStyle.primaryOption());
         rootPasswordVerificationEditor.addStyleName(customizableStyle.primaryOption());
         authorizedKeysEditor.addStyleName(customizableStyle.primaryOption());
+        passwordSetEditor.addStyleName(customizableStyle.primaryOption());
         regenerateKeysEnabledEditor.addStyleName(customizableStyle.primaryOption());
         networkExpanderContent.addStyleName(customizableStyle.primaryOption());
 
@@ -444,6 +453,19 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 setNetworkStaticDetailsStyle(model.getNetworkDhcp().getEntity() == null
                         || !(Boolean) model.getNetworkDhcp().getEntity());
+            }
+        });
+
+        model.getPasswordSet().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).propertyName;
+                if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                    passwordSetEditor.setTitle(
+                            model.getPasswordSet().getIsChangable() ?
+                            constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
+                    );
+                }
             }
         });
 
