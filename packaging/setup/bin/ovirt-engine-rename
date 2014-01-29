@@ -26,7 +26,7 @@ Usage: $0
     --config=file
         Load configuration files.
     --config-append=file
-        Load extra configuration files.
+        Load extra configuration files or answer file.
     --generate-answer=file
         Generate answer file.
 
