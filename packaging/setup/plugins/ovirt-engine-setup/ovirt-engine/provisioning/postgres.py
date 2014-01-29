@@ -139,6 +139,11 @@ class Plugin(plugin.PluginBase):
                     default=True,
                 )
 
+            else:
+                self.environment[
+                    osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+                ] = False
+
         if self.environment[
             osetupcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ]:
