@@ -20,6 +20,7 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
     private String winKey;
     private String rootPassword;
+    private boolean passwordAlreadyStored;
     private String customScript;
 
     public VmInit() {
@@ -115,5 +116,13 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
     public void setWinKey(String winKey) {
         this.winKey = winKey;
+    }
+
+    public boolean isPasswordAlreadyStored() {
+        return passwordAlreadyStored;
+    }
+
+    public void setPasswordAlreadyStored(boolean passwordAlreadyStored) {
+        this.passwordAlreadyStored = passwordAlreadyStored;
     }
 }
