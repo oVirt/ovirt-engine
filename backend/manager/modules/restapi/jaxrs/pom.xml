@@ -100,12 +100,17 @@
       <scope>test</scope>
     </dependency>
 
-      <dependency>
+    <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-types</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxb-provider</artifactId>
+      <version>${resteasy.version}</version>
     </dependency>
 
   </dependencies>

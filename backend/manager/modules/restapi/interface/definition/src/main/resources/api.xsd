@@ -4,9 +4,19 @@
            xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
            jaxb:version="2.1" jaxb:extensionBindingPrefixes="xjc">
 
+
   <xs:annotation>
     <xs:appinfo>
-      <jaxb:globalBindings generateIsSetMethod="true"/>
+      <jaxb:globalBindings generateIsSetMethod="true">
+         <!-- Replace the default int JAXB parser with one that checks the value is less than Integer.MAX_VALUE -->
+         <jaxb:javaType name="int" xmlType="xs:int"
+           parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseIntegerToInt"
+         />
+         <!-- Replace the default short JAXB parser with one that checks the value is less than Short.MAX_VALUE -->
+         <jaxb:javaType name="int" xmlType="xs:unsignedShort"
+           parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseIntegerToShort"
+         />
+       </jaxb:globalBindings>
     </xs:appinfo>
   </xs:annotation>
 
