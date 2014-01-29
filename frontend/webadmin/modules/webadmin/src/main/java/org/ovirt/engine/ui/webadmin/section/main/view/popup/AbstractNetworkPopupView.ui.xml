@@ -42,7 +42,6 @@
 
 		.checkBox {
 			padding: 0px !important;
-			width: 230px !important;
 		}
 
 		.vmNetworkStyle {
@@ -66,12 +65,11 @@
 		}
 
 		.qosStyle {
-			float: left;
-			margin-right: 20px;
+			margin-left: 20px;
 		}
 
-		.floatLeft {
-			float: left;
+		.propertyWidth {
+			width: 340px;
 		}
 
 		.inlineLabel {
@@ -113,10 +111,10 @@
 										<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
 									</g:HorizontalPanel>
-									<ge:ListModelSuggestBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField} {style.floatLeft}" />
+									<ge:ListModelSuggestBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField} {style.propertyWidth}" />
 									<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-										<e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.qosStyle}" />
-										<w:UiCommandButton ui:field="addQosButton" />
+										<e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />
+										<w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />
 									</g:HorizontalPanel>
 								</g:FlowPanel>
 							</g:FlowPanel>
