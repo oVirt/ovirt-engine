@@ -608,12 +608,14 @@ public class HostSetupNetworksModel extends EntityModel {
             LogicalNetworkModel networkModel = new LogicalNetworkModel(network, this);
             networkModels.put(network.getName(), networkModel);
 
-            NetworkLabelModel labelModel = labelMap.get(network.getLabel());
-            if (labelModel == null) {
-                labelModel = new NetworkLabelModel(network.getLabel(), this);
-                labelMap.put(network.getLabel(), labelModel);
+            if (!network.isExternal()) {
+                NetworkLabelModel labelModel = labelMap.get(network.getLabel());
+                if (labelModel == null) {
+                    labelModel = new NetworkLabelModel(network.getLabel(), this);
+                    labelMap.put(network.getLabel(), labelModel);
+                }
+                labelModel.getNetworks().add(networkModel);
             }
-            labelModel.getNetworks().add(networkModel);
         }
         setNetworks(networkModels);
     }
