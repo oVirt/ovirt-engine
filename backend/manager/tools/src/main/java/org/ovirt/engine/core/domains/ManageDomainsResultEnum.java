@@ -3,13 +3,11 @@ package org.ovirt.engine.core.domains;
 public enum ManageDomainsResultEnum {
     OK("Manage Domains completed successfully", 0),
     INVALID_ACTION("%1$s is not a valid action.", 1),
-    ACTION_IS_NOT_SPECIFIED("Action is not specified.", 2),
     ARGUMENT_IS_REQUIRED("Argument %1$s is required.", 3),
-    TOO_MANY_ARGUMENTS("Too many arguments.", 4),
     DOMAIN_ALREADY_EXISTS_IN_CONFIGURATION("Domain %1$s already exists in the configuration.", 5),
     DOMAIN_DOESNT_EXIST_IN_CONFIGURATION("Domain %1$s doesn't exist in the configuration.", 6),
     FAILED_READING_CONFIGURATION(
-             "Failed reading engine-manage-domains configuration.",
+             "Failed reading engine-manage-domains configuration. Details: %1$s",
              7),
     FAILURE_WHILE_TESTING_DOMAIN("Failure while testing domain %1$s. Details: %2$s", 8),
     FAILURE_WHILE_APPLYING_KERBEROS_CONFIGURATION("Failure while applying Kerberos configuration. Details: %1$s", 9),
@@ -19,9 +17,6 @@ public enum ManageDomainsResultEnum {
     FAILED_SETTING_CONFIGURATION_VALUE_FOR_OPTION_WITH_DETAILS(
             "Failed setting configuration value for option %1$s. Details: %2$s",
             13),
-    INVALID_ARGUMENT_FOR_COMMAND(
-            "Invalid argument %1$s",
-            14),
     FAILED_READING_CURRENT_CONFIGURATION(
             "Failed reading current configuration. Details: %1$s",
             15),
@@ -36,7 +31,8 @@ public enum ManageDomainsResultEnum {
     EMPTY_PASSWORD_FILE("password file is empty", 22),
     NO_LDAP_SERVERS_FOR_DOMAIN("No LDAP servers can be obtained for domain %1$s", 23),
     NO_KDC_SERVERS_FOR_DOMAIN("No KDC can be obtained for domain %1$s", 24),
-    ARGUMENT_VALUE_REQUIRED("Value is required for argument %1$s", 25);
+    INVALID_ARGUMENT_VALUE("Invalid argument value. Details: %1$s", 26),
+    ARGUMENT_PARSING_ERROR("Error parsing arguments. Details: %1$s", 27);
     private String detailedMessage;
     private final int exitCode;
 
