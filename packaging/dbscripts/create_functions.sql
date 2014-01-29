@@ -463,7 +463,7 @@ BEGIN
    if (v_ad_element_id = getGlobalIds('everyone')) then
       result := 'Everyone';
    else
-      select(COALESCE(name,'') || ' ' || COALESCE(surname,'') || ' (' || COALESCE(username,'') || ')') INTO result from users where user_id = v_ad_element_id;
+      select(COALESCE(name,'') || ' ' || COALESCE(surname,'') || ' (' || COALESCE(username,'') || '@' || COALESCE(domain,'') || ')') INTO result from users where user_id = v_ad_element_id;
       if (result is null) then
          select   name INTO result from ad_groups where ID = v_ad_element_id;
       end if;

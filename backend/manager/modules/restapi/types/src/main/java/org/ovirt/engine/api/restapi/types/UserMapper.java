@@ -17,7 +17,7 @@ public class UserMapper {
         User model = template != null ? template : new User();
         model.setExternalId(entity.getExternalId().toHex());
         model.setName(entity.getFirstName());
-        model.setUserName(entity.getLoginName());
+        model.setUserName(entity.getLoginName() + "@" + entity.getDomain());
         model.setId(entity.getId().toString());
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
@@ -42,7 +42,7 @@ public class UserMapper {
     public static User map(DirectoryUser entity, User template) {
         User model = template != null ? template : new User();
         model.setName(entity.getFirstName());
-        model.setUserName(entity.getName());
+        model.setUserName(entity.getName() + "@" + entity.getDirectory().getName());
         model.setId(entity.getId().toHex());
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());

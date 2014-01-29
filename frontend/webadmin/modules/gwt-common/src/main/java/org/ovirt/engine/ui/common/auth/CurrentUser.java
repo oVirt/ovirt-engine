@@ -6,6 +6,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.inject.Inject;
+import org.ovirt.engine.ui.frontend.utils.FormatUtils;
 
 /**
  * Holds data relevant for the current user.
@@ -75,14 +76,7 @@ public class CurrentUser implements HasHandlers {
      * Returns full user name ({@code user@domain}) if the user is currently logged in, {@code null} otherwise.
      */
     public String getFullUserName() {
-        String userName = getUserName();
-        String domain = getDomain();
-
-        if (userName != null && !userName.contains("@") && domain != null) { //$NON-NLS-1$
-            return userName + "@" + domain; //$NON-NLS-1$
-        }
-
-        return userName;
+        return isLoggedIn()? FormatUtils.getFullLoginName(loggedUser): null;
     }
 
     public boolean isAutoLogin() {
