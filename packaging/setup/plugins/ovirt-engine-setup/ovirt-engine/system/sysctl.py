@@ -149,7 +149,7 @@ class Plugin(plugin.PluginBase):
         # Verify shmmax is set correctly
         shmmax = self._get_shmmax()
 
-        if shmmax <= self.environment[osetupcons.SystemEnv.SHMMAX]:
+        if shmmax < self.environment[osetupcons.SystemEnv.SHMMAX]:
             self.logger.debug(
                 'sysctl kernel.shmmax is %s lower than %s' % (
                     shmmax,
