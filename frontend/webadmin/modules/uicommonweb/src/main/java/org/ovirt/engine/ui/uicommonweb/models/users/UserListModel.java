@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -121,6 +122,7 @@ public class UserListModel extends ListWithDetailsModel
         TagListModel model = new TagListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
+        model.setHelpTag(HelpTag.assign_tags_users);
         model.setHashName("assign_tags_users"); //$NON-NLS-1$
 
         getAttachedTagsToSelectedUsers(model);
@@ -327,6 +329,7 @@ public class UserListModel extends ListWithDetailsModel
         AdElementListModel model = new AdElementListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().addUsersAndGroupsTitle());
+        model.setHelpTag(HelpTag.add_users_and_groups);
         model.setHashName("add_users_and_groups"); //$NON-NLS-1$
         model.setIsRoleListHidden(true);
         model.getIsEveryoneSelectionHidden().setEntity(true);
@@ -351,6 +354,7 @@ public class UserListModel extends ListWithDetailsModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeUsersTitle());
+        model.setHelpTag(HelpTag.remove_user);
         model.setHashName("remove_user"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -41,6 +42,7 @@ public class VmAppListModel extends SearchableListModel
     public VmAppListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().applicationsTitle());
+        setHelpTag(HelpTag.applications);
         setHashName("applications"); //$NON-NLS-1$
     }
 

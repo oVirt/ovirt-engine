@@ -41,6 +41,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
@@ -573,6 +574,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newLocalDomainTitle());
+        model.setHelpTag(HelpTag.new_local_domain);
         model.setHashName("new_local_domain"); //$NON-NLS-1$
         LocalStorageModel localStorageModel = new LocalStorageModel();
         localStorageModel.setRole(StorageDomainType.Data);
@@ -625,6 +627,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(title);
+        model.setHelpTag(HelpTag.new_domain);
         model.setHashName("new_domain"); //$NON-NLS-1$
         ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
         dataCenters.add(getEntity());
@@ -1156,6 +1159,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.setTitle(ConstantsManager.getInstance().getConstants().forceStorageDomainCreation());
         model.setMessage(ConstantsManager.getInstance().getConstants().lunsAlreadyInUse());
+        model.setHelpTag(HelpTag.force_storage_domain_creation);
         model.setHashName("force_storage_domain_creation"); //$NON-NLS-1$
         model.setItems(usedLunsMessages);
 
@@ -1339,6 +1343,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.init(false);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
+        model.setHelpTag(HelpTag.new_cluster);
         model.setHashName("new_cluster"); //$NON-NLS-1$
         model.setIsNew(true);
 
@@ -1428,6 +1433,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         MoveHost model = new MoveHost();
         model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
+        model.setHelpTag(HelpTag.select_host);
         model.setHashName("select_host"); //$NON-NLS-1$
 
         // In case of local storage, do not show the cluster selection in host select menu as there can be only one cluster in that case
@@ -1542,6 +1548,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         HostModel model = new NewHostModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
+        model.setHelpTag(HelpTag.new_host_guide_me);
         model.setHashName("new_host_guide_me"); //$NON-NLS-1$
         model.getPort().setEntity(54321);
         model.getOverrideIpTables().setEntity(true);
@@ -1576,6 +1583,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
+            confirmModel.setHelpTag(HelpTag.power_management_configuration);
             confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 

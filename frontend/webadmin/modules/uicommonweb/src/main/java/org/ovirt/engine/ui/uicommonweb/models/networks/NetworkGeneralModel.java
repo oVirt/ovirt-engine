@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -23,6 +24,7 @@ public class NetworkGeneralModel extends EntityModel
 
     public NetworkGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
     }
 

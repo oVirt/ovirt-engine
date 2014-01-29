@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -95,6 +96,7 @@ public class VmMonitorModel extends EntityModel
     public VmMonitorModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().monitorTitle());
+        setHelpTag(HelpTag.monitor);
         setHashName("monitor"); //$NON-NLS-1$
 
         setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$

@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -88,6 +89,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
     public ClusterGlusterHookListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().glusterHooksTitle());
+        setHelpTag(HelpTag.gluster_hooks);
         setHashName("gluster_hooks"); // $//$NON-NLS-1$
         setAvailableInModes(ApplicationMode.GlusterOnly);
 
@@ -131,6 +133,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().confirmDisableGlusterHooks());
+        model.setHelpTag(HelpTag.disable_hooks);
         model.setHashName("disable_hooks"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().disableGlusterHooksMessage());
 
@@ -204,6 +207,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         GlusterHookContentModel contentModel = new GlusterHookContentModel();
         contentModel.setTitle(ConstantsManager.getInstance().getConstants().viewContentGlusterHookTitle());
+        contentModel.setHelpTag(HelpTag.view_gluster_hook);
         contentModel.setHashName("view_gluster_hook"); //$NON-NLS-1$
         setWindow(contentModel);
 
@@ -252,6 +256,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         GlusterHookResolveConflictsModel conflictsModel = new GlusterHookResolveConflictsModel();
         conflictsModel.setTitle(ConstantsManager.getInstance().getConstants().resolveConflictsGlusterHookTitle());
+        conflictsModel.setHelpTag(HelpTag.gluster_hook_resolve_conflicts);
         conflictsModel.setHashName("gluster_hook_resolve_conflicts"); //$NON-NLS-1$
         hookEntity.setServerHooks(new ArrayList<GlusterServerHook>());
         conflictsModel.setGlusterHookEntity(hookEntity);

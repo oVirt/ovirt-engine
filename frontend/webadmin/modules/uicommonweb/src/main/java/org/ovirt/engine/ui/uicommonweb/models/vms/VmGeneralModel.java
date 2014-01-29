@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -508,6 +509,7 @@ public class VmGeneralModel extends EntityModel
         setUpdateCompleteEvent(new Event(updateCompleteEventDefinition));
 
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
     }
 

@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -75,6 +76,7 @@ public class VmGuideModel extends GuideModel
 
         NewDiskModel model = new NewGuideDiskModel(this);
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
+        model.setHelpTag(HelpTag.new_virtual_disk);
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setVm(getEntity());
         setWindow(model);

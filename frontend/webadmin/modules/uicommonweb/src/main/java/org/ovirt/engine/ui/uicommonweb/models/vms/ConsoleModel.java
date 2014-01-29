@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -227,6 +228,7 @@ public abstract class ConsoleModel extends EntityModel {
         ConfirmationModel model = new ConfirmationModel();
         parentModel.setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().confirmConsoleConnect());
+        model.setHelpTag(HelpTag.confirm_console_connect);
         model.setHashName("confirm_console_connect"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().confirmConsoleConnectMessage());
 

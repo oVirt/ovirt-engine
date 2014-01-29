@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -159,6 +160,7 @@ public class DiskGeneralModel extends EntityModel
     public DiskGeneralModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
     }
 

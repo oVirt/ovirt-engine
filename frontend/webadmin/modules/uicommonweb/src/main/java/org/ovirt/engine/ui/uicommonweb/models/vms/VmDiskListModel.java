@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
@@ -215,6 +216,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     public VmDiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
+        setHelpTag(HelpTag.disks);
         setHashName("disks"); //$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -292,6 +294,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         NewDiskModel model = new NewDiskModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
+        model.setHelpTag(HelpTag.new_virtual_disk);
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setVm(vm);
         setWindow(model);
@@ -315,6 +318,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         ChangeQuotaModel model = new ChangeQuotaModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
+        model.setHelpTag(HelpTag.change_quota_disks);
         model.setHashName("change_quota_disks"); //$NON-NLS-1$
         model.startProgress(null);
         model.init(disks);
@@ -368,6 +372,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         EditDiskModel model = new EditDiskModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().editVirtualDiskTitle());
+        model.setHelpTag(HelpTag.edit_virtual_disk);
         model.setHashName("edit_virtual_disk"); //$NON-NLS-1$
         model.setVm(getEntity());
         model.setDisk(disk);
@@ -392,6 +397,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         RemoveDiskModel model = new RemoveDiskModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
+        model.setHelpTag(HelpTag.remove_disk);
         model.setHashName("remove_disk"); //$NON-NLS-1$
 
         model.getLatch().setEntity(false);
@@ -505,6 +511,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
+        model.setHelpTag(HelpTag.move_disk);
         model.setHashName("move_disk"); //$NON-NLS-1$
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);

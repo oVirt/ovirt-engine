@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -123,6 +124,7 @@ public class RolePermissionListModel extends SearchableListModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removePermissionTitle());
+        model.setHelpTag(HelpTag.remove_permission);
         model.setHashName("remove_permission"); //$NON-NLS-1$
         model.setItems(getSelectedItems());
 

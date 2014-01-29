@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -273,6 +274,7 @@ public class ClusterGuideModel extends GuideModel
 
         final MoveHost model = new MoveHost();
         model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
+        model.setHelpTag(HelpTag.select_host);
         model.setHashName("select_host"); //$NON-NLS-1$
 
         // In case of local storage, only one host is allowed in the cluster so we should disable multi selection
@@ -379,6 +381,7 @@ public class ClusterGuideModel extends GuideModel
         HostModel model = new NewHostModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
+        model.setHelpTag(HelpTag.new_host);
         model.setHashName("new_host"); //$NON-NLS-1$
         model.getPort().setEntity(54321);
         model.getOverrideIpTables().setEntity(true);
@@ -431,6 +434,7 @@ public class ClusterGuideModel extends GuideModel
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
+            confirmModel.setHelpTag(HelpTag.power_management_configuration);
             confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -32,6 +33,7 @@ public class StorageVmListModel extends SearchableListModel
     public StorageVmListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
     }
 

@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -51,6 +52,7 @@ public class HostGlusterSwiftListModel extends SearchableListModel {
 
     public HostGlusterSwiftListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().glusterSwiftTitle());
+        setHelpTag(HelpTag.gluster_swift);
         setHashName("gluster_swift"); //$NON-NLS-1$
         setAvailableInModes(ApplicationMode.GlusterOnly);
 

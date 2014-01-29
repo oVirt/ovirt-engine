@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -172,6 +173,7 @@ public class SnapshotModel extends EntityModel
     public static SnapshotModel createNewSnapshotModel(ICommandTarget cancelCommandTarget) {
         SnapshotModel model = new SnapshotModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().createSnapshotTitle());
+        model.setHelpTag(HelpTag.create_snapshot);
         model.setHashName("create_snapshot"); //$NON-NLS-1$
 
         // the cancel command has to be created be before the call to initialize to avoid race condition

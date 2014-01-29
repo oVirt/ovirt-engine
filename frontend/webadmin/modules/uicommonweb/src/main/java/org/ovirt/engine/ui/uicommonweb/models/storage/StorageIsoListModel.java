@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -25,6 +26,7 @@ public class StorageIsoListModel extends SearchableListModel
     public StorageIsoListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().imagesTitle());
+        setHelpTag(HelpTag.images);
         setHashName("images"); //$NON-NLS-1$
 
         setImportImagesCommand(new UICommand("Import", this)); //$NON-NLS-1$
@@ -149,6 +151,7 @@ public class StorageIsoListModel extends SearchableListModel
         setWindow(model);
 
         model.setTitle(ConstantsManager.getInstance().getConstants().importImagesTitle());
+        model.setHelpTag(HelpTag.import_images);
         model.setHashName("import_images"); //$NON-NLS-1$
         model.setEntity(this);
         model.init((StorageDomain) getEntity(), repoImages);

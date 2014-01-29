@@ -23,6 +23,7 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -278,6 +279,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     {
         NewDiskModel model = new NewDiskModel(getSystemTreeSelectedItem());
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
+        model.setHelpTag(HelpTag.new_virtual_disk);
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         setWindow(model);
 
@@ -306,6 +308,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         MoveDiskModel model = new MoveDiskModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
+        model.setHelpTag(HelpTag.move_disks);
         model.setHashName("move_disks"); //$NON-NLS-1$
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
@@ -345,6 +348,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         setWindow(model);
 
         model.setTitle(ConstantsManager.getInstance().getConstants().exportImagesTitle());
+        model.setHelpTag(HelpTag.export_disks);
         model.setHashName("export_disks"); //$NON-NLS-1$
         model.setEntity(this);
         model.init(disks);
@@ -369,6 +373,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         ChangeQuotaModel model = new ChangeQuotaModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
+        model.setHelpTag(HelpTag.change_quota_disks);
         model.setHashName("change_quota_disks"); //$NON-NLS-1$
         model.startProgress(null);
         model.init(disks);
@@ -425,6 +430,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         CopyDiskModel model = new CopyDiskModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().copyDisksTitle());
+        model.setHelpTag(HelpTag.copy_disks);
         model.setHashName("copy_disks"); //$NON-NLS-1$
         model.setEntity(this);
         model.init(disks);
@@ -441,6 +447,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         RemoveDiskModel model = new RemoveDiskModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
+        model.setHelpTag(HelpTag.remove_disk);
         model.setHashName("remove_disk"); //$NON-NLS-1$
 
         model.getLatch().setIsAvailable(false);

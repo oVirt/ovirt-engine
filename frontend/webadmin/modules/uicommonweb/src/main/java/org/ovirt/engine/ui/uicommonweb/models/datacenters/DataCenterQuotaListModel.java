@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -21,6 +22,7 @@ public class DataCenterQuotaListModel extends QuotaListModel
 {
     public DataCenterQuotaListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
+        setHelpTag(HelpTag.quota);
         setHashName("quota"); //$NON-NLS-1$
     }
 

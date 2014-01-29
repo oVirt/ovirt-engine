@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -257,6 +258,7 @@ public class RoleListModel extends ListWithDetailsModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeRolesTitle());
+        model.setHelpTag(HelpTag.remove_role);
         model.setHashName("remove_role"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
@@ -406,29 +408,27 @@ public class RoleListModel extends ListWithDetailsModel
             model.getName().setIsChangable(!role.getis_readonly());
             model.getDescription().setIsChangable(!role.getis_readonly());
         }
-        String title = null;
-        String hashName = null;
         switch (commandType)
         {
-        case New:
-            title = ConstantsManager.getInstance().getConstants().newRoleTitle();
-            hashName = "new_role"; //$NON-NLS-1$
-            break;
-        case Edit:
-            title = ConstantsManager.getInstance().getConstants().editRoleTitle();
-            hashName = "edit_role"; //$NON-NLS-1$
-            model.getIsAdminRole().setIsChangable(false);
-            break;
-        case Clone:
-            title = ConstantsManager.getInstance().getConstants().copyRoleTitle();
-            hashName = "copy_role"; //$NON-NLS-1$
-            model.getIsAdminRole().setIsChangable(false);
-            break;
-
+            case New:
+                model.setTitle(ConstantsManager.getInstance().getConstants().newRoleTitle());
+                model.setHelpTag(HelpTag.new_role);
+                model.setHashName("new_role"); //$NON-NLS-1$
+                break;
+            case Edit:
+                model.setTitle(ConstantsManager.getInstance().getConstants().editRoleTitle());
+                model.setHelpTag(HelpTag.edit_role);
+                model.setHashName("edit_role"); //$NON-NLS-1$
+                model.getIsAdminRole().setIsChangable(false);
+                break;
+            case Clone:
+                model.setTitle(ConstantsManager.getInstance().getConstants().copyRoleTitle());
+                model.setHelpTag(HelpTag.copy_role);
+                model.setHashName("copy_role"); //$NON-NLS-1$
+                model.getIsAdminRole().setIsChangable(false);
+                break;
         }
 
-        model.setTitle(title);
-        model.setHashName(hashName);
         if (!role.getis_readonly() || commandType == CommandType.Clone)
         {
             UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$

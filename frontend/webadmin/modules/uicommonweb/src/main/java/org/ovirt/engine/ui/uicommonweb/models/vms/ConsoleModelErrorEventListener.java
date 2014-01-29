@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import org.ovirt.engine.ui.frontend.ConsoleErrorTranslator;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -55,6 +56,7 @@ public class ConsoleModelErrorEventListener implements IEventListener, ICommandT
             parentModel.setConfirmWindow(model);
         }
         model.setTitle(ConstantsManager.getInstance().getConstants().consoleDisconnectedTitle());
+        model.setHelpTag(HelpTag.console_disconnected);
         model.setHashName("console_disconnected"); //$NON-NLS-1$
         model.setMessage(message);
 

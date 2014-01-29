@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -23,6 +24,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
         this.sourceListModel = sourceListModel;
 
         setTitle(ConstantsManager.getInstance().getConstants().removeLogicalNetworkTitle());
+        setHelpTag(HelpTag.remove_logical_network);
         setHashName("remove_logical_network"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();

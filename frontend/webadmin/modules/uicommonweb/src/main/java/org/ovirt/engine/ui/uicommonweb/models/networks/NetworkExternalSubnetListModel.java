@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NewExternalSubnetModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveExternalSubnetModel;
@@ -17,6 +18,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel
     private UICommand removeCommand;
 
     public NetworkExternalSubnetListModel() {
+        setHelpTag(HelpTag.external_subnets);
         setHashName("external_subnets"); //$NON-NLS-1$
         setComparator(new NameableComparator());
 

@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -623,6 +624,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         spiceWithoutAgentModel.setTitle(ConstantsManager.getInstance()
                 .getConstants()
                 .guestAgentNotResponsiveTitle());
+        spiceWithoutAgentModel.setHelpTag(HelpTag.sso_did_not_succeeded);
         spiceWithoutAgentModel.setHashName("sso_did_not_succeeded"); //$NON-NLS-1$
 
         spiceWithoutAgentModel.setMessage(ConstantsManager.getInstance()

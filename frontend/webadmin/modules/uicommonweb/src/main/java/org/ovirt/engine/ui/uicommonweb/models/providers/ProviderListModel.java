@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -35,6 +36,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
     public ProviderListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().providersTitle());
+        setHelpTag(HelpTag.providers);
         setHashName("providers"); //$NON-NLS-1$
 
         setDefaultSearchString("Provider:"); //$NON-NLS-1$

@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
@@ -556,6 +557,7 @@ public class CommonModel extends ListModel
         EntityModel model = new EntityModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().ConfigureTitle());
+        model.setHelpTag(HelpTag.configure);
         model.setHashName("configure"); //$NON-NLS-1$
         model.setEntity(new Model[] { roleListModel, systemPermissionListModel, clusterPolicyListModel });
 

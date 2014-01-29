@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -265,6 +266,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         Frontend.getInstance().getQueryStartedEvent().addListener(this);
         Frontend.getInstance().getQueryCompleteEvent().addListener(this);
 
+        setHelpTag(HelpTag.SanStorageModelBase);
         setHashName("SanStorageModelBase"); //$NON-NLS-1$
         setHash(getHashName() + new Date());
 

@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -16,6 +17,7 @@ public class NewNetworkQoSModel extends NetworkQoSModel {
     public NewNetworkQoSModel(Model sourceModel, StoragePool dataCenter) {
         super(sourceModel, dataCenter);
         setTitle(ConstantsManager.getInstance().getConstants().newNetworkQoSTitle());
+        setHelpTag(HelpTag.new_network_qos);
         setHashName("new_network_qos"); //$NON-NLS-1$
         networkQoS = new NetworkQoS();
     }

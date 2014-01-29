@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -93,6 +94,7 @@ public class EventListModel extends ListWithDetailsModel
     public EventListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
+        setHelpTag(HelpTag.events);
         setHashName("events"); //$NON-NLS-1$
 
         setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$
@@ -189,6 +191,7 @@ public class EventListModel extends ListWithDetailsModel
         EventModel model = new EventModel();
         model.setEvent(event);
         model.setTitle(ConstantsManager.getInstance().getConstants().eventDetailsTitle());
+        model.setHelpTag(HelpTag.event_details);
         model.setHashName("event_details"); //$NON-NLS-1$
         setWindow(model);
 

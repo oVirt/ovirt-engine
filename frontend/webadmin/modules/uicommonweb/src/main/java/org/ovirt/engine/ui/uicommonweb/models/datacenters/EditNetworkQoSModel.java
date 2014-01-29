@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -16,6 +17,7 @@ public class EditNetworkQoSModel extends NetworkQoSModel {
     public EditNetworkQoSModel(NetworkQoS networkQoS, Model sourceModel, StoragePool dataCenter) {
         super(sourceModel, dataCenter);
         setTitle(ConstantsManager.getInstance().getConstants().editNetworkQoSTitle());
+        setHelpTag(HelpTag.edit_network_qos);
         setHashName("edit_network_qos"); //$NON-NLS-1$
         getName().setEntity(networkQoS.getName());
         init(networkQoS);

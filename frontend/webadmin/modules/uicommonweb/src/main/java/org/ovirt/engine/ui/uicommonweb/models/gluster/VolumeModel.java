@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -320,6 +321,7 @@ public class VolumeModel extends Model {
 
         setWindow(volumeBrickModel);
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
+        volumeBrickModel.setHelpTag(HelpTag.add_bricks);
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -388,6 +390,7 @@ public class VolumeModel extends Model {
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .addBricksReplicateConfirmationTitle());
+            confirmModel.setHelpTag(HelpTag.add_bricks_confirmation);
             confirmModel.setHashName("add_bricks_confirmation"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance()
                     .getConstants()

@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleCo
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -520,6 +521,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         UnitVmModel windowModel = new UnitVmModel(new UserPortalNewTemplateVmModelBehavior(vm));
         setWindow(windowModel);
         windowModel.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
+        windowModel.setHelpTag(HelpTag.new_template);
         windowModel.setHashName("new_template"); //$NON-NLS-1$
         windowModel.setIsNew(true);
         windowModel.getVmType().setSelectedItem(vm.getVmType());
@@ -736,6 +738,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         model.getVmType().setSelectedItem(VmType.Server);
         model.setTitle(ConstantsManager.getInstance()
                 .getConstants().newVmTitle());
+        model.setHelpTag(HelpTag.new_vm);
         model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
@@ -790,7 +793,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm));
 
         model.setTitle(ConstantsManager.getInstance()
-                .getConstants().editVmTitle());
+                               .getConstants().editVmTitle());
+        model.setHelpTag(HelpTag.edit_vm);
         model.setHashName("edit_vm"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(vm.getVmType());
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
@@ -822,6 +826,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         setConfirmWindow(confirmModel);
 
         confirmModel.setTitle(ConstantsManager.getInstance().getConstants().removeVirtualMachineTitle());
+        confirmModel.setHelpTag(HelpTag.remove_virtual_machine);
         confirmModel.setHashName("remove_virtual_machine"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
@@ -893,6 +898,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         AttachCdModel model = new AttachCdModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().changeCDTitle());
+        model.setHelpTag(HelpTag.change_cd);
         model.setHashName("change_cd"); //$NON-NLS-1$
 
         ArrayList<String> defaultImages =

@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -51,6 +52,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     public NetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
+        setHelpTag(HelpTag.networks);
         setHashName("networks"); //$NON-NLS-1$
 
         setDefaultSearchString("Network:"); //$NON-NLS-1$

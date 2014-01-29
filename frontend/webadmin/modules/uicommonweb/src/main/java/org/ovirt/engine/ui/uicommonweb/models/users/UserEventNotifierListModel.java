@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
@@ -60,6 +61,7 @@ public class UserEventNotifierListModel extends SearchableListModel
     public UserEventNotifierListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().eventNotifierTitle());
+        setHelpTag(HelpTag.event_notifier);
         setHashName("event_notifier"); //$NON-NLS-1$
 
         setManageEventsCommand(new UICommand("ManageEvents", this)); //$NON-NLS-1$
@@ -101,6 +103,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         setWindow(model);
 
         model.setTitle(ConstantsManager.getInstance().getConstants().addEventNotificationTitle());
+        model.setHelpTag(HelpTag.add_event_notification);
         model.setHashName("add_event_notification"); //$NON-NLS-1$
 
         ArrayList<EventNotificationEntity> eventTypes =

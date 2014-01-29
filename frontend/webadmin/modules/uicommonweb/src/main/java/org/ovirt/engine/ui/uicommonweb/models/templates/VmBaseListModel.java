@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -41,6 +42,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
         setWindow(model);
         model.startProgress(null);
         model.setTitle(title);
+        model.setHelpTag(HelpTag.export_virtual_machine);
         model.setHashName("export_virtual_machine"); //$NON-NLS-1$
         setupExportModel(model);
 

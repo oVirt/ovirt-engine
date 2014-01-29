@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -32,6 +33,7 @@ public class HostBricksListModel extends SearchableListModel
     public HostBricksListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().hostBricksTitle());
+        setHelpTag(HelpTag.gluster_bricks);
         setHashName("gluster_bricks"); // $//$NON-NLS-1$
         setAvailableInModes(ApplicationMode.GlusterOnly);
     }

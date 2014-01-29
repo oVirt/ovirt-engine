@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.EditVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
@@ -29,6 +30,7 @@ public class NetworkProfileListModel extends SearchableListModel
 
     public NetworkProfileListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
+        setHelpTag(HelpTag.profiles);
         setHashName("profiles"); //$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$

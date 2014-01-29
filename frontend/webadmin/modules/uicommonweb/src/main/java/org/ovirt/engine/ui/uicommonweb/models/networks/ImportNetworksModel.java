@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -80,6 +81,7 @@ public class ImportNetworksModel extends Model {
         this.sourceListModel = sourceListModel;
 
         setTitle(ConstantsManager.getInstance().getConstants().importNetworksTitle());
+        setHelpTag(HelpTag.import_networks);
         setHashName("import_networks"); //$NON-NLS-1$
 
         UICommand importCommand = new UICommand(CMD_IMPORT, this);

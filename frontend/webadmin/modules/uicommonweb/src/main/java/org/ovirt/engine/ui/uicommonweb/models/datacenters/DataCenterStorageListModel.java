@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -166,6 +167,7 @@ public class DataCenterStorageListModel extends SearchableListModel
     public DataCenterStorageListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
+        setHelpTag(HelpTag.storage);
         setHashName("storage"); //$NON-NLS-1$
 
         setAttachStorageCommand(new UICommand("AttachStorage", this)); //$NON-NLS-1$
@@ -249,26 +251,32 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     public void attachBackup()
     {
-        attachInternal(StorageDomainType.ImportExport, ConstantsManager.getInstance()
-                .getConstants()
-                .attachExportDomainTitle(), "attach_export_domain"); //$NON-NLS-1$
+        ListModel listModel = new ListModel();
+        listModel.setTitle(ConstantsManager.getInstance().getConstants().attachExportDomainTitle());
+        listModel.setHelpTag(HelpTag.attach_export_domain);
+        listModel.setHashName("attach_export_domain"); //$NON-NLS-1$
+        attachInternal(listModel, StorageDomainType.ImportExport);
     }
 
     public void attachISO()
     {
-        attachInternal(StorageDomainType.ISO,
-                ConstantsManager.getInstance().getConstants().attachISOLibraryTitle(),
-                "attach_iso_library"); //$NON-NLS-1$
+        ListModel listModel = new ListModel();
+        listModel.setTitle(ConstantsManager.getInstance().getConstants().attachISOLibraryTitle());
+        listModel.setHelpTag(HelpTag.attach_iso_library);
+        listModel.setHashName("attach_iso_library"); //$NON-NLS-1$
+        attachInternal(listModel, StorageDomainType.ISO);
     }
 
     public void attachStorage()
     {
-        attachInternal(StorageDomainType.Data,
-                ConstantsManager.getInstance().getConstants().attachStorageTitle(),
-                "attach_storage"); //$NON-NLS-1$
+        ListModel listModel = new ListModel();
+        listModel.setTitle(ConstantsManager.getInstance().getConstants().attachStorageTitle());
+        listModel.setHelpTag(HelpTag.attach_storage);
+        listModel.setHashName("attach_storage"); //$NON-NLS-1$
+        attachInternal(listModel, StorageDomainType.Data);
     }
 
-    private void attachInternal(StorageDomainType storageType, String title, String hashName)
+    private void attachInternal(ListModel listModel, StorageDomainType storageType)
     {
         if (getWindow() != null)
         {
@@ -277,10 +285,8 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         this.setStorageDomainType(storageType);
 
-        ListModel listModel = new ListModel();
         setWindow(listModel);
-        listModel.setTitle(title);
-        listModel.setHashName(hashName);
+
         if (storageType == StorageDomainType.ISO)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -477,6 +483,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().detachStorageTitle());
+        model.setHelpTag(HelpTag.detach_storage);
         model.setHashName("detach_storage"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
 

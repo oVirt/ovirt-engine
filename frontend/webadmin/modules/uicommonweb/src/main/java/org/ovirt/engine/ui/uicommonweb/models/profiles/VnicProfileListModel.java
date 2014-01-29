@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -41,6 +42,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
     public VnicProfileListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
+        setHelpTag(HelpTag.vnicProfiles);
         setHashName("vnicProfiles"); //$NON-NLS-1$
 
         setDefaultSearchString("VnicProfile:"); //$NON-NLS-1$

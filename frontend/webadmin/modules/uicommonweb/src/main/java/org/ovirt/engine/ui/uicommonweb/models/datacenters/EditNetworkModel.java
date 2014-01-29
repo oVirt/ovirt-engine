@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -25,6 +26,7 @@ public class EditNetworkModel extends NetworkModel {
 
     private void init() {
         setTitle(ConstantsManager.getInstance().getConstants().editLogicalNetworkTitle());
+        setHelpTag(HelpTag.edit_logical_network);
         setHashName("edit_logical_network"); //$NON-NLS-1$
         getName().setEntity(getNetwork().getName());
         if (isManagemet()) {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -22,6 +23,7 @@ public class TemplateVmListModel extends VmListModel
     public TemplateVmListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
     }
 

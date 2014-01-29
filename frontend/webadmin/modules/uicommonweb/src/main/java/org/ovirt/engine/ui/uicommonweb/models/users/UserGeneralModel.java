@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -12,6 +13,7 @@ public class UserGeneralModel extends EntityModel
     public UserGeneralModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
     }
 

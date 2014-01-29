@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -16,6 +17,7 @@ public class QuotaClusterListModel extends SearchableListModel {
 
     public QuotaClusterListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
+        setHelpTag(HelpTag.clusters);
         setHashName("clusters"); // $//$NON-NLS-1$
     }
 

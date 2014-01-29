@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -39,6 +40,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
                 new EditProfileBehavior());
         this.nic = nic;
         setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
+        setHelpTag(HelpTag.edit_network_interface_vms);
         setHashName("edit_network_interface_vms"); //$NON-NLS-1$
     }
 

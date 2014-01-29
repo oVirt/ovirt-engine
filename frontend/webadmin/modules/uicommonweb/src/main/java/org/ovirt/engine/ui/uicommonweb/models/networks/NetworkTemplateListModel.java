@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmTemplateInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -38,6 +39,7 @@ public class NetworkTemplateListModel extends SearchableListModel
     public NetworkTemplateListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
+        setHelpTag(HelpTag.templates);
         setHashName("templates"); //$NON-NLS-1$
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$

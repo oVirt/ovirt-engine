@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -32,6 +33,7 @@ public class RemoveProvidersModel extends ConfirmationModel {
         providers = (List<Provider>) sourceListModel.getSelectedItems();
 
         setTitle(ConstantsManager.getInstance().getConstants().removeProviderTitle());
+        setHelpTag(HelpTag.remove_provider);
         setHashName("remove_provider"); //$NON-NLS-1$
 
         List<String> providerNames = new ArrayList<String>();

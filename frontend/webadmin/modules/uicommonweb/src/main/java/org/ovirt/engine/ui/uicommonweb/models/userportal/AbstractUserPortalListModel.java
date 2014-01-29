@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -85,6 +86,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
 
         ConsolePopupModel model = new ConsolePopupModel();
         model.setVmConsoles(((UserPortalItemModel) getSelectedItem()).getVmConsoles());
+        model.setHelpTag(HelpTag.editConsole);
         model.setHashName("editConsole"); //$NON-NLS-1$
         setWindow(model);
 

@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -18,6 +19,7 @@ public class QuotaPermissionListModel extends PermissionListModel {
 
     public QuotaPermissionListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
+        setHelpTag(HelpTag.permissions);
         setHashName("permissions"); //$NON-NLS-1$
     }
 

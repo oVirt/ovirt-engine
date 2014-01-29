@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -26,6 +27,7 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel {
 
     public DataCenterNetworkQoSListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networkQoSTitle());
+        setHelpTag(HelpTag.network_qos);
         setHashName("network_qos"); //$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$

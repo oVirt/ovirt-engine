@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -188,6 +189,7 @@ public class BookmarkListModel extends SearchableListModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBookmarksTitle());
+        model.setHelpTag(HelpTag.remove_bookmark);
         model.setHashName("remove_bookmark"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
@@ -240,6 +242,7 @@ public class BookmarkListModel extends SearchableListModel
         BookmarkModel model = new BookmarkModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editBookmarkTitle());
+        model.setHelpTag(HelpTag.edit_bookmark);
         model.setHashName("edit_bookmark"); //$NON-NLS-1$
         model.setIsNew(false);
         model.getName().setEntity(bookmark.getbookmark_name());
@@ -265,6 +268,7 @@ public class BookmarkListModel extends SearchableListModel
         BookmarkModel model = new BookmarkModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newBookmarkTitle());
+        model.setHelpTag(HelpTag.new_bookmark);
         model.setHashName("new_bookmark"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getSearchString().setEntity(getSearchString());

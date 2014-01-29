@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -38,6 +39,7 @@ public class NewTemplateInterfaceModel extends NewVmInterfaceModel {
                 vmNicList,
                 sourceModel);
         setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
+        setHelpTag(HelpTag.new_network_interface_tmps);
         setHashName("new_network_interface_tmps"); //$NON-NLS-1$
     }
 

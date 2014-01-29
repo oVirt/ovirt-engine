@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -16,6 +17,7 @@ public class PoolInterfaceListModel extends SearchableListModel
     public PoolInterfaceListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
+        setHelpTag(HelpTag.network_interfaces);
         setHashName("network_interfaces"); //$NON-NLS-1$
     }
 

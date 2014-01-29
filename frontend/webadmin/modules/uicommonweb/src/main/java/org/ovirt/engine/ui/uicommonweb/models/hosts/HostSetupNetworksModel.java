@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -153,6 +154,7 @@ public class HostSetupNetworksModel extends EntityModel {
         this.sourceListModel = listModel;
 
         setTitle(ConstantsManager.getInstance().getConstants().setupHostNetworksTitle());
+        setHelpTag(HelpTag.host_setup_networks);
         setHashName("host_setup_networks"); //$NON-NLS-1$
 
         networkToLastDetachParams = new HashMap<String, NetworkParameters>();

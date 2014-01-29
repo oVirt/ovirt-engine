@@ -13,6 +13,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -49,6 +50,7 @@ public class PoolVmListModel extends VmListModel
     public PoolVmListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
 
         setDetachCommand(new UICommand("Detach", this)); //$NON-NLS-1$
@@ -94,6 +96,7 @@ public class PoolVmListModel extends VmListModel
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().detachVirtualMachinesTitle());
+        model.setHelpTag(HelpTag.detach_virtual_machine);
         model.setHashName("detach_virtual_machine"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();

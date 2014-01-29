@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -212,6 +213,7 @@ public class VmSnapshotListModel extends SearchableListModel
     public VmSnapshotListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
+        setHelpTag(HelpTag.snapshots);
         setHashName("snapshots"); //$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -335,6 +337,7 @@ public class VmSnapshotListModel extends SearchableListModel
             ConfirmationModel model = new ConfirmationModel();
             setWindow(model);
             model.setTitle(ConstantsManager.getInstance().getConstants().deleteSnapshotTitle());
+            model.setHelpTag(HelpTag.delete_snapshot);
             model.setHashName("delete_snapshot"); //$NON-NLS-1$
             model.setMessage(ConstantsManager.getInstance()
                     .getMessages()
@@ -421,6 +424,7 @@ public class VmSnapshotListModel extends SearchableListModel
             setWindow(model);
 
             model.setTitle(ConstantsManager.getInstance().getConstants().previewSnapshotTitle());
+            model.setHelpTag(HelpTag.preview_snapshot);
             model.setHashName("preview_snapshot"); //$NON-NLS-1$
 
             addCommands(model, "OnPreview"); //$NON-NLS-1$
@@ -447,6 +451,7 @@ public class VmSnapshotListModel extends SearchableListModel
         setWindow(model);
 
         model.setTitle(ConstantsManager.getInstance().getConstants().customPreviewSnapshotTitle());
+        model.setHelpTag(HelpTag.custom_preview_snapshot);
         model.setHashName("custom_preview_snapshot"); //$NON-NLS-1$
 
         addCommands(model, "OnCustomPreview"); //$NON-NLS-1$
@@ -560,6 +565,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 behavior.setVm(vm);
 
                 model.setTitle(ConstantsManager.getInstance().getConstants().cloneVmFromSnapshotTitle());
+                model.setHelpTag(HelpTag.clone_vm_from_snapshot);
                 model.setHashName("clone_vm_from_snapshot"); //$NON-NLS-1$
                 model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
                 model.initialize(vmSnapshotListModel.getSystemTreeSelectedItem());

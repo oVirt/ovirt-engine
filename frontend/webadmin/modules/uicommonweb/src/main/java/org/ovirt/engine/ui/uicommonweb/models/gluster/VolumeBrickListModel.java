@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -52,6 +53,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     public VolumeBrickListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().bricksTitle());
+        setHelpTag(HelpTag.bricks);
         setHashName("bricks"); //$NON-NLS-1$
         setAddBricksCommand(new UICommand("Add Bricks", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("Remove Bricks", this)); //$NON-NLS-1$
@@ -307,6 +309,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                     model.setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .cannotAddBricksNoUpServerFound());
+                    model.setHelpTag(HelpTag.cannot_add_bricks);
                     model.setHashName("cannot_add_bricks"); //$NON-NLS-1$
 
                     UICommand command = new UICommand("Cancel", VolumeBrickListModel.this); //$NON-NLS-1$
@@ -332,6 +335,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         volumeBrickModel.getStripeCount().setIsAvailable(volumeEntity.getVolumeType().isStripedType());
 
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksTitle());
+        volumeBrickModel.setHelpTag(HelpTag.add_bricks);
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
         volumeBrickModel.getVolumeType().setEntity(volumeEntity.getVolumeType());
 
@@ -442,6 +446,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .addBricksReplicateConfirmationTitle());
+            confirmModel.setHelpTag(HelpTag.add_bricks_confirmation);
             confirmModel.setHashName("add_bricks_confirmation"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance()
                     .getConstants()
@@ -558,6 +563,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
         RemoveBrickModel removeBrickModel = new RemoveBrickModel();
+        removeBrickModel.setHelpTag(HelpTag.volume_remove_bricks);
         removeBrickModel.setHashName("volume_remove_bricks"); //$NON-NLS-1$
         removeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksTitle());
         setWindow(removeBrickModel);
@@ -846,6 +852,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().stopRemoveBricksTitle());
         model.setMessage(ConstantsManager.getInstance().getConstants().stopRemoveBricksMessage());
+        model.setHelpTag(HelpTag.volume_remove_bricks_stop);
         model.setHashName("volume_remove_bricks_stop"); //$NON-NLS-1$
 
         GlusterVolumeEntity volumeEntity = getVolumeEntity();
@@ -914,6 +921,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().commitRemoveBricksTitle());
         model.setMessage(ConstantsManager.getInstance().getConstants().commitRemoveBricksMessage());
+        model.setHelpTag(HelpTag.volume_remove_bricks_commit);
         model.setHashName("volume_remove_bricks_commit"); //$NON-NLS-1$
 
         GlusterVolumeEntity volumeEntity = getVolumeEntity();
@@ -984,6 +992,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             }
         }
         final ConfirmationModel cModel = new ConfirmationModel();
+        cModel.setHelpTag(HelpTag.volume_remove_bricks_status);
         cModel.setHashName("volume_remove_bricks_status"); ////$NON-NLS-1$
 
         UICommand removeBrickStatusOk = new UICommand("CancelConfirmation", VolumeBrickListModel.this);//$NON-NLS-1$
@@ -1028,6 +1037,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                         removeBrickStatusModel.setTitle(ConstantsManager.getInstance()
                                 .getConstants()
                                 .removeBricksStatusTitle());
+                        removeBrickStatusModel.setHelpTag(HelpTag.volume_remove_bricks_status);
                         removeBrickStatusModel.setHashName("volume_remove_bricks_status"); ////$NON-NLS-1$
 
                         setWindow(removeBrickStatusModel);
@@ -1077,6 +1087,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().retainBricksTitle());
         model.setMessage(ConstantsManager.getInstance().getConstants().retainBricksMessage());
+        model.setHelpTag(HelpTag.volume_retain_brick);
         model.setHashName("volume_retain_brick"); //$NON-NLS-1$
 
         GlusterVolumeEntity volumeEntity = getVolumeEntity();
@@ -1165,6 +1176,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         setWindow(brickModel);
         brickModel.setTitle(ConstantsManager.getInstance().getConstants().replaceBrickTitle());
+        brickModel.setHelpTag(HelpTag.replace_brick);
         brickModel.setHashName("replace_brick"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -1275,6 +1287,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                             .brickDetailsNotSupportedInClusterCompatibilityVersion(vdsGroup.getcompatibility_version() != null ? vdsGroup.getcompatibility_version()
                                     .toString()
                                     : "")); //$NON-NLS-1$
+                    model.setHelpTag(HelpTag.brick_details_not_supported);
                     model.setHashName("brick_details_not_supported"); //$NON-NLS-1$
 
                     UICommand command = new UICommand("Cancel", VolumeBrickListModel.this); //$NON-NLS-1$
@@ -1294,6 +1307,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         final BrickAdvancedDetailsModel brickModel = new BrickAdvancedDetailsModel();
         setWindow(brickModel);
         brickModel.setTitle(ConstantsManager.getInstance().getConstants().advancedDetailsBrickTitle());
+        brickModel.setHelpTag(HelpTag.brick_advanced);
         brickModel.setHashName("brick_advanced"); //$NON-NLS-1$
         brickModel.startProgress(null);
 

@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -28,6 +29,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
 
     public DataCenterIscsiBondListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().iscsiBondsTitle());
+        setHelpTag(HelpTag.iscsi_bundles);
         setHashName("iscsi_bundles"); //$NON-NLS-1$
 
         setAddCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -105,6 +107,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
 
         IscsiBondModel model = new IscsiBondModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().addIscsiBondTitle());
+        model.setHelpTag(HelpTag.new_iscsi_bundle);
         model.setHashName("new_iscsi_bundle"); //$NON-NLS-1$
         model.setStoragePool(getEntity());
         setWindow(model);
@@ -120,6 +123,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
 
         IscsiBondModel model = new IscsiBondModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().editIscsiBondTitle());
+        model.setHelpTag(HelpTag.edit_iscsi_bundle);
         model.setHashName("edit_iscsi_bundle"); //$NON-NLS-1$
         model.setIscsiBond((IscsiBond) getSelectedItem());
         model.setStoragePool(getEntity());
@@ -136,6 +140,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
 
         ConfirmationModel model = new ConfirmationModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().removeIscsiBondTitle());
+        model.setHelpTag(HelpTag.remove_iscsi_bundle);
         model.setHashName("remove_iscsi_bundle"); //$NON-NLS-1$
         setWindow(model);
 

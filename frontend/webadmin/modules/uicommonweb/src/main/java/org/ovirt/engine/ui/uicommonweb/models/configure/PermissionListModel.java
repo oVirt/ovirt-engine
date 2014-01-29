@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -69,6 +70,7 @@ public class PermissionListModel extends SearchableListModel
     public PermissionListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
+        setHelpTag(HelpTag.permissions);
         setHashName("permissions"); //$NON-NLS-1$
 
         setAddCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -123,6 +125,7 @@ public class PermissionListModel extends SearchableListModel
         AdElementListModel model = createAdElementListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().addPermissionToUserTitle());
+        model.setHelpTag(HelpTag.add_permission_to_user);
         model.setHashName("add_permission_to_user"); //$NON-NLS-1$
 
         UICommand tempVar = new UICommand("OnAdd", this); //$NON-NLS-1$
@@ -149,6 +152,7 @@ public class PermissionListModel extends SearchableListModel
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removePermissionTitle());
+        model.setHelpTag(HelpTag.remove_permission);
         model.setHashName("remove_permission"); //$NON-NLS-1$
         model.setItems(getSelectedItems());
 

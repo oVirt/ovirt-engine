@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -137,6 +138,7 @@ public class HostHardwareGeneralModel extends EntityModel
     public HostHardwareGeneralModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHelpTag(HelpTag.hardware);
         setHashName("hardware"); //$NON-NLS-1$
         setAvailableInModes(ApplicationMode.VirtOnly);
     }
