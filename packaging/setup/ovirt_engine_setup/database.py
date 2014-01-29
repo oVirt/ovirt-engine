@@ -228,7 +228,9 @@ class Statement(base.Base):
         options,
     ):
         for option in options:
+            name = option['name']
             value = option['value']
+            version = option.get('version', 'general')
 
             if option.get('encrypt', False):
                 x509 = X509.load_cert(
@@ -248,20 +250,55 @@ class Statement(base.Base):
             if isinstance(value, bool):
                 value = 'true' if value else 'false'
 
-            self.execute(
+            res = self.execute(
                 statement="""
-                    update vdc_options
-                    set
-                        option_value=%(value)s,
+                    select count(*) as count
+                    from vdc_options
+                    where
+                        option_name=%(name)s and
                         version=%(version)s
-                    where option_name=%(name)s
                 """,
                 args=dict(
-                    name=option['name'],
-                    value=value,
-                    version=option.get('version', 'general'),
+                    name=name,
+                    version=version,
                 ),
             )
+            if res[0]['count'] == 0:
+                self.execute(
+                    statement="""
+                        insert into vdc_options (
+                            option_name,
+                            option_value,
+                            version
+                        )
+                        values (
+                            %(name)s,
+                            %(value)s,
+                            %(version)s
+                        )
+                    """,
+                    args=dict(
+                        name=name,
+                        version=version,
+                        value=value,
+                    ),
+                )
+            else:
+                self.execute(
+                    statement="""
+                        update vdc_options
+                        set
+                            option_value=%(value)s
+                        where
+                            option_name=%(name)s and
+                            version=%(version)s
+                    """,
+                    args=dict(
+                        name=name,
+                        version=version,
+                        value=value,
+                    ),
+                )
 
 
 @util.export
