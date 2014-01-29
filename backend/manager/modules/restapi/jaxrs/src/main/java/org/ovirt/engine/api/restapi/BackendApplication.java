@@ -58,10 +58,12 @@ import org.ovirt.engine.api.restapi.resource.BackendUsersResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVnicProfilesResource;
+import org.ovirt.engine.api.restapi.resource.validation.InvalidValueExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JaxbExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
+import org.ovirt.engine.api.restapi.resource.validation.XmlMessageBodyReader;
 import org.ovirt.engine.api.restapi.security.auth.LoginValidator;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
@@ -162,10 +164,14 @@ public class BackendApplication extends Application {
         singletons.add(new ResponseStatusLogger());
         singletons.add(new ResponsePayloadLogger());
 
+        // JAXB message body reader that sets default validation event handler
+        singletons.add(new XmlMessageBodyReader());
+
         // Intercepter that maps exceptions cause by illegal guid string to 400 status (BAD_REQUEST).
         singletons.add(new MalformedIdExceptionMapper());
         singletons.add(new JaxbExceptionMapper());
         singletons.add(new JsonExceptionMapper());
+        singletons.add(new InvalidValueExceptionMapper());
     }
 
     private void addResource(final BackendResource resource) {
