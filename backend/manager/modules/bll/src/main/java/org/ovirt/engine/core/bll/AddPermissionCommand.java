@@ -3,17 +3,17 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.RoleType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -88,15 +88,25 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // the database yet, this will be the case if they don't have an
         // internal identifier, if this is the case then they need to be
         // added to the database now, before the permission:
-        final DbUser user = parameters.getUser();
-        if (user != null && user.getId() == null) {
+        DbUser user = parameters.getUser();
+        if (user != null) {
             user.setId(Guid.newGuid());
-            getDbUserDAO().save(user);
+            DbUser userFromDb = getDbUserDAO().getByExternalId(user.getDomain(), user.getExternalId());
+            if (userFromDb == null) {
+                getDbUserDAO().save(user);
+            } else {
+                user = userFromDb;
+            }
         }
-        final DbGroup group = parameters.getGroup();
-        if (group != null && group.getId() == null) {
+        DbGroup group = parameters.getGroup();
+        if (group != null) {
             group.setId(Guid.newGuid());
-            getAdGroupDAO().save(group);
+            DbGroup groupFromDb = getAdGroupDAO().getByExternalId(group.getDomain(), group.getExternalId());
+            if (groupFromDb == null) {
+                getAdGroupDAO().save(group);
+            } else {
+                group = groupFromDb;
+            }
         }
 
         // The identifier of the owner of the permission can come from the parameters directly or from the user/group
